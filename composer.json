@@ -1,0 +1,19 @@
+{
+  "name": "clinikal/client-app",
+  "description": "React app for OpenEMR",
+  "type": "clinikal-react",
+  "authors": [
+    {
+      "name": "Clinikal team"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@bitbucket.org:clinikal/composer-installers-clinikal-extender.git"
+    }
+  ],
+  "require": {
+    "clinikal/composer-installers-clinikal-extender": "dev-react-start"
+  }
+}
