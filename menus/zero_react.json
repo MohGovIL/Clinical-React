@@ -1,0 +1,349 @@
+[
+  {
+    "label": "Modules",
+    "menu_id": "modimg",
+    "children": [
+      {
+        "label": "Manage Modules",
+        "menu_id": "adm0",
+        "target": "pat",
+        "url": "/interface/modules/zend_modules/public/Installer",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "manage_modules"
+        ]
+      },
+      {
+        "label": "Vaccines",
+        "menu_id": "inter",
+        "icon": "fa-caret-right",
+        "children": [
+          {
+            "label": "Commercial names management",
+            "menu_id": "adm1",
+            "target": "mod",
+            "url": "/interface/modules/zend_modules/public/commercial-names-management/commercial-names-management-index",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "modules",
+              "commercial_names_management"
+            ]
+          },
+          {
+            "label": "Vaccinations and Drugs management",
+            "menu_id": "vac",
+            "target": "mod",
+            "url": "/interface/modules/zend_modules/public/vaccines-management",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "modules",
+              "vaccines_drugs_management"
+            ]
+          },
+          {
+            "label": "Vaccines briefing management",
+            "menu_id": "adm1",
+            "target": "mod",
+            "url": "/interface/modules/zend_modules/public/vaccines-briefing/vaccines-briefing-index",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "modules",
+              "vaccines_briefing_management"
+            ]
+          },
+          {
+
+            "label": "Warnings and contraindications management",
+            "menu_id": "adm1",
+            "target": "mod",
+            "url": "/interface/modules/zend_modules/public/warnings-and-contraindications-management/warnings-and-contraindications-management-index",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "modules",
+              "warnings_and_contraindications_management"
+            ]
+          },
+          {
+            "label": "Vaccines interval management",
+            "menu_id": "inter",
+            "target": "mod",
+            "url": "/interface/modules/zend_modules/public/vaccine-intervals",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "modules",
+              "interval_management"
+            ]
+          },
+          {
+            "label": "Managment of email address for serious side-effects",
+            "menu_id": "manmail",
+            "target": "mod",
+            "url": "/interface/modules/zend_modules/public/emails-vaccines-management/emails-vaccines-management-index",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "modules",
+              "emails_vaccines_management"
+            ]
+          }
+        ],
+        "requirement": 0,
+        "acl_req": [
+          "modules",
+          "vaccines_drugs_management"
+        ]
+      },
+      {
+        "label": "Inheritance",
+        "menu_id": "adm0",
+        "target": "pat",
+        "url": "/interface/modules/zend_modules/public/inheritance",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "manage_modules"
+        ]
+      },
+      {
+        "label": "Importdata",
+        "icon": "fa-caret-right",
+        "children": [
+          {
+            "label": "Initial List from CSV",
+            "menu_id": "adm1",
+            "target": "mod",
+            "url": "/interface/modules/zend_modules/public/ImportData/csv",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "admin",
+              "manage_modules"
+            ]
+          },
+          {
+            "label": "Update Lists from CSV",
+            "menu_id": "adm1",
+            "target": "mod",
+            "url": "/interface/modules/zend_modules/public/ImportData/csv/update_list",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "admin",
+              "manage_modules"
+            ]
+          }
+        ],
+        "requirement": 0,
+        "acl_req": [
+          "menus",
+          "modle"
+        ]
+      },
+      {
+        "label": "Multipledb",
+        "menu_id": "adm0",
+        "target": "pat",
+        "url": "/interface/modules/zend_modules/public/multipledb",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "manage_modules"
+        ]
+      }
+    ],
+    "requirement": 0,
+    "acl_req": [
+      "menus",
+      "modle"
+    ]
+  },
+  {
+    "label": "Administration",
+    "menu_id": "admimg",
+    "children": [
+      {
+        "label": "Globals",
+        "menu_id": "adm0",
+        "target": "adm",
+        "url": "/interface/super/edit_globals.php",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "super"
+        ]
+      },
+      {
+        "label": "Users",
+        "menu_id": "adm0",
+        "target": "adm",
+        "url": "/interface/usergroup/usergroup_admin.php",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "users"
+        ]
+      },
+      {
+        "label": "Codes",
+        "menu_id": "sup0",
+        "target": "adm",
+        "url": "/interface/patient_file/encounter/superbill_custom_full.php",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "superbill"
+        ]
+      },
+      {
+        "label": "Lists",
+        "menu_id": "adm0",
+        "target": "adm",
+        "url": "/interface/super/edit_list.php",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "super"
+        ]
+      },
+      {
+        "label": "ACL",
+        "menu_id": "adm0",
+        "target": "adm",
+        "url": "/interface/usergroup/adminacl.php",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "acl"
+        ]
+      },
+      {
+        "label": "Rules",
+        "menu_id": "adm0",
+        "target": "adm",
+        "url": "/interface/super/rules/index.php?action=browse!list",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "super"
+        ],
+        "global_req": "enable_cdr"
+      },
+      {
+        "label": "Other",
+        "icon": "fa-caret-right",
+        "children": [
+          {
+            "label": "Language",
+            "menu_id": "adm0",
+            "target": "adm",
+            "url": "/interface/language/language.php",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "admin",
+              "language"
+            ]
+          },
+          {
+            "label": "Forms",
+            "menu_id": "adm0",
+            "target": "adm",
+            "url": "/interface/forms_admin/forms_admin.php",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+              "admin",
+              "forms"
+            ]
+          }
+        ],
+        "requirement": 0
+      }
+    ],
+    "requirement": 0,
+    "acl_req": [
+      [
+        "admin",
+        "calendar"
+      ],
+      [
+        "admin",
+        "database"
+      ],
+      [
+        "admin",
+        "forms"
+      ],
+      [
+        "admin",
+        "practice"
+      ],
+      [
+        "admin",
+        "users"
+      ],
+      [
+        "admin",
+        "acl"
+      ],
+      [
+        "admin",
+        "super"
+      ],
+      [
+        "admin",
+        "superbill"
+      ],
+      [
+        "admin",
+        "drugs"
+      ]
+    ]
+  },
+  {
+    "label": "Miscellaneous",
+    "menu_id": "misimg",
+    "children": [
+      {
+        "label": "Document Templates",
+        "menu_id": "adm0",
+        "target": "msc",
+        "url": "/interface/super/manage_document_templates.php",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+          "admin",
+          "practice"
+        ]
+      }
+    ],
+    "requirement": 0,
+    "acl_req": [
+      "patients",
+      "docs"
+    ]
+  },
+  {
+    "label": "About",
+    "menu_id": "abo0",
+    "target": "msc",
+    "url": "/clinikal/scripts/clinikalAbout.php",
+    "children": [],
+    "requirement": 0
+  }
+]

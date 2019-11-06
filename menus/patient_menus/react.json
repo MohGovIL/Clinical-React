@@ -1,0 +1,113 @@
+[
+    {
+        "label": "Dashboard{{patient file}}",
+        "menu_id": "dashboard",
+        "target": "main",
+        "on_click":"top.restoreSession()",
+        "url": "interface/patient_file/summary/demographics.php",
+        "pid":"false",
+        "children": [],
+        "requirement": 0
+    },
+    {
+        "label": "Report",
+        "menu_id": "report",
+        "target": "main",
+        "on_click":"top.restoreSession()",
+        "url": "interface/patient_file/report/patient_report.php",
+        "pid":"false",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+            "patients",
+            "pat_rep"
+        ]
+    },
+    {
+        "label": "Documents",
+        "menu_id": "documents",
+        "target": "main",
+        "on_click":"top.restoreSession()",
+        "url": "controller.php?document&list&patient_id=",
+        "pid":"true",
+        "children": [],
+        "requirement": 0,
+        "acl_req": [
+            "patients",
+            "docs"
+        ]
+    },
+    {
+        "label": "Patient vaccines",
+        "menu_id": "patient-vaccines",
+        "target": "pvac",
+        "on_click":"top.restoreSession()",
+        "url": "interface/modules/zend_modules/public/patient-vaccines",
+        "pid":"false",
+        "children": [],
+        "requirement": 0,
+        "acl_req":[
+            "patients",
+            "patient_vaccines"
+        ]
+    },
+    {
+        "label": "Payment",
+        "menu_id": "payment-vaccines",
+        "target": "pvac",
+        "on_click":"top.restoreSession()",
+        "url": "interface/modules/zend_modules/public/payment-vaccines",
+        "pid":"false",
+        "children": [],
+        "requirement": 0,
+        "acl_req":[
+            "patients",
+            "payments_for_vaccines"
+        ]
+    },
+    {
+        "label": "Patient lab tests",
+        "menu_id": "patient-lab-tests",
+        "target": "pvac",
+        "on_click":"top.restoreSession()",
+        "url": "interface/modules/zend_modules/public/patient-lab-tests",
+        "pid":"false",
+        "children": [],
+        "requirement": 0,
+        "acl_req":[
+            "patients",
+            "lab_tests"
+        ]
+    },
+    {
+        "label": "Tuberculosis tests",
+        "menu_id": "tuberculosis-tests",
+        "target": "ptt",
+        "on_click":"top.restoreSession()",
+        "url": "interface/modules/zend_modules/public/tuberculosis-test",
+        "pid":"false",
+        "children": [],
+        "requirement": 0,
+        "acl_req":[
+            "patients",
+            "tuberculosis_test"
+        ]
+    },
+    {
+        "label": "Rabies",
+        "menu_id": "rabies-incident",
+        "target": "rab",
+        "on_click":"top.restoreSession()",
+        "url": "interface/modules/zend_modules/public/rabies-incident/list",
+        "pid":"false",
+        "children": [],
+        "requirement": 0,
+        "acl_req":[
+            "patients",
+            "rabies"
+        ]
+    }
+]
+
+
+

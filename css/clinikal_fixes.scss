@@ -1,0 +1,946 @@
+//fixes for vaccines
+
+.btn.btn-info{
+    background: $mid;
+    border-color: $mid !important;
+}
+
+.tabContainer>.tab{
+    width: 735px;
+}
+
+.fa-plus {
+    position: relative;
+    top: 2px;
+}
+
+.fa-refresh {
+    position: relative;
+    top: 2px;
+    left: 0.5px;
+}
+
+.fa-search {
+    position: relative;
+    top: 1.5px;
+}
+
+.fix_inline_radio {
+    margin-left: 10px!important;
+    top: -1.5px!important;
+}
+
+span#select2-country_name-container {
+    direction: rtl;
+}
+
+.multi_select_24_px{
+
+    li.select2-selection__choice {
+        font-size: 10px;
+    }
+
+    span.select2-selection.select2-selection--multiple {
+        min-height: 25px;
+    }
+
+    input.select2-search__field {
+        height: 18px !important;
+    }
+}
+
+#vaccine_advisor_form_scss{
+
+    label{
+        padding: 0 !important;
+        max-width: 257px !important;
+    }
+    .radio-inline + .radio-inline, .checkbox-inline + .checkbox-inline {
+        margin-right: 24px !important;
+        margin-left: 0 !important;
+    }
+
+    select {
+        margin: 0px  !important;
+    }
+    .glyphicon-info-sign{
+        max-width: 360px !important;
+        margin-right: 10px;
+
+    }
+    .btn-default{
+        border-color: #ffffff !important;
+    }
+    #addRow_countries_table_generic {
+        margin: 11px 0px;
+    }
+    input[type=button], input[type=reset], input[type=submit] {
+        margin-top: 10px  !important;
+    }
+    .btn-sm {
+        font-size: 1em !important;
+    }
+    .danger-margin {
+        margin-right: 20px;
+    }
+
+    span.select2.select2-container.select2-container--default.select2-container--above {
+        width:115px !important;
+    }
+}
+
+#vaccination_counseling_for_health_professions_form_scss
+{
+
+    .changeText{
+        right:10px !important;
+    }
+    label[for='vaccine_plan_info']{
+        right: -6px;
+    }
+    .glyphicon-info-sign{
+        left:170px !important;
+        top:5px !important;
+    }
+
+    #_questionnaire_7 .labelWrapper {
+        max-width: 287px !important;
+    }
+
+    .labelWrapper {
+        max-width: 287px !important;
+    }
+
+
+    input[id^='directives']{
+        margin-top:3px;
+    }
+    label{
+        padding: 0 !important;
+        max-width: 290px !important;
+    }
+    .radio-inline + .radio-inline, .checkbox-inline + .checkbox-inline {
+        margin-right: 24px !important;
+        margin-left: 0 !important;
+    }
+
+    select {
+        margin: 0px  !important;
+    }
+    .glyphicon-info-sign{
+        max-width: 415px !important;
+        margin-right: 3px !important;
+
+    }
+    .btn-default{
+        border-color: #ffffff !important;
+    }
+    #addRow_countries_table_generic {
+        margin: 11px 0px;
+    }
+    input[type=button], input[type=reset], input[type=submit] {
+        margin-top: 10px  !important;
+    }
+    .btn-sm {
+        font-size: 1em !important;
+    }
+    .danger-margin {
+        margin-right: 20px;
+    }
+    span.select2.select2-container.select2-container--default.select2-container--above {
+        width:115px !important;
+    }
+
+}
+
+#refusal_to_receive_a_vaccine_form_scss{
+
+    .labelWrapper {
+        max-width: 309px!important;
+    }
+
+    .error-message{
+        margin:-4px;
+    }
+
+}
+
+#logistic-management-wrapper {
+
+    .intervalAmount {
+        border: 1px solid $darker !important;
+        margin: 3px;
+    }
+
+     label {
+         padding: 0 0 !important;
+     }
+}
+
+#add-edit-vaccines{
+    form label{
+        width: 100px;
+    }
+    label[for="immunizator_source_type_id"] {
+        width: 120px !important;
+    }
+    label[for="immunizator"] {
+        width: 90px !important;
+    }
+
+    .inline-form-row .col-md-4 {
+        margin-bottom: 20px;
+        min-height: 35px;
+    }
+    .inline-form-row input[type='text'], select{
+        min-width: 200px;
+    }
+    .inline-form-row .radio>label {
+        width: auto;
+    }
+    .inline-form-row .radio>label>input{
+        margin-left: 5px !important;
+        margin-right: 13px !important;
+        box-shadow: none;
+
+    }
+    .error-message {
+        padding-left: 100px;
+    }
+
+    #comments{
+        width: 90% !important;
+    }
+
+    #save-update-buttons, #not-deleted{
+        display: none;
+    }
+
+    #warning_id, #countermeasure_id{
+        max-width: 200px;
+    }
+
+    .col-md-12{
+        margin-bottom: 20px;
+    }
+
+    #payment_notice{
+        display: inline-block;
+        margin-top: 5px;
+    }
+
+    .select2-results .glyphicon , .select2-selection .glyphicon {
+        float: left;
+        position: relative;
+        line-height: 20px;
+    }
+
+    .width-batch{
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 110px;
+        white-space: nowrap;
+    }
+
+    #immunizator {
+        width: 250px;
+    }
+}
+
+.error-border-important,.error-border, .error-message ~.select2 .select2-selection{
+    border: 1px solid red !important;
+}
+
+.ui-dialog-title{
+    margin: 1em !important;
+}
+.ui-dialog .ui-dialog-buttonpane button {
+    background: $darker !important;
+}
+div.ui-dialog-titlebar{
+    background: $darker !important;
+    color: #ffffff;
+}
+
+#add-edit-intervals, #add-edit-briefing-form, #add-edit-warnings-and-contraindications {
+    input[type="radio"]{
+        margin-left: 5px!important;
+        box-shadow:none;
+    }
+}
+
+#add-edit-briefing-form {
+    input#description {
+        min-width: 390px !important;
+        margin-bottom: 20px;
+    }
+
+    input#cdc {
+        margin-bottom: 20px;
+    }
+
+    form label{
+        width: 100px;
+        max-width: 100px!important;
+    }
+
+    .inline-form-row .col-md-4 {
+        margin-bottom: 20px;
+        min-height: 35px;
+    }
+    input[type='text'], select{
+        min-width: 200px;
+    }
+    .radio>label {
+        width: auto;
+    }
+    .radio>label>input{
+        margin-left: 5px;
+        margin-right: 13px;
+        box-shadow: none;
+    }
+    .error-message {
+        padding-right: 130px;
+    }
+
+    #group_1, #group_2, #group_3 {
+        direction: ltr;
+    }
+
+
+}
+
+input[type="radio"].form-control:focus{
+    box-shadow: none;
+    border-color: inherit;
+}
+
+#add-edit-intervals{
+    label{
+        margin-left: 15px;
+    }
+
+    .form-group-TWB{
+        margin-bottom: 10px;
+    }
+
+    select{
+        min-width: 200px;
+    }
+
+    input[type="radio"]{
+        margin-left: 5px;
+    }
+
+    .intervalAmount{
+        margin-left: 7px;
+    }
+
+    #intervalExists,
+    #badAmount{
+        display: none;
+        font-size: 20px;
+    }
+
+    .inputDiv{
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+
+    .validationError{
+        color: red;
+        position: absolute;
+        font-size: 11px;
+    }
+}
+
+#add-edit-warnings-and-contraindications {
+    form label{
+        width: 100px;
+    }
+
+    .inline-form-row .col-md-4 {
+        margin-bottom: 20px;
+        min-height: 35px;
+    }
+    .inline-form-row input[type='text'], select{
+        min-width: 200px;
+    }
+    .inline-form-row .radio>label {
+        width: auto;
+    }
+    .inline-form-row .radio>label>input{
+        margin-left: 5px;
+        margin-right: 13px;
+        box-shadow: none;
+
+    }
+    .error-message {
+        padding-left: 100px;
+    }
+    select#description {
+        width: 76%;
+    }
+}
+
+button#save,button#add_vaccine,button#add_past_vaccine {
+    margin-left: 4px;
+}
+
+#add-edit-vaccines button#update  ,#add-edit-vaccines button#delete {
+    margin-left: 4px;
+}
+
+#add-edit-lab-tests button#update  ,#add-edit-lab-tests button#delete {
+    margin-left: 4px;
+}
+
+
+#prescription_edit input[type="radio"] {
+    height: 10px !important;
+    margin-left: 4px !important;
+}
+
+#vaccines_briefing_table_generic_table label[name^="group"] {
+    direction: ltr;
+}
+
+
+#visit-details{
+    .error-message {
+        white-space: inherit !important;
+    }
+}
+.groupsAreHere{
+    .panel-title{
+            font-weight: bold;
+    }
+}
+
+.inline-form-row .radio>label>input {
+    margin-left: 5px !important;
+    margin-right: 13px !important;
+}
+
+#symptoms-after-vaccines-form {
+    .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox], .radio input[type=radio], .radio-inline input[type=radio] {
+        margin-left: 25px!important;
+        margin-top: 2px;
+    }
+
+    span#error_side_effect {
+        left: -76px;
+        display: block;
+        position: relative;
+        top: -67px;
+        right: 45%;
+        font-size: 154%;
+    }
+
+
+    .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+        position: relative;
+        height: auto;
+        width: 424px;
+        top: -59%;
+        right: 33%;
+    }
+    .ui-dialog .ui-dialog-buttonpane button {
+        background: #263756!important;
+        margin-left: 10px;
+    }
+    div.ui-dialog-titlebar {
+        background: #5cacff!important;
+    }
+
+    .ui-dialog {
+        background: #e0f1f7;
+    }
+    .SumoSelect.disabled{
+        opacity: 1!important;
+    }
+}
+
+
+
+#symptoms-after-vaccines-scss {
+
+    .ui-dialog-buttonset {
+        padding: 0.4em 1.5em;
+    }
+
+    .ui-dialog-content.ui-widget-content {
+        padding: 0.5em 1em;
+    }
+
+    .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+        position: fixed !important;
+        height: auto !important;
+        width: 30% !important;
+        top: 30% !important;
+        right: 36% !important;
+    }
+    .ui-dialog .ui-dialog-buttonpane button {
+        margin-left: 10px !important;
+        min-height: 28px !important;
+    }
+    div.ui-dialog-titlebar {
+        /*background: #5cacff !important;*/
+    }
+
+    .ui-dialog {
+        background: white !important;
+    }
+
+    .ui-widget.ui-widget-content {
+        border-width: 1px;
+        border-style: solid;
+        border-color: rgb(197, 197, 197);
+        border-image: initial;
+    }
+
+    .ui-widget-header {
+        position: relative !important;
+        padding: 0.4em 1em !important;
+        min-height: 2em;
+    }
+
+    div#alertSomethingWasChanged {
+        margin-right: 10px;
+    }
+
+    .ui-dialog-buttonset button {
+        padding: 0.4em !important;
+        border-bottom-right-radius: 3px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: rgb(197, 197, 197);
+        border-image: initial;
+    }
+
+    .ui-helper-clearfix {
+        margin: 5px;
+        border-top: 1px rgb(197, 197, 197) solid;
+    }
+
+    button.ui-dialog-titlebar-close {
+        float: left;
+        position: relative;
+        margin-top: 8px;
+        margin-left: 6px;
+    }
+    button.ui-dialog-titlebar-close {
+        padding: 9px;
+        background-color: white;
+        background-image: url(../../public/assets/jquery-ui-themes/themes/base/images/ui-icons_777777_256x240.png);
+        left: 97%;
+        top: -9px;
+        background-position: -96px -128px;
+    }
+
+}
+
+
+#exp_cont_icon {
+    position: inherit;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+nav .left-buttons {
+    padding: 10px;
+    float: left;
+}
+
+#add-edit-lab-tests{
+    select, input[type=text] {
+        min-width: 200px;
+    }
+
+    .row{
+        margin-bottom: 15px;
+    }
+
+    label{
+        width: 130px;
+    }
+
+    .select2-selection{
+        border: 1px solid #0064db!important;
+        &.error-border{
+            border: 1px solid red!important;
+        }
+    }
+
+    #test_result_num{
+        min-width: 0;
+        width: 40%;
+        border: 1px solid #0064db;
+    }
+
+    #test_result_unit_id{
+        min-width: 0;
+        width: 100%;
+    }
+
+    #test_result_details{
+        width: 59%;
+    }
+
+    .form-group-TWB{
+        display: inline-block;
+    }
+
+    .wierd{
+        .form-group-TWB:first-child {
+                min-width: 0;
+                width: 45%;
+        }
+    }
+
+    .wierder{
+        .form-group-TWB:first-child {
+            min-width: 0;
+            width: 110%;
+        }
+    }
+
+    button{
+        #delete{
+            margin-left: 4px;
+        }
+    }
+
+}
+
+#patient-lab-tests{
+    .btn.btn-info{
+        margin-top: 5px;
+        margin-bottom: 8px;
+        margin-left: 11px;
+    }
+}
+
+#patient-tuberculosis-tests {
+    .tuberculosis-tests-item {
+        border: 1px solid $midpale;
+        display: inline-block;
+        margin: 3px 16px 6px 16px;
+        padding: 15px;
+        border-radius: 4px;
+        width: 100%;
+    }
+    .tuberculosis-tests-details{
+        width: 90%;
+    }
+
+    .remove-icon{
+        position: relative;
+        top: 50px;
+        font-size: 20px;
+        color: red;
+        margin: 12px;
+        cursor: pointer;
+    }
+
+    .short-input{
+        width: 130px;
+    }
+    .tuberculin-test-alert-range-date{
+        display: none;
+    }
+    #pdf-print{
+        margin:-15px 5px 5px 5px
+    }
+}
+
+#confirmation_of_completion_of_vaccination_plan_form_scss,#statement_on_vaccinations_and_disease_in_the_past_form_scss,#refusal_to_perform_tb_tests_form_scss{
+    span.error-message {
+            margin: 0px 92px;
+    }
+}
+
+.formSumbitButtonsHere #button_submit{
+    margin: 0px 10px;
+}
+
+#encounter_forms{
+    .form_header {
+        margin-top: 10px;
+        font-size: 10pt;
+    }
+
+    .form_header a{
+        font-size: 10pt;
+    }
+    .onerow>td {
+        padding: 10px 0px;
+    }
+
+    .form_header_controls {
+        padding: 10px 0px;
+    }
+
+    div> .encounter-summary-column {
+        margin: 15px 0px;
+        font-size: 10pt;
+    }
+    span{
+        font-size: 10pt;
+    }
+
+    td{
+        font-size:10pt;
+    }
+}
+
+
+#yellow_fever_vaccine_exemption{
+    .error-message {
+        margin: 0px 160px;
+    }
+}
+
+#documents_list a, #documents_list td {
+    font-size: 13pt!important;
+}
+
+button#pastEncounters {
+    direction: rtl;
+}
+
+
+#add-edit-vaccines button#save-update {
+    margin-left: 4px;
+}
+
+#filters-container {
+    .filter-box {
+        display: inline-flex;
+        padding-left: 7px;
+    }
+    .select2-selection__choice{
+        float: none !important;
+        display: inline-block !important;
+    }
+    input[type=text].form-control {
+         height: 31px!important;
+        border: 1px solid #949eaa!important;
+    }
+    .filter-box-radio{
+        margin-right: 20px;
+    }
+    .SumoSelect{
+        display: block;
+        width: auto;
+    }
+    @include if-rtl {
+        .SumoSelect > .optWrapper > .options li.opt label {
+            margin-right: 30px;
+        }
+        .SumoSelect.open .search-txt {
+            top: -4px;
+            left: -4px;
+        }
+    }
+}
+
+#patient-vaccines {
+    #filters-container {
+        .select2-selection__choice{
+            float: right !important;
+        }
+        span.select2-selection.select2-selection--multiple {
+            max-height: 50px;
+        }
+        .selection li {
+            display: none;
+        }
+        ul.select2-selection__rendered {
+            max-height: 50px;
+        }
+        li.select2-selection__choice {
+            margin-bottom: 2px !important;
+        }
+    }
+}
+
+
+.disabled-link {
+    color: grey;
+    cursor: default;
+    &:hover {
+        text-decoration: none;
+        color: grey;
+    }
+    &:focus {
+        text-decoration: none;
+        color: grey;
+    }
+    &:visited {
+        color: grey;
+    }
+}
+
+.status-wrapper span.select2-selection {
+    height: auto !important;
+}
+.pointer{
+    cursor: pointer;
+}
+
+#add-past-vaccines{
+    .icon-button {
+        padding:7px;
+    }
+}
+
+#add-edit-lab-tests button#save_and_add {
+    margin-left: 4px;
+}
+
+
+#vaccination_counseling_for_measles_form_scss{
+
+    label{
+        padding: 0 !important;
+        max-width: 257px !important;
+    }
+    .radio-inline + .radio-inline, .checkbox-inline + .checkbox-inline {
+        margin-right: 24px !important;
+        margin-left: 0 !important;
+    }
+
+    select {
+        margin: 0px  !important;
+    }
+    .glyphicon-info-sign{
+        max-width: 360px !important;
+        margin-right: 10px;
+
+    }
+    .btn-default{
+        border-color: #ffffff !important;
+    }
+    #addRow_countries_table_generic {
+        margin: 11px 0px;
+    }
+    input[type=button], input[type=reset], input[type=submit] {
+        margin-top: 10px  !important;
+    }
+    .btn-sm {
+        font-size: 1em !important;
+    }
+
+    label.glyphicon.glyphicon-info-sign {
+        margin-left: 5px;
+    }
+
+    span.select2.select2-container.select2-container--default.select2-container--above {
+        width:115px !important;
+    }
+}
+
+.SumoSelect > .CaptionCont > label > i {
+    background-size: 7px 14px !important;
+}
+
+input[name="test_result_num"] {
+    direction: ltr;
+    text-align: right;
+}
+
+#patient-lab-tests-table tr td:nth-child(5){
+    direction: ltr;
+}
+#patient-vaccines {
+    .select2-container--bootstrap .select2-selection--multiple .select2-search--inline .select2-search__field {
+        min-width: 1em !important;
+        max-width: 2em !important;
+    }
+    .select2-selection {
+        height: auto !important;
+    }
+}
+.pagebreak {
+    page-break-before: always;
+}
+
+
+
+
+#mainBox>#body_top_div{
+    background-color: #71a6ef!important;
+}
+
+
+.body_title {
+    background-color: #bed5f8!important;
+}
+
+.patient-demographics .navbar-default {
+    background-color: #71a6ef!important;
+}
+
+.menuSection > .menuEntries {
+    min-width: 210px !important;
+
+}
+
+#patient-lab-tests-scss{
+.error-message{
+    margin: 0px 132px;
+}
+}
+
+#RabiesContent{
+    #incidentDetails {
+        label{
+            width: 140px;
+        }
+
+        #incident_details_note, #incident_details_description {
+            width: 70% !important;
+        }
+
+        #incident_details_incident_time {
+            width: 55px;
+            text-align: center;
+        }
+
+        .error-message {
+            margin-right: 150px !important;
+        }
+    }
+}
+
+#injuryDetails{
+
+    .row {
+        padding: 5px;
+    }
+
+}
+
+#offendingDetails{
+    .error-message {
+        margin-right:5px;
+    }
+    .row {
+        padding: 5px;
+    }
+
+}
+#incidentTracking {
+    table.fields_table {
+        th, td {
+            padding: 8px 25px;
+            border-bottom: none;
+        }
+    }
+}
+
+.tooltip_templates {
+    display: none;
+}

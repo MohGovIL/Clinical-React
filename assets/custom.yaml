@@ -1,0 +1,86 @@
+---
+# In the case that custom.yaml file found It's parse by \OpenEMR\Core\Header::includeAsset
+# after config/config.yaml. the structure of custom.yaml is equal to config.yaml.
+#
+# Use %KEY-NAME% in this file and it will be replaced with the value of
+# $GLOBALS['KEY-NAME'] if it exists. If the key name does not exist, this script
+# won't work (Need to build in proper error handling @TODO RD 2017-05-16
+#
+# Basic example usage (from config.yaml):
+# assets: Top-level key name (Required)
+#     asset-short-name: Short name
+#         basePath: %assets_static_relative%/full/path/to/deepest/common/file
+#         script: null filename or null
+#         link: jquery-ui.min.css filename or null
+#         autoload: true (defaults to false)
+#         loadInFile: relative path to file
+#
+# Inject custom assets example
+# assets:
+#     always-load:
+#         basePath: %webroot%/custom/assets/
+#         script: js/add_custom_link.js
+#         link: css/add_custom_link.css
+#         autoload: true
+#     fix-only-messages:
+#         basePath: %webroot%/custom/assets/
+#         script: js/fix_messages.js
+#         loadInFile: interface/main/messages/messages.php
+
+assets:
+# generic files
+    load-base-path:
+        basePath: %webroot%/clinikal/public/
+        script: js/base_path.js
+        autoload: true
+    civil-registry-new:
+        basePath: %webroot%/clinikal/public/
+        script: js/new_patient_verification_button.js
+        loadInFile: interface/new/new.php
+    civil-registry-edit:
+        basePath: %webroot%/clinikal/public/
+        script: js/verification_button.js
+        loadInFile: interface/patient_file/summary/demographics_full.php
+    select-streets:
+        basePath: %webroot%/clinikal/public/
+        script: js/multi_select.js
+        loadInFile: interface/patient_file/summary/demographics_full.php
+    update-remote:
+        basePath: %webroot%/clinikal/public/
+        script: js/update_remote_patients.js
+        loadInFile: interface/patient_file/summary/demographics_full.php
+    scanner:
+        basePath: %webroot%/clinikal/public/
+        script: js/scaner.js
+        loadInFile: controller.php
+    fix-edit-issue:
+        basePath: %webroot%/clinikal/public/
+        script: js/fix_edit_issue.js
+        loadInFile: interface/patient_file/summary/add_edit_issue.php
+    fix-close-popup:
+        basePath: %webroot%/clinikal/public/
+        script: js/fix_close_popup.js
+        loadInFile: interface/patient_file/encounter/forms.php
+    sumoselect:
+        basePath: %webroot%/interface/modules/zend_modules/public/
+        script: js/sumoselect/jquery.sumoselect.js
+        link: css/sumoselect/sumoselect.css
+        autoload: true
+    timepicker:
+        basePath: %webroot%/interface/modules/zend_modules/public/
+        script: js/lib/jquery.timepicker.min.js
+    tooltipster:
+        basePath: %webroot%/interface/modules/zend_modules/public/
+        script: /js/lib/tooltipster.bundle.min.js
+        link: /css/tooltipster.bundle.min.css
+    validateJS:
+            basePath: %webroot%/library/js/vendors/validate/
+            script: validate_modified.js
+    validateJSExt:
+            basePath: %webroot%/library/js/vendors/validate/
+            script: validate_extend.js
+# end generic files
+
+
+
+
