@@ -69,5 +69,7 @@ function rewireModule(modulePath, customizer) {
     // react-scripts imports the config as a `const` and we can't
     // modify that reference.
     let config = defaults.__get__('config');
+    //process.stdout.write(config)
+    //console.log(config)
     customizer(config);
 }
