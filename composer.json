@@ -1,7 +1,7 @@
 {
   "name": "clinikal/client-app",
   "description": "React app for OpenEMR",
-  "type": "clinikal-react",
+  "type": "clinikal-vertical",
   "authors": [
     {
       "name": "Clinikal team"
