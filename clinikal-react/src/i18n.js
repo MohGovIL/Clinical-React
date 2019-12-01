@@ -38,22 +38,3 @@ i18n
     });
 
 export default i18n;
-
-export const xl = function(string) {
-    if (typeof top.i18next.t == 'function') {
-        return top.i18next.t(string);
-    } else {
-        // Unable to find the i18next.t function, so log error
-        console.log("xl function is unable to translate since can not find the i18next.t function");
-        return string;
-    }
-}
-
-/*export function setupI18n(lang_id) {
-
-    return fetch( "http://localhost/poc_react/openemr/library/ajax/i18n_generator.php?lang_id=" + encodeURIComponent(lang_id) +  , {
-        credentials: 'same-origin',
-        method: 'GET'
-    })
-.then(response => response.json())
-}*/
