@@ -12,16 +12,18 @@ i18n
     .use(initReactI18next) // passes i18n down to react-i18next
     .init({
         backend:{
-            loadPath:`${basePath()}/library/ajax/i18n_generator.php`,
+            //loadPath:`${basePath()}/library/ajax/i18n_generator.php`,
+            loadPath:`${basePath()}/apis/api/translation/7`,
             crossDomain: false,
             queryStringParams: {
-                lang_id:7,
+             //   lang_id:7,
                 lng:'selected',
                 ns:'translation',
                 csrf_token_form:getKey()
             },
             customHeaders: {
                 "X-Requested-With": "XMLHttpRequest",
+                "apicsrftoken": getKey()
                 // ...
             },
             react: {
