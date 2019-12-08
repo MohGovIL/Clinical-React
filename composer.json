@@ -14,6 +14,6 @@
     }
   ],
   "require": {
-    "clinikal/composer-installers-clinikal-extender": "dev-react-start"
+    "clinikal/composer-installers-clinikal-extender": "dev-master"
   }
 }
