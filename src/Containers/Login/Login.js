@@ -1,47 +1,30 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import {login} from "../../store/Actions/actions";
 import styles from './Login.module.css';
 
-class Login extends Component {
-    state = {
-        userName: "",
-        password: ""
+const Login = (props) => {
+    const [userState, userSetState] = useState({userName: "", password: ""});
+
+    const userNameHandler = e => {
+        userSetState({...userState, userName: e.target.value});
     };
 
-    userNameHandler = e => {
-        this.setState({userName: e.target.value})
+    const passwordHandler = e => {
+        userSetState({...userState, password: e.target.value});
     };
 
-    passwordHandler = e => {
-        this.setState({password: e.target.value})
-    };
+    return (
 
-
-    /*TODO
-    3. how to make it possible to have a session at the same time (for the IFrame).
-    DOING
-    DOING
-    DONE
-    2. find the relevant api to get the TOKEN.
-    4. set axios infrastructure
-    1. set login component
-    2. set redux infrastructure
-    */
-
-    render() {
-        return (
-
-            <div className={styles.box}>
-                <h1>LOGIN</h1>
-                <input type="text" placeholder="user name" onChange={this.userNameHandler} value={this.state.userName}/>
-                <input type="password" placeholder="password" onChange={this.passwordHandler}
-                       value={this.state.password}/>
-                <input type="submit" value="Login"
-                       onClick={() => this.props.login(this.state.userName, this.state.password)}/>
-            </div>
-        );
-    }
+        <div className={styles.box}>
+            <h1>LOGIN</h1>
+            <input type="text" placeholder="user name" onChange={userNameHandler} value={userState.userName}/>
+            <input type="password" placeholder="password" onChange={passwordHandler}
+                   value={userState.password}/>
+            <input type="submit" value="Login"
+                   onClick={() => props.login(userState.userName, userState.password)}/>
+        </div>
+    );
 }
 
 

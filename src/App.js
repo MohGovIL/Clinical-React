@@ -6,7 +6,7 @@ import Login from './Containers/Login/Login';
 // import i18n (needs to be bundled ;))
 import { xl } from './i18n';
 
-class App extends React.Component {
+const App = () => {
 
     // constructor(props) {
     //     super(props);
@@ -22,8 +22,6 @@ class App extends React.Component {
     //         iframeUrl: this.props.appUrl + '/' + page
     //     })
     // }
-
-    render() {
         return(
             <Login/>
         )
@@ -38,7 +36,6 @@ class App extends React.Component {
         //
         //         </body>
         //     </div>
-    }
 
 }
 
