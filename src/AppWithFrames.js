@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './Components/App/App.css';
 import Header from "./Header";
 import IframeEnvelopPatientFile from "./IframeEnvelopPatientFile";
 // import i18n (needs to be bundled ;))

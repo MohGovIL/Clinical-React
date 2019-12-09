@@ -1,8 +1,8 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import backend from "i18next-xhr-backend";
-import {getKey} from "./helpers/js_csrf"
-import {basePath} from "./helpers/basePath"
+import {getKey} from "./Utils/Helpers/js_csrf"
+import {basePath} from "./Utils/Helpers/basePath"
 
 // the translations
 // (tip move them in a JSON file and import them)

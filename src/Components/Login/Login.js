@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
-import {login} from "../../store/Actions/actions";
-import styles from './Login.module.css';
+import {loginAction} from "../../Store/Actions/LoginActions/LoginActions";
+import LoginBox from './LoginBox/LoginBox';
 
 const Login = (props) => {
     const [userState, userSetState] = useState({userName: "", password: ""});
@@ -14,18 +14,15 @@ const Login = (props) => {
         userSetState({...userState, password: e.target.value});
     };
 
-    return (
+    const loginHandler = () => {
+        props.loginAction(userState.userName, userState.password);
+    };
 
-        <div className={styles.box}>
-            <h1>LOGIN</h1>
-            <input type="text" placeholder="user name" onChange={userNameHandler} value={userState.userName}/>
-            <input type="password" placeholder="password" onChange={passwordHandler}
-                   value={userState.password}/>
-            <input type="submit" value="Login"
-                   onClick={() => props.login(userState.userName, userState.password)}/>
-        </div>
+    return (
+        <LoginBox userName={userState.userName} password={userState.password} userNameHandler={userNameHandler}
+                  passwordHandler={passwordHandler} login={loginHandler}/>
     );
-}
+};
 
 
 const mapStateToProps = state => {
@@ -34,4 +31,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps, {login})(Login);
+export default connect(mapStateToProps, {loginAction})(Login);
