@@ -18,16 +18,21 @@ const Login = (props) => {
         props.loginAction(userState.userName, userState.password);
     };
 
+
     return (
-        <LoginBox userName={userState.userName} password={userState.password} userNameHandler={userNameHandler}
-                  passwordHandler={passwordHandler} login={loginHandler}/>
+        <React.Fragment>
+            <LoginBox userName={userState.userName} password={userState.password} userNameHandler={userNameHandler}
+                      passwordHandler={passwordHandler} login={loginHandler} status={props.status}
+            />
+        </React.Fragment>
     );
 };
 
 
 const mapStateToProps = state => {
     return {
-        isAuth: state.login.isAuth
+        isAuth: state.login.isAuth,
+        status: state.login.STATUS
     }
 };
 
