@@ -33,8 +33,9 @@ export const loginAction = (username, password) => {
                 password,
                 scope: "default"
             };
-            const tokenData = await loginInstance.post('auth', userObj);
+            const tokenData = await loginInstance.post('api/auth', userObj);
             document.cookie = `accessToken=${tokenData.data.access_token};`;
+            document.cookie = `tokenType=${tokenData.data.token_type};`;
             console.log(tokenData);
             dispatch(loginSuccessAction());
         } catch (err) {

@@ -24,8 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "watch": "node scripts/customized-config watch -b dev-mode/build/ -v",
-    "watch2": "node scripts/watch.js"
+    "watch": "node scripts/customized-config watch -b dev-mode/build/ -v"
   },
   "eslintConfig": {
     "extends": "react-app"
