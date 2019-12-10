@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './App.css';
+import classes from './App.css';
 import Header from "../../Header";
 import IframeEnvelopPatientFile from "../../IframeEnvelopPatientFile";
 import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom';
