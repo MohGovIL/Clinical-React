@@ -1,35 +1,35 @@
-#Project files structure
+# Project files structure
 README file for folders standards.
 # src directory
-    -Assets
-    -Components
-    -Store
-    -Utils
-#Assets
+    - Assets
+    - Components
+    - Store
+    - Utils
+# Assets
     -Elements
     -Images
-##Elements
+### Elements
 The elements directory purpose is to store all the generic elements,styled-components and costume-components.
 
     Creating a new element:
     create a new directory inside elements and name it with 'CapitalLetter'.
-    -Example: 'StyledComponent'.
+    - Example: 'StyledComponent'.
     
     Each folder needs to contain a .js file and .module.css file (if it's not a styled component) with the same name as the directory name.
-##Images
+### Images
     The images directory purpose is to store all the images.
-#Components
+# Components
 The components directory purpose is to store all the 'logical' components and their specified elements.
 
     Creating a new component:
     create a new directory inside components and name it with 'CapitalLetters'.
-    -Example: 'VaccinesName'
+    - Example: 'VaccinesName'
     
     Each folder needs to contain a .js file and .module.css file with the same name as the directory name.
     and inside all of his specified elements following the same structure in 'Elements' just inside the component directory.
-#Store
+# Store
 The Store directory purpose is to store all the 'store' (state) overall, all redux actions, actionTypes and reducers are going to be placed here.
-##Actions
+### Actions
     *{Name} needs to be the same name related to the 'logical' component if it's related it.
     Creating a new actions:
     create a new directory inside Store/Actions/{Name}Actions with 'CapitalLetters'.
@@ -53,7 +53,7 @@ The Store directory purpose is to store all the 'store' (state) overall, all red
             payload: 'data'
         }
     }`
-##Reducers
+### Reducers
     *{Name} needs to be the same name related to the 'logical' component if it's related it.
     Creating a new reducer:
     create a new JS file inside the reducer {Name}Reducer.js.
@@ -74,11 +74,11 @@ The Store directory purpose is to store all the 'store' (state) overall, all red
         
         } 
   
-#Utils
+# Utils
 The utils directory purpose is to store all the utility functions such as implementing the API calls
 to the server or functions that are not related to any components or functions that are used over and over again so we could implement the DRY(Don't repeat yourself) principles.
-##Helpers
+### Helpers
     Helpers are functions that are used many time over the project and can be stored here, instead of repeating ourselves in the code.
-##Services
+### Services
     Services is where all the API calls are going to be stored.
     
