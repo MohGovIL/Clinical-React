@@ -15,7 +15,7 @@ const Login = (props) => {
     };
 
     const loginHandler = () => {
-        props.loginAction(userState.userName, userState.password);
+        props.loginAction(userState.userName, userState.password, props.history);
     };
 
 

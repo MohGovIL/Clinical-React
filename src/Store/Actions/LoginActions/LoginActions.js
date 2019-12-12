@@ -1,6 +1,5 @@
 import {LOGIN_START, LOGIN_FAILED, LOGIN_SUCCESS} from './LoginActionTypes'
-import {loginInstance} from '../../../Utils/Services/ApiAxios';
-
+import {loginInstance} from '../../../Utils/Services/AxiosLoginInstance';
 
 export const loginStartAction = () => {
     return {
@@ -8,14 +7,16 @@ export const loginStartAction = () => {
     }
 };
 
-export const loginFailedAction = () => {
+export const loginFailedAction = (history) => {
+    history.push('/');
     return {
         type: LOGIN_FAILED,
         isAuth: false
     }
 };
 
-export const loginSuccessAction = () => {
+export const loginSuccessAction = (history) => {
+    history.push('/facility');
     return {
         type: LOGIN_SUCCESS,
         isAuth: true
@@ -23,7 +24,7 @@ export const loginSuccessAction = () => {
 };
 
 
-export const loginAction = (username, password) => {
+export const loginAction = (username, password, history) => {
     return async dispatch => {
         dispatch(loginStartAction());
         try {
@@ -34,12 +35,12 @@ export const loginAction = (username, password) => {
                 scope: "default"
             };
             const tokenData = await loginInstance.post('api/auth', userObj);
+            console.log(tokenData.data.access_token + " SERVER TOKEN");
             document.cookie = `accessToken=${tokenData.data.access_token};`;
             document.cookie = `tokenType=${tokenData.data.token_type};`;
-            console.log(tokenData);
-            dispatch(loginSuccessAction());
+            dispatch(loginSuccessAction(history));
         } catch (err) {
-            dispatch(loginFailedAction());
+            dispatch(loginFailedAction(history));
         }
     }
 };
