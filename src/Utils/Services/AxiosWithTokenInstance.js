@@ -5,7 +5,6 @@ import {getToken} from "../Helpers/getToken";
 
 export const tokenInstance = () => {
         const baseURL = basePath();
-        const csrf = getKey();
         const token = getToken('accessToken');
         console.log(token + ' TOKEN FROM COOKIE');
         let axiosObj;
@@ -20,11 +19,10 @@ export const tokenInstance = () => {
             axiosObj = {
                 baseURL,
                 headers: {
-                    'apicsftoken': csrf
+                    'apicsrftoken': token
                 }
             }
         }
-        console.log(axiosObj.headers.Authorization + " HEADER TOKEN");
         return axios.create(axiosObj);
 
     }
