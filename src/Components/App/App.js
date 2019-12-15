@@ -5,18 +5,15 @@ import IframeEnvelopPatientFile from "../../IframeEnvelopPatientFile";
 import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom';
 import Login from '../Login/Login';
 import GetData from '../GetData/GetData';
+import PrivateRoute from "../PrivateRoute/PrivateRoute";
+
 // import i18n (needs to be bundled ;))
 import {xl} from '../../i18n';
+import Routes from "../Routes/Routes";
 
 const App = () => {
     return (
-        <BrowserRouter>
-            <Switch>
-                <Route exact path="/" component={Login}/>
-                <Route exact path='/facility' component={GetData} />
-                <Redirect from="" to="/"/>
-            </Switch>
-        </BrowserRouter>
+        <Routes/>
     )
 };
 
