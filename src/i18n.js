@@ -19,7 +19,7 @@ i18n
              //   lang_id:7,
                 lng:'selected',
                 ns:'translation',
-                csrf_token_form:getKey()
+                //csrf_token_form:getKey()
             },
             customHeaders: {
                 "X-Requested-With": "XMLHttpRequest",
