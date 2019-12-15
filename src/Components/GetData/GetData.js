@@ -1,4 +1,3 @@
-// Component just for testing...
 import {connect} from 'react-redux';
 import React, {useEffect} from 'react';
 import {getFacility} from '../../Store/Actions/FacilityActions/FacilityActions'

@@ -1,4 +1,11 @@
-import {LOGIN_FAILED, LOGIN_START, LOGIN_SUCCESS} from '../Actions/LoginActions/LoginActionTypes'
+import {
+    LOGIN_FAILED,
+    LOGIN_START,
+    LOGIN_SUCCESS,
+    LOGOUT_FAILED,
+    LOGOUT_START,
+    LOGOUT_SUCCESS
+} from '../Actions/LoginActions/LoginActionTypes'
 
 const INITIAL_STATE = {
     isAuth: false,
@@ -27,7 +34,25 @@ const loginReducer = (state = INITIAL_STATE, action) => {
                     isAuth: action.isAuth,
                     STATUS: action.type
                 };
-
+            case
+            LOGOUT_START:
+                return {
+                    ...state,
+                    STATUS: action.type
+                };
+            case
+            LOGOUT_SUCCESS:
+                return {
+                    ...state,
+                    isAuth: false,
+                    STATUS: action.type
+                };
+            case
+            LOGOUT_FAILED:
+                return {
+                    ...state,
+                    STATUS: action.type
+                };
             default:
                 return state;
         }

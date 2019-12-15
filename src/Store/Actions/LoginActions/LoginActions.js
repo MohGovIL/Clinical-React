@@ -1,5 +1,38 @@
-import {LOGIN_START, LOGIN_FAILED, LOGIN_SUCCESS} from './LoginActionTypes'
+import {LOGIN_START, LOGIN_FAILED, LOGIN_SUCCESS, LOGOUT_FAILED, LOGOUT_SUCCESS, LOGOUT_START} from './LoginActionTypes'
 import {loginInstance} from '../../../Utils/Services/AxiosLoginInstance';
+
+export const logoutStartAction = () => {
+    return {
+        type: LOGOUT_START
+    }
+};
+
+export const logoutSuccessAction = () => {
+    return {
+        type: LOGOUT_SUCCESS,
+        isAuth: false
+    }
+};
+
+export const logoutFailedAction = () => {
+    return {
+        type: LOGOUT_FAILED
+    }
+};
+
+export const logoutAction = () => {
+    return async dispatch => {
+        dispatch(logoutStartAction());
+        try {
+            document.cookie = `accessToken=''`;
+            document.cookie = `tokenType=''`;
+            document.cookie = `csrf_token=''`;
+            dispatch(logoutSuccessAction());
+        } catch (err) {
+            dispatch(logoutFailedAction());
+        }
+    }
+};
 
 export const loginStartAction = () => {
     return {
@@ -8,7 +41,6 @@ export const loginStartAction = () => {
 };
 
 export const loginFailedAction = () => {
-
     return {
         type: LOGIN_FAILED,
         isAuth: false
@@ -16,13 +48,11 @@ export const loginFailedAction = () => {
 };
 
 export const loginSuccessAction = () => {
-
     return {
         type: LOGIN_SUCCESS,
         isAuth: true
     }
 };
-
 
 export const loginAction = (username, password, history) => {
     return async dispatch => {
