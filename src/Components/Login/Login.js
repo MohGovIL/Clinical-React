@@ -1,16 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import {loginAction} from "../../Store/Actions/LoginActions/LoginActions";
-import LoginBox from './LoginBox/LoginBox';
+import LoginBox from "./LoginBox/LoginBox";
 
 const Login = (props) => {
-    
+
     useEffect(() => {
         if(process.env.REACT_APP_API_MODE !== 'stateless'){
             props.loginAction(null, null, props.history);
         }
     }, []);
-    
+
     const [userState, userSetState] = useState({userName: "", password: ""});
 
     const userNameHandler = e => {
