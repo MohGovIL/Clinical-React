@@ -1,4 +1,4 @@
-import React, {Suspense, lazy} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './Components/App/App';
@@ -8,6 +8,7 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import loginReducer from './Store/Reducers/LoginReducer';
 import facilityReducer from './Store/Reducers/FacilityReducer';
 import thunk from 'redux-thunk';
+import './Utils/Services/i18n';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const rootReducer = combineReducers({
@@ -16,8 +17,6 @@ const rootReducer = combineReducers({
 });
 
 const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
-
-var iframePath = '../../../interface';
 
 // ReactDOM.render(<Provider Store={Store}><Suspense fallback="loading..."><App appUrl={iframePath}/></Suspense></Provider>, document.getElementById('root'));
 ReactDOM.render(<Provider store={store}><App/></Provider>, document.getElementById('root'));

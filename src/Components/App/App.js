@@ -1,10 +1,15 @@
 import React from 'react';
-// import i18n (needs to be bundled ;))
-import {xl} from '../../i18n';
 import Routes from "../Routes/Routes";
+import GlobalStyle from "../../Assets/Elements/GlobalStyle";
 
 const App = () => {
-    return <Routes/>
+
+    return (
+        <React.Fragment>
+            <GlobalStyle rtl/>
+            <Routes/>
+        </React.Fragment>
+    )
 };
 
 export default App;

@@ -1,8 +1,8 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import backend from "i18next-xhr-backend";
-import {getKey} from "./Utils/Helpers/js_csrf"
-import {basePath} from "./Utils/Helpers/basePath"
+import {getToken} from "../Helpers/getToken"
+import {basePath} from "../Helpers/basePath"
 
 // the translations
 // (tip move them in a JSON file and import them)
@@ -13,7 +13,7 @@ i18n
     .init({
         backend:{
             //loadPath:`${basePath()}/library/ajax/i18n_generator.php`,
-            loadPath:`${basePath()}/apis/api/translation/7`,
+            loadPath:`${basePath()}/${process.env.REACT_APP_INSTALL_NAME}/apis/api/translation/7`,
             crossDomain: false,
             queryStringParams: {
              //   lang_id:7,
@@ -23,7 +23,7 @@ i18n
             },
             customHeaders: {
                 "X-Requested-With": "XMLHttpRequest",
-                "apicsrftoken": getKey()
+                "apicsrftoken": getToken('csrf_token')
                 // ...
             },
             react: {
