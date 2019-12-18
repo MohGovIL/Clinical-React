@@ -10,7 +10,7 @@ const Routes = (props) => {
     return (
         <BrowserRouter>
             <Switch>
-                <Route path="/" component={GetData}/>
+                {/*<Route path="/" component={GetData}/>*/}
                 <Route exact path='/' component={process.env.REACT_APP_API_MODE === 'stateless'? Login : LoginWithCSRF}/>
                 <PrivateRoute exact path='/facility' component={GetData} isAuth={props.isAuth}/>
             </Switch>
