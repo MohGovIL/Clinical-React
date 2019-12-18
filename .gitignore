@@ -25,4 +25,5 @@ yarn-error.log*
 #development
 /dev-mode
 
+#php storm
 .idea/
