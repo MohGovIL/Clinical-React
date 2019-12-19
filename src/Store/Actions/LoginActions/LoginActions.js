@@ -1,5 +1,7 @@
 import {LOGIN_START, LOGIN_FAILED, LOGIN_SUCCESS, LOGOUT_FAILED, LOGOUT_SUCCESS, LOGOUT_START} from './LoginActionTypes'
 import {loginInstance} from '../../../Utils/Services/AxiosLoginInstance';
+import {stateLessOrNot} from "../../../Utils/Helpers/StatelessOrNot";
+import {getSettingsAction} from "../SettingsActions/SettingsActions";
 
 export const logoutStartAction = () => {
     return {
@@ -65,18 +67,16 @@ export const loginAction = (username, password, history) => {
                 password,
                 scope: "default"
             };
-            if (process.env.REACT_APP_API_MODE === 'stateless') {
+            if (stateLessOrNot()) {
                 tokenData = await loginInstance.post('apis/api/auth', userObj);
                 document.cookie = `accessToken=${tokenData.data.access_token};`;
                 document.cookie = `tokenType=${tokenData.data.token_type};`;
             } else {
-                //TODO
-                //access TOKEN problem saves it twice change the name to csrf_token and token
                 tokenData = await loginInstance.get('interface/modules/zend_modules/public/clinikal-api/get-csrf-token');
                 document.cookie = `csrf_token=${tokenData.data.csrf_token}`;
             }
-            dispatch(loginSuccessAction(history));
-            history.push('/facility');
+            dispatch(loginSuccessAction());
+            dispatch(getSettingsAction(history));
         } catch (err) {
             dispatch(loginFailedAction(history));
             history.push('/');

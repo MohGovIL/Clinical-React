@@ -7,13 +7,14 @@ import {Provider} from 'react-redux';
 import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import loginReducer from './Store/Reducers/LoginReducer';
 import facilityReducer from './Store/Reducers/FacilityReducer';
+import SettingsReducer from "./Store/Reducers/SettingsReducer";
 import thunk from 'redux-thunk';
-import './Utils/Services/i18n';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const rootReducer = combineReducers({
     login: loginReducer,
-    facilityData: facilityReducer
+    facilityData: facilityReducer,
+    settings: SettingsReducer,
 });
 
 const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
