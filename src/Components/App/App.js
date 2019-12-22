@@ -6,7 +6,6 @@ const App = () => {
 
     return (
         <React.Fragment>
-            <GlobalStyle rtl/>
             <Routes/>
         </React.Fragment>
     )

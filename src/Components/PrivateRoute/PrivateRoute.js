@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Redirect, withRouter} from 'react-router-dom';
+import {Route, Redirect} from 'react-router-dom';
 
 const PrivateRoute = ({component: Component, isAuth, ...rest}) => {
     return (
