@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import SearchPNG from '../../Images/search.png';
 import styled from "styled-components";
 
@@ -32,9 +32,20 @@ const SearchImg = styled.img`
 `;
 
 const Search = (props) => {
+    useEffect(() => {
+        document.addEventListener('keypress', keyDownHandler);
+    }, []);
+
+    const keyDownHandler = (e) => {
+        if(e.key==="Enter"){
+
+        }
+        console.log(e);
+    };
+
     return (
         <Wrapper>
-            <Input placeholder="איתור מטופל"/>
+            <Input placeholder={props.placeholder}/>
             <SearchImg src={SearchPNG}/>
         </Wrapper>
     );

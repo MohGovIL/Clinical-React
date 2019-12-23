@@ -8,8 +8,8 @@ import VerticalRoute from "../../Routes/VerticalRoute";
 const InitApp = (props) => {
     return (
         <React.Fragment>
-            <GlobalStyle/>
             <Suspense fallback={<Loader/>}>
+                <GlobalStyle rtl/>
                 <VerticalRoute verticalName={props.clinikal_vertical}/>
             </Suspense>
         </React.Fragment>

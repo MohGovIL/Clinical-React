@@ -1,12 +1,22 @@
-import styled from 'styled-components';
+import React from 'react';
+import HeaderWrapper from "./HeaderWrapper/HeaderWrapper";
+import HeaderItemWrapper from "./HeaderItemWrapper/HeaderItemWrapper";
+import HeaderItem from "./HeaderItemWrapper/HeaderItem/HeaderItem";
 
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 95px;
-  box-shadow: 0 2px 4px 0 rgba(90, 90, 90, 0.5);
-  background-image: linear-gradient(88deg, #002398 1%, #076ce9 101%);
-`;
+const Header = () => {
+    return (
+        <HeaderWrapper>
+            <HeaderItemWrapper>
+                <HeaderItem active>מעקב מטופלים</HeaderItem>
+                <HeaderItem >משימות</HeaderItem>
+                <HeaderItem >יומן</HeaderItem>
+                <HeaderItem >רשימת מטופלים</HeaderItem>
+                <HeaderItem >חיובים ותשלומים</HeaderItem>
+                <HeaderItem >דוחות</HeaderItem>
+                <HeaderItem >הגדרות</HeaderItem>
+            </HeaderItemWrapper>
+        </HeaderWrapper>
+    );
+};
 
 export default Header;
