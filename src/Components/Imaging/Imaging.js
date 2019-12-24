@@ -1,20 +1,18 @@
 import React from 'react';
-import {useTranslation} from "react-i18next";
 import Header from "../../Assets/Elements/Header/Header";
-import HeaderItem from "../../Assets/Elements/Header/HeaderItemWrapper/HeaderItem/HeaderItem";
-import Search from "../../Assets/Elements/Search/Search";
-import HeaderItemWrapper from "../../Assets/Elements/Header/HeaderItemWrapper/HeaderItemWrapper";
 
 const Imaging = () => {
-    const {t} = useTranslation();
+    //Simulate API data
+    const simulateAPI = [
+        {Title: 'Patient', Link: '/Patient', SubMenu: null},
+        {Title: 'Diary', Link: 'Diary', SubMenu: null},
+        {Title: 'Missions', Link: '/Missions', SubMenu: null},
+        {Title: 'Reports', Link: '/Reports', SubMenu: null},
+        {Title: 'System Management', Link: '/System Management', SubMenu: null}
+    ];
     return (
         <React.Fragment>
-            <Header>
-                <HeaderItemWrapper>
-                    <HeaderItem active >{t('Zulu')}</HeaderItem>
-                </HeaderItemWrapper>
-                <Search placeholder="איתור מטופל"/>
-            </Header>
+            <Header Items={simulateAPI}/>
         </React.Fragment>
     );
 };
