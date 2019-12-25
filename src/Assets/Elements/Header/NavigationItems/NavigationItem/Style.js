@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const NavigationItemStyle = styled.div`
+const Style = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,4 +15,4 @@ const NavigationItemStyle = styled.div`
   }
 `;
 
-export default NavigationItemStyle;
+export default Style;

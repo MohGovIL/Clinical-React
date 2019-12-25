@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {device} from "../../MediaQueries";
 
-const NavigationItemsStyle = styled.div`
+const Style = styled.div`
   display: flex;
   height: 100%;
   justify-content: space-around;
@@ -15,4 +15,4 @@ const NavigationItemsStyle = styled.div`
   }
 `;
 
-export default NavigationItemsStyle;
+export default Style;

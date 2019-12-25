@@ -1,5 +1,5 @@
 import React, {Suspense} from 'react';
-import Loader from "../../../Assets/Elements/Loader/Loader";
+import Loader from "../../../Assets/Elements/Loader";
 import {getSettingsAction} from '../../../Store/Actions/SettingsActions/SettingsActions';
 import {connect} from 'react-redux';
 import GlobalStyle from "../../../Assets/Elements/GlobalStyle";

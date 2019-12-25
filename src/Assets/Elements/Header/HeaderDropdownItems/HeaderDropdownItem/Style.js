@@ -1,13 +1,14 @@
 import styled from "styled-components";
 
-const UserNameStyle = styled.div`
+const Style = styled.div`
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   font-weight: bold;
+  color: #0027a5;
   word-wrap: break-word;
-  color: #f8f8f8;
-  margin: 0 9px;
+  width: 100%;
+  min-height: 60px;
 `;
 
-export default UserNameStyle;
+export default Style;

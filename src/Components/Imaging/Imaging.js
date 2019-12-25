@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from "../../Assets/Elements/Header/Header";
+import Header from "../../Assets/Elements/Header";
 
 const Imaging = () => {
     //Simulate API data
