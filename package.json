@@ -24,7 +24,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "watch": "node scripts/customized-config watch -b dev-mode/build/ -v"
+    "watch": "node scripts/customized-config watch -b dev-mode/build/ -v",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -43,6 +45,10 @@
   },
   "proxy": "http://localhost:80",
   "devDependencies": {
+    "@storybook/addon-actions": "^5.2.8",
+    "@storybook/addon-links": "^5.2.8",
+    "@storybook/addons": "^5.2.8",
+    "@storybook/react": "^5.2.8",
     "cra-build-watch": "^3.0.0",
     "error-overlay-webpack-plugin": "^0.4.1",
     "webpack-cli": "^3.3.10"
