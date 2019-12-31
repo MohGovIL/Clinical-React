@@ -1,6 +1,6 @@
 import React from 'react';
 import {LOGIN_START} from '../../../Store/Actions/LoginActions/LoginActionTypes'
-import Loader from "../../../Assets/Elements/Loader/Loader";
+import Loader from "../../../Assets/Elements/Loader";
 import LoginStyleBox from "./LoginBoxStyle";
 
 
@@ -29,7 +29,7 @@ export default LoginBox;
 //             <input type="password" placeholder="password" onChange={props.passwordHandler}
 //                    value={props.password}/>
 //             {props.status !== LOGIN_START ? <input type="submit" value="Login"
-//                                                    onClick={() => props.login()}/> : <Loader/>}
+//                                                    onClick={() => props.login()}/> : <Index/>}
 //         </div>
 //     );
 // };

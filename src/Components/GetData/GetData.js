@@ -1,9 +1,9 @@
 import {connect} from 'react-redux';
 import React, {useEffect} from 'react';
 import {getFacility} from '../../Store/Actions/FacilityActions/FacilityActions'
-import Header from "../../Assets/Elements/Header/Header";
-import HeaderItem from "../../Assets/Elements/Header/HeaderItem/HeaderItem";
-import Search from "../../Assets/Elements/Search/Search";
+import Index from "../../Assets/Elements/Header";
+import Style from "../../Assets/Elements/Header/NavigationItems/NavigationItem/Style";
+import Index from "../../Assets/Elements/Search";
 
 const GetData = (props) => {
     useEffect(() => {
@@ -11,15 +11,15 @@ const GetData = (props) => {
     }, []);
     return (
         <React.Fragment>
-            <Header>
-                <HeaderItem>מעקב מטופלים</HeaderItem>
-                <HeaderItem>משימות</HeaderItem>
-                <HeaderItem>יומן</HeaderItem>
-                <HeaderItem>רשימת מטופלים</HeaderItem>
-                <HeaderItem>חיובים ותשלומים</HeaderItem>
-                <HeaderItem>דוחות</HeaderItem>
-                <Search/>
-            </Header>
+            <Index>
+                <Style>מעקב מטופלים</Style>
+                <Style>משימות</Style>
+                <Style>יומן</Style>
+                <Style>רשימת מטופלים</Style>
+                <Style>חיובים ותשלומים</Style>
+                <Style>דוחות</Style>
+                <Index/>
+            </Index>
         </React.Fragment>
     );
 };

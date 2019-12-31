@@ -1,6 +1,5 @@
 import React from 'react';
 import Imaging from "../Imaging/Imaging";
-import Loader from "../../Assets/Elements/Loader/Loader";
 
 const VerticalRoute = ({verticalName}) => {
 

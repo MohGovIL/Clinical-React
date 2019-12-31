@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import SearchPNG from '../../Images/search.png';
 import styled from "styled-components";
 
-const Wrapper = styled.div`
+const SearchStyle = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -11,6 +11,7 @@ const Wrapper = styled.div`
   border-radius: 23px;
   border: solid 1px #b6b6b6;
   background-color: #ffffff;
+  margin-right: auto;
 `;
 
 const Input = styled.input`
@@ -32,11 +33,22 @@ const SearchImg = styled.img`
 `;
 
 const Search = (props) => {
+    useEffect(() => {
+        document.addEventListener('keypress', keyDownHandler);
+    }, []);
+
+    const keyDownHandler = (e) => {
+        if(e.key==="Enter"){
+
+        }
+        console.log(e);
+    };
+
     return (
-        <Wrapper>
-            <Input placeholder="איתור מטופל"/>
+        <SearchStyle>
+            <Input placeholder={props.placeholder}/>
             <SearchImg src={SearchPNG}/>
-        </Wrapper>
+        </SearchStyle>
     );
 };
 
