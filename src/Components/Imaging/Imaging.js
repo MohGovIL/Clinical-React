@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from "../../Assets/Elements/Header";
 
 const Imaging = () => {
     //Simulate API data
@@ -12,7 +11,7 @@ const Imaging = () => {
     ];
     return (
         <React.Fragment>
-            <Header Items={simulateAPI}/>
+
         </React.Fragment>
     );
 };
