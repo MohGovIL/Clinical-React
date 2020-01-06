@@ -6,11 +6,15 @@ import Login from "../Login/Login";
 import LoginWithCSRF from "../Login/LoginWithCSRF";
 import InitApp from "../Generic/InitApp/InitApp";
 import {stateLessOrNot} from "../../Utils/Helpers/StatelessOrNot";
+import Imaging from "../Imaging/Imaging";
 
 const Routes = (props) => {
     return (
         <BrowserRouter>
             <Switch>
+                {/*This route is for testing*/}
+                <Route path='/' component={Imaging}/>
+                {/*This route is for testing*/}
                 <Route exact path='/'
                        component={stateLessOrNot() ? Login : LoginWithCSRF}/>
                 <PrivateRoute exact path='/InitApp' component={InitApp} isAuth={props.isAuth}/>

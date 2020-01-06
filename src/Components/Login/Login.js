@@ -2,11 +2,12 @@ import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import {loginAction} from "../../Store/Actions/LoginActions/LoginActions";
 import LoginBox from "./LoginBox/LoginBox";
+import {stateLessOrNot} from "../../Utils/Helpers/StatelessOrNot";
 
 const Login = (props) => {
 
     useEffect(() => {
-        if(process.env.REACT_APP_API_MODE !== 'stateless'){
+        if(!stateLessOrNot()){
             props.loginAction(null, null, props.history);
         }
     }, []);
