@@ -17,7 +17,7 @@ var proxyquire = require('proxyquire');
 switch(process.argv[2]) {
     // The "start" script is run during development mode
     case 'watch':
-        rewireModule('cra-build-watch/scripts/index.js', loadCustomizer('../config-overrides.dev'));
+            rewireModule('cra-build-watch/scripts/index.js', loadCustomizer('../config-overrides.dev'));
         break;
     // The "build" script is run to produce a production bundle
     /*case 'build':

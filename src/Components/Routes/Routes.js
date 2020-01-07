@@ -13,8 +13,9 @@ const Routes = (props) => {
         <BrowserRouter>
             <Switch>
                 {/*This route is for testing*/}
-                <Route path='/' component={Imaging}/>
+                {/*<Route path='/' component={Imaging}/>*/}
                 {/*This route is for testing*/}
+                {console.log(props.history)}
                 <Route exact path='/'
                        component={stateLessOrNot() ? Login : LoginWithCSRF}/>
                 <PrivateRoute exact path='/InitApp' component={InitApp} isAuth={props.isAuth}/>
