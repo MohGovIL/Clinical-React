@@ -10,13 +10,14 @@ import {stateLessOrNot} from "../Helpers/StatelessOrNot";
 
 export const geti18n = (lang_id) => {
     let customHeaders = {
-        "X-Requested-With": "XMLHttpRequest",
+        // "X-Requested-With": "XMLHttpRequest", //Not working
     };
     stateLessOrNot() ? customHeaders.Authorization = `Bearer ${getToken('accessToken')}` : customHeaders.apicsrftoken = `${getToken('csrf_token')}`;
     i18n
         .use(backend)
         .use(initReactI18next) // passes i18n down to react-i18next
         .init({
+            fallbackLng: 'en',
             backend: {
                 //loadPath:`${basePath()}/library/ajax/i18n_generator.php`,
                 loadPath: `${basePath()}apis/api/translation/${lang_id}`,
