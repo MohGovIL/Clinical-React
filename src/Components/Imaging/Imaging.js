@@ -1,12 +1,18 @@
 import React from 'react';
-import {useTranslation} from "react-i18next";
+import Header from "../../Assets/Elements/Header";
 
 const Imaging = () => {
-    const {t} = useTranslation();
+    //Simulate API data
+    const simulateAPI = [
+        {Label: 'Patient', Link: '/Patient', SubMenu: null},
+        {Label: 'Calendar', Link: '/Calendar', SubMenu: null},
+        {Label: 'Missions', Link: '/Missions', SubMenu: null},
+        {Label: 'Reports', Link: '/Reports', SubMenu: null},
+    ];
     return (
-        <div>
-            {t('Zulu')}
-        </div>
+        <React.Fragment>
+            <Header Items={simulateAPI}/>
+        </React.Fragment>
     );
 };
 
