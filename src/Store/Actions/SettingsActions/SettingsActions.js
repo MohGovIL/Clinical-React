@@ -1,4 +1,5 @@
 import {tokenInstance} from "../../../Utils/Services/AxiosWithTokenInstance";
+import {getGlobalSettings} from "../../../Utils/Services/API";
 import {
     GET_SETTINGS,
     GET_SETTINGS_FAILED,
@@ -29,16 +30,17 @@ export const getSettingsFailedAction = () => {
     }
 };
 
-export const getSettingsAction = (history) => {
+export const getSettingsAction = (history, userID) => {
     return async dispatch => {
         try {
             dispatch(getSettingsStartAction());
-            const settings = await tokenInstance().get('apis/api/settings/globals');
+            const settings = await getGlobalSettings(userID);
+            console.log(settings);
             await geti18n(settings.data.lang_id);
             dispatch(getSettingsSuccessAction(settings.data));
             history.push('/InitApp');
         } catch (err) {
-            dispatch(getSettingsFailedAction())
+            dispatch(getSettingsFailedAction());
         }
     }
 };

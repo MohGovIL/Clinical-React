@@ -49,10 +49,11 @@ export const loginFailedAction = () => {
     }
 };
 
-export const loginSuccessAction = () => {
+export const loginSuccessAction = (userID) => {
     return {
         type: LOGIN_SUCCESS,
-        isAuth: true
+        isAuth: true,
+        userID
     }
 };
 
@@ -75,8 +76,8 @@ export const loginAction = (username, password, history) => {
                 tokenData = await loginInstance.get('interface/modules/zend_modules/public/clinikal-api/get-csrf-token');
                 document.cookie = `csrf_token=${tokenData.data.csrf_token}`;
             }
-            dispatch(loginSuccessAction());
-            dispatch(getSettingsAction(history));
+            dispatch(loginSuccessAction(tokenData.data?.user_data?.user_id));
+            dispatch(getSettingsAction(history, tokenData.data?.user_data?.user_id));
         } catch (err) {
             dispatch(loginFailedAction(history));
             history.push('/');

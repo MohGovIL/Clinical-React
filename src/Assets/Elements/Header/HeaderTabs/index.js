@@ -12,9 +12,9 @@ const HeaderTabs = (props) => {
 
     return (
         <StyledTabs value={value}>
-            {props.Items.map((item, itemIndex) => <HeaderTab Label={item.Label} Link={item.Link}
+            {props.Items.map((item, itemIndex) => <HeaderTab Label={item.label} Link={item.url}
                                                              SubMenu={item.SubMenu}
-                                                             key={itemIndex}
+                                                             key={item.menu_id}
                                                              tabIndex={itemIndex}
                                                              tabsHandler={tabsHandler}
                                                              selected={itemIndex === value ? 'true' : 'false'}/>)}

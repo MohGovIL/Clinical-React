@@ -7,7 +7,7 @@ const InitApp = (props) => {
     return (
         <React.Fragment>
             <Suspense fallback={<p>Loading...</p>}>
-                <VerticalRoute verticalName={props.clinikal_vertical}/>
+                <VerticalRoute clinikal_vertical={props.clinikal_vertical}/>
             </Suspense>
         </React.Fragment>
     );
