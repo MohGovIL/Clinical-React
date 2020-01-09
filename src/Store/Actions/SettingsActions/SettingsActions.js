@@ -1,5 +1,5 @@
-import {tokenInstance} from "../../../Utils/Services/AxiosWithTokenInstance";
 import {getGlobalSettings} from "../../../Utils/Services/API";
+
 import {
     GET_SETTINGS,
     GET_SETTINGS_FAILED,
@@ -9,6 +9,7 @@ import {
     SET_SETTINGS_SUCCESS
 } from "./SettingsActionTypes";
 import {geti18n} from '../../../Utils/Services/i18n';
+import {stateLessOrNot} from "../../../Utils/Helpers/StatelessOrNot";
 
 
 export const getSettingsStartAction = () => {
@@ -38,7 +39,7 @@ export const getSettingsAction = (history, userID) => {
             console.log(settings);
             await geti18n(settings.data.lang_id);
             dispatch(getSettingsSuccessAction(settings.data));
-            history.push('/InitApp');
+            history.push('InitApp')
         } catch (err) {
             dispatch(getSettingsFailedAction());
         }

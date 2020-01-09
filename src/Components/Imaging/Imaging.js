@@ -16,12 +16,14 @@ const Imaging = (props) => {
     const [menuItems, setMenuItems] = useState([]);
 
     useEffect(() => {
-            const menuData = getMenu(`${props.clinikal_vertical}-client`);
-            const menuDataClone = menuData.map(menuDataItem => {
-               menuDataItem.label = t(menuDataItem.label);
-               return menuDataItem;
+        (async () => {
+            const menuData =  await getMenu(`${props.clinikal_vertical}-client`);
+            const menuDataClone = menuData.data.map(menuDataItem => {
+                menuDataItem.label = t(menuDataItem.label);
+                return menuDataItem;
             });
             setMenuItems(menuDataClone);
+        })();
     }, [props.clinikal_vertical]);
 
 

@@ -2,8 +2,8 @@ import {tokenInstance} from "./AxiosWithTokenInstance";
 
 export const getGlobalSettings = async userID => {
     try {
-        const {data} = await tokenInstance().get(`apis/api/settings/globals/${userID}`);
-        return data;
+        return await tokenInstance().get(`apis/api/settings/globals/${userID}`);
+
     } catch (err) {
         console.log(err);
     }
@@ -11,8 +11,7 @@ export const getGlobalSettings = async userID => {
 
 export const getMenu = async menuName => {
     try {
-        const {data} = await tokenInstance().get(`apis/api/settings/menu/${menuName}`);
-        return data;
+        return await tokenInstance().get(`apis/api/settings/menu/${menuName}`);
     } catch (err) {
         console.log(err);
     }

@@ -62,13 +62,13 @@ export const loginAction = (username, password, history) => {
         dispatch(loginStartAction());
         try {
             let tokenData;
-            const userObj = {
-                grant_type: "password",
-                username,
-                password,
-                scope: "default"
-            };
             if (stateLessOrNot()) {
+                const userObj = {
+                    grant_type: "password",
+                    username,
+                    password,
+                    scope: "default"
+                };
                 tokenData = await loginInstance.post('apis/api/auth', userObj);
                 document.cookie = `accessToken=${tokenData.data.access_token};`;
                 document.cookie = `tokenType=${tokenData.data.token_type};`;
@@ -79,7 +79,7 @@ export const loginAction = (username, password, history) => {
             dispatch(loginSuccessAction(tokenData.data?.user_data?.user_id));
             dispatch(getSettingsAction(history, tokenData.data?.user_data?.user_id));
         } catch (err) {
-            dispatch(loginFailedAction(history));
+            dispatch(loginFailedAction());
             history.push('/');
         }
     }
