@@ -6,12 +6,6 @@ import {stateLessOrNot} from "../../Utils/Helpers/StatelessOrNot";
 
 const Login = (props) => {
 
-    // useEffect(() => {
-    //     if(!stateLessOrNot()){
-    //         props.loginAction(null, null, props.history);
-    //     }
-    // }, []);
-
     const [userState, userSetState] = useState({userName: "", password: ""});
 
     const userNameHandler = e => {
