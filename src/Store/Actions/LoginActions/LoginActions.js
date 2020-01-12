@@ -2,6 +2,7 @@ import {LOGIN_START, LOGIN_FAILED, LOGIN_SUCCESS, LOGOUT_FAILED, LOGOUT_SUCCESS,
 import {loginInstance} from '../../../Utils/Services/AxiosLoginInstance';
 import {stateLessOrNot} from "../../../Utils/Helpers/StatelessOrNot";
 import {getSettingsAction} from "../SettingsActions/SettingsActions";
+import {basePath} from "../../../Utils/Helpers/basePath";
 
 export const logoutStartAction = () => {
     return {
@@ -29,6 +30,9 @@ export const logoutAction = () => {
             document.cookie = `accessToken=''`;
             document.cookie = `tokenType=''`;
             document.cookie = `csrf_token=''`;
+            if(!stateLessOrNot()){
+                window.location = `${basePath()}interface/logout.php`
+            }
             dispatch(logoutSuccessAction());
         } catch (err) {
             dispatch(logoutFailedAction());

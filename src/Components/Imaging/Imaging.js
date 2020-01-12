@@ -5,14 +5,8 @@ import {getMenu} from "../../Utils/Services/API";
 
 const Imaging = (props) => {
 
-    // let menuItems = [
-    //     {Label: t('Patient'), Link: '/Patient', SubMenu: null},
-    //     {Label: t('Missions'), Link: '/Missions', SubMenu: null},
-    //     {Label: t('Reports'), Link: '/Reports', SubMenu: null},
-    //     {Label: t('Calendar'), Link: '/Calendar', SubMenu: null},
     const {t} = useTranslation();
 
-    // ];
     const [menuItems, setMenuItems] = useState([]);
 
     useEffect(() => {
