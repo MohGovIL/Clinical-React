@@ -2,6 +2,7 @@ import {LOGIN_START, LOGIN_FAILED, LOGIN_SUCCESS, LOGOUT_FAILED, LOGOUT_SUCCESS,
 import {loginInstance} from '../../../Utils/Services/AxiosLoginInstance';
 import {stateLessOrNot} from "../../../Utils/Helpers/StatelessOrNot";
 import {getSettingsAction} from "../SettingsActions/SettingsActions";
+import {basePath} from "../../../Utils/Helpers/basePath";
 
 export const logoutStartAction = () => {
     return {
@@ -29,6 +30,9 @@ export const logoutAction = () => {
             document.cookie = `accessToken=''`;
             document.cookie = `tokenType=''`;
             document.cookie = `csrf_token=''`;
+            if(!stateLessOrNot()){
+                window.location = `${basePath()}interface/logout.php`
+            }
             dispatch(logoutSuccessAction());
         } catch (err) {
             dispatch(logoutFailedAction());
@@ -49,10 +53,11 @@ export const loginFailedAction = () => {
     }
 };
 
-export const loginSuccessAction = () => {
+export const loginSuccessAction = (userID) => {
     return {
         type: LOGIN_SUCCESS,
-        isAuth: true
+        isAuth: true,
+        userID
     }
 };
 
@@ -61,13 +66,13 @@ export const loginAction = (username, password, history) => {
         dispatch(loginStartAction());
         try {
             let tokenData;
-            const userObj = {
-                grant_type: "password",
-                username,
-                password,
-                scope: "default"
-            };
             if (stateLessOrNot()) {
+                const userObj = {
+                    grant_type: "password",
+                    username,
+                    password,
+                    scope: "default"
+                };
                 tokenData = await loginInstance.post('apis/api/auth', userObj);
                 document.cookie = `accessToken=${tokenData.data.access_token};`;
                 document.cookie = `tokenType=${tokenData.data.token_type};`;
@@ -75,10 +80,10 @@ export const loginAction = (username, password, history) => {
                 tokenData = await loginInstance.get('interface/modules/zend_modules/public/clinikal-api/get-csrf-token');
                 document.cookie = `csrf_token=${tokenData.data.csrf_token}`;
             }
-            dispatch(loginSuccessAction());
-            dispatch(getSettingsAction(history));
+            dispatch(loginSuccessAction(tokenData.data?.user_data?.user_id));
+            dispatch(getSettingsAction(history, tokenData.data?.user_data?.user_id));
         } catch (err) {
-            dispatch(loginFailedAction(history));
+            dispatch(loginFailedAction());
             history.push('/');
         }
     }

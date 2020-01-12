@@ -9,7 +9,8 @@ import {
 
 const INITIAL_STATE = {
     isAuth: false,
-    STATUS: ""
+    STATUS: "",
+    userData: null
 };
 
 const loginReducer = (state = INITIAL_STATE, action) => {
@@ -18,7 +19,8 @@ const loginReducer = (state = INITIAL_STATE, action) => {
                 return {
                     ...state,
                     STATUS: action.type,
-                    isAuth: action.isAuth
+                    isAuth: action.isAuth,
+                    userID: action.userID
                 };
 
             case

@@ -25,13 +25,14 @@ const Header = (props) => {
     const arrowDownClickHandler = e => {
         setIsArrowOpen(!isArrowOpen)
     };
-    const arrowDropDownItems = [{
-        Label: t('Disconnect'),
-        func: props.logoutAction
-    },
+    const arrowDropDownItems = [
         {
             Label: t('Change Password'),
             func: null
+        },
+        {
+            Label: t('Disconnect'),
+            func: props.logoutAction
         }];
 
 

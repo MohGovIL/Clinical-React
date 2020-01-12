@@ -1,11 +1,11 @@
 import React from 'react';
 import Imaging from "../Imaging/Imaging";
 
-const VerticalRoute = ({verticalName}) => {
+const VerticalRoute = ({clinikal_vertical}) => {
 
-  switch (verticalName) {
+  switch (clinikal_vertical) {
       case "imaging":
-          return <Imaging/>;
+          return <Imaging clinikal_vertical={clinikal_vertical}/>;
       default:
           return <h1>Error</h1>
   }
