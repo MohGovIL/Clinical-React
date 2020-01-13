@@ -16,8 +16,8 @@ const rootReducer = combineReducers({
     facilityData: facilityReducer,
     settings: SettingsReducer,
 });
-
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
+//Added export so I can use it in story book hopefully
+export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 // ReactDOM.render(<Provider Store={Store}><Suspense fallback="loading..."><App appUrl={iframePath}/></Suspense></Provider>, document.getElementById('root'));
 ReactDOM.render(<Provider store={store}><App/></Provider>, document.getElementById('root'));

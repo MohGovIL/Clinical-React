@@ -7,11 +7,12 @@ import VerticalLine from './VerticalLine';
 import notifications from "../../Images/notifications.png";
 import userAvatar from '../../Images/user-avatar-image.png';
 import arrowDown from '../../Images/icon-color-copy.png';
+import Logo from '../../Images/Logo Area.png';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import HeaderDropDown from "./HeaderDropDown";
 import {connect} from "react-redux";
 import {logoutAction} from "../../../Store/Actions/LoginActions/LoginActions";
-import DefaultLogo from "./DefaultLogo";
+// import DefaultLogo from "./DefaultLogo";
 import {useTranslation} from "react-i18next";
 
 const Header = (props) => {
@@ -38,7 +39,7 @@ const Header = (props) => {
 
     return (
         <StyledAppBar>
-            <DefaultLogo/>
+            <HeaderIcon alt='Logo' img={Logo}/>
             <HeaderTabs Items={props.Items}/>
             <Search/>
             <HeaderIcon alt='notifications icon' img={notifications}/>
