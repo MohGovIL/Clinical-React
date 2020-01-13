@@ -84,7 +84,11 @@ export const loginAction = (username, password, history) => {
             dispatch(getSettingsAction(history, tokenData.data?.user_data?.user_id));
         } catch (err) {
             dispatch(loginFailedAction());
-            history.push('/');
+            if(!stateLessOrNot()){
+                window.location = `${basePath()}interface/logout.php`
+            }else{
+                history.push('/');
+            }
         }
     }
 };
