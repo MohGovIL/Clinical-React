@@ -1,5 +1,6 @@
 import React from 'react';
 import Imaging from "../Imaging/Imaging";
+import {Route} from 'react-router-dom';
 
 const VerticalRoute = ({clinikal_vertical}) => {
 
