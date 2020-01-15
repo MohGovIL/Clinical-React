@@ -2,6 +2,7 @@ import styled from "styled-components";
 import AppBar from "@material-ui/core/AppBar";
 
 export default styled(AppBar)`
+    flex-direction: row;
     align-items: center;
     color: #fafafa;
     height: 88px;

@@ -84,7 +84,14 @@ export const loginAction = (username, password, history) => {
             dispatch(getSettingsAction(history, tokenData.data?.user_data?.user_id));
         } catch (err) {
             dispatch(loginFailedAction());
-            history.push('/');
+            /*Optional solution dispatch logoutAction and add the 'else' below to logoutAction
+            (not really necessary cuz Auth is false and PrivateRoute got it covered)
+            */
+            if(!stateLessOrNot()){
+                window.location = `${basePath()}interface/logout.php`
+            }else{
+                history.push('/');
+            }
         }
     }
 };

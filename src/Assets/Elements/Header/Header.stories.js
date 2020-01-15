@@ -1,29 +1,42 @@
 import React from "react";
 import Header from "./index";
-import DefaultLogo from "./DefaultLogo";
-import HeaderDropDown from "./HeaderDropDown";
+import ProviderWrapper from "../../../../.storybook/Provider";
+import {store} from "../../../index";
+import {StylesProvider} from '@material-ui/core/styles'
+import GlobalStyle from "../../Themes/GlobalStyle";
+import {action} from "@storybook/addon-actions";
+import {withKnobs, object} from "@storybook/addon-knobs";
+import {withStorySource} from "@storybook/addon-storysource";
 
 export default {
-    title: 'Components',
-    component: Header
+    title: 'Header',
+    component: Header,
+    decorators: [withKnobs, story => <StylesProvider injectFirst><GlobalStyle lang_id={'7'}/>{story()}</StylesProvider>],
+    excludeStories: /.*Data$/,
 }
 
-export const normalHeader = () => {
-    return < Header />;
-};
-
-export const defaultLogo = () => {
-  return <DefaultLogo />
-};
-
-export const headerDropDownOpened = () => {
-    const items = [{
-        Label: 'label',
-        func: null
+export const itemsDefaultData = [{
+    "label": "Patients",
+    "menu_id": "patients",
+    "url": "/PatientTraking",
+    "children": []
+},
+    {
+        "label": "Calendar",
+        "menu_id": "calendar",
+        "url": "/Calendar",
+        "children": []
+    },
+    {
+        "label": "Tasks",
+        "menu_id": "tasks",
+        "url": "/Tasks",
+        "children": []
     }];
-    return <HeaderDropDown isOpen={true} Items={items}/>
-};
 
-export const headerDropDownClosed = () => {
-  return <HeaderDropDown />
+export const normalHeader = () => {
+
+    return <ProviderWrapper store={store}>
+        <Header Items={object('HeaderItems', [...itemsDefaultData])}/>
+    </ProviderWrapper>
 };
