@@ -9,7 +9,7 @@ import {stateLessOrNot} from "../../Utils/Helpers/StatelessOrNot";
 import Imaging from "../Imaging/Imaging";
 import {baseRoutePath} from "../../Utils/Helpers/baseRoutePath";
 
-const Routes = (props) => {
+const Routes = ({isAuth}) => {
     return (
         <BrowserRouter>
             <Switch>
@@ -18,7 +18,7 @@ const Routes = (props) => {
                 {/*This route is for testing*/}
                 <Route exact path={`${baseRoutePath()}/`}
                        component={stateLessOrNot() ? Login : LoginWithCSRF}/>
-                <PrivateRoute exact path={`${baseRoutePath()}/InitApp`} component={InitApp} isAuth={props.isAuth}/>
+                <PrivateRoute exact path={`${baseRoutePath()}/:clinikal_vertical`} component={InitApp} isAuth={isAuth}/>
             </Switch>
         </BrowserRouter>
     );

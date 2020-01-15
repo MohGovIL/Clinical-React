@@ -9,8 +9,7 @@ import {
     SET_SETTINGS_SUCCESS
 } from "./SettingsActionTypes";
 import {geti18n} from '../../../Utils/Services/i18n';
-import {stateLessOrNot} from "../../../Utils/Helpers/StatelessOrNot";
-
+import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
 
 export const getSettingsStartAction = () => {
     return {
@@ -39,7 +38,7 @@ export const getSettingsAction = (history, userID) => {
             console.log(settings);
             await geti18n(settings.data.lang_id);
             dispatch(getSettingsSuccessAction(settings.data));
-            history.push('InitApp')
+            history.push(`${baseRoutePath()}/${settings.data.clinikal_vertical}`)
         } catch (err) {
             dispatch(getSettingsFailedAction());
         }
