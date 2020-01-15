@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Header from "../../Assets/Elements/Header";
 import {useTranslation} from "react-i18next";
 import {getMenu} from "../../Utils/Services/API";
+import {getAppointment} from "../../Utils/Services/FhirAPI";
 import {connect} from 'react-redux';
 
 const Imaging = ({clinikalVertical}) => {
@@ -10,6 +11,9 @@ const Imaging = ({clinikalVertical}) => {
 
     const [menuItems, setMenuItems] = useState([]);
 
+    const [appointments, setAppointments] = useState();
+
+    //Gets the menu items
     useEffect(() => {
         (async () => {
             try{
@@ -19,12 +23,18 @@ const Imaging = ({clinikalVertical}) => {
                 return menuDataItem;
             });
             setMenuItems(menuDataClone);
-            }catch (err) {
-                console.log(err);
-            }
+            }catch (err) {console.log(err)}
         })();
     }, [clinikalVertical]);
 
+    useEffect(() => {
+        (async () => {
+            try{
+                const {data} = await getAppointment();
+                console.log(data);
+            }catch(err){console.log(err)}
+        })()
+    }, []);
 
     return (
         <React.Fragment>
