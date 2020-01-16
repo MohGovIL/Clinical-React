@@ -18,14 +18,14 @@ const Imaging = ({clinikalVertical}) => {
         (async () => {
             try{
             const menuData =  await getMenu(`${clinikalVertical}-client`);
-            const {data} = await getAppointment();
-            console.log(data + 'appointment');
+
+            // console.log(data + 'appointment');
             const menuDataClone = menuData.data.map(menuDataItem => {
                 menuDataItem.label = t(menuDataItem.label);
                 return menuDataItem;
             });
             setMenuItems(menuDataClone);
-
+            const {data} = await getAppointment();
             }catch (err) {console.log(err)}
         })();
     }, [clinikalVertical]);
