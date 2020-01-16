@@ -35,7 +35,6 @@ export const getSettingsAction = (history, userID) => {
         try {
             dispatch(getSettingsStartAction());
             const settings = await getGlobalSettings(userID);
-            console.log(settings);
             await geti18n(settings.data.lang_id);
             dispatch(getSettingsSuccessAction(settings.data));
             history.push(`${baseRoutePath()}/${settings.data.clinikal_vertical}`)
