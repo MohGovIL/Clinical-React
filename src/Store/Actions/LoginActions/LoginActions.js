@@ -32,9 +32,6 @@ export const logoutAction = () => {
             for(const token in ApiTokens){
                 document.cookie = `${ApiTokens[token].tokenName}=''`
             }
-            // document.cookie = `apiAccessToken=''`;
-            // document.cookie = `fhirAccessToken`;
-            // document.cookie = `csrfAccessToken=''`;
             if(!stateLessOrNot()){
                 window.location = `${basePath()}interface/logout.php`
             }
