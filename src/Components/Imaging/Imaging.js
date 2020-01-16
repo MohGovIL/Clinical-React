@@ -18,23 +18,17 @@ const Imaging = ({clinikalVertical}) => {
         (async () => {
             try{
             const menuData =  await getMenu(`${clinikalVertical}-client`);
+            const {data} = await getAppointment();
+            console.log(data + 'appointment');
             const menuDataClone = menuData.data.map(menuDataItem => {
                 menuDataItem.label = t(menuDataItem.label);
                 return menuDataItem;
             });
             setMenuItems(menuDataClone);
+
             }catch (err) {console.log(err)}
         })();
     }, [clinikalVertical]);
-
-    useEffect(() => {
-        (async () => {
-            try{
-                const {data} = await getAppointment();
-                console.log(data);
-            }catch(err){console.log(err)}
-        })()
-    }, []);
 
     return (
         <React.Fragment>
