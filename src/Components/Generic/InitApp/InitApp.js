@@ -3,14 +3,25 @@ import {getSettingsAction} from '../../../Store/Actions/SettingsActions/Settings
 import {connect} from 'react-redux';
 import VerticalRoute from "../../Routes/VerticalRoute";
 import GlobalStyle from "../../../Assets/Themes/GlobalStyle";
+import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
+import {devicesKey, devicesValue} from "../../../Assets/Themes/BreakPoints";
 
 const InitApp = (props) => {
+
+    const theme = createMuiTheme({
+        breakpoints: {
+            keys: [...devicesKey],
+            values: {...devicesValue}
+        },
+    });
 
     return (
         <React.Fragment>
             <Suspense fallback={<p>Loading...</p>}>
                 <GlobalStyle lang_id={props.lang_id}/>
-                <VerticalRoute/>
+                <ThemeProvider theme={theme}>
+                    <VerticalRoute/>
+                </ThemeProvider>
             </Suspense>
         </React.Fragment>
     );

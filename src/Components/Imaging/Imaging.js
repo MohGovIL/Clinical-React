@@ -4,6 +4,8 @@ import {useTranslation} from "react-i18next";
 import {getMenu} from "../../Utils/Services/API";
 import {getAppointment} from "../../Utils/Services/FhirAPI";
 import {connect} from 'react-redux';
+import PatientTracking from "./PatientTracking";
+
 
 const Imaging = ({clinikalVertical}) => {
 
@@ -27,20 +29,31 @@ const Imaging = ({clinikalVertical}) => {
             }catch (err) {console.log(err)}
         })();
 
+
+    }, []);
+
+    //Gets Appointment data
+    useEffect(() => {
         (async () => {
             try{
-                const appointmentData = await getAppointment();
-                console.log(appointmentData);
+                const {data} = await getAppointment();
+                console.log(data);
             }catch (err) {
                 console.log(err)
             }
-
         })()
     }, []);
 
+    const normalizeAppointmentData = (appointmentData) => {
+
+    };
+
+    //TODO
+    //In the future there will be a routing for each component
     return (
         <React.Fragment>
             <Header Items={menuItems}/>
+            <PatientTracking />
         </React.Fragment>
     );
 };

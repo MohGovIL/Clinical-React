@@ -1,6 +1,7 @@
 import Tabs from "@material-ui/core/Tabs";
 import styled from "styled-components";
 import React from "react";
+import {devicesValue} from "../../../Themes/BreakPoints";
 
 export default styled(({...other}) => <Tabs {...other} />)`
   margin: 0;
@@ -11,7 +12,7 @@ export default styled(({...other}) => <Tabs {...other} />)`
     border-radius: 5px;
   }
 
-  @media (min-width: 1025px){
+  @media (min-width: ${devicesValue.desktop}px){
       margin: 0 60px;
 
   }

@@ -12,14 +12,15 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import HeaderDropDown from "./HeaderDropDown";
 import {connect} from "react-redux";
 import {logoutAction} from "../../../Store/Actions/LoginActions/LoginActions";
-// import DefaultLogo from "./DefaultLogo";
 import {useTranslation} from "react-i18next";
+import useTheme from "@material-ui/core/styles/useTheme";
+import {devicesValue} from "../../Themes/BreakPoints";
 
 const Header = (props) => {
 
     const {t} = useTranslation();
 
-    const matches = useMediaQuery('(min-width:1025px)');
+    const matches = useMediaQuery(`(min-width:${devicesValue.desktop}px)`);
 
     // Arrow functionality and props
     const [isArrowOpen, setIsArrowOpen] = useState(false);
