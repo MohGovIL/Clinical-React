@@ -13,7 +13,6 @@ import HeaderDropDown from "./HeaderDropDown";
 import {connect} from "react-redux";
 import {logoutAction} from "../../../Store/Actions/LoginActions/LoginActions";
 import {useTranslation} from "react-i18next";
-import useTheme from "@material-ui/core/styles/useTheme";
 import {devicesValue} from "../../Themes/BreakPoints";
 
 const Header = (props) => {
