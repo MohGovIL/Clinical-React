@@ -5,6 +5,6 @@ export default styled.div`
   flex-direction: ${props => props.desktop ? 'row' : 'column'};
   padding-right: 87px;
   padding-left: 87px;
-  margin-top: 42px;
+  padding-top: 42px;
   background-color: #f6f6f6;
 `;
