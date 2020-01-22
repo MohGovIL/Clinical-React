@@ -5,6 +5,7 @@ import {getMenu} from "../../Utils/Services/API";
 import {getAppointment} from "../../Utils/Services/FhirAPI";
 import {connect} from 'react-redux';
 import PatientTracking from "./PatientTracking";
+import {normalizeAppointmentData} from "../../Utils/Helpers/normalizeFhirAppointmentData";
 
 
 const Imaging = ({clinikalVertical}) => {
@@ -39,51 +40,15 @@ const Imaging = ({clinikalVertical}) => {
         (async () => {
             try {
                 const {data} = await getAppointment();
-                normalizeAppointmentData(data.entry);
+                const normalizedAppointmentData = normalizeAppointmentData(data.entry);
+                setAppointments(normalizedAppointmentData);
             } catch (err) {
                 console.log(err)
             }
         })()
     }, []);
 
-    const normalizeAppointmentData = (appointmentsData) => {
-        const appointmentsArray = [];
-        const patientsObj = {};
-        //Looping over the appointments data and store all the Patients in an array like a dictionary for O(1)
-        for (let entryIndex = 0; entryIndex < appointmentsData.length; entryIndex++) {
-            const entry = appointmentsData[entryIndex].resource;
-            if (entry.resourceType === 'Patient') {
-                const patientsObjItem = {
-                    id: entry.id,
-                    identifier: entry.identifier[0].value,
-                    firstName: entry.name[0].given[0],
-                    middleName: entry.name[0].given[1],
-                    lastName: entry.name[0].family,
-                    telecom: [entry.telecom],
-                    gender: entry.gender,
-                    birthDate: entry.birthDate,
-                };
-                patientsObj[`${entry.id}`] = {patientsObjItem};
-            }
-        }
-        for (let entryIndex = 0; entryIndex < appointmentsData.length; entryIndex++) {
-            const entry = appointmentsData[entryIndex].resource;
-            if (entry.resourceType === 'Appointment') {
-                const patientInAppointment = entry.participant.find(actorObj => actorObj.actor.reference.includes('Patient'));
-                const healthCareService = entry.participant.find(actorObj => !actorObj.actor.reference.includes('Patient'));
-                const appointmentsArrayItem = {
-                    status: entry.status,
-                    healthCareService: healthCareService.actor.display,
-                    examination: entry.serviceType[0].text,
-                    time: entry.start,
-                    participants: {...patientsObj[patientInAppointment.actor.reference.split("/")[1]]}
-                };
-                appointmentsArray.push(appointmentsArrayItem);
-            }
-        }
-        console.log(appointmentsArray);
-        setAppointments(appointmentsArray);
-    };
+
 
     //TODO
     //In the future there will be a routing for each component

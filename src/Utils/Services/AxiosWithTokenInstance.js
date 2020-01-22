@@ -4,7 +4,11 @@ import {getToken} from "../Helpers/getToken";
 import {stateLessOrNot} from "../Helpers/StatelessOrNot";
 import {ApiTokens} from "./ApiTokens";
 
-
+/**
+ * @author Idan Gigi gigiidan@gmail.com
+ * @param tokenName - the token needed for the api
+ * @returns {AxiosInstance} Axios instance with the token stored inside the axios instance
+ */
 export const tokenInstanceGenerator = (tokenName) => {
     const baseURL = basePath();
     let axiosObj = {
