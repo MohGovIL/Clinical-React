@@ -1,28 +1,26 @@
 import React, {useState} from 'react';
 import StyledAppBar from './Style';
-import Tabs from "@material-ui/core/Tabs";
-import Tab from '@material-ui/core/Tab';
+import AppointmentsStatusFilterBoxTabs from "./AppointmentsStatusFilterBoxTabs";
 
-const AppointmentsStatusFilterBox = () => {
-
+const AppointmentsStatusFilterBox = ({desktop}) => {
     //simulateApi
     const status = [
-        'מוזמנים',
-        'ממתינים לבדיקה',
-        'ממתינים לפיענוח',
-        'סיימו טיפול'
+        'Invited',
+        'Waiting for examination',
+        'Waiting for decoding',
+        'Finished'
     ];
 
     const [tabsValue, setTabsValue] = useState(0);
 
+    const tabsHandler = (tabsIndex) => {
+        setTabsValue(tabsIndex);
+    };
+
     return (
         <StyledAppBar>
-            <Tabs value={tabsValue}>
-                {status.map((tabsName, tabsIndex) => {
-                    return <Tab label={tabsName}
-                                onChange={() => setTabsValue(prevState => prevState !== tabsIndex ? tabsIndex : prevState)}/>
-                })}
-            </Tabs>
+            <AppointmentsStatusFilterBoxTabs value={tabsValue} tabsLabel={status}
+                                             tabsHandler={tabsHandler} orientation={desktop ? "vertical" : "horizontal"} />
         </StyledAppBar>
     );
 };

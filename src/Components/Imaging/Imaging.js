@@ -26,7 +26,6 @@ const Imaging = ({clinikalVertical}) => {
                     return menuDataItem;
                 });
                 setMenuItems(menuDataClone);
-
             } catch (err) {
                 console.log(err)
             }

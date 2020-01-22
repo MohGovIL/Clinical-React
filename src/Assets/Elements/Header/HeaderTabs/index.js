@@ -4,20 +4,20 @@ import StyledTabs from './Style';
 
 
 const HeaderTabs = (props) => {
-    const [value, setValue] = useState(0);
+    const [tabsValue, setTabsValue] = useState(0);
 
     const tabsHandler = (tabIndex) => {
-        setValue(tabIndex);
+        setTabsValue(tabIndex);
     };
 
     return (
-        <StyledTabs value={value}>
+        <StyledTabs value={tabsValue}>
             {props.Items.map((item, itemIndex) => <HeaderTab Label={item.label} Link={item.url}
                                                              SubMenu={item.SubMenu}
                                                              key={item.menu_id}
                                                              tabIndex={itemIndex}
                                                              tabsHandler={tabsHandler}
-                                                             selected={itemIndex === value ? 'true' : 'false'}/>)}
+                                                             selected={itemIndex === tabsValue ? 'true' : 'false'}/>)}
         </StyledTabs>
     );
 };
