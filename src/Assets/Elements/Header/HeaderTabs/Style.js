@@ -12,6 +12,10 @@ export default styled(({...other}) => <Tabs {...other} />)`
     border-radius: 5px;
   }
 
+  & .Mui-selected {
+  font-weight: bold;
+  }
+
   @media (min-width: ${devicesValue.desktop}px){
       margin: 0 60px;
 

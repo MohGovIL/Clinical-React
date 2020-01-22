@@ -6,7 +6,4 @@ export default styled(AppBar)`
   position: relative;
   display: flex;
   flex-direction: ${props => props.desktop ? 'column' : 'row'};
-  & .MuiTabs-indicator {
-
-  }
 `;
