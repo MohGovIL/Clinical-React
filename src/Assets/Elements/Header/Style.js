@@ -11,4 +11,8 @@ export default styled(AppBar)`
     padding-right: 25px;
     padding-left: 25px;
     position: relative;
+    & span{
+      margin-right: 8px;
+      margin-left: 8px;
+    }
 `;

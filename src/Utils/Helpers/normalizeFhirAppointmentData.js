@@ -32,7 +32,7 @@ export const normalizeAppointmentData = (appointmentsData) => {
             const healthCareService = entry.participant.find(actorObj => !actorObj.actor.reference.includes('Patient'));
             const appointmentsArrayItem = {
                 status: entry.status,
-                healthCareService: healthCareService.actor.display,
+                healthcareService: healthCareService.actor.display,
                 examination: entry.serviceType[0].text,
                 time: entry.start,
                 participants: {...patientsObj[patientInAppointment.actor.reference.split("/")[1]]}

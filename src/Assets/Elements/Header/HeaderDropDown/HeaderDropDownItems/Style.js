@@ -6,6 +6,7 @@ export default styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1600;
   :hover {
     background-color: #076ce9;
     color: #ffffff;
