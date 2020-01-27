@@ -1,11 +1,13 @@
 import React from 'react';
 import StyledHeaderDropDown from './Style';
-import HeaderDropDownItem from "./HeaderDropDownItems";
+import HeaderDropDownItem from "./HeaderDropDownItem";
 import Divider from "@material-ui/core/Divider";
 
 const HeaderDropDown = (props) => {
 
     return (
+        //TODO
+        // Change HeaderDropDownItem to listItem from materialUI
         <StyledHeaderDropDown>
             {props.Items.map((item, itemIndex) => {
                 return (
