@@ -4,26 +4,23 @@ import styled from "styled-components";
 
 const IconWrapper = styled.div`
   display: flex;
-  position: relative;
   justify-content: center;
   align-items: center;
   height: 100%;
 `;
 
 
-
-const HeaderIcon = (props) => {
+const HeaderIcon = ({onClick, alt, img,}) => {
 
     const onClickHandler = () => {
-        if(props.onClick){
-            props.onClick();
+        if (onClick) {
+            onClick();
         }
     };
 
     return (
         <IconWrapper>
-            <StyledSearchIcon alt={props.alt} src={props.img} onClick={onClickHandler} />
-            {props.children}
+            <StyledSearchIcon alt={alt} src={img} onClick={onClickHandler}/>
         </IconWrapper>
     )
 };

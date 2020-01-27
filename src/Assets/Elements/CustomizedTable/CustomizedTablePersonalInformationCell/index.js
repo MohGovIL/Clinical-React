@@ -2,9 +2,9 @@ import React from 'react';
 import StyledCustomizedTablePersonalInformationCell from './Style';
 import maleIcon from '../../../Images/maleIcon.png';
 import womanIcon from '../../../Images/womanIcon.png';
-import PersonalData from "./PersonalData/Style";
+import PersonalData from "./PersonalData";
 import {useTranslation} from "react-i18next";
-import GenderIcon from "./GenderIcon/Style";
+import GenderIcon from "./GenderIcon";
 
 const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName}) => {
 

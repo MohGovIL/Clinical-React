@@ -6,7 +6,7 @@ import Divider from "@material-ui/core/Divider";
 const HeaderDropDown = (props) => {
 
     return (
-        <StyledHeaderDropDown isOpen={props.isOpen}>
+        <StyledHeaderDropDown>
             {props.Items.map((item, itemIndex) => {
                 return (
                     <React.Fragment key={itemIndex}>

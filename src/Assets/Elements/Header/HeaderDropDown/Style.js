@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export default styled.div`
-  display: ${props => props.isOpen ? 'flex' : 'none'};
+  display: flex;
   justify-content: start;
   flex-direction: column;
   position: absolute;

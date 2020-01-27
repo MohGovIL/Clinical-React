@@ -3,11 +3,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {useTranslation} from "react-i18next";
 import {TableBody} from "@material-ui/core";
-import CustomizedTableHeaderRow from "./CustomizedTableHeaderRow/Style";
-import CustomizedTableHeaderCell from "./CustomizedTableHeaderCell/Style";
+import CustomizedTableHeaderRow from "./CustomizedTableHeaderRow";
+import CustomizedTableHeaderCell from "./CustomizedTableHeaderCell";
 import StyledCustomizedTable from "./Style";
 import CustomizedTablePersonalInformationCell from "./CustomizedTablePersonalInformationCell";
-import CustomizedTablePhoneCell from "./CustomizedTablePhoneCell/Style";
+import CustomizedTablePhoneCell from "./CustomizedTablePhoneCell";
 import TableCell from "@material-ui/core/TableCell";
 
 const CustomizedTable = ({tableHeaders, tableData}) => {
