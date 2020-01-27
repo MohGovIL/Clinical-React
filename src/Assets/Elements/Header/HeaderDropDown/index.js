@@ -1,7 +1,7 @@
 import React from 'react';
 import StyledHeaderDropDown from './Style';
 import HeaderDropDownItem from "./HeaderDropDownItems";
-import HRL from './HeaderHorizontalLine';
+import Divider from "@material-ui/core/Divider";
 
 const HeaderDropDown = (props) => {
 
@@ -11,7 +11,7 @@ const HeaderDropDown = (props) => {
                 return (
                     <React.Fragment key={itemIndex}>
                         <HeaderDropDownItem Label={item.Label} Function={item.func} />
-                        {props.Items.length - 1 === itemIndex ? null : <HRL/>}
+                        {props.Items.length - 1 === itemIndex ? null : <Divider/>}
                     </React.Fragment>
                 )
             })}

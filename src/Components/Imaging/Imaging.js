@@ -5,7 +5,7 @@ import {getMenu} from "../../Utils/Services/API";
 import {getAppointment} from "../../Utils/Services/FhirAPI";
 import {connect} from 'react-redux';
 import PatientTracking from "./PatientTracking";
-import {normalizeAppointmentData} from "../../Utils/Helpers/normalizeFhirAppointmentData";
+import {normalizeAppointmentData} from "../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
 
 
 const Imaging = ({clinikalVertical}) => {
