@@ -2,10 +2,8 @@ import React, {useEffect, useState} from 'react';
 import Header from "../../Assets/Elements/Header";
 import {useTranslation} from "react-i18next";
 import {getMenu} from "../../Utils/Services/API";
-import {getAppointment} from "../../Utils/Services/FhirAPI";
 import {connect} from 'react-redux';
 import PatientTracking from "./PatientTracking";
-import {normalizeAppointmentData} from "../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
 
 
 const Imaging = ({clinikalVertical}) => {
@@ -14,7 +12,6 @@ const Imaging = ({clinikalVertical}) => {
 
     const [menuItems, setMenuItems] = useState([]);
 
-    const [appointments, setAppointments] = useState([]);
 
     //Gets the menu items
     useEffect(() => {
@@ -34,18 +31,7 @@ const Imaging = ({clinikalVertical}) => {
 
     }, []);
 
-    //Gets Appointment data
-    useEffect(() => {
-        (async () => {
-            try {
-                const {data} = await getAppointment();
-                const normalizedAppointmentData = normalizeAppointmentData(data.entry);
-                setAppointments(normalizedAppointmentData);
-            } catch (err) {
-                console.log(err)
-            }
-        })()
-    }, []);
+
 
 
 
@@ -54,7 +40,7 @@ const Imaging = ({clinikalVertical}) => {
     return (
         <React.Fragment>
             <Header Items={menuItems}/>{/*TODO Change name from Items to tabs or something more meaningful*/}
-            <PatientTracking appointments={appointments} />
+            <PatientTracking />
         </React.Fragment>
     );
 };

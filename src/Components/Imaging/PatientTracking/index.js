@@ -1,11 +1,30 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PatientTrackingStyle from './Style';
 import StatusFilterBox from "../../../Assets/Elements/StatusFilterBox";
 import CustomizedTable from "../../../Assets/Elements/CustomizedTable";
+import {getAppointments} from "../../../Utils/Services/FhirAPI";
+import {normalizeAppointmentData} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
 
-const PatientTracking = ({appointments}) => {
+const PatientTracking = () => {
 
-    const tabsArray = [
+    const [appointments, setAppointments] = useState([]);
+
+    //Gets Appointment data
+    useEffect(() => {
+        (async () => {
+            try {
+                const {data} = await getAppointments();
+                const normalizedAppointmentData = normalizeAppointmentData(data.entry);
+                setAppointments(normalizedAppointmentData);
+            } catch (err) {
+                console.log(err)
+            }
+        })()
+    }, []);
+
+
+
+    const tabs = [
         {
             tabName: 'Invited',
             count: 10
@@ -26,42 +45,42 @@ const PatientTracking = ({appointments}) => {
 
     const tableHeaders = [
         {
-            tabName: 'Personal information',
+            tableHeader: 'Personal information',
         },
         {
-            tabName: 'Cell phone',
+            tableHeader: 'Cell phone',
 
         },
         {
-            tabName: 'Healthcare service',
+            tableHeader: 'Healthcare service',
 
         },
         {
-            tabName: 'Test',
+            tableHeader: 'Test',
 
         },
         {
-            tabName: 'Time',
+            tableHeader: 'Time',
 
         },
         {
-            tabName: 'Status',
+            tableHeader: 'Status',
 
         },
         {
-            tabName: 'Messages',
+            tableHeader: 'Messages',
 
         },
         {
-            tabName: 'Patient admission',
-            hideTabName: true
+            tableHeader: 'Patient admission',
+            hideTableHeader: true
         },
 
     ];
 
     return (
         <PatientTrackingStyle>
-            <StatusFilterBox tabs={tabsArray}/>
+            <StatusFilterBox tabs={tabs}/>
             <CustomizedTable tableHeaders={tableHeaders} tableData={appointments}/>
         </PatientTrackingStyle>
     );

@@ -9,26 +9,28 @@ import StyledCustomizedTable from "./Style";
 import CustomizedTablePersonalInformationCell from "./CustomizedTablePersonalInformationCell";
 import CustomizedTablePhoneCell from "./CustomizedTablePhoneCell";
 import TableCell from "@material-ui/core/TableCell";
+import CustomizedSelect from "../CustomizedSelect";
 
 const CustomizedTable = ({tableHeaders, tableData}) => {
-    console.log(tableData);
+    console.log(tableData, tableHeaders);
     const {t} = useTranslation();
+
     return (
         <StyledCustomizedTable size={'small'}>
             <TableHead>
                 <CustomizedTableHeaderRow>
                     {tableHeaders.map((tableHeader, tableHeaderIndex) => <CustomizedTableHeaderCell
-                        key={tableHeaderIndex}>{tableHeader.hideTabName ? null : t(tableHeader.tabName)}</CustomizedTableHeaderCell>)}
+                        key={tableHeaderIndex}>{tableHeader.hideTableHeader ? null : t(tableHeader.tableHeader)}</CustomizedTableHeaderCell>)}
                 </CustomizedTableHeaderRow>
             </TableHead>
             <TableBody>
                 {tableData.map((tableRow, tableRowIndex) => {
                     return (<TableRow key={tableRowIndex}>
                         {tableHeaders.map((tableCellItem, tableCellItemIndex) => {
-                            switch (tableCellItem.tabName) {
+                            switch (tableCellItem.tableHeader) {
                                 case 'Personal information':
                                     return <CustomizedTablePersonalInformationCell
-                                        size={'small'} padding={'none'}
+                                        padding={'none'}
                                         key={tableCellItemIndex}
                                         gender={tableRow.participants?.patient.gender}
                                         id={tableRow.participants?.patient.identifier}
@@ -41,11 +43,11 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                     </CustomizedTablePhoneCell>;
                                 case 'Healthcare service':
                                     return <TableCell padding={'none'} align={'right'} key={tableCellItemIndex}>
-                                        {tableRow.healthCareService}
+                                        {t(tableRow.healthCareService)}
                                     </TableCell>;
                                 case 'Test':
                                     return <TableCell padding={'none'} align={'right'} key={tableCellItemIndex}>
-                                        {tableRow.examination}
+                                        {t(tableRow.examination)}
                                     </TableCell>;
                                 case 'Time':
                                     return <TableCell padding={'none'} align={'right'} key={tableCellItemIndex}>
@@ -53,7 +55,8 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                     </TableCell>;
                                 case 'Status':
                                     return <TableCell padding={'none'} align={'right'} key={tableCellItemIndex}>
-                                        {tableRow.status}
+                                        <CustomizedSelect backgroundColor={'#eaf7ff'} iconColor={'#096de9'} value={tableRow.status}/>
+                                        {/*{t(tableRow.status)}*/}
                                     </TableCell>;
                                 case 'Messages':
                                     break;
