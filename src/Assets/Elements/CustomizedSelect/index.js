@@ -1,15 +1,14 @@
 import React from 'react';
 import StyledSelect from './Style'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-const CustomizedSelect = ({backgroundColor, iconColor, value, onChange, items}) => {
+const CustomizedSelect = ({background_color, icon_color, value, onChange, items}) => {
 
 
 
     return (
-        <StyledSelect backgroundcolor={backgroundColor} iconColor={iconColor} value>
-            <option>
-                {}
-            </option>
+        <StyledSelect native  background_color={background_color} icon_color={icon_color} IconComponent={ExpandMoreIcon} value>
+
         </StyledSelect>
     );
 };

@@ -2,10 +2,24 @@ import React, {useEffect, useState} from 'react';
 import PatientTrackingStyle from './Style';
 import StatusFilterBox from "../../../Assets/Elements/StatusFilterBox";
 import CustomizedTable from "../../../Assets/Elements/CustomizedTable";
-import {getAppointments} from "../../../Utils/Services/FhirAPI";
+import {getAppointments, getStatuses} from "../../../Utils/Services/FhirAPI";
 import {normalizeAppointmentData} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
 
 const PatientTracking = () => {
+
+    let statuses;
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const {data} = await getStatuses();
+                console.log(data);
+                statuses = data.compose.include[0].concept;
+            }catch (err) {
+                console.log(err)
+            }
+        })()
+    });
 
     const [appointments, setAppointments] = useState([]);
 

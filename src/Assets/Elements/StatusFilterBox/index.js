@@ -4,7 +4,14 @@ import StatusFilterBoxTabs from "./StatusFilterBoxTabs";
 import {devicesValue} from "../../Themes/BreakPoints";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
-const StatusFilterBox = ({desktop, tabs}) => {
+/**
+ * @author Idan Gigi gigiidan@gmail.com
+ * @param tabs - array
+ * @example [{tabName: string, count: Number}]
+ * @returns {Component}
+ * @constructor
+ */
+const StatusFilterBox = ({tabs}) => {
 
     const matches = useMediaQuery(`(min-width:${devicesValue.desktop}px)`);
 

@@ -12,7 +12,6 @@ import TableCell from "@material-ui/core/TableCell";
 import CustomizedSelect from "../CustomizedSelect";
 
 const CustomizedTable = ({tableHeaders, tableData}) => {
-    console.log(tableData, tableHeaders);
     const {t} = useTranslation();
 
     return (
@@ -55,7 +54,7 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                     </TableCell>;
                                 case 'Status':
                                     return <TableCell padding={'none'} align={'right'} key={tableCellItemIndex}>
-                                        <CustomizedSelect backgroundColor={'#eaf7ff'} iconColor={'#096de9'} value={tableRow.status}/>
+                                        <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#096de9'} value={tableRow.status}/>
                                         {/*{t(tableRow.status)}*/}
                                     </TableCell>;
                                 case 'Messages':
