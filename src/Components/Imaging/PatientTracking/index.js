@@ -13,7 +13,6 @@ const PatientTracking = () => {
         (async () => {
             try {
                 const {data} = await getStatuses();
-                console.log(data);
                 statuses = data.compose.include[0].concept;
             }catch (err) {
                 console.log(err)

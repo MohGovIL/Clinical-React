@@ -17,7 +17,7 @@ export const getAppointments = async () => {
 
 export const getStatuses = async () => {
   try {
-      return await fhirTokenInstance().get('apis/fhir/ValueSet/apptstat');
+      return await fhirTokenInstance().get('apis/fhir/v4/ValueSet/apptstat');
   }catch (err) {
       console.log(err);
   }
