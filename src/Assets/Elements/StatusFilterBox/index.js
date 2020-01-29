@@ -11,7 +11,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
  * @returns {Component}
  * @constructor
  */
-const StatusFilterBox = ({tabs}) => {
+const StatusFilterBox = ({tabs, }) => {
 
     const matches = useMediaQuery(`(min-width:${devicesValue.desktop}px)`);
 

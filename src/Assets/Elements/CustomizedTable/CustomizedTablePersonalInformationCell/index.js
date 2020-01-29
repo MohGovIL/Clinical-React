@@ -11,13 +11,13 @@ const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName
     const {t} = useTranslation();
 
     return (
-        <StyledCustomizedTablePersonalInformationCell padding={padding} align={align}>
+        <StyledCustomizedTablePersonalInformationCell align={align}>
             <GenderIcon alt={'gender icon'} src={gender === 'male' ? maleIcon : womanIcon}/>
             <PersonalData>
                 <span>
                     {`${firstName} ${lastName}`}
                 </span>
-                {`${t('Federal Tax ID')}${id}`}
+                {`${t('Federal Tax ID')} ${id}`}
             </PersonalData>
         </StyledCustomizedTablePersonalInformationCell>
     );

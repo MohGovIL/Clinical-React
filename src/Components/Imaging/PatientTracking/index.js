@@ -7,18 +7,7 @@ import {normalizeAppointmentData} from "../../../Utils/Helpers/normalizeFhirAppo
 
 const PatientTracking = () => {
 
-    let statuses;
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const {data} = await getStatuses();
-                statuses = data.compose.include[0].concept;
-            }catch (err) {
-                console.log(err)
-            }
-        })()
-    });
+    const [currentStatus, setCurrentState] = useState(0);
 
     const [appointments, setAppointments] = useState([]);
 
@@ -35,7 +24,18 @@ const PatientTracking = () => {
         })()
     }, []);
 
+    const [statuses, setStatuses] = useState([]);
 
+    useEffect(() => {
+        (async () => {
+            try {
+                const {data} = await getStatuses();
+                setStatuses(data.compose.include[0].concept);
+            }catch (err) {
+                console.log(err)
+            }
+        })()
+    }, []);
 
     const tabs = [
         {
@@ -94,7 +94,7 @@ const PatientTracking = () => {
     return (
         <PatientTrackingStyle>
             <StatusFilterBox tabs={tabs}/>
-            <CustomizedTable tableHeaders={tableHeaders} tableData={appointments}/>
+            <CustomizedTable tableHeaders={tableHeaders} tableData={appointments} options={statuses}/>
         </PatientTrackingStyle>
     );
 };

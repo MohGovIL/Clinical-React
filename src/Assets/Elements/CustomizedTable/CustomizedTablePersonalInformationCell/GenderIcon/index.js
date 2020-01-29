@@ -5,6 +5,7 @@ const GenderIcon = styled.img`
   width: 30px;
   height: 30px;
   margin-left: 16px;
+  margin-right: 16px;
 `;
 
 export default GenderIcon;
