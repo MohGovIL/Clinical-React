@@ -34,8 +34,8 @@ const CustomizedTable = ({tableHeaders, tableData, options}) => {
                                     switch (tableCellItem.tableHeader) {
                                         case 'Personal information':
                                             return <CustomizedTablePersonalInformationCell
+                                                priority={tableRow.priority}
                                                 align={'right'}
-                                                padding={'none'}
                                                 key={tableCellItemIndex}
                                                 gender={tableRow.participants?.patient.gender}
                                                 id={tableRow.participants?.patient.identifier}

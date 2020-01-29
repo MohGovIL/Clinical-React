@@ -7,8 +7,6 @@ import {normalizeAppointmentData} from "../../../Utils/Helpers/normalizeFhirAppo
 
 const PatientTracking = () => {
 
-    const [currentStatus, setCurrentState] = useState(0);
-
     const [appointments, setAppointments] = useState([]);
 
     //Gets Appointment data

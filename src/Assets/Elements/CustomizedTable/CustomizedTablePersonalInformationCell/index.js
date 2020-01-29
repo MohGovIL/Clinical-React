@@ -6,13 +6,13 @@ import PersonalData from "./PersonalData";
 import {useTranslation} from "react-i18next";
 import GenderIcon from "./GenderIcon";
 
-const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName, padding, align}) => {
+const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName, align, priority}) => {
 
     const {t} = useTranslation();
 
     return (
         <StyledCustomizedTablePersonalInformationCell align={align}>
-            <GenderIcon alt={'gender icon'} src={gender === 'male' ? maleIcon : womanIcon}/>
+            <GenderIcon priority={priority} alt={'gender icon'} src={gender === 'male' ? maleIcon : womanIcon}/>
             <PersonalData>
                 <span>
                     {`${firstName} ${lastName}`}
