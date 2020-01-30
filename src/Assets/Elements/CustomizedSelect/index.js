@@ -27,7 +27,7 @@ const CustomizedSelect = ({background_color, icon_color, value, onChange, option
             const {data} = await updateAppointmentStatus(appointmentId, e.target.value);
             setStatusValue(data.status)
         } catch (err) {
-            console.log();
+            console.log(err);
         }
 
     };
