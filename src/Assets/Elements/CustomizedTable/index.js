@@ -61,7 +61,8 @@ const CustomizedTable = ({tableHeaders, tableData, options}) => {
                                         case 'Status':
                                             return <TableCell padding={'none'} align={'center'} key={tableCellItemIndex}>
                                                 <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#096de9'}
-                                                                  value={tableRow.status} options={options}/>
+                                                                  value={tableRow.status} options={options}
+                                                                  appointmentId={tableRow.id}/>
                                             </TableCell>;
                                         case 'Messages':
                                             return <TableCell padding={'none'} align={'center'} key={tableCellItemIndex}>

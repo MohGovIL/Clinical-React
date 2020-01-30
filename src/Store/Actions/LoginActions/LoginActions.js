@@ -80,7 +80,7 @@ export const loginAction = (username, password, history) => {
                 const fhirToken = await loginInstance.post('apis/fhir/auth', userObj);
                 document.cookie = `${ApiTokens.FHIR.tokenName}=${fhirToken.data.access_token}`;
             } else {
-                const tokenData = await loginInstance.get('interface/modules/zend_modules/public/clinikal-api/get-csrf-token');
+                tokenData = await loginInstance.get('interface/modules/zend_modules/public/clinikal-api/get-csrf-token');
                 document.cookie = `${ApiTokens.CSRF.tokenName}=${tokenData.data.csrf_token}`;
             }
             dispatch(loginSuccessAction(tokenData.data?.user_data?.user_id));
