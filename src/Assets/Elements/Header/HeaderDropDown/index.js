@@ -1,17 +1,19 @@
 import React from 'react';
 import StyledHeaderDropDown from './Style';
-import HeaderDropDownItem from "./HeaderDropDownItems";
-import HRL from './HeaderHorizontalLine';
+import HeaderDropDownItem from "./HeaderDropDownItem";
+import Divider from "@material-ui/core/Divider";
 
 const HeaderDropDown = (props) => {
 
     return (
-        <StyledHeaderDropDown isOpen={props.isOpen}>
+        //TODO
+        // Change HeaderDropDownItem to listItem from materialUI
+        <StyledHeaderDropDown>
             {props.Items.map((item, itemIndex) => {
                 return (
                     <React.Fragment key={itemIndex}>
                         <HeaderDropDownItem Label={item.Label} Function={item.func} />
-                        {props.Items.length - 1 === itemIndex ? null : <HRL/>}
+                        {props.Items.length - 1 === itemIndex ? null : <Divider/>}
                     </React.Fragment>
                 )
             })}

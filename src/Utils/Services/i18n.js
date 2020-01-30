@@ -4,15 +4,18 @@ import backend from "i18next-xhr-backend";
 import {getToken} from "../Helpers/getToken"
 import {basePath} from "../Helpers/basePath"
 import {stateLessOrNot} from "../Helpers/StatelessOrNot";
-
+import {ApiTokens} from "./ApiTokens";
 // the translations
 // (tip move them in a JSON file and import them)
-
+/**
+ * @author Idan Gigi gigiidan@gmail.com
+ * @param lang_id - the language you want to translate the data too
+ */
 export const geti18n = (lang_id) => {
     let customHeaders = {
         // "X-Requested-With": "XMLHttpRequest", //Not working
     };
-    stateLessOrNot() ? customHeaders.Authorization = `Bearer ${getToken('accessToken')}` : customHeaders.apicsrftoken = `${getToken('csrf_token')}`;
+    stateLessOrNot() ? customHeaders.Authorization = `${ApiTokens.API.tokenType} ${getToken(ApiTokens.API.tokenName)}` : customHeaders.apicsrftoken = `${getToken(ApiTokens.CSRF.tokenName)}`;
     i18n
         .use(backend)
         .use(initReactI18next) // passes i18n down to react-i18next

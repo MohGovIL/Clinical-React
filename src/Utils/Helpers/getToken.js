@@ -1,3 +1,8 @@
+/**
+ * @author Idan Gigi gigiidan@gmail.com
+ * @param cookieName - string of the cookie name
+ * @returns {string} If found the given cookieName returns it otherwise return an empty string ""
+ */
 export const getToken = (cookieName) => {
     const name = `${cookieName}=`;
     const decodedCookie = decodeURIComponent(document.cookie);

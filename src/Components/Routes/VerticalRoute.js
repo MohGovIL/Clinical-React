@@ -1,15 +1,17 @@
 import React from 'react';
 import Imaging from "../Imaging/Imaging";
-import {Route} from 'react-router-dom';
+import {Route, Switch} from 'react-router-dom';
+import {baseRoutePath} from "../../Utils/Helpers/baseRoutePath";
 
-const VerticalRoute = ({clinikal_vertical}) => {
+const VerticalRoute = () => {
 
-  switch (clinikal_vertical) {
-      case "imaging":
-          return <Imaging clinikal_vertical={clinikal_vertical}/>;
-      default:
-          return <h1>Error</h1>
-  }
+return(
+    <React.Fragment>
+        <Switch>
+            <Route exact path={`${baseRoutePath()}/imaging`} component={Imaging}/>
+        </Switch>
+    </React.Fragment>
+);
 };
 
 export default VerticalRoute;

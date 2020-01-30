@@ -19,12 +19,12 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "rewire": "^4.0.1",
-    "styled-components": "^4.4.1"
+    "styled-components": "^5.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start --no-cache",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --no-cache",
     "eject": "react-scripts eject",
     "watch": "node scripts/customized-config watch -b dev-mode/build/ -v",
     "watch2": "cra-build-watch",

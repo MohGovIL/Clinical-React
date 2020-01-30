@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export default styled.div`
-  display: ${props => props.isOpen ? 'flex' : 'none'};
+  display: flex;
   justify-content: start;
   flex-direction: column;
   position: absolute;
@@ -14,7 +14,7 @@ export default styled.div`
   background-color: #ffffff;
   border-radius: 2px;
   color: #0027a5;
-  z-index: 1;
+  z-index: 9999;
   ::before{
     content: '';
     background-color: #ffffff;

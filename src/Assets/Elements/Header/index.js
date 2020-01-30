@@ -5,27 +5,31 @@ import Search from "./Search";
 import HeaderIcon from "./HeaderIcon";
 import VerticalLine from './VerticalLine';
 import notifications from "../../Images/notifications.png";
-import userAvatar from '../../Images/user-avatar-image.png';
 import arrowDown from '../../Images/icon-color-copy.png';
 import Logo from '../../Images/Logo Area.png';
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import HeaderDropDown from "./HeaderDropDown";
 import {connect} from "react-redux";
 import {logoutAction} from "../../../Store/Actions/LoginActions/LoginActions";
-// import DefaultLogo from "./DefaultLogo";
 import {useTranslation} from "react-i18next";
+import {ClickAwayListener} from "@material-ui/core";
+import RelativeWrapperForClickAwayListener from './RelativeWrapperForClickAwayListener'
 
 const Header = (props) => {
 
     const {t} = useTranslation();
 
-    const matches = useMediaQuery('(min-width:1025px)');
 
     // Arrow functionality and props
     const [isArrowOpen, setIsArrowOpen] = useState(false);
-    const arrowDownClickHandler = e => {
-        setIsArrowOpen(!isArrowOpen)
+
+    const arrowDownClickHandler = () => {
+        setIsArrowOpen(!isArrowOpen);
     };
+
+    const clickAwayHandler = () => {
+        setIsArrowOpen(false);
+    };
+
     const arrowDropDownItems = [
         {
             Label: t('Change Password'),
@@ -44,11 +48,13 @@ const Header = (props) => {
             <Search/>
             <HeaderIcon alt='notifications icon' img={notifications}/>
             <VerticalLine/>
-            <HeaderIcon alt='profile avatar' img={userAvatar}/>
-            {matches ? <span>חני החנייה</span> : null}
-            <HeaderIcon alt='arrow down' img={arrowDown} onClick={arrowDownClickHandler}>
-                <HeaderDropDown isOpen={isArrowOpen} Items={arrowDropDownItems}/>
-            </HeaderIcon>
+            <span>חני החנייה</span>
+            <ClickAwayListener onClickAway={clickAwayHandler}>
+                <RelativeWrapperForClickAwayListener>
+                    <HeaderIcon alt='arrow down' img={arrowDown} onClick={arrowDownClickHandler}/>
+                    {isArrowOpen ? <HeaderDropDown Items={arrowDropDownItems}/> : null}
+                </RelativeWrapperForClickAwayListener>
+            </ClickAwayListener>
         </StyledAppBar>
     );
 };

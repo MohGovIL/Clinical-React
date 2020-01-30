@@ -3,6 +3,8 @@ import {loginInstance} from '../../../Utils/Services/AxiosLoginInstance';
 import {stateLessOrNot} from "../../../Utils/Helpers/StatelessOrNot";
 import {getSettingsAction} from "../SettingsActions/SettingsActions";
 import {basePath} from "../../../Utils/Helpers/basePath";
+import {ApiTokens} from "../../../Utils/Services/ApiTokens";
+
 
 export const logoutStartAction = () => {
     return {
@@ -27,9 +29,9 @@ export const logoutAction = () => {
     return async dispatch => {
         dispatch(logoutStartAction());
         try {
-            document.cookie = `accessToken=''`;
-            document.cookie = `tokenType=''`;
-            document.cookie = `csrf_token=''`;
+            for(const token in ApiTokens){
+                document.cookie = `${ApiTokens[token].tokenName}=''`
+            }
             if(!stateLessOrNot()){
                 window.location = `${basePath()}interface/logout.php`
             }
@@ -74,11 +76,12 @@ export const loginAction = (username, password, history) => {
                     scope: "default"
                 };
                 tokenData = await loginInstance.post('apis/api/auth', userObj);
-                document.cookie = `accessToken=${tokenData.data.access_token};`;
-                document.cookie = `tokenType=${tokenData.data.token_type};`;
+                document.cookie = `${ApiTokens.API.tokenName}=${tokenData.data.access_token};`;
+                const fhirToken = await loginInstance.post('apis/fhir/auth', userObj);
+                document.cookie = `${ApiTokens.FHIR.tokenName}=${fhirToken.data.access_token}`;
             } else {
-                tokenData = await loginInstance.get('interface/modules/zend_modules/public/clinikal-api/get-csrf-token');
-                document.cookie = `csrf_token=${tokenData.data.csrf_token}`;
+                const tokenData = await loginInstance.get('interface/modules/zend_modules/public/clinikal-api/get-csrf-token');
+                document.cookie = `${ApiTokens.CSRF.tokenName}=${tokenData.data.csrf_token}`;
             }
             dispatch(loginSuccessAction(tokenData.data?.user_data?.user_id));
             dispatch(getSettingsAction(history, tokenData.data?.user_data?.user_id));
