@@ -22,6 +22,9 @@ const CustomizedSelect = ({background_color, icon_color, value, onChange, option
 
     const {t} = useTranslation();
 
+    //TODO
+    //Put it in a separate place and pass it on
+    //So you could give different onChange functions
     const onChangeHandler = async e => {
         try {
             const {data} = await updateAppointmentStatus(appointmentId, e.target.value);
