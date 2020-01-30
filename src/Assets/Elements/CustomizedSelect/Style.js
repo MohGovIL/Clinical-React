@@ -4,7 +4,7 @@ import Select from "@material-ui/core/Select";
 export default styled(Select)`
   background-color: ${props => props.background_color ? props.background_color : null};
   border-radius: 15px;
-  color: ${props => props.color ? props.color :  null};
+  color: ${props => props.text_color ? props.text_color :  null};
   font-weight: bold;
   & .MuiSelect-icon {
     position: relative;

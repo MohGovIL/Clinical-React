@@ -9,7 +9,7 @@ import {updateAppointmentStatus} from "../../../Utils/Services/FhirAPI";
  * @author Idan Gigi gigiidan@gmail.com
  * @param background_color
  * @param icon_color
- * @param color
+ * @param textcolor
  * @param value
  * @param onChange
  * @param options
@@ -17,7 +17,7 @@ import {updateAppointmentStatus} from "../../../Utils/Services/FhirAPI";
  * @returns {Component}
  * @constructor
  */
-const CustomizedSelect = ({background_color, icon_color, color, value, onChange, options, appointmentId}) => {
+const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, appointmentId}) => {
 
     const [statusValue, setStatusValue] = useState(value);
 
@@ -38,7 +38,7 @@ const CustomizedSelect = ({background_color, icon_color, color, value, onChange,
 
     return (
         <StyledSelect onChange={onChangeHandler} native background_color={background_color} icon_color={icon_color}
-                      color={color}
+                      text_color={text_color}
                       IconComponent={ExpandMoreIcon} value={statusValue}>
             {options.map((option, optionIndex) => <CustomizedSelectOption value={option.code}
                                                                           key={optionIndex}>{t(option.display)}</CustomizedSelectOption>)}
