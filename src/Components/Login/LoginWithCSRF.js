@@ -2,9 +2,9 @@ import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {loginAction} from '../../Store/Actions/LoginActions/LoginActions'
 
-const LoginWithCsrf = (props) => {
+const LoginWithCsrf = ({history, loginAction}) => {
     useEffect(() => {
-        props.loginAction(null, null, props.history)
+        loginAction(null, null, history)
     }, []);
 
     return (

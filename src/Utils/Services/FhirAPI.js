@@ -22,3 +22,15 @@ export const getStatuses = async () => {
       console.log(err);
   }
 };
+
+export const updateAppointmentStatus = async (appointmentId, value) => {
+    try{
+        return await fhirTokenInstance().patch(`apis/fhir/v4/Appointment/${appointmentId}`, {
+            op: "replace",
+            path:"/status",
+            value
+        })
+    }catch(err){
+        console.log(err)
+    }
+};
