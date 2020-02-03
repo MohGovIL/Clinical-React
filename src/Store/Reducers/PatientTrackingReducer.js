@@ -4,7 +4,6 @@ import {
 
 const INITIAL_STATE = {
     statusFilterBoxValue: 0,
-
 };
 
 

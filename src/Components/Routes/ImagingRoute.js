@@ -9,7 +9,7 @@ const ImagingRoute = (props) => {
     const {path, url} = useRouteMatch();
     return (
         <Switch>
-            <Route path={`${baseRoutePath()}/`}/>
+            <Route path={`${baseRoutePath()}/imaging/`}/>
         </Switch>
     );
 };

@@ -35,11 +35,39 @@ export const updateAppointmentStatus = async (appointmentId, value) => {
     }
 };
 
-export const createNewEncounter = async (status) => {
+export const createNewEncounter = async () => {
     try{
         return await fhirTokenInstance().post('apis/fhir/v4/Encounter', {
-            resourceType: "Encounter",
-            status
+            "resourceType": "Encounter",
+            "status": "planned",
+            "serviceType": {
+                "coding": [
+                    {
+                        "code": "5"
+                    }
+                ]
+            },
+            "reasonCode": {
+                "coding": [
+                    {
+                        "code": "5"
+                    }
+                ]
+            },
+            " subject": {
+                "reference": "Patient/60"
+            },
+            "appointment": [
+                {
+                    "reference": "Appointment/11"
+                }
+            ],
+            "period": {
+                "start": "2020-01-27 00:00:00"
+            },
+            "serviceProvider": {
+                "reference": "Organization/3"
+            }
         })
 
     }catch (err) {

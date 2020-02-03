@@ -13,6 +13,7 @@ const normalizeFhirAppointment = (appointment, patientsObj)  => {
         status: appointment.status,
         healthCareService,
         examination: appointment.serviceType[0]?.text,
+        examinationCode: appointment.serviceType[0]?.coding?.code,
         time: appointment.start,
         participants: patientInAppointmentId ? {...patientsObj[patientInAppointmentId]} : undefined
     };
