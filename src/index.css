@@ -1,7 +1,4 @@
 body {
-    /* direction set to rtl needs to be generic with material UI or if there is no option in material UI use styled-components*/
-    /*direction: rtl;*/
-    /*font-family: OpenSansHebrew;*/
     margin: 0;
     padding: 0;
     box-sizing: border-box;

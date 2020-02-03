@@ -10,7 +10,7 @@ import CustomizedTablePersonalInformationCell from "./CustomizedTablePersonalInf
 import CustomizedTablePhoneCell from "./CustomizedTablePhoneCell";
 import TableCell from "@material-ui/core/TableCell";
 import CustomizedSelect from "../CustomizedSelect";
-import StyledTableBadge from "./CustomizedTableBadge";
+import CustomizedTableBadge from "./CustomizedTableBadge";
 import CustomizedTableButton from "./CustomizedTableButton";
 import CustomizedTableContainer from "./CustomizedTableContainer";
 
@@ -67,7 +67,7 @@ const CustomizedTable = ({tableHeaders, tableData, options}) => {
                                             </TableCell>;
                                         case 'Messages':
                                             return <TableCell padding={'none'} align={'center'} key={tableCellItemIndex}>
-                                                <StyledTableBadge badgeContent={0}/>
+                                                <CustomizedTableBadge badgeContent={0}/>
                                             </TableCell>;
                                         case 'Patient admission':
                                             return <TableCell padding={'none'} align={'center'} key={tableCellItemIndex}>
