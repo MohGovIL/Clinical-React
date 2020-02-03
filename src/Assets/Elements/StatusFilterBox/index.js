@@ -4,7 +4,7 @@ import StatusFilterBoxTabs from "./StatusFilterBoxTabs";
 import {devicesValue} from "../../Themes/BreakPoints";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {connect} from 'react-redux';
-import {setStatusFilterBoxIndexAction} from "../../../Store/Actions/PatientTrackingActions/PatienTrackingActions";
+import {setStatusFilterBoxValueAction} from "../../../Store/Actions/PatientTrackingActions/PatienTrackingActions";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
@@ -15,20 +15,19 @@ import {setStatusFilterBoxIndexAction} from "../../../Store/Actions/PatientTrack
  * @returns {Component}
  * @constructor
  */
-const StatusFilterBox = ({tabs, setStatusFilterBoxIndexAction, tabsIndex}) => {
+const StatusFilterBox = ({tabs, setStatusFilterBoxValueAction, tabsValue}) => {
 
     const matches = useMediaQuery(`(min-width:${devicesValue.desktop}px)`);
 
 
-    const [tabsValue, setTabsValue] = useState(0);
 
-    const tabsHandler = (tabsIndex) => {
-        setStatusFilterBoxIndexAction(tabsIndex)
+    const tabsHandler = tabsValue => {
+        setStatusFilterBoxValueAction(tabsValue)
     };
 
     return (
         <StyledAppBar>
-            <StatusFilterBoxTabs value={tabsIndex} tabs={tabs}
+            <StatusFilterBoxTabs value={tabsValue} tabs={tabs}
                                  tabsHandler={tabsHandler} orientation={matches ? "vertical" : "horizontal"}/>
         </StyledAppBar>
     );
@@ -36,8 +35,8 @@ const StatusFilterBox = ({tabs, setStatusFilterBoxIndexAction, tabsIndex}) => {
 
 const mapStateToProps = state => {
     return {
-        tabsIndex: state.patientTracking.statusFilterBoxIndex
+        tabsValue: state.patientTracking.statusFilterBoxValue
     }
 };
 
-export default connect(mapStateToProps, {setStatusFilterBoxIndexAction})(StatusFilterBox);
+export default connect(mapStateToProps, {setStatusFilterBoxValueAction})(StatusFilterBox);

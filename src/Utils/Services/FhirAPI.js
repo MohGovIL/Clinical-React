@@ -34,3 +34,15 @@ export const updateAppointmentStatus = async (appointmentId, value) => {
         console.log(err)
     }
 };
+
+export const createNewEncounter = async (status) => {
+    try{
+        return await fhirTokenInstance().post('apis/fhir/v4/Encounter', {
+            resourceType: "Encounter",
+            status
+        })
+
+    }catch (err) {
+        console.log(err)
+    }
+};

@@ -1,10 +1,10 @@
 import {
-    SET_STATUS_FILTER_BOX_INDEX
+    SET_STATUS_FILTER_BOX_VALUE
 } from "./PatientTrackingTypes";
 
-export const setStatusFilterBoxIndexAction = index => {
+export const setStatusFilterBoxValueAction = value => {
     return {
-        type: SET_STATUS_FILTER_BOX_INDEX,
-        index
+        type: SET_STATUS_FILTER_BOX_VALUE,
+        value
     }
 };

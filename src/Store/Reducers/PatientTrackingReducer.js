@@ -1,19 +1,19 @@
 import {
-    SET_STATUS_FILTER_BOX_INDEX
+    SET_STATUS_FILTER_BOX_VALUE
 } from "../Actions/PatientTrackingActions/PatientTrackingTypes";
 
 const INITIAL_STATE = {
-    statusFilterBoxIndex: 0,
+    statusFilterBoxValue: 0,
 
 };
 
 
 const PatientTrackingReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
-        case SET_STATUS_FILTER_BOX_INDEX:
+        case SET_STATUS_FILTER_BOX_VALUE:
             return {
                 ...state,
-                statusFilterBoxIndex: action.index,
+                statusFilterBoxValue: action.value,
             };
 
         default:
