@@ -8,6 +8,7 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import loginReducer from './Store/Reducers/LoginReducer';
 import facilityReducer from './Store/Reducers/FacilityReducer';
 import SettingsReducer from "./Store/Reducers/SettingsReducer";
+import PatientTrackingReducer from "./Store/Reducers/PatientTrackingReducer";
 import thunk from 'redux-thunk';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     login: loginReducer,
     facilityData: facilityReducer,
     settings: SettingsReducer,
+    patientTracking: PatientTrackingReducer,
 });
 //Added export so I can use it in story book hopefully
 export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
