@@ -4,6 +4,8 @@ import StatusFilterBox from "../../../Assets/Elements/StatusFilterBox";
 import CustomizedTable from "../../../Assets/Elements/CustomizedTable";
 import {getAppointments, getStatuses} from "../../../Utils/Services/FhirAPI";
 import {normalizeAppointmentData} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
+import PatientTableStatusFilterBox from "./PatientTableStatusFilterBox";
+import FilterBox from "./FilterBox";
 
 const PatientTracking = () => {
 
@@ -91,9 +93,14 @@ const PatientTracking = () => {
 
     return (
         <PatientTrackingStyle>
-            <StatusFilterBox tabs={tabs}/>
-            <CustomizedTable tableHeaders={tableHeaders} tableData={appointments} options={statuses}/>
+            <FilterBox />
+            <PatientTableStatusFilterBox tabs={tabs} tableHeaders={tableHeaders} tableData={appointments} options={statuses} />
         </PatientTrackingStyle>
+
+
+        //     <StatusFilterBox tabs={tabs}/>
+        //     <CustomizedTable tableHeaders={tableHeaders} tableData={appointments} options={statuses}/>
+        // </PatientTrackingStyle>
     );
 };
 
