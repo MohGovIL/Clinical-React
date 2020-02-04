@@ -34,3 +34,11 @@ export const updateAppointmentStatus = async (appointmentId, value) => {
         console.log(err)
     }
 };
+
+export const getCities = async () => {
+    try {
+        return await fhirTokenInstance().get('apis/fhir/v4/ValueSet/mh_cities');
+    } catch (err) {
+        console.log(err)
+    }
+};

@@ -17,7 +17,7 @@ import {updateAppointmentStatus} from "../../../Utils/Services/FhirAPI";
  * @returns {Component}
  * @constructor
  */
-const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, appointmentId}) => {
+const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, appointmentId, label}) => {
 
     const [statusValue, setStatusValue] = useState(value);
 
@@ -37,12 +37,15 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
     };
 
     return (
+        <React.Fragment>
+            {label ? <b>{label}</b> : null}
         <StyledSelect onChange={onChangeHandler} native background_color={background_color} icon_color={icon_color}
                       text_color={text_color}
                       IconComponent={ExpandMoreIcon} value={statusValue}>
             {options.map((option, optionIndex) => <CustomizedSelectOption value={option.code}
                                                                           key={optionIndex}>{t(option.display)}</CustomizedSelectOption>)}
         </StyledSelect>
+        </React.Fragment>
     );
 };
 

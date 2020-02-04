@@ -93,7 +93,7 @@ const PatientTracking = () => {
 
     return (
         <PatientTrackingStyle>
-            <FilterBox />
+            <FilterBox statuses={statuses} />
             <PatientTableStatusFilterBox tabs={tabs} tableHeaders={tableHeaders} tableData={appointments} options={statuses} />
         </PatientTrackingStyle>
 
