@@ -17,7 +17,7 @@ export const getSettingsStartAction = () => {
     }
 };
 
-export const getSettingsSuccessAction = (payload) => {
+export const getSettingsSuccessAction = payload => {
     return {
         type: GET_SETTINGS_SUCCESS,
         payload

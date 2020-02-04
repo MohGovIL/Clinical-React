@@ -32,22 +32,20 @@ const Imaging = ({clinikalVertical}) => {
     }, []);
 
 
-
-
-
     //TODO
     //In the future there will be a routing for each component
     return (
         <React.Fragment>
             <Header Items={menuItems}/>{/*TODO Change name from Items to tabs or something more meaningful*/}
-            <PatientTracking />
+            <PatientTracking/>
         </React.Fragment>
     );
 };
-
+//TODO (clinicalVertical) can also be hard coded to 'imaging' since this is an imaging component the only concern I have is in case of typo error so leave it like that for now
 const mapStateToProps = state => {
     return {
         clinikalVertical: state.settings.clinikal_vertical
+
     }
 };
 
