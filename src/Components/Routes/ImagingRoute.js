@@ -9,7 +9,8 @@ const ImagingRoute = (props) => {
     const {path, url} = useRouteMatch();
     return (
         <Switch>
-            <Route path={`${baseRoutePath()}/imaging/patientTracking`} component={PatientTracking} />
+            <Route exact path={`${baseRoutePath()}/imaging/patientTracking`} component={PatientTracking} />
+            <Route exact path={`${baseRoutePath()}/imaging/patientAdmission`} component/>
         </Switch>
     );
 };

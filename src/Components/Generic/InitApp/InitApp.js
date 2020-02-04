@@ -2,14 +2,15 @@ import React, {Suspense} from 'react';
 import {connect} from 'react-redux';
 import VerticalRoute from "../../Routes/VerticalRoute";
 import GlobalStyle from "../../../Assets/Themes/GlobalStyle";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-const InitApp = (props) => {
+const InitApp = ({lang_id}) => {
 
 
     return (
         <React.Fragment>
-            <Suspense fallback={<p>Loading...</p>}>
-                <GlobalStyle lang_id={props.lang_id}/>
+            <Suspense fallback={<CircularProgress />}>
+                <GlobalStyle lang_id={lang_id}/>
                 <VerticalRoute/>
             </Suspense>
         </React.Fragment>

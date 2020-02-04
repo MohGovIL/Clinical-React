@@ -57,6 +57,7 @@ const PatientTracking = () => {
     const tableHeaders = [
         {
             tableHeader: 'Personal information',
+
         },
         {
             tableHeader: 'Cell phone',
