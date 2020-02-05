@@ -18,7 +18,7 @@ const InitApp = (props) => {
     return (
         <React.Fragment>
             <Suspense fallback={<p>Loading...</p>}>
-                <GlobalStyle lang_id={props.lang_id}/>
+                <GlobalStyle languageDirection={props.languageDirection}/>
                 <ThemeProvider theme={theme}>
                     <VerticalRoute/>
                 </ThemeProvider>
@@ -29,7 +29,7 @@ const InitApp = (props) => {
 
 const mapStateToProps = state => {
     return {
-        lang_id: state.settings.lang_id
+        languageDirection: state.settings.lang_dir
     }
 };
 export default connect(mapStateToProps, {getSettingsAction})(InitApp);

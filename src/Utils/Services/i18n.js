@@ -20,7 +20,7 @@ export const geti18n = (lang_id) => {
         .use(backend)
         .use(initReactI18next) // passes i18n down to react-i18next
         .init({
-            fallbackLng: false,
+            fallbackLng: 'en',
             backend: {
                 //loadPath:`${basePath()}/library/ajax/i18n_generator.php`,
                 loadPath: `${basePath()}apis/api/translation/${lang_id}`,
@@ -37,7 +37,7 @@ export const geti18n = (lang_id) => {
                 useSuspense: true, //changed from FALSE ********************************************
             },
             load: 'languageOnly',
-            lng: 'selected',
+            lng: 'en',
             debug: true,
             keySeparator: false, // we do not use keys in form messages.welcome
             nsSeparator: false,
