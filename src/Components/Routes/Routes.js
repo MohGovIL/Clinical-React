@@ -18,7 +18,7 @@ const Routes = ({isAuth}) => {
                 {/*This route is for testing*/}
                 <Route exact path={`${baseRoutePath()}/`}
                        component={stateLessOrNot() ? Login : LoginWithCSRF}/>
-                <PrivateRoute exact path={`${baseRoutePath()}/:clinikal_vertical`} component={InitApp} isAuth={isAuth}/>
+                <PrivateRoute exact path={`${baseRoutePath()}/:clinikal_vertical/:page`} component={InitApp} isAuth={isAuth}/>
             </Switch>
         </BrowserRouter>
     );

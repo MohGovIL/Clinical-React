@@ -8,7 +8,7 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import loginReducer from './Store/Reducers/LoginReducer';
 import facilityReducer from './Store/Reducers/FacilityReducer';
 import SettingsReducer from "./Store/Reducers/SettingsReducer";
-import PatientTrackingReducer from "./Store/Reducers/PatientTrackingReducer";
+import ImagingReducer from "./Store/Reducers/ImagingReducer";
 import thunk from 'redux-thunk';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -16,9 +16,9 @@ const rootReducer = combineReducers({
     login: loginReducer,
     facilityData: facilityReducer,
     settings: SettingsReducer,
-    patientTracking: PatientTrackingReducer,
+    imaging: ImagingReducer,
 });
-//Added export so I can use it in story book hopefully
+//Added export so I can use it in story book hopefully. Months later it worked :D.
 export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 // ReactDOM.render(<Provider Store={Store}><Suspense fallback="loading..."><App appUrl={iframePath}/></Suspense></Provider>, document.getElementById('root'));

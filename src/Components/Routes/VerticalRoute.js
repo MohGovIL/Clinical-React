@@ -1,17 +1,19 @@
 import React from 'react';
 import Imaging from "../Imaging/Imaging";
-import {Route, Switch} from 'react-router-dom';
+import {Switch} from 'react-router-dom';
 import {baseRoutePath} from "../../Utils/Helpers/baseRoutePath";
+import {connect} from 'react-redux'
+import PrivateRoute from "../PrivateRoute/PrivateRoute";
 
-const VerticalRoute = () => {
+const VerticalRoute = ({isAuth}) => {
 
-return(
-    <React.Fragment>
+    return (
         <Switch>
-            <Route exact path={`${baseRoutePath()}/imaging`} component={Imaging}/>
+            <PrivateRoute exact path={`${baseRoutePath()}/imaging/:page`} component={Imaging} isAuth={isAuth}/>
         </Switch>
-    </React.Fragment>
-);
+    );
 };
 
-export default VerticalRoute;
+const mapStateToProps = state => ({isAuth: state.login.isAuth});
+
+export default connect(mapStateToProps, null)(VerticalRoute);

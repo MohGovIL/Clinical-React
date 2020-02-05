@@ -1,5 +1,5 @@
 import {getGlobalSettings} from "../../../Utils/Services/API";
-
+import firstRouteMapper from "../../../Utils/Helpers/firstRouteMapper";
 import {
     GET_SETTINGS,
     GET_SETTINGS_FAILED,
@@ -9,7 +9,6 @@ import {
     SET_SETTINGS_SUCCESS
 } from "./SettingsActionTypes";
 import {geti18n} from '../../../Utils/Services/i18n';
-import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
 
 export const getSettingsStartAction = () => {
     return {
@@ -37,7 +36,7 @@ export const getSettingsAction = (history, userID) => {
             const settings = await getGlobalSettings(userID);
             await geti18n(settings.data.lang_id);
             dispatch(getSettingsSuccessAction(settings.data));
-            history.push(`${baseRoutePath()}/${settings.data.clinikal_vertical}`)
+            history.push(`${firstRouteMapper(settings.data.clinikal_vertical)}`);
         } catch (err) {
             dispatch(getSettingsFailedAction());
         }

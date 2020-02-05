@@ -35,7 +35,7 @@ const StatusFilterBox = ({tabs, setStatusFilterBoxValueAction, tabsValue}) => {
 
 const mapStateToProps = state => {
     return {
-        tabsValue: state.patientTracking.statusFilterBoxValue
+        tabsValue: state.imaging.statusFilterBoxValue
     }
 };
 
