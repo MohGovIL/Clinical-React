@@ -37,7 +37,7 @@ export const getAppointmentsSuccessAction = payload => {
 
 
 export const getAppointmentsAction = () => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         try {
             dispatch(getAppointmentsStartAction());
             const {data} = await getAppointments();

@@ -6,12 +6,12 @@
  */
 const normalizeFhirAppointment = (appointment, patientsObj)  => {
     const patientInAppointmentId = appointment.participant?.find(actorObj => actorObj.actor.reference.includes('Patient')).actor.reference.split("/")[1];
-    const healthCareService = appointment.participant?.find(actorObj => !actorObj.actor.reference.includes('Patient')).actor.display;
+    const healthcareService = appointment.participant?.find(actorObj => !actorObj.actor.reference.includes('Patient')).actor.display;
     return {
         id: appointment.id,
         priority: appointment.priority,
         status: appointment.status,
-        healthCareService,
+        healthcareService,
         examination: appointment.serviceType[0]?.text,
         examinationCode: appointment.serviceType[0]?.coding?.code,
         time: appointment.start,

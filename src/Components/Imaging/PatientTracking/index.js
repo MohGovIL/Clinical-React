@@ -2,17 +2,20 @@ import React, {useEffect, useState} from 'react';
 import PatientTrackingStyle from './Style';
 import StatusFilterBox from "../../../Assets/Elements/StatusFilterBox";
 import CustomizedTable from "../../../Assets/Elements/CustomizedTable";
-import {getAppointments, getStatuses} from "../../../Utils/Services/FhirAPI";
-import {normalizeAppointmentData} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
+import {getStatuses} from "../../../Utils/Services/FhirAPI";
 import {connect} from "react-redux";
 import {getAppointmentsAction} from "../../../Store/Actions/PatientTrackingActions/PatienTrackingActions";
 import Header from "../../../Assets/Elements/Header";
 import {useTranslation} from "react-i18next";
 import {getMenu} from "../../../Utils/Services/API";
+import setPatientTrackingTableRows from "../../../Utils/Helpers/patientTrackingTableRows";
+import {SELECT_CELL, BADGE_CELL, BUTTON_CELL, PERSONAL_INFORMATION_CELL, LABEL_CELL} from "../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
 
 const PatientTracking = ({appointments, getAppointmentsAction, vertical}) => {
 
-    // const [appointments, setAppointments] = useState([]);
+    useEffect(() => {
+
+    }, []);
 
     //Gets Appointment data
     useEffect(() => {
@@ -44,6 +47,7 @@ const PatientTracking = ({appointments, getAppointmentsAction, vertical}) => {
 
     }, []);
 
+    //Get statuses
     useEffect(() => {
         (async () => {
             try {
@@ -77,42 +81,43 @@ const PatientTracking = ({appointments, getAppointmentsAction, vertical}) => {
     const tableHeaders = [
         {
             tableHeader: 'Personal information',
-            hideTableHeader: false
-
+            hideTableHeader: false,
+            component: PERSONAL_INFORMATION_CELL
         },
         {
             tableHeader: 'Cell phone',
-            hideTableHeader: false
-
+            hideTableHeader: false,
+            component: LABEL_CELL
         },
         {
             tableHeader: 'Healthcare service',
-            hideTableHeader: false
-
+            hideTableHeader: false,
+            component: LABEL_CELL
         },
         {
             tableHeader: 'Test',
-            hideTableHeader: false
-
+            hideTableHeader: false,
+            component: LABEL_CELL
         },
         {
             tableHeader: 'Time',
-            hideTableHeader: false
-
+            hideTableHeader: false,
+            component: LABEL_CELL
         },
         {
             tableHeader: 'Status',
-            hideTableHeader: false
-
+            hideTableHeader: false,
+            component: SELECT_CELL
         },
         {
             tableHeader: 'Messages',
-            hideTableHeader: false
-
+            hideTableHeader: false,
+            component: BADGE_CELL
         },
         {
             tableHeader: 'Patient admission',
-            hideTableHeader: true
+            hideTableHeader: true,
+            component: BUTTON_CELL
         },
 
     ];

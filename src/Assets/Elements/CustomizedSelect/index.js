@@ -11,13 +11,13 @@ import {updateAppointmentStatus} from "../../../Utils/Services/FhirAPI";
  * @param icon_color
  * @param textcolor
  * @param value
- * @param onChange
  * @param options
+ * @param onChangeHandler
  * @param appointmentId
  * @returns {Component}
  * @constructor
  */
-const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, appointmentId}) => {
+const CustomizedSelect = ({background_color, icon_color, text_color, value, onChangeHandler, options, appointmentId}) => {
 
     const [statusValue, setStatusValue] = useState(value);
 
@@ -26,18 +26,17 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
     //TODO
     //Put it in a separate place and pass it on
     //So you could give different onChange functions
-    const onChangeHandler = async e => {
+    const onChangeHandlerChange = async e => {
         try {
             const {data} = await updateAppointmentStatus(appointmentId, e.target.value);
             setStatusValue(data.status)
         } catch (err) {
             console.log(err);
         }
-
     };
 
     return (
-        <StyledSelect onChange={onChangeHandler} native background_color={background_color} icon_color={icon_color}
+        <StyledSelect onChange={onChangeHandlerChange} native background_color={background_color} icon_color={icon_color}
                       text_color={text_color}
                       IconComponent={ExpandMoreIcon} value={statusValue}>
             {options.map((option, optionIndex) => <CustomizedSelectOption value={option.code}
