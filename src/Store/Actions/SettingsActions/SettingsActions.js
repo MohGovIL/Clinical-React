@@ -18,9 +18,6 @@ export const getSettingsStartAction = () => {
 };
 
 export const getSettingsSuccessAction = (payload) => {
-
-    payload.format_date = payload.format_date.replace(/^DD|YYYY/gm,function(x){ return x.toLowerCase()})
-
     return {
         type: GET_SETTINGS_SUCCESS,
         payload
