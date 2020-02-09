@@ -5,6 +5,7 @@ const INITIAL_STATE = {
     facility: null,
     lang_id: null,
     lang_dir: null,
+    lang_code: null,
     format_date: null,
     user_role: null,
     clinikal_vertical: null

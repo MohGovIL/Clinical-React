@@ -3,22 +3,31 @@ import Moment from "moment";
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import {DatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
-import StyledDatePicker from "./Styles";
-
 import MomentUtils from "@date-io/moment";
-import 'moment/locale/he';
-
 import Button from "@material-ui/core/Button/Button";
-import { makeStyles } from "@material-ui/core";
+import {makeStyles} from "@material-ui/core";
+// import 'moment/locale/he';
 
 const customizedDatePickerStyle = makeStyles({
-    label : {
-        transform: 'rotate(180deg)'
-    },
+    label: {
+        transform: props => `rotate( ${props.languageDirection === 'rtl' ? '180deg' : '0def'} )`,
+    }
 });
 
+const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode}) => {
+    // languageCode = 'en-gb';
 
-const CustomizedDatePicker = ({dateFormat, ...other}) => {
+    import(`moment/locale/${languageCode}.js`).then(component => {
+        Moment.locale(languageCode);
+        if (languageCode === 'he') {
+            Moment.updateLocale('he', {
+                weekdays: 'יום ראשון_ יום שני_ יום שלישי_ יום רביעי_ יום חמישי_ יום שישי_שבת'.split('_'),
+            });
+        }
+    }).catch(err => {
+        console.log("CustomizedDatePicker: error: " + err);
+    });
+
     const [selectedDate, setSelectedDate] = useState(new Date());
 
     const handleDateChange = date => {
@@ -37,46 +46,39 @@ const CustomizedDatePicker = ({dateFormat, ...other}) => {
         console.log("Current date: " + futureMoment.format(dateFormat));
     }
 
-    //need to place in settings
-    Moment.updateLocale('he', {
-        weekdays: 'יום ראשון_ יום שני_ יום שלישי_ יום רביעי_ יום חמישי_ יום שישי_שבת'.split('_'),
-    });
-
-    //if(lang_code == 'he){
-    //
-    // const classes = customizedDatePickerStyle();
-    const classes = customizedDatePickerStyle();
-    //}
+    const classes = customizedDatePickerStyle({languageDirection});
 
     return (
-            <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
-                <Button onClick={() => scrollDays('prev')}> Prev </Button>
-                <StyledDatePicker
-                    disableToolbar={"true"}
-                    variant="inline"
-                    format={"MMMM D, dddd"}
-                    InputProps={{
-                        disableUnderline: true,
-                    }}
-                    id="date-picker-inline"
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                    leftArrowButtonProps={{
-                        classes: classes
-                    }}
-                    rightArrowButtonProps={{
-                        classes: classes
-                    }}
-                    autoOk={"true"}
-                />
-                <Button onClick={() => scrollDays('next')}> Next </Button>
-            </MuiPickersUtilsProvider>
+        <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
+            <Button onClick={() => scrollDays('prev')}> Prev </Button>
+            <DatePicker
+                disableToolbar={"true"}
+                variant="inline"
+                format={"MMMM D, dddd"}
+                InputProps={{
+                    disableUnderline: true,
+                }}
+                id="date-picker-inline"
+                value={selectedDate}
+                onChange={handleDateChange}
+                leftArrowButtonProps={{
+                    classes: classes
+                }}
+                rightArrowButtonProps={{
+                    classes: classes
+                }}
+                autoOk={"true"}
+            />
+            <Button onClick={() => scrollDays('next')}> Next </Button>
+        </MuiPickersUtilsProvider>
     );
 };
 
 const mapStateToProps = state => {
     return {
-        dateFormat: state.settings.format_date
+        dateFormat: state.settings.format_date,
+        languageDirection: state.settings.lang_dir,
+        languageCode: state.settings.lang_code,
     }
 }
 
