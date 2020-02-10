@@ -1,32 +1,39 @@
-import "date-fns";
-import Moment from "moment";
+import Moment, {lang} from "moment";
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
-import {DatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from "@date-io/moment";
-import Button from "@material-ui/core/Button/Button";
-import {makeStyles} from "@material-ui/core";
-// import 'moment/locale/he';
+
+import {DatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+
+import {makeStyles, IconButton} from "@material-ui/core";
+import {ChevronLeft, ChevronRight} from "@material-ui/icons";
+
+import 'moment/locale/en-gb';
+import 'moment/locale/he';
+import 'moment/locale/ru';
+import mergeProps from "react-redux/lib/connect/mergeProps";
+
+
 
 const customizedDatePickerStyle = makeStyles({
     label: {
         transform: props => `rotate( ${props.languageDirection === 'rtl' ? '180deg' : '0def'} )`,
+        color: props => `${props.props.icon_color}`,
     }
 });
 
-const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode}) => {
-    // languageCode = 'en-gb';
+const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, props}) => {
+console.log("-==========-");
+console.log(props);
+console.log("-==========-");
+    languageCode = (languageCode === "en" ? "en-gb" : languageCode);
+    Moment.locale(languageCode);
 
-    import(`moment/locale/${languageCode}.js`).then(component => {
-        Moment.locale(languageCode);
-        if (languageCode === 'he') {
-            Moment.updateLocale('he', {
-                weekdays: 'יום ראשון_ יום שני_ יום שלישי_ יום רביעי_ יום חמישי_ יום שישי_שבת'.split('_'),
-            });
-        }
-    }).catch(err => {
-        console.log("CustomizedDatePicker: error: " + err);
-    });
+    if (languageCode === 'he') {
+        Moment.updateLocale('he', {
+            weekdays: 'יום ראשון_ יום שני_ יום שלישי_ יום רביעי_ יום חמישי_ יום שישי_שבת'.split('_'),
+        });
+    }
 
     const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -46,13 +53,18 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode}) => 
         console.log("Current date: " + futureMoment.format(dateFormat));
     }
 
-    const classes = customizedDatePickerStyle({languageDirection});
+    const classes = customizedDatePickerStyle({languageDirection, props});
+
+    const ChevronFirst = languageDirection === 'rtl' ? ChevronRight: ChevronLeft;
+    const ChevronSecond = languageDirection === 'rtl' ? ChevronLeft : ChevronRight;
 
     return (
         <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
-            <Button onClick={() => scrollDays('prev')}> Prev </Button>
+            <IconButton onClick={() => scrollDays('prev')}>
+                <ChevronFirst htmlColor={props.icon_color} />
+            </IconButton>
             <DatePicker
-                disableToolbar={"true"}
+                disableToolbar
                 variant="inline"
                 format={"MMMM D, dddd"}
                 InputProps={{
@@ -67,19 +79,32 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode}) => 
                 rightArrowButtonProps={{
                     classes: classes
                 }}
-                autoOk={"true"}
+                autoOk
+                // showTabs="true"
+                // showTodayButton
+                // okLabel={""}
+                // cancelLabel={""}
+                /*DialogProps={{
+                    root: {},
+                    style: {
+                        zIndex: "0 !important",
+                    },
+                }}*/
             />
-            <Button onClick={() => scrollDays('next')}> Next </Button>
+            <IconButton onClick={() => scrollDays('next')}>
+                <ChevronSecond htmlColor={props.icon_color} />
+            </IconButton>
         </MuiPickersUtilsProvider>
     );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, props) => {
     return {
         dateFormat: state.settings.format_date,
         languageDirection: state.settings.lang_dir,
         languageCode: state.settings.lang_code,
+        props: props,
     }
 }
 
-export default connect(mapStateToProps, null)(CustomizedDatePicker);
+export default connect(mapStateToProps,null)(CustomizedDatePicker);

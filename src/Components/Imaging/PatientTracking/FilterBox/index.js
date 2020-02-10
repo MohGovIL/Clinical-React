@@ -37,7 +37,7 @@ const FilterBox = ({statuses}) => {
 
     return (
         <StyledFilterBox>
-            <CustomizedDatePicker />
+            <CustomizedDatePicker icon_color={'#076ce9'} />
             {labelElements.map((labelElement, labelElementsIndex) =>
                 <CustomizedSelect key={labelElementsIndex} background_color={'#eaf7ff'} icon_color={'#076ce9'}
                                   value={'planned'} options={cities}

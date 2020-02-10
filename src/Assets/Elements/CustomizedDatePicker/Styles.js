@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import {DatePicker} from '@material-ui/pickers';
+import {MuiPickersUtilsProvider} from '@material-ui/pickers/';
 
-const StyledDatePicker = styled(DatePicker)`
+export default styled(MuiPickersUtilsProvider)`
 
 `;
 
-export default StyledDatePicker;
+// export default StyledMuiPickersUtilsProvider;
