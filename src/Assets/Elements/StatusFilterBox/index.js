@@ -10,8 +10,6 @@ import {setStatusFilterBoxValueAction} from "../../../Store/Actions/PatientTrack
  * @author Idan Gigi gigiidan@gmail.com
  * @param tabs - array
  * @param setStatusFilterBoxIndexAction - redux action
- * @param tabsIndex - redux prop
- * @example [{tabName: string, count: Number}]
  * @returns {Component}
  * @constructor
  */

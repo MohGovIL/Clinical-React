@@ -1,8 +1,8 @@
 import {
     SET_STATUS_FILTER_BOX_VALUE,
-    GET_APPOINTMENTS,
-    GET_APPOINTMENTS_FAILED,
-    GET_APPOINTMENTS_SUCCESS
+    GET_PATIENTS_DATA_SUCCESS,
+    GET_PATIENTS_DATA_FAILED,
+    GET_PATIENTS_DATA
 } from "./PatientTrackingTypes";
 import {getAppointments} from "../../../Utils/Services/FhirAPI";
 import {normalizeAppointmentData} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
@@ -15,36 +15,36 @@ export const setStatusFilterBoxValueAction = value => {
     }
 };
 
-export const getAppointmentsStartAction = () => {
+export const setPatientsDataStartAction = () => {
     return {
-        type: GET_APPOINTMENTS
+        type: GET_PATIENTS_DATA
     };
 };
 
-export const getAppointmentsFailedAction = () => {
+export const setPatientsDataFailedAction = () => {
     return {
-        type: GET_APPOINTMENTS_FAILED
+        type: GET_PATIENTS_DATA_FAILED
     };
 };
 
 
-export const getAppointmentsSuccessAction = payload => {
+export const setPatientsDataSuccessAction = payload => {
     return {
-        type: GET_APPOINTMENTS_SUCCESS,
+        type: GET_PATIENTS_DATA_SUCCESS,
         payload
     };
 };
 
 
-export const getAppointmentsAction = () => {
-    return async (dispatch, getState) => {
-        try {
-            dispatch(getAppointmentsStartAction());
-            const {data} = await getAppointments();
-            const normalizedAppointmentData = normalizeAppointmentData(data.entry);
-            dispatch(getAppointmentsSuccessAction(normalizedAppointmentData))
-        } catch (err) {
-            dispatch(getAppointmentsFailedAction());
-        }
+export const setPatientsDataAction = (patientsData) => {
+    return async dispatch => {
+        // try {
+            // dispatch(setPatientsDataStartAction());
+            // const {data} = await getAppointments();
+            // const normalizedAppointmentData = normalizeAppointmentData(data.entry);
+            dispatch(setPatientsDataSuccessAction(patientsData));
+        // } catch (err) {
+        //     dispatch(setPatientsDataFailedAction());
+        // }
     };
 };
