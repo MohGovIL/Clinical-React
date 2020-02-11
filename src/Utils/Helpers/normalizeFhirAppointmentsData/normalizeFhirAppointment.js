@@ -1,8 +1,9 @@
+// noinspection JSClosureCompilerSyntax
 /**
  * @author Idan Gigi gigiidan@gmail.com
  * @param appointment - object
  * @param patientsObj - object
- * @returns {{}}
+ * @returns {}
  */
 const normalizeFhirAppointment = (appointment, patientsObj)  => {
     const patientInAppointmentId = appointment.participant?.find(actorObj => actorObj.actor.reference.includes('Patient')).actor.reference.split("/")[1];
