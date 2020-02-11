@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import PatientTrackingStyle from './Style';
 import StatusFilterBox from "../../../Assets/Elements/StatusFilterBox";
 import CustomizedTable from "../../../Assets/Elements/CustomizedTable";
-import {getStatuses} from "../../../Utils/Services/FhirAPI";
+import {getValueSet} from "../../../Utils/Services/FhirAPI";
 import {connect} from "react-redux";
 import {setPatientsDataAction} from "../../../Store/Actions/PatientTrackingActions/PatienTrackingActions";
 import Header from "../../../Assets/Elements/Header";
@@ -19,7 +19,7 @@ import {
 import {getAppointments} from "../../../Utils/Services/FhirAPI";
 import {normalizeAppointmentData} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
 
-const PatientTracking = ({vertical, status, setPatientsDataAction}) => {
+const PatientTracking = ({vertical, status, setPatientsDataAction, history}) => {
 
     const tableHeaders = [
         {
@@ -60,34 +60,34 @@ const PatientTracking = ({vertical, status, setPatientsDataAction}) => {
         {
             tableHeader: 'Patient admission',
             hideTableHeader: true,
-            component: BUTTON_CELL
+            component: BUTTON_CELL,
         },
 
     ];
 
-    const tabs = [
+    const [tabs, setTabs] = useState([
         {
             tabName: 'Invited',
-            count: 10,
+            count: 0,
 
         },
         {
             tabName: 'Waiting for examination',
-            count: 10
+            count: 0
         },
         {
             tabName: 'Waiting for decoding',
-            count: 10
+            count: 0
         },
         {
             tabName: 'Finished',
-            count: 10
+            count: 0
         }
-    ];
+    ]);
 
     const [tableData, setTableData] = useState([]);
 
-    //Gets Appointment data
+    //Gets patients data
     useEffect(() => {
         (async () => {
             try {
@@ -97,9 +97,10 @@ const PatientTracking = ({vertical, status, setPatientsDataAction}) => {
                         const appointments = await getAppointments();
                         const normalizedAppointmentData = normalizeAppointmentData(appointments.data.entry);
                         setPatientsDataAction(normalizedAppointmentData);
-                        const statuses = await getStatuses();
+                        // setTabs(...tabs, tabs[status]) //Should be setting to state so it will re-render (but tabs are hard coded)
+                        const statuses = await getValueSet('apptstat');
                         statusesArr.push(statuses.data.compose.include[0].concept);
-                        setTableData(setPatientDataInvitedTableRows(normalizedAppointmentData, tableHeaders, statusesArr));
+                        setTableData(setPatientDataInvitedTableRows(normalizedAppointmentData, tableHeaders, statusesArr, history));
                         break;
                     case 1:
                         break;

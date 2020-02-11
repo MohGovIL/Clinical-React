@@ -1,4 +1,6 @@
-const setPatientDataInvitedTableRows = (appointments, tableHeaders, options) => {
+import {baseRoutePath} from "./baseRoutePath";
+
+const setPatientDataInvitedTableRows = (appointments, tableHeaders, options, history) => {
     let rows = [];
     for (let rowsIndex = 0; rowsIndex < appointments.length; rowsIndex++) {
         let row = [];
@@ -21,14 +23,19 @@ const setPatientDataInvitedTableRows = (appointments, tableHeaders, options) => 
                         padding: 'none',
                         align: 'center',
                         color: 'primary',
-                        onClickHandler: null
+                        onClickHandler(){
+                            history.push({
+                                pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                                search: `?index=${rowsIndex}`
+                            })
+                        }
                     });
                     break;
                 case 'Messages':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        badgeContent: appointments.length
+                        badgeContent: 0
                     });
                     break;
                 case 'Status':
