@@ -2,10 +2,8 @@ import React, {useEffect, useState} from 'react';
 import StyledFilterBox from "./Style";
 import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
-import CustomizedTableBadge from "../../../../Assets/Elements/CustomizedTable/CustomizedTableBadge";
 import {useTranslation} from "react-i18next";
 import {getCities} from "../../../../Utils/Services/FhirAPI";
-import {normalizeAppointmentData} from "../../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
 
 const FilterBox = ({statuses}) => {
     const {t} = useTranslation();
@@ -13,9 +11,11 @@ const FilterBox = ({statuses}) => {
     const labelElements = [
         {
             labelName: t("Facility name"),
+            code: 'organizationName',
         },
         {
             labelName: t("Service type"),
+            code: 'serviceType',
         },
     ];
 
@@ -35,15 +35,26 @@ const FilterBox = ({statuses}) => {
         })()
     }, []);
 
+    const organizationOnChangeHandler = () => {
+        console.log("organizationOnChangeHandler => call()");
+    };
+
+    const serviceTypeOnChangeHandler = () => {
+        console.log("serviceTypeOnChangeHandler => call()");
+    };
+
     return (
         <StyledFilterBox>
-            <CustomizedDatePicker icon_color={'#076ce9'} />
+            <CustomizedDatePicker iconColor={'#076ce9'}/>
+
             {labelElements.map((labelElement, labelElementsIndex) =>
                 <CustomizedSelect key={labelElementsIndex} background_color={'#eaf7ff'} icon_color={'#076ce9'}
                                   value={'planned'} options={cities}
                                   appointmentId={'1'}
                                   text_color={'#076ce9'}
                                   label={labelElement.labelName}
+                                  onChange={labelElement.code === 'organizationName' ? organizationOnChangeHandler : serviceTypeOnChangeHandler }
+
                 />
             )}
         </StyledFilterBox>

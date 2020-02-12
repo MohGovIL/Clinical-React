@@ -2,68 +2,53 @@ import Moment, {lang} from "moment";
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import MomentUtils from "@date-io/moment";
-
-import {DatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
-
-import {makeStyles, IconButton} from "@material-ui/core";
+import {StyledDatePicker, GlobalStyledDatePicker} from "./Styles";
+import {MuiPickersUtilsProvider} from '@material-ui/pickers';
+import {IconButton} from "@material-ui/core";
 import {ChevronLeft, ChevronRight} from "@material-ui/icons";
 
 import 'moment/locale/en-gb';
 import 'moment/locale/he';
-import 'moment/locale/ru';
-import mergeProps from "react-redux/lib/connect/mergeProps";
+import {setFilterDateAction} from "../../../Store/Actions/SettingsActions/SettingsActions";
 
-
-
-const customizedDatePickerStyle = makeStyles({
-    label: {
-        transform: props => `rotate( ${props.languageDirection === 'rtl' ? '180deg' : '0def'} )`,
-        color: props => `${props.props.icon_color}`,
-    }
-});
-
-const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, props}) => {
-console.log("-==========-");
-console.log(props);
-console.log("-==========-");
+const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filterDate, setFilterDateAction, props}) => {
     languageCode = (languageCode === "en" ? "en-gb" : languageCode);
+
     Moment.locale(languageCode);
 
     if (languageCode === 'he') {
         Moment.updateLocale('he', {
             weekdays: 'יום ראשון_ יום שני_ יום שלישי_ יום רביעי_ יום חמישי_ יום שישי_שבת'.split('_'),
+            weekdaysShort: 'א_ב_ג_ד_ה_ו_ש'.split('_'),
         });
     }
 
-    const [selectedDate, setSelectedDate] = useState(new Date());
-
     const handleDateChange = date => {
-        setSelectedDate(date);
+        setFilterDateAction(date);
     };
 
     const scrollDays = (direction) => {
-        let date = new Date(selectedDate);
+        let futureMoment;
+
         if (direction === 'prev') {
-            var futureMoment = Moment(date).subtract(1, 'days');
+            futureMoment = Moment(filterDate).subtract(1, 'days');
         }
         if (direction === 'next') {
-            var futureMoment = Moment(date).add(1, 'days');
+            futureMoment = Moment(filterDate).add(1, 'days');
         }
-        setSelectedDate(futureMoment);
-        console.log("Current date: " + futureMoment.format(dateFormat));
+        setFilterDateAction(futureMoment);
     }
 
-    const classes = customizedDatePickerStyle({languageDirection, props});
-
-    const ChevronFirst = languageDirection === 'rtl' ? ChevronRight: ChevronLeft;
+    const ChevronFirst = languageDirection === 'rtl' ? ChevronRight : ChevronLeft;
     const ChevronSecond = languageDirection === 'rtl' ? ChevronLeft : ChevronRight;
 
     return (
         <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
+            <GlobalStyledDatePicker iconColor={props.iconColor} langDirection={languageDirection}/>
             <IconButton onClick={() => scrollDays('prev')}>
-                <ChevronFirst htmlColor={props.icon_color} />
+                <ChevronFirst htmlColor={props.iconColor}/>
             </IconButton>
-            <DatePicker
+            <StyledDatePicker
                 disableToolbar
                 variant="inline"
                 format={"MMMM D, dddd"}
@@ -71,40 +56,26 @@ console.log("-==========-");
                     disableUnderline: true,
                 }}
                 id="date-picker-inline"
-                value={selectedDate}
+                value={filterDate}
                 onChange={handleDateChange}
-                leftArrowButtonProps={{
-                    classes: classes
-                }}
-                rightArrowButtonProps={{
-                    classes: classes
-                }}
                 autoOk
-                // showTabs="true"
-                // showTodayButton
-                // okLabel={""}
-                // cancelLabel={""}
-                /*DialogProps={{
-                    root: {},
-                    style: {
-                        zIndex: "0 !important",
-                    },
-                }}*/
+                text_color={props.iconColor}
             />
             <IconButton onClick={() => scrollDays('next')}>
-                <ChevronSecond htmlColor={props.icon_color} />
+                <ChevronSecond htmlColor={props.iconColor}/>
             </IconButton>
         </MuiPickersUtilsProvider>
     );
 };
 
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (state, ownProps) => {
     return {
         dateFormat: state.settings.format_date,
         languageDirection: state.settings.lang_dir,
         languageCode: state.settings.lang_code,
-        props: props,
+        filterDate: state.settings.filter_date,
+        props: ownProps,
     }
 }
 
-export default connect(mapStateToProps,null)(CustomizedDatePicker);
+export default connect(mapStateToProps, {setFilterDateAction})(CustomizedDatePicker);
