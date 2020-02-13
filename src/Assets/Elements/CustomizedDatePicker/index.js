@@ -37,7 +37,7 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
             futureMoment = Moment(filterDate).add(1, 'days');
         }
         setFilterDateAction(futureMoment);
-    }
+    };
 
     const ChevronFirst = languageDirection === 'rtl' ? ChevronRight : ChevronLeft;
     const ChevronSecond = languageDirection === 'rtl' ? ChevronLeft : ChevronRight;

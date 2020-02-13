@@ -4,9 +4,11 @@ import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
 import {getOrganization} from "../../../../Utils/Services/FhirAPI";
-import ExpandMore from "@material-ui/icons/ExpandMore";
+import {connect} from "react-redux";
 
-const FilterBox = ({statuses}) => {
+import {setFilterDateAction} from "../../../../Store/Actions/SettingsActions/SettingsActions";
+
+const FilterBox = ({languageDirection, props}) => {
     const {t} = useTranslation();
 
     const labelElements = [
@@ -65,7 +67,6 @@ const FilterBox = ({statuses}) => {
     return (
         <StyledFilterBox>
             <CustomizedDatePicker iconColor={'#076ce9'}/>
-
             {labelElements.map((labelElement, labelElementsIndex) =>
                 <CustomizedSelect key={labelElementsIndex} background_color={'#eaf7ff'} icon_color={'#076ce9'}
                                   value={organization} options={labelElement.code === 'organizationName' ? labelOrganization : [] }
@@ -73,11 +74,18 @@ const FilterBox = ({statuses}) => {
                                   text_color={'#076ce9'}
                                   label={labelElement.labelName}
                                   onChange={labelElement.code === 'organizationName' ? organizationOnChangeHandler : serviceTypeOnChangeHandler }
-
+                                  langDirection={languageDirection}
+                                  code_menu={labelElement.code}
                 />
             )}
         </StyledFilterBox>
     );
 };
 
-export default FilterBox;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        languageDirection: state.settings.lang_dir,
+        props: ownProps,
+    }
+};
+export default connect(mapStateToProps, null)(FilterBox);
