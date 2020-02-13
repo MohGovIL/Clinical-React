@@ -1,5 +1,5 @@
-import Moment, {lang} from "moment";
-import React, {useState} from 'react';
+import Moment from "moment";
+import React from 'react';
 import {connect} from 'react-redux';
 import MomentUtils from "@date-io/moment";
 import {StyledDatePicker, GlobalStyledDatePicker} from "./Styles";

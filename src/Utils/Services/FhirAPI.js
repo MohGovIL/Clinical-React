@@ -35,7 +35,7 @@ export const updateAppointmentStatus = async (appointmentId, value) => {
     }
 };
 
-export const getCities = async () => {
+export const getOrganization = async () => {
     try {
         return await fhirTokenInstance().get('apis/fhir/v4/Organization?active=1');
     } catch (err) {

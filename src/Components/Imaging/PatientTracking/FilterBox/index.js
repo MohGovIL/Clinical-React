@@ -3,7 +3,8 @@ import StyledFilterBox from "./Style";
 import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
-import {getCities} from "../../../../Utils/Services/FhirAPI";
+import {getOrganization} from "../../../../Utils/Services/FhirAPI";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 
 const FilterBox = ({statuses}) => {
     const {t} = useTranslation();
@@ -19,23 +20,41 @@ const FilterBox = ({statuses}) => {
         },
     ];
 
+    const labelOrganization = [
+        {
+            code: 0,
+            display: t('all'),
+        },
+        {
+            code: 3,
+            display: 'מרפאת תל אביב'
+        },
+        {
+            code: 4,
+            display: 'מרפאת חיפה'
+        }
+    ];
+
     const [cities, setCities] = useState([]);
 
     //Gets cities list data
     useEffect(() => {
         (async () => {
             try {
-                const {data} = await getCities();
+                const {data} = await getOrganization();
                 // const normalizedAppointmentData = normalizeAppointmentData(data.entry);
                 // setAppointments(normalizedAppointmentData);
-                setCities(data.compose.include[0].concept);
+                // setCities(labelOrganization);
             } catch (err) {
                 console.log(err)
             }
         })()
     }, []);
 
-    const organizationOnChangeHandler = () => {
+    const [organization, setOrganization] = useState(0);
+
+    const organizationOnChangeHandler = (code) => {
+        setOrganization(code);
         console.log("organizationOnChangeHandler => call()");
     };
 
@@ -49,7 +68,7 @@ const FilterBox = ({statuses}) => {
 
             {labelElements.map((labelElement, labelElementsIndex) =>
                 <CustomizedSelect key={labelElementsIndex} background_color={'#eaf7ff'} icon_color={'#076ce9'}
-                                  value={'planned'} options={cities}
+                                  value={organization} options={labelElement.code === 'organizationName' ? labelOrganization : [] }
                                   appointmentId={'1'}
                                   text_color={'#076ce9'}
                                   label={labelElement.labelName}
