@@ -3,7 +3,7 @@ import StyledFilterBox from "./Style";
 import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
-import {getOrganization} from "../../../../Utils/Services/FhirAPI";
+import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 
 const FilterBox = ({statuses}) => {
@@ -54,7 +54,9 @@ const FilterBox = ({statuses}) => {
     const [organization, setOrganization] = useState(0);
 
     const organizationOnChangeHandler = (code) => {
-        setOrganization(code);
+        setOrganization(code.target.value);
+
+        const {data} = getHealhcareService(code.target.value);
         console.log("organizationOnChangeHandler => call()");
     };
 

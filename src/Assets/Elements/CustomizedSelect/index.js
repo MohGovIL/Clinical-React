@@ -26,7 +26,7 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
     return (
         <React.Fragment>
             {label ? <b>{label}</b> : null}
-            <StyledSelect onChange={() => onChange()} native background_color={background_color} icon_color={icon_color}
+            <StyledSelect onChange={(event) => onChange(event)} native background_color={background_color} icon_color={icon_color}
                           text_color={text_color}
                           IconComponent={() => (<ExpandMore className={"MuiSelect-icon"} />)}
                           disableUnderline={true}
