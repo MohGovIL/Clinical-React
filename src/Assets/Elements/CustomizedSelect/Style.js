@@ -21,6 +21,7 @@ export const StyledButton = styled(Button)`
   margin: 0px 5px 0px 5px;
   padding: 5px;
   border-bottom: 0px !important;
+  //min-width: 138px;
 
   .MuiButton-label {
     padding:0px 5px 0px 5px;

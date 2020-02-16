@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import StyledSelect from './Style'
 import {StyledButton, StyledMenu, StyledMenuItem} from './Style'
 
@@ -36,91 +36,98 @@ import {ChevronLeft, ChevronRight} from "@material-ui/icons";
  * @returns {Component}
  * @constructor
  */
-const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, appointmentId, label, langDirection,codeMenu}) => {
+const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, appointmentId, label, langDirection, codeMenu}) => {
 
     const {t} = useTranslation();
     ///
     const [anchorEl, setAnchorEl] = React.useState(null);
+
     const [selectedIndex, setSelectedIndex] = React.useState(1);
 
     const handleClick = event => {
-        setAnchorEl( event.currentTarget );
+        setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
     };
 
-    const handleMenuItemClick = (event, index) => {
-        setSelectedIndex(index);
-
-        console.log("-----");
-        console.log(index);
-        console.log("-----");
-
+    const handleMenuItemClick = (code) => {
+        onChange(code);
         setAnchorEl(null);
     };
+
     ///
     let opts = {};
     let iconForButtonMenu = <ExpandMore htmlColor={icon_color}/>;
     let typeIcon = (langDirection === 'rtl' ? 'endIcon' : 'startIcon');
     opts[typeIcon] = iconForButtonMenu;
 
+    var ButtonLabel;
+    if (options !== undefined) {
+        var res = options.find(obj => {
+            return obj.code === value
+        });
+
+        if (res !== undefined) {
+            ButtonLabel = res.name;
+        }
+    }
+
 
 
     return (
         <React.Fragment>
             {label ? <b>{label}</b> : null}
-
             <StyledButton
                 background_color={background_color}
                 icon_color={icon_color}
                 text_color={text_color}
-
                 aria-controls="customized-menu"
                 aria-haspopup="true"
-                // ref={anchorEl.current}
-                // onClick={() => onChange()}
                 onClick={handleClick}
                 language_direction={langDirection}
                 {...opts}
             >
-                {t("All")}
+                {ButtonLabel}
             </StyledButton>
-            {/*<ClickAwayListener onClickAway={handleClose}>*/}
-                <StyledMenu
-                    background_color={background_color}
-                    icon_color={icon_color}
-                    text_color={text_color}
+            <StyledMenu
+                background_color={background_color}
+                icon_color={icon_color}
+                text_color={text_color}
 
-                    id="customized-menu"
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
+                id="customized-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
 
-                    elevation={0}
-                    getContentAnchorEl={null}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'center',
-                    }}
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center',
-                    }}
-                >
-                    {options.map((option, optionIndex) =>
-                        <StyledMenuItem key={optionIndex} selected={optionIndex === selectedIndex}
-                                        onClick={event => handleMenuItemClick(event, option.code)}
-                        >
-                            <ListItemText value={option.code} primary={t(option.display)}/>
-                        </StyledMenuItem>
-                    )}
-                </StyledMenu>
-            {/*</ClickAwayListener>*/}
+                elevation={0}
+                getContentAnchorEl={null}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                {options.map((option, optionIndex) =>
+                    <StyledMenuItem key={optionIndex}
+                        // selected={optionIndex === selectedIndex}
+                                    onClick={event => handleMenuItemClick(option.code)}
+                    >
+                        <ListItemText value={option.code} primary={t(option.name)}/>
+                    </StyledMenuItem>
+                )}
+            </StyledMenu>
         </React.Fragment>
     );
+};
+
+CustomizedSelect.propTypes = {
+
 };
 
 export default CustomizedSelect;
