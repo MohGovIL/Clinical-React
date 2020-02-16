@@ -4,8 +4,8 @@ import {
     GET_PATIENTS_DATA_FAILED,
     GET_PATIENTS_DATA
 } from "./PatientTrackingTypes";
-import {getAppointments} from "../../../Utils/Services/FhirAPI";
-import {normalizeAppointmentData} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentData";
+import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
+import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentsWithPatients";
 
 
 export const setStatusFilterBoxValueAction = value => {

@@ -10,9 +10,9 @@ const StatusFilterBoxTabs = ({value, orientation, tabsHandler, tabs}) => {
     return (
         <StyledStatusFilterBoxTabs value={value} orientation={orientation} variant={'fullWidth'}>
             {tabs.map((tabObj, tabIndex) => <StatusFilterBoxTab key={tabIndex} label={t(tabObj.tabName)}
-                                                                selected={value === tabIndex}
+                                                                selected={value === tabObj.tabValue}
                                                                 tabHandler={tabsHandler}
-                                                                tabIndex={tabIndex}
+                                                                tabValue={tabObj.tabValue}
                                                                 count={tabObj.count}/>)}
         </StyledStatusFilterBoxTabs>
     );

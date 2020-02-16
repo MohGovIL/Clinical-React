@@ -13,7 +13,7 @@ import {setStatusFilterBoxValueAction} from "../../../Store/Actions/PatientTrack
  * @returns {Component}
  * @constructor
  */
-const StatusFilterBox = ({tabs, setStatusFilterBoxValueAction, tabsValue}) => {
+const StatusFilterBox = ({tabs, setStatusFilterBoxValueAction, selectedTab}) => {
 
     const matches = useMediaQuery(`(min-width:${devicesValue.desktop}px)`);
 
@@ -25,7 +25,7 @@ const StatusFilterBox = ({tabs, setStatusFilterBoxValueAction, tabsValue}) => {
 
     return (
         <StyledAppBar>
-            <StatusFilterBoxTabs value={tabsValue} tabs={tabs}
+            <StatusFilterBoxTabs value={selectedTab} tabs={tabs}
                                  tabsHandler={tabsHandler} orientation={matches ? "vertical" : "horizontal"}/>
         </StyledAppBar>
     );
@@ -33,7 +33,7 @@ const StatusFilterBox = ({tabs, setStatusFilterBoxValueAction, tabsValue}) => {
 
 const mapStateToProps = state => {
     return {
-        tabsValue: state.imaging.statusFilterBoxValue
+        selectedTab: state.filters.statusFilterBoxValue
     }
 };
 
