@@ -29,24 +29,21 @@ const implementMeNotActive = () => {
     console.log('Implement me not active :D')
 };
 
-const invitedTabActiveFunction = async () => {
-//     import { store } from '/path/to/createdStore';
-// ​
-// function testAction(text) {
-//     return {
-//         type: 'TEST_ACTION',
-//         text
-//     }
-// }
-// ​
-// store.dispatch(testAction('StackOverflow))
+const invitedTabActiveFunction = async (setTableData, setTableHeaders, history) => {
     try {
         console.log('invitedTabActiveFunction');
         const appointmentsWithPatients = await getAppointmentsWithPatients();
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
         store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
-        const statuses = await getValueSet('apptstat');
+        // const statuses = await getValueSet('apptstat');
+        const options = [
+            {
+                display: 'hey',
+                code: '1',
+            }
+    ];
         // setPatientDataInvitedTableRows(patients, appointments, tableHeaders, statusesArr, history)
+        setPatientDataInvitedTableRows(patients, appointments, options, tableHeaders, history)
     } catch (err) {
         console.log(err);
     }
@@ -156,31 +153,11 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];
                     if (tab.tabValue === status) {
-                        tab.activeAction();
+                        tab.activeAction(setTableData, setTableHeaders, history);
                     } else {
                         tab.notActiveAction();
                     }
                 }
-                // switch (status) {
-                //     case 0:
-                //         let statusesArr = [];
-                //         const appointmentsWithPatients = await getAppointmentsWithPatients();
-                //         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
-                //         setAppointmentsWithPatientsAction(patients, appointments);
-                //         const statuses = await getValueSet('apptstat');
-                //         statusesArr.push(statuses.data.compose.include[0].concept);
-                //         setTableData(setPatientDataInvitedTableRows(patients, appointments, tableHeaders, statusesArr, history));
-                //         break;
-                //     case 1:
-                //         break;
-                //     case 2:
-                //         break;
-                //     case 3:
-                //         break;
-                //     default:
-                //         console.log('No such status could be a critical error');
-                //         break;
-                // }
             } catch (err) {
                 console.log(err)
             }
@@ -226,10 +203,12 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
 const mapStateToProps = state => {
     return {
         // patientsData: state.imaging.patientsData,
+        appointments: state.fhirData.appointments,
+        patients: state.fhirData.patients,
         vertical: state.settings.clinikal_vertical,
         status: state.filters.statusFilterBoxValue,
         userRole: state.settings.user_role
     };
 };
 
-export default connect(mapStateToProps, {setAppointmentsWithPatientsAction})(PatientTracking);
+export default connect(mapStateToProps,null)(PatientTracking);

@@ -1,6 +1,6 @@
 import {baseRoutePath} from "./baseRoutePath";
 
-const setPatientDataInvitedTableRows = (appointments, tableHeaders, options, history) => {
+const setPatientDataInvitedTableRows = (patients, appointments, tableHeaders, options, history) => {
     let rows = [];
     for (let rowsIndex = 0; rowsIndex < appointments.length; rowsIndex++) {
         let row = [];
@@ -44,7 +44,7 @@ const setPatientDataInvitedTableRows = (appointments, tableHeaders, options, his
                         text_color: '#076ce9',
                         padding: 'none',
                         value: appointment.status,
-                        options: options[0],
+                        options: null,
                         align: 'center',
                         background_color: '#eaf7ff',
                         icon_color: '#076ce9'

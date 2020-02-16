@@ -1,26 +1,26 @@
 import {
-    GET_APPOINTMENTS_WITH_PATIENTS_SUCCESS,
-    GET_APPOINTMENTS_WITH_PATIENTS_FAILED,
-    GET_APPOINTMENTS_WITH_PATIENTS
+    SET_APPOINTMENTS_WITH_PATIENTS_SUCCESS,
+    SET_APPOINTMENTS_WITH_PATIENTS_FAILED,
+    SET_APPOINTMENTS_WITH_PATIENTS
 } from "./fhirActionTypes";
 import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentsWithPatients";
 import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
 
-const getAppointmentsWithPatientsStartAction = () => {
+const setAppointmentsWithPatientsStartAction = () => {
     return {
-        type: GET_APPOINTMENTS_WITH_PATIENTS
+        type: SET_APPOINTMENTS_WITH_PATIENTS
     }
 };
 
-const getAppointmentsWithPatientsFailedAction = () => {
+const setAppointmentsWithPatientsFailedAction = () => {
   return {
-      type: GET_APPOINTMENTS_WITH_PATIENTS_FAILED
+      type: SET_APPOINTMENTS_WITH_PATIENTS_FAILED
   }
 };
 
-const getAppointmentsWithPatientsSuccessAction = (patients, appointments) => {
+const setAppointmentsWithPatientsSuccessAction = (patients, appointments) => {
     return {
-        type: GET_APPOINTMENTS_WITH_PATIENTS_SUCCESS,
+        type: SET_APPOINTMENTS_WITH_PATIENTS_SUCCESS,
         patients,
         appointments
     }
@@ -31,7 +31,7 @@ export const setAppointmentsWithPatientsAction = (patients, appointments) => {
     return dispatch => {
         try {
             // dispatch(getAppointmentsWithPatientsStartAction());
-            dispatch(getAppointmentsWithPatientsSuccessAction(patients, appointments));
+            dispatch(setAppointmentsWithPatientsSuccessAction(patients, appointments));
         } catch (err) {
             // dispatch(getAppointmentsWithPatientsFailedAction());
         }
