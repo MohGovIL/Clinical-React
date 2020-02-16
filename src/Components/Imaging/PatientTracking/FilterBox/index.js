@@ -4,82 +4,95 @@ import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
-import ExpandMore from "@material-ui/icons/ExpandMore";
+import {connect} from "react-redux";
 
-const FilterBox = ({statuses}) => {
+import {setFilterDateAction} from "../../../../Store/Actions/SettingsActions/SettingsActions";
+import {normalizeOrganizationData, normalizeServiceTypeData} from "../../../../Utils/Helpers/normalizeOrganizationData";
+
+const FilterBox = ({languageDirection, props}) => {
     const {t} = useTranslation();
 
-    const labelElements = [
-        {
-            labelName: t("Facility name"),
-            code: 'organizationName',
-        },
-        {
-            labelName: t("Service type"),
-            code: 'serviceType',
-        },
-    ];
+    const [selectOrganizationValue, setSelectOrganizationValue] = useState(0);
+    const [selectServiceTypeValue, setSelectServiceTypeValue] = useState(0);
 
-    const labelOrganization = [
-        {
-            code: 0,
-            display: t('all'),
-        },
-        {
-            code: 3,
-            display: 'מרפאת תל אביב'
-        },
-        {
-            code: 4,
-            display: 'מרפאת חיפה'
-        }
-    ];
-
-    const [cities, setCities] = useState([]);
+    const [labelOrganization, setLabelOrganization] = useState([]);
+    const [labelServiceType, setLabelServiceType] = useState([]);
 
     //Gets cities list data
     useEffect(() => {
         (async () => {
             try {
+                let array = [{
+                    code: 0,
+                    name: t("All")
+                }];
                 const {data} = await getOrganization();
-                // const normalizedAppointmentData = normalizeAppointmentData(data.entry);
-                // setAppointments(normalizedAppointmentData);
-                // setCities(labelOrganization);
+                for (var entry of data.entry) {
+                    if (entry.resource !== undefined) {
+                        const labelOrganizationData = normalizeOrganizationData(entry.resource);
+                        array.push(labelOrganizationData);
+                    }
+                }
+                setLabelOrganization(array);
             } catch (err) {
                 console.log(err)
             }
         })()
     }, []);
 
-    const [organization, setOrganization] = useState(0);
-
     const organizationOnChangeHandler = (code) => {
-        setOrganization(code.target.value);
+        setSelectOrganizationValue(code);
+        var data = {};
+        if (code > 0) {
+            let array = [{
+                code: 0,
+                name: t("All")
+            }];
+            (async () => {
+                const {data} = await getHealhcareService(code);
+                for (var entry of data.entry) {
+                    if (entry.resource !== undefined) {
+                        const setLabelServiceType = normalizeServiceTypeData(entry.resource);
+                        array.push(setLabelServiceType);
+                    }
+                }
+                setLabelServiceType(array);
+            })();
+        }
 
-        const {data} = getHealhcareService(code.target.value);
         console.log("organizationOnChangeHandler => call()");
     };
 
-    const serviceTypeOnChangeHandler = () => {
+    const serviceTypeOnChangeHandler = (code) => {
+        setSelectServiceTypeValue(code)
         console.log("serviceTypeOnChangeHandler => call()");
     };
 
     return (
         <StyledFilterBox>
             <CustomizedDatePicker iconColor={'#076ce9'}/>
-
-            {labelElements.map((labelElement, labelElementsIndex) =>
-                <CustomizedSelect key={labelElementsIndex} background_color={'#eaf7ff'} icon_color={'#076ce9'}
-                                  value={organization} options={labelElement.code === 'organizationName' ? labelOrganization : [] }
-                                  appointmentId={'1'}
-                                  text_color={'#076ce9'}
-                                  label={labelElement.labelName}
-                                  onChange={labelElement.code === 'organizationName' ? organizationOnChangeHandler : serviceTypeOnChangeHandler }
-
-                />
-            )}
+            <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
+                              value={selectOrganizationValue} options={labelOrganization}
+                              label={t("Facility name")}
+                              onChange={organizationOnChangeHandler}
+                              langDirection={languageDirection}
+                              code_menu={"organizationName"}
+            />
+            <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
+                              value={selectServiceTypeValue} options={labelServiceType}
+                              label={t("Service type")}
+                              onChange={serviceTypeOnChangeHandler}
+                              langDirection={languageDirection}
+                              code_menu={"serviceType"}
+            />
         </StyledFilterBox>
     );
 };
 
-export default FilterBox;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        languageDirection: state.settings.lang_dir,
+        props: ownProps,
+    }
+};
+export default connect(mapStateToProps, null)(FilterBox);
