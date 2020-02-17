@@ -45,7 +45,7 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
     let typeIcon = (langDirection === 'rtl' ? 'endIcon' : 'startIcon');
     opts[typeIcon] = iconForButtonMenu;
 
-    let buttonLabel;
+    let buttonLabel = " ";
     if (options !== undefined) {
         var res = options.find(obj => {
             return obj.code === value
@@ -55,7 +55,6 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
             buttonLabel = res.name;
         }
     }
-
     return (
         <StyledDiv>
             <ListItemText>{label}</ListItemText>
@@ -65,12 +64,10 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
                 text_color={text_color}
                 aria-controls="customized-menu"
                 aria-haspopup="true"
-                ref={anchorEl}
                 onClick={handleClick}
                 language_direction={langDirection}
                 {...opts}
-            >
-                {buttonLabel}
+            >{buttonLabel}
             </StyledButton>
             <StyledMenu
                 background_color={background_color}
@@ -82,7 +79,6 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
-
                 elevation={0}
                 getContentAnchorEl={null}
                 anchorOrigin={{
@@ -107,8 +103,6 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
     );
 };
 
-CustomizedSelect.propTypes = {
-
-};
+CustomizedSelect.propTypes = {};
 
 export default CustomizedSelect;

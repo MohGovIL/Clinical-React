@@ -9,26 +9,33 @@ import {connect} from "react-redux";
 import {setFilterDateAction} from "../../../../Store/Actions/SettingsActions/SettingsActions";
 import {normalizeOrganizationData, normalizeServiceTypeData} from "../../../../Utils/Helpers/normalizeOrganizationData";
 
-const FilterBox = ({languageDirection, props}) => {
+
+const FilterBox = ({languageDirection, facility, props}) => {
     const {t} = useTranslation();
-    var emptyArray = [{
-        code: 0,
-        name: t("All")
-    }];
+
+    const emptyArrayAll = () => {
+        return  [{
+            code: 0,
+            name: t("All")
+        }]
+    };
 
     const [selectOrganizationValue, setSelectOrganizationValue] = useState(0);
     const [selectServiceTypeValue, setSelectServiceTypeValue] = useState(0);
 
     const [labelOrganization, setLabelOrganization] = useState([]);
-    const [labelServiceType, setLabelServiceType] = useState(emptyArray);
+    const [labelServiceType, setLabelServiceType] = useState([]);
 
     //Gets cities list data
     useEffect(() => {
         (async () => {
             try {
-                let array = emptyArray;
-                const {data} = await getOrganization();
-                for (var entry of data.entry) {
+                //Array for list options with default element (All).
+                let array = emptyArrayAll();
+                //Nested destructuring from Promise. ES6 new syntax.
+                const { data: {entry: dataOrganization } } = await getOrganization();
+
+                for (let entry of dataOrganization) {
                     if (entry.resource !== undefined) {
                         const labelOrganizationData = normalizeOrganizationData(entry.resource);
                         array.push(labelOrganizationData);
@@ -36,19 +43,28 @@ const FilterBox = ({languageDirection, props}) => {
                 }
                 setLabelOrganization(array);
             } catch (err) {
-                console.log(err)
+                console.log(err);
             }
         })()
     }, []);
 
+    useEffect(() => {
+        if (facility !== 0) {
+            organizationOnChangeHandler(facility);
+        }
+    }, []);
+
     const organizationOnChangeHandler = (code) => {
         setSelectOrganizationValue(code);
-        var data = {};
         if (code > 0) {
-            let array = emptyArray;
+            //Array for list options with default element (All).
+            let array = emptyArrayAll();
+
             (async () => {
-                const {data} = await getHealhcareService(code);
-                for (var entry of data.entry) {
+                //Nested destructuring from Promise. ES6 new syntax.
+                const { data: {entry: dataServiceType } } = await getHealhcareService(code);
+
+                for (let entry of dataServiceType) {
                     if (entry.resource !== undefined) {
                         const setLabelServiceType = normalizeServiceTypeData(entry.resource);
                         array.push(setLabelServiceType);
@@ -59,7 +75,7 @@ const FilterBox = ({languageDirection, props}) => {
             })();
         } else {
             setSelectServiceTypeValue(0);
-            setLabelServiceType(emptyArray);
+            setLabelServiceType(emptyArrayAll());
         }
 
         console.log("organizationOnChangeHandler => call()");
@@ -94,6 +110,7 @@ const FilterBox = ({languageDirection, props}) => {
 const mapStateToProps = (state, ownProps) => {
     return {
         languageDirection: state.settings.lang_dir,
+        facility: parseInt(state.settings.facility),
         props: ownProps,
     }
 };
