@@ -4,7 +4,6 @@ import {DatePicker} from '@material-ui/pickers/';
 export const StyledDatePicker = styled(DatePicker)`
 & .MuiInputBase-root {
    text-align: center !important;
-   margin-top: 5px;
 }
 & .MuiInputBase-root .MuiInput-input {
   text-align: center;

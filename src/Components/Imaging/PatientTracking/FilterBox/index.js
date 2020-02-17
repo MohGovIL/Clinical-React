@@ -11,21 +11,22 @@ import {normalizeOrganizationData, normalizeServiceTypeData} from "../../../../U
 
 const FilterBox = ({languageDirection, props}) => {
     const {t} = useTranslation();
+    var emptyArray = [{
+        code: 0,
+        name: t("All")
+    }];
 
     const [selectOrganizationValue, setSelectOrganizationValue] = useState(0);
     const [selectServiceTypeValue, setSelectServiceTypeValue] = useState(0);
 
     const [labelOrganization, setLabelOrganization] = useState([]);
-    const [labelServiceType, setLabelServiceType] = useState([]);
+    const [labelServiceType, setLabelServiceType] = useState(emptyArray);
 
     //Gets cities list data
     useEffect(() => {
         (async () => {
             try {
-                let array = [{
-                    code: 0,
-                    name: t("All")
-                }];
+                let array = emptyArray;
                 const {data} = await getOrganization();
                 for (var entry of data.entry) {
                     if (entry.resource !== undefined) {
@@ -44,10 +45,7 @@ const FilterBox = ({languageDirection, props}) => {
         setSelectOrganizationValue(code);
         var data = {};
         if (code > 0) {
-            let array = [{
-                code: 0,
-                name: t("All")
-            }];
+            let array = emptyArray;
             (async () => {
                 const {data} = await getHealhcareService(code);
                 for (var entry of data.entry) {
@@ -56,15 +54,19 @@ const FilterBox = ({languageDirection, props}) => {
                         array.push(setLabelServiceType);
                     }
                 }
+                setSelectServiceTypeValue(0);
                 setLabelServiceType(array);
             })();
+        } else {
+            setSelectServiceTypeValue(0);
+            setLabelServiceType(emptyArray);
         }
 
         console.log("organizationOnChangeHandler => call()");
     };
 
     const serviceTypeOnChangeHandler = (code) => {
-        setSelectServiceTypeValue(code)
+        setSelectServiceTypeValue(code);
         console.log("serviceTypeOnChangeHandler => call()");
     };
 
