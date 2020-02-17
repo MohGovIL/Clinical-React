@@ -27,7 +27,7 @@ const PatientAdmission = ({location, patientsData}) => {
 
 const mapStateToProps = state => {
     return{
-        patientsData: state.imaging.patientsData
+        patientsData: state.fhirData.patients
     };
 };
 

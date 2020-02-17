@@ -19,19 +19,16 @@ export const itemsDefaultData = [{
     "label": "Patients",
     "menu_id": "patients",
     "url": "/PatientTraking",
-    "children": []
 },
     {
         "label": "Calendar",
         "menu_id": "calendar",
         "url": "/Calendar",
-        "children": []
     },
     {
         "label": "Tasks",
         "menu_id": "tasks",
         "url": "/Tasks",
-        "children": []
     }];
 
 export const normalHeader = () => {

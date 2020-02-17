@@ -21,8 +21,6 @@ import {
 } from "./CustomizedTableComponentsTypes";
 
 const CustomizedTable = ({tableHeaders, tableData}) => {
-
-    console.log(tableData);
     const {t} = useTranslation();
 
     return (

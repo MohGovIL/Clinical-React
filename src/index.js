@@ -8,7 +8,6 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import loginReducer from './Store/Reducers/LoginReducer';
 import facilityReducer from './Store/Reducers/FacilityReducer';
 import SettingsReducer from "./Store/Reducers/SettingsReducer";
-import ImagingReducer from "./Store/Reducers/ImagingReducer";
 import FiltersReducer from "./Store/Reducers/FiltersReducer";
 import FhirDataReducer from "./Store/Reducers/FhirDataReducer";
 import thunk from 'redux-thunk';
@@ -18,7 +17,6 @@ const rootReducer = combineReducers({
     login: loginReducer,
     facilityData: facilityReducer,
     settings: SettingsReducer,
-    imaging: ImagingReducer,
     filters: FiltersReducer,
     fhirData: FhirDataReducer
 });

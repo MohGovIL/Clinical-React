@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import StyledAppBar from './Style';
 import StatusFilterBoxTabs from "./StatusFilterBoxTabs";
 import {devicesValue} from "../../Themes/BreakPoints";
@@ -16,7 +16,6 @@ import {setStatusFilterBoxValueAction} from "../../../Store/Actions/PatientTrack
 const StatusFilterBox = ({tabs, setStatusFilterBoxValueAction, selectedTab}) => {
 
     const matches = useMediaQuery(`(min-width:${devicesValue.desktop}px)`);
-
 
 
     const tabsHandler = tabsValue => {

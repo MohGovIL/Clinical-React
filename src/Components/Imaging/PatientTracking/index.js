@@ -4,19 +4,11 @@ import StatusFilterBox from "../../../Assets/Elements/StatusFilterBox";
 import CustomizedTable from "../../../Assets/Elements/CustomizedTable";
 import {getValueSet} from "../../../Utils/Services/FhirAPI";
 import {connect} from "react-redux";
-import {setPatientsDataAction} from "../../../Store/Actions/PatientTrackingActions/PatienTrackingActions";
 import {setAppointmentsWithPatientsAction} from "../../../Store/Actions/FhirActions/fhirActions";
 import Header from "../../../Assets/Elements/Header";
 import {useTranslation} from "react-i18next";
 import {getMenu} from "../../../Utils/Services/API";
 import setPatientDataInvitedTableRows from "../../../Utils/Helpers/setPatientDataInvitedTableRows";
-import {
-    SELECT_CELL,
-    BADGE_CELL,
-    BUTTON_CELL,
-    PERSONAL_INFORMATION_CELL,
-    LABEL_CELL
-} from "../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
 import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
 import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentsWithPatients";
 import {store} from "../../../index";
@@ -29,21 +21,21 @@ const implementMeNotActive = () => {
     console.log('Implement me not active :D')
 };
 
-const invitedTabActiveFunction = async (setTableData, setTableHeaders, history) => {
+const invitedTabActiveFunction = async (setTable, history) => {
     try {
-        console.log('invitedTabActiveFunction');
         const appointmentsWithPatients = await getAppointmentsWithPatients();
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
-        store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
-        // const statuses = await getValueSet('apptstat');
+        //TODO
+        //When there will be actual API for list make the api call here and pass it as options.
         const options = [
             {
                 display: 'hey',
-                code: '1',
+                code: 1,
             }
-    ];
-        // setPatientDataInvitedTableRows(patients, appointments, tableHeaders, statusesArr, history)
-        setPatientDataInvitedTableRows(patients, appointments, options, tableHeaders, history)
+        ];
+        const table = setPatientDataInvitedTableRows(patients, appointments, options, history);
+        setTable(table);
+        store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
     } catch (err) {
         console.log(err);
     }
@@ -84,58 +76,19 @@ const allTabs = [
     }
 ]; //Needs to be placed in another place in the project
 
-const tableHeaders = [
-    {
-        tableHeader: 'Personal information',
-        hideTableHeader: false,
-        component: PERSONAL_INFORMATION_CELL
-    },
-    {
-        tableHeader: 'Cell phone',
-        hideTableHeader: false,
-        component: LABEL_CELL
-    },
-    {
-        tableHeader: 'Healthcare service',
-        hideTableHeader: false,
-        component: LABEL_CELL
-    },
-    {
-        tableHeader: 'Test',
-        hideTableHeader: false,
-        component: LABEL_CELL
-    },
-    {
-        tableHeader: 'Time',
-        hideTableHeader: false,
-        component: LABEL_CELL
-    },
-    {
-        tableHeader: 'Status',
-        hideTableHeader: false,
-        component: SELECT_CELL
-    },
-    {
-        tableHeader: 'Messages',
-        hideTableHeader: false,
-        component: BADGE_CELL
-    },
-    {
-        tableHeader: 'Patient admission',
-        hideTableHeader: true,
-        component: BUTTON_CELL,
-    },
-
-]; //Needs to be placed in another place in the project
-
 const PatientTracking = ({vertical, status, history, userRole}) => {
+    const {t} = useTranslation();
 
+    //The tabs of the Status filter box component.
     const [tabs, setTabs] = useState([]);
 
-    const [tableData, setTableData] = useState([]);
+    //table is an array of 2 arrays inside. First array represents the table headers, the second array represents the table data combined them together so it won't be making double rendering.
+    const [[tableHeaders, tableData], setTable] = useState([[], []]);
 
-    const [tableHeaders, setTableHeaders] = useState([]);
-    //Create an array of tabs according to the user role
+    //The headers menu items
+    const [menuItems, setMenuItems] = useState([]);
+
+    //Create an array of permitted tabs according to the user role.
     useEffect(() => {
         const permittedTabs = [];
         for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
@@ -145,7 +98,6 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
         }
         setTabs(permittedTabs);
     }, [userRole]);
-
     //Filter box mechanism
     useEffect(() => {
         (async () => {
@@ -153,7 +105,7 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];
                     if (tab.tabValue === status) {
-                        tab.activeAction(setTableData, setTableHeaders, history);
+                        tab.activeAction(setTable, history);
                     } else {
                         tab.notActiveAction();
                     }
@@ -163,13 +115,6 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
             }
         })();
     }, [status, tabs]);
-
-
-    const {t} = useTranslation();
-
-    const [menuItems, setMenuItems] = useState([]);
-
-
     //Gets the menu items
     useEffect(() => {
         (async () => {
@@ -187,7 +132,6 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
 
 
     }, []);
-
 
     return (
         <React.Fragment>
@@ -211,4 +155,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps,null)(PatientTracking);
+export default connect(mapStateToProps, null)(PatientTracking);

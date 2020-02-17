@@ -1,19 +1,69 @@
 import {baseRoutePath} from "./baseRoutePath";
+import {
+    BADGE_CELL, BUTTON_CELL,
+    LABEL_CELL,
+    PERSONAL_INFORMATION_CELL, SELECT_CELL
+} from "../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
 
-const setPatientDataInvitedTableRows = (patients, appointments, tableHeaders, options, history) => {
+const tableHeaders = [
+    {
+        tableHeader: 'Personal information',
+        hideTableHeader: false,
+        component: PERSONAL_INFORMATION_CELL
+    },
+    {
+        tableHeader: 'Cell phone',
+        hideTableHeader: false,
+        component: LABEL_CELL
+    },
+    {
+        tableHeader: 'Healthcare service',
+        hideTableHeader: false,
+        component: LABEL_CELL
+    },
+    {
+        tableHeader: 'Test',
+        hideTableHeader: false,
+        component: LABEL_CELL
+    },
+    {
+        tableHeader: 'Time',
+        hideTableHeader: false,
+        component: LABEL_CELL
+    },
+    {
+        tableHeader: 'Status',
+        hideTableHeader: false,
+        component: SELECT_CELL
+    },
+    {
+        tableHeader: 'Messages',
+        hideTableHeader: false,
+        component: BADGE_CELL
+    },
+    {
+        tableHeader: 'Patient admission',
+        hideTableHeader: true,
+        component: BUTTON_CELL,
+    },
+
+]; //Needs to be placed in another place in the project
+
+const setPatientDataInvitedTableRows = (patients, appointments, options, history) => {
+    let result = [];
     let rows = [];
-    for (let rowsIndex = 0; rowsIndex < appointments.length; rowsIndex++) {
+    for (let [appointmentId, appointment] of Object.entries(appointments)) {
         let row = [];
-        const appointment = appointments[rowsIndex];
         for (let columnIndex = 0; columnIndex < tableHeaders.length; columnIndex++) {
+            const patient = patients[appointment.participantPatient];
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({
-                        id: appointment.participants?.patient.identifier,
+                        id: patient.id,
                         priority: appointment.priority,
-                        gender: appointment.participants?.patient.gender,
-                        firstName: appointment.participants?.patient.firstName,
-                        lastName: appointment.participants?.patient.lastName,
+                        gender: patient.gender,
+                        firstName: patient.firstName,
+                        lastName: patient.lastName,
                         align: 'right',
                     });
                     break;
@@ -26,7 +76,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, tableHeaders, op
                         onClickHandler(){
                             history.push({
                                 pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-                                search: `?index=${rowsIndex}`
+                                search: `?index=${appointmentId}`
                             })
                         }
                     });
@@ -44,7 +94,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, tableHeaders, op
                         text_color: '#076ce9',
                         padding: 'none',
                         value: appointment.status,
-                        options: null,
+                        options: options,
                         align: 'center',
                         background_color: '#eaf7ff',
                         icon_color: '#076ce9'
@@ -54,7 +104,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, tableHeaders, op
                     row.push({
                         padding: 'none',
                         align: 'right',
-                        label: appointment.participants?.patient?.mobileCellPhone ? appointment.participants.patient.mobileCellPhone : null,
+                        label: patient.mobileCellPhone || null,
                         color: '#0027a5'
                     });
                     break;
@@ -62,14 +112,14 @@ const setPatientDataInvitedTableRows = (patients, appointments, tableHeaders, op
                     row.push({
                         padding: 'none',
                         align: 'right',
-                        label: appointment.healthcareService
+                        label: appointment.serviceType ? appointment.serviceType.join(' ') : null
                     });
                     break;
                 case 'Test':
                     row.push({
                         padding: 'none',
                         align: 'right',
-                        label: appointment.examination
+                        label: appointment.examination ?  appointment.examination.join(' ') : null
                     });
                     break;
                 case 'Time':
@@ -83,9 +133,11 @@ const setPatientDataInvitedTableRows = (patients, appointments, tableHeaders, op
                     break;
             }
         }
-        rows[rowsIndex] = [...row];
+        rows.push(row);
     }
-    return rows;
+    result[0] = tableHeaders;
+    result[1] = rows;
+    return result;
 };
 
 export default setPatientDataInvitedTableRows;

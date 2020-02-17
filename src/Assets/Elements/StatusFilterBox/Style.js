@@ -14,6 +14,5 @@ export default styled(AppBar)`
   @media(min-width: ${devicesValue.desktop}px){
     width: 13%;
     margin-left: 5% ;
-
   }
 `;
