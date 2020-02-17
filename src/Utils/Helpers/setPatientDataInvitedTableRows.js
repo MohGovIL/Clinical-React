@@ -111,21 +111,21 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                 case 'Healthcare service':
                     row.push({
                         padding: 'none',
-                        align: 'right',
+                        align: 'center',
                         label: appointment.serviceType ? appointment.serviceType.join(' ') : null
                     });
                     break;
                 case 'Test':
                     row.push({
                         padding: 'none',
-                        align: 'right',
+                        align: 'center',
                         label: appointment.examination ?  appointment.examination.join(' ') : null
                     });
                     break;
                 case 'Time':
                     row.push({
                         padding: 'none',
-                        align: 'right',
+                        align: 'center',
                         label: appointment.time
                     });
                     break;
