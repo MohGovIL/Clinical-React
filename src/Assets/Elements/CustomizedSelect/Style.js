@@ -12,6 +12,7 @@ export const StyledMenu = styled(Menu)`
   & .MuiMenu-paper {
      background-color: ${props => props.background_color ? props.background_color : null};
      color: ${props => props.text_color ? props.text_color : null};
+     min-width: 130px;
   }
 
   & .MuiList-padding {
@@ -27,10 +28,11 @@ export const StyledButton = styled(Button)`
   margin: 0px 5px 0px 5px;
   padding: 5px;
   border-bottom: 0px !important;
-  //min-width: 138px;
 
   .MuiButton-label {
     padding:0px 5px 0px 5px;
+    justify-content: space-between;
+    min-width: 130px;
   }
 
   .MuiButton-endIcon {
