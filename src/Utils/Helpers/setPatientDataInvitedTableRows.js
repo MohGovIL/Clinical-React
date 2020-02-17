@@ -4,6 +4,8 @@ import {
     LABEL_CELL,
     PERSONAL_INFORMATION_CELL, SELECT_CELL
 } from "../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
+import moment from "moment";
+import "moment/locale/he"
 
 const tableHeaders = [
     {
@@ -126,7 +128,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: appointment.time
+                        label: moment(appointment.time).format('LT')
                     });
                     break;
                 default:

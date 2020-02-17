@@ -20,7 +20,7 @@ const PatientAdmission = ({location, patientsData}) => {
     console.log(patientData);
     return (
         <span>
-            1
+            PATIENT ADMISSION
         </span>
     );
 };

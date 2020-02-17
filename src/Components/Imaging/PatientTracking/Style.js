@@ -11,5 +11,6 @@ export default styled.div`
 
   @media(min-width: ${devicesValue.desktop}px){
     flex-direction: row;
+    justify-content: space-between;
   }
 `;

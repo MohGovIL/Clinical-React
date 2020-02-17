@@ -21,7 +21,7 @@ const implementMeNotActive = () => {
     console.log('Implement me not active :D')
 };
 
-const invitedTabActiveFunction = async (setTable, history) => {
+const invitedTabActiveFunction = async (setTable, setTabs, history) => {
     try {
         const appointmentsWithPatients = await getAppointmentsWithPatients();
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
@@ -105,7 +105,7 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];
                     if (tab.tabValue === status) {
-                        tab.activeAction(setTable, history);
+                        tab.activeAction(setTable, setTabs, history);
                     } else {
                         tab.notActiveAction();
                     }
