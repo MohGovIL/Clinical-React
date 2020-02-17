@@ -5,10 +5,16 @@ import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePick
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
 import {connect} from "react-redux";
-
-import {setFilterDateAction} from "../../../../Store/Actions/SettingsActions/SettingsActions";
 import {normalizeOrganizationData, normalizeServiceTypeData} from "../../../../Utils/Helpers/normalizeOrganizationData";
 
+/**
+ * @author Yuiry Gershem yuriyge@matrix.co.il
+ * @param languageDirection
+ * @param facility
+ * @param props
+ * @returns {*}
+ * @constructor
+ */
 
 const FilterBox = ({languageDirection, facility, props}) => {
     const {t} = useTranslation();

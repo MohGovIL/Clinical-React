@@ -11,6 +11,18 @@ import 'moment/locale/en-gb';
 import 'moment/locale/he';
 import {setFilterDateAction} from "../../../Store/Actions/SettingsActions/SettingsActions";
 
+/**
+ * @author Yuiry Gershem yuriyge@matrix.co.il
+ * @param dateFormat
+ * @param languageDirection
+ * @param languageCode
+ * @param filterDate
+ * @param setFilterDateAction
+ * @param props
+ * @returns {*}
+ * @constructor
+ */
+
 const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filterDate, setFilterDateAction, props}) => {
     languageCode = (languageCode === "en" ? "en-gb" : languageCode);
 
