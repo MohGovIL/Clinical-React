@@ -21,7 +21,8 @@ const implementMeNotActive = () => {
     console.log('Implement me not active :D')
 };
 
-const invitedTabActiveFunction = async (setTable, setTabs, history) => {
+//Using normal function not arrow just to get the Object as this inside the function do that kind of function for each of the tabs,
+const invitedTabActiveFunction = async function (setTable, setTabs, history) {
     try {
         const appointmentsWithPatients = await getAppointmentsWithPatients();
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
@@ -35,6 +36,14 @@ const invitedTabActiveFunction = async (setTable, setTabs, history) => {
         ];
         const table = setPatientDataInvitedTableRows(patients, appointments, options, history);
         setTable(table);
+        setTabs(prevState => {
+                const prevStateClone = [...prevState];
+                prevStateClone[this.tabValue].count = appointmentsWithPatients.data.total;
+                return [
+                    ...prevStateClone
+                ]
+            }
+        );
         store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
     } catch (err) {
         console.log(err);
@@ -64,7 +73,7 @@ const allTabs = [
         tabValue: 2,
         activeAction: implementMeActive,
         notActiveAction: implementMeNotActive,
-        permission: ['admin']
+        permission: ['p']
     },
     {
         tabName: 'Finished',
@@ -74,13 +83,13 @@ const allTabs = [
         notActiveAction: implementMeNotActive,
         permission: ['admin']
     }
-]; //Needs to be placed in another place in the project
+];
 
 const PatientTracking = ({vertical, status, history, userRole}) => {
     const {t} = useTranslation();
 
     //The tabs of the Status filter box component.
-    const [tabs, setTabs] = useState([]);
+    const [tabs, setTabs] = useState(allTabs);
 
     //table is an array of 2 arrays inside. First array represents the table headers, the second array represents the table data combined them together so it won't be making double rendering.
     const [[tableHeaders, tableData], setTable] = useState([[], []]);
@@ -114,7 +123,7 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
                 console.log(err)
             }
         })();
-    }, [status, tabs]);
+    }, [status]);
     //Gets the menu items
     useEffect(() => {
         (async () => {

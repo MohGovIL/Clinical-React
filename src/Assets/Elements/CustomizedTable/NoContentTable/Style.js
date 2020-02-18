@@ -9,10 +9,6 @@ export const Styledh1 = styled.h1`
   margin-bottom: 8px;
 `;
 
-export const StyledSpan = styled.span`
-  color: #000b40;
-`;
-
 export default styled.div`
   display: flex;
   align-items: center;
