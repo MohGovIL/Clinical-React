@@ -104,13 +104,15 @@ const FilterBox = ({languageDirection, facility, props}) => {
                                   code_menu={"organizationName"}
                 />
             </StyledCustomizedSelect>
-            <ListItemText>{t("Service type")}</ListItemText>
-            <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
-                              value={selectServiceTypeValue} options={labelServiceType}
-                              onChange={serviceTypeOnChangeHandler}
-                              langDirection={languageDirection}
-                              code_menu={"serviceType"}
-            />
+            <StyledCustomizedSelect>
+                <ListItemText>{t("Service type")}</ListItemText>
+                <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
+                                  value={selectServiceTypeValue} options={labelServiceType}
+                                  onChange={serviceTypeOnChangeHandler}
+                                  langDirection={languageDirection}
+                                  code_menu={"serviceType"}
+                />
+            </StyledCustomizedSelect>
         </StyledFilterBox>
     );
 };

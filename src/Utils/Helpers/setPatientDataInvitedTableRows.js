@@ -61,7 +61,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({
-                        id: patient.id,
+                        id: patient.identifier,
                         priority: appointment.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,

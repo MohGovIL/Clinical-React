@@ -11,6 +11,6 @@ export default styled(AppBar)`
   margin-bottom: 2px;
   box-shadow: 0 1px 10px 0 rgba(152, 151, 151, 0.3);
   @media(min-width: ${devicesValue.desktop}px){
-    flex-basis: 13%;
+    flex-basis: 14%;
   }
 `;
