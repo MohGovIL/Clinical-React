@@ -5,7 +5,6 @@ import {Button, Menu, MenuItem} from "@material-ui/core";
 export const StyledDiv = styled.div`
   display: flex;
   flex-direction: row;
-  margin: 0px 25px 0px 25px;
 `;
 
 export const StyledMenu = styled(Menu)`
@@ -44,7 +43,6 @@ export const StyledButton = styled(Button)`
     padding-right: ${props => props.languageDirection == 'ltr' ? '0px' : null};
     padding-left: ${props => props.languageDirection == 'ltr' ? '0px' : null};
   }
-
 `;
 
 export const StyledMenuItem = styled(MenuItem)`

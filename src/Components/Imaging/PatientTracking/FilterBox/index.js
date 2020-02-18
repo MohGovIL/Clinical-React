@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import StyledFilterBox from "./Style";
+import StyledFilterBox, {StyledCustomizedSelect} from "./Style";
 import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
 import {connect} from "react-redux";
 import {normalizeOrganizationData, normalizeServiceTypeData} from "../../../../Utils/Helpers/normalizeOrganizationData";
+import ListItemText from "@material-ui/core/ListItemText";
 
 /**
  * @author Yuiry Gershem yuriyge@matrix.co.il
@@ -20,7 +21,7 @@ const FilterBox = ({languageDirection, facility, props}) => {
     const {t} = useTranslation();
 
     const emptyArrayAll = () => {
-        return  [{
+        return [{
             code: 0,
             name: t("All")
         }]
@@ -32,14 +33,14 @@ const FilterBox = ({languageDirection, facility, props}) => {
     const [labelOrganization, setLabelOrganization] = useState([]);
     const [labelServiceType, setLabelServiceType] = useState([]);
 
-    //Gets cities list data
+    //Gets organizations list data
     useEffect(() => {
         (async () => {
             try {
                 //Array for list options with default element (All).
                 let array = emptyArrayAll();
                 //Nested destructuring from Promise. ES6 new syntax.
-                const { data: {entry: dataOrganization } } = await getOrganization();
+                const {data: {entry: dataOrganization}} = await getOrganization();
 
                 for (let entry of dataOrganization) {
                     if (entry.resource !== undefined) {
@@ -68,7 +69,7 @@ const FilterBox = ({languageDirection, facility, props}) => {
 
             (async () => {
                 //Nested destructuring from Promise. ES6 new syntax.
-                const { data: {entry: dataServiceType } } = await getHealhcareService(code);
+                const {data: {entry: dataServiceType}} = await getHealhcareService(code);
 
                 for (let entry of dataServiceType) {
                     if (entry.resource !== undefined) {
@@ -83,28 +84,29 @@ const FilterBox = ({languageDirection, facility, props}) => {
             setSelectServiceTypeValue(0);
             setLabelServiceType(emptyArrayAll());
         }
-
-        console.log("organizationOnChangeHandler => call()");
+        // console.log("organizationOnChangeHandler => call()");
     };
 
     const serviceTypeOnChangeHandler = (code) => {
         setSelectServiceTypeValue(code);
-        console.log("serviceTypeOnChangeHandler => call()");
+        // console.log("serviceTypeOnChangeHandler => call()");
     };
 
     return (
         <StyledFilterBox>
             <CustomizedDatePicker iconColor={'#076ce9'}/>
-            <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
-                              value={selectOrganizationValue} options={labelOrganization}
-                              label={t("Facility name")}
-                              onChange={organizationOnChangeHandler}
-                              langDirection={languageDirection}
-                              code_menu={"organizationName"}
-            />
+            <StyledCustomizedSelect>
+                <ListItemText>{t("Facility name")}</ListItemText>
+                <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
+                                  value={selectOrganizationValue} options={labelOrganization}
+                                  onChange={organizationOnChangeHandler}
+                                  langDirection={languageDirection}
+                                  code_menu={"organizationName"}
+                />
+            </StyledCustomizedSelect>
+            <ListItemText>{t("Service type")}</ListItemText>
             <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
                               value={selectServiceTypeValue} options={labelServiceType}
-                              label={t("Service type")}
                               onChange={serviceTypeOnChangeHandler}
                               langDirection={languageDirection}
                               code_menu={"serviceType"}

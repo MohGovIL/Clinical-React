@@ -1,5 +1,10 @@
 import styled from "styled-components";
 
+export const StyledCustomizedSelect = styled.div`
+  display: flex;
+  margin: 0px 10px 0px 10px;
+`;
+
 export default styled.div`
   display: flex;
   align-items: center;

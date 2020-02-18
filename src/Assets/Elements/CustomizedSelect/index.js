@@ -7,7 +7,7 @@ import {ExpandMore} from "@material-ui/icons/";
 import ListItemText from '@material-ui/core/ListItemText';
 
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi gigiidan@gmail.com, Yuriy Gershem yuriyge@matrix.co.il
  * @param background_color
  * @param icon_color
  * @param textcolor
@@ -57,7 +57,6 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
     }
     return (
         <StyledDiv>
-            <ListItemText>{label}</ListItemText>
             <StyledButton
                 background_color={background_color}
                 icon_color={icon_color}
