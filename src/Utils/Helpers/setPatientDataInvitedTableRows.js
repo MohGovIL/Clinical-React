@@ -99,7 +99,8 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         options: options,
                         align: 'center',
                         background_color: '#eaf7ff',
-                        icon_color: '#076ce9'
+                        icon_color: '#076ce9',
+                        langDirection: 'rtl'
                     });
                     break;
                 case 'Cell phone':

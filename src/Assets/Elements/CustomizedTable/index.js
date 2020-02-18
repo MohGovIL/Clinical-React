@@ -69,6 +69,7 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                                                                   background_color={rowData.background_color}
                                                                                   align={rowData.align}
                                                                                   options={rowData.options}
+                                                                                  langDirection={rowData.langDirection}
                                                                                   key={tableCellItemIndex}/>;
                                             case PERSONAL_INFORMATION_CELL:
                                                 return <CustomizedTablePersonalInformationCell
