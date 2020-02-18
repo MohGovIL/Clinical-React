@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import PatientTrackingStyle from './Style';
+import PatientTrackingStyle, {StyledFilterBox, TableRowStyle} from './Style';
 import StatusFilterBox from "../../../Assets/Elements/StatusFilterBox";
 import CustomizedTable from "../../../Assets/Elements/CustomizedTable";
 import {getValueSet} from "../../../Utils/Services/FhirAPI";
@@ -12,6 +12,7 @@ import setPatientDataInvitedTableRows from "../../../Utils/Helpers/setPatientDat
 import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
 import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentsWithPatients";
 import {store} from "../../../index";
+import FilterBox from "./FilterBox";
 
 const implementMeActive = () => {
     console.log('Implement me active :D')
@@ -146,8 +147,13 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
         <React.Fragment>
             <Header Items={menuItems}/>
             <PatientTrackingStyle>
-                <StatusFilterBox tabs={tabs}/>
-                <CustomizedTable tableHeaders={tableHeaders} tableData={tableData}/>
+                <StyledFilterBox>
+                    <FilterBox/>
+                </StyledFilterBox>
+                <TableRowStyle>
+                    <StatusFilterBox tabs={tabs}/>
+                    <CustomizedTable tableHeaders={tableHeaders} tableData={tableData}/>
+                </TableRowStyle>
             </PatientTrackingStyle>
         </React.Fragment>
     );
