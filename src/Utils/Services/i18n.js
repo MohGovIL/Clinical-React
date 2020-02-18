@@ -32,11 +32,12 @@ export const geti18n = (lang_id) => {
                     //csrf_token_form:getKey()
                 },
                 customHeaders,
-                react: {
-                    useSuspense: true //changed from FALSE ********************************************
-                },
             },
-            lng: 'selected',
+            react: {
+                useSuspense: true, //changed from FALSE ********************************************
+            },
+            load: 'languageOnly',
+            lng: 'en',
             debug: true,
             keySeparator: false, // we do not use keys in form messages.welcome
             nsSeparator: false,

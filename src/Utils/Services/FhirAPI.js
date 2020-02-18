@@ -77,3 +77,19 @@ export const createNewEncounter = async () => {
         console.log(err)
     }
 };
+
+export const getOrganization = async () => {
+    try {
+        return await fhirTokenInstance().get('apis/fhir/v4/Organization?active=1');
+    } catch (err) {
+        console.log(err)
+    }
+};
+
+export const getHealhcareService = async (organization) => {
+    try {
+        return await fhirTokenInstance().get(`apis/fhir/v4/HealthcareService?organization=${organization}`);
+    } catch (err) {
+        console.log(err)
+    }
+};

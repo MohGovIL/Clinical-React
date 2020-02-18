@@ -27,3 +27,6 @@ yarn-error.log*
 
 #php storm
 .idea/
+
+#storybook build
+storybook-static/
