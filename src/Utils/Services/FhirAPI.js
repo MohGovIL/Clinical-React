@@ -98,10 +98,7 @@ export const getHealhcareService = async (organization) => {
 
 export const getEncountersWithPatients = async (date = '') => {
     try {
-        // return await fhirTokenInstance().get(`${fhirBasePath}/Encounter?_include=Encounter:patient${date ? `&date=${date}` : date}&_sort=date&status=arrived&status=triaged&status=in-progress`)
-        return await fhirTokenInstance().get(`${fhirBasePath}/Encounter/1`);
-
-
+        return await fhirTokenInstance().get(`${fhirBasePath}/Encounter?_include=Encounter:patient${date ? `&date=${date}` : date}&_sort=date&status=arrived&status=triaged&status=in-progress`);
     } catch (err) {
         console.log(err);
     }
