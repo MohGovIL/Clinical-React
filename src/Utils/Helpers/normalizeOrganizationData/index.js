@@ -1,22 +1,14 @@
 /**
- * @author Yuiry Gershem yuriyge@matrix.co.il
- * @param organization
+ * @author Yuriy Gershem yuriyge@matrix.co.il
+ * @param valueData
  * @returns {{}}
  */
-export const normalizeOrganizationData = organization => {
-    if (organization.resourceType) {
+const normalizeValueData = valueData => {
+    if (valueData.resourceType) {
         return {
-            code: organization.id,
-            name: organization.name
+            code: valueData.id,
+            name: valueData.name
         }
     }
 };
-
-export const normalizeServiceTypeData = serviceType => {
-    if (serviceType.resourceType) {
-        return {
-            code: serviceType.id,
-            name: serviceType.name
-        }
-    }
-};
+export default normalizeValueData;

@@ -5,7 +5,7 @@ import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePick
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
 import {connect} from "react-redux";
-import {normalizeOrganizationData, normalizeServiceTypeData} from "../../../../Utils/Helpers/normalizeOrganizationData";
+import normalizeValueData from "../../../../Utils/Helpers/normalizeOrganizationData";
 import ListItemText from "@material-ui/core/ListItemText";
 
 /**
@@ -44,7 +44,7 @@ const FilterBox = ({languageDirection, facility}) => {
 
                 for (let entry of dataOrganization) {
                     if (entry.resource !== undefined) {
-                        const labelOrganizationData = normalizeOrganizationData(entry.resource);
+                        const labelOrganizationData = normalizeValueData(entry.resource);
                         array.push(labelOrganizationData);
                     }
                 }
@@ -73,7 +73,7 @@ const FilterBox = ({languageDirection, facility}) => {
 
                 for (let entry of dataServiceType) {
                     if (entry.resource !== undefined) {
-                        const setLabelServiceType = normalizeServiceTypeData(entry.resource);
+                        const setLabelServiceType = normalizeValueData(entry.resource);
                         array.push(setLabelServiceType);
                     }
                 }
