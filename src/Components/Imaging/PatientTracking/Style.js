@@ -31,7 +31,7 @@ export default styled.div`
   background-color: #f6f6f6;
   padding-right: 87px;
   padding-left: 87px;
-
+  min-height: calc(100vh - 88px);
     @media(min-width: ${devicesValue.desktop}px){
       padding: 0;
     }

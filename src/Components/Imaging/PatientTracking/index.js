@@ -11,6 +11,7 @@ import {getMenu} from "../../../Utils/Services/API";
 import setPatientDataInvitedTableRows from "../../../Utils/Helpers/setPatientDataInvitedTableRows";
 import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
 import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
+import {getEncountersWithPatients} from "../../../Utils/Services/FhirAPI";
 import {store} from "../../../index";
 import FilterBox from "./FilterBox";
 import Title from "../../../Assets/Elements/Title";
@@ -51,21 +52,47 @@ const invitedTabActiveFunction = async function (setTable, setTabs, history) {
         console.log(err);
     }
 };
+//TODO
+// this function will be generic for all the NotActive tabs and will be handled with Promise.all[] and check if prevState
+// of the tabs is the same in all of the response
+const invitedTabNotActiveFunction = async function (setTabs) {
+    const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true);
+    setTabs(prevState => {
+        if (prevState[this.tabValue].count !== parseInt(appointmentsWithPatientsSummaryCount.data.total)) {
+            const prevStateClone = [...prevState];
+            prevStateClone[this.tabValue].count = appointmentsWithPatientsSummaryCount.data.total;
+            return [
+                ...prevStateClone
+            ]
+        }
+        return prevState;
+    })
+};
 
+const waitingForExaminationTabActiveFunction = async function () {
+    try {
+        const encounterWithPatients = await getEncountersWithPatients();
+        console.log(encounterWithPatients);
+
+    } catch (err) {
+        console.log(err);
+    }
+    //Call a normalizer for encounter patient
+};
 const allTabs = [
     {
         tabName: 'Invited',
         count: 0,
         tabValue: 0,
         activeAction: invitedTabActiveFunction,
-        notActiveAction: implementMeNotActive,
+        notActiveAction: invitedTabNotActiveFunction,
         permission: ['admin'],
     },
     {
         tabName: 'Waiting for examination',
         count: 0,
         tabValue: 1,
-        activeAction: implementMeActive,
+        activeAction: waitingForExaminationTabActiveFunction,
         notActiveAction: implementMeNotActive,
         permission: ['admin']
     },
@@ -118,7 +145,7 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
                     if (tab.tabValue === status) {
                         tab.activeAction(setTable, setTabs, history);
                     } else {
-                        tab.notActiveAction();
+                        tab.notActiveAction(setTabs);
                     }
                 }
             } catch (err) {
