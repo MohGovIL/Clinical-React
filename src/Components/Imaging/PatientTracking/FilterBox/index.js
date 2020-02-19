@@ -5,7 +5,7 @@ import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePick
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
 import {connect} from "react-redux";
-import normalizeValueData from "../../../../Utils/Helpers/normalizeOrganizationData";
+import normalizeValueData from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import ListItemText from "@material-ui/core/ListItemText";
 
 /**

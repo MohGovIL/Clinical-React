@@ -1,5 +1,5 @@
-import normalizeFhirPatient from "./normalizeFhirPatient";
-import normalizeFhirAppointment from "./normalizeFhirAppointment";
+import normalizeFhirPatient from "../normalizeFhirPatient";
+import normalizeFhirAppointment from "../normalizeFhirAppointment";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
@@ -9,7 +9,7 @@ import normalizeFhirAppointment from "./normalizeFhirAppointment";
  * appointmentsObj stores all the appointments each appointment key is his ID.
  */
 
-export const normalizeFhirAppointmentsWithPatients = (appointmentsData) => {
+export const normalizeFhirAppointmentsWithPatients = appointmentsData => {
     const response = [];
     const appointmentsObj = {};
     const patientsObj = {};

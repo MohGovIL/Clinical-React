@@ -4,7 +4,7 @@
  * @param appointment - object
  * @returns {}
  */
-const normalizeFhirAppointment = (appointment) => {
+const normalizeFhirAppointment = appointment => {
     let serviceType = null;
     let serviceTypeCode = null;
     if(appointment.serviceType && appointment.serviceType.length > 0){

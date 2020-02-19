@@ -10,9 +10,10 @@ import {useTranslation} from "react-i18next";
 import {getMenu} from "../../../Utils/Services/API";
 import setPatientDataInvitedTableRows from "../../../Utils/Helpers/setPatientDataInvitedTableRows";
 import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
-import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/normalizeFhirAppointmentsData/normalizeFhirAppointmentsWithPatients";
+import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
 import {store} from "../../../index";
 import FilterBox from "./FilterBox";
+import Title from "../../../Assets/Elements/Title";
 
 const implementMeActive = () => {
     console.log('Implement me active :D')
@@ -147,6 +148,7 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
         <React.Fragment>
             <Header Items={menuItems}/>
             <PatientTrackingStyle>
+                <Title label={'Patient tracking'}/>
                 <StyledFilterBox>
                     <FilterBox/>
                 </StyledFilterBox>
