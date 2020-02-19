@@ -1,5 +1,5 @@
 import React from 'react';
-import {Switch} from 'react-router-dom'
+import Switch from 'react-router-dom/Switch'
 import {baseRoutePath} from "../../Utils/Helpers/baseRoutePath";
 import PatientTracking from "../Imaging/PatientTracking";
 import PatientAdmission from "../Imaging/PatientAdmission";

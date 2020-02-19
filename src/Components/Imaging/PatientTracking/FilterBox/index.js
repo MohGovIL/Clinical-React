@@ -17,7 +17,7 @@ import ListItemText from "@material-ui/core/ListItemText";
  * @constructor
  */
 
-const FilterBox = ({languageDirection, facility, props}) => {
+const FilterBox = ({languageDirection, facility}) => {
     const {t} = useTranslation();
 
     const emptyArrayAll = () => {

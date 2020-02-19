@@ -74,7 +74,7 @@ const allTabs = [
         tabValue: 2,
         activeAction: implementMeActive,
         notActiveAction: implementMeNotActive,
-        permission: ['p']
+        permission: ['admin']
     },
     {
         tabName: 'Finished',
@@ -161,7 +161,6 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
 
 const mapStateToProps = state => {
     return {
-        // patientsData: state.imaging.patientsData,
         appointments: state.fhirData.appointments,
         patients: state.fhirData.patients,
         vertical: state.settings.clinikal_vertical,

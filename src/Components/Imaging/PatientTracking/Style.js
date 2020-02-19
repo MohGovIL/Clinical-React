@@ -28,6 +28,5 @@ export const StyledFilterBox = styled.div`
 export default styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 42px;
   background-color: #f6f6f6;
 `;
