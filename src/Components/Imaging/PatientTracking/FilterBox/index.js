@@ -101,7 +101,6 @@ const FilterBox = ({languageDirection, facility}) => {
                                   value={selectOrganizationValue} options={labelOrganization}
                                   onChange={organizationOnChangeHandler}
                                   langDirection={languageDirection}
-                                  code_menu={"organizationName"}
                 />
             </StyledCustomizedSelect>
             <StyledCustomizedSelect>
@@ -110,7 +109,6 @@ const FilterBox = ({languageDirection, facility}) => {
                                   value={selectServiceTypeValue} options={labelServiceType}
                                   onChange={serviceTypeOnChangeHandler}
                                   langDirection={languageDirection}
-                                  code_menu={"serviceType"}
                 />
             </StyledCustomizedSelect>
         </StyledFilterBox>

@@ -13,8 +13,10 @@ export const normalizeOrganizationData = organization => {
 };
 
 export const normalizeServiceTypeData = serviceType => {
-    return {
-        code: serviceType.id,
-        name: serviceType.name
+    if (serviceType.resourceType) {
+        return {
+            code: serviceType.id,
+            name: serviceType.name
+        }
     }
 };

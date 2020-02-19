@@ -2,19 +2,9 @@
 /**
  * @author Idan Gigi gigiidan@gmail.com
  * @param appointment - object
- * @param patientsObj - object
  * @returns {}
  */
 const normalizeFhirAppointment = (appointment) => {
-    //TODO change the optional chaining, supported only by Google chrome version 79 experimental API.
-    //  Done
-    //const participantPatient = appointment.participant?.find(actorObj => actorObj.actor.reference.includes('Patient')).actor.reference.split("/")[1];
-    //const participantHealthcareService = appointment.participant?.find(actorObj => actorObj.actor.reference.includes('HealthcareService')).actor.reference.split("/")[1];
-    //const examinationCode = appointment.reasonCode.map(reasonCodeObj => reasonCodeObj.coding[0].code);
-    //const examination = appointment.reasonCode.map(reasonCodeObj => reasonCodeObj.text);
-    //const serviceType = appointment.serviceType.map(serviceTypeObj => serviceTypeObj.text);
-    //const serviceTypeCode = appointment.serviceType.map(serviceTypeObj => serviceTypeObj.coding[0].code);
-
     let serviceType = null;
     let serviceTypeCode = null;
     if(appointment.serviceType && appointment.serviceType.length > 0){

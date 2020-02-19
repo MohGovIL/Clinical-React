@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import StyledSelect from './Style'
+import React from 'react';
 import {StyledButton, StyledMenu, StyledMenuItem, StyledDiv} from './Style'
 
 import {useTranslation} from "react-i18next";
@@ -14,16 +13,16 @@ import ListItemText from '@material-ui/core/ListItemText';
  * @param value
  * @param onChange
  * @param options
- * @param appointmentId
  * @returns {Component}
  * @constructor
  */
-const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, appointmentId, label, langDirection, codeMenu}) => {
+const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, langDirection}) => {
 
     const {t} = useTranslation();
-    ///
+
     const [anchorEl, setAnchorEl] = React.useState(null);
 
+    //DO NOT DELETE, FOR FUTURE USE
     const [selectedIndex, setSelectedIndex] = React.useState(1);
 
     const handleClick = event => {
@@ -41,13 +40,13 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
 
     ///
     let opts = {};
-    let iconForButtonMenu = <ExpandMore htmlColor={icon_color}/>;
+    let iconForButtonMenu = <ExpandMore/>;
     let typeIcon = (langDirection === 'rtl' ? 'endIcon' : 'startIcon');
     opts[typeIcon] = iconForButtonMenu;
 
     let buttonLabel = " ";
     if (options !== undefined) {
-        var res = options.find(obj => {
+        const res = options.find(obj => {
             return obj.code === value
         });
 
@@ -91,7 +90,7 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
             >
                 {options.map((option, optionIndex) =>
                     <StyledMenuItem key={optionIndex}
-                        // selected={optionIndex === selectedIndex}
+                        // selected={optionIndex === selectedIndex} DO NOT DELETE, FOR FUTURE USE
                                     onClick={event => handleMenuItemClick(option.code)}
                     >
                         <ListItemText value={option.code} primary={t(option.name)}/>
