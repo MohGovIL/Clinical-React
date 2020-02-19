@@ -1,54 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import Header from "../../Assets/Elements/Header";
-import {useTranslation} from "react-i18next";
-import {getMenu} from "../../Utils/Services/API";
-import {connect} from 'react-redux';
-import PatientTracking from "./PatientTracking";
+import React from 'react';
+import {Switch} from 'react-router-dom'
+import {baseRoutePath} from "../../Utils/Helpers/baseRoutePath";
+import PatientTracking from "../Imaging/PatientTracking";
+import PatientAdmission from "../Imaging/PatientAdmission";
+import PrivateRoute from "../PrivateRoute/PrivateRoute";
+import {connect} from 'react-redux'
+
+const Imaging= ({isAuth}) => {
 
 
-const Imaging = ({clinikalVertical}) => {
-
-    const {t} = useTranslation();
-
-    const [menuItems, setMenuItems] = useState([]);
-
-
-    //Gets the menu items
-    useEffect(() => {
-        (async () => {
-            try {
-                const menuData = await getMenu(`${clinikalVertical}-client`);
-                const menuDataClone = menuData.data.map(menuDataItem => {
-                    menuDataItem.label = t(menuDataItem.label);
-                    return menuDataItem;
-                });
-                setMenuItems(menuDataClone);
-            } catch (err) {
-                console.log(err)
-            }
-        })();
-
-
-    }, []);
-
-
-
-
-
-    //TODO
-    //In the future there will be a routing for each component
     return (
-        <React.Fragment>
-            <Header Items={menuItems}/>{/*TODO Change name from Items to tabs or something more meaningful*/}
-            <PatientTracking />
-        </React.Fragment>
+        <Switch>
+            <PrivateRoute exact path={`${baseRoutePath()}/imaging/patientTracking`} component={PatientTracking} isAuth={isAuth}/>
+            <PrivateRoute exact path={`${baseRoutePath()}/imaging/patientAdmission`} component={PatientAdmission} isAuth={isAuth}/>
+        </Switch>
     );
 };
 
-const mapStateToProps = state => {
-    return {
-        clinikalVertical: state.settings.clinikal_vertical
-    }
-};
+const mapStateToProps = state => ({isAuth: state.login.isAuth});
 
 export default connect(mapStateToProps, null)(Imaging);

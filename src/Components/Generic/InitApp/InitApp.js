@@ -1,27 +1,17 @@
 import React, {Suspense} from 'react';
-import {getSettingsAction} from '../../../Store/Actions/SettingsActions/SettingsActions';
 import {connect} from 'react-redux';
 import VerticalRoute from "../../Routes/VerticalRoute";
 import GlobalStyle from "../../../Assets/Themes/GlobalStyle";
-import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
-import {devicesKey, devicesValue} from "../../../Assets/Themes/BreakPoints";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-const InitApp = (props) => {
+const InitApp = ({lang_id,languageDirection}) => {
 
-    const theme = createMuiTheme({
-        breakpoints: {
-            keys: [...devicesKey],
-            values: {...devicesValue}
-        },
-    });
 
     return (
         <React.Fragment>
-            <Suspense fallback={<p>Loading...</p>}>
-                <GlobalStyle lang_id={props.lang_id}/>
-                <ThemeProvider theme={theme}>
-                    <VerticalRoute/>
-                </ThemeProvider>
+            <Suspense fallback={<CircularProgress />}>
+                <GlobalStyle lang_id={lang_id} languageDirection={languageDirection}/>
+                <VerticalRoute/>
             </Suspense>
         </React.Fragment>
     );
@@ -29,7 +19,8 @@ const InitApp = (props) => {
 
 const mapStateToProps = state => {
     return {
-        lang_id: state.settings.lang_id
+        lang_id: state.settings.lang_id,
+        languageDirection: state.settings.lang_dir
     }
 };
-export default connect(mapStateToProps, {getSettingsAction})(InitApp);
+export default connect(mapStateToProps, null)(InitApp);

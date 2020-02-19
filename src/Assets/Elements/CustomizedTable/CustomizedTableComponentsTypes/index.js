@@ -1,0 +1,5 @@
+export const PERSONAL_INFORMATION_CELL = 'PERSONAL_INFORMATION_CELL';
+export const BUTTON_CELL = 'BUTTON_CELL';
+export const LABEL_CELL = 'LABEL_CELL';
+export const BADGE_CELL = 'BADGE_CELL';
+export const SELECT_CELL = 'SELECT_CELL';

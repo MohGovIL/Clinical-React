@@ -8,6 +8,8 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import loginReducer from './Store/Reducers/LoginReducer';
 import facilityReducer from './Store/Reducers/FacilityReducer';
 import SettingsReducer from "./Store/Reducers/SettingsReducer";
+import FiltersReducer from "./Store/Reducers/FiltersReducer";
+import FhirDataReducer from "./Store/Reducers/FhirDataReducer";
 import thunk from 'redux-thunk';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -15,8 +17,10 @@ const rootReducer = combineReducers({
     login: loginReducer,
     facilityData: facilityReducer,
     settings: SettingsReducer,
+    filters: FiltersReducer,
+    fhirData: FhirDataReducer
 });
-//Added export so I can use it in story book hopefully
+//Added export so I can use it in story book hopefully. Months later it worked :D. It is also used for to dispatch redux actions outside react component
 export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 // ReactDOM.render(<Provider Store={Store}><Suspense fallback="loading..."><App appUrl={iframePath}/></Suspense></Provider>, document.getElementById('root'));

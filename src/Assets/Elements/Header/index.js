@@ -14,7 +14,7 @@ import {useTranslation} from "react-i18next";
 import {ClickAwayListener} from "@material-ui/core";
 import RelativeWrapperForClickAwayListener from './RelativeWrapperForClickAwayListener'
 
-const Header = (props) => {
+const Header = ({Items, logoutAction}) => {
 
     const {t} = useTranslation();
 
@@ -37,14 +37,14 @@ const Header = (props) => {
         },
         {
             Label: t('Disconnect'),
-            func: props.logoutAction
+            func: logoutAction
         }];
 
 
     return (
         <StyledAppBar>
             <HeaderIcon alt='Logo' img={Logo}/>
-            <HeaderTabs Items={props.Items}/>
+            <HeaderTabs Items={Items}/>
             <Search/>
             <HeaderIcon alt='notifications icon' img={notifications}/>
             <VerticalLine/>

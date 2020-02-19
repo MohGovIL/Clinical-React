@@ -1,9 +1,14 @@
-import styled from "styled-components";
-import Button from "@material-ui/core/Button";
-import React from "react";
+import React from 'react';
+import StyledButton from './Style';
+import {useTranslation} from "react-i18next";
 
-const CustomizedTableButton = styled((props) =>  <Button {...props} />)`
-  border-radius: 25px;
-`;
+const CustomizedTableButton = ({variant, color, label, onClickHandler}) => {
+    const {t} = useTranslation();
+    return (
+        <StyledButton variant={variant} color={color} onClick={onClickHandler}>
+            {t(label)}
+        </StyledButton>
+    );
+};
 
 export default CustomizedTableButton;

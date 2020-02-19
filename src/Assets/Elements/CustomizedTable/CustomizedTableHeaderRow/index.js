@@ -5,7 +5,6 @@ const CustomizedTableHeaderRow = styled(TableRow)`
   height: 32px;
   color: #000d37;
   font-size: 12px;
-  opacity: 0.6;
   padding: 0;
 `;
 

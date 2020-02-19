@@ -1,7 +1,7 @@
 import React from 'react';
 import StyledCustomizedTablePersonalInformationCell from './Style';
 import maleIcon from '../../../Images/maleIcon.png';
-import womanIcon from '../../../Images/womanIcon.png';
+import femaleIcon from '../../../Images/womanIcon.png';
 import PersonalData from "./PersonalData";
 import {useTranslation} from "react-i18next";
 import GenderIcon from "./GenderIcon";
@@ -12,7 +12,7 @@ const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName
 
     return (
         <StyledCustomizedTablePersonalInformationCell align={align}>
-            <GenderIcon priority={priority} alt={'gender icon'} src={gender === 'male' ? maleIcon : womanIcon}/>
+            <GenderIcon priority={priority} alt={'gender icon'} src={gender === 'male' ? maleIcon : femaleIcon}/>
             <PersonalData>
                 <span>
                     {`${firstName} ${lastName}`}

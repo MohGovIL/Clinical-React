@@ -1,7 +1,7 @@
 import React from 'react';
 import StyledBadge from './Style'
 
-const StyledTableBadge = ({badgeContent}) => {
+const CustomizedTableBadge = ({badgeContent}) => {
     return (
         <StyledBadge badgeContent={badgeContent}>
             <b>{badgeContent}</b>
@@ -9,4 +9,4 @@ const StyledTableBadge = ({badgeContent}) => {
     );
 };
 
-export default StyledTableBadge;
+export default CustomizedTableBadge;
