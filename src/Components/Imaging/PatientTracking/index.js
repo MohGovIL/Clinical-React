@@ -57,16 +57,17 @@ const invitedTabActiveFunction = async function (setTable, setTabs, history) {
 // of the tabs is the same in all of the response
 const invitedTabNotActiveFunction = async function (setTabs) {
     const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true);
-    setTabs(prevState => {
-        if (prevState[this.tabValue].count !== parseInt(appointmentsWithPatientsSummaryCount.data.total)) {
+    if (this.count !== parseInt(appointmentsWithPatientsSummaryCount.data.total)) {
+        setTabs(prevState => {
             const prevStateClone = [...prevState];
             prevStateClone[this.tabValue].count = appointmentsWithPatientsSummaryCount.data.total;
             return [
                 ...prevStateClone
             ]
-        }
-        return prevState;
-    })
+        });
+    } else {
+        console.log('Did not render');
+    }
 };
 
 const waitingForExaminationTabActiveFunction = async function () {
@@ -190,6 +191,7 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
 
 const mapStateToProps = state => {
     return {
+
         appointments: state.fhirData.appointments,
         patients: state.fhirData.patients,
         vertical: state.settings.clinikal_vertical,

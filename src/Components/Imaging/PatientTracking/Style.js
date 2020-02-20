@@ -15,7 +15,7 @@ export const TableRowStyle = styled.div`
 export const StyledFilterBox = styled.div`
   display: flex;
   align-items: center;
-  margin: 35px 0px 35px 0px;
+  margin: 35px 0 35px 0;
 
   & .MuiListItemText-root span{
     color: #000d37;

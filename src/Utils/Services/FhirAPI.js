@@ -10,11 +10,11 @@ const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName)
 
 const fhirBasePath = 'apis/fhir/v4';
 
-const appointmentWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=Appointment:patient`;
+const appointmentsWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=Appointment:patient`;
 
 export const getAppointmentsWithPatients = async (summary = false, date = '', organization = '', serviceType = '') => {
     try {
-        return await fhirTokenInstance().get(`${appointmentWithPatientsBasePath}${date ? `&date=${date}` : date}${organization ? `&actor:HealthcareService.organization=${organization}` : organization}${serviceType ? `&service-type=${serviceType}` : serviceType}${summary ? `&_summary=count` : ''}`);
+        return await fhirTokenInstance().get(`${appointmentsWithPatientsBasePath}${date ? `&date=${date}` : date}${organization ? `&actor:HealthcareService.organization=${organization}` : organization}${serviceType ? `&service-type=${serviceType}` : serviceType}${summary ? `&_summary=count` : ''}`);
     } catch (err) {
         console.log(err)
     }
@@ -96,9 +96,11 @@ export const getHealhcareService = async (organization) => {
     }
 };
 
-export const getEncountersWithPatients = async (date = '') => {
+const encountersWithPatientsBasePath = '/Encounter?_include=Encounter:patient';
+
+export const getEncountersWithPatients = async (summary = false, date = '', serviceProvider = '', serviceType = '') => {
     try {
-        return await fhirTokenInstance().get(`${fhirBasePath}/Encounter?_include=Encounter:patient${date ? `&date=${date}` : date}&_sort=date&status=arrived&status=triaged&status=in-progress`);
+        return await fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${date ? `&date=${date}` : date}&_sort=date&status=arrived&status=triaged&status=in-progress${serviceProvider ? `&service-provider=${serviceProvider}` : serviceProvider}${serviceType ? `service-type=${serviceType}` : serviceType}`);
     } catch (err) {
         console.log(err);
     }
