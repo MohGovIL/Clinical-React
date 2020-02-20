@@ -191,7 +191,7 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
 
 const mapStateToProps = state => {
     return {
-
+        fhirDataStatus: state.fhirData.STATUS,
         appointments: state.fhirData.appointments,
         patients: state.fhirData.patients,
         vertical: state.settings.clinikal_vertical,
