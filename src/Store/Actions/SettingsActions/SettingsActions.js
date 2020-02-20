@@ -6,8 +6,7 @@ import {
     GET_SETTINGS_SUCCESS,
     SET_SETTINGS,
     SET_SETTINGS_FAILED,
-    SET_SETTINGS_SUCCESS,
-    SET_FILTER_DATE
+    SET_SETTINGS_SUCCESS
 } from "./SettingsActionTypes";
 import {geti18n} from '../../../Utils/Services/i18n';
 
@@ -43,10 +42,3 @@ export const getSettingsAction = (history, userID) => {
         }
     }
 };
-
-export const setFilterDateAction = (filter_date) => {
-    return {
-        type: SET_FILTER_DATE,
-        filter_date
-    }
-}
