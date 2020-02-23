@@ -14,6 +14,8 @@ import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/Fhir
 import {store} from "../../../index";
 import FilterBox from "./FilterBox";
 import Title from "../../../Assets/Elements/Title";
+import isAllowed from "../../../Utils/Helpers/isAllowed";
+
 
 const implementMeActive = () => {
     console.log('Implement me active :D')
@@ -55,35 +57,39 @@ const invitedTabActiveFunction = async function (setTable, setTabs, history) {
 const allTabs = [
     {
         tabName: 'Invited',
+        id: 'invited',
+        mode:'hide',
         count: 0,
         tabValue: 0,
         activeAction: invitedTabActiveFunction,
-        notActiveAction: implementMeNotActive,
-        permission: ['admin'],
+        notActiveAction: implementMeNotActive
     },
     {
         tabName: 'Waiting for examination',
+        id: 'Waiting_for_examination',
+        mode:'hide',
         count: 0,
         tabValue: 1,
         activeAction: implementMeActive,
-        notActiveAction: implementMeNotActive,
-        permission: ['admin']
+        notActiveAction: implementMeNotActive
     },
     {
         tabName: 'Waiting for decoding',
+        id: 'Waiting_for_decoding',
+        mode:'hide',
         count: 0,
         tabValue: 2,
         activeAction: implementMeActive,
-        notActiveAction: implementMeNotActive,
-        permission: ['admin']
+        notActiveAction: implementMeNotActive
     },
     {
         tabName: 'Finished',
+        id: 'finished',
+        mode:'hide',
         count: 0,
         tabValue: 3,
         activeAction: implementMeActive,
-        notActiveAction: implementMeNotActive,
-        permission: ['admin']
+        notActiveAction: implementMeNotActive
     }
 ];
 
@@ -101,14 +107,21 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
 
     //Create an array of permitted tabs according to the user role.
     useEffect(() => {
-        const permittedTabs = [];
-        for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
+        /*for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
             const tab = allTabs[tabIndex];
             // eslint-disable-next-line no-unused-expressions
             tab.permission.some(role => userRole.includes(role)) ? permittedTabs.push(tab) : null
+        }*/
+        for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
+            const tab = allTabs[tabIndex];
+            //set tab acl role.
+            isAllowed(tab);
         }
+        const permittedTabs =  allTabs.filter((tab, tabIndex) => {
+            return tab.mode !== 'hide';
+        });
         setTabs(permittedTabs);
-    }, [userRole]);
+    }, []);
     //Filter box mechanism
     useEffect(() => {
         (async () => {

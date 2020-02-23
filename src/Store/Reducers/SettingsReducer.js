@@ -8,6 +8,7 @@ const INITIAL_STATE = {
     lang_code: null,
     format_date: null,
     user_role: null,
+    user_aco: null,
     clinikal_vertical: null
 };
 

@@ -7,6 +7,7 @@ import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
 import normalizeValueData from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import ListItemText from "@material-ui/core/ListItemText";
+import errorHandler from "../../../../Utils/Helpers/errorHandler";
 import {
     setFilterOrganizationAction,
     setFilterServiceTypeAction
@@ -70,6 +71,7 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
             let array = emptyArrayAll();
 
             (async () => {
+                try {
                 //Nested destructuring from Promise. ES6 new syntax.
                 const {data: {entry: dataServiceType}} = await getHealhcareService(code);
 
@@ -81,6 +83,10 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
                 }
                 setFilterServiceTypeAction(0);
                 setLabelServiceType(array);
+                }
+                catch (err) {
+                    errorHandler(err);
+                }
             })();
         } else {
             setFilterServiceTypeAction(0);
