@@ -6,13 +6,13 @@ import {StyledDatePicker, GlobalStyledDatePicker} from "./Styles";
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {IconButton} from "@material-ui/core";
 import {ChevronLeft, ChevronRight} from "@material-ui/icons";
+import {setFilterDateAction} from "../../../Store/Actions/FilterActions/FilterActions";
 
 import 'moment/locale/en-gb';
 import 'moment/locale/he';
-import {setFilterDateAction} from "../../../Store/Actions/SettingsActions/SettingsActions";
 
 /**
- * @author Yuiry Gershem yuriyge@matrix.co.il
+ * @author Yuriy Gershem yuriyge@matrix.co.il
  * @param dateFormat
  * @param languageDirection
  * @param languageCode
@@ -85,9 +85,9 @@ const mapStateToProps = (state, ownProps) => {
         dateFormat: state.settings.format_date,
         languageDirection: state.settings.lang_dir,
         languageCode: state.settings.lang_code,
-        filterDate: state.settings.filter_date,
+        filterDate: state.filters.filter_date,
         props: ownProps,
     }
-}
+};
 
 export default connect(mapStateToProps, {setFilterDateAction})(CustomizedDatePicker);
