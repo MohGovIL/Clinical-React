@@ -20,9 +20,9 @@ export const getAppointmentsWithPatients = async (summary = false, date = '', or
     }
 };
 
-export const getValueSet = async list => {
+export const getValueSet = async id => {
     try {
-        return await fhirTokenInstance().get(`${fhirBasePath}/ValueSet/${list}`);
+        return await fhirTokenInstance().get(`${fhirBasePath}/ValueSet/${id}/$expand`);
     } catch (err) {
         console.log(err);
     }

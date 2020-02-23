@@ -29,15 +29,16 @@ const invitedTabActiveFunction = async function (setTable, setTabs, history) {
     try {
         const appointmentsWithPatients = await getAppointmentsWithPatients();
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
+        const {data:{expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
         //TODO
         //When there will be actual API for list make the api call here and pass it as options.
-        const options = [
-            {
-                display: 'hey',
-                code: 1,
-            }
-        ];
-        const table = setPatientDataInvitedTableRows(patients, appointments, options, history);
+        // const options = [
+        //     {
+        //         display: 'hey',
+        //         code: 1,
+        //     }
+        // ];
+        const table = setPatientDataInvitedTableRows(patients, appointments, contains, history);
         setTable(table);
         setTabs(prevState => {
                 const prevStateClone = [...prevState];
@@ -80,6 +81,7 @@ const waitingForExaminationTabActiveFunction = async function () {
     }
     //Call a normalizer for encounter patient
 };
+
 const allTabs = [
     {
         tabName: 'Invited',
@@ -135,8 +137,8 @@ const PatientTracking = ({vertical, status, history, userRole}) => {
             // eslint-disable-next-line no-unused-expressions
             tab.permission.some(role => userRole.includes(role)) ? permittedTabs.push(tab) : null
         }
-        setTabs(permittedTabs);
-    }, [userRole]);
+        setTabs(() => permittedTabs);
+    }, []);
     //Filter box mechanism
     useEffect(() => {
         (async () => {
