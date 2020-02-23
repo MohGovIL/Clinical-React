@@ -12,7 +12,7 @@ const appointmentWithPatientsBasePath = 'apis/fhir/v4/Appointment?_include=Appoi
 
 export const getAppointmentsWithPatients = async (date = '', organization = '', serviceType = '') => {
     try {
-        return await fhirTokenInstance().get(`${appointmentWithPatientsBasePath}${date ? `&date=${date}` : date}${organization ? `&actor:HealthcareService.organization=${organization}` : organization}${serviceType ? `&service-type=${serviceType}` : serviceType}`);
+        return await fhirTokenInstance().get(`${appointmentWithPatientsBasePath}${date ? `&date=${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}`);
     } catch (err) {
         console.log(err)
     }

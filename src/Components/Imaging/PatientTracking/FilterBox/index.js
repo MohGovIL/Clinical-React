@@ -5,7 +5,7 @@ import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
-import normalizeValueData from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import normalizeValueData, {normalizeHealhcareServiceValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import ListItemText from "@material-ui/core/ListItemText";
 import {
     setFilterOrganizationAction,
@@ -75,7 +75,7 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
 
                 for (let entry of dataServiceType) {
                     if (entry.resource !== undefined) {
-                        const setLabelServiceType = normalizeValueData(entry.resource);
+                        const setLabelServiceType = normalizeHealhcareServiceValueData(entry.resource);
                         array.push(setLabelServiceType);
                     }
                 }
