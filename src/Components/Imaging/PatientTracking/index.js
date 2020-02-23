@@ -24,9 +24,9 @@ const implementMeNotActive = () => {
 };
 
 //Using normal function not arrow just to get the Object as this inside the function do that kind of function for each of the tabs,
-const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
+const invitedTabActiveFunction = async function (setTable, setTabs, history) {
     try {
-        const appointmentsWithPatients = await getAppointmentsWithPatients('',selectFilter.filter_organization, selectFilter.filter_service_type);
+        const appointmentsWithPatients = await getAppointmentsWithPatients();
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
         //TODO
         //When there will be actual API for list make the api call here and pass it as options.
@@ -87,7 +87,7 @@ const allTabs = [
     }
 ];
 
-const PatientTracking = ({vertical, status, history, userRole, selectFilter}) => {
+const PatientTracking = ({vertical, status, history, userRole}) => {
     const {t} = useTranslation();
 
     //The tabs of the Status filter box component.
@@ -116,7 +116,7 @@ const PatientTracking = ({vertical, status, history, userRole, selectFilter}) =>
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];
                     if (tab.tabValue === status) {
-                        tab.activeAction(setTable, setTabs, history, selectFilter);
+                        tab.activeAction(setTable, setTabs, history);
                     } else {
                         tab.notActiveAction();
                     }
@@ -167,8 +167,7 @@ const mapStateToProps = state => {
         patients: state.fhirData.patients,
         vertical: state.settings.clinikal_vertical,
         status: state.filters.statusFilterBoxValue,
-        userRole: state.settings.user_role,
-        selectFilter: state.filters,
+        userRole: state.settings.user_role
     };
 };
 

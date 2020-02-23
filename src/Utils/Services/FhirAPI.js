@@ -8,11 +8,11 @@ import {ApiTokens} from "./ApiTokens";
 
 const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName);
 
-const appointmentWithPatientsBasePath = 'apis/fhir/v4/Appointment2?_include=Appointment:patient';
+const appointmentWithPatientsBasePath = 'apis/fhir/v4/Appointment?_include=Appointment:patient';
 
 export const getAppointmentsWithPatients = async (date = '', organization = '', serviceType = '') => {
     try {
-        return await fhirTokenInstance().get(`${appointmentWithPatientsBasePath}${date ? `&date=${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}`);
+        return await fhirTokenInstance().get(`${appointmentWithPatientsBasePath}${date ? `&date=${date}` : date}${organization ? `&actor:HealthcareService.organization=${organization}` : organization}${serviceType ? `&service-type=${serviceType}` : serviceType}`);
     } catch (err) {
         console.log(err)
     }

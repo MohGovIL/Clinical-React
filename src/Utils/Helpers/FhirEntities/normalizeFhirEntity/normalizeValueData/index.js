@@ -11,14 +11,4 @@ const normalizeValueData = valueData => {
         }
     }
 };
-
-export const normalizeHealhcareServiceValueData = valueData => {
-    if (valueData.resourceType) {
-        return {
-            code: valueData.type[0].coding[0].code,
-            name: valueData.type[0].text,
-        }
-    }
-};
-
 export default normalizeValueData;

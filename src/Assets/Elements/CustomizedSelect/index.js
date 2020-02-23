@@ -2,8 +2,9 @@ import React from 'react';
 import {StyledButton, StyledMenu, StyledMenuItem, StyledDiv} from './Style'
 
 import {useTranslation} from "react-i18next";
-import {ExpandMore,ExpandLess} from "@material-ui/icons/";
+import {ExpandMore} from "@material-ui/icons/";
 import ListItemText from '@material-ui/core/ListItemText';
+import {ExpandLess} from "@material-ui/icons";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com, Yuriy Gershem yuriyge@matrix.co.il
@@ -17,6 +18,7 @@ import ListItemText from '@material-ui/core/ListItemText';
  * @constructor
  */
 const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, langDirection}) => {
+
     const {t} = useTranslation();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
