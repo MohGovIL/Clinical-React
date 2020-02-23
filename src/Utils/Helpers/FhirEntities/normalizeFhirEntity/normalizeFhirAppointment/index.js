@@ -37,7 +37,7 @@ const normalizeFhirAppointment = appointment => {
         id: appointment.id,
         priority: appointment.priority,
         status: appointment.status,
-        time: appointment.start,
+        startTime: appointment.start,
         examinationCode,
         examination,
         participantHealthcareService,

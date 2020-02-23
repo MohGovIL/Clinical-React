@@ -11,6 +11,7 @@ import {getMenu} from "../../../Utils/Services/API";
 import setPatientDataInvitedTableRows from "../../../Utils/Helpers/setPatientDataInvitedTableRows";
 import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
 import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
+import {getEncountersWithPatients} from "../../../Utils/Services/FhirAPI";
 import {store} from "../../../index";
 import FilterBox from "./FilterBox";
 import Title from "../../../Assets/Elements/Title";
@@ -26,57 +27,66 @@ const implementMeNotActive = () => {
 };
 
 //Using normal function not arrow just to get the Object as this inside the function do that kind of function for each of the tabs,
-const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
+const invitedTabActiveFunction = async function (setTable, setTabs, tabs, history, selectFilter) {
     try {
-        const appointmentsWithPatients = await getAppointmentsWithPatients('', selectFilter.filter_organization, selectFilter.filter_service_type);
+        const appointmentsWithPatients = await getAppointmentsWithPatients(false, '', selectFilter.filter_organization, selectFilter.filter_service_type);
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
-        //TODO
-        //When there will be actual API for list make the api call here and pass it as options.
-        const options = [
-            {
-                display: 'hey',
-                code: 1,
-            }
-        ];
-        const table = setPatientDataInvitedTableRows(patients, appointments, options, history);
+        const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
+        const table = setPatientDataInvitedTableRows(patients, appointments, contains, history);
         setTable(table);
-        setTabs(prevState => {
-                const prevStateClone = [...prevState];
-                prevStateClone[this.tabValue].count = appointmentsWithPatients.data.total;
-                return [
-                    ...prevStateClone
-                ]
-            }
-        );
+        const tabsClone = tabs;
+        tabsClone[tabsClone.findIndex(tabObj => tabObj.tabValue === this.tabValue)].count = appointmentsWithPatients.data.total;
+        setTabs(tabsClone);
         store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
     } catch (err) {
         console.log(err);
     }
+};
+//TODO
+// this function will be generic for all the NotActive tabs and will be handled with Promise.all[] and check if prevState
+// of the tabs is the same in all of the response
+const invitedTabNotActiveFunction = async function (setTabs, tabs) {
+    const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true);
+    const tabsClone = tabs;
+    tabsClone[tabsClone.findIndex(tabObj => tabObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total;
+    setTabs(tabsClone);
+};
+
+const waitingForExaminationTabActiveFunction = async function () {
+    try {
+        const encounterWithPatients = await getEncountersWithPatients();
+        console.log(encounterWithPatients);
+
+    } catch (err) {
+        console.log(err);
+    }
+    //Call a normalizer for encounter patient
 };
 
 const allTabs = [
     {
         tabName: 'Invited',
         id: 'invited',
-        mode:'hide',
+        mode: 'hide',
         count: 0,
         tabValue: 0,
         activeAction: invitedTabActiveFunction,
-        notActiveAction: implementMeNotActive
+        notActiveAction: invitedTabNotActiveFunction,
+
     },
     {
         tabName: 'Waiting for examination',
-        id: 'Waiting_for_examination',
-        mode:'hide',
+        id: 'waiting_for_examination',
+        mode: 'hide',
         count: 0,
         tabValue: 1,
-        activeAction: implementMeActive,
+        activeAction: waitingForExaminationTabActiveFunction,
         notActiveAction: implementMeNotActive
     },
     {
         tabName: 'Waiting for decoding',
-        id: 'Waiting_for_decoding',
-        mode:'hide',
+        id: 'waiting_for_decoding',
+        mode: 'hide',
         count: 0,
         tabValue: 2,
         activeAction: implementMeActive,
@@ -85,7 +95,7 @@ const allTabs = [
     {
         tabName: 'Finished',
         id: 'finished',
-        mode:'hide',
+        mode: 'hide',
         count: 0,
         tabValue: 3,
         activeAction: implementMeActive,
@@ -93,7 +103,7 @@ const allTabs = [
     }
 ];
 
-const PatientTracking = ({vertical, status, history, userRole, selectFilter}) => {
+const PatientTracking = ({vertical, status, history, selectFilter}) => {
     const {t} = useTranslation();
 
     //The tabs of the Status filter box component.
@@ -107,17 +117,11 @@ const PatientTracking = ({vertical, status, history, userRole, selectFilter}) =>
 
     //Create an array of permitted tabs according to the user role.
     useEffect(() => {
-        /*for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
-            const tab = allTabs[tabIndex];
-            // eslint-disable-next-line no-unused-expressions
-            tab.permission.some(role => userRole.includes(role)) ? permittedTabs.push(tab) : null
-        }*/
         for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
             const tab = allTabs[tabIndex];
-            //set tab acl role.
             isAllowed(tab);
         }
-        const permittedTabs =  allTabs.filter((tab, tabIndex) => {
+        const permittedTabs = allTabs.filter((tab, tabIndex) => {
             return tab.mode !== 'hide';
         });
         setTabs(permittedTabs);
@@ -129,9 +133,9 @@ const PatientTracking = ({vertical, status, history, userRole, selectFilter}) =>
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];
                     if (tab.tabValue === status) {
-                        tab.activeAction(setTable, setTabs, history, selectFilter);
+                        tab.activeAction(setTable, setTabs, tabs, history, selectFilter);
                     } else {
-                        tab.notActiveAction();
+                        tab.notActiveAction(setTabs, tabs);
                     }
                 }
             } catch (err) {
@@ -176,6 +180,7 @@ const PatientTracking = ({vertical, status, history, userRole, selectFilter}) =>
 
 const mapStateToProps = state => {
     return {
+        fhirDataStatus: state.fhirData.STATUS,
         appointments: state.fhirData.appointments,
         patients: state.fhirData.patients,
         vertical: state.settings.clinikal_vertical,

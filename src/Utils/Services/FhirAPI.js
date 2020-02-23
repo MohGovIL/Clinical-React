@@ -8,19 +8,21 @@ import {ApiTokens} from "./ApiTokens";
 
 const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName);
 
-const appointmentWithPatientsBasePath = 'apis/fhir/v4/Appointment?_include=Appointment:patient';
+const fhirBasePath = 'apis/fhir/v4';
 
-export const getAppointmentsWithPatients = async (date = '', organization = '', serviceType = '') => {
+const appointmentsWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=Appointment:patient`;
+
+export const getAppointmentsWithPatients = async (summary = false, date = '', organization = '', serviceType = '') => {
     try {
-        return await fhirTokenInstance().get(`${appointmentWithPatientsBasePath}${date ? `&date=${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}`);
+        return await fhirTokenInstance().get(`${appointmentsWithPatientsBasePath}${date ? `&date=${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
     } catch (err) {
         console.log(err)
     }
 };
 
-export const getValueSet = async list => {
+export const getValueSet = async id => {
     try {
-        return await fhirTokenInstance().get(`apis/fhir/v4/ValueSet/${list}`);
+        return await fhirTokenInstance().get(`${fhirBasePath}/ValueSet/${id}/$expand`);
     } catch (err) {
         console.log(err);
     }
@@ -28,7 +30,7 @@ export const getValueSet = async list => {
 
 export const updateAppointmentStatus = async (appointmentId, value) => {
     try {
-        return await fhirTokenInstance().patch(`apis/fhir/v4/Appointment/${appointmentId}`, {
+        return await fhirTokenInstance().patch(`${fhirBasePath}/Appointment/${appointmentId}`, {
             op: "replace",
             path: "/status",
             value
@@ -40,7 +42,7 @@ export const updateAppointmentStatus = async (appointmentId, value) => {
 
 export const createNewEncounter = async () => {
     try {
-        return await fhirTokenInstance().post('apis/fhir/v4/Encounter', {
+        return await fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
             "resourceType": "Encounter",
             "status": "planned",
             "serviceType": {
@@ -80,7 +82,7 @@ export const createNewEncounter = async () => {
 
 export const getOrganization = async () => {
     try {
-        return await fhirTokenInstance().get('apis/fhir/v4/Organization?active=1');
+        return await fhirTokenInstance().get(`${fhirBasePath}/Organization?active=1`);
     } catch (err) {
         console.log(err)
     }
@@ -88,8 +90,18 @@ export const getOrganization = async () => {
 
 export const getHealhcareService = async (organization) => {
     try {
-        return await fhirTokenInstance().get(`apis/fhir/v4/HealthcareService?organization=${organization}`);
+        return await fhirTokenInstance().get(`${fhirBasePath}/HealthcareService?organization=${organization}`);
     } catch (err) {
         console.log(err)
+    }
+};
+
+const encountersWithPatientsBasePath = '/Encounter?_include=Encounter:patient';
+
+export const getEncountersWithPatients = async (summary = false, date = '', serviceProvider = '', serviceType = '') => {
+    try {
+        return await fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${date ? `&date=${date}` : date}&_sort=date&status=arrived&status=triaged&status=in-progress${serviceProvider ? `&service-provider=${serviceProvider}` : serviceProvider}${serviceType ? `service-type=${serviceType}` : serviceType}`);
+    } catch (err) {
+        console.log(err);
     }
 };

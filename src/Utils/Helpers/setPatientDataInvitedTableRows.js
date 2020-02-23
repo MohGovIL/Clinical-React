@@ -129,7 +129,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment(appointment.time).format('LT')
+                        label: moment(appointment.startTime).format('LT')
                     });
                     break;
                 default:
