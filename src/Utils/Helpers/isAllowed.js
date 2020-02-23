@@ -5,8 +5,7 @@ const modes = ['write','view'];
 
 
 const isAllowed = object => {
-    debugger;
-        let codeOfTheAcoToCheck = getUIACOMapping[object.id];
+         let codeOfTheAcoToCheck = getUIACOMapping[object.id];
          modes.forEach(function(element,index){
              let elementsAllowed = store.getState().settings.user_aco[element];
              if(elementsAllowed) {
