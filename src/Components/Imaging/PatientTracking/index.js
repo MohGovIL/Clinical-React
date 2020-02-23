@@ -103,7 +103,7 @@ const allTabs = [
     }
 ];
 
-const PatientTracking = ({vertical, status, history, userRole, selectFilter}) => {
+const PatientTracking = ({vertical, status, history, selectFilter}) => {
     const {t} = useTranslation();
 
     //The tabs of the Status filter box component.
