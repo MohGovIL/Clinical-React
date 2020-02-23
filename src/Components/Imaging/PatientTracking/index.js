@@ -29,7 +29,7 @@ const implementMeNotActive = () => {
 //Using normal function not arrow just to get the Object as this inside the function do that kind of function for each of the tabs,
 const invitedTabActiveFunction = async function (setTable, setTabs, tabs, history, selectFilter) {
     try {
-        const appointmentsWithPatients = await getAppointmentsWithPatients(false, '', selectFilter.filter_organization, selectFilter.filter_service_type);
+        const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
         const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
         const table = setPatientDataInvitedTableRows(patients, appointments, contains, history);
@@ -103,7 +103,7 @@ const allTabs = [
     }
 ];
 
-const PatientTracking = ({vertical, status, history, selectFilter}) => {
+const PatientTracking = ({vertical, history, selectFilter}) => {
     const {t} = useTranslation();
 
     //The tabs of the Status filter box component.
@@ -132,7 +132,7 @@ const PatientTracking = ({vertical, status, history, selectFilter}) => {
             try {
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];
-                    if (tab.tabValue === status) {
+                    if (tab.tabValue === selectFilter.statusFilterBoxValue) {
                         tab.activeAction(setTable, setTabs, tabs, history, selectFilter);
                     } else {
                         tab.notActiveAction(setTabs, tabs);
@@ -142,7 +142,7 @@ const PatientTracking = ({vertical, status, history, selectFilter}) => {
                 console.log(err)
             }
         })();
-    }, [status]);
+    }, [selectFilter]);
     //Gets the menu items
     useEffect(() => {
         (async () => {
@@ -184,7 +184,6 @@ const mapStateToProps = state => {
         appointments: state.fhirData.appointments,
         patients: state.fhirData.patients,
         vertical: state.settings.clinikal_vertical,
-        status: state.filters.statusFilterBoxValue,
         userRole: state.settings.user_role,
         selectFilter: state.filters
     };
