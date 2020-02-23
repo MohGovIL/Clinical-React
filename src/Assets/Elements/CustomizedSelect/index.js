@@ -52,7 +52,7 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
     let buttonLabel = " ";
     if (options !== undefined) {
         const res = options.find(obj => {
-            return obj.code === value
+            return obj.code == value
         });
 
         if (res !== undefined) {
