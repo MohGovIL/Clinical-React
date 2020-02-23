@@ -1,15 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import StyledFilterBox, {StyledCustomizedSelect} from "./Style";
+import {connect} from "react-redux";
 import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
-import {connect} from "react-redux";
-import normalizeValueData from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import normalizeValueData, {normalizeHealhcareServiceValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import ListItemText from "@material-ui/core/ListItemText";
+import errorHandler from "../../../../Utils/Helpers/errorHandler";
+import {
+    setFilterOrganizationAction,
+    setFilterServiceTypeAction
+} from "../../../../Store/Actions/FilterActions/FilterActions";
 
 /**
- * @author Yuiry Gershem yuriyge@matrix.co.il
+ * @author Yuriy Gershem yuriyge@matrix.co.il
  * @param languageDirection
  * @param facility
  * @param props
@@ -17,7 +22,7 @@ import ListItemText from "@material-ui/core/ListItemText";
  * @constructor
  */
 
-const FilterBox = ({languageDirection, facility}) => {
+const FilterBox = ({languageDirection, facility, selectFilterOrganization, selectFilterServiceType, setFilterOrganizationAction, setFilterServiceTypeAction}) => {
     const {t} = useTranslation();
 
     const emptyArrayAll = () => {
@@ -27,11 +32,8 @@ const FilterBox = ({languageDirection, facility}) => {
         }]
     };
 
-    const [selectOrganizationValue, setSelectOrganizationValue] = useState(0);
-    const [selectServiceTypeValue, setSelectServiceTypeValue] = useState(0);
-
-    const [labelOrganization, setLabelOrganization] = useState([]);
-    const [labelServiceType, setLabelServiceType] = useState([]);
+    const [optionsOrganization, setLabelOrganization] = useState([]);
+    const [optionsServiceType, setLabelServiceType] = useState([]);
 
     //Gets organizations list data
     useEffect(() => {
@@ -55,6 +57,7 @@ const FilterBox = ({languageDirection, facility}) => {
         })()
     }, []);
 
+    //Autoset current facility
     useEffect(() => {
         if (facility !== 0) {
             organizationOnChangeHandler(facility);
@@ -62,34 +65,37 @@ const FilterBox = ({languageDirection, facility}) => {
     }, []);
 
     const organizationOnChangeHandler = (code) => {
-        setSelectOrganizationValue(code);
+        setFilterOrganizationAction(code);
         if (code > 0) {
             //Array for list options with default element (All).
             let array = emptyArrayAll();
 
             (async () => {
+                try {
                 //Nested destructuring from Promise. ES6 new syntax.
                 const {data: {entry: dataServiceType}} = await getHealhcareService(code);
 
                 for (let entry of dataServiceType) {
                     if (entry.resource !== undefined) {
-                        const setLabelServiceType = normalizeValueData(entry.resource);
+                        const setLabelServiceType = normalizeHealhcareServiceValueData(entry.resource);
                         array.push(setLabelServiceType);
                     }
                 }
-                setSelectServiceTypeValue(0);
+                setFilterServiceTypeAction(0);
                 setLabelServiceType(array);
+                }
+                catch (err) {
+                    errorHandler(err);
+                }
             })();
         } else {
-            setSelectServiceTypeValue(0);
+            setFilterServiceTypeAction(0);
             setLabelServiceType(emptyArrayAll());
         }
-        // console.log("organizationOnChangeHandler => call()");
     };
 
     const serviceTypeOnChangeHandler = (code) => {
-        setSelectServiceTypeValue(code);
-        // console.log("serviceTypeOnChangeHandler => call()");
+        setFilterServiceTypeAction(code);
     };
 
     return (
@@ -98,7 +104,7 @@ const FilterBox = ({languageDirection, facility}) => {
             <StyledCustomizedSelect>
                 <ListItemText>{t("Facility name")}</ListItemText>
                 <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
-                                  value={selectOrganizationValue} options={labelOrganization}
+                                  value={selectFilterOrganization} options={optionsOrganization}
                                   onChange={organizationOnChangeHandler}
                                   langDirection={languageDirection}
                 />
@@ -106,7 +112,7 @@ const FilterBox = ({languageDirection, facility}) => {
             <StyledCustomizedSelect>
                 <ListItemText>{t("Service type")}</ListItemText>
                 <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
-                                  value={selectServiceTypeValue} options={labelServiceType}
+                                  value={selectFilterServiceType} options={optionsServiceType}
                                   onChange={serviceTypeOnChangeHandler}
                                   langDirection={languageDirection}
                 />
@@ -115,11 +121,13 @@ const FilterBox = ({languageDirection, facility}) => {
     );
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
         languageDirection: state.settings.lang_dir,
         facility: parseInt(state.settings.facility),
-        props: ownProps,
+        selectFilterOrganization: state.filters.filter_organization,
+        selectFilterServiceType: state.filters.filter_service_type,
     }
 };
-export default connect(mapStateToProps, null)(FilterBox);
+
+export default connect(mapStateToProps, {setFilterOrganizationAction, setFilterServiceTypeAction})(FilterBox);
