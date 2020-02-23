@@ -11,7 +11,7 @@ import {
 const INITIAL_STATE = {
     STATUS: '',
     statusFilterBoxValue: 0,
-    filter_date: Moment.now(),
+    filter_date: Moment().format("YYYY-MM-DD"),
     filter_organization: 0,
     filter_service_type: 0
 };
@@ -28,7 +28,7 @@ const FiltersReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 STATUS: action.type,
-                filter_date: action.filter_date
+                filter_date: Moment(action.filter_date).format("YYYY-MM-DD")
             };
         case SET_ORGANIZATION_FILTER_VALUE:
             return {
