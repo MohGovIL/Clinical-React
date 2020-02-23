@@ -26,7 +26,6 @@ const isAllowed = object => {
 
         });
 };
-
 export default isAllowed;
 
 
