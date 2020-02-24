@@ -16,20 +16,20 @@ export const getAppointmentsWithPatients =  (summary = false, date = '', organiz
         return fhirTokenInstance().get(`${appointmentsWithPatientsBasePath}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
 };
 
-export const getValueSet = async id => {
-        return await fhirTokenInstance().get(`${fhirBasePath}/ValueSet/${id}/$expand`);
+export const getValueSet = id => {
+        return fhirTokenInstance().get(`${fhirBasePath}/ValueSet/${id}/$expand`);
 };
 
-export const updateAppointmentStatus = async (appointmentId, value) => {
-        return await fhirTokenInstance().patch(`${fhirBasePath}/Appointment/${appointmentId}`, {
+export const updateAppointmentStatus = (appointmentId, value) => {
+        return fhirTokenInstance().patch(`${fhirBasePath}/Appointment/${appointmentId}`, {
             op: "replace",
             path: "/status",
             value
         })
 };
 
-export const createNewEncounter = async () => {
-        return await fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
+export const createNewEncounter = () => {
+        return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
             "resourceType": "Encounter",
             "status": "planned",
             "serviceType": {
