@@ -6,7 +6,7 @@
 const normalizeValueData = valueData => {
     if (valueData.resourceType) {
         return {
-            code: valueData.id,
+            code: parseInt(valueData.id) === NaN ? valueData.id : parseInt(valueData.id),
             name: valueData.name
         }
     }
@@ -15,7 +15,7 @@ const normalizeValueData = valueData => {
 export const normalizeHealhcareServiceValueData = valueData => {
     if (valueData.resourceType) {
         return {
-            code: valueData.type[0].coding[0].code,
+            code: parseInt(valueData.type[0].coding[0].code) === NaN ? valueData.type[0].coding[0].code : parseInt(valueData.type[0].coding[0].code),
             name: valueData.type[0].text,
         }
     }

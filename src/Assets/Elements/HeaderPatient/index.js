@@ -1,31 +1,26 @@
 import React, {useEffect, useState} from 'react';
-// import AppBar from "@material-ui/core/AppBar";
-import StyledAppBar from "./Style";
-import {Breadcrumbs, Link, Typography} from "@material-ui/core";
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import StyledAppBar, {StyledBreadcrumbs, StyledIconButton} from "./Style";
+import {Link, Typography} from "@material-ui/core";
+import {NavigateNext, NavigateBefore} from '@material-ui/icons';
+import CloseIcon from '@material-ui/icons/Close';
 
-const HeaderPatient = (makeBread) => {
-    let breadcrumbValues = [];
-    const handleClick = () => {
-        console.log("i'll be pressed ");
-    };
-
-    breadcrumbValues = makeBread.makeBread;
+const HeaderPatient = ({breadcrumbs, languageDirection, onCloseClick}) => {
+    const NavigateIcon = languageDirection === 'rtl' ? NavigateBefore : NavigateNext;
 
     return (
         <StyledAppBar>
-            <Breadcrumbs aria-label="breadcrumb" separator={<NavigateNextIcon fontSize="small"/>}>
-                {breadcrumbValues.map((option, optionIndex) =>
-                    <Link color="inherit" href="#" onClick={handleClick}>{option["text"]}</Link>
-                )}
-                {/*<Link color="inherit" href="#" onClick={handleClick}>*/}
-                {/*    Material-UI*/}
-                {/*</Link>*/}
-                {/*<Link color="inherit" href="#" onClick={handleClick}>*/}
-                {/*    Core*/}
-                {/*</Link>*/}
-                {/*<Typography color="textPrimary">Breadcrumb</Typography>*/}
-            </Breadcrumbs>
+            <StyledBreadcrumbs aria-label="breadcrumb" separator={<NavigateIcon fontSize="small"/>}>
+                {breadcrumbs.map((option, optionIndex) => {
+                    if (option["separator"] !== false) {
+                        return <Typography key={optionIndex}>{option["text"]}</Typography>
+                    } else {
+                        return <Link color="inherit" href={option.url} key={optionIndex}>{option.text}</Link>
+                    }
+                })}
+            </StyledBreadcrumbs>
+            <StyledIconButton onClick={onCloseClick}>
+                <CloseIcon htmlColor={"#ffffff"} />
+            </StyledIconButton>
         </StyledAppBar>
     );
 };

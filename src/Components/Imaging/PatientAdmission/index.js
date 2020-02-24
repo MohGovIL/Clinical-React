@@ -3,71 +3,66 @@ import {connect} from "react-redux";
 import {createNewEncounter} from "../../../Utils/Services/FhirAPI";
 import HeaderPatient from "../../../Assets/Elements/HeaderPatient";
 import {useTranslation} from "react-i18next";
+import Paper from "@material-ui/core/Paper";
+import * as Moment from "moment";
+import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
 
 
-const PatientAdmission = ({location, appointmentsData, patientsData}) => {
+const PatientAdmission = ({location, appointmentsData, patientsData, languageDirection, formatDate, history}) => {
     const {t} = useTranslation();
 
     const [patientData, setPatientData] = useState({});
 
-    useEffect(()=> {
+    useEffect(() => {
         let appointmentId = new URLSearchParams(location.search).get("index");
         let participantPatient = appointmentsData[appointmentId].participantPatient;
 
         setPatientData(patientsData[participantPatient]);
 
         (async () => {
-           try{
-               // await createNewEncounter()
-           } catch (err) {
-               console.log(err)
-           }
+            try {
+                // await createNewEncounter()
+            } catch (err) {
+                console.log(err)
+            }
         })()
     }, []);
 
+    const allBreadcrumbs = [
+        {
+            text: t("Patient Admission"),
+            separator: "NavigateNextIcon",
+            url: "#",
+        },
+        {
+            text: patientData["firstName"] + " " + patientData["lastName"] + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
+            separator: false,
+            url: "#"
+        }
+    ];
 
-    const buildBreadcrumbs = () => {
-        // console.log("```````````````````````");
-        // console.log(patientData);
-        // console.log("```````````````````````");
-        let breadcrumbArray = [];
-        let _tmp = [];
-        _tmp["text"] = t("Patient Addmission");
-        _tmp["separator"] = "NavigateNextIcon";
-        _tmp["url"] = "#";
-        breadcrumbArray.push(_tmp);
-        _tmp = [];
-        _tmp["text"] = patientData["firstName"] + " " + patientData["lastName"];
-        _tmp["separator"] = "NavigateNextIcon";
-        _tmp["url"] = "#";
-        breadcrumbArray.push(_tmp);
-        _tmp = [];
-        _tmp["text"] = t("Encounter date") + ":" + "2";
-        _tmp["separator"] = "NavigateNextIcon";
-        _tmp["url"] = "#";
-        breadcrumbArray.push(_tmp);
-
-
-        return breadcrumbArray;
+    const handleCloseClick = () => {
+        history.push(`${baseRoutePath()}/imaging/patientTracking`);
     };
 
     //
 
-
     return (
         <React.Fragment>
-            <HeaderPatient makeBread={buildBreadcrumbs()}/>
+            <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection} onCloseClick={handleCloseClick}/>
+            <Paper elevation={4}>
+                PATIENT ADMISSION
+            </Paper>
         </React.Fragment>
-        // <span>
-        //     PATIENT ADMISSION
-        // </span>
     );
 };
 
 const mapStateToProps = state => {
-    return{
+    return {
         appointmentsData: state.fhirData.appointments,
-        patientsData: state.fhirData.patients
+        patientsData: state.fhirData.patients,
+        languageDirection: state.settings.lang_dir,
+        formatDate: state.settings.format_date
     };
 };
 
