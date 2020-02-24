@@ -122,9 +122,7 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
             const tab = allTabs[tabIndex];
             isAllowed(tab);
         }
-        const permittedTabs = allTabs.filter((tab, tabIndex) => {
-            return tab.mode === 'hide';
-        });
+        const permittedTabs = allTabs.filter((tab, tabIndex) => tab.mode !== 'hide');
         allTabs = permittedTabs;
         setTabs(allTabs);
     }, []);
