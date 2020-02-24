@@ -3,7 +3,7 @@
  * @param valueData
  * @returns {{}}
  */
-const normalizeValueData = valueData => {
+export const normalizeValueData = valueData => {
     if (valueData.resourceType) {
         return {
             code: valueData.id,
@@ -20,5 +20,3 @@ export const normalizeHealhcareServiceValueData = valueData => {
         }
     }
 };
-
-export default normalizeValueData;

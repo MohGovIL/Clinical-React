@@ -14,6 +14,7 @@ import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/Fhir
 import {getEncountersWithPatients} from "../../../Utils/Services/FhirAPI";
 import {store} from "../../../index";
 import FilterBox from "./FilterBox";
+import {normalizeValueData} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import Title from "../../../Assets/Elements/Title";
 import isAllowed from "../../../Utils/Helpers/isAllowed";
 
@@ -32,6 +33,7 @@ const invitedTabActiveFunction = async function (setTable, setTabs, tabs, histor
         const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
         const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
+        // const options = normalizeValueData(contains.entry);
         const table = setPatientDataInvitedTableRows(patients, appointments, contains, history);
         setTable(table);
         const tabsClone = tabs;

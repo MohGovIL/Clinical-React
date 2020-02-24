@@ -5,7 +5,7 @@ import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
-import normalizeValueData, {normalizeHealhcareServiceValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import {normalizeHealhcareServiceValueData, normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import ListItemText from "@material-ui/core/ListItemText";
 import errorHandler from "../../../../Utils/Helpers/errorHandler";
 import {
