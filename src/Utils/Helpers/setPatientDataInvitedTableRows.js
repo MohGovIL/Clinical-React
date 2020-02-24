@@ -51,7 +51,7 @@ const tableHeaders = [
 
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataInvitedTableRows = (patients, appointments, options, history) => {
+const setPatientDataInvitedTableRows = (patients, appointments, options, history,mode) => {
     let result = [];
     let rows = [];
     for (let [appointmentId, appointment] of Object.entries(appointments)) {
@@ -80,7 +80,8 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                                 pathname: `${baseRoutePath()}/imaging/patientAdmission`,
                                 search: `?index=${appointmentId}`
                             })
-                        }
+                        },
+                        mode
                     });
                     break;
                 case 'Messages':
@@ -96,11 +97,12 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         text_color: '#076ce9',
                         padding: 'none',
                         value: appointment.status,
-                        options: options,
+                        options,
                         align: 'center',
                         background_color: '#eaf7ff',
                         icon_color: '#076ce9',
-                        langDirection: 'rtl'
+                        langDirection: 'rtl',
+                        mode
                     });
                     break;
                 case 'Cell phone':

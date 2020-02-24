@@ -48,7 +48,8 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                                                                   color={rowData.color}
                                                                                   variant={rowData.variant}
                                                                                   onClickHandler={rowData.onClickHandler}
-                                                                                  key={tableCellItemIndex}/>;
+                                                                                  key={tableCellItemIndex}
+                                                                                  mode={rowData.mode}/>;
                                             case LABEL_CELL:
                                                 return <CustomizedTableLabelCell padding={rowData.padding}
                                                                                  align={rowData.align}
@@ -70,7 +71,8 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                                                                   align={rowData.align}
                                                                                   options={rowData.options}
                                                                                   langDirection={rowData.langDirection}
-                                                                                  key={tableCellItemIndex}/>;
+                                                                                  key={tableCellItemIndex}
+                                                                                  mode={rowData.mode}/>;
                                             case PERSONAL_INFORMATION_CELL:
                                                 return <CustomizedTablePersonalInformationCell
                                                     priority={rowData.priority}
