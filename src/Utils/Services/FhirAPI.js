@@ -14,7 +14,7 @@ const appointmentsWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=A
 
 export const getAppointmentsWithPatients = async (summary = false, date = '', organization = '', serviceType = '') => {
     try {
-        return await fhirTokenInstance().get(`${appointmentsWithPatientsBasePath}${date ? `&date=${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
+        return await fhirTokenInstance().get(`${appointmentsWithPatientsBasePath}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
     } catch (err) {
         console.log(err)
     }
