@@ -39,7 +39,8 @@ export const StyledBreadcrumbs = styled(Breadcrumbs)`
 export const StyledIconButton = styled(IconButton)`
   display: flex;
   flex-direction: row;
-  margin-right: auto;
+  margin-right: ${props => props.language_direction == "rtl" ? "auto" : null } ;
+  margin-left: ${props => props.language_direction == "ltr" ? "auto" : null } ;
   justify-content: left;
   min-width: 32px;
   min-height: 32px;

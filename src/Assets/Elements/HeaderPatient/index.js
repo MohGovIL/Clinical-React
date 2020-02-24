@@ -18,7 +18,7 @@ const HeaderPatient = ({breadcrumbs, languageDirection, onCloseClick}) => {
                     }
                 })}
             </StyledBreadcrumbs>
-            <StyledIconButton onClick={onCloseClick}>
+            <StyledIconButton onClick={onCloseClick} language_direction={languageDirection}>
                 <CloseIcon htmlColor={"#ffffff"} />
             </StyledIconButton>
         </StyledAppBar>
