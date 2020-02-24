@@ -45,8 +45,6 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
         history.push(`${baseRoutePath()}/imaging/patientTracking`);
     };
 
-    //
-
     return (
         <React.Fragment>
             <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection} onCloseClick={handleCloseClick}/>
