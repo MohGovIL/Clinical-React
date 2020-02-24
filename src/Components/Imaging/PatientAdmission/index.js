@@ -21,7 +21,7 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
 
         (async () => {
             try {
-                // await createNewEncounter()
+                //await createNewEncounter()
             } catch (err) {
                 console.log(err)
             }
