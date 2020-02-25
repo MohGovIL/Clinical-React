@@ -60,7 +60,7 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
         }
     }
     console.log("--------------");
-    console.log("mode2 = "+mode);
+    console.log("mode CustomizedSelect = "+ mode);
     console.log("--------------");
     return (
         <StyledDiv>
@@ -73,7 +73,7 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
                 onClick={handleClick}
                 language_direction={langDirection}
                 {...opts}
-                disabled={mode !== 'write' && mode !== 'hide' && mode !== undefined ?true : false}
+                disabled={mode === 'view' ? true : false}
             >{buttonLabel}
             </StyledButton>
             <StyledMenu

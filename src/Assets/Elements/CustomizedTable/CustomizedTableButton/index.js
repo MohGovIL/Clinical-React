@@ -4,9 +4,9 @@ import {useTranslation} from "react-i18next";
 
 const CustomizedTableButton = ({variant, color, label, onClickHandler,mode}) => {
     const {t} = useTranslation();
-    console.log("mode = "+ mode);
+    console.log("mode Customized table button = "+ mode);
     return (
-        <StyledButton variant={variant} color={color} onClick={onClickHandler} disabled={mode !== 'write' ? true : false}>
+        <StyledButton variant={variant} color={color} onClick={onClickHandler} disabled={mode === 'view' ? true : false}>
             {t(label)}
         </StyledButton>
     );
