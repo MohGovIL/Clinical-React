@@ -3,9 +3,11 @@
  * @param valueSetObj
  * @returns {code: *, name: *}
  */
+
 const normalizeFhirValueSet = valueSetObj => {
+
     return {
-        code: isNaN(parseInt(valueSetObj.code)) ? valueSetObj.code : parseInt(valueSetObj.code),
+        code: valueSetObj.code,
         name: valueSetObj.display,
     }
 };

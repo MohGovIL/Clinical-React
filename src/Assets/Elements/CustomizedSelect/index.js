@@ -18,7 +18,6 @@ import {ExpandLess} from "@material-ui/icons";
  * @constructor
  */
 const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, langDirection}) => {
-    debugger
     const {t} = useTranslation();
 
     const [anchorEl, setAnchorEl] = React.useState(null);

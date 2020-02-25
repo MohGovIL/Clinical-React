@@ -62,7 +62,7 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                                                                  padding={rowData.padding}
                                                                                  key={tableCellItemIndex}/>;
                                             case SELECT_CELL:
-                                                return <CustomizedTableSelectCell onChangeHandler={rowData.onChangeHandler}
+                                                return <CustomizedTableSelectCell onChange={rowData.onChange}
                                                                                   text_color={rowData.text_color}
                                                                                   padding={rowData.padding}
                                                                                   value={rowData.value}

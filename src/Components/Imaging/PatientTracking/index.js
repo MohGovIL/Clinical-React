@@ -54,15 +54,18 @@ const invitedTabActiveFunction = async function (setTable, setTabs, history, sel
 //TODO
 // this function will be generic for all the NotActive tabs and will be handled with Promise.all[] and check if prevState
 // of the tabs is the same in all of the response
-const invitedTabNotActiveFunction = async function (setTabs, tabs, selectFilter) {
-    const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
-
-    setTabs(prevTabs => {
-        //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
-        const prevTabsClone = [...prevTabs];
-        prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total
-        return prevTabsClone;
-    });
+const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
+    try{
+        const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total
+            return prevTabsClone;
+        });
+    }catch (err) {
+        console.log(err);
+    }
 };
 
 const waitingForExaminationTabActiveFunction = async function () {

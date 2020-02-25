@@ -4,6 +4,7 @@ import {
     LABEL_CELL,
     PERSONAL_INFORMATION_CELL, SELECT_CELL
 } from "../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
+import {updateAppointmentStatus} from "../Services/FhirAPI";
 import moment from "moment";
 import "moment/locale/he"
 
@@ -93,7 +94,14 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                     break;
                 case 'Status':
                     row.push({
-                        onChangeHandler: null,
+                        onChange(){
+                            // try{
+                            //     const updateAppointmentStatus();
+                            //
+                            // }catch (err) {
+                            //     console.log(err);
+                            // }
+                        },
                         text_color: '#076ce9',
                         padding: 'none',
                         value: appointment.status,
