@@ -29,14 +29,15 @@ const implementMeNotActive = () => {
 //Using normal function not arrow just to get the Object as this inside the function do that kind of function for each of the tabs,
 const invitedTabActiveFunction = async function (setTable, setTabs, tabs, history, selectFilter) {
     try {
+       let contains = [];
         const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
-        const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
-        const table = setPatientDataInvitedTableRows(patients, appointments, contains, history);
+       /* const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');*/
+        const table = setPatientDataInvitedTableRows(patients, appointments, contains, history, this.mode);
         setTable(table);
         const tabsClone = tabs;
         tabsClone[tabsClone.findIndex(tabObj => tabObj.tabValue === this.tabValue)].count = appointmentsWithPatients.data.total;
-        setTabs(tabsClone);
+        setTabs(prevState => tabsClone);
         store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
     } catch (err) {
         console.log(err);
@@ -49,7 +50,7 @@ const invitedTabNotActiveFunction = async function (setTabs, tabs) {
     const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true);
     const tabsClone = tabs;
     tabsClone[tabsClone.findIndex(tabObj => tabObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total;
-    setTabs(tabsClone);
+    setTabs(prevState => tabsClone);
 };
 
 const waitingForExaminationTabActiveFunction = async function () {
@@ -63,51 +64,12 @@ const waitingForExaminationTabActiveFunction = async function () {
     //Call a normalizer for encounter patient
 };
 
-const allTabs = [
-    {
-        tabName: 'Invited',
-        id: 'invited',
-        mode: 'hide',
-        count: 0,
-        tabValue: 0,
-        activeAction: invitedTabActiveFunction,
-        notActiveAction: invitedTabNotActiveFunction,
-
-    },
-    {
-        tabName: 'Waiting for examination',
-        id: 'waiting_for_examination',
-        mode: 'hide',
-        count: 0,
-        tabValue: 1,
-        activeAction: waitingForExaminationTabActiveFunction,
-        notActiveAction: implementMeNotActive
-    },
-    {
-        tabName: 'Waiting for decoding',
-        id: 'waiting_for_decoding',
-        mode: 'hide',
-        count: 0,
-        tabValue: 2,
-        activeAction: implementMeActive,
-        notActiveAction: implementMeNotActive
-    },
-    {
-        tabName: 'Finished',
-        id: 'finished',
-        mode: 'hide',
-        count: 0,
-        tabValue: 3,
-        activeAction: implementMeActive,
-        notActiveAction: implementMeNotActive
-    }
-];
 
 const PatientTracking = ({vertical, history, selectFilter}) => {
     const {t} = useTranslation();
 
     //The tabs of the Status filter box component.
-    const [tabs, setTabs] = useState(allTabs);
+    const [tabs, setTabs] = useState([]);
 
     //table is an array of 2 arrays inside. First array represents the table headers, the second array represents the table data combined them together so it won't be making double rendering.
     const [[tableHeaders, tableData], setTable] = useState([[], []]);
@@ -117,19 +79,55 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
 
     //Create an array of permitted tabs according to the user role.
     useEffect(() => {
+        let allTabs = [
+            {
+                tabName: 'Invited',
+                id: 'invited',
+                mode: 'hide',
+                count: 0,
+                tabValue: 0,
+                activeAction: invitedTabActiveFunction,
+                notActiveAction: invitedTabNotActiveFunction,
+
+            },
+            {
+                tabName: 'Waiting for examination',
+                id: 'waiting_for_examination',
+                mode: 'hide',
+                count: 0,
+                tabValue: 1,
+                activeAction: waitingForExaminationTabActiveFunction,
+                notActiveAction: implementMeNotActive
+            },
+            {
+                tabName: 'Waiting for decoding',
+                id: 'waiting_for_decoding',
+                mode: 'hide',
+                count: 0,
+                tabValue: 2,
+                activeAction: implementMeActive,
+                notActiveAction: implementMeNotActive
+            },
+            {
+                tabName: 'Finished',
+                id: 'finished',
+                mode: 'hide',
+                count: 0,
+                tabValue: 3,
+                activeAction: implementMeActive,
+                notActiveAction: implementMeNotActive
+            }
+        ];
         for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
             const tab = allTabs[tabIndex];
             isAllowed(tab);
         }
-        const permittedTabs = allTabs.filter((tab, tabIndex) => {
-            return tab.mode !== 'hide';
-        });
-        setTabs(permittedTabs);
+        const permittedTabs = allTabs.filter((tab, tabIndex) => tab.mode !== 'hide');
+        allTabs = permittedTabs;
+        setTabs(allTabs);
     }, []);
     //Filter box mechanism
     useEffect(() => {
-        (async () => {
-            try {
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];
                     if (tab.tabValue === selectFilter.statusFilterBoxValue) {
@@ -138,10 +136,6 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                         tab.notActiveAction(setTabs, tabs);
                     }
                 }
-            } catch (err) {
-                console.log(err)
-            }
-        })();
     }, [selectFilter]);
     //Gets the menu items
     useEffect(() => {

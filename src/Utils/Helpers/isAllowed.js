@@ -1,3 +1,12 @@
+/**
+ * @author Dror Golan drorgo@matrix.co.il
+ * @param object - array
+ * @return nothing
+ * @calibrate  data inside components tabs
+ * @constructor
+ */
+
+
 import {store} from "../../../src";
 import getUIACOMapping from "./acoMapping";
 import errorHandler from "../../../src/Utils/Helpers/errorHandler";
