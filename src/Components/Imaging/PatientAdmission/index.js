@@ -6,7 +6,9 @@ import {useTranslation} from "react-i18next";
 import Paper from "@material-ui/core/Paper";
 import * as Moment from "moment";
 import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
-
+import PatientDataBlock from "./PatientDataBlock";
+import PatientDetailsBlock from "./PatientDetailsBlock";
+import {StyledPatientRow} from "./Style";
 
 const PatientAdmission = ({location, appointmentsData, patientsData, languageDirection, formatDate, history}) => {
     const {t} = useTranslation();
@@ -47,10 +49,13 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
 
     return (
         <React.Fragment>
-            <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection} onCloseClick={handleCloseClick}/>
-            <Paper elevation={4}>
-                PATIENT ADMISSION
-            </Paper>
+            <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection}
+                           onCloseClick={handleCloseClick}/>
+            <StyledPatientRow>
+                <PatientDataBlock patientData={patientData}/>
+                <PatientDetailsBlock/>
+            </StyledPatientRow>
+
         </React.Fragment>
     );
 };
