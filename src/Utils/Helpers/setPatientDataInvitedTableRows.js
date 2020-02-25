@@ -52,7 +52,7 @@ const tableHeaders = [
 ]; //Needs to be placed in another place in the project
 
 const setPatientDataInvitedTableRows = (patients, appointments, options, history,mode) => {
-    console.log("mode 1 = "+ mode);
+   /* console.log("mode 1 = "+ mode);*/
     let result = [];
     let rows = [];
     for (let [appointmentId, appointment] of Object.entries(appointments)) {
