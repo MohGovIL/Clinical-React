@@ -147,6 +147,8 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                     if (tab.tabValue === selectFilter.statusFilterBoxValue) {
                         tab.activeAction(setTable, setTabs, history, selectFilter);
                     } else {
+                        //TODO make this call in a different useEffect because when statusFiltterBoxValue changes
+                        // there is no need to call `tab.activeAction` only call `tab.notActiveAction`
                         tab.notActiveAction(setTabs, selectFilter);
                     }
                 }
