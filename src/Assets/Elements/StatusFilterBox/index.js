@@ -18,8 +18,8 @@ const StatusFilterBox = ({tabs, setStatusFilterBoxValueAction, selectedTab}) => 
     const matches = useMediaQuery(`(min-width:${devicesValue.desktop}px)`);
 
 
-    const tabsHandler = tabsValue => {
-        setStatusFilterBoxValueAction(tabsValue)
+    const tabsHandler = tabValue => {
+        setStatusFilterBoxValueAction(tabValue)
     };
 
     return (

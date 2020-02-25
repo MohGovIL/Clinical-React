@@ -32,12 +32,18 @@ const invitedTabActiveFunction = async function (setTable, setTabs, tabs, histor
     try {
         const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
-        const tabsClone = tabs;
-        tabsClone[tabsClone.findIndex(tabObj => tabObj.tabValue === this.tabValue)].count = appointmentsWithPatients.data.total;
-        setTabs(tabsClone);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatients.data.total;
+            return prevTabsClone;
+        });
         const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
-        // const options = normalizeValueData(contains.entry);
-        const table = setPatientDataInvitedTableRows(patients, appointments, contains, history);
+        let options = [];
+        for(let status of contains){
+            options.push(normalizeValueData(status));
+        }
+        const table = setPatientDataInvitedTableRows(patients, appointments, options, history);
         setTable(table);
 
         store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
@@ -50,9 +56,13 @@ const invitedTabActiveFunction = async function (setTable, setTabs, tabs, histor
 // of the tabs is the same in all of the response
 const invitedTabNotActiveFunction = async function (setTabs, tabs, selectFilter) {
     const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
-    const tabsClone = tabs;
-    tabsClone[tabsClone.findIndex(tabObj => tabObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total;
-    setTabs(tabsClone);
+
+    setTabs(prevTabs => {
+        //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+        const prevTabsClone = [...prevTabs];
+        prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total
+        return prevTabsClone;
+    });
 };
 
 const waitingForExaminationTabActiveFunction = async function () {

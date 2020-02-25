@@ -3,7 +3,7 @@ import StyledStatusFilterBoxTab from './Style';
 import StyledFilterBoxBadge from "./StyledFilterBoxBadge/Style";
 //TODO fix the flex layout so the items inside (Label and badge) look the same way they are in Zeplin aligned right
     const StatusFilterBoxTab = ({label, selected, tabValue, tabHandler, count}) => {
-        debugger
+
     const badge = <StyledFilterBoxBadge badgeContent={count} color={'primary'} selected={selected} />;
 
     return (
