@@ -59,9 +59,9 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
             buttonLabel = res.name;
         }
     }
-    console.log("--------------");
+  /*  console.log("--------------");
     console.log("mode CustomizedSelect = "+ mode);
-    console.log("--------------");
+    console.log("--------------");*/
     return (
         <StyledDiv>
             <StyledButton
