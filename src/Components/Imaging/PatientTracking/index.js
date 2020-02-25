@@ -14,7 +14,7 @@ import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/Fhir
 import {getEncountersWithPatients} from "../../../Utils/Services/FhirAPI";
 import {store} from "../../../index";
 import FilterBox from "./FilterBox";
-import {normalizeValueData} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import normalizeFhirValueSet from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import Title from "../../../Assets/Elements/Title";
 import isAllowed from "../../../Utils/Helpers/isAllowed";
 
@@ -28,7 +28,7 @@ const implementMeNotActive = () => {
 };
 
 //Using normal function not arrow just to get the Object as this inside the function do that kind of function for each of the tabs,
-const invitedTabActiveFunction = async function (setTable, setTabs, tabs, history, selectFilter) {
+const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
@@ -41,7 +41,7 @@ const invitedTabActiveFunction = async function (setTable, setTabs, tabs, histor
         const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
         let options = [];
         for(let status of contains){
-            options.push(normalizeValueData(status));
+            options.push(normalizeFhirValueSet(status));
         }
         const table = setPatientDataInvitedTableRows(patients, appointments, options, history);
         setTable(table);
@@ -142,9 +142,9 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];
                     if (tab.tabValue === selectFilter.statusFilterBoxValue) {
-                        tab.activeAction(setTable, setTabs, tabs, history, selectFilter);
+                        tab.activeAction(setTable, setTabs, history, selectFilter);
                     } else {
-                        tab.notActiveAction(setTabs, tabs, selectFilter);
+                        tab.notActiveAction(setTabs, selectFilter);
                     }
                 }
     }, [selectFilter.filter_date, selectFilter.statusFilterBoxValue, selectFilter.filter_service_type, selectFilter.filter_organization]);
