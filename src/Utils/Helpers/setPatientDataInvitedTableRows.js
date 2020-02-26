@@ -116,7 +116,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                 case 'Cell phone':
                     row.push({
                         padding: 'none',
-                        align: 'right',
+                        align: 'center',
                         label: patient.mobileCellPhone || null,
                         color: '#0027a5'
                     });
