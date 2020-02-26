@@ -7,7 +7,7 @@ const StyledCustomizedTable = styled(Table)`
    0 4px 5px 0 rgba(0,0,0,0.14),
    0 1px 10px 0 rgba(0,0,0,0.12);
    border-collapse: unset;
-   table-layout: fixed;
+   table-layout: auto;
 `;
 
 export default StyledCustomizedTable;
