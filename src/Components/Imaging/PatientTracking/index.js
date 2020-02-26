@@ -17,7 +17,7 @@ import FilterBox from "./FilterBox";
 import normalizeFhirValueSet from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import Title from "../../../Assets/Elements/Title";
 import isAllowed from "../../../Utils/Helpers/isAllowed";
-
+import {normalizeFhirEncountersWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
 
 const implementMeActive = () => {
     console.log('Implement me active :D')
@@ -60,7 +60,7 @@ const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
             const prevTabsClone = [...prevTabs];
-            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total;
             return prevTabsClone;
         });
     }catch (err) {
@@ -68,15 +68,41 @@ const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
     }
 };
 
-const waitingForExaminationTabActiveFunction = async function () {
+const waitingForExaminationTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
-        const encounterWithPatients = await getEncountersWithPatients();
-        console.log(encounterWithPatients);
+        const encounterWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
+        const [patients, encounters] = normalizeFhirEncountersWithPatients(encounterWithPatients.data.entry);
+        debugger
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encounterWithPatients.data.total;
+            return prevTabsClone;
+        });
+        const {data:{expansion:{contains}}} = await getValueSet('encounter_statuses');
+        let options = [];
+        for(let status of contains){
+            options.push(normalizeFhirValueSet(status));
+        }
 
     } catch (err) {
         console.log(err);
     }
     //Call a normalizer for encounter patient
+};
+
+const waitingForExaminationTabNotActiveFunction = async function(setTabs, selectFilter){
+  try{
+      const encounterWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
+      setTabs(prevTabs => {
+          //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+          const prevTabsClone = [...prevTabs];
+          prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encounterWithPatientsSummaryCount.data.total;
+          return prevTabsClone;
+      });
+  }catch (err) {
+      console.log(err);
+  }
 };
 
 
@@ -103,7 +129,6 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                 tabValue: 0,
                 activeAction: invitedTabActiveFunction,
                 notActiveAction: invitedTabNotActiveFunction,
-
             },
             {
                 tabName: 'Waiting for examination',
@@ -112,7 +137,7 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                 count: 0,
                 tabValue: 1,
                 activeAction: waitingForExaminationTabActiveFunction,
-                notActiveAction: implementMeNotActive
+                notActiveAction: waitingForExaminationTabNotActiveFunction
             },
             {
                 tabName: 'Waiting for decoding',
@@ -140,7 +165,7 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
         allTabs = allTabs.filter((tab) => tab.mode !== 'hide');
         setTabs(allTabs);
     }, []);
-    //Filter box mechanism
+    //Filter box mechanism for activeTabs
     useEffect(() => {
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];

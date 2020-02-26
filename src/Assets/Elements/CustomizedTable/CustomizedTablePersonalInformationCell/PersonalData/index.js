@@ -6,9 +6,9 @@ const PersonalData = styled.div`
    width: 100%;
    flex-direction: column;
    & span{
-     width: 125px;
      font-weight: bold;
      text-align: right;
+     width: 125px;
      text-overflow: ellipsis;
      overflow: hidden;
      white-space: nowrap;

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Table from "@material-ui/core/Table";
+import {devicesValue} from "../../Themes/BreakPoints";
 
 const StyledCustomizedTable = styled(Table)`
   background-color: #ffffff;
@@ -8,6 +9,9 @@ const StyledCustomizedTable = styled(Table)`
    0 1px 10px 0 rgba(0,0,0,0.12);
    border-collapse: unset;
    table-layout: auto;
+   @media(min-width: ${devicesValue.desktop}px){
+    table-layout: fixed;
+   }
 `;
 
 export default StyledCustomizedTable;

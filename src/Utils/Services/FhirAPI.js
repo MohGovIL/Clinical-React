@@ -74,5 +74,5 @@ export const getHealhcareService = (organization) => {
 const encountersWithPatientsBasePath = '/Encounter?_include=Encounter:patient';
 
 export const getEncountersWithPatients = (summary = false, date = '', serviceProvider = '', serviceType = '') => {
-        return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${date ? `&date=${date}` : date}&_sort=date&status=arrived&status=triaged&status=in-progress${serviceProvider ? `&service-provider=${serviceProvider}` : serviceProvider}${serviceType ? `service-type=${serviceType}` : serviceType}`);
+        return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${date ? `&date=eq${date}` : ''}&_sort=date&status=arrived&status=triaged&status=in-progress${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
 };

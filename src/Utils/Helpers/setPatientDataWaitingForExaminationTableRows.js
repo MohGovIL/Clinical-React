@@ -1,12 +1,11 @@
-import {baseRoutePath} from "./baseRoutePath";
 import {
     BADGE_CELL, BUTTON_CELL,
     LABEL_CELL,
     PERSONAL_INFORMATION_CELL, SELECT_CELL
 } from "../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
-import {updateAppointmentStatus} from "../Services/FhirAPI";
 import moment from "moment";
 import "moment/locale/he"
+import {baseRoutePath} from "./baseRoutePath";
 
 const tableHeaders = [
     {
@@ -52,8 +51,8 @@ const tableHeaders = [
 
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataInvitedTableRows = (patients, appointments, options, history,mode) => {
-   /* console.log("mode 1 = "+ mode);*/
+const setPatientDataWaitingForExaminationTableRows = (patients, appointments, options, history,mode) => {
+    /* console.log("mode 1 = "+ mode);*/
     let result = [];
     let rows = [];
     for (let [appointmentId, appointment] of Object.entries(appointments)) {
@@ -78,10 +77,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         align: 'center',
                         color: 'primary',
                         onClickHandler(){
-                            history.push({
-                                pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-                                search: `?index=${appointmentId}`
-                            })
+                            console.log();
                         },
                         mode
                     });
@@ -118,7 +114,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: patient.mobileCellPhone,
+                        label: patient.mobileCellPhone || null,
                         color: '#0027a5'
                     });
                     break;
@@ -154,4 +150,4 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
     return result;
 };
 
-export default setPatientDataInvitedTableRows;
+export default setPatientDataWaitingForExaminationTableRows;

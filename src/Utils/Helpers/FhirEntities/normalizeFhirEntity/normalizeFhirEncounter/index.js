@@ -4,20 +4,51 @@ const normalizeFhirEncounter = encounter => {
 
     const appointment = encounter.appointment ? encounter.appointment.map(appointmentObj => appointmentObj.reference.split('/')[1]) : null;
 
-    const startTime = encounter.period ? encounter.period.start : null;
+    let examinationCode = null
+    let examination = null;
+    if (encounter.reasonCode && encounter.reasonCode.length > 0){
+        if(encounter.reasonCode.every(reasonCodeObj => reasonCodeObj.coding)){
+            examinationCode = encounter.reasonCode.map(reasonCodeObj => reasonCodeObj.coding[0].code);
+            examination = encounter.reasonCode.map(reasonCodeObj => reasonCodeObj.text);
+        }
+    }
+    let startTime = null;
+    let date = null;
+    debugger
+    if(encounter.period){
+        if(encounter.period.start){
+            const isPeriodValid = encounter.period.start.split(' ');
+            if(isPeriodValid.length > 1){
+                date = isPeriodValid[0];
+                startTime = isPeriodValid[1];
+            }
+        }
+    }
 
     const serviceProvider = encounter.serviceProvider ? encounter.serviceProvider.reference.split('/')[1] : null;
 
-    const serviceType = encounter.serviceType ? encounter.serviceType.coding[0].code : null;
+    let serviceType = null;
+    let serviceTypeCode = null;
+    if(encounter.serviceType && encounter.serviceType.length > 0){
+        if(encounter.serviceType.every(serviceTypeObj => serviceTypeObj.coding)){
+            serviceTypeCode = encounter.serviceType.map(serviceTypeCodeObj => serviceTypeCodeObj.coding[0].code);
+            serviceType = encounter.serviceType.map(serviceTypeObj => serviceTypeObj.text);
+        }
+    }
 
     return {
         id: encounter.id,
         priority: encounter.priority,
+        status: encounter.status,
         patient,
         appointment,
         startTime,
         serviceProvider,
-        serviceType
+        serviceType,
+        date,
+        examinationCode,
+        examination,
+        serviceTypeCode
     }
 };
 
