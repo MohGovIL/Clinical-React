@@ -13,11 +13,14 @@ import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
 import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
 import {getEncountersWithPatients} from "../../../Utils/Services/FhirAPI";
 import {store} from "../../../index";
+import {setEncounterWithPatientsAction} from "../../../Store/Actions/FhirActions/fhirActions";
 import FilterBox from "./FilterBox";
 import normalizeFhirValueSet from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import Title from "../../../Assets/Elements/Title";
 import isAllowed from "../../../Utils/Helpers/isAllowed";
 import {normalizeFhirEncountersWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
+import setPatientDataWaitingForExaminationTableRows
+    from "../../../Utils/Helpers/setPatientDataWaitingForExaminationTableRows";
 
 const implementMeActive = () => {
     console.log('Implement me active :D')
@@ -43,7 +46,7 @@ const invitedTabActiveFunction = async function (setTable, setTabs, history, sel
         for(let status of contains){
             options.push(normalizeFhirValueSet(status));
         }
-        const table = setPatientDataInvitedTableRows(patients, appointments, options, history);
+        const table = setPatientDataInvitedTableRows(patients, appointments, options, history, this.mode);
         setTable(table);
 
         store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
@@ -72,7 +75,6 @@ const waitingForExaminationTabActiveFunction = async function (setTable, setTabs
     try {
         const encounterWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
         const [patients, encounters] = normalizeFhirEncountersWithPatients(encounterWithPatients.data.entry);
-        debugger
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
             const prevTabsClone = [...prevTabs];
@@ -84,7 +86,12 @@ const waitingForExaminationTabActiveFunction = async function (setTable, setTabs
         for(let status of contains){
             options.push(normalizeFhirValueSet(status));
         }
+        debugger
+        const table = setPatientDataWaitingForExaminationTableRows(patients, encounters, options, history, this.mode);
 
+        setTable(table);
+
+        store.dispatch(setEncounterWithPatientsAction(patients, encounters));
     } catch (err) {
         console.log(err);
     }

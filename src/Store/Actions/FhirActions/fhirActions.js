@@ -7,11 +7,11 @@ import {
     SET_ENCOUNTER_WITH_PATIENTS_SUCCESS
 } from "./fhirActionTypes";
 //TODO use this functions to add the data to redux
-const setEncounterWithPatientsAction = (encounters, patients) => {
+export const setEncounterWithPatientsAction = (patients, encounters) => {
     return dispatch => {
         try{
             dispatch(setEncounterWithPatientsStartAction());
-            dispatch(setEncounterWithPatientsSuccessAction(encounters, patients));
+            dispatch(setEncounterWithPatientsSuccessAction(patients, encounters));
         }catch(err){
             dispatch(setEncounterWithPatientsFailedAction());
         }
@@ -32,7 +32,7 @@ const setEncounterWithPatientsFailedAction = () => {
 };
 
 
-const setEncounterWithPatientsSuccessAction = (encounters, patients) => {
+const setEncounterWithPatientsSuccessAction = (patients, encounters) => {
     return {
         type: SET_ENCOUNTER_WITH_PATIENTS_SUCCESS,
         encounters,

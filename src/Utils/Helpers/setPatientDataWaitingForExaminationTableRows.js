@@ -51,19 +51,19 @@ const tableHeaders = [
 
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataWaitingForExaminationTableRows = (patients, appointments, options, history,mode) => {
+const setPatientDataWaitingForExaminationTableRows = (patients, encounters, options, history, mode) => {
     /* console.log("mode 1 = "+ mode);*/
     let result = [];
     let rows = [];
-    for (let [appointmentId, appointment] of Object.entries(appointments)) {
+    for (let [encountersId, encounter] of Object.entries(encounters)) {
         let row = [];
         for (let columnIndex = 0; columnIndex < tableHeaders.length; columnIndex++) {
-            const patient = patients[appointment.participantPatient];
+            const patient = patients[encounter.patient];
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
-                        priority: appointment.priority,
+                        priority: encounter.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,
                         lastName: patient.lastName,
@@ -101,7 +101,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, appointments, op
                         },
                         text_color: '#076ce9',
                         padding: 'none',
-                        value: appointment.status,
+                        value: encounter.status,
                         options,
                         align: 'center',
                         background_color: '#eaf7ff',
@@ -122,21 +122,21 @@ const setPatientDataWaitingForExaminationTableRows = (patients, appointments, op
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: appointment.serviceType ? appointment.serviceType.join(' ') : null
+                        label: encounter.serviceType ? encounter.serviceType.join(' ') : null
                     });
                     break;
                 case 'Test':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: appointment.examination ?  appointment.examination.join(' ') : null
+                        label: encounter.examination ?  encounter.examination.join(' ') : null
                     });
                     break;
                 case 'Time':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment(appointment.startTime).format('LT')
+                        label: moment(encounter.startTime).format('LT')
                     });
                     break;
                 default:

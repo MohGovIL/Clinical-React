@@ -13,7 +13,7 @@ export const normalizeFhirEncountersWithPatients = encountersData => {
     const response = [];
     const encountersObj = {};
     const patientsObj = {};
-    //Looping over the appointments data and store all the Patients in an array like a dictionary
+    //Looping over the encounters data and store all the Patients in an array like a dictionary
     for (let entryIndex = 0; entryIndex < encountersData.length; entryIndex++) {
         if (encountersData[entryIndex].resource) {
             const entry = encountersData[entryIndex].resource;

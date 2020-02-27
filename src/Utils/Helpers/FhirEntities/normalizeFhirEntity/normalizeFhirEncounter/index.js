@@ -14,16 +14,16 @@ const normalizeFhirEncounter = encounter => {
     }
     let startTime = null;
     let date = null;
-    debugger
-    if(encounter.period){
-        if(encounter.period.start){
-            const isPeriodValid = encounter.period.start.split(' ');
-            if(isPeriodValid.length > 1){
-                date = isPeriodValid[0];
-                startTime = isPeriodValid[1];
-            }
-        }
-    }
+
+    // if(encounter.period){
+    //     if(encounter.period.start){
+    //         const isPeriodValid = encounter.period.start.split(' ');
+    //         if(isPeriodValid.length > 1){
+    //             date = isPeriodValid[0];
+    //             startTime = isPeriodValid[1];
+    //         }
+    //     }
+    // }
 
     const serviceProvider = encounter.serviceProvider ? encounter.serviceProvider.reference.split('/')[1] : null;
 
@@ -38,14 +38,13 @@ const normalizeFhirEncounter = encounter => {
 
     return {
         id: encounter.id,
-        priority: encounter.priority,
+        priority: encounter.priority.length ? encounter.priority.coding.code : null,
         status: encounter.status,
+        startTime: encounter.period.length ? encounter.period.start : null,
         patient,
         appointment,
-        startTime,
         serviceProvider,
         serviceType,
-        date,
         examinationCode,
         examination,
         serviceTypeCode
