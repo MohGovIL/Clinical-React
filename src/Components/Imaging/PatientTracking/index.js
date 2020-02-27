@@ -112,6 +112,40 @@ const waitingForExaminationTabNotActiveFunction = async function(setTabs, select
   }
 };
 
+const finishedTabActiveFunction = async function(setTable, setTabs, history, selectFilter){
+    // try {
+    //     const statuses = ['arrived', 'triaged', 'in-progress'];
+    //     const encounterWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+    //     const [patients, encounters] = normalizeFhirEncountersWithPatients(encounterWithPatients.data.entry);
+    //     setTabs(prevTabs => {
+    //         //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+    //         const prevTabsClone = [...prevTabs];
+    //         prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encounterWithPatients.data.total;
+    //         return prevTabsClone;
+    //     });
+    //     const {data:{expansion:{contains}}} = await getValueSet('encounter_statuses');
+    //     let options = [];
+    //     for(let status of contains){
+    //         options.push(normalizeFhirValueSet(status));
+    //     }
+    //     const table = setPatientDataWaitingForExaminationTableRows(patients, encounters, options, history, this.mode);
+    //
+    //     setTable(table);
+    //
+    //     store.dispatch(setEncounterWithPatientsAction(patients, encounters));
+    // } catch (err) {
+    //     console.log(err);
+    // }
+    try{
+
+    }catch (err) {
+        console.log(err);
+    }
+};
+
+const finishedTabNotActiveFunction = async function(setTabs, selectFilter){
+
+};
 
 const PatientTracking = ({vertical, history, selectFilter}) => {
     const {t} = useTranslation();
@@ -161,8 +195,8 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                 mode: 'hide',
                 count: 0,
                 tabValue: 3,
-                activeAction: implementMeActive,
-                notActiveAction: implementMeNotActive
+                activeAction: finishedTabActiveFunction,
+                notActiveAction: finishedTabNotActiveFunction
             }
         ];
         for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
