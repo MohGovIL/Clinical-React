@@ -24,18 +24,14 @@ const normalizeFhirPatient = patient => {
         }
     }
     if (patient.telecom) {
-        let found;
-        found = patient.telecom.patient.telecom.find(telecomItem => telecomItem.system === 'phone' && telecomItem.use === 'mobile');
-        found ? mobileCellPhone = found.value : mobileCellPhone = found;
+        const thereIsMobilePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'phone' && telecomObj.use === 'mobile');
+        mobileCellPhone = thereIsMobilePhone.length ? thereIsMobilePhone[0].value : null;
 
-        found = patient.telecom.patient.telecom.find(telecomItem => telecomItem.system === 'phone' && telecomItem.use === 'home');
-        found ? homePhone = found.value : homePhone = found;
+        const thereIsEmail = patient.telecom.filter(telecomObj => telecomObj.system === 'email');
+        email = thereIsEmail.length ? thereIsEmail[0].value : null;
 
-        found = patient.telecom.patient.telecom.find(telecomItem => telecomItem.system === 'email');
-        found ? email = found.value : email = found;
-        // mobileCellPhone = patient.telecom.patient.telecom.find(telecomItem => telecomItem.system === 'phone' && telecomItem.use === 'mobile') ?.value;
-        // homePhone = patient.telecom.patient.telecom.find(telecomItem => telecomItem.system === 'phone' && telecomItem.use === 'home')?.value;
-        // email = patient.telecom.patient.telecom.find(telecomItem => telecomItem.system === 'email')?.value;
+        const thereIsHomePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'phone' && telecomObj.use === 'home');
+        homePhone = thereIsHomePhone.length ? thereIsHomePhone[0].value : null;
     }
     return {
         id: patient.id,

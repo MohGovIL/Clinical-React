@@ -11,7 +11,7 @@ import {ExpandLess} from "@material-ui/icons";
  * @param background_color
  * @param icon_color
  * @param textcolor
- * @param value
+ * @param value - valueCode
  * @param onChange
  * @param options
  * @returns {Component}
@@ -59,9 +59,6 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
             buttonLabel = res.name;
         }
     }
-  /*  console.log("--------------");
-    console.log("mode CustomizedSelect = "+ mode);
-    console.log("--------------");*/
     return (
         <StyledDiv>
             <StyledButton

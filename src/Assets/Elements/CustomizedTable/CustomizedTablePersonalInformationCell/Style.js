@@ -5,7 +5,4 @@ export default styled(TableCell)`
   display: flex;
   flex-direction: row;
   padding: 14px 0;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
 `;
