@@ -10,15 +10,21 @@ const normalizeFhirPatient = patient => {
     let email = null;
     let firstName = null;
     let lastName = null;
-    let identifier = patient.identifier ? patient.identifier[0].value : null;
+    let identifier = null;
 
-    if(patient.name){
+    //Temporary fix for checking
+    if (patient.identifier) {
+        // let identifier = patient.identifier ? patient.identifier[0].value : null;
+        identifier = {value: (patient.identifier ? patient.identifier[0].value : null), type: "ID"};
+    }
+
+    if (patient.name) {
         lastName = patient.name[0].family;
-        if(patient.name[0].given){
+        if (patient.name[0].given) {
             firstName = patient.name[0].given[0];
-            if(patient.name[0].given.length > 2){
+            if (patient.name[0].given.length > 2) {
                 middleName = patient.name[0].given.join(' ');
-            }else{
+            } else {
                 middleName = patient.name[0].given[1];
             }
         }

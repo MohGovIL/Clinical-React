@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from "react-redux";
-import {createNewEncounter} from "../../../Utils/Services/FhirAPI";
+// import {createNewEncounter} from "../../../Utils/Services/FhirAPI";
 import HeaderPatient from "../../../Assets/Elements/HeaderPatient";
 import {useTranslation} from "react-i18next";
-import Paper from "@material-ui/core/Paper";
 import * as Moment from "moment";
 import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
 import PatientDataBlock from "./PatientDataBlock";
 import PatientDetailsBlock from "./PatientDetailsBlock";
-import {StyledPatientRow} from "./Style";
+import {StyledPatientRow, StyledDummyBlock} from "./Style";
 
 const PatientAdmission = ({location, appointmentsData, patientsData, languageDirection, formatDate, history}) => {
     const {t} = useTranslation();
@@ -53,6 +52,7 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
                            onCloseClick={handleCloseClick}/>
             <StyledPatientRow>
                 <PatientDataBlock patientData={patientData}/>
+                <StyledDummyBlock />
                 <PatientDetailsBlock/>
             </StyledPatientRow>
 

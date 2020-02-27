@@ -1,14 +1,31 @@
 import styled from "styled-components";
+import {devicesValue} from "../../../../Assets/Themes/BreakPoints";
 
 export const StyledDiv = styled.div`
   display: flex;
   flex-direction: column;
-  flex-basis: 13%;
-  align-items: flex-start;
+  width: 23%;
   box-shadow: 0 1px 10px 0 rgba(152, 151, 151, 0.3);
   background-color: #ffffff;
   height: calc(100vh - 88px);
-  padding: 8px 16px;
+  padding: 8px 0;
+  position: fixed;
+  z-index: 100;
+
+  @media(min-width: ${devicesValue.desktop}px){
+     width: 15%;
+   }
+
+  .MuiDivider-root {
+    height: 2px;
+    width: 100%;
+  }
+`;
+
+export const StyledAvatarIdBlock = styled.div`
+   display: flex;
+   flex-direction: column;
+   padding: 0 16px;
 
   .MuiIconButton-root {
     display: flex;
@@ -17,17 +34,11 @@ export const StyledDiv = styled.div`
   }
 
   .MuiTypography-root {
-    display: flex;
     align-self: center;
     font-weight: bold;
     color: #000b40;
+    max-width: 250px;
   }
-
-  .MuiDivider-root {
-    height: 2px;
-    width: 100%;
-  }
-
 `;
 
 export const StyledRoundAvatar = styled.div`
@@ -36,7 +47,7 @@ export const StyledRoundAvatar = styled.div`
     border: 3px solid #ff3232;
     padding: 11px;
     border-radius: 72px;
-    margin:5px 0 10px 0;
+    margin: 5px 0 10px 0;
 
   .MuiAvatar-root {
     width: 72px;
@@ -64,6 +75,7 @@ export const StyledTextInput = styled.div`
     flex-direction: column;
     margin-top: 20px;
     justify-content: space-between;
+    padding: 0 16px;
 
     .MuiInputLabel-root {
       font-size: 13px;
@@ -75,9 +87,13 @@ export const StyledTextInput = styled.div`
       text-align: right;
       color: #1e2132;
     }
+
     .MuiTextField-root {
       margin-bottom: 24px;
       width: 100%;
       color: #000b40;
     }
 `;
+
+
+
