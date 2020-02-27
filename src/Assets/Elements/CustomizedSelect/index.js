@@ -11,13 +11,13 @@ import {ExpandLess} from "@material-ui/icons";
  * @param background_color
  * @param icon_color
  * @param textcolor
- * @param value
+ * @param value - valueCode
  * @param onChange
  * @param options
  * @returns {Component}
  * @constructor
  */
-const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, langDirection}) => {
+const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, langDirection, mode}) => {
 
     const {t} = useTranslation();
 
@@ -70,6 +70,7 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
                 onClick={handleClick}
                 language_direction={langDirection}
                 {...opts}
+                disabled={mode === 'view' ? true : false}
             >{buttonLabel}
             </StyledButton>
             <StyledMenu

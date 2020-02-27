@@ -13,10 +13,14 @@ import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
 import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
 import {getEncountersWithPatients} from "../../../Utils/Services/FhirAPI";
 import {store} from "../../../index";
+import {setEncounterWithPatientsAction} from "../../../Store/Actions/FhirActions/fhirActions";
 import FilterBox from "./FilterBox";
+import normalizeFhirValueSet from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import Title from "../../../Assets/Elements/Title";
 import isAllowed from "../../../Utils/Helpers/isAllowed";
-
+import {normalizeFhirEncountersWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
+import setPatientDataWaitingForExaminationTableRows
+    from "../../../Utils/Helpers/setPatientDataWaitingForExaminationTableRows";
 
 const implementMeActive = () => {
     console.log('Implement me active :D')
@@ -27,16 +31,24 @@ const implementMeNotActive = () => {
 };
 
 //Using normal function not arrow just to get the Object as this inside the function do that kind of function for each of the tabs,
-const invitedTabActiveFunction = async function (setTable, setTabs, tabs, history, selectFilter) {
+const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatients.data.total;
+            return prevTabsClone;
+        });
         const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
-        const table = setPatientDataInvitedTableRows(patients, appointments, contains, history);
+        let options = [];
+        for(let status of contains){
+            options.push(normalizeFhirValueSet(status));
+        }
+        const table = setPatientDataInvitedTableRows(patients, appointments, options, history, this.mode);
         setTable(table);
-        const tabsClone = tabs;
-        tabsClone[tabsClone.findIndex(tabObj => tabObj.tabValue === this.tabValue)].count = appointmentsWithPatients.data.total;
-        setTabs(tabsClone);
+
         store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
     } catch (err) {
         console.log(err);
@@ -45,69 +57,66 @@ const invitedTabActiveFunction = async function (setTable, setTabs, tabs, histor
 //TODO
 // this function will be generic for all the NotActive tabs and will be handled with Promise.all[] and check if prevState
 // of the tabs is the same in all of the response
-const invitedTabNotActiveFunction = async function (setTabs, tabs) {
-    const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true);
-    const tabsClone = tabs;
-    tabsClone[tabsClone.findIndex(tabObj => tabObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total;
-    setTabs(tabsClone);
+const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
+    try{
+        const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total;
+            return prevTabsClone;
+        });
+    }catch (err) {
+        console.log(err);
+    }
 };
 
-const waitingForExaminationTabActiveFunction = async function () {
+const waitingForExaminationTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
-        const encounterWithPatients = await getEncountersWithPatients();
-        console.log(encounterWithPatients);
+        const encounterWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
+        const [patients, encounters] = normalizeFhirEncountersWithPatients(encounterWithPatients.data.entry);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encounterWithPatients.data.total;
+            return prevTabsClone;
+        });
+        const {data:{expansion:{contains}}} = await getValueSet('encounter_statuses');
+        let options = [];
+        for(let status of contains){
+            options.push(normalizeFhirValueSet(status));
+        }
+        const table = setPatientDataWaitingForExaminationTableRows(patients, encounters, options, history, this.mode);
 
+        setTable(table);
+
+        store.dispatch(setEncounterWithPatientsAction(patients, encounters));
     } catch (err) {
         console.log(err);
     }
     //Call a normalizer for encounter patient
 };
 
-const allTabs = [
-    {
-        tabName: 'Invited',
-        id: 'invited',
-        mode: 'hide',
-        count: 0,
-        tabValue: 0,
-        activeAction: invitedTabActiveFunction,
-        notActiveAction: invitedTabNotActiveFunction,
+const waitingForExaminationTabNotActiveFunction = async function(setTabs, selectFilter){
+  try{
+      const encounterWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
+      setTabs(prevTabs => {
+          //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+          const prevTabsClone = [...prevTabs];
+          prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encounterWithPatientsSummaryCount.data.total;
+          return prevTabsClone;
+      });
+  }catch (err) {
+      console.log(err);
+  }
+};
 
-    },
-    {
-        tabName: 'Waiting for examination',
-        id: 'waiting_for_examination',
-        mode: 'hide',
-        count: 0,
-        tabValue: 1,
-        activeAction: waitingForExaminationTabActiveFunction,
-        notActiveAction: implementMeNotActive
-    },
-    {
-        tabName: 'Waiting for decoding',
-        id: 'waiting_for_decoding',
-        mode: 'hide',
-        count: 0,
-        tabValue: 2,
-        activeAction: implementMeActive,
-        notActiveAction: implementMeNotActive
-    },
-    {
-        tabName: 'Finished',
-        id: 'finished',
-        mode: 'hide',
-        count: 0,
-        tabValue: 3,
-        activeAction: implementMeActive,
-        notActiveAction: implementMeNotActive
-    }
-];
 
 const PatientTracking = ({vertical, history, selectFilter}) => {
     const {t} = useTranslation();
 
     //The tabs of the Status filter box component.
-    const [tabs, setTabs] = useState(allTabs);
+    const [tabs, setTabs] = useState([]);
 
     //table is an array of 2 arrays inside. First array represents the table headers, the second array represents the table data combined them together so it won't be making double rendering.
     const [[tableHeaders, tableData], setTable] = useState([[], []]);
@@ -117,32 +126,64 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
 
     //Create an array of permitted tabs according to the user role.
     useEffect(() => {
+        let allTabs = [
+            {
+                tabName: 'Invited',
+                id: 'invited',
+                mode: 'hide',
+                count: 0,
+                tabValue: 0,
+                activeAction: invitedTabActiveFunction,
+                notActiveAction: invitedTabNotActiveFunction,
+            },
+            {
+                tabName: 'Waiting for examination',
+                id: 'waiting_for_examination',
+                mode: 'hide',
+                count: 0,
+                tabValue: 1,
+                activeAction: waitingForExaminationTabActiveFunction,
+                notActiveAction: waitingForExaminationTabNotActiveFunction
+            },
+            {
+                tabName: 'Waiting for decoding',
+                id: 'waiting_for_decoding',
+                mode: 'hide',
+                count: 0,
+                tabValue: 2,
+                activeAction: implementMeActive,
+                notActiveAction: implementMeNotActive
+            },
+            {
+                tabName: 'Finished',
+                id: 'finished',
+                mode: 'hide',
+                count: 0,
+                tabValue: 3,
+                activeAction: implementMeActive,
+                notActiveAction: implementMeNotActive
+            }
+        ];
         for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
             const tab = allTabs[tabIndex];
             isAllowed(tab);
         }
-        const permittedTabs = allTabs.filter((tab, tabIndex) => {
-            return tab.mode !== 'hide';
-        });
-        setTabs(permittedTabs);
+        allTabs = allTabs.filter((tab) => tab.mode !== 'hide');
+        setTabs(allTabs);
     }, []);
-    //Filter box mechanism
+    //Filter box mechanism for activeTabs
     useEffect(() => {
-        (async () => {
-            try {
                 for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
                     const tab = tabs[tabIndex];
                     if (tab.tabValue === selectFilter.statusFilterBoxValue) {
-                        tab.activeAction(setTable, setTabs, tabs, history, selectFilter);
+                        tab.activeAction(setTable, setTabs, history, selectFilter);
                     } else {
-                        tab.notActiveAction(setTabs, tabs);
+                        //TODO make this call in a different useEffect because when statusFiltterBoxValue changes
+                        // there is no need to call `tab.activeAction` only call `tab.notActiveAction`
+                        tab.notActiveAction(setTabs, selectFilter);
                     }
                 }
-            } catch (err) {
-                console.log(err)
-            }
-        })();
-    }, [selectFilter]);
+    }, [selectFilter.filter_date, selectFilter.statusFilterBoxValue, selectFilter.filter_service_type, selectFilter.filter_organization]);
     //Gets the menu items
     useEffect(() => {
         (async () => {
@@ -157,8 +198,6 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                 console.log(err)
             }
         })();
-
-
     }, []);
 
     return (
