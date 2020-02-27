@@ -72,7 +72,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                     break;
                 case 'Patient admission':
                     row.push({
-                        label: 'Patient Admission',
+                        label: 'Encounter sheet',
                         padding: 'none',
                         align: 'center',
                         color: 'primary',
