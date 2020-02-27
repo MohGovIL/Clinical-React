@@ -71,8 +71,12 @@ export const getHealhcareService = (organization) => {
         return fhirTokenInstance().get(`${fhirBasePath}/HealthcareService?organization=${organization}`);
 };
 
-const encountersWithPatientsBasePath = '/Encounter?_include=Encounter:patient&_sort=date&status=arrived&status=triaged&status=in-progress';
+const encountersWithPatientsBasePath = '/Encounter?_include=Encounter:patient&_sort=date';
 
-export const getEncountersWithPatients = (summary = false, date = '', serviceProvider = '', serviceType = '') => {
-        return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
+export const getEncountersWithPatients = (summary = false, date = '', serviceProvider = '', serviceType = '', statuses = []) => {
+    let statusesString = '';
+        for(let status of statuses){
+            statusesString = statusesString.concat(`&status=${status}`)
+        }
+        return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
 };

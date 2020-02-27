@@ -73,7 +73,8 @@ const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
 
 const waitingForExaminationTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
-        const encounterWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
+        const statuses = ['arrived', 'triaged', 'in-progress'];
+        const encounterWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
         const [patients, encounters] = normalizeFhirEncountersWithPatients(encounterWithPatients.data.entry);
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
@@ -94,12 +95,12 @@ const waitingForExaminationTabActiveFunction = async function (setTable, setTabs
     } catch (err) {
         console.log(err);
     }
-    //Call a normalizer for encounter patient
 };
 
 const waitingForExaminationTabNotActiveFunction = async function(setTabs, selectFilter){
   try{
-      const encounterWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
+      const statuses = ['arrived', 'triaged', 'in-progress'];
+      const encounterWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
       setTabs(prevTabs => {
           //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
           const prevTabsClone = [...prevTabs];
