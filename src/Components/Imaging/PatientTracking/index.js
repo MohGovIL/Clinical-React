@@ -22,6 +22,7 @@ import {normalizeFhirEncountersWithPatients} from "../../../Utils/Helpers/FhirEn
 import setPatientDataWaitingForExaminationTableRows
     from "../../../Utils/Helpers/setPatientDataWaitingForExaminationTableRows";
 import setPatientDataFinishedTableRows from "../../../Utils/Helpers/setPatientDataFinishedTableRows";
+import setPatientDataWaitingForResultsTableRows from "../../../Utils/Helpers/setPatientWaitingForResultsTableRows";
 
 const implementMeActive = () => {
     console.log('Implement me active :D')
@@ -113,6 +114,47 @@ const waitingForExaminationTabNotActiveFunction = async function (setTabs, selec
     }
 };
 
+const waitingForResultsTabActiveFunction = async function(setTable, setTabs, history, selectFilter){
+    try {
+        const statuses = ['waiting-for-results'];
+        const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        const [patients, encounters] = normalizeFhirEncountersWithPatients(encountersWithPatients.data.entry);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatients.data.total;
+            return prevTabsClone;
+        });
+        const {data: {expansion: {contains}}} = await getValueSet('encounter_statuses');
+        let options = [];
+        for (let status of contains) {
+            options.push(normalizeFhirValueSet(status));
+        }
+        const table = setPatientDataWaitingForResultsTableRows(patients, encounters, options, history, this.mode);
+
+        setTable(table);
+
+        store.dispatch(setEncounterWithPatientsAction(patients, encounters));
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const waitingForResultsTabNotActiveFunction = async function(setTabs, selectFilter){
+    try {
+        const statuses = ['waiting-for-results'];
+        const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatientsSummaryCount.data.total;
+            return prevTabsClone;
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 const finishedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const statuses = ['finished'];
@@ -124,8 +166,12 @@ const finishedTabActiveFunction = async function (setTable, setTabs, history, se
             prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatients.data.total;
             return prevTabsClone;
         });
-
-        const table = setPatientDataFinishedTableRows(patients, encounters, [{code: 'finished', name: 'Finished'}], history, this.mode);
+        const {data: {expansion: {contains}}} = await getValueSet('encounter_statuses');
+        let options = [];
+        for (let status of contains) {
+            options.push(normalizeFhirValueSet(status));
+        }
+        const table = setPatientDataFinishedTableRows(patients, encounters, options, history, this.mode);
 
             setTable(table);
 
@@ -189,8 +235,8 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                 mode: 'hide',
                 count: 0,
                 tabValue: 2,
-                activeAction: implementMeActive,
-                notActiveAction: implementMeNotActive
+                activeAction: waitingForResultsTabActiveFunction,
+                notActiveAction: waitingForResultsTabNotActiveFunction
             },
             {
                 tabName: 'Finished',
