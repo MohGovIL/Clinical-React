@@ -51,7 +51,7 @@ const tableHeaders = [
 
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataWaitingForExaminationTableRows = (patients, encounters, options, history, mode) => {
+const setPatientDataFinishedTableRows = (patients, encounters, options, history, mode) => {
     /* console.log("mode 1 = "+ mode);*/
     let result = [];
     let rows = [];
@@ -107,7 +107,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                         background_color: '#eaf7ff',
                         icon_color: '#076ce9',
                         langDirection: 'rtl',
-                        mode
+                        mode: 'view'
                     });
                     break;
                 case 'Cell phone':
@@ -150,4 +150,4 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
     return result;
 };
 
-export default setPatientDataWaitingForExaminationTableRows;
+export default setPatientDataFinishedTableRows;

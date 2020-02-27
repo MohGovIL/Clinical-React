@@ -21,6 +21,7 @@ import isAllowed from "../../../Utils/Helpers/isAllowed";
 import {normalizeFhirEncountersWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
 import setPatientDataWaitingForExaminationTableRows
     from "../../../Utils/Helpers/setPatientDataWaitingForExaminationTableRows";
+import setPatientDataFinishedTableRows from "../../../Utils/Helpers/setPatientDataFinishedTableRows";
 
 const implementMeActive = () => {
     console.log('Implement me active :D')
@@ -43,7 +44,7 @@ const invitedTabActiveFunction = async function (setTable, setTabs, history, sel
         });
         const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
         let options = [];
-        for(let status of contains){
+        for (let status of contains) {
             options.push(normalizeFhirValueSet(status));
         }
         const table = setPatientDataInvitedTableRows(patients, appointments, options, history, this.mode);
@@ -58,7 +59,7 @@ const invitedTabActiveFunction = async function (setTable, setTabs, history, sel
 // this function will be generic for all the NotActive tabs and will be handled with Promise.all[] and check if prevState
 // of the tabs is the same in all of the response
 const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
-    try{
+    try {
         const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
@@ -66,7 +67,7 @@ const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
             prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total;
             return prevTabsClone;
         });
-    }catch (err) {
+    } catch (err) {
         console.log(err);
     }
 };
@@ -74,17 +75,17 @@ const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
 const waitingForExaminationTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const statuses = ['arrived', 'triaged', 'in-progress'];
-        const encounterWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-        const [patients, encounters] = normalizeFhirEncountersWithPatients(encounterWithPatients.data.entry);
+        const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        const [patients, encounters] = normalizeFhirEncountersWithPatients(encountersWithPatients.data.entry);
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
             const prevTabsClone = [...prevTabs];
-            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encounterWithPatients.data.total;
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatients.data.total;
             return prevTabsClone;
         });
-        const {data:{expansion:{contains}}} = await getValueSet('encounter_statuses');
+        const {data: {expansion: {contains}}} = await getValueSet('encounter_statuses');
         let options = [];
-        for(let status of contains){
+        for (let status of contains) {
             options.push(normalizeFhirValueSet(status));
         }
         const table = setPatientDataWaitingForExaminationTableRows(patients, encounters, options, history, this.mode);
@@ -97,54 +98,56 @@ const waitingForExaminationTabActiveFunction = async function (setTable, setTabs
     }
 };
 
-const waitingForExaminationTabNotActiveFunction = async function(setTabs, selectFilter){
-  try{
-      const statuses = ['arrived', 'triaged', 'in-progress'];
-      const encounterWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-      setTabs(prevTabs => {
-          //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
-          const prevTabsClone = [...prevTabs];
-          prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encounterWithPatientsSummaryCount.data.total;
-          return prevTabsClone;
-      });
-  }catch (err) {
-      console.log(err);
-  }
-};
-
-const finishedTabActiveFunction = async function(setTable, setTabs, history, selectFilter){
-    // try {
-    //     const statuses = ['arrived', 'triaged', 'in-progress'];
-    //     const encounterWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-    //     const [patients, encounters] = normalizeFhirEncountersWithPatients(encounterWithPatients.data.entry);
-    //     setTabs(prevTabs => {
-    //         //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
-    //         const prevTabsClone = [...prevTabs];
-    //         prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encounterWithPatients.data.total;
-    //         return prevTabsClone;
-    //     });
-    //     const {data:{expansion:{contains}}} = await getValueSet('encounter_statuses');
-    //     let options = [];
-    //     for(let status of contains){
-    //         options.push(normalizeFhirValueSet(status));
-    //     }
-    //     const table = setPatientDataWaitingForExaminationTableRows(patients, encounters, options, history, this.mode);
-    //
-    //     setTable(table);
-    //
-    //     store.dispatch(setEncounterWithPatientsAction(patients, encounters));
-    // } catch (err) {
-    //     console.log(err);
-    // }
-    try{
-
-    }catch (err) {
+const waitingForExaminationTabNotActiveFunction = async function (setTabs, selectFilter) {
+    try {
+        const statuses = ['arrived', 'triaged', 'in-progress'];
+        const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatientsSummaryCount.data.total;
+            return prevTabsClone;
+        });
+    } catch (err) {
         console.log(err);
     }
 };
 
-const finishedTabNotActiveFunction = async function(setTabs, selectFilter){
+const finishedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
+    try {
+        const statuses = ['finished'];
+        const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        const [patients, encounters] = normalizeFhirEncountersWithPatients(encountersWithPatients.data.entry);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatients.data.total;
+            return prevTabsClone;
+        });
 
+        const table = setPatientDataFinishedTableRows(patients, encounters, [{code: 'finished', name: 'Finished'}], history, this.mode);
+
+            setTable(table);
+
+            store.dispatch(setEncounterWithPatientsAction(patients, encounters));
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const finishedTabNotActiveFunction = async function (setTabs, selectFilter) {
+    try {
+        const statuses = ['finished'];
+        const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatientsSummaryCount.data.total;
+            return prevTabsClone;
+        });
+    } catch (err) {
+        console.log(err);
+    }
 };
 
 const PatientTracking = ({vertical, history, selectFilter}) => {
@@ -208,16 +211,16 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
     }, []);
     //Filter box mechanism for activeTabs
     useEffect(() => {
-                for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
-                    const tab = tabs[tabIndex];
-                    if (tab.tabValue === selectFilter.statusFilterBoxValue) {
-                        tab.activeAction(setTable, setTabs, history, selectFilter);
-                    } else {
-                        //TODO make this call in a different useEffect because when statusFiltterBoxValue changes
-                        // there is no need to call `tab.activeAction` only call `tab.notActiveAction`
-                        tab.notActiveAction(setTabs, selectFilter);
-                    }
-                }
+        for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
+            const tab = tabs[tabIndex];
+            if (tab.tabValue === selectFilter.statusFilterBoxValue) {
+                tab.activeAction(setTable, setTabs, history, selectFilter);
+            } else {
+                //TODO make this call in a different useEffect because when statusFiltterBoxValue changes
+                // there is no need to call `tab.activeAction` only call `tab.notActiveAction`
+                tab.notActiveAction(setTabs, selectFilter);
+            }
+        }
     }, [selectFilter.filter_date, selectFilter.statusFilterBoxValue, selectFilter.filter_service_type, selectFilter.filter_organization]);
     //Gets the menu items
     useEffect(() => {
