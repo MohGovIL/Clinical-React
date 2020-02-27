@@ -30,7 +30,8 @@ const normalizeFhirPatient = patient => {
         }
     }
     if (patient.telecom) {
-        const thereIsMobilePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'phone' && telecomObj.use === 'mobile');
+        //for temporary use system === 'mobile'
+        const thereIsMobilePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'mobile' && telecomObj.use === 'mobile');
         mobileCellPhone = thereIsMobilePhone.length ? thereIsMobilePhone[0].value : null;
 
         const thereIsEmail = patient.telecom.filter(telecomObj => telecomObj.system === 'email');

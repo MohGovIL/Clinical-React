@@ -13,11 +13,13 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
     const {t} = useTranslation();
 
     const [patientData, setPatientData] = useState({});
+    const [appointmentId, setAppointmentId] = useState(0);
 
     useEffect(() => {
         let appointmentId = new URLSearchParams(location.search).get("index");
         let participantPatient = appointmentsData[appointmentId].participantPatient;
 
+        setAppointmentId(appointmentId);
         setPatientData(patientsData[participantPatient]);
 
         (async () => {
@@ -51,8 +53,8 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
             <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection}
                            onCloseClick={handleCloseClick}/>
             <StyledPatientRow>
-                <PatientDataBlock patientData={patientData}/>
-                <StyledDummyBlock />
+                <PatientDataBlock appointmentId={appointmentId} patientData={patientData}/>
+                <StyledDummyBlock/>
                 <PatientDetailsBlock/>
             </StyledPatientRow>
 

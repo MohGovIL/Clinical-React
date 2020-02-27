@@ -44,7 +44,7 @@ export const StyledAvatarIdBlock = styled.div`
 export const StyledRoundAvatar = styled.div`
     display: flex;
     align-self: center;
-    border: 3px solid #ff3232;
+    border: ${props => props.encounterPriority == 2 ? "3px solid #ff3232" : 0 };
     padding: 11px;
     border-radius: 72px;
     margin: 5px 0 10px 0;
@@ -86,6 +86,7 @@ export const StyledTextInput = styled.div`
       letter-spacing: normal;
       text-align: right;
       color: #1e2132;
+      opacity: 60%;
     }
 
     .MuiTextField-root {
