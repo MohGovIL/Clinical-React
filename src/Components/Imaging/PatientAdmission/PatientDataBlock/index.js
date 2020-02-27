@@ -27,6 +27,10 @@ const PatientDataBlock = ({patientData}) => {
         setPatientAge(Math.floor(Moment(new Date()).diff(Moment(patientData.birthDate, "YYYY-MM-DD"), 'years', true)));
         setPatientBirthDate(patientData.birthDate || '');
         setPatientIdentifier(patientData.identifier || {});
+
+        console.log("======================");
+        console.log(patientData);
+        console.log("======================");
     }, [patientData.gender]);
 
 
@@ -70,6 +74,25 @@ const PatientDataBlock = ({patientData}) => {
                     />
 
                     <InputLabel>{t("Kupat Cholim")}</InputLabel>
+                    <TextField
+                        id="standard-kupatCholim"
+                        value="Cholim"
+                        InputProps={{
+                            disableUnderline: true,
+                        }}
+                        readOnly
+                    />
+
+                    <InputLabel>{t("Cell phone")}</InputLabel>
+                    <TextField
+                        id="standard-kupatCholim"
+                        value="2"
+                        InputProps={{
+                            disableUnderline: true,
+                        }}
+                        readOnly
+                    />
+                    <InputLabel>{t("Mail address")}</InputLabel>
                     <TextField
                         id="standard-kupatCholim"
                         value="Cholim"
