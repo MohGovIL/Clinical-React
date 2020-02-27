@@ -10,7 +10,7 @@ const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName)
 
 const fhirBasePath = 'apis/fhir/v4';
 
-const appointmentsWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=Appointment:patient`;
+const appointmentsWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
 
 export const getAppointmentsWithPatients =  (summary = false, date = '', organization = '', serviceType = '') => {
         return fhirTokenInstance().get(`${appointmentsWithPatientsBasePath}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
