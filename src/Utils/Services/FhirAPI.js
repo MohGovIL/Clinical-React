@@ -10,7 +10,7 @@ const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName)
 
 const fhirBasePath = 'apis/fhir/v4';
 
-const appointmentsWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=Appointment:patient`;
+const appointmentsWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
 
 export const getAppointmentsWithPatients =  (summary = false, date = '', organization = '', serviceType = '') => {
         return fhirTokenInstance().get(`${appointmentsWithPatientsBasePath}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
@@ -71,8 +71,8 @@ export const getHealhcareService = (organization) => {
         return fhirTokenInstance().get(`${fhirBasePath}/HealthcareService?organization=${organization}`);
 };
 
-const encountersWithPatientsBasePath = '/Encounter?_include=Encounter:patient';
+const encountersWithPatientsBasePath = '/Encounter?_include=Encounter:patient&_sort=date&status=arrived&status=triaged&status=in-progress';
 
 export const getEncountersWithPatients = (summary = false, date = '', serviceProvider = '', serviceType = '') => {
-        return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${date ? `&date=eq${date}` : ''}&_sort=date&status=arrived&status=triaged&status=in-progress${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
+        return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
 };

@@ -86,7 +86,6 @@ const waitingForExaminationTabActiveFunction = async function (setTable, setTabs
         for(let status of contains){
             options.push(normalizeFhirValueSet(status));
         }
-        debugger
         const table = setPatientDataWaitingForExaminationTableRows(patients, encounters, options, history, this.mode);
 
         setTable(table);
