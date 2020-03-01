@@ -2,10 +2,10 @@ import {
     BADGE_CELL, BUTTON_CELL,
     LABEL_CELL,
     PERSONAL_INFORMATION_CELL, SELECT_CELL
-} from "../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
+} from "../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
 import moment from "moment";
 import "moment/locale/he"
-import {baseRoutePath} from "./baseRoutePath";
+import {baseRoutePath} from "../baseRoutePath";
 
 const tableHeaders = [
     {
@@ -51,7 +51,7 @@ const tableHeaders = [
 
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataFinishedTableRows = (patients, encounters, options, history, mode) => {
+const setPatientDataWaitingForResultsTableRows = (patients, encounters, options, history, mode) => {
     /* console.log("mode 1 = "+ mode);*/
     let result = [];
     let rows = [];
@@ -150,4 +150,4 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
     return result;
 };
 
-export default setPatientDataFinishedTableRows;
+export default setPatientDataWaitingForResultsTableRows;

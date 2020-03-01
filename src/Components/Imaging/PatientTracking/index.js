@@ -8,7 +8,7 @@ import {setAppointmentsWithPatientsAction} from "../../../Store/Actions/FhirActi
 import Header from "../../../Assets/Elements/Header";
 import {useTranslation} from "react-i18next";
 import {getMenu} from "../../../Utils/Services/API";
-import setPatientDataInvitedTableRows from "../../../Utils/Helpers/setPatientDataInvitedTableRows";
+import setPatientDataInvitedTableRows from "../../../Utils/Helpers/patientTrackingTabs/setPatientDataInvitedTableRows";
 import {getAppointmentsWithPatients} from "../../../Utils/Services/FhirAPI";
 import {normalizeFhirAppointmentsWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
 import {getEncountersWithPatients} from "../../../Utils/Services/FhirAPI";
@@ -20,19 +20,12 @@ import Title from "../../../Assets/Elements/Title";
 import isAllowed from "../../../Utils/Helpers/isAllowed";
 import {normalizeFhirEncountersWithPatients} from "../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
 import setPatientDataWaitingForExaminationTableRows
-    from "../../../Utils/Helpers/setPatientDataWaitingForExaminationTableRows";
-import setPatientDataFinishedTableRows from "../../../Utils/Helpers/setPatientDataFinishedTableRows";
-import setPatientDataWaitingForResultsTableRows from "../../../Utils/Helpers/setPatientWaitingForResultsTableRows";
-
-const implementMeActive = () => {
-    console.log('Implement me active :D')
-};
-
-const implementMeNotActive = () => {
-    console.log('Implement me not active :D')
-};
+    from "../../../Utils/Helpers/patientTrackingTabs/setPatientDataWaitingForExaminationTableRows";
+import setPatientDataFinishedTableRows from "../../../Utils/Helpers/patientTrackingTabs/setPatientDataFinishedTableRows";
+import setPatientDataWaitingForResultsTableRows from "../../../Utils/Helpers/patientTrackingTabs/setPatientWaitingForResultsTableRows";
 
 //Using normal function not arrow just to get the Object as this inside the function do that kind of function for each of the tabs,
+//מוזמנים
 const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
@@ -56,9 +49,7 @@ const invitedTabActiveFunction = async function (setTable, setTabs, history, sel
         console.log(err);
     }
 };
-//TODO
-// this function will be generic for all the NotActive tabs and will be handled with Promise.all[] and check if prevState
-// of the tabs is the same in all of the response
+
 const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
     try {
         const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
@@ -73,6 +64,7 @@ const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
     }
 };
 
+// ממתינים לבדיקה
 const waitingForExaminationTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const statuses = ['arrived', 'triaged', 'in-progress'];
@@ -114,6 +106,7 @@ const waitingForExaminationTabNotActiveFunction = async function (setTabs, selec
     }
 };
 
+//   ממתינים לפענוח
 const waitingForResultsTabActiveFunction = async function(setTable, setTabs, history, selectFilter){
     try {
         const statuses = ['waiting-for-results'];
@@ -155,6 +148,7 @@ const waitingForResultsTabNotActiveFunction = async function(setTabs, selectFilt
     }
 };
 
+// סיימו טיפול
 const finishedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const statuses = ['finished'];
