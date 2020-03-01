@@ -22,7 +22,7 @@ import {
  * @constructor
  */
 
-const FilterBox = ({languageDirection, facility, selectFilterOrganization, selectFilterServiceType, setFilterOrganizationAction, setFilterServiceTypeAction}) => {
+const FilterBox = ({languageDirection, facility, selectFilterOrganization, selectFilterServiceType, setFilterOrganizationAction, setFilterServiceTypeAction, tabValue}) => {
     const {t} = useTranslation();
 
     const emptyArrayAll = () => {
@@ -100,7 +100,7 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
 
     return (
         <StyledFilterBox>
-            <CustomizedDatePicker iconColor={'#076ce9'}/>
+            <CustomizedDatePicker iconColor={'#076ce9'} isDisabled={tabValue === 2}/>
             <StyledCustomizedSelect>
                 <ListItemText>{t("Facility name")}</ListItemText>
                 <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
@@ -127,6 +127,7 @@ const mapStateToProps = (state) => {
         facility: parseInt(state.settings.facility),
         selectFilterOrganization: state.filters.filter_organization,
         selectFilterServiceType: state.filters.filter_service_type,
+        tabValue: state.filters.statusFilterBoxValue
     }
 };
 
