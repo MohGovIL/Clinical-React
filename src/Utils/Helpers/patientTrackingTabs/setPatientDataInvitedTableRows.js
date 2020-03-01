@@ -1,11 +1,55 @@
+import {baseRoutePath} from "../baseRoutePath";
 import {
     BADGE_CELL, BUTTON_CELL,
     LABEL_CELL,
     PERSONAL_INFORMATION_CELL, SELECT_CELL
-} from "../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
+} from "../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
+import {getAppointmentsWithPatients, getValueSet, updateAppointmentStatus} from "../../Services/FhirAPI";
 import moment from "moment";
 import "moment/locale/he"
-import {baseRoutePath} from "./baseRoutePath";
+import {normalizeFhirAppointmentsWithPatients} from "../FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
+import normalizeFhirValueSet from "../FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
+import {store} from "../../../index";
+import {setAppointmentsWithPatientsAction} from "../../../Store/Actions/FhirActions/fhirActions";
+
+//מוזמנים
+export const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
+    try {
+        const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
+        const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatients.data.total;
+            return prevTabsClone;
+        });
+        const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
+        let options = [];
+        for (let status of contains) {
+            options.push(normalizeFhirValueSet(status));
+        }
+        const table = setPatientDataInvitedTableRows(patients, appointments, options, history, this.mode);
+        setTable(table);
+
+        store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+export const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
+    try {
+        const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total;
+            return prevTabsClone;
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
 
 const tableHeaders = [
     {
@@ -51,19 +95,19 @@ const tableHeaders = [
 
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataWaitingForExaminationTableRows = (patients, encounters, options, history, mode) => {
-    /* console.log("mode 1 = "+ mode);*/
+const setPatientDataInvitedTableRows = (patients, appointments, options, history,mode) => {
+   /* console.log("mode 1 = "+ mode);*/
     let result = [];
     let rows = [];
-    for (let [encountersId, encounter] of Object.entries(encounters)) {
+    for (let [appointmentId, appointment] of Object.entries(appointments)) {
         let row = [];
         for (let columnIndex = 0; columnIndex < tableHeaders.length; columnIndex++) {
-            const patient = patients[encounter.patient];
+            const patient = patients[appointment.participantPatient];
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
-                        priority: encounter.priority,
+                        priority: appointment.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,
                         lastName: patient.lastName,
@@ -72,12 +116,15 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                     break;
                 case 'Patient admission':
                     row.push({
-                        label: 'Encounter sheet',
+                        label: 'Patient Admission',
                         padding: 'none',
                         align: 'center',
                         color: 'primary',
                         onClickHandler(){
-                            console.log();
+                            history.push({
+                                pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                                search: `?index=${appointmentId}`
+                            })
                         },
                         mode
                     });
@@ -101,7 +148,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                         },
                         text_color: '#076ce9',
                         padding: 'none',
-                        value: encounter.status,
+                        value: appointment.status,
                         options,
                         align: 'center',
                         background_color: '#eaf7ff',
@@ -114,7 +161,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: patient.mobileCellPhone || null,
+                        label: patient.mobileCellPhone,
                         color: '#0027a5'
                     });
                     break;
@@ -122,21 +169,21 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: encounter.serviceType ? encounter.serviceType.join(' ') : null
+                        label: appointment.serviceType ? appointment.serviceType.join(' ') : null
                     });
                     break;
                 case 'Test':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: encounter.examination ?  encounter.examination.join(' ') : null
+                        label: appointment.examination ?  appointment.examination.join(' ') : null
                     });
                     break;
                 case 'Time':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment(encounter.startTime).format('LT')
+                        label: moment(appointment.startTime).format('LT')
                     });
                     break;
                 default:
@@ -150,4 +197,4 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
     return result;
 };
 
-export default setPatientDataWaitingForExaminationTableRows;
+export default setPatientDataInvitedTableRows;

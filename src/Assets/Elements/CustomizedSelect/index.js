@@ -56,7 +56,7 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
         });
 
         if (res !== undefined) {
-            buttonLabel = res.name;
+            buttonLabel = t(res.name);
         }
     }
     return (

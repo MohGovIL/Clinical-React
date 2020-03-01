@@ -10,7 +10,8 @@ import {
 const INITIAL_STATE = {
     STATUS: '',
     appointments: null,
-    patients: null
+    patients: null,
+    encounters: null
 };
 
 
