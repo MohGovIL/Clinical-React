@@ -4,9 +4,52 @@ import {
     LABEL_CELL,
     PERSONAL_INFORMATION_CELL, SELECT_CELL
 } from "../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
-import {updateAppointmentStatus} from "../../Services/FhirAPI";
+import {getAppointmentsWithPatients, getValueSet, updateAppointmentStatus} from "../../Services/FhirAPI";
 import moment from "moment";
 import "moment/locale/he"
+import {normalizeFhirAppointmentsWithPatients} from "../FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
+import normalizeFhirValueSet from "../FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
+import {store} from "../../../index";
+import {setAppointmentsWithPatientsAction} from "../../../Store/Actions/FhirActions/fhirActions";
+
+//מוזמנים
+export const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
+    try {
+        const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
+        const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatients.data.total;
+            return prevTabsClone;
+        });
+        const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
+        let options = [];
+        for (let status of contains) {
+            options.push(normalizeFhirValueSet(status));
+        }
+        const table = setPatientDataInvitedTableRows(patients, appointments, options, history, this.mode);
+        setTable(table);
+
+        store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+export const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
+    try {
+        const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatientsSummaryCount.data.total;
+            return prevTabsClone;
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
 
 const tableHeaders = [
     {

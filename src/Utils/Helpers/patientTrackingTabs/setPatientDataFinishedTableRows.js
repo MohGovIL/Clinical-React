@@ -6,8 +6,53 @@ import {
 import moment from "moment";
 import "moment/locale/he"
 import {baseRoutePath} from "../baseRoutePath";
+import {getEncountersWithPatients, getValueSet} from "../../Services/FhirAPI";
+import {normalizeFhirEncountersWithPatients} from "../FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
+import normalizeFhirValueSet from "../FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
+import {store} from "../../../index";
+import {setEncounterWithPatientsAction} from "../../../Store/Actions/FhirActions/fhirActions";
 
+// סיימו טיפול
+export const finishedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
+    try {
+        const statuses = ['finished'];
+        const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        const [patients, encounters] = normalizeFhirEncountersWithPatients(encountersWithPatients.data.entry);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatients.data.total;
+            return prevTabsClone;
+        });
+        const {data: {expansion: {contains}}} = await getValueSet('encounter_statuses');
+        let options = [];
+        for (let status of contains) {
+            options.push(normalizeFhirValueSet(status));
+        }
+        const table = setPatientDataFinishedTableRows(patients, encounters, options, history, this.mode);
 
+        setTable(table);
+
+        store.dispatch(setEncounterWithPatientsAction(patients, encounters));
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+export const finishedTabNotActiveFunction = async function (setTabs, selectFilter) {
+    try {
+        const statuses = ['finished'];
+        const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        setTabs(prevTabs => {
+            //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
+            const prevTabsClone = [...prevTabs];
+            prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatientsSummaryCount.data.total;
+            return prevTabsClone;
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
 
 const tableHeaders = [
     {
@@ -78,7 +123,7 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
                         padding: 'none',
                         align: 'center',
                         color: 'primary',
-                        onClickHandler(){
+                        onClickHandler() {
                             console.log();
                         },
                         mode
@@ -93,7 +138,7 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
                     break;
                 case 'Status':
                     row.push({
-                        onChange(){
+                        onChange() {
                             // try{
                             //     const updateAppointmentStatus();
                             //
@@ -131,7 +176,7 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: encounter.examination ?  encounter.examination.join(' ') : null
+                        label: encounter.examination ? encounter.examination.join(' ') : null
                     });
                     break;
                 case 'Time':
@@ -151,5 +196,3 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
     result[1] = rows;
     return result;
 };
-
-export default setPatientDataFinishedTableRows;
