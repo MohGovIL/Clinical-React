@@ -31,7 +31,7 @@ const PatientDataBlock = ({appointmentId, patientData, appointmentsData}) => {
             setPatientMobilePhone(patientData.mobileCellPhone || '');
             setPatientEmail(patientData.email || '');
             if (appointmentsData !== undefined) {
-                //TO DO - in future change to encountersData
+                //TO DO - in future use you need to change to encountersData
                 setPatientEncounter(appointmentsData[appointmentId] || 0);
             }
         } catch (e) {
@@ -60,8 +60,8 @@ const PatientDataBlock = ({appointmentId, patientData, appointmentsData}) => {
                 </Typography>
 
                 <StyledAgeIdBlock>
-                    <p className={"identifier"}>{patientIdentifier.type == "ID" ? t("Id. Number") : t("Passport")} {patientIdentifier.value}</p>
-                    <p className={"age"}>{patientData.gender == "male" ? t("Son") : t("Daughter")} {patientAge}</p>
+                    <span>{patientIdentifier.type == "ID" ? t("Id. Number") : t("Passport")} {patientIdentifier.value}</span>
+                    <span>{patientData.gender == "male" ? t("Son") : t("Daughter")} {patientAge}</span>
                 </StyledAgeIdBlock>
 
             </StyledAvatarIdBlock>
@@ -86,7 +86,7 @@ const PatientDataBlock = ({appointmentId, patientData, appointmentsData}) => {
                         InputProps={{
                             disableUnderline: true,
                         }}
-                        readOnly
+
                     />
 
                     <InputLabel>{t("Cell phone")}</InputLabel>

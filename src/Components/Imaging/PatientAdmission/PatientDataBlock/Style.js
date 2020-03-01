@@ -44,7 +44,7 @@ export const StyledAvatarIdBlock = styled.div`
 export const StyledRoundAvatar = styled.div`
     display: flex;
     align-self: center;
-    border: ${props => props.encounterPriority == 2 ? "3px solid #ff3232" : 0 };
+    border: ${props => props.encounterPriority == 2 ? "3px solid #ff3232" : null };
     padding: 11px;
     border-radius: 72px;
     margin: 5px 0 10px 0;
@@ -61,8 +61,9 @@ export const StyledAgeIdBlock = styled.div`
     justify-content: space-between;
     align-items: flex-start;
     width: 100%;
+    margin: 16px 0 16px 0;
 
-    p.identifier, p.age {
+    span {
       align-content: center;
       display: flex;
       color: #000b40;
@@ -89,7 +90,7 @@ export const StyledTextInput = styled.div`
       opacity: 60%;
     }
 
-    .MuiTextField-root {
+    .MuiInput-formControl {
       margin-bottom: 24px;
       width: 100%;
       color: #000b40;
