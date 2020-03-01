@@ -3,6 +3,7 @@ import {StyledDiv, StyledRoundAvatar, StyledAgeIdBlock, StyledTextInput, StyledA
 import maleIcon from '../../../../Assets/Images/maleIcon.png';
 import femaleIcon from '../../../../Assets/Images/womanIcon.png';
 import * as Moment from "moment";
+import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
 
 import {Avatar, IconButton, Divider, Typography, TextField, InputLabel} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
@@ -25,7 +26,7 @@ const PatientDataBlock = ({appointmentId, patientData, appointmentsData}) => {
         try {
             setAvatarIcon(patientData.gender == "male" ? maleIcon : patientData.gender == "female" ? femaleIcon : "")
             //use format date of FHIR date - YYYY-MM-DD only
-            setPatientAge(Math.floor(Moment(new Date()).diff(Moment(patientData.birthDate, "YYYY-MM-DD"), 'years', true)));
+            setPatientAge(ageCalculator(patientData.birthDate));
             setPatientBirthDate(patientData.birthDate || '');
             setPatientIdentifier(patientData.identifier || {});
             setPatientMobilePhone(patientData.mobileCellPhone || '');
