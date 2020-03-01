@@ -19,6 +19,7 @@ import 'moment/locale/he';
  * @param filterDate
  * @param setFilterDateAction
  * @param props
+ * @param isDisabled - bool
  * @returns {*}
  * @constructor
  */
@@ -57,8 +58,8 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
     return (
         <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
             <GlobalStyledDatePicker iconColor={props.iconColor} langDirection={languageDirection}/>
-            <IconButton onClick={() => scrollDays('prev')}>
-                <ChevronFirst htmlColor={props.iconColor}/>
+            <IconButton onClick={() => scrollDays('prev')} disabled={props.isDisabled}>
+                <ChevronFirst htmlColor={props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}/>
             </IconButton>
             <StyledDatePicker
                 disableToolbar
@@ -71,10 +72,11 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
                 value={filterDate}
                 onChange={handleDateChange}
                 autoOk
-                text_color={props.iconColor}
+                text_color={props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}
+                disabled={props.isDisabled}
             />
-            <IconButton onClick={() => scrollDays('next')}>
-                <ChevronSecond htmlColor={props.iconColor}/>
+            <IconButton onClick={() => scrollDays('next')} disabled={props.isDisabled}>
+                <ChevronSecond htmlColor={props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}/>
             </IconButton>
         </MuiPickersUtilsProvider>
     );
