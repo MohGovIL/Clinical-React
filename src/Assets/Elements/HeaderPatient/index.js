@@ -8,20 +8,22 @@ const HeaderPatient = ({breadcrumbs, languageDirection, onCloseClick}) => {
     const NavigateIcon = languageDirection === 'rtl' ? NavigateBefore : NavigateNext;
 
     return (
-        <StyledAppBar>
-            <StyledBreadcrumbs aria-label="breadcrumb" separator={<NavigateIcon fontSize="small"/>}>
-                {breadcrumbs.map((option, optionIndex) => {
-                    if (option["separator"] !== false) {
-                        return <Typography key={optionIndex}>{option["text"]}</Typography>
-                    } else {
-                        return <Link color="inherit" href={option.url} key={optionIndex}>{option.text}</Link>
-                    }
-                })}
-            </StyledBreadcrumbs>
-            <StyledIconButton onClick={onCloseClick} language_direction={languageDirection}>
-                <CloseIcon htmlColor={"#ffffff"} />
-            </StyledIconButton>
-        </StyledAppBar>
+        <React.Fragment>
+            <StyledAppBar position="fixed">
+                <StyledBreadcrumbs aria-label="breadcrumb" separator={<NavigateIcon fontSize="small"/>}>
+                    {breadcrumbs.map((option, optionIndex) => {
+                        if (option["separator"] !== false) {
+                            return <Typography key={optionIndex}>{option["text"]}</Typography>
+                        } else {
+                            return <Link color="inherit" href={option.url} key={optionIndex}>{option.text}</Link>
+                        }
+                    })}
+                </StyledBreadcrumbs>
+                <StyledIconButton onClick={onCloseClick} language_direction={languageDirection}>
+                    <CloseIcon htmlColor={"#ffffff"}/>
+                </StyledIconButton>
+            </StyledAppBar>
+        </React.Fragment>
     );
 };
 export default HeaderPatient;

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import AppBar from "@material-ui/core/AppBar";
 import {Breadcrumbs} from "@material-ui/core/";
 import {IconButton} from "@material-ui/core";
-import {devicesValue} from '../../Themes/BreakPoints';
+// import {devicesValue} from '../../Themes/BreakPoints';
 
 export default styled(AppBar)`
     flex-direction: row;
@@ -13,7 +13,7 @@ export default styled(AppBar)`
     box-shadow: 0 2px 4px 0 rgba(90, 90, 90, 0.5);
     padding-right: 46px;
     padding-left: 25px;
-    position: relative;
+
     & span{
       margin-right: 8px;
       margin-left: 8px;
@@ -39,8 +39,8 @@ export const StyledBreadcrumbs = styled(Breadcrumbs)`
 export const StyledIconButton = styled(IconButton)`
   display: flex;
   flex-direction: row;
-  margin-right: ${props => props.language_direction == "rtl" ? "auto" : null } ;
-  margin-left: ${props => props.language_direction == "ltr" ? "auto" : null } ;
+  margin-right: ${props => props.language_direction === "rtl" ? "auto" : null } ;
+  margin-left: ${props => props.language_direction === "ltr" ? "auto" : null } ;
   justify-content: left;
   min-width: 32px;
   min-height: 32px;
