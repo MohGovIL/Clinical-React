@@ -4,16 +4,19 @@ import {devicesValue} from "../../../../Assets/Themes/BreakPoints";
 export const StyledDiv = styled.div`
   display: flex;
   flex-direction: column;
-  width: 23%;
+  min-width: 25%;
+  flex-basis: 25%;
   box-shadow: 0 1px 10px 0 rgba(152, 151, 151, 0.3);
   background-color: #ffffff;
   height: calc(100vh - 88px);
-  padding: 8px 0;
-  position: fixed;
+  position: ${props => props.edit_mode === 1 ? "unset" : "fixed"};
   z-index: 100;
+  max-width: ${props => props.edit_mode === 1 ? "25%" : "unset" };
 
   @media(min-width: ${devicesValue.desktop}px){
-     width: 15%;
+     flex-basis: 15%;
+     min-width: 15%;
+     max-width: ${props => props.edit_mode === 1 ? "15%" : "unset" };
    }
 
   .MuiDivider-root {
@@ -78,7 +81,14 @@ export const StyledTextInput = styled.div`
     justify-content: space-between;
     padding: 0 16px;
 
-    .MuiInputLabel-root {
+    form {
+     display: flex;
+     flex-direction: column;
+    }
+
+    .MuiInputLabel-formControl {
+      right: 0;
+      left: unset;
       font-size: 13px;
       font-weight: normal;
       font-stretch: normal;
@@ -91,11 +101,27 @@ export const StyledTextInput = styled.div`
     }
 
     .MuiInput-formControl {
-      margin-bottom: 24px;
       width: 100%;
       color: #000b40;
     }
+
+    .MuiFilledInput-root {
+       background-color: rgba(248, 250, 255, 1);
+    }
+
+    .MuiInputLabel-shrink {
+      transform-origin: top right;
+    }
+
+    .MuiFormControl-root {
+      margin: 0 0 46px 0;
+    }
 `;
 
-
+export const StyledButtonBlock = styled.div`
+   display: flex;
+   justify-content: space-between;
+   padding: 0 17px 0 17px;
+   margin: 10px 0 62px 0;
+`;
 

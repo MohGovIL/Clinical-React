@@ -1,16 +1,27 @@
 import React, {useEffect, useState} from 'react';
-import {StyledDiv, StyledRoundAvatar, StyledAgeIdBlock, StyledTextInput, StyledAvatarIdBlock} from "./Style";
+import * as Moment from "moment";
+import {connect} from "react-redux";
+import {useTranslation} from "react-i18next";
+
+import {
+    StyledDiv,
+    StyledRoundAvatar,
+    StyledAgeIdBlock,
+    StyledTextInput,
+    StyledAvatarIdBlock,
+    StyledButtonBlock
+} from "./Style";
 import maleIcon from '../../../../Assets/Images/maleIcon.png';
 import femaleIcon from '../../../../Assets/Images/womanIcon.png';
-import * as Moment from "moment";
+import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
 
 import {Avatar, IconButton, Divider, Typography, TextField, InputLabel} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import {useTranslation} from "react-i18next";
-import {connect} from "react-redux";
+import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
 
-const PatientDataBlock = ({appointmentId, patientData, appointmentsData}) => {
+
+const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_mode, appointmentsData}) => {
     const {t} = useTranslation();
 
     const [avatarIcon, setAvatarIcon] = useState(null);
@@ -24,7 +35,7 @@ const PatientDataBlock = ({appointmentId, patientData, appointmentsData}) => {
 
     useEffect(() => {
         try {
-            setAvatarIcon(patientData.gender == "male" ? maleIcon : patientData.gender == "female" ? femaleIcon : "")
+            setAvatarIcon(patientData.gender === "male" ? maleIcon : patientData.gender === "female" ? femaleIcon : "")
             //use format date of FHIR date - YYYY-MM-DD only
             setPatientAge(ageCalculator(patientData.birthDate));
             setPatientBirthDate(patientData.birthDate || '');
@@ -45,72 +56,125 @@ const PatientDataBlock = ({appointmentId, patientData, appointmentsData}) => {
         console.log("handleBirthdayChange");
     };
 
+    const handleCloseEdit = () => {
+        // setEdit(false);
+    }
+
+    const handleSaveClick = () => {
+
+    }
+
+    const handleUndoEdittingClick = () => {
+        onEditButtonClick(0);
+    }
+
+    let TextFieldOpts = {
+        'disabled': edit_mode === 1 ? false : true,
+        'InputProps': {disableUnderline: edit_mode === 1 ? false : true},
+        'color': edit_mode === 1 ? "primary" : 'primary',
+        'variant': edit_mode === 1 ? "filled" : 'filled',
+        // 'variant': edit_mode === true ? "filled" : 'standard',
+    };
+
+    let labelRequiredOpts = {
+        'required': edit_mode === 1 ? true : false
+    };
+console.log("======================");
+console.log(TextFieldOpts);
+console.log("======================");
+//aria-hidden={"true"}
     return (
-        <StyledDiv>
-            <StyledAvatarIdBlock>
-                <IconButton>
-                    <EditIcon/>
-                </IconButton>
+        <React.Fragment>
+            <StyledDiv edit_mode={edit_mode}>
+                <StyledAvatarIdBlock>
+                    {edit_mode === 0 &&
+                    <IconButton onClick={() => {
+                        onEditButtonClick(1)
+                    }}>
+                        <EditIcon/>
+                    </IconButton>
+                    }
+                    <StyledRoundAvatar encounterPriority={patientEncounter.priority}>
+                        <Avatar alt={""} src={avatarIcon}/>
+                    </StyledRoundAvatar>
 
-                <StyledRoundAvatar encounterPriority={patientEncounter.priority}>
-                    <Avatar alt={""} src={avatarIcon}/>
-                </StyledRoundAvatar>
+                    <Typography variant="h5" noWrap={true}>
+                        {edit_mode === 0 ? patientData.firstName + " " + patientData.lastName : ''}
+                    </Typography>
 
-                <Typography variant="h5" noWrap={true}>
-                    {patientData.firstName + " " + patientData.lastName}
-                </Typography>
+                    <StyledAgeIdBlock>
+                        <span>{patientIdentifier.type == "ID" ? t("Id. Number") : t("Passport")} {patientIdentifier.value}</span>
+                        <span>{patientData.gender == "male" ? t("Son") : t("Daughter")} {patientAge}</span>
+                    </StyledAgeIdBlock>
 
-                <StyledAgeIdBlock>
-                    <span>{patientIdentifier.type == "ID" ? t("Id. Number") : t("Passport")} {patientIdentifier.value}</span>
-                    <span>{patientData.gender == "male" ? t("Son") : t("Daughter")} {patientAge}</span>
-                </StyledAgeIdBlock>
+                </StyledAvatarIdBlock>
+                <Divider/>
+                <StyledTextInput>
+                    <form noValidate autoComplete="off">
+                        <StyledFormGroup>
+                            {edit_mode === 1 &&
+                            <TextField
+                                id="standard-firstName"
+                                value={patientData.firstName}
+                                onChange={handleBirthdayChange}
+                                label={t("First name")}
+                                required
+                                {...TextFieldOpts}
+                            />
+                            }
+                            {edit_mode === 1 &&
+                            <TextField
+                                id="standard-lastName"
+                                value={patientData.lastName}
+                                onChange={handleBirthdayChange}
+                                label={t("Last name")}
+                                required
+                                {...TextFieldOpts}
+                            />
 
-            </StyledAvatarIdBlock>
-            <Divider/>
-            <StyledTextInput>
-                <form noValidate autoComplete="off">
-                    <InputLabel>{t("birth day")}</InputLabel>
-                    <TextField
-                        id="standard-birthDate"
-                        value={patientBirthDate}
-                        onChange={handleBirthdayChange}
-                        InputProps={{
-                            disableUnderline: true,
-                        }}
-                        readOnly
-                    />
+                        }
+                        <TextField
+                            id="standard-birthDate"
+                            value={patientBirthDate}
+                            onChange={handleBirthdayChange}
+                            label={t("birth day")}
+                            required
+                            {...TextFieldOpts}
+                        />
+                        <TextField
+                            id="standard-kupatCholim"
+                            value={patientKupatHolim}
+                            label={t("Kupat Cholim")}
+                            required
+                            {...TextFieldOpts}
 
-                    <InputLabel>{t("Kupat Cholim")}</InputLabel>
-                    <TextField
-                        id="standard-kupatCholim"
-                        value={patientKupatHolim}
-                        InputProps={{
-                            disableUnderline: true,
-                        }}
+                        />
+                        <TextField
+                            id="standard-mobilePhone"
+                            value={patientMobilePhone}
+                            label={t("Cell phone")}
+                            required
+                            {...TextFieldOpts}
+                        />
+                        <TextField
+                            id="standard-patientEmail"
+                            value={patientEmail}
+                            label={t("Mail address")}
+                            {...TextFieldOpts}
+                        />
+                        </StyledFormGroup>
+                        {edit_mode === 1 &&
+                        <StyledButtonBlock>
+                            <CustomizedTableButton variant={"text"} color={"primary"} label={t("Undo editing")}
+                                                   onClickHandler={handleUndoEdittingClick}/>
+                            <CustomizedTableButton variant={"contained"} color={"primary"} label={t("save")}/>
+                        </StyledButtonBlock>
+                        }
 
-                    />
-
-                    <InputLabel>{t("Cell phone")}</InputLabel>
-                    <TextField
-                        id="standard-mobilePhone"
-                        value={patientMobilePhone}
-                        InputProps={{
-                            disableUnderline: true,
-                        }}
-                        readOnly
-                    />
-                    <InputLabel>{t("Mail address")}</InputLabel>
-                    <TextField
-                        id="standard-patientEmail"
-                        value={patientEmail}
-                        InputProps={{
-                            disableUnderline: true,
-                        }}
-                        readOnly
-                    />
-                </form>
-            </StyledTextInput>
-        </StyledDiv>
+                    </form>
+                </StyledTextInput>
+            </StyledDiv>
+        </React.Fragment>
     );
 };
 
