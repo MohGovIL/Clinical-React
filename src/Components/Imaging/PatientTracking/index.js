@@ -110,7 +110,7 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
         <React.Fragment>
             <Header Items={menuItems}/>
             <PatientTrackingStyle>
-                <Title label={'Patient tracking'}/>
+                <Title fontSize={'28px'} color={'#002398'} label={'Patient tracking'}/>
                 <StyledFilterBox>
                     <FilterBox/>
                 </StyledFilterBox>

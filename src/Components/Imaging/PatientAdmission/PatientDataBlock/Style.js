@@ -4,16 +4,17 @@ import {devicesValue} from "../../../../Assets/Themes/BreakPoints";
 export const StyledDiv = styled.div`
   display: flex;
   flex-direction: column;
-  width: 23%;
+  min-width: 25%;
+  flex-basis: 25%;
   box-shadow: 0 1px 10px 0 rgba(152, 151, 151, 0.3);
   background-color: #ffffff;
   height: calc(100vh - 88px);
-  padding: 8px 0;
   position: fixed;
   z-index: 100;
 
   @media(min-width: ${devicesValue.desktop}px){
-     width: 15%;
+     flex-basis: 15%;
+     min-width: 15%;
    }
 
   .MuiDivider-root {

@@ -4,18 +4,17 @@ import {devicesValue} from "../../../Assets/Themes/BreakPoints";
 export const StyledPatientRow = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   background-color: #f6f6f6;
   padding: 32px 0 0 0;
   margin-top: 88px;
+  width: 100%;
 `;
 
 export const StyledDummyBlock = styled.div`
   display: flex;
   flex-direction: column;
-  flex-basis: 20%;
+  flex-basis: 25%;
   height: calc(100vh - 88px);
-  padding: 8px 0;
   z-index: 1;
   position: relative;
 

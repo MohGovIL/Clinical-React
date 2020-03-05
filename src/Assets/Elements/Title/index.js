@@ -2,10 +2,10 @@ import React from 'react';
 import {useTranslation} from "react-i18next";
 import TitleStyle from './Style';
 
-const Title = ({label}) => {
+const Title = ({label, fontSize, color, bold}) => {
     const {t} = useTranslation();
     return (
-        <TitleStyle>
+        <TitleStyle fontSize={fontSize} color={color} bold={bold}>
             {t(label)}
         </TitleStyle>
     );

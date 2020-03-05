@@ -54,10 +54,9 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
                            onCloseClick={handleCloseClick}/>
             <StyledPatientRow>
                 <PatientDataBlock appointmentId={appointmentId} patientData={patientData}/>
-                <StyledDummyBlock/>
+                <StyledDummyBlock languageDirection={languageDirection}/>
                 <PatientDetailsBlock/>
             </StyledPatientRow>
-
         </React.Fragment>
     );
 };
