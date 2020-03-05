@@ -4,18 +4,18 @@
  * @returns {}
  */
 const normalizeFhirPatient = patient => {
-    let middleName = null;
-    let mobileCellPhone = null;
-    let homePhone = null;
-    let email = null;
-    let firstName = null;
-    let lastName = null;
-    let identifier = null;
+    let middleName = '';
+    let mobileCellPhone = '';
+    let homePhone = '';
+    let email = '';
+    let firstName = '';
+    let lastName = '';
+    let identifier = '';
 
     //Temporary fix for checking
     if (patient.identifier) {
-        // let identifier = patient.identifier ? patient.identifier[0].value : null;
-        identifier = {value: (patient.identifier ? patient.identifier[0].value : null), type: "ID"};
+        // let identifier = patient.identifier ? patient.identifier[0].value : '';
+        identifier = {value: (patient.identifier ? patient.identifier[0].value : ''), type: "ID"};
     }
 
     if (patient.name) {
@@ -32,13 +32,13 @@ const normalizeFhirPatient = patient => {
     if (patient.telecom) {
         //for temporary use system === 'mobile', instead 'phone'
         const thereIsMobilePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'mobile' && telecomObj.use === 'mobile');
-        mobileCellPhone = thereIsMobilePhone.length ? thereIsMobilePhone[0].value : null;
+        mobileCellPhone = thereIsMobilePhone.length ? thereIsMobilePhone[0].value : '';
 
         const thereIsEmail = patient.telecom.filter(telecomObj => telecomObj.system === 'email');
-        email = thereIsEmail.length ? thereIsEmail[0].value : null;
+        email = thereIsEmail.length ? thereIsEmail[0].value : '';
 
         const thereIsHomePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'phone' && telecomObj.use === 'home');
-        homePhone = thereIsHomePhone.length ? thereIsHomePhone[0].value : null;
+        homePhone = thereIsHomePhone.length ? thereIsHomePhone[0].value : '';
     }
     return {
         id: patient.id,

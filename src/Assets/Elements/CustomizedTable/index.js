@@ -18,7 +18,7 @@ import {
     BADGE_CELL,
     BUTTON_CELL,
     LABEL_CELL,
-    PERSONAL_INFORMATION_CELL
+    PERSONAL_INFORMATION_CELL,
 } from "./CustomizedTableComponentsTypes";
 
 const CustomizedTable = ({tableHeaders, tableData}) => {
