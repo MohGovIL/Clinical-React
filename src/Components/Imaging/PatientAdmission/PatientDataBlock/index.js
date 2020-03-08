@@ -16,13 +16,15 @@ import femaleIcon from '../../../../Assets/Images/womanIcon.png';
 import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
 
-import {Avatar, IconButton, Divider, Typography, TextField, InputLabel} from '@material-ui/core';
+import {Avatar, IconButton, Divider, Typography, TextField, InputLabel, MenuItem, Menu} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
-
+import {StyledButton, StyledMenu} from "../../../../Assets/Elements/CustomizedSelect/Style";
+import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
 
 const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_mode, appointmentsData}) => {
     const {t} = useTranslation();
+    // const [anchorEl, setAnchorEl] = React.useState(null);
 
     const [avatarIcon, setAvatarIcon] = useState(null);
     const [patientAge, setPatientAge] = useState(0);
@@ -31,7 +33,7 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
     const [patientMobilePhone, setPatientMobilePhone] = useState('');
     const [patientEmail, setPatientEmail] = useState('');
     const [patientEncounter, setPatientEncounter] = useState(0);
-    const [patientKupatHolim, setPatientKupatHolim] = useState("leumi");
+    const [patientKupatHolim, setPatientKupatHolim] = useState("Leumi");
 
     useEffect(() => {
         try {
@@ -75,14 +77,40 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
         'variant': edit_mode === 1 ? "filled" : 'filled',
         // 'variant': edit_mode === true ? "filled" : 'standard',
     };
+    //let TextFieldSelectOpts = TextFieldOpts;
+
+    //TextFieldSelectOpts.select = edit_mode === 1 ? true : false;
 
     let labelRequiredOpts = {
         'required': edit_mode === 1 ? true : false
     };
-console.log("======================");
-console.log(TextFieldOpts);
-console.log("======================");
-//aria-hidden={"true"}
+
+    const currencies = [
+        {
+            value: 'Clalit',
+            label: 'Clalit',
+        },
+        {
+            value: 'Leumi',
+            label: 'Leumi',
+        },
+        {
+            value: 'Meuhedet',
+            label: 'Meuhedet',
+        },
+    ];
+
+    const handleLoadListKupatHolim = () => {
+      let kupatHolimList = getOrganizationTypeKupatHolim();
+      console.log("=======================");
+      console.log(kupatHolimList);
+      console.log("=======================");
+    }
+
+    const handleClick = event => {
+        setPatientKupatHolim(event.target.value);
+    };
+
     return (
         <React.Fragment>
             <StyledDiv edit_mode={edit_mode}>
@@ -132,36 +160,59 @@ console.log("======================");
                                 {...TextFieldOpts}
                             />
 
-                        }
-                        <TextField
-                            id="standard-birthDate"
-                            value={patientBirthDate}
-                            onChange={handleBirthdayChange}
-                            label={t("birth day")}
-                            required
-                            {...TextFieldOpts}
-                        />
-                        <TextField
-                            id="standard-kupatCholim"
-                            value={patientKupatHolim}
-                            label={t("Kupat Cholim")}
-                            required
-                            {...TextFieldOpts}
-
-                        />
-                        <TextField
-                            id="standard-mobilePhone"
-                            value={patientMobilePhone}
-                            label={t("Cell phone")}
-                            required
-                            {...TextFieldOpts}
-                        />
-                        <TextField
-                            id="standard-patientEmail"
-                            value={patientEmail}
-                            label={t("Mail address")}
-                            {...TextFieldOpts}
-                        />
+                            }
+                            <TextField
+                                id="standard-birthDate"
+                                value={patientBirthDate}
+                                onChange={handleBirthdayChange}
+                                label={t("birth day")}
+                                required
+                                {...TextFieldOpts}
+                            />
+                            <TextField
+                                id="standard-kupatCholim"
+                                value={patientKupatHolim}
+                                label={t("Kupat Cholim")}
+                                required
+                                select={edit_mode === 1 ? true : false}
+                                {...TextFieldOpts}
+                                onClick={handleLoadListKupatHolim}
+                                onChange={handleClick}
+                                SelectProps={{
+                                    MenuProps: {
+                                        elevation: 0,
+                                        keepMounted: true,
+                                        getContentAnchorEl: null,
+                                        anchorOrigin: {
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        },
+                                        transformOrigin: {
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }
+                                    }
+                                }}
+                            >
+                                {currencies.map(option => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <TextField
+                                id="standard-mobilePhone"
+                                value={patientMobilePhone}
+                                label={t("Cell phone")}
+                                required
+                                {...TextFieldOpts}
+                            />
+                            <TextField
+                                id="standard-patientEmail"
+                                value={patientEmail}
+                                label={t("Mail address")}
+                                {...TextFieldOpts}
+                            />
                         </StyledFormGroup>
                         {edit_mode === 1 &&
                         <StyledButtonBlock>

@@ -89,10 +89,6 @@ export const StyledTextInput = styled.div`
     .MuiInputLabel-formControl {
       right: 0;
       left: unset;
-      font-size: 13px;
-      font-weight: normal;
-      font-stretch: normal;
-      font-style: normal;
       line-height: 1.38;
       letter-spacing: normal;
       text-align: right;
@@ -110,7 +106,7 @@ export const StyledTextInput = styled.div`
     }
 
     .MuiInputLabel-shrink {
-      transform-origin: top right;
+      //transform-origin: top right;
     }
 
     .MuiFormControl-root {
