@@ -20,11 +20,11 @@ import {Avatar, IconButton, Divider, Typography, TextField, InputLabel, MenuItem
 import EditIcon from '@material-ui/icons/Edit';
 import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
 import {StyledButton, StyledMenu} from "../../../../Assets/Elements/CustomizedSelect/Style";
-import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
+import {getHealhcareService, getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
+import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
 const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_mode, appointmentsData}) => {
     const {t} = useTranslation();
-    // const [anchorEl, setAnchorEl] = React.useState(null);
 
     const [avatarIcon, setAvatarIcon] = useState(null);
     const [patientAge, setPatientAge] = useState(0);
@@ -33,7 +33,8 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
     const [patientMobilePhone, setPatientMobilePhone] = useState('');
     const [patientEmail, setPatientEmail] = useState('');
     const [patientEncounter, setPatientEncounter] = useState(0);
-    const [patientKupatHolim, setPatientKupatHolim] = useState("Leumi");
+    const [patientKupatHolim, setPatientKupatHolim] = useState(0);
+    const [patientKupatHolimList, setPatientKupatHolimList] = useState([{code: 0, name: "All"}]);
 
     useEffect(() => {
         try {
@@ -48,6 +49,8 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                 //TO DO - in future use you need to change to encountersData
                 setPatientEncounter(appointmentsData[appointmentId] || 0);
             }
+            setPatientKupatHolim(6); //TO DO - change to dynamic mode from DB
+            setPatientKupatHolimList([{code: 0, name: "Clalit"}]); //TO DO - change to dynamic mode from DB
         } catch (e) {
             console.log(e);
         }
@@ -59,7 +62,7 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
     };
 
     const handleCloseEdit = () => {
-        // setEdit(false);
+
     }
 
     const handleSaveClick = () => {
@@ -77,40 +80,55 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
         'variant': edit_mode === 1 ? "filled" : 'filled',
         // 'variant': edit_mode === true ? "filled" : 'standard',
     };
-    //let TextFieldSelectOpts = TextFieldOpts;
-
-    //TextFieldSelectOpts.select = edit_mode === 1 ? true : false;
 
     let labelRequiredOpts = {
         'required': edit_mode === 1 ? true : false
     };
 
-    const currencies = [
-        {
-            value: 'Clalit',
-            label: 'Clalit',
-        },
-        {
-            value: 'Leumi',
-            label: 'Leumi',
-        },
-        {
-            value: 'Meuhedet',
-            label: 'Meuhedet',
-        },
-    ];
+    const emptyArrayAll = () => {
+        return [{
+            code: 0,
+            name: t("All")
+        }]
+    };
 
     const handleLoadListKupatHolim = () => {
-      let kupatHolimList = getOrganizationTypeKupatHolim();
-      console.log("=======================");
-      console.log(kupatHolimList);
-      console.log("=======================");
+        let array = emptyArrayAll();
+
+        //If object is empty - load kupat holi, from server
+        if (Object.keys(patientKupatHolimList).length <= 1) {
+            (async () => {
+                try {
+                    const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
+                    for (let entry of dataServiceType) {
+                        if (entry.resource !== undefined) {
+                            const setLabelKupatHolim = normalizeValueData(entry.resource);
+                            array.push(setLabelKupatHolim);
+                        }
+                    }
+                    setPatientKupatHolimList(array);
+                } catch (e) {
+                    console.log("Error during load list of kupat holim");
+                }
+            })();
+        }
     }
 
     const handleClick = event => {
-        setPatientKupatHolim(event.target.value);
-    };
+        try {
+            const res = patientKupatHolimList.find(obj => {
+                return obj.code == event.target.value
+            });
+            setPatientKupatHolim(res.code);
+            console.log("=======================");
+            console.log(res.name);
+            console.log(patientKupatHolimList);
+            console.log("=======================");
 
+        } catch (e) {
+            console.log("Error");
+        }
+    };
     return (
         <React.Fragment>
             <StyledDiv edit_mode={edit_mode}>
@@ -176,9 +194,10 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                                 required
                                 select={edit_mode === 1 ? true : false}
                                 {...TextFieldOpts}
-                                onClick={handleLoadListKupatHolim}
-                                onChange={handleClick}
+
+                                onClick={handleClick}
                                 SelectProps={{
+                                    onOpen: handleLoadListKupatHolim,
                                     MenuProps: {
                                         elevation: 0,
                                         keepMounted: true,
@@ -194,9 +213,10 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                                     }
                                 }}
                             >
-                                {currencies.map(option => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
+                                {patientKupatHolimList.map((option, optionIndex) => (
+                                    <MenuItem key={optionIndex} value={option.code}
+                                              selected={option.code === patientKupatHolim}>
+                                        {t(option.name)}
                                     </MenuItem>
                                 ))}
                             </TextField>
