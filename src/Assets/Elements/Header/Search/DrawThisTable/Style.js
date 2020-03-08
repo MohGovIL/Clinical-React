@@ -3,6 +3,7 @@ import {ExpansionPanelDetails, ExpansionPanelSummary} from "@material-ui/core";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import GenderIcon from "../../../CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
 import Icon from "@material-ui/core/Icon";
+import TitleValueComponent from "./TitleValueComponent";
 
 export const StyledExpansionPanel = styled(ExpansionPanel)`
     margin: 0 !important;
@@ -179,4 +180,21 @@ width: 132px;
   text-align: right;
   color: #002cb1;
   margin-top: 2.5%;
+`;
+export const StyledValueComponent  = styled.label`
+
+        width:100%;
+        margin-top: 20px;
+        margin-left: 25px;
+        opacity: 0.6;
+        font-family: OpenSansHebrew;
+        font-size: 16px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.13;
+        letter-spacing: normal;
+        text-align: center;
+        color: navy;
+
 `;

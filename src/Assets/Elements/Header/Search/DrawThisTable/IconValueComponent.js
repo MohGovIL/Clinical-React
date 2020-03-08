@@ -9,8 +9,8 @@ const IconValueComponent = ({iconType, value}) => {
     const {t} = useTranslation();
     return (
         <React.Fragment>
-            <StyledIcon>{iconType}</StyledIcon>
-            <StyledIconText>{t(value)}</StyledIconText>
+            {iconType ? <StyledIcon>{iconType}</StyledIcon>:''}
+            {value ? <StyledIconText>{t(value)}</StyledIconText> : ''}
         </React.Fragment>
     );
 
