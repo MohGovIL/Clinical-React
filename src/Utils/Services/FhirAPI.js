@@ -177,6 +177,7 @@ function _buildList(patient) {
 };
 
 function FHIRPersontoDataArray(pushthisData,data) {
+    let currentDataToFill = data;
     if (pushthisData && pushthisData.data && pushthisData.data.total > 0) {
         let entry = pushthisData.data.entry;
 
@@ -185,8 +186,8 @@ function FHIRPersontoDataArray(pushthisData,data) {
             if (pushThisPerson) {
                 let PushThisPersonIdentifier = pushThisPerson.id;
                 let canPushThisPatient = true;
-                for (let i = 0; i < data.length; i++) {
-                    let dataIdentifier = data[i].id;
+                for (let i = 0; i < currentDataToFill.length; i++) {
+                    let dataIdentifier = currentDataToFill[i].id;
 
                     if (PushThisPersonIdentifier === dataIdentifier) {
                         canPushThisPatient = false;
@@ -195,10 +196,11 @@ function FHIRPersontoDataArray(pushthisData,data) {
                 }
 
                 if (canPushThisPatient) {
-                    data.push(pushThisPerson);
+                    currentDataToFill.push(pushThisPerson);
                 }
             }
         });
-        return data;
+
     }
+    return currentDataToFill;
 };
