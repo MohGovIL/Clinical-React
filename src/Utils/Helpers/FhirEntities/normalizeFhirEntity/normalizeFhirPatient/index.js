@@ -11,6 +11,8 @@ const normalizeFhirPatient = patient => {
     let firstName = '';
     let lastName = '';
     let identifier = '';
+    let ageGenderType = '';
+
 
     //Temporary fix for checking
     if (patient.identifier) {
@@ -40,6 +42,10 @@ const normalizeFhirPatient = patient => {
         const thereIsHomePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'phone' && telecomObj.use === 'home');
         homePhone = thereIsHomePhone.length ? thereIsHomePhone[0].value : '';
     }
+
+    ageGenderType = patient.gender === 'female' ? 'age{f}' : 'age{m}';
+
+
     return {
         id: patient.id,
         identifier,
@@ -51,6 +57,7 @@ const normalizeFhirPatient = patient => {
         email,
         gender: patient.gender,
         birthDate: patient.birthDate,
+        ageGenderType
     }
 };
 

@@ -1,5 +1,6 @@
 import {tokenInstanceGenerator} from "./AxiosWithTokenInstance";
 import {ApiTokens} from "./ApiTokens";
+import normalizeFhirPatient from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
@@ -86,6 +87,118 @@ export const getEncountersWithPatients = (summary = false, date = '', servicePro
 };
 
 const patientsFhirSeacrh = '/Patient?';
-export const searchPatients = (value) => {
-    return  isNumeric(value) ?   fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}_id=${value}`) : fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}name=${value}`);
+
+
+export const searchPatients = async (value) => {
+
+
+
+    let data = [];
+    let mobileData = null;
+    if (isNumeric(value)) {
+
+        let identifierData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}identifier:contains=${value}`);
+        let mobileData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}mobile:contains=${value}`);
+        //let PersonsByNumberSearch = [];
+        //let PersonsByIDSearch = [];
+        data = FHIRPersontoDataArray(identifierData,data);
+        data = FHIRPersontoDataArray(mobileData,data);
+
+      /*  if (identifierData && identifierData.data && identifierData.data.total > 0) {
+            let entry = identifierData.data.entry;
+
+            entry.map((patient, patientIndex) => {
+                let pushThisPerson = _buildList(patient);
+                if (pushThisPerson) {
+                    data.push(pushThisPerson);
+                }
+            });
+
+        }*/
+        /*if (mobileData && mobileData.data && mobileData.data.total > 0) {
+            let entry = mobileData.data.entry;
+
+            entry.map((patient, patientIndex) => {
+                let pushThisPerson = _buildList(patient);
+                if(pushThisPerson) {
+                    let PushThisPersonIdentifier = pushThisPerson.id;
+                    let canPushThisPatient = true;
+                    for (let i = 0; i < data.length; i++) {
+                        let dataIdentifier = data[i].id;
+
+                        if (PushThisPersonIdentifier === dataIdentifier) {
+                            canPushThisPatient = false;
+                        }
+
+                    }
+
+                    if (canPushThisPatient) {
+                        data.push(pushThisPerson);
+                    }
+                }
+            });
+
+        }*/
+    } else {
+        let identifierData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}identifier:contains=${value}`);
+        let byNameData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}name=${value}`);
+
+        data = FHIRPersontoDataArray(identifierData,data);
+        data = FHIRPersontoDataArray(byNameData,data);
+    }
+
+    return data;
+};
+
+function _buildList(patient) {
+    //debugger;
+    let arr = [];
+    let resource = patient.resource;
+    /*
+       id: patient.id,
+       identifier,
+       firstName,
+       lastName,
+       middleName,
+       mobileCellPhone,
+       homePhone,
+       email,
+       gender: patient.gender,
+       birthDate: patient.birthDate,
+*/
+
+    if (resource) {
+        let normalizedPerson = normalizeFhirPatient(resource);
+        normalizedPerson.ageGenderType = normalizedPerson.gender === 'female' ? 'age{f}' : 'age{m}';
+        return normalizedPerson;
+    } else {
+        return null;
+    }
+};
+
+function FHIRPersontoDataArray(pushthisData,data) {
+    if (pushthisData && pushthisData.data && pushthisData.data.total > 0) {
+        let entry = pushthisData.data.entry;
+
+        entry.map((patient, patientIndex) => {
+            let pushThisPerson = _buildList(patient);
+            if (pushThisPerson) {
+                let PushThisPersonIdentifier = pushThisPerson.id;
+                let canPushThisPatient = true;
+                for (let i = 0; i < data.length; i++) {
+                    let dataIdentifier = data[i].id;
+
+                    if (PushThisPersonIdentifier === dataIdentifier) {
+                        canPushThisPatient = false;
+                    }
+
+                }
+
+                if (canPushThisPatient) {
+                    data.push(pushThisPerson);
+                }
+            }
+        });
+        return data;
+    }
 };

@@ -37,6 +37,7 @@ const Search = ({languageDirection}) => {
     const [input, setInput] = useState('');
     const [showResult, setShowResult] = useState(false);
     const [result, setResult] = useState({});
+
     const onChangeHandler = async e => {
         const target = e.target;
 
@@ -50,23 +51,24 @@ const Search = ({languageDirection}) => {
         }
 
         if (tValue.length > 2) {
-            try {
-
-                const patients = await searchPatients(tValue);
-                if (patients && patients.data && patients.data.total > 0) {
-                    //for
-                    setResult(patients);
-                    setShowResult(true);
-                    // setResult(patients);
-                } else {
+            (async () => {
+                try {
+                    const patients = await searchPatients(tValue);
+                    if (patients) {
+                        //for
+                        setResult(patients);
+                        setShowResult(true);
+                        // setResult(patients);
+                    } else {
+                        setResult(null);
+                        setShowResult(true);
+                    }
+                } catch (err) {
+                    //  setShowResult(false);
                     setResult(null);
-                    setShowResult(true);
+                    console.log(err);
                 }
-            } catch (err) {
-                //  setShowResult(false);
-                setResult(null);
-                console.log(err);
-            }
+            })()
         } else {
             setShowResult(false);
         }

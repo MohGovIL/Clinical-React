@@ -17,6 +17,7 @@ import maleIcon from "../../../../Images/maleIcon.png";
 import femaleIcon from "../../../../Images/womanIcon.png";
 
 const DrawThisTable = ({result}) => {
+debugger;
     const [expanded, setExpanded] = React.useState('');
     const handleChange = panel => (event, newExpanded) => {
         setExpanded(newExpanded ? panel : false);
@@ -31,11 +32,11 @@ const DrawThisTable = ({result}) => {
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
-    function _buildList(patient) {
+   /* function _buildList(patient) {
       //debugger;
         let arr= [];
         let resource = patient.resource;
-        /*
+        /!*
            id: patient.id,
            identifier,
            firstName,
@@ -46,31 +47,29 @@ const DrawThisTable = ({result}) => {
            email,
            gender: patient.gender,
            birthDate: patient.birthDate,
-   */
-
+           ageGenderType
+   *!/
         if(resource) {
-            let normalizedPerson =  normalizeFhirPatient(resource);
-            normalizedPerson.ageGenderType = normalizedPerson.gender === 'female' ? 'age{f}'  : 'age{m}';
-            return normalizedPerson;
+            return normalizeFhirPatient(resource);
         }
         else{
             return null;
         }
-    }
+    }*/
 
-
-    if(result && result.data && result.data.total>0){
+//debugger;
+    if(result){
         //debugger;
-        let entry = result.data.entry;
+
 
 
 
             return (
 
-                    entry.map((patient, patientIndex) => {
+                result.map((patient, patientIndex) => {
+//debugger;
 
-                    let personSearchArr = _buildList(patient);
-                    if(personSearchArr)
+                    if(patient)
                     {
                     return (
                         <StyledExpansionPanel expanded = {expanded==='panel'+patientIndex} key={patientIndex} onChange={handleChange('panel'+patientIndex)}>
@@ -78,22 +77,22 @@ const DrawThisTable = ({result}) => {
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel1a-content"
                         id="panel1a-header">
-                        <GenderIcon  alt={'gender icon'} src={personSearchArr.gender === 'male' ? maleIcon : femaleIcon}/>
+                        <GenderIcon  alt={'gender icon'} src={patient.gender === 'male' ? maleIcon : femaleIcon}/>
                         <StyledLabelName>
-                            <TitleValueComponent  name= {personSearchArr.firstName} value= {personSearchArr.lastName}/>
+                            <TitleValueComponent  name= {patient.firstName} value= {patient.lastName}/>
                         </StyledLabelName>
                         <StyledLabelTZ>
-                        <TitleValueComponent  name= {t(personSearchArr.identifier.type)} value= {personSearchArr.identifier.value}/>
+                        <TitleValueComponent  name= {t(patient.identifier.type)} value= {patient.identifier.value}/>
                         </StyledLabelTZ>
                         <StyledLabelPhone>
                         {
-                            personSearchArr.mobileCellPhone ?
-                                < TitleValueComponent  name = {t('Mobile Phone')}  value = {personSearchArr.mobileCellPhone} /> :
-                                personSearchArr.homePhone ? < TitleValueComponent name = {t('Phone number')}   value = {personSearchArr.homePhone} /> : ''
+                            patient.mobileCellPhone ?
+                                < TitleValueComponent  name = {t('Mobile Phone')}  value = {patient.mobileCellPhone} /> :
+                                patient.homePhone ? < TitleValueComponent name = {t('Phone number')}   value = {patient.homePhone} /> : ''
                         }
                         </StyledLabelPhone>
                         <StyledLabelAge>
-                            <TitleValueComponent  name= {t(personSearchArr.ageGenderType)} value= {_calculateAge(personSearchArr.birthDate)}/>
+                            <TitleValueComponent  name= {t(patient.ageGenderType)} value= {_calculateAge(patient.birthDate)}/>
                         </StyledLabelAge>
 
                         </StyledExpansionPanelSummary>
