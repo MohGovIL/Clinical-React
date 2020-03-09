@@ -22,12 +22,16 @@ export default styled.div`
 export const StyledPaper = styled(Paper)`
     width: 744px;
     height: auto;
+
     border-radius: 2px;
     box-shadow: 0 0 10px 0 rgba(152,151,151,0.3);
     background-color: #ffffff;
     position: absolute;
     margin: 26% -56%;
     border-top: 0;
+
+
+
 `;
 
 export const StyledTriangle = styled.div`
@@ -56,7 +60,7 @@ export const StyledIconValueComponent = styled(IconValueComponent)`
 `;
 
 export const StyledPaperContainer = styled.div`
-overflow:auto;
 
     max-height: calc(100vh - 88px - 60px);
+    min-height:56px;
 `;

@@ -17,6 +17,11 @@ import maleIcon from "../../../../Images/maleIcon.png";
 import femaleIcon from "../../../../Images/womanIcon.png";
 
 const DrawThisTable = ({result}) => {
+    const [expanded, setExpanded] = React.useState('');
+    const handleChange = panel => (event, newExpanded) => {
+        setExpanded(newExpanded ? panel : false);
+    };
+
    // debugger;
     const {t} = useTranslation();
 
@@ -68,7 +73,7 @@ const DrawThisTable = ({result}) => {
                     if(personSearchArr)
                     {
                     return (
-                        <StyledExpansionPanel key={patientIndex}>
+                        <StyledExpansionPanel expanded = {expanded==='panel'+patientIndex} key={patientIndex} onChange={handleChange('panel'+patientIndex)}>
                         <StyledExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel1a-content"
@@ -93,7 +98,7 @@ const DrawThisTable = ({result}) => {
 
                         </StyledExpansionPanelSummary>
                         <StyledExpansionPanelDetails>
-                          דגיייייייייייי
+                          <div>To do : appointments box </div>
                         </StyledExpansionPanelDetails>
                         </StyledExpansionPanel>
                     );

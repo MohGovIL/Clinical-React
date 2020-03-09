@@ -7,12 +7,13 @@ import TitleValueComponent from "./TitleValueComponent";
 
 export const StyledExpansionPanel = styled(ExpansionPanel)`
     margin: 0 !important;
+    position: inherit !important;
  `;
 export const StyledExpansionPanelSummary = styled(ExpansionPanelSummary)`
     display: flex;
     max-height: 56px;
     background-color: #ffffff;
-    box-shadow: -1px 10px 23px -2px #d4d4d4;
+     box-shadow: 0px 0px 12px -1px #d4d4d4;
     justify-content: space-evenly;
 `;
 
@@ -89,7 +90,6 @@ export const StyledLabelTZ = styled.label`
   }
 
 `;
-
 
 
 export const StyledLabelPhone = styled.label`
@@ -181,7 +181,7 @@ width: 132px;
   color: #002cb1;
   margin-top: 2.5%;
 `;
-export const StyledValueComponent  = styled.label`
+export const StyledValueComponent = styled.label`
 
         width:100%;
         margin-top: 20px;
@@ -196,5 +196,6 @@ export const StyledValueComponent  = styled.label`
         letter-spacing: normal;
         text-align: center;
         color: navy;
+
 
 `;
