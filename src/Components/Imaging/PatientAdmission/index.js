@@ -9,9 +9,6 @@ import PatientDataBlock from "./PatientDataBlock";
 import PatientDetailsBlock from "./PatientDetailsBlock";
 import {StyledPatientRow, StyledDummyBlock, StyledBackdrop} from "./Style";
 
-import {Backdrop} from '@material-ui/core';
-
-
 const PatientAdmission = ({location, appointmentsData, patientsData, languageDirection, formatDate, history}) => {
     const {t} = useTranslation();
 

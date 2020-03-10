@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {StyledForm, StyledPatientDetails, StyledFormGroup, StyledDivider, StyledTextField} from "./Style"
+import React from 'react';
+import {StyledForm, StyledPatientDetails, StyledFormGroup, StyledDivider} from "./Style"
 import {useTranslation} from "react-i18next";
-import {Typography} from '@material-ui/core';
 import Title from "../../../../Assets/Elements/Title";
 
-const PatientDetailsBlock = ({}) => {
+const PatientDetailsBlock = () => {
     const {t} = useTranslation();
 
     return (
