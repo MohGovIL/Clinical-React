@@ -92,7 +92,7 @@ const patientsFhirSeacrh = '/Patient?';
 export const searchPatients = async (value) => {
 
 
-debugger;
+
     let data = null;
     let mobileData = null;
     if (isNumeric(value)) {

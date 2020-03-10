@@ -6,7 +6,7 @@ const handleChange =  (event) => {
 };
 
 const highlight = (event) => {
-    debugger;
+
     let inputText = event;
     let innerHTML = event.target.innerHTML ;
     let searchTrimmed = searchParam.trim();
