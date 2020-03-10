@@ -111,7 +111,7 @@ export const searchPatients = async (value) => {
         //for future Lexicographic search in ID open this
         //data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : null;
         data = byNameData.data.total > 0 ? FHIRPersontoDataArray(byNameData,data) : data;
-        if (data.length > 1){
+        if (data && data.length > 1){
             data = sortPatientRulesByLexicogrphicsSort(data,value);
         }
 
