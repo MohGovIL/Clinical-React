@@ -40,7 +40,7 @@ export const StyledLabelName = styled.label`
           letter-spacing: normal;
           text-align: right;
           color: #00094a;
-          font-weight: bold;
+
     }
     div{
 
@@ -53,7 +53,7 @@ export const StyledLabelName = styled.label`
           letter-spacing: normal;
           text-align: right;
           color: #00094a;
-          font-weight: bold;
+
     }
 
 `;

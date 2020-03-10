@@ -16,7 +16,7 @@ import GenderIcon from "../../../CustomizedTable/CustomizedTablePersonalInformat
 import maleIcon from "../../../../Images/maleIcon.png";
 import femaleIcon from "../../../../Images/womanIcon.png";
 
-const DrawThisTable = ({result}) => {
+const DrawThisTable = ({result,searchParam}) => {
 
     const [expanded, setExpanded] = React.useState('');
     const handleChange = panel => (event, newExpanded) => {
@@ -45,10 +45,10 @@ const DrawThisTable = ({result}) => {
                         id="panel1a-header">
                         <GenderIcon  alt={'gender icon'} src={patient.gender === 'male' ? maleIcon : femaleIcon}/>
                         <StyledLabelName>
-                            <TitleValueComponent  name= {patient.firstName} value= {patient.lastName}/>
+                            <TitleValueComponent  searchParam = {searchParam} name= {patient.firstName} value= {patient.lastName}/>
                         </StyledLabelName>
                         <StyledLabelTZ>
-                        <TitleValueComponent  name= {t(patient.identifier.type === 'idtype_1' ? 'Teudat zehut' :patient.identifier.type)} value= {patient.identifier.value}/>
+                        <TitleValueComponent   searchParam = {searchParam} name= {t(patient.identifier.type === 'idtype_1' ? 'Teudat zehut' :patient.identifier.type)} value= {patient.identifier.value}/>
                         </StyledLabelTZ>
                         <StyledLabelPhone>
                         {

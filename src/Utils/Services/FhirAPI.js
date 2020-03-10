@@ -92,7 +92,7 @@ const patientsFhirSeacrh = '/Patient?';
 export const searchPatients = async (value) => {
 
 
-
+debugger;
     let data = null;
     let mobileData = null;
     if (isNumeric(value)) {
@@ -100,8 +100,9 @@ export const searchPatients = async (value) => {
         let identifierData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}identifier:contains=${value}`);
         let mobileData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}mobile:contains=${value}`);
 
-        data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : null;
-        data = mobileData.data.total > 0 ? FHIRPersontoDataArray(mobileData,data) : null;
+        data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : data;
+        data = mobileData.data.total > 0 ? FHIRPersontoDataArray(mobileData,data) : data;
+
 
     } else {
         //for future Lexicographic search in ID open this
@@ -109,7 +110,11 @@ export const searchPatients = async (value) => {
         let byNameData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}name=${value}`);
         //for future Lexicographic search in ID open this
         //data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : null;
-        data = byNameData.data.total > 0 ? FHIRPersontoDataArray(byNameData,data) : null;
+        data = byNameData.data.total > 0 ? FHIRPersontoDataArray(byNameData,data) : data;
+        if (data.length > 1){
+            data = sortPatientRulesByLexicogrphicsSort(data,value);
+        }
+
     }
 
     return data;
@@ -173,3 +178,77 @@ function FHIRPersontoDataArray(pushthisData,data) {
     }
     return currentDataToFill;
 };
+
+// sort by value
+function sortByValue(items,field) {
+    items.sort(function (a, b) {
+        return a[field] - b[field];
+    });
+    return items;
+}
+
+// sort by name
+function sortByName(items,field) {
+
+    items.sort(function (a, b) {
+        var nameA =  a[field].toUpperCase(); // ignore upper and lowercase
+        var nameB =  b[field].toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+
+        // names must be equal
+        return 0;
+    });
+    return items;
+}
+
+// sort by name
+function sortByNameContains(items,field,value) {
+
+    items.sort(function (a, b) {
+        var nameA =  a[field].toUpperCase(); // ignore upper and lowercase
+        var nameB =  b[field].toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB && nameA.includes(value) && nameB.includes(value)) {
+            return -1;
+        }
+        if (nameA > nameB && nameA.includes(value) && nameB.includes(value)) {
+            return 1;
+        }
+
+        // names must be equal
+        return 0;
+    });
+    return items;
+}
+
+function sortPatientRulesByLexicogrphicsSort(items , value) {
+
+    /*
+       id: patient.id,
+       identifier,
+       firstName,
+       lastName,
+       middleName,
+       mobileCellPhone,
+       homePhone,
+       email,
+       gender: patient.gender,
+       birthDate: patient.birthDate,
+*/
+ /*   console.log("-----------------------ORIGINAL-LIST-------------------------");
+    await console.log(items);
+    console.log("-----------------------LAST-NAME-SORT------------------------");*/
+    items = sortByName(items, 'lastName');
+    /*console.log(items);
+    console.log("-----------------------FIRSt-NAME-SORT------------------------");*/
+    items = sortByName(items, 'firstName');
+    items = sortByNameContains(items, 'firstName',value);
+    items = sortByNameContains(items, 'lastName',value);
+  /*  console.log(items);*/
+
+    return items;
+}

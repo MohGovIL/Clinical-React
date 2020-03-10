@@ -85,7 +85,7 @@ const Search = ({languageDirection}) => {
                     <StyledPaper elevation={1} id='results' variant="outlined" square>
                         {result ?
                             <StyledPaperContainer>
-                                <DrawThisTable result={result}/>
+                                <DrawThisTable result={result} searchParam={input}/>
                             </StyledPaperContainer>
                             :
                             <StyledPaperBottom elevation={1} variant="outlined" square>
