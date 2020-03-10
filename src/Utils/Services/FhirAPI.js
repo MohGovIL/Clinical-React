@@ -93,65 +93,30 @@ export const searchPatients = async (value) => {
 
 
 
-    let data = [];
+    let data = null;
     let mobileData = null;
     if (isNumeric(value)) {
 
         let identifierData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}identifier:contains=${value}`);
         let mobileData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}mobile:contains=${value}`);
-        //let PersonsByNumberSearch = [];
-        //let PersonsByIDSearch = [];
-        data = FHIRPersontoDataArray(identifierData,data);
-        data = FHIRPersontoDataArray(mobileData,data);
 
-      /*  if (identifierData && identifierData.data && identifierData.data.total > 0) {
-            let entry = identifierData.data.entry;
+        data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : null;
+        data = mobileData.data.total > 0 ? FHIRPersontoDataArray(mobileData,data) : null;
 
-            entry.map((patient, patientIndex) => {
-                let pushThisPerson = _buildList(patient);
-                if (pushThisPerson) {
-                    data.push(pushThisPerson);
-                }
-            });
-
-        }*/
-        /*if (mobileData && mobileData.data && mobileData.data.total > 0) {
-            let entry = mobileData.data.entry;
-
-            entry.map((patient, patientIndex) => {
-                let pushThisPerson = _buildList(patient);
-                if(pushThisPerson) {
-                    let PushThisPersonIdentifier = pushThisPerson.id;
-                    let canPushThisPatient = true;
-                    for (let i = 0; i < data.length; i++) {
-                        let dataIdentifier = data[i].id;
-
-                        if (PushThisPersonIdentifier === dataIdentifier) {
-                            canPushThisPatient = false;
-                        }
-
-                    }
-
-                    if (canPushThisPatient) {
-                        data.push(pushThisPerson);
-                    }
-                }
-            });
-
-        }*/
     } else {
-        let identifierData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}identifier:contains=${value}`);
+        //for future Lexicographic search in ID open this
+        //let identifierData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}identifier:contains=${value}`);
         let byNameData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}name=${value}`);
-
-        data = FHIRPersontoDataArray(identifierData,data);
-        data = FHIRPersontoDataArray(byNameData,data);
+        //for future Lexicographic search in ID open this
+        //data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : null;
+        data = byNameData.data.total > 0 ? FHIRPersontoDataArray(byNameData,data) : null;
     }
 
     return data;
 };
 
 function _buildList(patient) {
-    //debugger;
+
     let arr = [];
     let resource = patient.resource;
     /*
@@ -169,7 +134,6 @@ function _buildList(patient) {
 
     if (resource) {
         let normalizedPerson = normalizeFhirPatient(resource);
-        normalizedPerson.ageGenderType = normalizedPerson.gender === 'female' ? 'age{f}' : 'age{m}';
         return normalizedPerson;
     } else {
         return null;
@@ -177,6 +141,11 @@ function _buildList(patient) {
 };
 
 function FHIRPersontoDataArray(pushthisData,data) {
+
+    if(!data) {
+        data = [];
+    }
+
     let currentDataToFill = data;
     if (pushthisData && pushthisData.data && pushthisData.data.total > 0) {
         let entry = pushthisData.data.entry;

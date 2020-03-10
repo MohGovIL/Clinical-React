@@ -17,7 +17,13 @@ const normalizeFhirPatient = patient => {
     //Temporary fix for checking
     if (patient.identifier) {
         // let identifier = patient.identifier ? patient.identifier[0].value : '';
-        identifier = {value: (patient.identifier ? patient.identifier[0].value : ''), type: "ID"};
+
+        //bugfix write correct type id
+        //identifier = {value: (patient.identifier ? patient.identifier[0].value : ''), type: "ID"};
+        let id = patient.identifier ? patient.identifier[0].value : '';
+        let type = patient.identifier[0].type.coding[0].code;
+        identifier = {value : id , type : type };
+
     }
 
     if (patient.name) {
@@ -33,7 +39,7 @@ const normalizeFhirPatient = patient => {
     }
     if (patient.telecom) {
         //for temporary use system === 'mobile', instead 'phone'
-        const thereIsMobilePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'mobile' && telecomObj.use === 'mobile');
+        const thereIsMobilePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'phone' && telecomObj.use === 'mobile');
         mobileCellPhone = thereIsMobilePhone.length ? thereIsMobilePhone[0].value : '';
 
         const thereIsEmail = patient.telecom.filter(telecomObj => telecomObj.system === 'email');

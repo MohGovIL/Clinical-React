@@ -82,17 +82,17 @@ const Search = ({languageDirection}) => {
             {showResult === true ?
                 <React.Fragment>
                     <StyledTriangle/>
-                    <StyledPaper elevation={6} id='results' variant="outlined" square>
+                    <StyledPaper elevation={1} id='results' variant="outlined" square>
                         {result ?
                             <StyledPaperContainer>
                                 <DrawThisTable result={result}/>
                             </StyledPaperContainer>
                             :
-                            <StyledPaperBottom elevation={6} variant="outlined" square>
+                            <StyledPaperBottom elevation={1} variant="outlined" square>
                                 <StyledValueComponent>{t('No result for this search')}</StyledValueComponent>
                             </StyledPaperBottom>
                         }
-                        <StyledPaperBottom elevation={6} id='results' variant="outlined" square>
+                        <StyledPaperBottom elevation={1} id='results' variant="outlined" square>
                             <StyledIconValueComponent iconType='add_circle' value='Add New Patient'/>
                         </StyledPaperBottom>
                     </StyledPaper>

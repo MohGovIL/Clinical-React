@@ -17,13 +17,13 @@ import maleIcon from "../../../../Images/maleIcon.png";
 import femaleIcon from "../../../../Images/womanIcon.png";
 
 const DrawThisTable = ({result}) => {
-debugger;
+
     const [expanded, setExpanded] = React.useState('');
     const handleChange = panel => (event, newExpanded) => {
         setExpanded(newExpanded ? panel : false);
     };
 
-   // debugger;
+
     const {t} = useTranslation();
 
     function _calculateAge(birthday) { // birthday is a date
@@ -32,43 +32,9 @@ debugger;
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
-   /* function _buildList(patient) {
-      //debugger;
-        let arr= [];
-        let resource = patient.resource;
-        /!*
-           id: patient.id,
-           identifier,
-           firstName,
-           lastName,
-           middleName,
-           mobileCellPhone,
-           homePhone,
-           email,
-           gender: patient.gender,
-           birthDate: patient.birthDate,
-           ageGenderType
-   *!/
-        if(resource) {
-            return normalizeFhirPatient(resource);
-        }
-        else{
-            return null;
-        }
-    }*/
-
-//debugger;
     if(result){
-        //debugger;
-
-
-
-
-            return (
-
-                result.map((patient, patientIndex) => {
-//debugger;
-
+               return (
+               result.map((patient, patientIndex) => {
                     if(patient)
                     {
                     return (
@@ -82,7 +48,7 @@ debugger;
                             <TitleValueComponent  name= {patient.firstName} value= {patient.lastName}/>
                         </StyledLabelName>
                         <StyledLabelTZ>
-                        <TitleValueComponent  name= {t(patient.identifier.type)} value= {patient.identifier.value}/>
+                        <TitleValueComponent  name= {t(patient.identifier.type === 'idtype_1' ? 'Teudat zehut' :patient.identifier.type)} value= {patient.identifier.value}/>
                         </StyledLabelTZ>
                         <StyledLabelPhone>
                         {

@@ -25,8 +25,8 @@ export const StyledExpansionPanelDetails = styled(ExpansionPanelDetails)`
 
 export const StyledLabelName = styled.label`
   display: inline-flex;
-  max-width: 15%;
-  min-width: 15%;
+  max-width: 20%;
+  min-width: 20%;
   height: 22px;
   margin-top: 10px;
     span{
@@ -61,7 +61,7 @@ export const StyledLabelName = styled.label`
 export const StyledLabelTZ = styled.label`
   display: inline-flex;
   max-width: 30%;
-  min-width: 30%;
+  min-width: 25%;
   height: 22px;
   margin-top: 10px;
   span{
@@ -74,7 +74,7 @@ export const StyledLabelTZ = styled.label`
           line-height: normal;
           letter-spacing: normal;
           text-align: right;
-          color: #00094a;
+          color: #000b40;
   }
   div{
 
@@ -86,7 +86,7 @@ export const StyledLabelTZ = styled.label`
           line-height: normal;
           letter-spacing: normal;
           text-align: right;
-          color: #00094a;
+          color: #000b40;
   }
 
 `;
