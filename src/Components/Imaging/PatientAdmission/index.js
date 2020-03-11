@@ -55,7 +55,7 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
             <StyledPatientRow>
                 <PatientDataBlock appointmentId={appointmentId} patientData={patientData}/>
                 <StyledDummyBlock languageDirection={languageDirection}/>
-                <PatientDetailsBlock/>
+                <PatientDetailsBlock patientData={patientData} />
             </StyledPatientRow>
         </React.Fragment>
     );
