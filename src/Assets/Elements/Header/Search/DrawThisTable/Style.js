@@ -61,7 +61,7 @@ export const StyledLabelName = styled.label`
 export const StyledLabelTZ = styled.label`
   display: inline-flex;
   max-width: 30%;
-  min-width: 25%;
+  min-width: 30%;
   height: 22px;
   margin-top: 10px;
   span{

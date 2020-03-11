@@ -61,6 +61,11 @@ export const StyledIconValueComponent = styled(IconValueComponent)`
 
 export const StyledPaperContainer = styled.div`
 
-    max-height: calc(100vh - 88px - 60px);
-    min-height:56px;
+    max-height: calc(100vh - 88px - 60px - 15px);
+    min-height: 56px;
+    overflow : hidden;
+
+    &:hover {
+     overflow : auto !important; // <Thing> when hovered
+     }
 `;

@@ -207,15 +207,16 @@ function sortByName(items,field) {
 }
 
 // sort by name
-function sortByNameContains(items,field,value) {
+function sortByContains(items,field,value) {
 
     items.sort(function (a, b) {
         var nameA =  a[field].toUpperCase(); // ignore upper and lowercase
         var nameB =  b[field].toUpperCase(); // ignore upper and lowercase
-        if (nameA < nameB && nameA.includes(value) && nameB.includes(value)) {
+        if  (nameA.includes(value) && !nameB.includes(value)) {
             return -1;
         }
-        if (nameA > nameB && nameA.includes(value) && nameB.includes(value)) {
+
+        if (!nameA.includes(value) && nameB.includes(value)) {
             return 1;
         }
 
@@ -239,16 +240,34 @@ function sortPatientRulesByLexicogrphicsSort(items , value) {
        gender: patient.gender,
        birthDate: patient.birthDate,
 */
- /*   console.log("-----------------------ORIGINAL-LIST-------------------------");
-    await console.log(items);
-    console.log("-----------------------LAST-NAME-SORT------------------------");*/
+
+    items = sortByContains(items, 'lastName',value);
+    items = sortByContains(items, 'firstName',value);
     items = sortByName(items, 'lastName');
-    /*console.log(items);
-    console.log("-----------------------FIRSt-NAME-SORT------------------------");*/
     items = sortByName(items, 'firstName');
-    items = sortByNameContains(items, 'firstName',value);
-    items = sortByNameContains(items, 'lastName',value);
-  /*  console.log(items);*/
+
+    return items;
+}
+
+function sortPatientRulesByNumberSort(items , value) {
+
+    /*
+       id: patient.id,
+       identifier,
+       firstName,
+       lastName,
+       middleName,
+       mobileCellPhone,
+       homePhone,
+       email,
+       gender: patient.gender,
+       birthDate: patient.birthDate,
+*/
+
+    items = sortByContains(items, 'mobileCellPhone',value);
+    items = sortByContains(items, 'identifier',value);
+    items = sortByName(items, 'mobileCellPhone');
+    items = sortByName(items, 'identifier');
 
     return items;
 }
