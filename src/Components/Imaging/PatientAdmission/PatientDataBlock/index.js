@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import * as Moment from "moment";
-import {connect} from "react-redux";
 import {useForm, Controller} from 'react-hook-form';
 import {useTranslation} from "react-i18next";
 
@@ -26,7 +25,8 @@ import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/P
 import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
 import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
-const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_mode, appointmentsData, formatDate}) => {
+const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, formatDate}) => {
+
     const {t} = useTranslation();
 
     const [avatarIcon, setAvatarIcon] = useState(null);
@@ -36,23 +36,14 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
     const [patientEncounter, setPatientEncounter] = useState(0);
     const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
 
-    const [patientInitialValues, setPatientInitialValues] = useState({
-        firstName: '',
-        lastName: '',
-        birthDate: '',
-        healthManageOrganization: {code: 0, name: t("All")},
-        mobilePhone: '',
-        patientEmail: '',
-    });
+    const {register, control, handleSubmit, setValue} = useForm();
 
-    const {register, control, handleSubmit} = useForm();
     const onSubmit = data => console.log(data);
     const TextFieldOpts = {
         'disabled': edit_mode === 1 ? false : true,
         'InputProps': {disableUnderline: edit_mode === 1 ? false : true},
         'color': edit_mode === 1 ? "primary" : 'primary',
         'variant': edit_mode === 1 ? "filled" : 'standard',
-        'inputRef': edit_mode === 0 ? null : register,
     };
 
     useEffect(() => {
@@ -62,23 +53,15 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
             setPatientAge(ageCalculator(patientData.birthDate));
             setPatientIdentifier(patientData.identifier || {});
 
-            if (appointmentsData !== undefined) {
-                //TO DO - in future use you need to change to encountersData
-                setPatientEncounter(appointmentsData[appointmentId] || 0);
+            if (appointmentData !== undefined) {
+                //TO DO - in future use you need to change to encounterData
+                setPatientEncounter(appointmentData || 0);
             }
 
             //It is necessary to get data from the server and fill the array.
             setPatientKupatHolimList([{code: 7, name: t("hmo_3")}]); //TO DO - change to dynamic mode from DB
 
-            setPatientInitialValues({
-                firstName: patientData.firstName || '',
-                lastName: patientData.lastName || '',
-                birthDate: Moment(patientData.birthDate).format(formatDate) || '',
-                healthManageOrganization: {code: 7, name: t("hmo_3")},
-                mobilePhone: patientData.mobileCellPhone || patientData.homePhone || '',
-                patientEmail: patientData.email || '',
-            });
-
+            register({ name: "healthManageOrganization" });
         } catch (e) {
             console.log(e);
         }
@@ -86,7 +69,7 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
 
     const handleUndoEdittingClick = () => {
         onEditButtonClick(0);
-    }
+    };
 
     const emptyArrayAll = () => {
         return [{
@@ -119,23 +102,42 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
     }
 
     const handleChangeKupatHolim = event => {
+        console.log("===========111==============");
+        console.log(event[0].target.value);
+        console.log("===========111==============");
         try {
             const res = patientKupatHolimList.find(obj => {
-                return obj.code == event.target.value;
+                return obj.code == event[0].target.value;
             });
-            setPatientInitialValues({
+            patientInitialValues = {
                 ...patientInitialValues,
-                healthManageOrganization: {code: event.target.value, name: res.name}
-            });
+                healthManageOrganizationValue: {code: event[0].target.value, name: res.name}
+            };
+             setValue("healthManageOrganization", event[0].target.value);
         } catch (e) {
             console.log("Error: " + e);
         }
     };
-    // {
-    //     console.log("===========111==============")
-    //     console.log(patientInitialValues)
-    //     console.log("===========111==============")
-    // }
+
+    let patientInitialValues = {
+        firstName: patientData.firstName || '',
+        lastName: patientData.lastName || '',
+        birthDate: Moment(patientData.birthDate).format(formatDate) || '',
+        healthManageOrganization: {code: 7, name: t("hmo_3")},
+        healthManageOrganizationValue: '',
+        mobilePhone: patientData.mobileCellPhone || patientData.homePhone || '',
+        patientEmail: patientData.email || '',
+    };
+
+    patientInitialValues = {
+        ...patientInitialValues,
+        healthManageOrganizationValue: (edit_mode === 1 ? patientInitialValues.healthManageOrganization.code : patientInitialValues.healthManageOrganization.name)
+    };
+
+    console.log("===========111==============");
+    console.log(patientInitialValues);
+    console.log("===========111==============");
+
     return (
         <React.Fragment>
             <StyledGlobalStyle disable_vertical_scroll={edit_mode === 0 ? false : true}/>
@@ -174,7 +176,9 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <StyledFormGroup>
                             {edit_mode === 1 &&
-                            <TextField
+                            <Controller
+                                as={TextField}
+                                control={control}
                                 id="standard-firstName"
                                 name="firstName"
                                 defaultValue={patientInitialValues.firstName}
@@ -184,7 +188,9 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                             />
                             }
                             {edit_mode === 1 &&
-                            <TextField
+                            <Controller
+                                as={TextField}
+                                control={control}
                                 id="standard-lastName"
                                 name="lastName"
                                 defaultValue={patientInitialValues.lastName}
@@ -193,7 +199,9 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                                 {...TextFieldOpts}
                             />
                             }
-                            <TextField
+                            <Controller
+                                as={TextField}
+                                control={control}
                                 id="standard-birthDate"
                                 name="birthDate"
                                 defaultValue={patientInitialValues.birthDate}
@@ -201,10 +209,13 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                                 required
                                 {...TextFieldOpts}
                             />
-                            <TextField
+                            <Controller
+                                as={TextField}
+                                control={control}
                                 id="standard-healthManageOrganization"
                                 name="healthManageOrganization"
-                                defaultValue={edit_mode === 1 ? patientInitialValues.healthManageOrganization.code : patientInitialValues.healthManageOrganization.name}
+                                defaultValue={patientInitialValues.healthManageOrganizationValue}
+                                // defaultValue={edit_mode === 1 ? patientInitialValues.healthManageOrganization.code : patientInitialValues.healthManageOrganization.name}
                                 label={t("Kupat Cholim")}
                                 required
                                 select={edit_mode === 1 ? true : false}
@@ -232,9 +243,10 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                                         {option.name}
                                     </MenuItem>
                                 ))}
-                            </TextField>
-                            <TextField
-                                // inputRef={register}
+                            </Controller>
+                            <Controller
+                                as={TextField}
+                                control={control}
                                 id="standard-mobilePhone"
                                 name="mobilePhone"
                                 defaultValue={patientInitialValues.mobilePhone}
@@ -242,8 +254,9 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                                 required
                                 {...TextFieldOpts}
                             />
-                            <TextField
-                                // inputRef={register}
+                            <Controller
+                                as={TextField}
+                                control={control}
                                 id="standard-patientEmail"
                                 name="patientEmail"
                                 defaultValue={patientInitialValues.patientEmail}
@@ -264,17 +277,9 @@ const PatientDataBlock = ({appointmentId, patientData, onEditButtonClick, edit_m
                 </StyledTextInput>
             </StyledDiv>
         </React.Fragment>
+
     );
 };
 
-const mapStateToProps = state => {
-    return {
-        appointmentsData: state.fhirData.appointments,
-        formatDate: state.settings.format_date
-        //TO DO - uncomment after encounter data
-        // encountersData: state.fhirData.encounters,
-    };
-};
-
-export default connect(mapStateToProps, null)(PatientDataBlock);
+export default PatientDataBlock;
 
