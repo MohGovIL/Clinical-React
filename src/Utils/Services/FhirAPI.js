@@ -10,10 +10,11 @@ const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName)
 
 const fhirBasePath = 'apis/fhir/v4';
 
-const appointmentsWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
+// const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
+const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?status:not=arrived&_sort=date${summary ? `&_include=Appointment:patient` : ''}`;
 
 export const getAppointmentsWithPatients =  (summary = false, date = '', organization = '', serviceType = '') => {
-        return fhirTokenInstance().get(`${appointmentsWithPatientsBasePath}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
+        return fhirTokenInstance().get(`${appointmentsWithPatientsBasePath(summary)}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
 };
 
 export const getValueSet = id => {
@@ -28,37 +29,38 @@ export const updateAppointmentStatus = (appointmentId, value) => {
         })
 };
 
-export const createNewEncounter = () => {
+export const createNewEncounter = (status = '', serviceTypeCode = '', serviceType = '', priority = '', patient = '', appointment = '', startTime = '', examination = '', examinationCode = '', serviceProvider = '') => {
         return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
-            "resourceType": "Encounter",
-            "status": "planned",
+            status,
             "serviceType": {
                 "coding": [
                     {
-                        "code": "5"
+                        "code": serviceTypeCode
                     }
-                ]
+                ],
+                "text": serviceType
             },
             "reasonCode": {
                 "coding": [
                     {
-                        "code": "5"
+                        "code": examinationCode
                     }
-                ]
+                ],
+                "text": examination
             },
             " subject": {
-                "reference": "Patient/60"
+                "reference": `Patient/${patient}`
             },
             "appointment": [
                 {
-                    "reference": "Appointment/11"
+                    "reference": `Appointment/${appointment}`
                 }
             ],
             "period": {
-                "start": "2020-01-27 00:00:00"
+                "start": startTime
             },
             "serviceProvider": {
-                "reference": "Organization/3"
+                "reference": `Organization/${serviceProvider}`
             }
         })
 };
@@ -71,12 +73,13 @@ export const getHealhcareService = (organization) => {
         return fhirTokenInstance().get(`${fhirBasePath}/HealthcareService?organization=${organization}`);
 };
 
-const encountersWithPatientsBasePath = '/Encounter?_include=Encounter:patient&_sort=date';
+// const encountersWithPatientsBasePath = summary => '/Encounter?_include=Encounter:patient&_sort=date';
+const encountersWithPatientsBasePath = summary => `/Encounter?_sort=date${summary ? '&_include=Encounter:patient' : ''}`;
 
 export const getEncountersWithPatients = (summary = false, date = '', serviceProvider = '', serviceType = '', statuses = []) => {
     let statusesString = '';
         for(let status of statuses){
             statusesString = statusesString.concat(`&status=${status}`)
         }
-        return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
+        return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
 };

@@ -8,23 +8,25 @@ import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
 import PatientDataBlock from "./PatientDataBlock";
 import PatientDetailsBlock from "./PatientDetailsBlock";
 import {StyledPatientRow, StyledDummyBlock} from "./Style";
+import {createNewEncounter} from '../../../Utils/Services/FhirAPI';
 
-const PatientAdmission = ({location, appointmentsData, patientsData, languageDirection, formatDate, history}) => {
+const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history}) => {
     const {t} = useTranslation();
 
     const [patientData, setPatientData] = useState({});
-    const [appointmentId, setAppointmentId] = useState(0);
+    const [appointmentId, setAppointmentId] = useState('');
 
     useEffect(() => {
         let appointmentId = new URLSearchParams(location.search).get("index");
-        let participantPatient = appointmentsData[appointmentId].participantPatient;
+        let participantPatient = appointments[appointmentId].participantPatient;
 
         setAppointmentId(appointmentId);
-        setPatientData(patientsData[participantPatient]);
+        setPatientData(patients[participantPatient]);
 
         (async () => {
             try {
-                //await createNewEncounter()
+
+                await createNewEncounter()
             } catch (err) {
                 console.log(err)
             }
@@ -63,8 +65,8 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
 
 const mapStateToProps = state => {
     return {
-        appointmentsData: state.fhirData.appointments,
-        patientsData: state.fhirData.patients,
+        appointments: state.fhirData.appointments,
+        patients: state.fhirData.patients,
         languageDirection: state.settings.lang_dir,
         formatDate: state.settings.format_date
     };

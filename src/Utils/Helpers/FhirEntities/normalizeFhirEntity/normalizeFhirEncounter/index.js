@@ -12,18 +12,6 @@ const normalizeFhirEncounter = encounter => {
             examination = encounter.reasonCode.map(reasonCodeObj => reasonCodeObj.text);
         }
     }
-    let startTime = null;
-    let date = null;
-
-    // if(encounter.period){
-    //     if(encounter.period.start){
-    //         const isPeriodValid = encounter.period.start.split(' ');
-    //         if(isPeriodValid.length > 1){
-    //             date = isPeriodValid[0];
-    //             startTime = isPeriodValid[1];
-    //         }
-    //     }
-    // }
 
     const serviceProvider = encounter.serviceProvider ? encounter.serviceProvider.reference.split('/')[1] : null;
 
