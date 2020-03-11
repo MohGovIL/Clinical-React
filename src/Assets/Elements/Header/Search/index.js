@@ -19,7 +19,9 @@ import {connect} from "react-redux";
 
 
 const Search = ({languageDirection}) => {
-
+    const isNumeric = n => {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    };
     String.prototype.trimRight = function (charlist) {
         if (charlist === undefined)
             charlist = "\s";
@@ -40,9 +42,12 @@ const Search = ({languageDirection}) => {
 
     const onChangeHandler = async e => {
         const target = e.target;
-
-        setInput(target.value);
         let tValue = target.value;
+        let minSearchParam = 2;
+
+        setResult(null);
+        //setShowResult(false);
+        setInput(target.value);
 
         if (languageDirection === 'ltr') {
             tValue = tValue.trimRight(" ");
@@ -50,7 +55,15 @@ const Search = ({languageDirection}) => {
             tValue = tValue.trimLeft(" ");
         }
 
-        if (tValue.length > 2) {
+        if (isNumeric(tValue))
+        {
+            minSearchParam = 2;
+        }
+        else{
+            minSearchParam = 1;
+        }
+
+        if (tValue.length > minSearchParam) {
             (async () => {
                 try {
                     const patients = await searchPatients(tValue);

@@ -53,8 +53,8 @@ const DrawThisTable = ({result,searchParam}) => {
                         <StyledLabelPhone>
                         {
                             patient.mobileCellPhone ?
-                                < TitleValueComponent  name = {t('Mobile Phone')}  value = {patient.mobileCellPhone} /> :
-                                patient.homePhone ? < TitleValueComponent name = {t('Phone number')}   value = {patient.homePhone} /> : ''
+                                < TitleValueComponent  searchParam = {searchParam} name = {t('Mobile Phone')}  value = {patient.mobileCellPhone} /> : ''
+                                /*patient.homePhone ? < TitleValueComponent name = {t('Phone number')}   value = {patient.homePhone} /> : ''*/
                         }
                         </StyledLabelPhone>
                         <StyledLabelAge>
