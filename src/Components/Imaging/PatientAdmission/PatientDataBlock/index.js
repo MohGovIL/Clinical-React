@@ -103,6 +103,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     const handleUndoEdittingClick = () => {
         onEditButtonClick(0);
         reset(patientInitialValues);
+        register({name: "healthManageOrganization"});
     };
 
     const organizationData = patientKupatHolimList.find(obj => {
@@ -211,6 +212,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 select={edit_mode === 1 ? true : false}
                                 onChange={handleChangeKupatHolim}
                                 SelectProps={{
+                                    // onOpen: handleLoadListKupatHolim,
                                     MenuProps: {
                                         elevation: 0,
                                         keepMounted: true,
