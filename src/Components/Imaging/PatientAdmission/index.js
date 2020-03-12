@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from "react-redux";
-// import {createNewEncounter} from "../../../Utils/Services/FhirAPI";
 import HeaderPatient from "../../../Assets/Elements/HeaderPatient";
 import {useTranslation} from "react-i18next";
 import * as Moment from "moment";
@@ -9,24 +8,27 @@ import PatientDataBlock from "./PatientDataBlock";
 import PatientDetailsBlock from "./PatientDetailsBlock";
 import {StyledPatientRow, StyledDummyBlock} from "./Style";
 import {createNewEncounter} from '../../../Utils/Services/FhirAPI';
+import normalizeFhirEncounter from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 
-const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history}) => {
+const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history, facility}) => {
     const {t} = useTranslation();
 
     const [patientData, setPatientData] = useState({});
     const [appointmentId, setAppointmentId] = useState('');
+    const [newEncounter, setNewEncounter] = useState({});
 
     useEffect(() => {
         let appointmentId = new URLSearchParams(location.search).get("index");
-        let participantPatient = appointments[appointmentId].participantPatient;
+        let participantPatient = appointments[appointmentId].patient;
 
         setAppointmentId(appointmentId);
         setPatientData(patients[participantPatient]);
 
         (async () => {
             try {
-
-                await createNewEncounter()
+                const encounterData = await createNewEncounter(appointments[appointmentId], facility);
+                debugger
+                setNewEncounter(normalizeFhirEncounter(encounterData.data));
             } catch (err) {
                 console.log(err)
             }
@@ -68,7 +70,8 @@ const mapStateToProps = state => {
         appointments: state.fhirData.appointments,
         patients: state.fhirData.patients,
         languageDirection: state.settings.lang_dir,
-        formatDate: state.settings.format_date
+        formatDate: state.settings.format_date,
+        facility: state.settings.facility
     };
 };
 
