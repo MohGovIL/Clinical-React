@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState,useEffect } from "react";
 import StyledSearch, {
     StyledExpansionPanelDetails,
     StyledExpansionPanelSummary, StyledIconValueComponent,
@@ -16,9 +16,14 @@ import TitleValueComponent from "./DrawThisTable/TitleValueComponent";
 import {StyledLabelName, StyledValueComponent} from "./DrawThisTable/Style";
 import {useTranslation} from "react-i18next";
 import {connect} from "react-redux";
+import PaperContainerComponent from "./DrawThisTable/PaperContainerComponent";
+
+
 
 
 const Search = ({languageDirection}) => {
+
+
     const isNumeric = n => {
         return !isNaN(parseFloat(n)) && isFinite(n);
     };
@@ -39,6 +44,8 @@ const Search = ({languageDirection}) => {
     const [input, setInput] = useState('');
     const [showResult, setShowResult] = useState(false);
     const [result, setResult] = useState({});
+
+
 
     const onChangeHandler = async e => {
         const target = e.target;
@@ -98,7 +105,7 @@ const Search = ({languageDirection}) => {
                     <StyledPaper elevation={1} id='results' variant="outlined" square>
                         {result ?
                             <StyledPaperContainer>
-                                <DrawThisTable result={result} searchParam={input}/>
+                                <PaperContainerComponent result={result} searchParam={input} />
                             </StyledPaperContainer>
                             :
                             <StyledPaperBottom elevation={1} variant="outlined" square>
