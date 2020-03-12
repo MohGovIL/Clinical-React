@@ -18,7 +18,7 @@ import femaleIcon from '../../../../Assets/Images/womanIcon.png';
 import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
 
-import {Avatar, IconButton, Divider, Typography, TextField, MenuItem} from '@material-ui/core';
+import {Avatar, IconButton, Divider, Typography, TextField, MenuItem, Select, InputLabel} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
 // import {StyledButton, StyledMenu} from "../../../../Assets/Elements/CustomizedSelect/Style";
@@ -35,10 +35,22 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
 
     const [patientEncounter, setPatientEncounter] = useState(0);
     const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
+    const [healthManageOrgId, setHealthManageOrgId] = useState('');
 
-    const {register, control, handleSubmit, setValue} = useForm();
+    const {register, control, handleSubmit, reset, setValue} = useForm();
 
-    const onSubmit = data => console.log(data);
+    const onSubmit = (data, e) => {
+        console.log(data);
+        onEditButtonClick(0);
+    };
+
+    const emptyArrayAll = () => {
+        return [{
+            code: 0,
+            name: t("All")
+        }]
+    };
+
     const TextFieldOpts = {
         'disabled': edit_mode === 1 ? false : true,
         'InputProps': {disableUnderline: edit_mode === 1 ? false : true},
@@ -59,37 +71,14 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
             }
 
             //It is necessary to get data from the server and fill the array.
-            setPatientKupatHolimList([{code: 7, name: t("hmo_3")}]); //TO DO - change to dynamic mode from DB
-
-            register({ name: "healthManageOrganization" });
-        } catch (e) {
-            console.log(e);
-        }
-    }, [patientData.id]);
-
-    const handleUndoEdittingClick = () => {
-        onEditButtonClick(0);
-    };
-
-    const emptyArrayAll = () => {
-        return [{
-            code: 0,
-            name: t("All")
-        }]
-    };
-
-    const handleLoadListKupatHolim = () => {
-        let array = emptyArrayAll();
-
-        //If object is empty - load kupat holi, from server
-        if (Object.keys(patientKupatHolimList).length <= 1 && edit_mode === 1) {
+            let array = emptyArrayAll();
             (async () => {
                 try {
                     const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
                     for (let entry of dataServiceType) {
                         if (entry.resource !== undefined) {
                             entry.resource.name = t(entry.resource.name);
-                            const setLabelKupatHolim = normalizeValueData(entry.resource);
+                            let setLabelKupatHolim = normalizeValueData(entry.resource);
                             array.push(setLabelKupatHolim);
                         }
                     }
@@ -98,45 +87,49 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                     console.log("Error during load list of kupat holim");
                 }
             })();
+        } catch (e) {
+            console.log(e);
         }
+    }, [patientData.id]);
+
+    useEffect(() => {
+        register({name: "healthManageOrganization"});
+    }, []);
+
+    if (patientKupatHolimList.length == 0) {
+        return null;
     }
 
-    const handleChangeKupatHolim = event => {
-        console.log("===========111==============");
-        console.log(event[0].target.value);
-        console.log("===========111==============");
-        try {
-            const res = patientKupatHolimList.find(obj => {
-                return obj.code == event[0].target.value;
-            });
-            patientInitialValues = {
-                ...patientInitialValues,
-                healthManageOrganizationValue: {code: event[0].target.value, name: res.name}
-            };
-             setValue("healthManageOrganization", event[0].target.value);
-        } catch (e) {
-            console.log("Error: " + e);
-        }
+    const handleUndoEdittingClick = () => {
+        onEditButtonClick(0);
+        reset(patientInitialValues);
     };
+
+    const organizationData = patientKupatHolimList.find(obj => {
+        return obj.code == (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) > 0 ? healthManageOrgId : patientData.managingOrganization);
+    });
 
     let patientInitialValues = {
         firstName: patientData.firstName || '',
         lastName: patientData.lastName || '',
         birthDate: Moment(patientData.birthDate).format(formatDate) || '',
-        healthManageOrganization: {code: 7, name: t("hmo_3")},
-        healthManageOrganizationValue: '',
+        healthManageOrganization: patientData.managingOrganization || 0,
+        healthManageOrganizationValue: edit_mode === 1 ? organizationData.code : organizationData.name,
         mobilePhone: patientData.mobileCellPhone || patientData.homePhone || '',
         patientEmail: patientData.email || '',
     };
 
-    patientInitialValues = {
-        ...patientInitialValues,
-        healthManageOrganizationValue: (edit_mode === 1 ? patientInitialValues.healthManageOrganization.code : patientInitialValues.healthManageOrganization.name)
+    const handleChangeKupatHolim = event => {
+        try {
+            const res = patientKupatHolimList.find(obj => {
+                return obj.code == event.target.value;
+            });
+            setValue("healthManageOrganization", event.target.value);
+            setHealthManageOrgId(event.target.value);
+        } catch (e) {
+            console.log("Error: " + e);
+        }
     };
-
-    console.log("===========111==============");
-    console.log(patientInitialValues);
-    console.log("===========111==============");
 
     return (
         <React.Fragment>
@@ -209,19 +202,15 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 required
                                 {...TextFieldOpts}
                             />
-                            <Controller
-                                as={TextField}
-                                control={control}
+                            <TextField
                                 id="standard-healthManageOrganization"
                                 name="healthManageOrganization"
                                 defaultValue={patientInitialValues.healthManageOrganizationValue}
-                                // defaultValue={edit_mode === 1 ? patientInitialValues.healthManageOrganization.code : patientInitialValues.healthManageOrganization.name}
                                 label={t("Kupat Cholim")}
                                 required
                                 select={edit_mode === 1 ? true : false}
                                 onChange={handleChangeKupatHolim}
                                 SelectProps={{
-                                    onOpen: handleLoadListKupatHolim,
                                     MenuProps: {
                                         elevation: 0,
                                         keepMounted: true,
@@ -243,7 +232,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                         {option.name}
                                     </MenuItem>
                                 ))}
-                            </Controller>
+                            </TextField>
                             <Controller
                                 as={TextField}
                                 control={control}
