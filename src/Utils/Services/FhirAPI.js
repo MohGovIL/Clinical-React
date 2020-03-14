@@ -102,7 +102,7 @@ export const searchPatients = async (value) => {
 
         data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : data;
         data = mobileData.data.total > 0 ? FHIRPersontoDataArray(mobileData,data) : data;
-
+        data = sortPatientRulesByNumberSort(data,value.trim());
 
     } else {
         //for future Lexicographic search in ID open this
@@ -112,7 +112,7 @@ export const searchPatients = async (value) => {
         //data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : null;
         data = byNameData.data.total > 0 ? FHIRPersontoDataArray(byNameData,data) : data;
         if (data && data.length > 1){
-            data = sortPatientRulesByLexicogrphicsSort(data,value);
+            data = sortPatientRulesByLexicogrphicsSort(data,value.trim());
         }
 
     }
@@ -188,11 +188,24 @@ function sortByValue(items,field) {
 }
 
 // sort by name
-function sortByName(items,field) {
+function sortByName(items,field,searchParams,field2) {
+    sortInputFirst(searchParams,items,field,field2);
+}
 
-    items.sort(function (a, b) {
-        var nameA =  a[field].toUpperCase(); // ignore upper and lowercase
-        var nameB =  b[field].toUpperCase(); // ignore upper and lowercase
+// sort by name
+
+function sortLexicographicAlphanumeric(first,field,field2){
+    let nameA = '';
+    let nameB = '';
+    first.sort(function (a, b) {
+        if(field2){
+            var nameA =  a[field][field2].toUpperCase(); // ignore upper and lowercase
+            var nameB =  b[field][field2].toUpperCase(); // ignore upper and lowercase
+        }else{
+            var nameA =  a[field].toUpperCase(); // ignore upper and lowercase
+            var nameB =  b[field].toUpperCase(); // ignore upper and lowercase
+        }
+
         if (nameA < nameB) {
             return -1;
         }
@@ -203,28 +216,66 @@ function sortByName(items,field) {
         // names must be equal
         return 0;
     });
-    return items;
+    return first;
 }
+function sortByContains(items,field,value,field2) {
 
-// sort by name
-function sortByContains(items,field,value) {
-
-    items.sort(function (a, b) {
-        var nameA =  a[field].toUpperCase(); // ignore upper and lowercase
-        var nameB =  b[field].toUpperCase(); // ignore upper and lowercase
-        if  (nameA.includes(value) && !nameB.includes(value)) {
-            return -1;
+    var first = [];
+    var others = [];
+    for (var i = 0; i < items.length; i++) {
+        if(field2)
+        {
+            if (items[i][field][field2].includes(value)) {
+                first.push(items[i]);
+            } else {
+                others.push(items[i]);
+            }
+        }
+        else{
+            if (items[i][field].includes(value)) {
+                first.push(items[i]);
+            } else {
+                others.push(items[i]);
+            }
         }
 
-        if (!nameA.includes(value) && nameB.includes(value)) {
-            return 1;
+    }
+
+
+    first = sortLexicographicAlphanumeric(first,field)
+    window.dataFound = window.dataFound.concat(first);
+    window.leftover = others;
+}
+
+function sortInputFirst(input, data,field,field2) {
+
+    var first = [];
+    var others = [];
+    for (var i = 0; i < data.length; i++) {
+        if(field2)
+        {
+            if (data[i][field] && data[i][field][field2] && data[i][field][field2].indexOf(input) == 0) {
+                first.push(data[i]);
+            } else {
+                others.push(data[i]);
+            }
+        }
+        else{
+            if (data[i][field] && data[i][field].indexOf(input) == 0) {
+                first.push(data[i]);
+            } else {
+                others.push(data[i]);
+            }
         }
 
-        // names must be equal
-        return 0;
-    });
-    return items;
+    }
+
+    first = sortLexicographicAlphanumeric(first,field,field2)
+    window.dataFound = window.dataFound.concat(first);
+    window.leftover = others;
 }
+
+
 
 function sortPatientRulesByLexicogrphicsSort(items , value) {
 
@@ -240,13 +291,18 @@ function sortPatientRulesByLexicogrphicsSort(items , value) {
        gender: patient.gender,
        birthDate: patient.birthDate,
 */
-
-    items = sortByContains(items, 'lastName',value);
+   /* items = sortByContains(items, 'lastName',value);
     items = sortByContains(items, 'firstName',value);
-    items = sortByName(items, 'lastName');
-    items = sortByName(items, 'firstName');
+    items = sortByName(items, 'lastName');*/
+    window.leftover = null;
+    window.dataFound = [];
 
-    return items;
+    sortByName(items, 'firstName',value,null);
+    sortByName(window.leftover, 'lastName',value,null);
+    sortByContains(window.leftover, 'firstName',value,null);
+    sortByContains(window.leftover, 'lastName',value,null);
+    let obj = [...window.dataFound,...window.leftover];
+    return  obj;
 }
 
 function sortPatientRulesByNumberSort(items , value) {
@@ -264,10 +320,16 @@ function sortPatientRulesByNumberSort(items , value) {
        birthDate: patient.birthDate,
 */
 
-    items = sortByContains(items, 'mobileCellPhone',value);
-    items = sortByContains(items, 'identifier',value);
-    items = sortByName(items, 'mobileCellPhone');
-    items = sortByName(items, 'identifier');
+    window.leftover = null;
+    window.dataFound = [];
+
+    sortByName(items, 'identifier',value,'value');
+    sortByName(window.leftover, 'mobileCellPhone',value,null);
+    sortByContains(window.leftover, 'identifier',value,'value');
+    sortByContains(window.leftover, 'mobileCellPhone',value,null);
+
+    let obj = [...window.dataFound,...window.leftover];
+    return  obj;
 
     return items;
 }
