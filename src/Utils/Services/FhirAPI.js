@@ -80,3 +80,7 @@ export const getEncountersWithPatients = (summary = false, date = '', servicePro
         }
         return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
 };
+
+export const getOrganizationTypeKupatHolim = () => {
+    return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=71`);
+};

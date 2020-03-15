@@ -11,11 +11,22 @@ const normalizeFhirPatient = patient => {
     let firstName = null;
     let lastName = null;
     let identifier = null;
+    let managingOrganization = null;
 
     //Temporary fix for checking
     if (patient.identifier) {
         // let identifier = patient.identifier ? patient.identifier[0].value : null;
         identifier = {value: (patient.identifier ? patient.identifier[0].value : null), type: "ID"};
+    }
+
+    //Demo data for health managing organization
+    //In future we need change to: patient.managingOrganization
+    managingOrganization = {
+        reference: "Organization/6"
+    };
+
+    if (managingOrganization.reference && managingOrganization.reference.length > 0) {
+        managingOrganization = managingOrganization ? managingOrganization.reference.split('/')[1] : null;
     }
 
     if (patient.name) {
@@ -51,6 +62,7 @@ const normalizeFhirPatient = patient => {
         email,
         gender: patient.gender,
         birthDate: patient.birthDate,
+        managingOrganization
     }
 };
 

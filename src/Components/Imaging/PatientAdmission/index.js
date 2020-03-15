@@ -7,20 +7,19 @@ import * as Moment from "moment";
 import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
 import PatientDataBlock from "./PatientDataBlock";
 import PatientDetailsBlock from "./PatientDetailsBlock";
-import {StyledPatientRow, StyledDummyBlock} from "./Style";
+import {StyledPatientRow, StyledDummyBlock, StyledBackdrop} from "./Style";
 
 const PatientAdmission = ({location, appointmentsData, patientsData, languageDirection, formatDate, history}) => {
     const {t} = useTranslation();
 
-    const [patientData, setPatientData] = useState({});
+    const [patientId, setPatientId] = useState(null);
     const [appointmentId, setAppointmentId] = useState(0);
+    const [edit, setEdit] = useState(0);
 
     useEffect(() => {
-        let appointmentId = new URLSearchParams(location.search).get("index");
-        let participantPatient = appointmentsData[appointmentId].participantPatient;
-
-        setAppointmentId(appointmentId);
-        setPatientData(patientsData[participantPatient]);
+        let appointmentID = new URLSearchParams(location.search).get("index");
+        setPatientId(appointmentsData[appointmentID].participantPatient);
+        setAppointmentId(appointmentID);
 
         (async () => {
             try {
@@ -29,7 +28,11 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
                 console.log(err)
             }
         })()
-    }, []);
+    }, [location]);
+
+    if (!patientId) {
+        return null;
+    }
 
     const allBreadcrumbs = [
         {
@@ -38,7 +41,7 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
             url: "#",
         },
         {
-            text: patientData["firstName"] + " " + patientData["lastName"] + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
+            text: patientsData[patientId].firstName + " " + patientsData[patientId].lastName + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
             separator: false,
             url: "#"
         }
@@ -48,16 +51,24 @@ const PatientAdmission = ({location, appointmentsData, patientsData, languageDir
         history.push(`${baseRoutePath()}/imaging/patientTracking`);
     };
 
+
+    const handleEditButtonClick = (isEdit) => {
+        setEdit(isEdit);
+    };
+
     return (
         <React.Fragment>
             <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection}
-                           onCloseClick={handleCloseClick}/>
+                           onCloseClick={handleCloseClick} edit_mode={edit}/>
             <StyledPatientRow>
-                <PatientDataBlock appointmentId={appointmentId} patientData={patientData}/>
-                <StyledDummyBlock/>
+                <StyledBackdrop open={true} edit_mode={edit}>
+                    <PatientDataBlock appointmentId={appointmentId} patientData={patientsData[patientId]}
+                                      onEditButtonClick={handleEditButtonClick} edit_mode={edit}
+                                      formatDate={formatDate}/>
+                </StyledBackdrop>
+                <StyledDummyBlock edit_mode={edit}/>
                 <PatientDetailsBlock/>
             </StyledPatientRow>
-
         </React.Fragment>
     );
 };

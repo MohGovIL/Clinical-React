@@ -38,7 +38,7 @@ export const geti18n = (lang_id) => {
             },
             load: 'languageOnly',
             lng: 'en',
-            debug: true,
+            debug: false,
             keySeparator: false, // we do not use keys in form messages.welcome
             nsSeparator: false,
             interpolation: {
