@@ -11,6 +11,16 @@ const normalizeFhirPatient = patient => {
     let firstName = null;
     let lastName = null;
     let identifier = null;
+    let city = null;
+    let postalCode = null;
+    let country = null;
+
+
+    if(patient.address.length){
+        city = patient.address[0].city;
+        postalCode = patient.address[0].postalCode;
+        country = patient.address[0].country;
+    }
 
     //Temporary fix for checking
     if (patient.identifier) {
@@ -43,6 +53,9 @@ const normalizeFhirPatient = patient => {
     }
     return {
         id: patient.id,
+        city,
+        postalCode,
+        country,
         identifier,
         firstName,
         lastName,

@@ -27,7 +27,6 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
         (async () => {
             try {
                 const encounterData = await createNewEncounter(appointments[appointmentId], facility);
-                debugger
                 setNewEncounter(normalizeFhirEncounter(encounterData.data));
             } catch (err) {
                 console.log(err)
