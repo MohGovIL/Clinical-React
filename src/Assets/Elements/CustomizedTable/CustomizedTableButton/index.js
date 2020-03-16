@@ -9,7 +9,7 @@ const CustomizedTableButton = ({variant, color, label, onClickHandler,mode}) => 
     console.log("mode Customized table button = "+ mode);
     console.log("--------------------");*/
     return (
-        <StyledButton variant={variant} color={color} onClick={onClickHandler} disabled={mode === 'view' ? true : false}>
+        <StyledButton variant={variant} color={color} onClick={onClickHandler} disabled={mode === 'view'}>
             {t(label)}
         </StyledButton>
     );
