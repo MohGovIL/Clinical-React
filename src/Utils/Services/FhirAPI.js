@@ -54,7 +54,7 @@ export const createNewEncounter = (appointment, facility) => {
                 },
             ],
         },
-        ' subject': {
+        'subject': {
             'reference': `Patient/${appointment.patient}`,
         },
         'appointment': [

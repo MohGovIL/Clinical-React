@@ -27,6 +27,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
         (async () => {
             try {
                 const encounterData = await createNewEncounter(appointments[appointmentId], facility);
+                debugger
                 setNewEncounter(normalizeFhirEncounter(encounterData.data));
             } catch (err) {
                 console.log(err)
@@ -58,7 +59,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
             <StyledPatientRow>
                 <PatientDataBlock appointmentId={appointmentId} patientData={patientData}/>
                 <StyledDummyBlock languageDirection={languageDirection}/>
-                <PatientDetailsBlock patientData={patientData} />
+                {patientData && <PatientDetailsBlock patientData={patientData} />}
             </StyledPatientRow>
         </React.Fragment>
     );

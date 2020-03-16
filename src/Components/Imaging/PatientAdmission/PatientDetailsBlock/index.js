@@ -11,6 +11,7 @@ import {useTranslation} from 'react-i18next';
 import Title from '../../../../Assets/Elements/Title';
 import Switch from '@material-ui/core/Switch';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import {DevTool} from 'react-hook-form-devtools';
 import {useForm, Controller} from 'react-hook-form';
 import {connect} from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
@@ -23,10 +24,16 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {getCities, getStreets} from '../../../../Utils/Services/API';
 import Grid from '@material-ui/core/Grid';
-import {TextField} from '@material-ui/core';
+
 
 const PatientDetailsBlock = ({languageDirection, patientData}) => {
     const {t} = useTranslation();
+    console.log(patientData);
+    const {register, control, handleSubmit} = useForm({
+        mode: 'onBlur',
+        submitFocusError: true
+    });
+
 
     const [cities, setCities] = useState([]);
     const [citiesOpen, setCitiesOpen] = useState(false);
@@ -51,8 +58,8 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
     };
 
     //TODO add react hook form
-    const handleSubmit = () => {
-        console.log('submit');
+    const onSubmit = data => {
+        console.log(data);
     };
 
     useEffect(() => {
@@ -96,7 +103,7 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
 
     return (
         <StyledPatientDetails>
-            <StyledForm onSubmit={handleSubmit}>
+            <StyledForm onSubmit={handleSubmit(onSubmit)}>
                 <Title fontSize={'28px'} color={'#002398'} label={'Patient Details'}/>
                 <StyledFormGroup title={t('Accompanying patient')}>
                     <Title fontSize={'18px'} color={'#000b40'} label={'Accompanying patient'} bold/>
@@ -111,8 +118,8 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
                     <StyledFormGroup>
                         <Title fontSize={'18px'} color={'#000b40'} label={t('Escort details')} bold/>
                         <StyledDivider variant={'fullWidth'}/>
-                        <StyledTextField id={'escortName'} label={t('Escort name')}/>
-                        <StyledTextField id={'escortMobilePhone'} label={t('Escort cell phone ')}/>
+                        <StyledTextField inputRef={register} name={'escortName'} id={'escortName'} label={t('Escort name')}/>
+                        <StyledTextField inputRef={register} name={'escortMobilePhone'} id={'escortMobilePhone'} label={t('Escort cell phone ')}/>
                     </StyledFormGroup>
                     :
                     null}
@@ -181,19 +188,20 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
                                 />}/>
 
                             <StyledTextField id={'addressHouseNumber'} label={t('House number')} />
-                            <TextField id={'addressPostalCode'} label={t('Postal code')} defaultValue={'kkkkkk'} name={'postalCode'}/>
+                            <Controller defaultValue={patientData.postalCode} name={'addressPostalCode'} as={<StyledTextField id={'addressPostalCode'} label={t('Postal code')}/>} control={control} />
                         </React.Fragment>
                         :
                         <React.Fragment>
                             <StyledTextField id={'POBoxCity'} label={t('City')}/>
                             <StyledTextField id={'POBox'} label={t('PO box')}/>
-                            <StyledTextField id={'POBoxPostalCode'} label={t('Postal code')}/>
+                            <Controller defaultValue={patientData.postalCode} name={'POBoxPostalCode'} as={<StyledTextField id={'POBoxPostalCode'} label={t('Postal code')}/>} control={control} />
                         </React.Fragment>}
                 </StyledFormGroup>
                 <span>{t('To find a zip code on the Israel post site')} <a
                     href={'https://mypost.israelpost.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/%D7%90%D7%99%D7%AA%D7%95%D7%A8-%D7%9E%D7%99%D7%A7%D7%95%D7%93/'}
                     target={'_blank'}>{t('click here')}</a></span>
             </StyledForm>
+            <DevTool control={control}/>
         </StyledPatientDetails>
     );
 };
