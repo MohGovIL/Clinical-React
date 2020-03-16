@@ -10,6 +10,7 @@ import facilityReducer from './Store/Reducers/FacilityReducer';
 import SettingsReducer from "./Store/Reducers/SettingsReducer";
 import FiltersReducer from "./Store/Reducers/FiltersReducer";
 import FhirDataReducer from "./Store/Reducers/FhirDataReducer";
+import 'material-icons-font/material-icons-font.css';
 import thunk from 'redux-thunk';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
