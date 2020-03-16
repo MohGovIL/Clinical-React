@@ -17,13 +17,17 @@ import maleIcon from '../../../../Assets/Images/maleIcon.png';
 import femaleIcon from '../../../../Assets/Images/womanIcon.png';
 import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
-
-import {Avatar, IconButton, Divider, Typography, TextField, MenuItem, Select, InputLabel} from '@material-ui/core';
+import MaskedInput from 'react-text-mask';
+import {Avatar, IconButton, Divider, Typography, TextField, MenuItem, Select, InputLabel, InputAdornment} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+
 import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
 // import {StyledButton, StyledMenu} from "../../../../Assets/Elements/CustomizedSelect/Style";
 import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
 import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import * as yup from "yup";
+
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, formatDate}) => {
 
@@ -37,7 +41,18 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
     const [healthManageOrgId, setHealthManageOrgId] = useState('');
 
-    const {register, control, handleSubmit, reset, setValue} = useForm();
+
+    // const PatientDataBlockSchema = yup.object().shape({
+    //     birthDate: yup.string().required(),
+    //     age: yup
+    //         .number()
+    //         .required()
+    //         .positive()
+    //         .integer(),
+    //     website: yup.string().url()
+    // });
+
+    const {register, control, errors, handleSubmit, reset, setValue} = useForm();
 
     const onSubmit = (data, e) => {
         console.log(data);
@@ -53,7 +68,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
 
     const TextFieldOpts = {
         'disabled': edit_mode === 1 ? false : true,
-        'InputProps': {disableUnderline: edit_mode === 1 ? false : true},
+        //'InputProps': {disableUnderline: edit_mode === 1 ? false : true},
         'color': edit_mode === 1 ? "primary" : 'primary',
         'variant': edit_mode === 1 ? "filled" : 'standard',
     };
@@ -198,9 +213,25 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 control={control}
                                 id="standard-birthDate"
                                 name="birthDate"
+                                placeholder={formatDate}
                                 defaultValue={patientInitialValues.birthDate}
                                 label={t("birth day")}
                                 required
+                                error={errors.birthDate ? true : false}
+                                helperText={errors.birthDate ? t("Date must be in a date format") : null}
+                                InputProps={{
+                                    disableUnderline: edit_mode === 1 ? false : true,
+                                    endAdornment: (errors.birthDate &&
+                                        <InputAdornment position="end">
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"} />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                rules={{
+                                    validate: {
+                                        value: value => Moment(value, formatDate, true).isValid() === true
+                                    }
+                                }}
                                 {...TextFieldOpts}
                             />
                             <TextField
@@ -242,6 +273,9 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 name="mobilePhone"
                                 defaultValue={patientInitialValues.mobilePhone}
                                 label={t("Cell phone")}
+                                mask={['(', /[0-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+                                placeholderChar={'\u2000'}
+
                                 required
                                 {...TextFieldOpts}
                             />
@@ -252,6 +286,11 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 name="patientEmail"
                                 defaultValue={patientInitialValues.patientEmail}
                                 label={t("Mail address")}
+                                error={errors.patientEmail ? true : false}
+                                helperText={errors.patientEmail ? t("Invalid email address") : null}
+                                rules={{
+                                    pattern:  /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
+                                }}
                                 {...TextFieldOpts}
                             />
                         </StyledFormGroup>
