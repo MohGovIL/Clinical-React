@@ -4,13 +4,14 @@
  * @returns {}
  */
 const normalizeFhirPatient = patient => {
-    let middleName = '';
-    let mobileCellPhone = '';
-    let homePhone = '';
-    let email = '';
-    let firstName = '';
-    let lastName = '';
-    let identifier = '';
+    let middleName = null;
+    let mobileCellPhone = null;
+    let homePhone = null;
+    let email = null;
+    let firstName = null;
+    let lastName = null;
+    let identifier = null;
+    let managingOrganization = null;
     let ageGenderType = '';
 
 
@@ -24,6 +25,16 @@ const normalizeFhirPatient = patient => {
         let type = patient.identifier[0].type.coding[0].code;
         identifier = {value : id , type : type };
 
+    }
+
+    //Demo data for health managing organization
+    //In future we need change to: patient.managingOrganization
+    managingOrganization = {
+        reference: "Organization/6"
+    };
+
+    if (managingOrganization.reference && managingOrganization.reference.length > 0) {
+        managingOrganization = managingOrganization ? managingOrganization.reference.split('/')[1] : null;
     }
 
     if (patient.name) {
@@ -63,6 +74,7 @@ const normalizeFhirPatient = patient => {
         email,
         gender: patient.gender,
         birthDate: patient.birthDate,
+        managingOrganization,
         ageGenderType
     }
 };

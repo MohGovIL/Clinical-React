@@ -120,3 +120,7 @@ export const searchPatients = async (value) => {
 
     return data;
 };
+
+export const getOrganizationTypeKupatHolim = () => {
+    return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=71`);
+};
