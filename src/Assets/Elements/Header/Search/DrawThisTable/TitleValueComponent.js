@@ -27,17 +27,24 @@ const highlight = (ref,type) => {
         if (index > 0) {
 
         if(isNumeric(searchParam)) {
+
             innerHTMLNew =
-                "<" + type + " style='margin-right:0; '>" + innerText.substr(index + searchTrimmed.length) + "</" + type + ">"+
-                "<" + type + " style='margin:0; font-weight: bold;'>" + innerText.substr(index, searchTrimmed.length) + "</" + type + ">" +
-                "<" + type + " style='margin-left:0; '>" + innerText.substr(0, index) + "</" + type + ">" ;
+                `<${type} style='margin-right:0; '>${innerText.substr(index + searchTrimmed.length)}</${type}>
+                <${type} style='margin:0; font-weight: bold;'>${innerText.substr(index, searchTrimmed.length)}</${type}>
+                <${type} style='margin-left:0; '>${innerText.substr(0, index)}</${type}>`;
+
+
 
         }
         else{
+
             innerHTMLNew =
-                "<" + type + " style='margin-left:0; '>" + innerText.substr(0, index) + "</" + type + ">" +
-                "<" + type + " style='margin:0; font-weight: bold;'>" + innerText.substr(index, searchTrimmed.length) + "</" + type + ">" +
-                "<" + type + " style='margin-right:0; '>" + innerText.substr(index + searchTrimmed.length) + "</" + type + ">";
+                `
+                <${type} style='margin-left:0;'>${innerText.substr(0, index)}</${type}> +
+                <${type} style='margin:0; font-weight: bold;'>${innerText.substr(index, searchTrimmed.length)}</${type}>
+                <${type} style='margin-right:0;'>${innerText.substr(index + searchTrimmed.length)}</${type}>
+                `;
+
         }
             if(ref.current.parentElement) {
                 ref.current.outerHTML = innerHTMLNew;
@@ -45,13 +52,13 @@ const highlight = (ref,type) => {
         } else {
             if (index === 0) {
                 if(isNumeric(searchParam)) {
-                    innerHTMLNew = "<"+type+" style='margin-right:0; '>" + innerText.substr(index + searchTrimmed.length) + "</"+type+">" +
-                        "<"+type+" style='margin-left:0; font-weight: bold;'>" + innerText.substr(0, searchTrimmed.length) + "</"+type+">";
+                    innerHTMLNew = `<${type} style='margin-right:0; '>  ${innerText.substr(index + searchTrimmed.length)}  </${type}>
+                        <${type} style='margin-left:0; font-weight: bold;'>  ${innerText.substr(0, searchTrimmed.length)}  </${type}>`;
 
                 }
                 else{
-                    innerHTMLNew = "<"+type+" style='margin-left:0; font-weight: bold;'>" + innerText.substr(0, searchTrimmed.length) + "</"+type+">" +
-                        "<"+type+" style='margin-right:0; '>" + innerText.substr(index + searchTrimmed.length) + "</"+type+">" ;
+                    innerHTMLNew = `<${type} style='margin-left:0; font-weight: bold;'>  ${innerText.substr(0, searchTrimmed.length)}  </${type}>
+                        <${type} style='margin-right:0; '>  ${innerText.substr(index + searchTrimmed.length)}  </${type}> `;
                 }
 
                 if(ref.current.parentElement) {
