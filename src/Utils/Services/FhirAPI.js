@@ -124,3 +124,22 @@ export const searchPatients = async (value) => {
 export const getOrganizationTypeKupatHolim = () => {
     return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=71`);
 };
+
+export const getNextPrevAppointmentPerPatient = (date, patient,prev) =>{
+    if(prev)
+    {
+        return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=lt${date}&_count=1&_sort=date`);//&patient=${patient}`);
+    }
+    else {
+        return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_count=1&_sort=date`);//&patient=${patient}`);
+    }
+};
+export const getNextPrevEncounterPerPatient = (date,patient,prev) =>{
+    if(prev){
+        return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=lt${date}&_count=1&_sort=-date&patient=${patient}`);
+    }
+    else{
+        return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=gt${date}&_count=1&_sort=-date&patient=${patient}`);
+    }
+
+};

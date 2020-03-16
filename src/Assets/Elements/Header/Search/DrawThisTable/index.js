@@ -15,14 +15,23 @@ import TitleValueComponent from "./TitleValueComponent";
 import GenderIcon from "../../../CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
 import maleIcon from "../../../../Images/maleIcon.png";
 import femaleIcon from "../../../../Images/womanIcon.png";
+import AppointmentsPerPatient from "./AppointmentsPerPatient";
+import {getNextPrevAppointmentPerPatient, getNextPrevEncounterPerPatient} from "../../../../../Utils/Services/FhirAPI";
+import {now} from "moment";
 
 const DrawThisTable = ({result,searchParam}) => {
 
-    const [expanded, setExpanded] = React.useState('');
-    const handleChange = panel => (event, newExpanded) => {
-        setExpanded(newExpanded ? panel : false);
-    };
 
+    const [expanded, setExpanded] = React.useState('');
+    const [nextAppointment, setNextAppointment] = React.useState('');
+    const [prevEncounter, setPrevEncounter] = React.useState('');
+    const handleChange = panel => async (event, newExpanded, identifier) => {
+        setExpanded(newExpanded ? panel : false);
+        if (panel) {
+            setNextAppointment( await getNextPrevAppointmentPerPatient(now(), identifier, false));
+            setPrevEncounter( await getNextPrevEncounterPerPatient(now(), identifier, true));
+        }
+    };
 
     const {t} = useTranslation();
 
@@ -38,7 +47,7 @@ const DrawThisTable = ({result,searchParam}) => {
                     if(patient)
                     {
                     return (
-                        <StyledExpansionPanel expanded = {expanded==='panel'+patientIndex} key={patientIndex} onChange={handleChange('panel'+patientIndex)}>
+                        <StyledExpansionPanel expanded = {expanded==='panel'+patientIndex} key={patientIndex} onChange={handleChange('panel'+patientIndex,patient.identifier.value)}>
                         <StyledExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel1a-content"
@@ -62,8 +71,8 @@ const DrawThisTable = ({result,searchParam}) => {
                         </StyledLabelAge>
 
                         </StyledExpansionPanelSummary>
-                        <StyledExpansionPanelDetails>
-                          <div>To do : appointments box </div>
+                        <StyledExpansionPanelDetails >
+                            <AppointmentsPerPatient  nextAppointment = {nextAppointment} prevEncounter={prevEncounter}/>
                         </StyledExpansionPanelDetails>
                         </StyledExpansionPanel>
                     );
