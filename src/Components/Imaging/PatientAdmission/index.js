@@ -12,22 +12,22 @@ import normalizeFhirEncounter from '../../../Utils/Helpers/FhirEntities/normaliz
 
 const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history, facility}) => {
     const {t} = useTranslation();
-
+    debugger
     const [patientData, setPatientData] = useState({});
     const [appointmentId, setAppointmentId] = useState('');
     const [newEncounter, setNewEncounter] = useState({});
 
     useEffect(() => {
-        let appointmentId = new URLSearchParams(location.search).get("index");
-        let participantPatient = appointments[appointmentId].patient;
+        let appointmentIdFromURL = new URLSearchParams(location.search).get("index");
+        setAppointmentId(appointmentIdFromURL);
 
-        setAppointmentId(appointmentId);
+        let participantPatient = appointments[appointmentIdFromURL].patient;
+
         setPatientData(patients[participantPatient]);
 
         (async () => {
             try {
                 const encounterData = await createNewEncounter(appointments[appointmentId], facility);
-                debugger
                 setNewEncounter(normalizeFhirEncounter(encounterData.data));
             } catch (err) {
                 console.log(err)
@@ -59,7 +59,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
             <StyledPatientRow>
                 <PatientDataBlock appointmentId={appointmentId} patientData={patientData}/>
                 <StyledDummyBlock languageDirection={languageDirection}/>
-                {patientData && <PatientDetailsBlock patientData={patientData} />}
+                {Object.values(patientData).length && <PatientDetailsBlock patientData={patientData} />}
             </StyledPatientRow>
         </React.Fragment>
     );

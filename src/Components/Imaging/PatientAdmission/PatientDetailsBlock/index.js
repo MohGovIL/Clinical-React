@@ -28,10 +28,9 @@ import Grid from '@material-ui/core/Grid';
 
 const PatientDetailsBlock = ({languageDirection, patientData}) => {
     const {t} = useTranslation();
-    console.log(patientData);
     const {register, control, handleSubmit} = useForm({
         mode: 'onBlur',
-        submitFocusError: true
+        submitFocusError: true,
     });
 
 
@@ -70,17 +69,20 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
         }
 
         (async () => {
-            const cities = await getCities();
-            debugger
-            if (active) {
-                setCities(Object.keys(cities.data).map(cityKey => {
-                    let cityObj = {};
-                    cityObj.code = cities.data[cityKey];
-                    cityObj.name = t(cities.data[cityKey]);
+            try {
+                const cities = await getCities();
+                if (active) {
+                    setCities(Object.keys(cities.data).map(cityKey => {
+                        let cityObj = {};
+                        cityObj.code = cities.data[cityKey];
+                        cityObj.name = t(cities.data[cityKey]);
 
-                    return cityObj;
+                        return cityObj;
 
-                }));
+                    }));
+                }
+            } catch (err) {
+                console.log(err);
             }
         })();
 
@@ -88,6 +90,30 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
             active = false;
         };
     }, [loadingCities]);
+
+
+    useEffect(() => {
+        let active = true;
+
+        if (!loadingStreets) {
+            return undefined;
+        }
+
+        (async () => {
+            try {
+                if (active) {
+
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        })();
+
+        return () => {
+            active = false;
+        };
+    }, [loadingStreets]);
+
 
     useEffect(
         () => {
@@ -118,8 +144,10 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
                     <StyledFormGroup>
                         <Title fontSize={'18px'} color={'#000b40'} label={t('Escort details')} bold/>
                         <StyledDivider variant={'fullWidth'}/>
-                        <StyledTextField inputRef={register} name={'escortName'} id={'escortName'} label={t('Escort name')}/>
-                        <StyledTextField inputRef={register} name={'escortMobilePhone'} id={'escortMobilePhone'} label={t('Escort cell phone ')}/>
+                        <StyledTextField inputRef={register} name={'escortName'} id={'escortName'}
+                                         label={t('Escort name')}/>
+                        <StyledTextField inputRef={register} name={'escortMobilePhone'} id={'escortMobilePhone'}
+                                         label={t('Escort cell phone ')}/>
                     </StyledFormGroup>
                     :
                     null}
@@ -181,20 +209,33 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
                                         ...params.InputProps,
                                         [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']:
                                             <InputAdornment
-                                                position={languageDirection === 'rtl' ? 'end' : 'start'}><ExpandMore/></InputAdornment>,
+                                                position={languageDirection === 'rtl' ? 'end' : 'start'}>
+                                                {loadingStreets ?
+                                                    <CircularProgress
+                                                        color={'inherit'}
+                                                        size={20}/> : null}{streetsOpen ?
+                                                <ExpandLess/> :
+                                                <ExpandMore/>}
+                                            </InputAdornment>,
                                     }}
                                     label={t('Street')}
-
                                 />}/>
 
-                            <StyledTextField id={'addressHouseNumber'} label={t('House number')} />
-                            <Controller defaultValue={patientData.postalCode} name={'addressPostalCode'} as={<StyledTextField id={'addressPostalCode'} label={t('Postal code')}/>} control={control} />
+                            <Controller name={'addressHouseNumber'} control={control}
+                                        as={<StyledTextField id={'addressHouseNumber'} label={t('House number')}/>}/>
+                            <Controller defaultValue={patientData.postalCode} name={'addressPostalCode'}
+                                        as={<StyledTextField id={'addressPostalCode'} label={t('Postal code')}/>}
+                                        control={control}/>
                         </React.Fragment>
                         :
                         <React.Fragment>
-                            <StyledTextField id={'POBoxCity'} label={t('City')}/>
-                            <StyledTextField id={'POBox'} label={t('PO box')}/>
-                            <Controller defaultValue={patientData.postalCode} name={'POBoxPostalCode'} as={<StyledTextField id={'POBoxPostalCode'} label={t('Postal code')}/>} control={control} />
+                            <Controller name={'POBoxCity'} control={control}
+                                        as={<StyledTextField id={'POBoxCity'} label={t('City')}/>}/>
+                            <Controller name={'POBox'} control={control}
+                                        as={<StyledTextField id={'POBox'} label={t('PO box')}/>}/>
+                            <Controller defaultValue={patientData.postalCode} name={'POBoxPostalCode'}
+                                        as={<StyledTextField id={'POBoxPostalCode'} label={t('Postal code')}/>}
+                                        control={control}/>
                         </React.Fragment>}
                 </StyledFormGroup>
                 <span>{t('To find a zip code on the Israel post site')} <a
