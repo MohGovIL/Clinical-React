@@ -64,7 +64,7 @@ export const StyledIconValueComponent = styled(IconValueComponent)`
 
 export const StyledPaperContainer = styled.div`
 
-    max-height: calc(100vh - 88px - 60px - 15px);
+    max-height: calc(100vh - 88px - 60px - 18px);
     min-height: 56px;
     overflow : hidden;
 
