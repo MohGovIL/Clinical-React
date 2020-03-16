@@ -8,6 +8,11 @@ const PaperContainerComponent = ({result,searchParam}) => {
     const [maxHeight, setMaxHeight] = useState(0);
     useEffect(() => {
 
+    // 88px are the headers height
+    // ~60px are the height of every element in the container
+    // ~18px is the height of the add box
+    // it is the same thing to save it in a variable but it is more clear like this
+
         setHeight(containerRef.current.clientHeight)
         setMaxHeight(window.innerHeight - 88 - 60 - 18);
     });

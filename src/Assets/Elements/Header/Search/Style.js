@@ -58,6 +58,9 @@ export const StyledPaperBottom = styled(Paper)`
 export const StyledIconValueComponent = styled(IconValueComponent)`
 
 `;
+// 88px are the headers height
+// ~60px are the height of every element in the container
+// ~18px is the height of the add box
 
 export const StyledPaperContainer = styled.div`
 
