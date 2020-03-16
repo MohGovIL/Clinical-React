@@ -29,10 +29,10 @@ import Grid from '@material-ui/core/Grid';
 const PatientDetailsBlock = ({languageDirection, patientData}) => {
     const {t} = useTranslation();
     const {register, control, handleSubmit} = useForm({
-        mode: 'onBlur',
         submitFocusError: true,
     });
 
+    const [addressCity, setAddressCity] = useState({});
 
     const [cities, setCities] = useState([]);
     const [citiesOpen, setCitiesOpen] = useState(false);
@@ -56,10 +56,17 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
         setTabValue(newValue);
     };
 
-    //TODO add react hook form
     const onSubmit = data => {
         console.log(data);
     };
+
+    useEffect(() => {
+        if(patientData.city){
+            const defaultAddressCityObj = {name: t(patientData.city), code: patientData.city};
+            setAddressCity(defaultAddressCityObj)
+        }
+
+    }, []);
 
     useEffect(() => {
         let active = true;
@@ -101,8 +108,25 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
 
         (async () => {
             try {
+                const streets = await getStreets(addressCity.code.split('_')[1]);
                 if (active) {
+                    if (streets.data.length) {
+                        setStreets(Object.keys(streets.data).map(streetKey => {
+                            let streetObj = {};
+                            streetObj.code = streets.data[streetKey];
+                            streetObj.name = t(streets.data[streetKey]);
 
+                            return streetObj;
+
+                        }));
+                    } else {
+                        const emptyResultsObj = {
+                            name: t('No Results'),
+                            code: 'no_result',
+                        };
+                        const emptyResults = [emptyResultsObj];
+                        setStreets(emptyResults);
+                    }
                 }
             } catch (err) {
                 console.log(err);
@@ -177,8 +201,12 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
                                 }}
                                 loading={loadingCities}
                                 options={cities}
-                                getOptionSelected={(option, value) => option.name === value.name}
-                                getOptionLabel={option => option.name}
+
+                                value={addressCity}
+                                onChange={(event, newValue) => {
+                                    setAddressCity(newValue);
+                                }}
+                                getOptionLabel={option => Object.keys(option).length === 0 && option.constructor === Object ? '' : option.name}
                                 noOptionsText={t('No Results')}
                                 loadingText={t('Loading')}
                                 renderInput={params => <StyledTextField {...params} label={t('City')}
@@ -198,11 +226,19 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
                                                                         }}
                                 />}
                             />
+
                             <Autocomplete
+                                defaultValue={''}
                                 options={streets}
                                 loading={loadingStreets}
                                 open={streetsOpen}
+                                onOpen={() => addressCity.name && setStreetsOpen(true)}
+                                onClose={() => setStreetsOpen(false)}
                                 id="addressStreet"
+                                getOptionLabel={option => option === '' ? '' : option.name}
+                                noOptionsText={t('No Results')}
+                                loadingText={t('Loading')}
+                                getOptionDisabled={option => option.code === 'no_result'}
                                 renderInput={params => <StyledTextField
                                     {...params}
                                     InputProps={{
@@ -229,8 +265,39 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
                         </React.Fragment>
                         :
                         <React.Fragment>
-                            <Controller name={'POBoxCity'} control={control}
-                                        as={<StyledTextField id={'POBoxCity'} label={t('City')}/>}/>
+                            <StyledAutoComplete
+                                name="POBoxCity"
+                                id="POBoxCity"
+                                open={citiesOpen}
+                                onOpen={() => {
+                                    setCitiesOpen(true);
+                                }}
+                                onClose={() => {
+                                    setCitiesOpen(false);
+                                }}
+                                loading={loadingCities}
+                                options={cities}
+                                // getOptionSelected={(option, value) => option.name === value.name}
+                                getOptionLabel={option => option.name}
+                                noOptionsText={t('No Results')}
+                                loadingText={t('Loading')}
+                                renderInput={params => <StyledTextField {...params} label={t('City')}
+                                                                        InputProps={{
+                                                                            ...params.InputProps,
+                                                                            [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']: (
+                                                                                <React.Fragment>
+                                                                                    <InputAdornment
+                                                                                        position={languageDirection === 'rtl' ? 'end' : 'start'}>{loadingCities ?
+                                                                                        <CircularProgress
+                                                                                            color={'inherit'}
+                                                                                            size={20}/> : null}{citiesOpen ?
+                                                                                        <ExpandLess/> :
+                                                                                        <ExpandMore/>}
+                                                                                    </InputAdornment>
+                                                                                </React.Fragment>),
+                                                                        }}
+                                />}
+                            />
                             <Controller name={'POBox'} control={control}
                                         as={<StyledTextField id={'POBox'} label={t('PO box')}/>}/>
                             <Controller defaultValue={patientData.postalCode} name={'POBoxPostalCode'}
