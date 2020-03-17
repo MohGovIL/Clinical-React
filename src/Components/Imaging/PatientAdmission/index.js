@@ -12,13 +12,14 @@ import normalizeFhirEncounter from '../../../Utils/Helpers/FhirEntities/normaliz
 
 const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history, facility}) => {
     const {t} = useTranslation();
-    debugger
+    
     const [patientData, setPatientData] = useState({});
     const [appointmentId, setAppointmentId] = useState('');
     const [newEncounter, setNewEncounter] = useState({});
 
     useEffect(() => {
         let appointmentIdFromURL = new URLSearchParams(location.search).get("index");
+        debugger
         setAppointmentId(appointmentIdFromURL);
 
         let participantPatient = appointments[appointmentIdFromURL].patient;
@@ -27,7 +28,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
 
         (async () => {
             try {
-                const encounterData = await createNewEncounter(appointments[appointmentId], facility);
+                const encounterData = await createNewEncounter(appointments[appointmentIdFromURL], facility);
                 setNewEncounter(normalizeFhirEncounter(encounterData.data));
             } catch (err) {
                 console.log(err)
