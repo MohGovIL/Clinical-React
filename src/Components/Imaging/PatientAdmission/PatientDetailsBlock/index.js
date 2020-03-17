@@ -309,7 +309,7 @@ const PatientDetailsBlock = ({languageDirection, patientData}) => {
                     href={'https://mypost.israelpost.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/%D7%90%D7%99%D7%AA%D7%95%D7%A8-%D7%9E%D7%99%D7%A7%D7%95%D7%93/'}
                     target={'_blank'}>{t('click here')}</a></span>
             </StyledForm>
-            <DevTool control={control}/>
+            {/* <DevTool control={control}/> */}
         </StyledPatientDetails>
     );
 };

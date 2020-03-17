@@ -3,6 +3,7 @@ import AppBar from "@material-ui/core/AppBar";
 import {Breadcrumbs} from "@material-ui/core/";
 import {IconButton} from "@material-ui/core";
 // import {devicesValue} from '../../Themes/BreakPoints';
+import { createGlobalStyle } from 'styled-components'
 
 export default styled(AppBar)`
     flex-direction: row;
@@ -13,6 +14,7 @@ export default styled(AppBar)`
     box-shadow: 0 2px 4px 0 rgba(90, 90, 90, 0.5);
     padding-right: 46px;
     padding-left: 25px;
+    z-index: ${props => props.edit_mode === 1 ? 0 : null };
 
     & span{
       margin-right: 8px;

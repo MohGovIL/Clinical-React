@@ -6,16 +6,17 @@ import * as Moment from "moment";
 import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
 import PatientDataBlock from "./PatientDataBlock";
 import PatientDetailsBlock from "./PatientDetailsBlock";
-import {StyledPatientRow, StyledDummyBlock} from "./Style";
+import {StyledPatientRow, StyledDummyBlock, StyledBackdrop} from "./Style";
 import {createNewEncounter} from '../../../Utils/Services/FhirAPI';
 import normalizeFhirEncounter from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 
 const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history, facility}) => {
     const {t} = useTranslation();
-    debugger
+    
     const [patientData, setPatientData] = useState({});
     const [appointmentId, setAppointmentId] = useState('');
     const [newEncounter, setNewEncounter] = useState({});
+    const [edit, setEdit] = useState(0);
 
     useEffect(() => {
         let appointmentIdFromURL = new URLSearchParams(location.search).get("index");
@@ -27,13 +28,13 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
 
         (async () => {
             try {
-                const encounterData = await createNewEncounter(appointments[appointmentId], facility);
+                const encounterData = await createNewEncounter(appointments[appointmentIdFromURL], facility);
                 setNewEncounter(normalizeFhirEncounter(encounterData.data));
             } catch (err) {
                 console.log(err)
             }
         })()
-    }, []);
+    }, [location]);
 
     const allBreadcrumbs = [
         {
@@ -42,7 +43,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
             url: "#",
         },
         {
-            text: patientData["firstName"] + " " + patientData["lastName"] + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
+            text: patientData.firstName + " " + patientData.lastName + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
             separator: false,
             url: "#"
         }
@@ -52,13 +53,22 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
         history.push(`${baseRoutePath()}/imaging/patientTracking`);
     };
 
+
+    const handleEditButtonClick = (isEdit) => {
+        setEdit(isEdit);
+    };
+
     return (
         <React.Fragment>
             <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection}
-                           onCloseClick={handleCloseClick}/>
+                           onCloseClick={handleCloseClick} edit_mode={edit}/>
             <StyledPatientRow>
-                <PatientDataBlock appointmentId={appointmentId} patientData={patientData}/>
-                <StyledDummyBlock languageDirection={languageDirection}/>
+                <StyledBackdrop open={true} edit_mode={edit}>
+                    {Object.values(patientData).length && <PatientDataBlock appointmentId={appointmentId} patientData={patientData}
+                                      onEditButtonClick={handleEditButtonClick} edit_mode={edit}
+                                      formatDate={formatDate}/>}
+                </StyledBackdrop>
+                <StyledDummyBlock edit_mode={edit}/>
                 {Object.values(patientData).length && <PatientDetailsBlock patientData={patientData} />}
             </StyledPatientRow>
         </React.Fragment>
