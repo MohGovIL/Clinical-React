@@ -183,7 +183,7 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment(encounter.startTime).format('LT')
+                        label: moment.utc(encounter.startTime).format('LT')
                     });
                     break;
                 default:

@@ -5,7 +5,7 @@ import femaleIcon from '../../../Images/womanIcon.png';
 import PersonalData from './PersonalData';
 import {useTranslation} from 'react-i18next';
 import GenderIcon from './GenderIcon';
-import {Tooltip} from '@material-ui/core';
+import {Tooltip, Typography} from '@material-ui/core';
 
 const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName, align, priority}) => {
 
@@ -17,10 +17,10 @@ const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName
             <PersonalData>
                 {firstName.length + lastName.length >= 19 ?
                     <Tooltip title={`${firstName} ${lastName}`} placement={'bottom'}>
-                        <span>{`${firstName} ${lastName}`}</span>
+                        <Typography noWrap={true} display='inline' style={{width: '125px'}} >{`${firstName} ${lastName}`}</Typography>
                     </Tooltip>
                     :
-                    <span>{`${firstName} ${lastName}`}</span>
+                    <Typography noWrap={true} display='inline' >{`${firstName} ${lastName}`}</Typography>
                 }
                 {`${t('Federal Tax ID')} ${id}`}
             </PersonalData>
