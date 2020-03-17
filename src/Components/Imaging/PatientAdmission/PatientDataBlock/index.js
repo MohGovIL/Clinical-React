@@ -17,7 +17,7 @@ import maleIcon from '../../../../Assets/Images/maleIcon.png';
 import femaleIcon from '../../../../Assets/Images/womanIcon.png';
 import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
-import MaskedInput from 'react-text-mask';
+// import MaskedInput from 'react-text-mask';
 import {Avatar, IconButton, Divider, Typography, TextField, MenuItem, Select, InputLabel, InputAdornment} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
@@ -26,7 +26,7 @@ import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/P
 // import {StyledButton, StyledMenu} from "../../../../Assets/Elements/CustomizedSelect/Style";
 import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
 import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
-import * as yup from "yup";
+// import * as yup from "yup";
 
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, formatDate}) => {
