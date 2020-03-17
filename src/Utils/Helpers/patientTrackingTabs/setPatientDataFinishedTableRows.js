@@ -91,7 +91,7 @@ const tableHeaders = [
         component: BADGE_CELL
     },
     {
-        tableHeader: 'Encounter Sheet',
+        tableHeader: 'Encounter sheet',
         hideTableHeader: true,
         component: BUTTON_CELL,
     },
@@ -119,7 +119,7 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
                     break;
                 case 'Encounter sheet':
                     row.push({
-                        label: 'Encounter sheet',
+                        label: 'Encounter Sheet',
                         padding: 'none',
                         align: 'center',
                         color: 'primary',
