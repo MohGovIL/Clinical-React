@@ -17,10 +17,10 @@ const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName
             <PersonalData>
                 {firstName.length + lastName.length >= 19 ?
                     <Tooltip title={`${firstName} ${lastName}`} placement={'bottom'}>
-                        <Typography noWrap={true} display='inline' style={{width: '125px'}} >{`${firstName} ${lastName}`}</Typography>
+                        <span>{`${firstName} ${lastName}`}</span>
                     </Tooltip>
                     :
-                    <Typography noWrap={true} display='inline' >{`${firstName} ${lastName}`}</Typography>
+                    <span>{`${firstName} ${lastName}`}</span>
                 }
                 {`${t('Federal Tax ID')} ${id}`}
             </PersonalData>
