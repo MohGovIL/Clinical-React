@@ -21,11 +21,30 @@ const normalizeFhirPatient = patient => {
         postalCode = patient.address[0].postalCode;
         country = patient.address[0].country;
     }
+    let managingOrganization = null;
+    let ageGenderType = '';
+
 
     //Temporary fix for checking
     if (patient.identifier) {
-        // let identifier = patient.identifier ? patient.identifier[0].value : null;
-        identifier = {value: (patient.identifier ? patient.identifier[0].value : null), type: "ID"};
+        // let identifier = patient.identifier ? patient.identifier[0].value : '';
+
+        //bugfix write correct type id
+        //identifier = {value: (patient.identifier ? patient.identifier[0].value : ''), type: "ID"};
+        let id = patient.identifier ? patient.identifier[0].value : '';
+        let type = patient.identifier[0].type.coding[0].code;
+        identifier = {value : id , type : type };
+
+    }
+
+    //Demo data for health managing organization
+    //In future we need change to: patient.managingOrganization
+    managingOrganization = {
+        reference: "Organization/6"
+    };
+
+    if (managingOrganization.reference && managingOrganization.reference.length > 0) {
+        managingOrganization = managingOrganization ? managingOrganization.reference.split('/')[1] : null;
     }
 
     if (patient.name) {
@@ -40,17 +59,20 @@ const normalizeFhirPatient = patient => {
         }
     }
     if (patient.telecom) {
-        // TODO
-        //  for temporary use system === 'mobile', instead 'phone'
-        const thereIsMobilePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'mobile' && telecomObj.use === 'mobile');
-        mobileCellPhone = thereIsMobilePhone.length ? thereIsMobilePhone[0].value : null;
+        //for temporary use system === 'mobile', instead 'phone'
+        const thereIsMobilePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'phone' && telecomObj.use === 'mobile');
+        mobileCellPhone = thereIsMobilePhone.length ? thereIsMobilePhone[0].value : '';
 
         const thereIsEmail = patient.telecom.filter(telecomObj => telecomObj.system === 'email');
-        email = thereIsEmail.length ? thereIsEmail[0].value : null;
+        email = thereIsEmail.length ? thereIsEmail[0].value : '';
 
         const thereIsHomePhone = patient.telecom.filter(telecomObj => telecomObj.system === 'phone' && telecomObj.use === 'home');
-        homePhone = thereIsHomePhone.length ? thereIsHomePhone[0].value : null;
+        homePhone = thereIsHomePhone.length ? thereIsHomePhone[0].value : '';
     }
+
+    ageGenderType = patient.gender === 'female' ? 'age{f}' : 'age{m}';
+
+
     return {
         id: patient.id,
         city,
@@ -65,6 +87,8 @@ const normalizeFhirPatient = patient => {
         email,
         gender: patient.gender,
         birthDate: patient.birthDate,
+        managingOrganization,
+        ageGenderType
     }
 };
 
