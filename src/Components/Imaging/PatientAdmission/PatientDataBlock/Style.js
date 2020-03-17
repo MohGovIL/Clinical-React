@@ -97,6 +97,11 @@ export const StyledTextInput = styled.div`
       opacity: 60%;
     }
 
+    .MuiInputLabel-formControl.Mui-error{
+        color: #ff0000;
+    }
+
+
     .MuiInput-formControl {
       width: 100%;
       color: #000b40;

@@ -156,7 +156,8 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                         edit_mode === 0 ? (
                             <IconButton onClick={() => {
                                 window.scrollTo(0, 0);
-                                onEditButtonClick(1)
+                                onEditButtonClick(1)        //'InputProps': {disableUnderline: edit_mode === 1 ? false : true},
+
                             }}>
                                 <EditIcon/>
                             </IconButton>
@@ -204,6 +205,9 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 name="lastName"
                                 defaultValue={patientInitialValues.lastName}
                                 label={t("Last name")}
+                                error={errors.lastName ? true : false}
+                                helperText={errors.lastName ? t("Date must be in a date format") : null}
+                                // rules={{ pattern: /^[a-zA-Z.+\s'-]+$/}}
                                 required
                                 {...TextFieldOpts}
                             />
@@ -258,7 +262,11 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                         }
                                     }
                                 }}
-                                {...TextFieldOpts}
+                                InputProps={{
+                                    disableUnderline: edit_mode === 1 ? false : true,
+                                }}
+                                rules={{ value: value => value > 0  }}
+                                {...TextFieldOpts}                                
                             >
                                 {patientKupatHolimList.map((option, optionIndex) => (
                                     <MenuItem key={optionIndex} value={option.code}>
@@ -273,9 +281,19 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 name="mobilePhone"
                                 defaultValue={patientInitialValues.mobilePhone}
                                 label={t("Cell phone")}
-                                mask={['(', /[0-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-                                placeholderChar={'\u2000'}
-
+                                rules={{
+                                    pattern: /^\(?([0-9]{2,3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
+                                }}
+                                error={errors.mobilePhone ? true : false}
+                                helperText={errors.mobilePhone ? t("The number entered is incorrect") : null}
+                                InputProps={{
+                                    disableUnderline: edit_mode === 1 ? false : true,
+                                    endAdornment: (errors.mobilePhone &&
+                                        <InputAdornment position="end">
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"} />
+                                        </InputAdornment>
+                                    ),
+                                }}
                                 required
                                 {...TextFieldOpts}
                             />
@@ -288,8 +306,16 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 label={t("Mail address")}
                                 error={errors.patientEmail ? true : false}
                                 helperText={errors.patientEmail ? t("Invalid email address") : null}
+                                InputProps={{
+                                    disableUnderline: edit_mode === 1 ? false : true,
+                                    endAdornment: (errors.patientEmail &&
+                                        <InputAdornment position="end">
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"} />
+                                        </InputAdornment>
+                                    ),
+                                }}
                                 rules={{
-                                    pattern:  /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
+                                    pattern:  /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
                                 }}
                                 {...TextFieldOpts}
                             />
