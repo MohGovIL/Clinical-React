@@ -91,7 +91,7 @@ const tableHeaders = [
         component: BADGE_CELL
     },
     {
-        tableHeader: 'Encounter sheet',
+        tableHeader: 'Encounter Sheet',
         hideTableHeader: true,
         component: BUTTON_CELL,
     },
