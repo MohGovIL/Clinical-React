@@ -24,7 +24,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
 
         let participantPatient = appointments[appointmentIdFromURL].patient;
 
-        setPatientId(appointmentsData[appointmentID].participantPatient);
+        setPatientId(appointments[appointmentIdFromURL].participantPatient);
         setPatientData(patients[participantPatient]);
 
         (async () => {
@@ -48,7 +48,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
             url: "#",
         },
         {
-            text: patientsData[patientId].firstName + " " + patientsData[patientId].lastName + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
+            text: patients[patientId].firstName + " " + patients[patientId].lastName + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
             separator: false,
             url: "#"
         }
@@ -69,7 +69,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                            onCloseClick={handleCloseClick} edit_mode={edit}/>
             <StyledPatientRow>
                 <StyledBackdrop open={true} edit_mode={edit}>
-                    <PatientDataBlock appointmentId={appointmentId} patientData={patientsData[patientId]}
+                    <PatientDataBlock appointmentId={appointmentId} patientData={patients[patientId]}
                                       onEditButtonClick={handleEditButtonClick} edit_mode={edit}
                                       formatDate={formatDate}/>
                 </StyledBackdrop>
