@@ -4,6 +4,7 @@
  * @returns {}
  */
 const normalizeFhirPatient = patient => {
+
     let middleName = null;
     let mobileCellPhone = null;
     let homePhone = null;
