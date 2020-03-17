@@ -12,7 +12,7 @@ import normalizeFhirEncounter from '../../../Utils/Helpers/FhirEntities/normaliz
 
 const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history, facility}) => {
     const {t} = useTranslation();
-    const [patientId, setPatientId] = useState(null);
+    
     const [patientData, setPatientData] = useState({});
     const [appointmentId, setAppointmentId] = useState('');
     const [newEncounter, setNewEncounter] = useState({});
@@ -24,7 +24,6 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
 
         let participantPatient = appointments[appointmentIdFromURL].patient;
 
-        setPatientId(appointments[appointmentIdFromURL].participantPatient);
         setPatientData(patients[participantPatient]);
 
         (async () => {
@@ -37,10 +36,6 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
         })()
     }, [location]);
 
-    if (!patientId) {
-        return null;
-    }
-
     const allBreadcrumbs = [
         {
             text: t("Patient Admission"),
@@ -48,7 +43,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
             url: "#",
         },
         {
-            text: patients[patientId].firstName + " " + patients[patientId].lastName + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
+            text: patientData.firstName + " " + patientData.lastName + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
             separator: false,
             url: "#"
         }
@@ -69,9 +64,9 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                            onCloseClick={handleCloseClick} edit_mode={edit}/>
             <StyledPatientRow>
                 <StyledBackdrop open={true} edit_mode={edit}>
-                    <PatientDataBlock appointmentId={appointmentId} patientData={patients[patientId]}
+                    {Object.values(patientData).length && <PatientDataBlock appointmentId={appointmentId} patientData={patientData}
                                       onEditButtonClick={handleEditButtonClick} edit_mode={edit}
-                                      formatDate={formatDate}/>
+                                      formatDate={formatDate}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>
                 {Object.values(patientData).length && <PatientDetailsBlock patientData={patientData} />}
