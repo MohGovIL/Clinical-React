@@ -1,5 +1,6 @@
-import {tokenInstanceGenerator} from "./AxiosWithTokenInstance";
-import {ApiTokens} from "./ApiTokens";
+import {tokenInstanceGenerator} from './AxiosWithTokenInstance';
+import {ApiTokens} from './ApiTokens';
+import moment from 'moment';
 import normalizeFhirPatient from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "./SearchLogic";
 
@@ -16,10 +17,11 @@ const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName)
 
 const fhirBasePath = 'apis/fhir/v4';
 
-const appointmentsWithPatientsBasePath = `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
+// const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
+const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?status:not=arrived&_sort=date${summary ? '&_summary=count' : '&_include=Appointment:patient'}`;
 
 export const getAppointmentsWithPatients = (summary = false, date = '', organization = '', serviceType = '') => {
-    return fhirTokenInstance().get(`${appointmentsWithPatientsBasePath}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
+    return fhirTokenInstance().get(`${appointmentsWithPatientsBasePath(summary)}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}`);
 };
 
 export const getValueSet = id => {
@@ -28,45 +30,51 @@ export const getValueSet = id => {
 
 export const updateAppointmentStatus = (appointmentId, value) => {
     return fhirTokenInstance().patch(`${fhirBasePath}/Appointment/${appointmentId}`, {
-        op: "replace",
-        path: "/status",
-        value
-    })
+        op: 'replace',
+        path: '/status',
+        value,
+    });
 };
 
-export const createNewEncounter = () => {
+export const createNewEncounter = (appointment, facility) => {
     return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
-        "resourceType": "Encounter",
-        "status": "planned",
-        "serviceType": {
-            "coding": [
+        'priority': {
+            'coding': [
                 {
-                    "code": "5"
-                }
-            ]
+                    'code': appointment.priority,
+                },
+            ],
         },
-        "reasonCode": {
-            "coding": [
+        'status': 'planned',
+        'serviceType': {
+            'coding': [
                 {
-                    "code": "5"
-                }
-            ]
+                    'code': appointment.serviceTypeCode,
+                },
+            ],
         },
-        " subject": {
-            "reference": "Patient/60"
+        'reasonCode': {
+            'coding': [
+                {
+                    'code': appointment.examinationCode,
+                },
+            ],
         },
-        "appointment": [
+        'subject': {
+            'reference': `Patient/${appointment.patient}`,
+        },
+        'appointment': [
             {
-                "reference": "Appointment/11"
-            }
+                'reference': `Appointment/${appointment.id}`,
+            },
         ],
-        "period": {
-            "start": "2020-01-27 00:00:00"
+        'period': {
+            'start': moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
         },
-        "serviceProvider": {
-            "reference": "Organization/3"
-        }
-    })
+        'serviceProvider': {
+            'reference': `Organization/${facility}`,
+        },
+    });
 };
 
 export const getOrganization = () => {
@@ -77,14 +85,15 @@ export const getHealhcareService = (organization) => {
     return fhirTokenInstance().get(`${fhirBasePath}/HealthcareService?organization=${organization}`);
 };
 
-const encountersWithPatientsBasePath = '/Encounter?_include=Encounter:patient&_sort=date';
+// const encountersWithPatientsBasePath = summary => '/Encounter?_include=Encounter:patient&_sort=date';
+const encountersWithPatientsBasePath = summary => `/Encounter?_sort=date${summary ? '&_summary=count' : '&_include=Encounter:patient'}`;
 
 export const getEncountersWithPatients = (summary = false, date = '', serviceProvider = '', serviceType = '', statuses = []) => {
     let statusesString = '';
     for (let status of statuses) {
         statusesString = statusesString.concat(`&status=${status}`)
     }
-    return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
+    return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
 };
 
 const patientsFhirSeacrh = '/Patient?';

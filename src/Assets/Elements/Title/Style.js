@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export default styled.div`
-  margin: 56px 32px 0px 0px;
-  font-size: 28px;
-  color: #002398;
+  font-size: ${props => props.fontSize};
+  color: ${props => props.color};
+  font-weight: ${props => props.bold ? 'bold' : null};
 `;
 

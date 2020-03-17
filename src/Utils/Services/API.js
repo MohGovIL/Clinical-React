@@ -1,5 +1,5 @@
-import {tokenInstanceGenerator} from "./AxiosWithTokenInstance";
-import {ApiTokens} from "./ApiTokens";
+import {tokenInstanceGenerator} from './AxiosWithTokenInstance';
+import {ApiTokens} from './ApiTokens';
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
@@ -10,18 +10,19 @@ import {ApiTokens} from "./ApiTokens";
 
 const apiTokenInstance = () => tokenInstanceGenerator(ApiTokens.API.tokenName);
 
-export const getGlobalSettings = async userID => {
-    try {
-        return await apiTokenInstance().get(`apis/api/settings/globals/${userID}`);
-    } catch (err) {
-        console.log(err);
-    }
+export const getGlobalSettings = userID => {
+    return apiTokenInstance().get(`apis/api/settings/globals/${userID}`);
+
 };
 
-export const getMenu = async menuName => {
-    try {
-        return await apiTokenInstance().get(`apis/api/settings/menu/${menuName}`);
-    } catch (err) {
-        console.log(err);
-    }
+export const getMenu = menuName => {
+    return apiTokenInstance().get(`apis/api/settings/menu/${menuName}`);
+};
+
+export const getCities = () => {
+    return apiTokenInstance().get(`apis/api/lists/cities`);
+};
+
+export const getStreets = city => {
+    return city && apiTokenInstance().get(`apis/api/lists/streets/${city}`);
 };

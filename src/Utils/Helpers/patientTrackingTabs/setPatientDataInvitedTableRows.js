@@ -102,7 +102,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
     for (let [appointmentId, appointment] of Object.entries(appointments)) {
         let row = [];
         for (let columnIndex = 0; columnIndex < tableHeaders.length; columnIndex++) {
-            const patient = patients[appointment.participantPatient];
+            const patient = patients[appointment.patient];
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({
