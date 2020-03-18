@@ -17,16 +17,14 @@ import maleIcon from '../../../../Assets/Images/maleIcon.png';
 import femaleIcon from '../../../../Assets/Images/womanIcon.png';
 import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
-// import MaskedInput from 'react-text-mask';
-import { Avatar, IconButton, Divider, Typography, TextField, MenuItem, Select, InputLabel, InputAdornment } from '@material-ui/core';
+import { Avatar, IconButton, Divider, Typography, TextField, MenuItem, InputAdornment } from '@material-ui/core';
+import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
 import { StyledFormGroup } from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
-// import {StyledButton, StyledMenu} from "../../../../Assets/Elements/CustomizedSelect/Style";
 import { getOrganizationTypeKupatHolim } from "../../../../Utils/Services/FhirAPI";
 import { normalizeValueData } from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
-// import * as yup from "yup";
 
 
 const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edit_mode, formatDate }) => {
@@ -41,7 +39,9 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
     const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
     const [healthManageOrgId, setHealthManageOrgId] = useState('');
 
-    const { register, control, errors, handleSubmit, reset, setValue } = useForm();
+    const { register, control, errors, handleSubmit, reset, setValue } = useForm({
+        mode: "onBlur"
+    });
 
     const onSubmit = (data, e) => {
         console.log(data);
@@ -55,6 +55,8 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
         }]
     };
 
+    const textFieldSelectNotEmptyRule = { validate: {value: value => parseInt(value) !== 0 } };
+
     const TextFieldOpts = {
         'disabled': edit_mode === 1 ? false : true,
         'color': edit_mode === 1 ? "primary" : 'primary',
@@ -67,7 +69,6 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
             //use format date of FHIR date - YYYY-MM-DD only
             setPatientAge(ageCalculator(patientData.birthDate));
             setPatientIdentifier(patientData.identifier || {});
-
             if (appointmentData !== undefined) {
                 //TO DO - in future use you need to change to encounterData
                 setPatientEncounter(appointmentData || 0);
@@ -95,9 +96,8 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
         }
     }, [patientData.id]);
 
-    useEffect(() => {
-        let rules={ validate: {value: value => parseInt(value) !== 0 } };
-        register({name: "healthManageOrganization"}, rules);
+    useEffect(() => {        
+        register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
     }, []);
 
     if (patientKupatHolimList.length == 0) {
@@ -107,11 +107,11 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
     const handleUndoEdittingClick = () => {
         onEditButtonClick(0);
         reset(patientInitialValues);
-        register({ name: "healthManageOrganization" });
+        register({ name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
     };
 
-    const organizationData = patientKupatHolimList.find(obj => {
-        return obj.code == (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) > 0 ? healthManageOrgId : patientData.managingOrganization);
+    const organizationData = patientKupatHolimList.find(obj => {    
+        return obj.code == (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) >= 0 ? healthManageOrgId : patientData.managingOrganization);
     });
 
     let patientInitialValues = {
@@ -126,10 +126,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
 
     const handleChangeKupatHolim = event => {
         try {
-            const res = patientKupatHolimList.find(obj => {
-                return obj.code == event.target.value;
-            });
-            setValue("healthManageOrganization", event.target.value);
+            setValue("healthManageOrganization", event.target.value, true);
             setHealthManageOrgId(event.target.value);
         } catch (e) {
             console.log("Error: " + e);
@@ -164,7 +161,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                     </Typography>
 
                     <StyledAgeIdBlock>
-                        <span>{patientIdentifier.type == "ID" ? t("Id. Number") : t("Passport")} {patientIdentifier.value}</span>
+                        <span>{patientIdentifier.type == "idtype_1" ? t("Id. Number") : t("Passport")} {patientIdentifier.value}</span>
                         <span>{patientData.gender == "male" ? t("Son") : t("Daughter")} {patientAge}</span>
                     </StyledAgeIdBlock>
 
@@ -226,7 +223,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                             <TextField
                                 id="standard-healthManageOrganization"
                                 name="healthManageOrganization"
-                                defaultValue={patientInitialValues.healthManageOrganizationValue}
+                                value={patientInitialValues.healthManageOrganizationValue}
                                 label={t("Kupat Cholim")}
                                 required
                                 select={edit_mode === 1 ? true : false}
