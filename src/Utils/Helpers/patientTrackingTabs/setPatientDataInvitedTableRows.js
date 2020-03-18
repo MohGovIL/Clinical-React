@@ -107,6 +107,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
+                        idType: patient.identifierType,
                         priority: appointment.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,
