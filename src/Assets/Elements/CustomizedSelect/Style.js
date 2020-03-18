@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import {Select} from "@material-ui/core";
 import {Button, Menu, MenuItem} from "@material-ui/core";
 
 export const StyledDiv = styled.div`

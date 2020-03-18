@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, {createGlobalStyle} from "styled-components";
 import {devicesValue} from "../../../../Assets/Themes/BreakPoints";
 
 export const StyledDiv = styled.div`
@@ -9,12 +9,14 @@ export const StyledDiv = styled.div`
   box-shadow: 0 1px 10px 0 rgba(152, 151, 151, 0.3);
   background-color: #ffffff;
   height: calc(100vh - 88px);
-  position: fixed;
+  position: ${props => props.edit_mode === 1 ? "unset" : "fixed"};
   z-index: 100;
+  max-width: ${props => props.edit_mode === 1 ? "25%" : "unset"};
 
   @media(min-width: ${devicesValue.desktop}px){
      flex-basis: 15%;
      min-width: 15%;
+     max-width: ${props => props.edit_mode === 1 ? "15%" : "unset"};
    }
 
   .MuiDivider-root {
@@ -45,7 +47,7 @@ export const StyledAvatarIdBlock = styled.div`
 export const StyledRoundAvatar = styled.div`
     display: flex;
     align-self: center;
-    border: ${props => props.encounterPriority == 2 ? "3px solid #ff3232" : null };
+    border: ${props => props.show_red_circle === true ? "3px solid #ff3232" : null};
     padding: 11px;
     border-radius: 72px;
     margin: 5px 0 10px 0;
@@ -78,12 +80,16 @@ export const StyledTextInput = styled.div`
     margin-top: 20px;
     justify-content: space-between;
     padding: 0 16px;
+    background-color: #ffffff;
 
-    .MuiInputLabel-root {
-      font-size: 13px;
-      font-weight: normal;
-      font-stretch: normal;
-      font-style: normal;
+    form {
+     display: flex;
+     flex-direction: column;
+    }
+
+    .MuiInputLabel-formControl {
+      right: 0;
+      left: unset;
       line-height: 1.38;
       letter-spacing: normal;
       text-align: right;
@@ -92,11 +98,38 @@ export const StyledTextInput = styled.div`
     }
 
     .MuiInput-formControl {
-      margin-bottom: 24px;
       width: 100%;
       color: #000b40;
     }
+
+    .MuiFilledInput-root {
+       background-color: rgba(248, 250, 255, 1);
+    }
+
+    .MuiInputLabel-shrink {
+      transform-origin: ${props => (props.edit_mode === 0 ? " top right " : null)};
+    }
+
+    .MuiFormControl-root {
+      margin: 0 0 46px 0;
+    }
 `;
 
+export const StyledButtonBlock = styled.div`
+   display: flex;
+   justify-content: space-between;
+   padding: 0 17px 0 17px;
+   margin: 10px 0 62px 0;
+`;
 
+export const StyledEmptyIconEdit = styled.div`
+  padding: 12px;
+  height: 24px;
+  width: 24px;
+`;
 
+export const StyledGlobalStyle = createGlobalStyle`
+  body{
+    overflow-y: ${props => (props.disable_vertical_scroll === true ? 'hidden' : null)};
+  }
+`;

@@ -1,5 +1,16 @@
 import styled from "styled-components";
 import {devicesValue} from "../../../Assets/Themes/BreakPoints";
+import {Backdrop} from '@material-ui/core';
+
+export const StyledBackdrop = styled(Backdrop)`
+  z-index: ${props => props.edit_mode === 1 ? 1 : 2} ;
+  display: block;
+  overflow-y: scroll;
+  position:  ${props => props.edit_mode === 1 ? "absolute" : "fixed"};
+  margin-bottom: 0px;
+  background-color: ${props => props.edit_mode === 1 ? "rgba(0, 13, 55, 0.5)" : "unset"};
+  padding-top: 120px;
+`;
 
 export const StyledPatientRow = styled.div`
   display: flex;
@@ -15,7 +26,7 @@ export const StyledDummyBlock = styled.div`
   flex-direction: column;
   flex-basis: 25%;
   height: calc(100vh - 88px);
-  z-index: 1;
+  z-index: ${props => props.edit_mode === 1 ? 0 : 1};
   position: relative;
 
   @media(min-width: ${devicesValue.desktop}px){

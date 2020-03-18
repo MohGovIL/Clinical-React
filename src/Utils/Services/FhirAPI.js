@@ -1,11 +1,17 @@
 import {tokenInstanceGenerator} from './AxiosWithTokenInstance';
 import {ApiTokens} from './ApiTokens';
 import moment from 'moment';
+import normalizeFhirPatient from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
+import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "./SearchLogic";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
  * @fileOverview Where all the apis that uses the normal FhirApi Token
  */
+
+const isNumeric = n => {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+};
 
 const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName);
 
@@ -85,7 +91,45 @@ const encountersWithPatientsBasePath = summary => `/Encounter?_sort=date${summar
 export const getEncountersWithPatients = (summary = false, date = '', serviceProvider = '', serviceType = '', statuses = []) => {
     let statusesString = '';
     for (let status of statuses) {
-        statusesString = statusesString.concat(`&status=${status}`);
+        statusesString = statusesString.concat(`&status=${status}`)
     }
-    return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}`);
+    return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
+};
+
+const patientsFhirSeacrh = '/Patient?';
+
+
+export const searchPatients = async (value) => {
+
+
+
+    let data = null;
+    let mobileData = null;
+    if (isNumeric(value)) {
+
+        let identifierData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}identifier:contains=${value}`);
+        let mobileData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}mobile:contains=${value}`);
+
+        data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : data;
+        data = mobileData.data.total > 0 ? FHIRPersontoDataArray(mobileData,data) : data;
+        data = sortPatientRulesByNumberSort(data,value.trim());
+
+    } else {
+        //for future Lexicographic search in ID open this
+        //let identifierData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}identifier:contains=${value}`);
+        let byNameData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}name=${value}`);
+        //for future Lexicographic search in ID open this
+        //data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : null;
+        data = byNameData.data.total > 0 ? FHIRPersontoDataArray(byNameData,data) : data;
+        if (data && data.length > 1){
+            data = sortPatientRulesByLexicogrphicsSort(data,value.trim());
+        }
+
+    }
+
+    return data;
+};
+
+export const getOrganizationTypeKupatHolim = () => {
+    return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=71`);
 };
