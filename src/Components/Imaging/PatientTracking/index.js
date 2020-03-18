@@ -61,7 +61,7 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                 notActiveAction: waitingForResultsTabNotActiveFunction
             },
             {
-                tabName: 'Finished',
+                tabName: 'Finished treatment',
                 id: 'finished',
                 mode: 'hide',
                 count: 0,

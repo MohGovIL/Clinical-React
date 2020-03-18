@@ -20,6 +20,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
 
     useEffect(() => {
         let appointmentIdFromURL = new URLSearchParams(location.search).get("index");
+        debugger
         setAppointmentId(appointmentIdFromURL);
 
         let participantPatient = appointments[appointmentIdFromURL].patient;
