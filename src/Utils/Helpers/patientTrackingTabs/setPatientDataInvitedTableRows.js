@@ -1,16 +1,16 @@
-import {baseRoutePath} from "../baseRoutePath";
+import {baseRoutePath} from '../baseRoutePath';
 import {
     BADGE_CELL, BUTTON_CELL,
     LABEL_CELL,
-    PERSONAL_INFORMATION_CELL, SELECT_CELL
-} from "../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
-import {getAppointmentsWithPatients, getValueSet, updateAppointmentStatus} from "../../Services/FhirAPI";
-import moment from "moment";
-import "moment/locale/he"
-import {normalizeFhirAppointmentsWithPatients} from "../FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
-import normalizeFhirValueSet from "../FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
-import {store} from "../../../index";
-import {setAppointmentsWithPatientsAction} from "../../../Store/Actions/FhirActions/fhirActions";
+    PERSONAL_INFORMATION_CELL, SELECT_CELL,
+} from '../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
+import {getAppointmentsWithPatients, getValueSet, updateAppointmentStatus} from '../../Services/FhirAPI';
+import moment from 'moment';
+import 'moment/locale/he';
+import {normalizeFhirAppointmentsWithPatients} from '../FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients';
+import normalizeFhirValueSet from '../FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import {store} from '../../../index';
+import {setAppointmentsWithPatientsAction} from '../../../Store/Actions/FhirActions/fhirActions';
 
 //מוזמנים
 export const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
@@ -55,37 +55,37 @@ const tableHeaders = [
     {
         tableHeader: 'Personal information',
         hideTableHeader: false,
-        component: PERSONAL_INFORMATION_CELL
+        component: PERSONAL_INFORMATION_CELL,
     },
     {
         tableHeader: 'Cell phone',
         hideTableHeader: false,
-        component: LABEL_CELL
+        component: LABEL_CELL,
     },
     {
         tableHeader: 'Healthcare service',
         hideTableHeader: false,
-        component: LABEL_CELL
+        component: LABEL_CELL,
     },
     {
         tableHeader: 'Test',
         hideTableHeader: false,
-        component: LABEL_CELL
+        component: LABEL_CELL,
     },
     {
         tableHeader: 'Time',
         hideTableHeader: false,
-        component: LABEL_CELL
+        component: LABEL_CELL,
     },
     {
         tableHeader: 'Status',
         hideTableHeader: false,
-        component: SELECT_CELL
+        component: SELECT_CELL,
     },
     {
         tableHeader: 'Messages',
         hideTableHeader: false,
-        component: BADGE_CELL
+        component: BADGE_CELL,
     },
     {
         tableHeader: 'Patient admission',
@@ -95,14 +95,14 @@ const tableHeaders = [
 
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataInvitedTableRows = (patients, appointments, options, history,mode) => {
-   /* console.log("mode 1 = "+ mode);*/
+const setPatientDataInvitedTableRows = (patients, appointments, options, history, mode) => {
+    /* console.log("mode 1 = "+ mode);*/
     let result = [];
     let rows = [];
     for (let [appointmentId, appointment] of Object.entries(appointments)) {
         let row = [];
         for (let columnIndex = 0; columnIndex < tableHeaders.length; columnIndex++) {
-            const patient = patients[appointment.participantPatient];
+            const patient = patients[appointment.patient];
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({
@@ -120,25 +120,25 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         padding: 'none',
                         align: 'center',
                         color: 'primary',
-                        onClickHandler(){
+                        onClickHandler() {
                             history.push({
                                 pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-                                search: `?index=${appointmentId}`
-                            })
+                                search: `?index=${appointmentId}`,
+                            });
                         },
-                        mode
+                        mode: moment(appointment.startTime).isAfter(moment()) ? 'view' : mode,
                     });
                     break;
                 case 'Messages':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        badgeContent: 0
+                        badgeContent: 0,
                     });
                     break;
                 case 'Status':
                     row.push({
-                        onChange(){
+                        onChange() {
                             // try{
                             //     const updateAppointmentStatus();
                             //
@@ -154,7 +154,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         background_color: '#eaf7ff',
                         icon_color: '#076ce9',
                         langDirection: 'rtl',
-                        mode
+                        mode,
                     });
                     break;
                 case 'Cell phone':
@@ -162,28 +162,28 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         padding: 'none',
                         align: 'center',
                         label: patient.mobileCellPhone,
-                        color: '#0027a5'
+                        color: '#0027a5',
                     });
                     break;
                 case 'Healthcare service':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: appointment.serviceType ? appointment.serviceType.join(' ') : null
+                        label: appointment.serviceType ? appointment.serviceType.join(' ') : null,
                     });
                     break;
                 case 'Test':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: appointment.examination ?  appointment.examination.join(' ') : null
+                        label: appointment.examination ? appointment.examination.join(' ') : null,
                     });
                     break;
                 case 'Time':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment(appointment.startTime).format('LT')
+                        label: moment.utc(appointment.startTime).format('LT'),
                     });
                     break;
                 default:
@@ -196,5 +196,3 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
     result[1] = rows;
     return result;
 };
-
-export default setPatientDataInvitedTableRows;

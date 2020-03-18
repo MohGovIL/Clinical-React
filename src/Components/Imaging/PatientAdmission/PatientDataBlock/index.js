@@ -60,7 +60,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
 
     useEffect(() => {
         try {
-            setAvatarIcon(patientData.gender === "male" ? maleIcon : patientData.gender === "female" ? femaleIcon : "")
+            setAvatarIcon(patientData.gender === "male" ? maleIcon : patientData.gender === "female" ? femaleIcon : "");
             //use format date of FHIR date - YYYY-MM-DD only
             setPatientAge(ageCalculator(patientData.birthDate));
             setPatientIdentifier(patientData.identifier || {});

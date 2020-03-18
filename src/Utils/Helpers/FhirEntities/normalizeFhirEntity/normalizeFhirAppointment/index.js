@@ -14,11 +14,11 @@ const normalizeFhirAppointment = appointment => {
         }
     }
 
-    let participantPatient = null;
+    let patient = null;
     let participantHealthcareService = null;
     if (appointment.participant && appointment.participant.length > 0) {
-        participantPatient = appointment.participant.find(actorObj => actorObj.actor.reference.includes('Patient'));
-        participantPatient = participantPatient ? participantPatient.actor.reference.split('/')[1] : null;
+        patient = appointment.participant.find(actorObj => actorObj.actor.reference.includes('Patient'));
+        patient = patient ? patient.actor.reference.split('/')[1] : null;
 
         participantHealthcareService = appointment.participant.find(actorObj => actorObj.actor.reference.includes('HealthcareService'));
         participantHealthcareService = participantHealthcareService ? participantHealthcareService.actor.reference.split('/')[1] : null;
@@ -43,7 +43,7 @@ const normalizeFhirAppointment = appointment => {
         participantHealthcareService,
         serviceType,
         serviceTypeCode,
-        participantPatient
+        patient
     };
 };
 
