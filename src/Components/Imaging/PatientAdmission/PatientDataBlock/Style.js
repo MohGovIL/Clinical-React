@@ -1,5 +1,5 @@
-import styled, {createGlobalStyle} from "styled-components";
-import {devicesValue} from "../../../../Assets/Themes/BreakPoints";
+import styled, { createGlobalStyle } from "styled-components";
+import { devicesValue } from "../../../../Assets/Themes/BreakPoints";
 
 export const StyledDiv = styled.div`
   display: flex;
@@ -14,9 +14,9 @@ export const StyledDiv = styled.div`
   max-width: ${props => props.edit_mode === 1 ? "25%" : "unset"};
 
   @media(min-width: ${devicesValue.desktop}px){
-     flex-basis: 15%;
-     min-width: 15%;
-     max-width: ${props => props.edit_mode === 1 ? "15%" : "unset"};
+     flex-basis: 16%;
+     min-width: 17%;
+     max-width: ${props => props.edit_mode === 1 ? "16%" : "unset"};
    }
 
   .MuiDivider-root {
