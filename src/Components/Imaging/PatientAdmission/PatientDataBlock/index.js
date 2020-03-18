@@ -27,7 +27,7 @@ import { getOrganizationTypeKupatHolim } from "../../../../Utils/Services/FhirAP
 import { normalizeValueData } from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
 
-const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edit_mode, formatDate }) => {
+const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate }) => {
 
     const { t } = useTranslation();
 
@@ -45,6 +45,12 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
 
     const onSubmit = (data, e) => {
         console.log(data);
+        /*let patientPatchData = {};
+        if(patientInitialValues.firstName !== data.firstName){
+            patientPatchData.firstName = data.firstName;
+        }
+            updatePatientData(patientId, patientPatchData);
+        */
         onEditButtonClick(0);
     };
 
@@ -132,6 +138,8 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
             console.log("Error: " + e);
         }
     };
+    console.log("================");
+    console.log(languageDirection);
 
     return (
         <React.Fragment>
@@ -207,7 +215,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 helperText={errors.birthDate ? t("Date must be in a date format") : null}
                                 InputProps={{
                                     disableUnderline: edit_mode === 1 ? false : true,
-                                    endAdornment: (errors.birthDate &&
+                                    [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']: (errors.birthDate &&
                                         <InputAdornment position="end">
                                             <ErrorOutlineIcon htmlColor={"#ff0000"} />
                                         </InputAdornment>
@@ -248,7 +256,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 helperText={errors.healthManageOrganization ? t("is a required field.") : null}
                                 InputProps={{
                                     disableUnderline: edit_mode === 1 ? false : true,
-                                    endAdornment: (errors.healthManageOrganization &&
+                                    [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']: (errors.healthManageOrganization &&
                                         <InputAdornment position="end">
                                             <ErrorOutlineIcon htmlColor={"#ff0000"} />
                                         </InputAdornment>
@@ -276,7 +284,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 helperText={errors.mobilePhone ? t("The number entered is incorrect") : null}
                                 InputProps={{
                                     disableUnderline: edit_mode === 1 ? false : true,
-                                    endAdornment: (errors.mobilePhone &&
+                                    [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']: (errors.mobilePhone &&
                                         <InputAdornment position="end">
                                             <ErrorOutlineIcon htmlColor={"#ff0000"} />
                                         </InputAdornment>
@@ -296,7 +304,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 helperText={errors.patientEmail ? t("Invalid email address") : null}
                                 InputProps={{
                                     disableUnderline: edit_mode === 1 ? false : true,
-                                    endAdornment: (errors.patientEmail &&
+                                    [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']: (errors.patientEmail &&
                                         <InputAdornment position="end">
                                             <ErrorOutlineIcon htmlColor={"#ff0000"} />
                                         </InputAdornment>

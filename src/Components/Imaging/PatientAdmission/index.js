@@ -66,6 +66,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                 <StyledBackdrop open={true} edit_mode={edit}>
                     {Object.values(patientData).length && <PatientDataBlock appointmentId={appointmentId} patientData={patientData}
                                       onEditButtonClick={handleEditButtonClick} edit_mode={edit}
+                                      languageDirection={languageDirection}
                                       formatDate={formatDate}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>

@@ -36,6 +36,14 @@ export const updateAppointmentStatus = (appointmentId, value) => {
     });
 };
 
+export const updatePatientData = (patientId, patientData) => {
+    return fhirTokenInstance.updat(`${fhirBasePath}/Patient/`,{
+        op: 'replace',
+        path: '',
+        patientData
+    })
+}
+
 export const createNewEncounter = (appointment, facility) => {
     return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
         'priority': {
