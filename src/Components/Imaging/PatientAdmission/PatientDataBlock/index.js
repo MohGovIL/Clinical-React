@@ -41,17 +41,6 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
     const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
     const [healthManageOrgId, setHealthManageOrgId] = useState('');
 
-
-    // const PatientDataBlockSchema = yup.object().shape({
-    //     birthDate: yup.string().required(),
-    //     age: yup
-    //         .number()
-    //         .required()
-    //         .positive()
-    //         .integer(),
-    //     website: yup.string().url()
-    // });
-
     const { register, control, errors, handleSubmit, reset, setValue } = useForm();
 
     const onSubmit = (data, e) => {
@@ -62,13 +51,12 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
     const emptyArrayAll = () => {
         return [{
             code: 0,
-            name: t("All")
+            name: t("Choose")
         }]
     };
 
     const TextFieldOpts = {
         'disabled': edit_mode === 1 ? false : true,
-        //'InputProps': {disableUnderline: edit_mode === 1 ? false : true},
         'color': edit_mode === 1 ? "primary" : 'primary',
         'variant': edit_mode === 1 ? "filled" : 'standard',
     };
@@ -108,7 +96,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
     }, [patientData.id]);
 
     useEffect(() => {
-        let rules={ validate: {value: value => value !== 0 || 'error message'}};
+        let rules={ validate: {value: value => parseInt(value) !== 0 } };
         register({name: "healthManageOrganization"}, rules);
     }, []);
 
@@ -157,8 +145,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                         edit_mode === 0 ? (
                             <IconButton onClick={() => {
                                 window.scrollTo(0, 0);
-                                onEditButtonClick(1)        //'InputProps': {disableUnderline: edit_mode === 1 ? false : true},
-
+                                onEditButtonClick(1);
                             }}>
                                 <EditIcon />
                             </IconButton>
@@ -206,9 +193,6 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                     name="lastName"
                                     defaultValue={patientInitialValues.lastName}
                                     label={t("Last name")}
-                                    // error={errors.lastName ? true : false}
-                                    // helperText={errors.lastName ? t("Date must be in a date format") : null}
-                                    // rules={{ pattern: /^[a-zA-Z.+\s'-]+$/}}
                                     required
                                     {...TextFieldOpts}
                                 />
@@ -267,6 +251,11 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 helperText={errors.healthManageOrganization ? t("is a required field.") : null}
                                 InputProps={{
                                     disableUnderline: edit_mode === 1 ? false : true,
+                                    endAdornment: (errors.healthManageOrganization &&
+                                        <InputAdornment position="end">
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"} />
+                                        </InputAdornment>
+                                    ),
                                 }}
                                 {...TextFieldOpts}                                
                             >
