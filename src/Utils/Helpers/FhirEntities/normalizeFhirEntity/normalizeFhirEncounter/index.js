@@ -38,9 +38,9 @@ const normalizeFhirEncounter = encounter => {
 
     return {
         id: encounter.id,
-        priority: encounter.priority.length ? encounter.priority.coding.code : null,
+        priority: encounter.priority.coding ? encounter.priority.coding.code : null,
         status: encounter.status,
-        startTime: encounter.period.length ? encounter.period.start : null,
+        startTime: encounter.period.start ? encounter.period.start : null,
         patient,
         appointment,
         serviceProvider,

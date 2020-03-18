@@ -2,6 +2,7 @@ import {tokenInstanceGenerator} from "./AxiosWithTokenInstance";
 import {ApiTokens} from "./ApiTokens";
 import normalizeFhirPatient from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "./SearchLogic";
+import normalizeFhirValueSet from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
@@ -143,3 +144,14 @@ export const getNextPrevEncounterPerPatient = (date,patient,prev) =>{
     }
 
 };
+
+export const requestValueSet =  async (id) => {
+
+    const {data: {expansion: {contains}}} = await getValueSet(id);
+    let options = [];
+    for (let status of contains) {
+        options[status.code]=status.display;
+    }
+
+    return options;
+}

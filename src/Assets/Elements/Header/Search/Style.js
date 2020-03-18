@@ -77,3 +77,7 @@ export const StyledPaperContainer = styled.div`
 
 
 `;
+export const StyledContainer = styled.div`
+width: 744px;
+height: 315px;
+`;

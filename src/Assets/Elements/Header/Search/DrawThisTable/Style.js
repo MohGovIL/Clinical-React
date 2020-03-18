@@ -4,6 +4,7 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import GenderIcon from "../../../CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
 import Icon from "@material-ui/core/Icon";
 import TitleValueComponent from "./TitleValueComponent";
+import Box from "@material-ui/core/Box";
 
 export const StyledExpansionPanel = styled(ExpansionPanel)`
     margin: 0 !important;
@@ -18,10 +19,121 @@ export const StyledExpansionPanelSummary = styled(ExpansionPanelSummary)`
 `;
 
 export const StyledExpansionPanelDetails = styled(ExpansionPanelDetails)`
-   height: 58px;
-      background-color: #ffffff;
+  width: 744px;
+  height: 315px;
 `;
 
+export const StyledBox = styled(Box)`
+  margin-top:24px;
+ /* margin-left: 24px;
+  margin-right:28px;*/
+  width: 692px;
+  height: 204px;
+  /*opacity: 0.2;*/
+  border: solid 1px #000b4024;
+  background-color: #f5f5f526;;
+   justify-content: space-evenly;
+    display: flex;
+`;
+
+export const StyledLabelAppointment = styled.label`
+
+  display: inline-flex;
+ /* max-width: 30%;
+  min-width: 30%;
+  height: 22px;*/
+  margin-top: 10px;
+    label{
+        margin-left: 5px;
+        margin-right: -12px;
+    }
+    span {
+        width: 86px;
+        height: 19px;
+        font-family: OpenSansHebrew;
+        font-size: 14px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: right;
+        color: #000b40;
+        margin-right:19px;
+    }
+    div{
+        width: 86px;
+        height: 19px;
+        font-family: OpenSansHebrew;
+        font-size: 14px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: right;
+         color: #000b40;
+  }
+`;
+
+export const StyledLabelStatusAppointment = styled.label`
+
+  display: inline-flex;
+ /* max-width: 30%;
+  min-width: 30%;
+  height: 22px;*/
+  margin-top: 10px;
+    label{
+        margin-left: 5px;
+        margin-right: -12px;
+    }
+    span {
+        width: 80px;
+        height: 18px;
+        font-family: OpenSansHebrew;
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.29;
+        letter-spacing: normal;
+        text-align: right;
+
+        text-align: -webkit-center;
+        border-radius: 15px;
+        background :  #eaf7ff;
+    }
+    div{
+
+  }
+`;
+
+export const StyledLabelServiceTypeAppointment = styled.label`
+
+  display: inline-flex;
+ /* max-width: 30%;
+  min-width: 30%;
+  height: 22px;*/
+  margin-top: 10px;
+    label{
+        margin-left: 5px;
+        margin-right: -12px;
+    }
+    span {
+        width: 80px;
+        height: 18px;
+        font-family: OpenSansHebrew;
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.29;
+        letter-spacing: normal;
+    }
+    div{
+
+  }
+`;
 
 export const StyledLabelName = styled.label`
   display: inline-flex;
@@ -198,4 +310,30 @@ export const StyledValueComponent = styled.label`
         color: navy;
 
 
+`;
+
+export const StyledLinkWithIconComponent = styled.div`
+
+    margin: 5px 0px;
+    a{
+      width: 73px;
+      height: 18px;
+      font-family: OpenSansHebrew;
+      font-size: 14px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.29;
+      letter-spacing: normal;
+      text-align: right;
+      color: #002398;
+     }
+
+    ${StyledIcon}{
+        width: 7px;
+        height: 17px;
+        object-fit: contain;
+    }
+
+  }
 `;
