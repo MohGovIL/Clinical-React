@@ -119,7 +119,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                     break;
                 case 'Encounter sheet':
                     row.push({
-                        label: 'Encounter sheet',
+                        label: 'Encounter Sheet',
                         padding: 'none',
                         align: 'center',
                         color: 'primary',
@@ -183,7 +183,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment(encounter.startTime).format('LT')
+                        label: moment.utc(encounter.startTime).format('LT')
                     });
                     break;
                 default:
