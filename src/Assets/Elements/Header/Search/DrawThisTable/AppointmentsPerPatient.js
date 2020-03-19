@@ -32,7 +32,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
     // const nextAppointmentEntry = prevEncounter && prevEncounter.data && prevEncounter.data.total >0  ? prevEncounter.data.entry[1] : null;
     const normalizedPrevEncounter = prevEncounterEntry ? normalizeFhirEncounter(prevEncounterEntry) : null;
     let normalizedCurEncounters = [];
-debugger;
+
     if (curEncounter.data && curEncounter.data.total > 0) {
         let entry = curEncounter.data.entry;
         entry.map((response, resourceIndex) => {
@@ -46,7 +46,7 @@ debugger;
         });
     }
 
-
+    debugger;
     // const normalizedPrevAppointment = normalizeFhirAppointment(prevEncounterEntry);
     /* const [healthCareServiceTypes, setHealthCareServiceServiceType] = React.useState(null);
      if (normalizedPrevEncounter && !healthCareServiceTypes) {
@@ -61,21 +61,21 @@ debugger;
                         normalizedCurEncounters.map((encounter, encounterID) => {
                             return (
 
-                                <ListItem>
+                                <ListItem key={encounterID}>
 
                                             <StyledLabelAppointment>
-                                                <TitleValueComponent name={t("Previous encounter")}
-                                                                     value={moment(normalizedCurEncounters.startTime).format("DD/MM/YYYY")}
+                                                <TitleValueComponent name={t("Current encounter")}
+                                                                     value={moment(encounter.startTime).format("DD/MM/YYYY")}
                                                                      seperator={true}/>
                                             </StyledLabelAppointment>
 
                                             <StyledLabelAppointment>
-                                                <TitleValueComponent name={t(normalizedCurEncounters.serviceType)}/>
+                                                <TitleValueComponent name={t(encounter.serviceType)}/>
                                             </StyledLabelAppointment>
 
                                             <StyledLabelStatusAppointment>
                                                 <TitleValueComponent
-                                                    name={encounterStatuses && normalizedCurEncounters ? t(encounterStatuses[normalizedCurEncounters.status]) : ''}/*t(normalizedPrevEncounter.status.charAt(0).toUpperCase() + normalizedPrevEncounter.status.slice(1))}*//>
+                                                    name={encounterStatuses && encounter ? t(encounterStatuses[encounter.status]) : ''}/*t(normalizedPrevEncounter.status.charAt(0).toUpperCase() + normalizedPrevEncounter.status.slice(1))}*//>
                                             </StyledLabelStatusAppointment>
 
                                             <StyledLinkWithIconComponent>
@@ -88,7 +88,7 @@ debugger;
 
                         })
                         :
-                        <ListItem>
+                        <ListItem key={"_1"}>
 
                                 <StyledLabelAppointment>
                                     <TitleValueComponent name={t("Current encounter")} value={t("Non existence")}
@@ -125,7 +125,7 @@ debugger;
 
                         </ListItem>
                         :
-                        <ListItem>
+                        <ListItem key={"_2"}>
 
                                 <StyledLabelAppointment>
                                     <TitleValueComponent name={t("Previous encounter")} value={t("Non existence")}

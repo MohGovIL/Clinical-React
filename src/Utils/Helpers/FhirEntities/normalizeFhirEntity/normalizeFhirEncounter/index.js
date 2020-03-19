@@ -3,7 +3,7 @@ const normalizeFhirEncounter = encounter => {
     const patient = encounter.subject ? encounter.subject.reference.split('/')[1] : null;
 
     const appointment = encounter.appointment ? encounter.appointment.map(appointmentObj => appointmentObj.reference.split('/')[1]) : null;
-debugger;
+
     let examinationCode = null
     let examination = null;
     if (encounter.reasonCode && encounter.reasonCode.length > 0){

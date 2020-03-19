@@ -29,6 +29,7 @@ export const StyledBox = styled(Box)`
   margin-right:28px;*/
   width: 692px;
   height: 204px;
+  overflow: auto;
   /*opacity: 0.2;*/
   border: solid 1px #000b4024;
   background-color: #f5f5f526;;
