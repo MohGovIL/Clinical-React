@@ -49,6 +49,7 @@ export const StyledPatientDetails = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   margin: 0 25px 0 25px;
+  z-index: ${props => !props.edit_mode && '2'};
 
    @media(min-width: ${devicesValue.desktop}px){
      flex-basis: 50%;

@@ -22,10 +22,11 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import Grid from '@material-ui/core/Grid';
 
-const PatientDetailsBlock = ({ languageDirection, patientData }) => {
+const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
   const { t } = useTranslation();
   const { register, control, handleSubmit } = useForm({
     submitFocusError: true,
+    mode: 'onBlur',
   });
 
   const [addressCity, setAddressCity] = useState({});
@@ -147,7 +148,7 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
   }, [citiesOpen, streetsOpen]);
 
   return (
-    <StyledPatientDetails>
+    <StyledPatientDetails edit={edit_mode}>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
         <Title fontSize={'28px'} color={'#002398'} label={'Patient Details'} />
         <StyledFormGroup title={t('Accompanying patient')}>
@@ -244,14 +245,9 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
                     label={t('City')}
                     InputProps={{
                       ...params.InputProps,
-                      [languageDirection === 'rtl'
-                        ? 'endAdornment'
-                        : 'startAdornment']: (
+                      endAdornment: (
                         <React.Fragment>
-                          <InputAdornment
-                            position={
-                              languageDirection === 'rtl' ? 'end' : 'start'
-                            }>
+                          <InputAdornment position={'end'}>
                             {loadingCities ? (
                               <CircularProgress color={'inherit'} size={20} />
                             ) : null}
@@ -281,13 +277,9 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
                     {...params}
                     InputProps={{
                       ...params.InputProps,
-                      [languageDirection === 'rtl'
-                        ? 'endAdornment'
-                        : 'startAdornment']: (
-                        <InputAdornment
-                          position={
-                            languageDirection === 'rtl' ? 'end' : 'start'
-                          }>
+
+                      endAdornment: (
+                        <InputAdornment position={'end'}>
                           {loadingStreets ? (
                             <CircularProgress color={'inherit'} size={20} />
                           ) : null}
@@ -346,14 +338,10 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
                     label={t('City')}
                     InputProps={{
                       ...params.InputProps,
-                      [languageDirection === 'rtl'
-                        ? 'endAdornment'
-                        : 'startAdornment']: (
+
+                      endAdornment: (
                         <React.Fragment>
-                          <InputAdornment
-                            position={
-                              languageDirection === 'rtl' ? 'end' : 'start'
-                            }>
+                          <InputAdornment position={'end'}>
                             {loadingCities ? (
                               <CircularProgress color={'inherit'} size={20} />
                             ) : null}
@@ -395,7 +383,7 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
           </a>
         </span>
       </StyledForm>
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
     </StyledPatientDetails>
   );
 };
