@@ -3,7 +3,7 @@ const normalizeFhirEncounter = encounter => {
     const patient = encounter.subject ? encounter.subject.reference.split('/')[1] : null;
 
     const appointment = encounter.appointment ? encounter.appointment.map(appointmentObj => appointmentObj.reference.split('/')[1]) : null;
-
+debugger;
     let examinationCode = null
     let examination = null;
     if (encounter.reasonCode && encounter.reasonCode.length > 0){
@@ -29,18 +29,18 @@ const normalizeFhirEncounter = encounter => {
 
     let serviceType = null;
     let serviceTypeCode = null;
-    if(encounter.serviceType && encounter.serviceType.length > 0){
-        if(encounter.serviceType.every(serviceTypeObj => serviceTypeObj.coding)){
-            serviceTypeCode = encounter.serviceType.map(serviceTypeCodeObj => serviceTypeCodeObj.coding[0].code);
-            serviceType = encounter.serviceType.map(serviceTypeObj => serviceTypeObj.text);
+    if(encounter.serviceType){
+        if(encounter.serviceType.coding){
+            serviceTypeCode =  encounter.serviceType.coding[0].code;
+            serviceType = encounter.serviceType.text;
         }
     }
 
     return {
         id: encounter.id,
-        priority: encounter.priority.coding ? encounter.priority.coding.code : null,
+        priority: encounter.priority && encounter.priority.length ? encounter.priority.coding.code : null,
         status: encounter.status,
-        startTime: encounter.period.start ? encounter.period.start : null,
+        startTime: encounter.period && encounter.period.start ? encounter.period.start : null,
         patient,
         appointment,
         serviceProvider,

@@ -17,6 +17,8 @@ import maleIcon from "../../../../Images/maleIcon.png";
 import femaleIcon from "../../../../Images/womanIcon.png";
 import AppointmentsPerPatient from "./AppointmentsPerPatient";
 import {
+    getCurrentEncounterPerPatient,
+    getHealthCareServiceByOrganization,
     getNextPrevAppointmentPerPatient,
     getNextPrevEncounterPerPatient,
     requestValueSet
@@ -31,7 +33,9 @@ const DrawThisTable = ({result, searchParam}) => {
     const [expanded, setExpanded] = React.useState('');
     const [nextAppointment, setNextAppointment] = React.useState('');
     const [prevEncounter, setPrevEncounter] = React.useState('');
+    const [curEncounter, setCurEncounter] = React.useState('');
     const [encounterStatuses, setEncounterStatuses] = React.useState('');
+
     //let patientTrackingStatuses =  null;
 
 
@@ -40,11 +44,13 @@ const DrawThisTable = ({result, searchParam}) => {
         setExpanded(newExpanded ? panel : false);
         setEncounterStatuses(await requestValueSet("encounter_statuses"));
 
+
         if (newExpanded) {
 
             let currentDate = moment().utc().format("YYYY-MM-DD");
-            setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
+          //  setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
             setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
+            setCurEncounter(await getCurrentEncounterPerPatient("2020-03-01", identifier));
 
         }
     };
@@ -96,7 +102,7 @@ const DrawThisTable = ({result, searchParam}) => {
                             <StyledExpansionPanelDetails>
                                 <AppointmentsPerPatient nextAppointment={nextAppointment}
                                                         prevEncounter={prevEncounter}
-                                                       /* patientTrackingStatuses={patientTrackingStatuses}*/
+                                                        curEncounter={curEncounter}
                                                         encounterStatuses = {encounterStatuses}
                                 />
                             </StyledExpansionPanelDetails>

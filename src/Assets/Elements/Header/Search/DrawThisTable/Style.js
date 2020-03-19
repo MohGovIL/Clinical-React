@@ -32,8 +32,8 @@ export const StyledBox = styled(Box)`
   /*opacity: 0.2;*/
   border: solid 1px #000b4024;
   background-color: #f5f5f526;;
-   justify-content: space-evenly;
-    display: flex;
+ /*  justify-content: space-evenly;*/
+   /* display: flex;*/
 `;
 
 export const StyledLabelAppointment = styled.label`
@@ -104,7 +104,7 @@ export const StyledLabelStatusAppointment = styled.label`
         background :  #eaf7ff;
     }
     div{
-
+    width:50px;
   }
 `;
 

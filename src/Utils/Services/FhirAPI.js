@@ -3,6 +3,7 @@ import {ApiTokens} from "./ApiTokens";
 import normalizeFhirPatient from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "./SearchLogic";
 import normalizeFhirValueSet from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
+import {normalizeHealhcareServiceValueData} from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
@@ -127,15 +128,22 @@ export const getOrganizationTypeKupatHolim = () => {
 };
 
 export const getNextPrevAppointmentPerPatient = (date, patient,prev) =>{
+    //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
     if(prev)
     {
-        return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=lt${date}&_count=1&_sort=date`);//&patient=${patient}`);
+        return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=lt${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
     }
     else {
-        return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_count=1&_sort=date`);//&patient=${patient}`);
+        return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
     }
 };
+export const getCurrentEncounterPerPatient = (date,patient) =>{
+    //PC-216 endpoint: /Encounter?date=eq<TODAY>&patient=<PID>
+        return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=eq${date}&patient=${patient}`);
+};
+
 export const getNextPrevEncounterPerPatient = (date,patient,prev) =>{
+    //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
     if(prev){
         return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=lt${date}&_count=1&_sort=-date&patient=${patient}`);
     }
@@ -154,4 +162,19 @@ export const requestValueSet =  async (id) => {
     }
 
     return options;
+}
+
+export const getHealthCareServiceByOrganization = async (organizationId) => {
+
+    let array = [];
+    const {data: {entry: dataServiceType}} = await getHealhcareService(organizationId);
+
+    for (let entry of dataServiceType) {
+        if (entry.resource !== undefined) {
+            const setLabelServiceType = normalizeHealhcareServiceValueData(entry.resource);
+            array[setLabelServiceType.code] = setLabelServiceType.name;
+        }
+    }
+
+    return array;
 }
