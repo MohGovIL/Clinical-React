@@ -15,7 +15,7 @@ const PaperContainerComponent = ({result,searchParam}) => {
 
         setHeight(containerRef.current.clientHeight)
         setMaxHeight(window.innerHeight - 88 - 60 - 18);
-    });
+    }, []);
 
     const containerRef = useRef(null);
     return (
