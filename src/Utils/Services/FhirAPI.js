@@ -29,11 +29,11 @@ export const getValueSet = id => {
 };
 
 export const updateAppointmentStatus = (appointmentId, value) => {
-    return fhirTokenInstance().patch(`${fhirBasePath}/Appointment/${appointmentId}`, {
+    return fhirTokenInstance().patch(`${fhirBasePath}/Appointment/${appointmentId}`, [{
         op: 'replace',
         path: '/status',
         value,
-    });
+    }]);
 };
 
 export const createNewEncounter = (appointment, facility) => {

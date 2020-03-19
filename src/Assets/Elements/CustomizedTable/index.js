@@ -66,7 +66,7 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                                     return <CustomizedTableSelectCell onChange={rowData.onChange}
                                                                                       text_color={rowData.text_color}
                                                                                       padding={rowData.padding}
-                                                                                      value={rowData.value}
+                                                                                      defaultValue={rowData.defaultValue}
                                                                                       icon_color={rowData.icon_color}
                                                                                       background_color={rowData.background_color}
                                                                                       align={rowData.align}
