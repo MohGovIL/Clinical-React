@@ -88,7 +88,7 @@ export const StyledTextInput = styled.div`
     }
 
     .MuiInputLabel-formControl {
-      right: 0;
+      right: ${props => props.languageDirection === "rtl" ? '0' : 'unset'};
       left: unset;
       line-height: 1.38;
       letter-spacing: normal;

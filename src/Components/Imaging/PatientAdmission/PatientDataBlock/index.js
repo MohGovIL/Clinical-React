@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import * as Moment from "moment";
-import { useForm, Controller } from 'react-hook-form';
-import { useTranslation } from "react-i18next";
+import {useForm, Controller} from 'react-hook-form';
+import {useTranslation} from "react-i18next";
 
 import {
     StyledDiv,
@@ -17,19 +17,20 @@ import maleIcon from '../../../../Assets/Images/maleIcon.png';
 import femaleIcon from '../../../../Assets/Images/womanIcon.png';
 import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
-import { Avatar, IconButton, Divider, Typography, TextField, MenuItem, InputAdornment } from '@material-ui/core';
+import {Avatar, IconButton, Divider, Typography, TextField, MenuItem, InputAdornment} from '@material-ui/core';
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+// import {updatePatientData} from "../../Services/FhirAPI";
+import {updatePatientData} from "../../../../Utils/Services/FhirAPI";
+import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
+import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
+import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
-import { StyledFormGroup } from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
-import { getOrganizationTypeKupatHolim } from "../../../../Utils/Services/FhirAPI";
-import { normalizeValueData } from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
+const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate}) => {
 
-const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate }) => {
-
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     const [avatarIcon, setAvatarIcon] = useState(null);
     const [patientIdentifier, setPatientIdentifier] = useState({});
@@ -39,18 +40,19 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
     const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
     const [healthManageOrgId, setHealthManageOrgId] = useState('');
 
-    const { register, control, errors, handleSubmit, reset, setValue } = useForm({
+    const {register, control, errors, handleSubmit, reset, setValue} = useForm({
         mode: "onBlur"
     });
 
     const onSubmit = (data, e) => {
-        console.log(data);
-        /*let patientPatchData = {};
-        if(patientInitialValues.firstName !== data.firstName){
-            patientPatchData.firstName = data.firstName;
-        }
-            updatePatientData(patientId, patientPatchData);
-        */
+        (async () => {
+            try {
+                data.birthDate = Moment(data.birthDate).format("YYYY-MM-DD");
+                const answer = await updatePatientData(patientData.id, data);
+            } catch (err) {
+                console.log(err);
+            }
+        })();
         onEditButtonClick(0);
     };
 
@@ -61,7 +63,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
         }]
     };
 
-    const textFieldSelectNotEmptyRule = { validate: {value: value => parseInt(value) !== 0 } };
+    const textFieldSelectNotEmptyRule = {validate: {value: value => parseInt(value) !== 0}};
 
     const TextFieldOpts = {
         'disabled': edit_mode === 1 ? false : true,
@@ -84,7 +86,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
             let array = emptyArrayAll();
             (async () => {
                 try {
-                    const { data: { entry: dataServiceType } } = await getOrganizationTypeKupatHolim();
+                    const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
                     for (let entry of dataServiceType) {
                         if (entry.resource !== undefined) {
                             entry.resource.name = t(entry.resource.name);
@@ -102,7 +104,7 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
         }
     }, [patientData.id]);
 
-    useEffect(() => {        
+    useEffect(() => {
         register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
     }, []);
 
@@ -113,10 +115,10 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
     const handleUndoEdittingClick = () => {
         onEditButtonClick(0);
         reset(patientInitialValues);
-        register({ name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
+        register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
     };
 
-    const organizationData = patientKupatHolimList.find(obj => {    
+    const organizationData = patientKupatHolimList.find(obj => {
         return obj.code == (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) >= 0 ? healthManageOrgId : patientData.managingOrganization);
     });
 
@@ -138,12 +140,10 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
             console.log("Error: " + e);
         }
     };
-    console.log("================");
-    console.log(languageDirection);
 
     return (
         <React.Fragment>
-            <StyledGlobalStyle disable_vertical_scroll={edit_mode === 0 ? false : true} />
+            <StyledGlobalStyle disable_vertical_scroll={edit_mode === 0 ? false : true}/>
             <StyledDiv edit_mode={edit_mode}>
                 <StyledAvatarIdBlock>
                     {
@@ -152,16 +152,16 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 window.scrollTo(0, 0);
                                 onEditButtonClick(1);
                             }}>
-                                <EditIcon />
+                                <EditIcon/>
                             </IconButton>
                         ) : (
-                                <StyledEmptyIconEdit />
-                            )
+                            <StyledEmptyIconEdit/>
+                        )
                     }
                     {/*patientEncounter.priority == 2 - the high priority*/}
                     <StyledRoundAvatar
                         show_red_circle={edit_mode === 0 && patientEncounter.priority == 2 ? true : false}>
-                        <Avatar alt={""} src={avatarIcon} />
+                        <Avatar alt={""} src={avatarIcon}/>
                     </StyledRoundAvatar>
 
                     <Typography variant="h5" noWrap={true}>
@@ -174,33 +174,33 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                     </StyledAgeIdBlock>
 
                 </StyledAvatarIdBlock>
-                <Divider />
-                <StyledTextInput edit_mode={edit_mode}>
+                <Divider/>
+                <StyledTextInput edit_mode={edit_mode} languageDirection={languageDirection}>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <StyledFormGroup>
                             {edit_mode === 1 &&
-                                <Controller
-                                    as={TextField}
-                                    control={control}
-                                    id="standard-firstName"
-                                    name="firstName"
-                                    defaultValue={patientInitialValues.firstName}
-                                    label={t("First name")}
-                                    required
-                                    {...TextFieldOpts}
-                                />
+                            <Controller
+                                as={TextField}
+                                control={control}
+                                id="standard-firstName"
+                                name="firstName"
+                                defaultValue={patientInitialValues.firstName}
+                                label={t("First name")}
+                                required
+                                {...TextFieldOpts}
+                            />
                             }
                             {edit_mode === 1 &&
-                                <Controller
-                                    as={TextField}
-                                    control={control}
-                                    id="standard-lastName"
-                                    name="lastName"
-                                    defaultValue={patientInitialValues.lastName}
-                                    label={t("Last name")}
-                                    required
-                                    {...TextFieldOpts}
-                                />
+                            <Controller
+                                as={TextField}
+                                control={control}
+                                id="standard-lastName"
+                                name="lastName"
+                                defaultValue={patientInitialValues.lastName}
+                                label={t("Last name")}
+                                required
+                                {...TextFieldOpts}
+                            />
                             }
                             <Controller
                                 as={TextField}
@@ -215,9 +215,9 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 helperText={errors.birthDate ? t("Date must be in a date format") : null}
                                 InputProps={{
                                     disableUnderline: edit_mode === 1 ? false : true,
-                                    [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']: (errors.birthDate &&
+                                    endAdornment: (errors.birthDate &&
                                         <InputAdornment position="end">
-                                            <ErrorOutlineIcon htmlColor={"#ff0000"} />
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
                                         </InputAdornment>
                                     ),
                                 }}
@@ -256,13 +256,13 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 helperText={errors.healthManageOrganization ? t("is a required field.") : null}
                                 InputProps={{
                                     disableUnderline: edit_mode === 1 ? false : true,
-                                    [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']: (errors.healthManageOrganization &&
+                                    endAdornment: (errors.healthManageOrganization &&
                                         <InputAdornment position="end">
-                                            <ErrorOutlineIcon htmlColor={"#ff0000"} />
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
                                         </InputAdornment>
                                     ),
                                 }}
-                                {...TextFieldOpts}                                
+                                {...TextFieldOpts}
                             >
                                 {patientKupatHolimList.map((option, optionIndex) => (
                                     <MenuItem key={optionIndex} value={option.code}>
@@ -284,9 +284,9 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 helperText={errors.mobilePhone ? t("The number entered is incorrect") : null}
                                 InputProps={{
                                     disableUnderline: edit_mode === 1 ? false : true,
-                                    [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']: (errors.mobilePhone &&
+                                    endAdornment: (errors.mobilePhone &&
                                         <InputAdornment position="end">
-                                            <ErrorOutlineIcon htmlColor={"#ff0000"} />
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
                                         </InputAdornment>
                                     ),
                                 }}
@@ -304,9 +304,9 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                                 helperText={errors.patientEmail ? t("Invalid email address") : null}
                                 InputProps={{
                                     disableUnderline: edit_mode === 1 ? false : true,
-                                    [languageDirection === 'rtl' ? 'endAdornment' : 'startAdornment']: (errors.patientEmail &&
+                                    endAdornment: (errors.patientEmail &&
                                         <InputAdornment position="end">
-                                            <ErrorOutlineIcon htmlColor={"#ff0000"} />
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
                                         </InputAdornment>
                                     ),
                                 }}
@@ -317,12 +317,12 @@ const PatientDataBlock = ({ appointmentData, patientData, onEditButtonClick, edi
                             />
                         </StyledFormGroup>
                         {edit_mode === 1 &&
-                            <StyledButtonBlock>
-                                <CustomizedTableButton variant={"text"} color={"primary"} label={t("Undo editing")}
-                                    onClickHandler={handleUndoEdittingClick} />
-                                <CustomizedTableButton variant={"contained"} color={"primary"} label={t("save")}
-                                    type={"submit"} />
-                            </StyledButtonBlock>
+                        <StyledButtonBlock>
+                            <CustomizedTableButton variant={"text"} color={"primary"} label={t("Undo editing")}
+                                                   onClickHandler={handleUndoEdittingClick}/>
+                            <CustomizedTableButton variant={"contained"} color={"primary"} label={t("save")}
+                                                   type={"submit"}/>
+                        </StyledButtonBlock>
                         }
 
                     </form>

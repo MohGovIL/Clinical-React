@@ -36,13 +36,20 @@ export const updateAppointmentStatus = (appointmentId, value) => {
     });
 };
 
-export const updatePatientData = (patientId, patientData) => {
-    return fhirTokenInstance.updat(`${fhirBasePath}/Patient/`,{
-        op: 'replace',
-        path: '',
-        patientData
-    })
-}
+export const updatePatientData = (patientId, value) => {
+    return fhirTokenInstance().patch(`${fhirBasePath}/Patient/${patientId}`, [
+        {op: 'replace', path: '/name/0/family', value: value.lastName},
+        {op: 'replace', path: '/name/0/given', value: [value.firstName, ""]},
+        {op: 'replace', path: '/telecom/1', value: {system: "email", value: value.patientEmail}},
+        {op: 'replace', path: '/telecom/2', value: {system: "phone", value: value.mobilePhone, use: "mobile"}},
+        {op: 'replace', path: '/birthDate', value: value.birthDate},
+        {
+            op: 'replace',
+            path: '/managingOrganization',
+            value: {reference: "Organization/" + value.healthManageOrganization}
+        },
+    ])
+};
 
 export const createNewEncounter = (appointment, facility) => {
     return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
@@ -110,7 +117,6 @@ const patientsFhirSeacrh = '/Patient?';
 export const searchPatients = async (value) => {
 
 
-
     let data = null;
     let mobileData = null;
     if (isNumeric(value)) {
@@ -118,9 +124,9 @@ export const searchPatients = async (value) => {
         let identifierData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}identifier:contains=${value}`);
         let mobileData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}mobile:contains=${value}`);
 
-        data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : data;
-        data = mobileData.data.total > 0 ? FHIRPersontoDataArray(mobileData,data) : data;
-        data = sortPatientRulesByNumberSort(data,value.trim());
+        data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData, data) : data;
+        data = mobileData.data.total > 0 ? FHIRPersontoDataArray(mobileData, data) : data;
+        data = sortPatientRulesByNumberSort(data, value.trim());
 
     } else {
         //for future Lexicographic search in ID open this
@@ -128,9 +134,9 @@ export const searchPatients = async (value) => {
         let byNameData = await fhirTokenInstance().get(`${fhirBasePath}${patientsFhirSeacrh}name=${value}`);
         //for future Lexicographic search in ID open this
         //data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData,data) : null;
-        data = byNameData.data.total > 0 ? FHIRPersontoDataArray(byNameData,data) : data;
-        if (data && data.length > 1){
-            data = sortPatientRulesByLexicogrphicsSort(data,value.trim());
+        data = byNameData.data.total > 0 ? FHIRPersontoDataArray(byNameData, data) : data;
+        if (data && data.length > 1) {
+            data = sortPatientRulesByLexicogrphicsSort(data, value.trim());
         }
 
     }
