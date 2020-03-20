@@ -4,7 +4,8 @@ import {
     SET_APPOINTMENTS_WITH_PATIENTS_SUCCESS,
     SET_ENCOUNTER_WITH_PATIENTS_SUCCESS,
     SET_ENCOUNTER_WITH_PATIENTS_FAILED,
-    SET_ENCOUNTER_WITH_PATIENTS
+    SET_ENCOUNTER_WITH_PATIENTS,
+    SET_PATIENT_DATA, SET_PATIENT_DATA_SUCCESS
 } from "../Actions/FhirActions/fhirActionTypes";
 
 const INITIAL_STATE = {
@@ -50,6 +51,12 @@ const FhirDataReducer = (state = INITIAL_STATE, action) => {
                 STATUS: action.type,
                 appointments: action.appointments,
                 patients: action.patients
+            };
+        case SET_PATIENT_DATA_SUCCESS:
+            return {
+                ...state,
+                STATUS: action.type,
+                patients: action.patient
             };
         default:
             return state;

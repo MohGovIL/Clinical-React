@@ -26,9 +26,15 @@ import {updatePatientData} from "../../../../Utils/Services/FhirAPI";
 import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
 import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
 import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import {connect} from "react-redux";
+import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
+import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
+import MomentUtils from "@date-io/moment";
+import {MuiPickersUtilsProvider} from "@material-ui/pickers";
+import {DatePicker} from '@material-ui/pickers/';
 
 
-const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate}) => {
+const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave}) => {
 
     const {t} = useTranslation();
 
@@ -47,8 +53,15 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     const onSubmit = (data, e) => {
         (async () => {
             try {
-                data.birthDate = Moment(data.birthDate).format("YYYY-MM-DD");
+                console.log("=========react hook form========");
+                console.log(data);
+                console.log("=========react hook form========");
+                data.birthDate = Moment(data.birthDate, formatDate).format("YYYY-MM-DD");
                 const answer = await updatePatientData(patientData.id, data);
+                const patient = {
+                    [patientData.id]: normalizeFhirPatient(answer.data)
+                };
+                setPatientDataAfterSave(patient);
             } catch (err) {
                 console.log(err);
             }
@@ -102,7 +115,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
         } catch (e) {
             console.log(e);
         }
-    }, [patientData.id]);
+    }, [patientData.id, patientData.birthDate]);
 
     useEffect(() => {
         register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
@@ -203,30 +216,41 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                             />
                             }
                             <Controller
-                                as={TextField}
+                                as={
+                                    <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
+                                            <DatePicker
+                                                disableToolbar
+                                                format={"DD/MM/YYYY"}
+                                                variant="inline"
+                                                color={"primary"}
+                                                required
+                                                value={patientInitialValues.birthDate}
+                                                label={t("birth day")}
+                                                onChange={( ) => { }}
+                                                InputProps={{
+                                                    disableUnderline: edit_mode === 1 ? false : true,
+                                                    endAdornment: (errors.birthDate &&
+                                                        <InputAdornment position="end">
+                                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
+                                                autoOk
+                                                error={errors.birthDate ? true : false}
+                                                helperText={errors.birthDate ? t("Date must be in a date format") : null}
+                                                {...TextFieldOpts}
+                                            />
+                                    </MuiPickersUtilsProvider>
+                                }
                                 control={control}
                                 id="standard-birthDate"
                                 name="birthDate"
                                 placeholder={formatDate}
-                                defaultValue={patientInitialValues.birthDate}
-                                label={t("birth day")}
-                                required
-                                error={errors.birthDate ? true : false}
-                                helperText={errors.birthDate ? t("Date must be in a date format") : null}
-                                InputProps={{
-                                    disableUnderline: edit_mode === 1 ? false : true,
-                                    endAdornment: (errors.birthDate &&
-                                        <InputAdornment position="end">
-                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
-                                        </InputAdornment>
-                                    ),
-                                }}
                                 rules={{
                                     validate: {
                                         value: value => Moment(value, formatDate, true).isValid() === true
                                     }
                                 }}
-                                {...TextFieldOpts}
                             />
                             <TextField
                                 id="standard-healthManageOrganization"
@@ -333,5 +357,6 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     );
 };
 
-export default PatientDataBlock;
+export default connect(null, {setPatientDataAfterSave})(PatientDataBlock);
+//export default connect(mapStateToProps, {setFilterOrganizationAction, setFilterServiceTypeAction})(FilterBox);
 

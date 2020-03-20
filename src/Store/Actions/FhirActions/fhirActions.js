@@ -4,7 +4,7 @@ import {
     SET_APPOINTMENTS_WITH_PATIENTS,
     SET_ENCOUNTER_WITH_PATIENTS,
     SET_ENCOUNTER_WITH_PATIENTS_FAILED,
-    SET_ENCOUNTER_WITH_PATIENTS_SUCCESS
+    SET_ENCOUNTER_WITH_PATIENTS_SUCCESS, SET_PATIENT_DATA_SUCCESS
 } from "./fhirActionTypes";
 //TODO use this functions to add the data to redux
 export const setEncounterWithPatientsAction = (patients, encounters) => {
@@ -71,3 +71,10 @@ export const setAppointmentsWithPatientsAction = (patients, appointments) => {
         }
     }
 };
+
+export const setPatientDataAfterSave = (patient) => {
+    return {
+        type: SET_PATIENT_DATA_SUCCESS,
+        patient
+    }
+}
