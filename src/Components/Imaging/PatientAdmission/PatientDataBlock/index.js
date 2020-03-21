@@ -154,6 +154,13 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
         }
     };
 
+    const handleChangeBirthDate = moment => {
+        let newBirthDate = moment.format(formatDate).toString();
+        setValue("birthDate", newBirthDate, true);
+        patientInitialValues.birthDate = newBirthDate;
+
+    };
+
     return (
         <React.Fragment>
             <StyledGlobalStyle disable_vertical_scroll={edit_mode === 0 ? false : true}/>
@@ -216,41 +223,43 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                             />
                             }
                             <Controller
+                                name="birthDate"
                                 as={
-                                    <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
-                                            <DatePicker
-                                                disableToolbar
-                                                format={"DD/MM/YYYY"}
-                                                variant="inline"
-                                                color={"primary"}
-                                                required
-                                                value={patientInitialValues.birthDate}
-                                                label={t("birth day")}
-                                                onChange={( ) => { }}
-                                                InputProps={{
-                                                    disableUnderline: edit_mode === 1 ? false : true,
-                                                    endAdornment: (errors.birthDate &&
-                                                        <InputAdornment position="end">
-                                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
-                                                        </InputAdornment>
-                                                    ),
-                                                }}
-                                                autoOk
-                                                error={errors.birthDate ? true : false}
-                                                helperText={errors.birthDate ? t("Date must be in a date format") : null}
-                                                {...TextFieldOpts}
-                                            />
-                                    </MuiPickersUtilsProvider>
+                                    <CustomizedDatePicker
+                                        PickerProps={{
+                                            id: "standard-birthDate",
+                                            format: "DD/MM/YYYY",
+                                            name: "birthDate",
+                                            required: true,
+                                            disableToolbar: false,
+                                            label: t("birth day"),
+                                            value: patientInitialValues.birthDate,
+                                            placeholder: {formatDate},
+                                            InputProps: {
+                                                disableUnderline: edit_mode === 1 ? false : true,
+                                                endAdornment: (errors.birthDate &&
+                                                    <InputAdornment position="end">
+                                                        <ErrorOutlineIcon htmlColor={"#ff0000"}/>
+                                                    </InputAdornment>
+                                                ),
+                                            },
+                                            color: edit_mode === 1 ? "primary" : 'primary',
+                                            onChange: handleChangeBirthDate,
+                                            error: errors.birthDate ? true : false,
+                                            helperText: errors.birthDate ? t("Date must be in a date format") : null,
+                                            showNextArrow: false,
+                                            showPrevArrow: false,
+                                        }}
+                                    />
                                 }
                                 control={control}
-                                id="standard-birthDate"
-                                name="birthDate"
-                                placeholder={formatDate}
                                 rules={{
                                     validate: {
                                         value: value => Moment(value, formatDate, true).isValid() === true
                                     }
                                 }}
+
+                                {...TextFieldOpts}
                             />
                             <TextField
                                 id="standard-healthManageOrganization"
