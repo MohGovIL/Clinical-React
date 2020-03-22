@@ -5,6 +5,7 @@ import GenderIcon from "../../../CustomizedTable/CustomizedTablePersonalInformat
 import Icon from "@material-ui/core/Icon";
 import TitleValueComponent from "./TitleValueComponent";
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 
 export const StyledExpansionPanel = styled(ExpansionPanel)`
     margin: 0 !important;
@@ -20,7 +21,9 @@ export const StyledExpansionPanelSummary = styled(ExpansionPanelSummary)`
 
 export const StyledExpansionPanelDetails = styled(ExpansionPanelDetails)`
   width: 744px;
-  height: 315px;
+    height: 315px;
+    display: block;
+    justify-content: stretch;
 `;
 
 export const StyledBox = styled(Box)`
@@ -35,6 +38,42 @@ export const StyledBox = styled(Box)`
   background-color: #f5f5f526;;
  /*  justify-content: space-evenly;*/
    /* display: flex;*/
+`;
+export const StyledBottomLinks = styled(Box)`
+    margin: 37px 0px 24px 61px;
+    display: flex;
+    justify-content: flex-end;
+    a.MuiButton-containedPrimary{
+         background-color: #002398 !important;
+    }
+    a.MuiButton-contained.Mui-disabled{
+        opacity: 0.4 !important;
+        color: #ffffff !important;
+    }
+    a.MuiButton-outlined.MuiButton-outlinedPrimary.Mui-disabled{
+    border: 1px solid #002398 !important;
+    color: #002398 !important;
+    }
+`;
+
+export const StyledHrefButton = styled(Button)`
+    border-radius: 25px;
+    font-family: OpenSansHebrew;
+    font-size: 15px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    -webkit-letter-spacing: normal;
+    -moz-letter-spacing: normal;
+    -ms-letter-spacing: normal;
+    letter-spacing: normal;
+    text-align: center;
+    height: 32px;
+    width: 177px;
+    margin: 3px 3px;
+}
+
 `;
 
 export const StyledLabelAppointment = styled.label`

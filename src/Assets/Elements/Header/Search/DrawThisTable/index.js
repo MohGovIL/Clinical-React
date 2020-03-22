@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import StyledSearch, {
+    StyledBottomLinks,
     StyledExpansionPanel,
     StyledExpansionPanelDetails,
-    StyledExpansionPanelSummary, StyledLabelAge, StyledLabelPhone,
+    StyledExpansionPanelSummary, StyledHrefButton, StyledLabelAge, StyledLabelPhone,
     StyledPaper
 } from './Style';
 import {useTranslation} from "react-i18next";
@@ -26,6 +27,7 @@ import {
 import moment, {now} from "moment";
 import normalizeFhirValueSet from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import {normalizeValueData} from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import StyledButton from "../../../CustomizedTable/CustomizedTableButton/Style";
 
 const DrawThisTable = ({result, searchParam}) => {
 
@@ -35,7 +37,7 @@ const DrawThisTable = ({result, searchParam}) => {
     const [prevEncounter, setPrevEncounter] = React.useState('');
     const [curEncounter, setCurEncounter] = React.useState('');
     const [encounterStatuses, setEncounterStatuses] = React.useState('');
-
+    let curTotal = 0;
     //let patientTrackingStatuses =  null;
 
 
@@ -48,9 +50,12 @@ const DrawThisTable = ({result, searchParam}) => {
         if (newExpanded) {
 
             let currentDate = moment().utc().format("YYYY-MM-DD");
-          //  setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
+            setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
             setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
             setCurEncounter(await getCurrentEncounterPerPatient("2020-03-01", identifier));
+          /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
+
+
 
         }
     };
@@ -105,7 +110,22 @@ const DrawThisTable = ({result, searchParam}) => {
                                                         curEncounter={curEncounter}
                                                         encounterStatuses = {encounterStatuses}
                                 />
+                                <StyledBottomLinks>
+                                    <StyledHrefButton variant="outlined" color="primary" href="#contained-buttons"
+                                                  disabled= {true}  >
+                                        {t("Go to all encounters and appointments")}
+                                    </StyledHrefButton>
+                                    <StyledHrefButton variant="contained" color="primary" href="#contained-buttons"
+                                                  disabled={false} >
+                                        {t("Get new encounter")}
+                                    </StyledHrefButton>
+                                    <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
+                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false}  >
+                                        {t("Receive patient")}
+                                    </StyledHrefButton>
+                                </StyledBottomLinks>
                             </StyledExpansionPanelDetails>
+
                         </StyledExpansionPanel>
                     );
                 } else {

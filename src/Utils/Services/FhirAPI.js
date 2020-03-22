@@ -129,26 +129,41 @@ export const getOrganizationTypeKupatHolim = () => {
 
 export const getNextPrevAppointmentPerPatient = (date, patient,prev) =>{
     //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
-    if(prev)
-    {
-        return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=lt${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+    try {
+        if (prev) {
+            return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=lt${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+        } else {
+            return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+        }
     }
-    else {
-        return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+    catch(err){
+        console.log(err);
+        return null;
     }
 };
 export const getCurrentEncounterPerPatient = (date,patient) =>{
     //PC-216 endpoint: /Encounter?date=eq<TODAY>&patient=<PID>
+    try {
         return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=eq${date}&patient=${patient}`);
+    }
+    catch(err){
+        console.log(err);
+        return null;
+    }
 };
 
 export const getNextPrevEncounterPerPatient = (date,patient,prev) =>{
     //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
-    if(prev){
-        return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=lt${date}&_count=1&_sort=-date&patient=${patient}`);
+    try {
+        if (prev) {
+            return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=lt${date}&_count=1&_sort=-date&patient=${patient}`);
+        } else {
+            return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=gt${date}&_count=1&_sort=-date&patient=${patient}`);
+        }
     }
-    else{
-        return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=gt${date}&_count=1&_sort=-date&patient=${patient}`);
+    catch(err){
+        console.log(err);
+        return null;
     }
 
 };
