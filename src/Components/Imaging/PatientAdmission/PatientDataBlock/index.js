@@ -21,7 +21,6 @@ import {Avatar, IconButton, Divider, Typography, TextField, MenuItem, InputAdorn
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-// import {updatePatientData} from "../../Services/FhirAPI";
 import {updatePatientData} from "../../../../Utils/Services/FhirAPI";
 import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
 import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
@@ -29,8 +28,6 @@ import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normali
 import {connect} from "react-redux";
 import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
 import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
-import MomentUtils from "@date-io/moment";
-import {MuiPickersUtilsProvider} from "@material-ui/pickers";
 import {DatePicker} from '@material-ui/pickers/';
 
 
@@ -41,7 +38,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     const [avatarIcon, setAvatarIcon] = useState(null);
     const [patientIdentifier, setPatientIdentifier] = useState({});
     const [patientAge, setPatientAge] = useState(0);
-    const [patientBirthDate, setPatientBirthDate] = useState('');
+    const [patientBirthDate, setPatientBirthDate] = useState(Moment(patientData.birthDate).format(formatDate) || '');
 
     const [patientEncounter, setPatientEncounter] = useState(0);
     const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
@@ -120,16 +117,9 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
         register({name: "birthDate"});
     }, []);
 
-    if (patientKupatHolimList.length == 0) {
+    if (patientKupatHolimList.length == 0 || patientData.birthDate.length == 0) {
         return null;
     }
-
-    const handleUndoEdittingClick = () => {
-        onEditButtonClick(0);
-        reset(patientInitialValues);
-        register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
-        register({name: "birthDate"});
-    };
 
     const organizationData = patientKupatHolimList.find(obj => {
         return obj.code == (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) >= 0 ? healthManageOrgId : patientData.managingOrganization);
@@ -138,11 +128,18 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     let patientInitialValues = {
         firstName: patientData.firstName || '',
         lastName: patientData.lastName || '',
-        birthDate: Moment(patientData.birthDate).format(formatDate) || '',
         healthManageOrganization: patientData.managingOrganization || 0,
         healthManageOrganizationValue: edit_mode === 1 ? organizationData.code : organizationData.name,
         mobilePhone: patientData.mobileCellPhone || patientData.homePhone || '',
         patientEmail: patientData.email || '',
+    };
+
+    const handleUndoEdittingClick = () => {
+        onEditButtonClick(0);
+        reset(patientInitialValues);
+        setPatientBirthDate(Moment(patientData.birthDate).format(formatDate));
+        register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
+        register({name: "birthDate"});
     };
 
     const handleChangeKupatHolim = event => {
@@ -154,18 +151,11 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
         }
     };
 
-    const handleChangeBirthDate = moment => {
+    const handleChangeBirthDate = date => {
         try {
-            let newBirthDate = moment.format(formatDate).toString();
+            let newBirthDate = date.format(formatDate).toString();
             setValue("birthDate", newBirthDate, true);
             setPatientBirthDate(newBirthDate);
-            patientInitialValues.birthDate = newBirthDate;
-
-            console.log("=========react hook form========");
-            console.log(patientInitialValues.birthDate);
-            console.log(formatDate);
-            console.log(newBirthDate);
-            console.log("=========react hook form========");
         } catch (e) {
             console.log("Error: " + e);
         }
@@ -249,17 +239,22 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                             required: true,
                                             disableToolbar: false,
                                             label: t("birth day"),
-                                            value: Moment(patientInitialValues.birthDate, formatDate),
-                                            placeholder: {formatDate},
+                                            inputValue: patientBirthDate,
+                                            mask: {formatDate},
                                             InputProps: {
                                                 disableUnderline: edit_mode === 1 ? false : true,
                                             },
+                                            disableFuture: true,
                                             color: edit_mode === 1 ? "primary" : 'primary',
                                             disabled: edit_mode === 1 ? false : true,
-                                            variant: edit_mode === 1 ? "filled" : 'standard',
+                                            variant: 'inline',
+                                            inputVariant: edit_mode === 1 ? "filled" : 'standard',
                                             onChange: handleChangeBirthDate,
+                                            autoOk: true,
                                             error: errors.birthDate ? true : false,
                                             helperText: errors.birthDate ? t("Date must be in a date format") : null,
+                                        }}
+                                        CustomizedProps={{
                                             keyBoardInput: true,
                                             showNextArrow: false,
                                             showPrevArrow: false,

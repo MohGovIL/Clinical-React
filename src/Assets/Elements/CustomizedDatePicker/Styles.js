@@ -26,10 +26,6 @@ export const GlobalStyledDatePicker = createGlobalStyle`
     font-size: 16px;
   }
 
-  button.MuiIconButton-root {
-    padding: 5px;
-  }
-
   .MuiPaper-root .MuiPickersCalendarHeader-switchHeader p.MuiTypography-root {
     color: ${props => props.iconColor ? props.iconColor : null}
   }

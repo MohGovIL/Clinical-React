@@ -15,4 +15,8 @@ export default styled.div`
     font-stretch: normal;
     font-style: normal;
   }
+
+  button.MuiIconButton-root {
+    padding: 5px;
+  }
 `;

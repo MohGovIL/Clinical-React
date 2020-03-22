@@ -55,6 +55,7 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
     const ChevronFirst = languageDirection === 'rtl' ? ChevronRight : ChevronLeft;
     const ChevronSecond = languageDirection === 'rtl' ? ChevronLeft : ChevronRight;
 
+    //Can set this values from CustomizedProps
     let DatePickerType = StyledDatePicker;
     let showPrevArrow = true;
     let showNextArrow = true;
@@ -75,40 +76,18 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
         color: null,
     };
 
-    if ('PickerProps' in props && typeof props.PickerProps !== 'undefined') {
-        showPrevArrow = typeof props.PickerProps.showPrevArrow !== 'undefined' && props.PickerProps.showPrevArrow ? true : false;
-        showNextArrow = typeof props.PickerProps.showNextArrow !== 'undefined' && props.PickerProps.showNextArrow ? true : false;
-
-        PickerProps.id = typeof props.PickerProps.id !== 'undefined' && props.PickerProps.id ? props.PickerProps.id : PickerProps.id;
-        PickerProps.name = typeof props.PickerProps.name !== 'undefined' && props.PickerProps.name ? props.PickerProps.name : null;
-        PickerProps.value = typeof props.PickerProps.value !== 'undefined' && props.PickerProps.value ? props.PickerProps.value : filterDate;
-
-        PickerProps.disableToolbar = typeof props.PickerProps.disableToolbar !== 'undefined' ? props.PickerProps.disableToolbar : PickerProps.disableToolbar;
-        PickerProps.format = typeof props.PickerProps.format !== 'undefined' && props.PickerProps.format ? props.PickerProps.format : PickerProps.format;
-        PickerProps.required = typeof props.PickerProps.required !== 'undefined' && props.PickerProps.required ? props.PickerProps.required : false;
-        PickerProps.label = typeof props.PickerProps.label !== 'undefined' && props.PickerProps.label ? props.PickerProps.label : null;
-        PickerProps.color = typeof props.PickerProps.color !== 'undefined' && props.PickerProps.color ? props.PickerProps.color : null;
-        PickerProps.onChange = typeof props.PickerProps.onChange !== 'undefined' && props.PickerProps.onChange ? props.PickerProps.onChange : PickerProps.onChange;
-        //PickerProps.variant = typeof props.PickerProps.variant !== 'undefined' && props.PickerProps.variant ?  props.PickerProps.variant :  PickerProps.variant;
-        PickerProps.disabled = typeof props.PickerProps.disabled !== 'undefined' && props.PickerProps.disabled ? props.PickerProps.disabled : null;
-        PickerProps.InputProps.disableUnderline = props.PickerProps.InputProps.disableUnderline ? true : false;
-
-        DatePickerType = props.PickerProps.keyBoardInput ? StyledKeyboardDatePicker : StyledDatePicker;
-        if (props.PickerProps.keyBoardInput) {
+    if ('CustomizedProps' in props && typeof props.CustomizedProps !== 'undefined') {
+        showPrevArrow = typeof props.CustomizedProps.showPrevArrow !== 'undefined' && props.CustomizedProps.showPrevArrow ? true : false;
+        showNextArrow = typeof props.CustomizedProps.showNextArrow !== 'undefined' && props.CustomizedProps.showNextArrow ? true : false;
+        DatePickerType = props.CustomizedProps.keyBoardInput ? StyledKeyboardDatePicker : StyledDatePicker;
+        if (props.CustomizedProps.keyBoardInput) {
             PickerProps.inputVariant = props.PickerProps.variant;
         }
-
-        if (props.PickerProps.helperText !== "undefined") {
-            PickerProps.helperText = props.PickerProps.helperText;
-        }
     }
-    // console.log("-----------------");
-    // console.log(PickerProps);
-    // console.log("-----------------");
-    // console.log("=========CustomizedDatePicker==========="); filled
-    // console.log(props);
-    // console.log("=========CustomizedDatePicker===========");
 
+    if ('PickerProps' in props && typeof props.PickerProps !== 'undefined') {
+        PickerProps = props.PickerProps;
+    }
 
     return (
         <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
