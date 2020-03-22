@@ -17,14 +17,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { connect } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { ExpandMore, ExpandLess, CheckBox } from '@material-ui/icons';
+import { ExpandMore, ExpandLess, CheckBox, CheckBoxOutlineBlank } from '@material-ui/icons';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import Grid from '@material-ui/core/Grid';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import { Typography } from '@material-ui/core';
+import { Typography, Checkbox } from '@material-ui/core';
 
 const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   const { t } = useTranslation();
@@ -102,15 +102,20 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
         } else {
           const serviceTypeResponse = await getValueSet('service_types');
           if (active) {
-            let servicesTypeObj = {};
-            serviceTypeResponse.data.expansion.contains.map(
-              async serviceType => {
-                const serviceTypeReasonCode = await getValueSet(
-                  `reason_codes_${normalizeFhirValueSet(serviceType).code}`,
-                );
-                serviceTypeReasonCode.data.expansion.contains.map();
-              },
+            setServicesType(
+              serviceTypeResponse.data.expansion.contains.map(serviceTypeObj =>
+                normalizeFhirValueSet(serviceTypeObj),
+              ),
             );
+            // let servicesTypeObj = {};
+            // serviceTypeResponse.data.expansion.contains.map(
+            //   async serviceType => {
+            //     const serviceTypeReasonCode = await getValueSet(
+            //       `reason_codes_${normalizeFhirValueSet(serviceType).code}`,
+            //     );
+            //     serviceTypeReasonCode.data.expansion.contains.map();
+            //   },
+            // );
           }
         }
       } catch (err) {
@@ -475,6 +480,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
               checked={isUrgent}
             />
           </Grid>
+          
           <Autocomplete
             multiple
             renderTags={() => null} //So it won't show tags inside
@@ -492,20 +498,19 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             onChange={(event, newValue) => {
               setServicesType(newValue);
             }}
-            getOptionLabel={option =>
-              Object.keys(option).length === 0 && option.constructor === Object
-                ? ''
-                : option.name
+            getOptionLabel={option => option.name
+              // Object.keys(option).length === 0 && option.constructor === Object
+              //   ? ''
+              //   : option.name
             }
+            disablePortal
             disableCloseOnSelect // Used for multiple selects
             noOptionsText={t('No Results')}
             loadingText={t('Loading')}
             renderOption={(option, { selected }) => (
               <React.Fragment>
-                <CheckBox
-                  defaultChecked
-                  color='primary'
-                />
+                { selected ?  <CheckBox /> : <CheckBoxOutlineBlank />}
+                {option.name}
               </React.Fragment>
             )}
             renderInput={params => (
