@@ -169,7 +169,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: encounter.serviceType ? encounter.serviceType.join(' ') : null
+                        label: encounter.serviceType ? encounter.serviceType : null
                     });
                     break;
                 case 'Test':
