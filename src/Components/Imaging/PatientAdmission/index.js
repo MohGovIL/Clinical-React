@@ -20,6 +20,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
 
     useEffect(() => {
         let appointmentIdFromURL = new URLSearchParams(location.search).get("index");
+        
         setAppointmentId(appointmentIdFromURL);
 
         let participantPatient = appointments[appointmentIdFromURL].patient;
@@ -28,7 +29,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
 
         (async () => {
             try {
-                const encounterData = await createNewEncounter(appointments[appointmentId], facility);
+                const encounterData = await createNewEncounter(appointments[appointmentIdFromURL], facility);
                 setNewEncounter(normalizeFhirEncounter(encounterData.data));
             } catch (err) {
                 console.log(err)

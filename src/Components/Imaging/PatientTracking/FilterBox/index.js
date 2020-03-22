@@ -104,7 +104,7 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
             <StyledCustomizedSelect>
                 <ListItemText>{t("Facility name")}</ListItemText>
                 <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
-                                  value={selectFilterOrganization} options={optionsOrganization}
+                                  defaultValue={selectFilterOrganization} options={optionsOrganization}
                                   onChange={organizationOnChangeHandler}
                                   langDirection={languageDirection}
                 />
@@ -112,7 +112,7 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
             <StyledCustomizedSelect>
                 <ListItemText>{t("Service type")}</ListItemText>
                 <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
-                                  value={selectFilterServiceType} options={optionsServiceType}
+                                  defaultValue={selectFilterServiceType} options={optionsServiceType}
                                   onChange={serviceTypeOnChangeHandler}
                                   langDirection={languageDirection}
                 />

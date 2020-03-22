@@ -22,13 +22,17 @@ import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePick
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import {updatePatientData} from "../../../../Utils/Services/FhirAPI";
-import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
+import {
+    StyledFormGroup,
+    StyledPatientDetails
+} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
 import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
 import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import {connect} from "react-redux";
 import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
 import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {DatePicker} from '@material-ui/pickers/';
+import {DevTool} from "react-hook-form-devtools";
 
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave}) => {
@@ -45,7 +49,10 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     const [healthManageOrgId, setHealthManageOrgId] = useState('');
 
     const {register, control, errors, handleSubmit, reset, setValue} = useForm({
-        mode: "onBlur"
+        mode: "onBlur",
+        defaultValues: {
+            birthDate: patientBirthDate
+        }
     });
 
     const onSubmit = (data, e) => {
@@ -84,7 +91,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
             setAvatarIcon(patientData.gender === "male" ? maleIcon : patientData.gender === "female" ? femaleIcon : "");
             //use format date of FHIR date - YYYY-MM-DD only
             setPatientAge(ageCalculator(patientData.birthDate));
-            setPatientIdentifier(patientData.identifier || {});
+            setPatientIdentifier({type: patientData.identifierType, value: patientData.identifier} || {});
             if (appointmentData !== undefined) {
                 //TO DO - in future use you need to change to encounterData
                 setPatientEncounter(appointmentData || 0);
