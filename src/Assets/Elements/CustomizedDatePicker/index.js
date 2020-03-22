@@ -2,7 +2,7 @@ import Moment from "moment";
 import React from 'react';
 import {connect} from 'react-redux';
 import MomentUtils from "@date-io/moment";
-import {StyledDatePicker, GlobalStyledDatePicker} from "./Styles";
+import {StyledDatePicker, StyledKeyboardDatePicker, GlobalStyledDatePicker} from "./Styles";
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {IconButton} from "@material-ui/core";
 import {ChevronLeft, ChevronRight} from "@material-ui/icons";
@@ -55,6 +55,7 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
     const ChevronFirst = languageDirection === 'rtl' ? ChevronRight : ChevronLeft;
     const ChevronSecond = languageDirection === 'rtl' ? ChevronLeft : ChevronRight;
 
+    let DatePickerType = StyledDatePicker;
     let showPrevArrow = true;
     let showNextArrow = true;
 
@@ -79,24 +80,35 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
         showNextArrow = typeof props.PickerProps.showNextArrow !== 'undefined' && props.PickerProps.showNextArrow ? true : false;
 
         PickerProps.id = typeof props.PickerProps.id !== 'undefined' && props.PickerProps.id ? props.PickerProps.id : PickerProps.id;
+        PickerProps.name = typeof props.PickerProps.name !== 'undefined' && props.PickerProps.name ? props.PickerProps.name : null;
+        PickerProps.value = typeof props.PickerProps.value !== 'undefined' && props.PickerProps.value ? props.PickerProps.value : filterDate;
+
         PickerProps.disableToolbar = typeof props.PickerProps.disableToolbar !== 'undefined' ? props.PickerProps.disableToolbar : PickerProps.disableToolbar;
         PickerProps.format = typeof props.PickerProps.format !== 'undefined' && props.PickerProps.format ? props.PickerProps.format : PickerProps.format;
         PickerProps.required = typeof props.PickerProps.required !== 'undefined' && props.PickerProps.required ? props.PickerProps.required : false;
         PickerProps.label = typeof props.PickerProps.label !== 'undefined' && props.PickerProps.label ? props.PickerProps.label : null;
-        PickerProps.value = typeof props.PickerProps.value !== 'undefined' && props.PickerProps.value ? props.PickerProps.value : filterDate;
-        PickerProps.name = typeof props.PickerProps.name !== 'undefined' && props.PickerProps.name ? props.PickerProps.name : null;
         PickerProps.color = typeof props.PickerProps.color !== 'undefined' && props.PickerProps.color ? props.PickerProps.color : null;
         PickerProps.onChange = typeof props.PickerProps.onChange !== 'undefined' && props.PickerProps.onChange ? props.PickerProps.onChange : PickerProps.onChange;
         //PickerProps.variant = typeof props.PickerProps.variant !== 'undefined' && props.PickerProps.variant ?  props.PickerProps.variant :  PickerProps.variant;
+        PickerProps.disabled = typeof props.PickerProps.disabled !== 'undefined' && props.PickerProps.disabled ? props.PickerProps.disabled : null;
+        PickerProps.InputProps.disableUnderline = props.PickerProps.InputProps.disableUnderline ? true : false;
 
-        console.log("-----------------");
-        console.log(PickerProps);
-        console.log("-----------------");
+        DatePickerType = props.PickerProps.keyBoardInput ? StyledKeyboardDatePicker : StyledDatePicker;
+        if (props.PickerProps.keyBoardInput) {
+            PickerProps.inputVariant = props.PickerProps.variant;
+        }
+
+        if (props.PickerProps.helperText !== "undefined") {
+            PickerProps.helperText = props.PickerProps.helperText;
+        }
     }
-
-    // console.log("=========CustomizedDatePicker===========");
+    // console.log("-----------------");
+    // console.log(PickerProps);
+    // console.log("-----------------");
+    // console.log("=========CustomizedDatePicker==========="); filled
     // console.log(props);
     // console.log("=========CustomizedDatePicker===========");
+
 
     return (
         <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
@@ -107,7 +119,7 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
                     <ChevronFirst htmlColor={props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}/>
                 </IconButton>
                 }
-                <StyledDatePicker
+                <DatePickerType
                     {...PickerProps}
                 />
                 {showNextArrow &&

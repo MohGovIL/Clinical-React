@@ -1,5 +1,5 @@
 import styled, {createGlobalStyle} from "styled-components";
-import {DatePicker} from '@material-ui/pickers/';
+import {DatePicker, KeyboardDatePicker} from '@material-ui/pickers';
 
 export const StyledDatePicker = styled(DatePicker)`
 & .MuiInputBase-root {
@@ -11,6 +11,12 @@ export const StyledDatePicker = styled(DatePicker)`
   padding: 0px;
   color: ${props => props.text_color ? props.text_color : null};
 }
+`;
+
+export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
+  .Mui-required {
+    color: #ff0000;
+  }
 `;
 
 export const GlobalStyledDatePicker = createGlobalStyle`

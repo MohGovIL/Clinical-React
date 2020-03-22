@@ -41,6 +41,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     const [avatarIcon, setAvatarIcon] = useState(null);
     const [patientIdentifier, setPatientIdentifier] = useState({});
     const [patientAge, setPatientAge] = useState(0);
+    const [patientBirthDate, setPatientBirthDate] = useState('');
 
     const [patientEncounter, setPatientEncounter] = useState(0);
     const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
@@ -53,9 +54,6 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     const onSubmit = (data, e) => {
         (async () => {
             try {
-                console.log("=========react hook form========");
-                console.log(data);
-                console.log("=========react hook form========");
                 data.birthDate = Moment(data.birthDate, formatDate).format("YYYY-MM-DD");
                 const answer = await updatePatientData(patientData.id, data);
                 const patient = {
@@ -119,6 +117,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
 
     useEffect(() => {
         register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
+        register({name: "birthDate"});
     }, []);
 
     if (patientKupatHolimList.length == 0) {
@@ -129,6 +128,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
         onEditButtonClick(0);
         reset(patientInitialValues);
         register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
+        register({name: "birthDate"});
     };
 
     const organizationData = patientKupatHolimList.find(obj => {
@@ -155,10 +155,20 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     };
 
     const handleChangeBirthDate = moment => {
-        let newBirthDate = moment.format(formatDate).toString();
-        setValue("birthDate", newBirthDate, true);
-        patientInitialValues.birthDate = newBirthDate;
+        try {
+            let newBirthDate = moment.format(formatDate).toString();
+            setValue("birthDate", newBirthDate, true);
+            setPatientBirthDate(newBirthDate);
+            patientInitialValues.birthDate = newBirthDate;
 
+            console.log("=========react hook form========");
+            console.log(patientInitialValues.birthDate);
+            console.log(formatDate);
+            console.log(newBirthDate);
+            console.log("=========react hook form========");
+        } catch (e) {
+            console.log("Error: " + e);
+        }
     };
 
     return (
@@ -224,6 +234,12 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                             }
                             <Controller
                                 name="birthDate"
+                                control={control}
+                                rules={{
+                                    validate: {
+                                        value: value => Moment(value, formatDate, true).isValid() === true
+                                    }
+                                }}
                                 as={
                                     <CustomizedDatePicker
                                         PickerProps={{
@@ -233,33 +249,23 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                             required: true,
                                             disableToolbar: false,
                                             label: t("birth day"),
-                                            value: patientInitialValues.birthDate,
+                                            value: Moment(patientInitialValues.birthDate, formatDate),
                                             placeholder: {formatDate},
                                             InputProps: {
                                                 disableUnderline: edit_mode === 1 ? false : true,
-                                                endAdornment: (errors.birthDate &&
-                                                    <InputAdornment position="end">
-                                                        <ErrorOutlineIcon htmlColor={"#ff0000"}/>
-                                                    </InputAdornment>
-                                                ),
                                             },
                                             color: edit_mode === 1 ? "primary" : 'primary',
+                                            disabled: edit_mode === 1 ? false : true,
+                                            variant: edit_mode === 1 ? "filled" : 'standard',
                                             onChange: handleChangeBirthDate,
                                             error: errors.birthDate ? true : false,
                                             helperText: errors.birthDate ? t("Date must be in a date format") : null,
+                                            keyBoardInput: true,
                                             showNextArrow: false,
                                             showPrevArrow: false,
                                         }}
                                     />
                                 }
-                                control={control}
-                                rules={{
-                                    validate: {
-                                        value: value => Moment(value, formatDate, true).isValid() === true
-                                    }
-                                }}
-
-                                {...TextFieldOpts}
                             />
                             <TextField
                                 id="standard-healthManageOrganization"
@@ -367,5 +373,3 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
 };
 
 export default connect(null, {setPatientDataAfterSave})(PatientDataBlock);
-//export default connect(mapStateToProps, {setFilterOrganizationAction, setFilterServiceTypeAction})(FilterBox);
-
