@@ -6,6 +6,7 @@ import {
   StyledDivider,
   StyledTextField,
   StyledAutoComplete,
+  StyledSwitch,
 } from './Style';
 import { useTranslation } from 'react-i18next';
 import Title from '../../../../Assets/Elements/Title';
@@ -20,9 +21,11 @@ import { ExpandMore, ExpandLess } from '@material-ui/icons';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
+import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import Grid from '@material-ui/core/Grid';
+import { Typography } from '@material-ui/core';
 
-const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
+const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   const { t } = useTranslation();
   const { register, control, handleSubmit } = useForm({
     submitFocusError: true,
@@ -37,25 +40,31 @@ const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
   const [streets, setStreets] = useState([]);
   const [streetsOpen, setStreetsOpen] = useState(false);
 
+  const [servicesType, setServicesType] = useState([]);
+  const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
+
   const loadingCities = citiesOpen && cities.length === 0;
   const loadingStreets = streetsOpen && streets.length === 0;
+  const loadingServicesType = setServicesTypeOpen && servicesType.length === 0;
 
-  //Is escorted
   const [isEscorted, setIsEscorted] = useState(false);
-  const switchOnChangeHandle = () => {
+  const isEscortedSwitchOnChangeHandle = () => {
     setIsEscorted(prevState => !prevState);
+  };
+
+  const [isUrgent, setIsUrgent] = useState(false);
+  const isUrgentSwitchOnChangeHandler = () => {
+    setIsUrgent(prevState => !prevState);
   };
 
   //Tabs
   const [tabValue, setTabValue] = useState(0);
-  const tabsChangeHandler = (event, newValue) => {
-    setTabValue(newValue);
-  };
 
+  //Sending the form
   const onSubmit = data => {
     console.log(data);
   };
-
+  // Default values
   useEffect(() => {
     if (patientData.city) {
       const defaultAddressCityObj = {
@@ -64,8 +73,33 @@ const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
       };
       setAddressCity(defaultAddressCityObj);
     }
-  }, []);
+    if (encounterData.priority > 1) {
+      setIsUrgent(true)
+    }
+  }, [encounterData, patientData]);
+  //Loading services type
+  useEffect(() => {
+    let active = true;
 
+    if (!loadingServicesType) {
+      return undefined;
+    }
+
+    (async () => {
+      try {
+        // const serviceTypes =
+        if (active) {
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loadingServicesType]);
+  //Loading cities
   useEffect(() => {
     let active = true;
 
@@ -96,7 +130,7 @@ const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
       active = false;
     };
   }, [loadingCities]);
-
+  //Loading streets
   useEffect(() => {
     let active = true;
 
@@ -119,10 +153,7 @@ const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
               }),
             );
           } else {
-            const emptyResultsObj = {
-              name: t('No Results'),
-              code: 'no_result',
-            };
+            const emptyResultsObj = {};
             const emptyResults = [emptyResultsObj];
             setStreets(emptyResults);
           }
@@ -136,40 +167,49 @@ const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
       active = false;
     };
   }, [loadingStreets]);
-
+  //Reset options for auto compelete
   useEffect(() => {
     if (!citiesOpen) {
       setCities([]);
     }
-
     if (!streetsOpen) {
       setStreets([]);
     }
-  }, [citiesOpen, streetsOpen]);
+    if (!servicesTypeOpen) {
+      setServicesType([]);
+    }
+  }, [citiesOpen, streetsOpen, servicesTypeOpen]);
 
   return (
     <StyledPatientDetails edit={edit_mode}>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
-        <Title fontSize={'28px'} color={'#002398'} label={'Patient Details'} />
-        <StyledFormGroup title={t('Accompanying patient')}>
-          <Title
-            fontSize={'18px'}
-            color={'#000b40'}
-            label={'Accompanying patient'}
-            bold
-          />
-          <StyledDivider variant={'fullWidth'} />
+        <Title
+          marginTop={'55px'}
+          fontSize={'28px'}
+          color={'#002398'}
+          label={'Patient Details'}
+        />
+        <StyledFormGroup>
+          <Title fontSize={'18px'} variant={'fullWidth'} />
           <Grid
             container
             direction={'row'}
             justify={'flex-start'}
             alignItems={'baseline'}>
             <span>{t('Patient arrived with an escort?')}</span>
-            <Switch
+            {/* <StyledSwitch
               size={'medium'}
               color={'primary'}
               onChange={switchOnChangeHandle}
               value={isEscorted}
+              beforeContent={t('yes')}
+              afterContent={t('no')}
+            /> */}
+            <Switch
+              size={'medium'}
+              color={'primary'}
+              onChange={isEscortedSwitchOnChangeHandle}
+              checked={isEscorted}
             />
           </Grid>
         </StyledFormGroup>
@@ -206,7 +246,9 @@ const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
           <StyledDivider variant={'fullWidth'} />
           <Tabs
             value={tabValue}
-            onChange={tabsChangeHandler}
+            onChange={(event, newValue) => {
+              setTabValue(newValue);
+            }}
             indicatorColor='primary'
             textColor='primary'
             variant='standard'
@@ -261,7 +303,6 @@ const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
               />
 
               <Autocomplete
-                defaultValue={''}
                 options={streets}
                 loading={loadingStreets}
                 open={streetsOpen}
@@ -326,9 +367,9 @@ const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
                 onClose={() => {
                   setCitiesOpen(false);
                 }}
+                value={addressCity}
                 loading={loadingCities}
                 options={cities}
-                // getOptionSelected={(option, value) => option.name === value.name}
                 getOptionLabel={option => option.name}
                 noOptionsText={t('No Results')}
                 loadingText={t('Loading')}
@@ -382,6 +423,78 @@ const PatientDetailsBlock = ({ languageDirection, patientData, edit_mode }) => {
             {t('click here')}
           </a>
         </span>
+
+        <Title
+          marginTop={'80px'}
+          fontSize={'28px'}
+          color={'#002398'}
+          label={'Patient Details'}
+        />
+        {/* REQUESTED SERVICE */}
+        <StyledFormGroup>
+          <Title
+            fontSize={'18px'}
+            color={'#000b40'}
+            label={'Requested service'}
+            bold
+          />
+          <StyledDivider variant={'fullWidth'} />
+          <Grid
+            container
+            direction={'row'}
+            justify={'flex-start'}
+            alignItems={'baseline'}>
+            <span>{t('Is urgent?')}</span>
+            <Switch
+              size={'medium'}
+              color={'primary'}
+              onChange={isUrgentSwitchOnChangeHandler}
+              checked={isUrgent}
+            />
+          </Grid>
+          <Autocomplete
+            id='addressCity'
+            open={citiesOpen}
+            onOpen={() => {
+              setCitiesOpen(true);
+            }}
+            onClose={() => {
+              setCitiesOpen(false);
+            }}
+            loading={loadingCities}
+            options={cities}
+            value={addressCity}
+            onChange={(event, newValue) => {
+              setAddressCity(newValue);
+            }}
+            getOptionLabel={option =>
+              Object.keys(option).length === 0 && option.constructor === Object
+                ? ''
+                : option.name
+            }
+            noOptionsText={t('No Results')}
+            loadingText={t('Loading')}
+            renderInput={params => (
+              <StyledTextField
+                {...params}
+                label={t('City')}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      <InputAdornment position={'end'}>
+                        {loadingServicesType ? (
+                          <CircularProgress color={'inherit'} size={20} />
+                        ) : null}
+                        {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
+                      </InputAdornment>
+                    </React.Fragment>
+                  ),
+                }}
+              />
+            )}
+          />
+        </StyledFormGroup>
       </StyledForm>
       {/* <DevTool control={control} /> */}
     </StyledPatientDetails>
