@@ -11,7 +11,8 @@ const normalizeFhirPatient = patient => {
     let email = null;
     let firstName = null;
     let lastName = null;
-    let identifier = null;
+    let identifier = '';
+    let identifierType = '';
     let city = null;
     let postalCode = null;
     let country = null;
@@ -26,16 +27,10 @@ const normalizeFhirPatient = patient => {
     let ageGenderType = '';
 
 
-    //Temporary fix for checking
-    if (patient.identifier) {
-        // let identifier = patient.identifier ? patient.identifier[0].value : '';
 
-        //bugfix write correct type id
-        //identifier = {value: (patient.identifier ? patient.identifier[0].value : ''), type: "ID"};
-        let id = patient.identifier ? patient.identifier[0].value : '';
-        let type = patient.identifier[0].type.coding[0].code;
-        identifier = {value : id , type : type };
-
+    if (patient.identifier.length) {
+        identifier = patient.identifier[0].value;
+        identifierType = patient.identifier[0].type.coding.length && patient.identifier[0].type.coding[0].code;
     }
 
     //Demo data for health managing organization
@@ -80,6 +75,7 @@ const normalizeFhirPatient = patient => {
         postalCode,
         country,
         identifier,
+        identifierType,
         firstName,
         lastName,
         middleName,

@@ -110,6 +110,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
+                        idType: patient.identifierType,
                         priority: encounter.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,

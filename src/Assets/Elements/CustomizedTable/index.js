@@ -80,6 +80,7 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                                         align={rowData.align}
                                                         gender={rowData.gender}
                                                         id={rowData.id}
+                                                        idType={rowData.idType}
                                                         firstName={rowData.firstName}
                                                         lastName={rowData.lastName}
                                                         key={tableCellItemIndex}/>;
