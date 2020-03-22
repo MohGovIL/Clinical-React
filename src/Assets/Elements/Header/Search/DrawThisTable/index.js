@@ -52,7 +52,7 @@ const DrawThisTable = ({result, searchParam}) => {
             let currentDate = moment().utc().format("YYYY-MM-DD");
             setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
             setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
-            setCurEncounter(await getCurrentEncounterPerPatient("2020-03-01", identifier));
+            setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
           /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
 
 
