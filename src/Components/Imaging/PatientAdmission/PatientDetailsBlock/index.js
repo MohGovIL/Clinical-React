@@ -34,6 +34,8 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
 
   const [addressCity, setAddressCity] = useState({});
 
+  const [selecetedServicesType, setSelecetedServicesType] = useState([]);
+
   const [cities, setCities] = useState([]);
   const [citiesOpen, setCitiesOpen] = useState(false);
 
@@ -45,7 +47,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
 
   const loadingCities = citiesOpen && cities.length === 0;
   const loadingStreets = streetsOpen && streets.length === 0;
-  const loadingServicesType = setServicesTypeOpen && servicesType.length === 0;
+  const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
 
   const [isEscorted, setIsEscorted] = useState(false);
   const isEscortedSwitchOnChangeHandle = () => {
@@ -73,8 +75,10 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
       };
       setAddressCity(defaultAddressCityObj);
     }
-    if (encounterData.priority > 1) {
-      setIsUrgent(true)
+    if (encounterData) {
+      if (encounterData.priority > 1) {
+        setIsUrgent(true);
+      }
     }
   }, [encounterData, patientData]);
   //Loading services type
@@ -87,9 +91,22 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
 
     (async () => {
       try {
-        // const serviceTypes =
-        if (active) {
+        if (encounterData.servicesType) {
+          const reasonsCodeResponse = await getValueSet(
+            `${encounterData.servicesTypeCode}`,
+          );
+          if (active) {
+          
+          }
+        } else {
+          const serviceTypeResponse = await getValueSet('service_types');
+          if (active) {
+            setServicesType(Object.keys(serviceTypeResponse.data.expansion.contains).map(serviceType => {
+              
+            }))
+          }
         }
+      
       } catch (err) {
         console.log(err);
       }
@@ -453,19 +470,20 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             />
           </Grid>
           <Autocomplete
-            id='addressCity'
-            open={citiesOpen}
+            multiple
+            id='servicesType'
+            open={servicesTypeOpen}
             onOpen={() => {
-              setCitiesOpen(true);
+              setServicesTypeOpen(true);
             }}
             onClose={() => {
-              setCitiesOpen(false);
+              setServicesTypeOpen(false);
             }}
-            loading={loadingCities}
-            options={cities}
-            value={addressCity}
+            loading={loadingServicesType}
+            options={servicesType}
+            value={selecetedServicesType}
             onChange={(event, newValue) => {
-              setAddressCity(newValue);
+              setServicesType(newValue);
             }}
             getOptionLabel={option =>
               Object.keys(option).length === 0 && option.constructor === Object
@@ -477,7 +495,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             renderInput={params => (
               <StyledTextField
                 {...params}
-                label={t('City')}
+                label={t('Select test')}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (

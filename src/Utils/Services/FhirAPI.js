@@ -1,7 +1,6 @@
 import {tokenInstanceGenerator} from './AxiosWithTokenInstance';
 import {ApiTokens} from './ApiTokens';
 import moment from 'moment';
-import normalizeFhirPatient from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "./SearchLogic";
 
 /**
