@@ -12,7 +12,7 @@ import normalizeFhirEncounter from '../../../Utils/Helpers/FhirEntities/normaliz
 
 const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history, facility}) => {
     const {t} = useTranslation();
-    
+
     const [patientData, setPatientData] = useState({});
     const [appointmentId, setAppointmentId] = useState('');
     const [newEncounter, setNewEncounter] = useState({});
@@ -35,7 +35,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                 console.log(err)
             }
         })()
-    }, [location]);
+    }, [location, patients]);
 
     const allBreadcrumbs = [
         {
@@ -67,6 +67,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                 <StyledBackdrop open={true} edit_mode={edit}>
                     {Object.values(patientData).length && <PatientDataBlock appointmentId={appointmentId} patientData={patientData}
                                       onEditButtonClick={handleEditButtonClick} edit_mode={edit}
+                                      languageDirection={languageDirection}
                                       formatDate={formatDate}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>

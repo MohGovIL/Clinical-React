@@ -7,7 +7,8 @@ import {
     SET_ENCOUNTER_WITH_PATIENTS_SUCCESS,
     UPDATE_APPOINTMENT,
     UPDATE_APPOINTMENT_FAILED,
-    UPDATE_APPOINTMENT_SUCCESS
+    UPDATE_APPOINTMENT_SUCCESS,
+    SET_PATIENT_DATA_SUCCESS
 } from "./fhirActionTypes";
 
 export const updateAppointmentAction = appointment => {
@@ -104,3 +105,10 @@ export const setAppointmentsWithPatientsAction = (patients, appointments) => {
         }
     }
 };
+
+export const setPatientDataAfterSave = (patient) => {
+    return {
+        type: SET_PATIENT_DATA_SUCCESS,
+        patient
+    }
+}
