@@ -10,17 +10,22 @@ import {StyledPatientRow, StyledDummyBlock, StyledBackdrop} from "./Style";
 import {createNewEncounter} from '../../../Utils/Services/FhirAPI';
 import normalizeFhirEncounter from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import {devicesValue} from "../../../Assets/Themes/BreakPoints";
+
 const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history, facility}) => {
     const {t} = useTranslation();
-    
+
     const [patientData, setPatientData] = useState({});
     const [appointmentId, setAppointmentId] = useState('');
     const [newEncounter, setNewEncounter] = useState({});
     const [edit, setEdit] = useState(0);
 
+    const isTabletMode = useMediaQuery(`(max-width: ${devicesValue.tabletPortrait}px)`);
+
     useEffect(() => {
         let appointmentIdFromURL = new URLSearchParams(location.search).get("index");
-        
+
         setAppointmentId(appointmentIdFromURL);
 
         let participantPatient = appointments[appointmentIdFromURL].patient;
@@ -58,7 +63,9 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
     const handleEditButtonClick = (isEdit) => {
         setEdit(isEdit);
     };
-
+console.log("=========isTabletMode==========");
+console.log(isTabletMode);
+console.log("=========isTabletMode==========");
     return (
         <React.Fragment>
             <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection}
