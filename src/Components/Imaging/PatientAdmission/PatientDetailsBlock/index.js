@@ -41,98 +41,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   ///////////////////////////////////
   const [value, setValue] = React.useState([]);
   const [pendingValue, setPendingValue] = React.useState([]);
-  const labels = [
-    {
-      name: 'good first issue',
-      color: '#7057ff',
-      description: 'Good for newcomers',
-    },
-    {
-      name: 'help wanted',
-      color: '#008672',
-      description: 'Extra attention is needed',
-    },
-    {
-      name: 'priority: critical',
-      color: '#b60205',
-      description: '',
-    },
-    {
-      name: 'priority: high',
-      color: '#d93f0b',
-      description: '',
-    },
-    {
-      name: 'priority: low',
-      color: '#0e8a16',
-      description: '',
-    },
-    {
-      name: 'priority: medium',
-      color: '#fbca04',
-      description: '',
-    },
-    {
-      name: "status: can't reproduce",
-      color: '#fec1c1',
-      description: '',
-    },
-    {
-      name: 'status: confirmed',
-      color: '#215cea',
-      description: '',
-    },
-    {
-      name: 'status: duplicate',
-      color: '#cfd3d7',
-      description: 'This issue or pull request already exists',
-    },
-    {
-      name: 'status: needs information',
-      color: '#fef2c0',
-      description: '',
-    },
-    {
-      name: 'status: wont do/fix',
-      color: '#eeeeee',
-      description: 'This will not be worked on',
-    },
-    {
-      name: 'type: bug',
-      color: '#d73a4a',
-      description: "Something isn't working",
-    },
-    {
-      name: 'type: discussion',
-      color: '#d4c5f9',
-      description: '',
-    },
-    {
-      name: 'type: documentation',
-      color: '#006b75',
-      description: '',
-    },
-    {
-      name: 'type: enhancement',
-      color: '#84b6eb',
-      description: '',
-    },
-    {
-      name: 'type: epic',
-      color: '#3e4b9e',
-      description: 'A theme of work that contain sub-tasks',
-    },
-    {
-      name: 'type: feature request',
-      color: '#fbca04',
-      description: 'New feature or request',
-    },
-    {
-      name: 'type: question',
-      color: '#d876e3',
-      description: 'Further information is requested',
-    },
-  ];
+  
   //////////////////////////////////
 
   const [addressCity, setAddressCity] = useState({});
@@ -219,7 +128,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [loadingServicesType]);
   // loadingServiceType add it to useEffect dep
 
   //Loading cities
@@ -610,50 +519,6 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
           {value.map(option => {
             return <span>{option.name}</span>
           })}
-                <Autocomplete
-            multiple
-            open={servicesTypeOpen}
-            onOpen={() => setServicesTypeOpen(true)}
-            onClose={() => {
-              setServicesTypeOpen(false);
-              setValue(pendingValue);
-            }}
-            value={pendingValue}
-            onChange={(event, newValue) => {
-              setPendingValue(newValue);
-            }}
-            disableCloseOnSelect
-            renderTags={() => null}
-            renderOption={(option, state) => (
-              <React.Fragment>
-                {
-                  <Checkbox
-                    icon={<CheckBoxOutlineBlankOutlinedOutlined />}
-                    checkedIcon={<CheckBox />}
-                    checked={state.selected}
-                  />
-                }
-                {option.name}
-              </React.Fragment>
-            )}
-            options={labels}
-            getOptionLabel={option => option.name}
-            renderInput={params => (
-              <TextField {...params} label={'Select test'} />
-            )}
-          />
-          {value.map(label => (
-          <div
-            key={label.name}
-            // className={classes.tag}
-            // style={{
-            //   backgroundColor: label.color,
-            //   color: theme.palette.getContrastText(label.color),
-            // }}
-          >
-            {label.name}
-          </div>
-        ))}
           {/* <Autocomplete
             multiple
             renderTags={() => null} //So it won't show tags inside
@@ -718,3 +583,96 @@ const mapStateToProps = state => {
   };
 };
 export default connect(mapStateToProps, null)(PatientDetailsBlock);
+
+const labels = [
+  {
+    name: 'good first issue',
+    color: '#7057ff',
+    description: 'Good for newcomers',
+  },
+  {
+    name: 'help wanted',
+    color: '#008672',
+    description: 'Extra attention is needed',
+  },
+  {
+    name: 'priority: critical',
+    color: '#b60205',
+    description: '',
+  },
+  {
+    name: 'priority: high',
+    color: '#d93f0b',
+    description: '',
+  },
+  {
+    name: 'priority: low',
+    color: '#0e8a16',
+    description: '',
+  },
+  {
+    name: 'priority: medium',
+    color: '#fbca04',
+    description: '',
+  },
+  {
+    name: "status: can't reproduce",
+    color: '#fec1c1',
+    description: '',
+  },
+  {
+    name: 'status: confirmed',
+    color: '#215cea',
+    description: '',
+  },
+  {
+    name: 'status: duplicate',
+    color: '#cfd3d7',
+    description: 'This issue or pull request already exists',
+  },
+  {
+    name: 'status: needs information',
+    color: '#fef2c0',
+    description: '',
+  },
+  {
+    name: 'status: wont do/fix',
+    color: '#eeeeee',
+    description: 'This will not be worked on',
+  },
+  {
+    name: 'type: bug',
+    color: '#d73a4a',
+    description: "Something isn't working",
+  },
+  {
+    name: 'type: discussion',
+    color: '#d4c5f9',
+    description: '',
+  },
+  {
+    name: 'type: documentation',
+    color: '#006b75',
+    description: '',
+  },
+  {
+    name: 'type: enhancement',
+    color: '#84b6eb',
+    description: '',
+  },
+  {
+    name: 'type: epic',
+    color: '#3e4b9e',
+    description: 'A theme of work that contain sub-tasks',
+  },
+  {
+    name: 'type: feature request',
+    color: '#fbca04',
+    description: 'New feature or request',
+  },
+  {
+    name: 'type: question',
+    color: '#d876e3',
+    description: 'Further information is requested',
+  },
+];
