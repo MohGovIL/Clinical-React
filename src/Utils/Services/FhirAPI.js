@@ -35,7 +35,22 @@ export const updateAppointmentStatus = (appointmentId, value) => {
     });
 };
 
+const codingArr = arr => {
+    return arr.map(arrEl => ({'code': arrEl}))
+}
+
 export const createNewEncounter = (appointment, facility) => {
+    let coding = codingArr(appointment.serviceTypeCode);
+    const serviceType = {
+        coding
+    };
+    // Todo fix reasonCode in here can't do it since I don't have the encounter normalizer fix from develop.
+    // coding = codingArr(appointment.examinationCode);
+    // const reasonCode = appointment.examinationCode
+    // appointment.examination.forEach(element => {
+        
+    // });
+    
     return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
         'priority': {
             'coding': [
@@ -45,13 +60,7 @@ export const createNewEncounter = (appointment, facility) => {
             ],
         },
         'status': 'planned',
-        'serviceType': {
-            'coding': [
-                {
-                    'code': appointment.serviceTypeCode,
-                },
-            ],
-        },
+        serviceType,
         'reasonCode': {
             'coding': [
                 {
