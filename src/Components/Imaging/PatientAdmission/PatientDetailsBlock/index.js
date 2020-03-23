@@ -17,19 +17,15 @@ import { useForm, Controller } from 'react-hook-form';
 import { connect } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import {
-  ExpandMore,
-  ExpandLess,
-  CheckBox,
-} from '@material-ui/icons';
-import CheckBoxOutlineBlankOutlinedOutlined from '@material-ui/icons/CheckBoxOutlineBlankOutlined'
+import { ExpandMore, ExpandLess, CheckBox } from '@material-ui/icons';
+import CheckBoxOutlineBlankOutlinedOutlined from '@material-ui/icons/CheckBoxOutlineBlankOutlined';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import Grid from '@material-ui/core/Grid';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import { Checkbox, Button, AppBar, TextField } from '@material-ui/core';
+import { Checkbox, TextField } from '@material-ui/core';
 
 const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   const { t } = useTranslation();
@@ -41,7 +37,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   ///////////////////////////////////
   const [value, setValue] = React.useState([]);
   const [pendingValue, setPendingValue] = React.useState([]);
-  
+
   //////////////////////////////////
 
   const [addressCity, setAddressCity] = useState({});
@@ -103,22 +99,23 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
 
     (async () => {
       try {
-        if (encounterData.servicesType) {
-          const reasonsCodeResponse = await getValueSet(
-            `${encounterData.servicesTypeCode}`,
-          );
-          if (active) {
-            console.log('I have a service type from appointment YES!');
+        const serviceTypeResponse = await getValueSet('service_types');
+        if (active) {
+          const servicesTypeObj = {};
+          // for (const serviceTypeIndex in serviceTypeResponse.data.expansion.contains) {
+          //     const normalizedServiceType = normalizeFhirValueSet(serviceTypeResponse.data.expansion.contains[serviceTypeIndex]);
+          //     Promise.all()
+            
+          // }
+          const allReasonsCode = await Promise.all(serviceTypeResponse.data.expansion.contains.map(serviceType => {
+            const normalizedServiceType = normalizeFhirValueSet(serviceType);
+            servicesTypeObj[normalizedServiceType.code] = normalizedServiceType;
+            return getValueSet(`reason_codes_${normalizedServiceType.code}`)
+          }));
+          for (let reasonsIndex = 0; reasonsIndex < allReasonsCode.length; reasonsIndex ++) {
+            servicesTypeObj[allReasonsCode[reasonsIndex].data.id.split('_')[2]]['reasonCodes'] = allReasonsCode[reasonsIndex].data.expansion.contains.map(reasonCode => normalizeFhirValueSet(reasonCode))
           }
-        } else {
-          const serviceTypeResponse = await getValueSet('service_types');
-          if (active) {
-            setServicesType(
-              serviceTypeResponse.data.expansion.contains.map(serviceTypeObj =>
-                normalizeFhirValueSet(serviceTypeObj),
-              ),
-            );
-          }
+          setServicesType(servicesTypeObj);
         }
       } catch (err) {
         console.log(err);
@@ -486,6 +483,8 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
           </Grid>
           <Autocomplete
             multiple
+            noOptionsText={t('No Results')}
+            loadingText={t('Loading')}
             open={servicesTypeOpen}
             onOpen={() => setServicesTypeOpen(true)}
             onClose={() => {
@@ -513,11 +512,27 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             options={labels}
             getOptionLabel={option => option.name}
             renderInput={params => (
-              <TextField {...params} label={t('Select test')} />
+              <StyledTextField
+                {...params}
+                label={t('Select test')}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      <InputAdornment position={'end'}>
+                        {loadingServicesType ? (
+                          <CircularProgress color={'inherit'} size={20} />
+                        ) : null}
+                        {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
+                      </InputAdornment>
+                    </React.Fragment>
+                  ),
+                }}
+              />
             )}
           />
           {value.map(option => {
-            return <span>{option.name}</span>
+            return <span>{option.name}</span>;
           })}
           {/* <Autocomplete
             multiple
