@@ -31,8 +31,7 @@ import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normali
 import {connect} from "react-redux";
 import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
 import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
-import {DatePicker} from '@material-ui/pickers/';
-import {DevTool} from "react-hook-form-devtools";
+import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
 
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave}) => {
@@ -137,7 +136,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
         lastName: patientData.lastName || '',
         healthManageOrganization: patientData.managingOrganization || 0,
         healthManageOrganizationValue: edit_mode === 1 ? organizationData.code : organizationData.name,
-        mobilePhone: patientData.mobileCellPhone || patientData.homePhone || '',
+        mobilePhone: patientData.mobileCellPhone || '',
         patientEmail: patientData.email || '',
     };
 
@@ -196,8 +195,8 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                     </Typography>
 
                     <StyledAgeIdBlock>
-                        <span>{patientIdentifier.type == "idtype_1" ? t("Id. Number") : t("Passport")} {patientIdentifier.value}</span>
-                        <span>{patientData.gender == "male" ? t("Son") : t("Daughter")} {patientAge}</span>
+                        <span>{t(patientIdentifier.type)} {patientIdentifier.value}</span>
+                        <span>{t(patientData.ageGenderType)} {patientAge}</span>
                     </StyledAgeIdBlock>
 
                 </StyledAvatarIdBlock>
@@ -319,7 +318,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 defaultValue={patientInitialValues.mobilePhone}
                                 label={t("Cell phone")}
                                 rules={{
-                                    pattern: /^\(?([0-9]{2,3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
+                                    pattern: getCellPhoneRegexPattern()
                                 }}
                                 error={errors.mobilePhone ? true : false}
                                 helperText={errors.mobilePhone ? t("The number entered is incorrect") : null}
@@ -352,7 +351,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                     ),
                                 }}
                                 rules={{
-                                    pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
+                                    pattern: getEmailRegexPattern()
                                 }}
                                 {...TextFieldOpts}
                             />
