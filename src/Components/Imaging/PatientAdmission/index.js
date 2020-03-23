@@ -49,7 +49,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
             url: "#",
         },
         {
-            text: patientData.firstName + " " + patientData.lastName + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
+            text: patientData.firstName + " " + patientData.lastName + " " + (!isTabletMode ? t("Encounter date") + ": " : "") + Moment(Moment.now()).format(formatDate),
             separator: false,
             url: "#"
         }
@@ -63,9 +63,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
     const handleEditButtonClick = (isEdit) => {
         setEdit(isEdit);
     };
-console.log("=========isTabletMode==========");
-console.log(isTabletMode);
-console.log("=========isTabletMode==========");
+
     return (
         <React.Fragment>
             <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection}
