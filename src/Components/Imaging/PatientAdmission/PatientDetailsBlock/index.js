@@ -37,6 +37,7 @@ import {
   ListItemIcon,
   ListItemText,
   Chip,
+  AppBar,
 } from '@material-ui/core';
 
 const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
@@ -557,10 +558,8 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
                 </Grid>
               </Grid>
             )}
+            ListboxComponent={ListboxComponent}
             options={servicesType}
-            // getOptionLabel={option =>
-            //   `${option.reasonCode.code} ${option.serviceType.name} ${option.reasonCode.name}`
-            // not needed for now}
             renderInput={params => (
               <StyledTextField
                 {...params}
@@ -605,3 +604,13 @@ const mapStateToProps = state => {
   };
 };
 export default connect(mapStateToProps, null)(PatientDetailsBlock);
+
+
+const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) {
+
+  return (
+    <div ref={ref}>
+      
+    </div>
+  )
+})
