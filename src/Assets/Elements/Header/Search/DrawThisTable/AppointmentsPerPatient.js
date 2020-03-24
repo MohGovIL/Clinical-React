@@ -29,7 +29,9 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
     const {t} = useTranslation();
 
     const prevEncounterEntry = prevEncounter && prevEncounter.data && prevEncounter.data.total > 0 ? prevEncounter.data.entry[1].resource : null;
-    // const nextAppointmentEntry = prevEncounter && prevEncounter.data && prevEncounter.data.total >0  ? prevEncounter.data.entry[1] : null;
+    // eslint-disable-next-line no-redeclare
+    const nextAppointmentElem = nextAppointment && nextAppointment.data && nextAppointment.data.total >0  ? nextAppointment.data.entry[1].resource : null;
+    const nextAppointmentEntry = nextAppointmentElem ? normalizeFhirAppointment(nextAppointmentElem) : null;
     const normalizedPrevEncounter = prevEncounterEntry ? normalizeFhirEncounter(prevEncounterEntry) : null;
     let normalizedCurEncounters = [];
 
@@ -46,7 +48,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
         });
     }
 
-    debugger;
+
     // const normalizedPrevAppointment = normalizeFhirAppointment(prevEncounterEntry);
     /* const [healthCareServiceTypes, setHealthCareServiceServiceType] = React.useState(null);
      if (normalizedPrevEncounter && !healthCareServiceTypes) {
@@ -61,7 +63,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
                         normalizedCurEncounters.map((encounter, encounterID) => {
                             return (
 
-                                <ListItem key={encounterID}>
+                                <ListItem key={encounterID+"_normalizedCurEncounters"}>
 
                                             <StyledLabelAppointment>
                                                 <TitleValueComponent name={t("Current encounter")}
@@ -80,7 +82,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
 
                                             <StyledLinkWithIconComponent>
                                                 <LinkComponentWithIcon linkHeader={t("navigate to encounter sheet")}
-                                                                       linkUrl={"google.com"}/>
+                                                                       linkUrl={"#"}/>
                                             </StyledLinkWithIconComponent>
 
                                 </ListItem>
@@ -88,19 +90,57 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
 
                         })
                         :
-                        <ListItem key={"_1"}>
+                        /*<ListItem key={"normalizedCurEncounters_1"}>
 
                                 <StyledLabelAppointment>
                                     <TitleValueComponent name={t("Current encounter")} value={t("Non existence")}
                                                          seperator={true}/>
                                 </StyledLabelAppointment>
 
-                        </ListItem>
-
+                        </ListItem>*/
+                        null
                     }
+                    {
 
+                        nextAppointmentEntry ?
+                            <ListItem key={nextAppointmentEntry.id+"_nextAppointmentEntry"} >
+
+
+                                <StyledLabelAppointment>
+                                    <TitleValueComponent name={t("Next appointment")}
+                                                         //Check if it is today if so show hour also ...
+                                                         //Else Show the future date of the appointment
+                                                         value={moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY")}
+                                                         seperator={true}/>
+                                </StyledLabelAppointment>
+
+                                <StyledLabelAppointment>
+                                    <TitleValueComponent name={t(nextAppointmentEntry.serviceType)}/>
+                                </StyledLabelAppointment>
+
+                                <StyledLabelStatusAppointment>
+                                    <TitleValueComponent
+                                        name={patientTrackingStatuses && nextAppointmentEntry ? t(patientTrackingStatuses[nextAppointmentEntry.status]) : ''}/*t(normalizedPrevEncounter.status.charAt(0).toUpperCase() + normalizedPrevEncounter.status.slice(1))}*//>
+                                </StyledLabelStatusAppointment>
+
+                                <StyledLinkWithIconComponent>
+                                    <LinkComponentWithIcon linkHeader={t("Navigate to appointment details")}
+                                                           linkUrl={"#"}/>
+                                </StyledLinkWithIconComponent>
+
+                            </ListItem>
+                        :
+                        <ListItem key={"nextAppointmentEntry_2"}>
+
+                           <StyledLabelAppointment>
+                               <TitleValueComponent name={t("Next encounter")} value={t("Non existence")}
+                                                    seperator={true}/>
+                           </StyledLabelAppointment>
+
+                        </ListItem>
+                    }
                     {normalizedPrevEncounter !== null ?
-                        <ListItem key={normalizedPrevEncounter.id} >
+                        <ListItem key={normalizedPrevEncounter.id+"_normalizedPrevEncounter"} >
 
 
                                     <StyledLabelAppointment>
@@ -120,12 +160,12 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
 
                                     <StyledLinkWithIconComponent>
                                         <LinkComponentWithIcon linkHeader={t("navigate to encounter sheet")}
-                                                               linkUrl={"google.com"}/>
+                                                               linkUrl={"#"}/>
                                     </StyledLinkWithIconComponent>
 
                         </ListItem>
                         :
-                        <ListItem key={"_2"}>
+                        <ListItem key={"normalizedPrevEncounter_3"}>
 
                                 <StyledLabelAppointment>
                                     <TitleValueComponent name={t("Previous encounter")} value={t("Non existence")}

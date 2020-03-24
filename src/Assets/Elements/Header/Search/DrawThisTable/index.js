@@ -37,6 +37,7 @@ const DrawThisTable = ({result, searchParam}) => {
     const [prevEncounter, setPrevEncounter] = React.useState('');
     const [curEncounter, setCurEncounter] = React.useState('');
     const [encounterStatuses, setEncounterStatuses] = React.useState('');
+    const [patientTrackingStatuses, setPatientTrackingStatuses] = React.useState('');
     let curTotal = 0;
     //let patientTrackingStatuses =  null;
 
@@ -45,6 +46,7 @@ const DrawThisTable = ({result, searchParam}) => {
 
         setExpanded(newExpanded ? panel : false);
         setEncounterStatuses(await requestValueSet("encounter_statuses"));
+        setPatientTrackingStatuses(await requestValueSet("appointment_statuses"));
 
 
         if (newExpanded) {
@@ -109,6 +111,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                                         prevEncounter={prevEncounter}
                                                         curEncounter={curEncounter}
                                                         encounterStatuses = {encounterStatuses}
+                                                        patientTrackingStatuses = {patientTrackingStatuses}
                                 />
                                 <StyledBottomLinks>
                                     <StyledHrefButton variant="outlined" color="primary" href="#contained-buttons"

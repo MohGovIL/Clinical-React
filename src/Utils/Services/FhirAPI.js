@@ -131,9 +131,9 @@ export const getNextPrevAppointmentPerPatient = (date, patient,prev) =>{
     //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
     try {
         if (prev) {
-            return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=le${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status=not:cancelled`);
+            return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=le${date}&_count=1&_sort=date&patient=${patient}&patient=1&status:not=arrived&status:not=booked&status:not=cancelled`);
         } else {
-            return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status=not:cancelled`);
+            return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_count=1&_sort=date&patient=${patient}&patient=1&status:not=arrived&status:not=booked&status:not=cancelled`);
         }
     }
     catch(err){

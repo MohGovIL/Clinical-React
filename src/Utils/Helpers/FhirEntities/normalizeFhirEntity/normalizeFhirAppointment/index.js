@@ -7,18 +7,18 @@
 const normalizeFhirAppointment = appointment => {
     let serviceType = null;
     let serviceTypeCode = null;
-    if(appointment.serviceType && appointment.serviceType.length > 0){
+    if(appointment.serviceType){
         if(appointment.serviceType.every(serviceTypeObj => serviceTypeObj.coding)){
             serviceTypeCode = appointment.serviceType.map(serviceTypeCodeObj => serviceTypeCodeObj.coding[0].code);
             serviceType = appointment.serviceType.map(serviceTypeObj => serviceTypeObj.text);
         }
     }
 
-    let participantPatient = null;
+    let patient = null;
     let participantHealthcareService = null;
-    if (appointment.participant && appointment.participant.length > 0) {
-        participantPatient = appointment.participant.find(actorObj => actorObj.actor.reference.includes('Patient'));
-        participantPatient = participantPatient ? participantPatient.actor.reference.split('/')[1] : null;
+    if (appointment.participant) {
+        patient = appointment.participant.find(actorObj => actorObj.actor.reference.includes('Patient'));
+        patient = patient ? patient.actor.reference.split('/')[1] : null;
 
         participantHealthcareService = appointment.participant.find(actorObj => actorObj.actor.reference.includes('HealthcareService'));
         participantHealthcareService = participantHealthcareService ? participantHealthcareService.actor.reference.split('/')[1] : null;
@@ -43,7 +43,7 @@ const normalizeFhirAppointment = appointment => {
         participantHealthcareService,
         serviceType,
         serviceTypeCode,
-        participantPatient
+        patient
     };
 };
 
