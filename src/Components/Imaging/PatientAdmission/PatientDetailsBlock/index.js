@@ -7,6 +7,7 @@ import {
   StyledTextField,
   StyledAutoComplete,
   StyledSwitch,
+  StyledChip
 } from './Style';
 import { useTranslation } from 'react-i18next';
 import Title from '../../../../Assets/Elements/Title';
@@ -25,7 +26,17 @@ import { getCities, getStreets } from '../../../../Utils/Services/API';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import Grid from '@material-ui/core/Grid';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import { Checkbox, TextField } from '@material-ui/core';
+import {
+  Checkbox,
+  TextField,
+  Divider,
+  Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Chip,
+} from '@material-ui/core';
 
 const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   const { t } = useTranslation();
@@ -34,11 +45,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
     mode: 'onBlur',
   });
 
-  ///////////////////////////////////
-  const [value, setValue] = React.useState([]);
   const [pendingValue, setPendingValue] = React.useState([]);
-
-  //////////////////////////////////
 
   const [addressCity, setAddressCity] = useState({});
 
@@ -67,6 +74,9 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
     setIsUrgent(prevState => !prevState);
   };
 
+  const onDeleteHandler = chipToDeleteIndex => {
+    setSelecetedServicesType(selecetedServicesType.filter((_, selectedIndex) => chipToDeleteIndex !== selectedIndex))
+  };
   //Tabs
   const [tabValue, setTabValue] = useState(0);
 
@@ -101,21 +111,37 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
       try {
         const serviceTypeResponse = await getValueSet('service_types');
         if (active) {
+          const options = [];
           const servicesTypeObj = {};
-          // for (const serviceTypeIndex in serviceTypeResponse.data.expansion.contains) {
-          //     const normalizedServiceType = normalizeFhirValueSet(serviceTypeResponse.data.expansion.contains[serviceTypeIndex]);
-          //     Promise.all()
-            
-          // }
-          const allReasonsCode = await Promise.all(serviceTypeResponse.data.expansion.contains.map(serviceType => {
-            const normalizedServiceType = normalizeFhirValueSet(serviceType);
-            servicesTypeObj[normalizedServiceType.code] = normalizedServiceType;
-            return getValueSet(`reason_codes_${normalizedServiceType.code}`)
-          }));
-          for (let reasonsIndex = 0; reasonsIndex < allReasonsCode.length; reasonsIndex ++) {
-            servicesTypeObj[allReasonsCode[reasonsIndex].data.id.split('_')[2]]['reasonCodes'] = allReasonsCode[reasonsIndex].data.expansion.contains.map(reasonCode => normalizeFhirValueSet(reasonCode))
+          const allReasonsCode = await Promise.all(
+            serviceTypeResponse.data.expansion.contains.map(serviceType => {
+              const normalizedServiceType = normalizeFhirValueSet(serviceType);
+              servicesTypeObj[normalizedServiceType.code] = {
+                ...normalizedServiceType,
+              };
+              return getValueSet(`reason_codes_${normalizedServiceType.code}`);
+            }),
+          );
+
+          for (
+            let reasonsIndex = 0;
+            reasonsIndex < allReasonsCode.length;
+            reasonsIndex++
+          ) {
+            allReasonsCode[reasonsIndex].data.expansion.contains.forEach(
+              reasonCode => {
+                const optionObj = {};
+                optionObj['serviceType'] = {
+                  ...servicesTypeObj[
+                    allReasonsCode[reasonsIndex].data.id.split('_')[2]
+                  ],
+                };
+                optionObj['reasonCode'] = normalizeFhirValueSet(reasonCode);
+                options.push(optionObj);
+              },
+            );
           }
-          setServicesType(servicesTypeObj);
+          setServicesType(options);
         }
       } catch (err) {
         console.log(err);
@@ -204,10 +230,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
     if (!streetsOpen) {
       setStreets([]);
     }
-    if (!servicesTypeOpen) {
-      setServicesType([]);
-    }
-  }, [citiesOpen, streetsOpen, servicesTypeOpen]);
+  }, [citiesOpen, streetsOpen]);
 
   return (
     <StyledPatientDetails edit={edit_mode}>
@@ -489,7 +512,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             onOpen={() => setServicesTypeOpen(true)}
             onClose={() => {
               setServicesTypeOpen(false);
-              setValue(pendingValue);
+              setSelecetedServicesType(pendingValue);
             }}
             value={pendingValue}
             onChange={(event, newValue) => {
@@ -499,18 +522,21 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             renderTags={() => null}
             renderOption={(option, state) => (
               <React.Fragment>
-                {
-                  <Checkbox
-                    icon={<CheckBoxOutlineBlankOutlinedOutlined />}
-                    checkedIcon={<CheckBox />}
-                    checked={state.selected}
-                  />
-                }
-                {option.name}
+                  <ListItemIcon>
+                    <Checkbox
+                      color='primary'
+                      icon={<CheckBoxOutlineBlankOutlinedOutlined />}
+                      checkedIcon={<CheckBox />}
+                      checked={state.selected}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary={option.reasonCode.code} />
+                  <ListItemText primary={t(option.serviceType.name)} />
+                  <ListItemText primary={t(option.reasonCode.name)} />
               </React.Fragment>
             )}
-            options={labels}
-            getOptionLabel={option => option.name}
+            options={servicesType}
+            getOptionLabel={option => option.reasonCode.name}
             renderInput={params => (
               <StyledTextField
                 {...params}
@@ -531,61 +557,8 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
               />
             )}
           />
-          {value.map(option => {
-            return <span>{option.name}</span>;
-          })}
-          {/* <Autocomplete
-            multiple
-            renderTags={() => null} //So it won't show tags inside
-            id='servicesType'
-            open={servicesTypeOpen}
-            onOpen={() => {
-              setServicesTypeOpen(true);
-            }}
-            onClose={() => {
-              setServicesTypeOpen(false);
-            }}
-            loading={loadingServicesType}
-            options={servicesType}
-            value={selecetedServicesType}
-            onChange={(event, newValue) => {
-              setServicesType(newValue);
-            }}
-            getOptionLabel={option => option.name
-              // Object.keys(option).length === 0 && option.constructor === Object
-              //   ? ''
-              //   : option.name
-            }
-            disablePortal
-            disableCloseOnSelect // Used for multiple selects
-            noOptionsText={t('No Results')}
-            loadingText={t('Loading')}
-            renderOption={(option, { selected }) => (
-              <React.Fragment>
-                { selected ?  <CheckBox /> : <CheckBoxOutlineBlank />}
-                {option.name}
-              </React.Fragment>
-            )}
-            renderInput={params => (
-              <StyledTextField
-                {...params}
-                label={t('Select test')}
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <React.Fragment>
-                      <InputAdornment position={'end'}>
-                        {loadingServicesType ? (
-                          <CircularProgress color={'inherit'} size={20} />
-                        ) : null}
-                        {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
-                      </InputAdornment>
-                    </React.Fragment>
-                  ),
-                }}
-              />
-            )}
-          /> */}
+          
+        {selecetedServicesType.map(selected => <StyledChip label={`${selected.reasonCode.code} | ${t(selected.serviceType.name)} | ${t(selected.reasonCode.name)}`} />)}
         </StyledFormGroup>
       </StyledForm>
       {/* <DevTool control={control} /> */}
@@ -598,96 +571,3 @@ const mapStateToProps = state => {
   };
 };
 export default connect(mapStateToProps, null)(PatientDetailsBlock);
-
-const labels = [
-  {
-    name: 'good first issue',
-    color: '#7057ff',
-    description: 'Good for newcomers',
-  },
-  {
-    name: 'help wanted',
-    color: '#008672',
-    description: 'Extra attention is needed',
-  },
-  {
-    name: 'priority: critical',
-    color: '#b60205',
-    description: '',
-  },
-  {
-    name: 'priority: high',
-    color: '#d93f0b',
-    description: '',
-  },
-  {
-    name: 'priority: low',
-    color: '#0e8a16',
-    description: '',
-  },
-  {
-    name: 'priority: medium',
-    color: '#fbca04',
-    description: '',
-  },
-  {
-    name: "status: can't reproduce",
-    color: '#fec1c1',
-    description: '',
-  },
-  {
-    name: 'status: confirmed',
-    color: '#215cea',
-    description: '',
-  },
-  {
-    name: 'status: duplicate',
-    color: '#cfd3d7',
-    description: 'This issue or pull request already exists',
-  },
-  {
-    name: 'status: needs information',
-    color: '#fef2c0',
-    description: '',
-  },
-  {
-    name: 'status: wont do/fix',
-    color: '#eeeeee',
-    description: 'This will not be worked on',
-  },
-  {
-    name: 'type: bug',
-    color: '#d73a4a',
-    description: "Something isn't working",
-  },
-  {
-    name: 'type: discussion',
-    color: '#d4c5f9',
-    description: '',
-  },
-  {
-    name: 'type: documentation',
-    color: '#006b75',
-    description: '',
-  },
-  {
-    name: 'type: enhancement',
-    color: '#84b6eb',
-    description: '',
-  },
-  {
-    name: 'type: epic',
-    color: '#3e4b9e',
-    description: 'A theme of work that contain sub-tasks',
-  },
-  {
-    name: 'type: feature request',
-    color: '#fbca04',
-    description: 'New feature or request',
-  },
-  {
-    name: 'type: question',
-    color: '#d876e3',
-    description: 'Further information is requested',
-  },
-];

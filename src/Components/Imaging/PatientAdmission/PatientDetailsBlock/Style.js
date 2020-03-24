@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { devicesValue } from '../../../../Assets/Themes/BreakPoints';
-import { Divider, TextField, Switch } from '@material-ui/core';
+import { Divider, TextField, Switch, Chip } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
 export const StyledDivider = styled(Divider)`
@@ -96,6 +96,16 @@ export const StyledPatientDetails = styled.div`
   @media (min-width: ${devicesValue.desktop}px) {
     flex-basis: 50%;
     margin: 0 38px 0 38px;
+  }
+`;
+
+export const StyledChip = styled(Chip)`
+  max-width: fit-content;
+  background-color: rgba(0, 58, 199, 0.13);
+
+  .MuiChip-label {
+    color: #000b40;
+    font-size: 13px;
   }
 `;
 
