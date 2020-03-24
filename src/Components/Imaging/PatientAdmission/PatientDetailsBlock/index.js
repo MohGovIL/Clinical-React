@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import matchSorter from 'match-sorter';
 import {
   StyledForm,
   StyledPatientDetails,
@@ -7,7 +8,7 @@ import {
   StyledTextField,
   StyledAutoComplete,
   StyledSwitch,
-  StyledChip
+  StyledChip,
 } from './Style';
 import { useTranslation } from 'react-i18next';
 import Title from '../../../../Assets/Elements/Title';
@@ -18,7 +19,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { connect } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { ExpandMore, ExpandLess, CheckBox } from '@material-ui/icons';
+import { ExpandMore, ExpandLess, CheckBox, Close } from '@material-ui/icons';
 import CheckBoxOutlineBlankOutlinedOutlined from '@material-ui/icons/CheckBoxOutlineBlankOutlined';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -44,9 +45,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
     submitFocusError: true,
     mode: 'onBlur',
   });
-
-  const [pendingValue, setPendingValue] = React.useState([]);
-
+  const icon = <Close fontSize='small' />;
   const [addressCity, setAddressCity] = useState({});
 
   const [selecetedServicesType, setSelecetedServicesType] = useState([]);
@@ -74,9 +73,26 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
     setIsUrgent(prevState => !prevState);
   };
 
-  const onDeleteHandler = chipToDeleteIndex => {
-    setSelecetedServicesType(selecetedServicesType.filter((_, selectedIndex) => chipToDeleteIndex !== selectedIndex))
+  const onDeleteHandler = chipToDeleteIndex => () => {
+    setSelecetedServicesType(
+      selecetedServicesType.filter(
+        (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
+      ),
+    );
   };
+
+  const filterOptions = (options, { inputValue }) => {
+    if(selecetedServicesType.length){
+      options = matchSorter(options, selecetedServicesType[0].serviceType.code, {keys: ['serviceType.code']})
+    }
+     return matchSorter(options, inputValue, {
+      keys: [
+        item => t(item.reasonCode.name),
+        'reasonCode.code',
+        item => t(item.serviceType.name),
+      ],
+    });
+  }
   //Tabs
   const [tabValue, setTabValue] = useState(0);
 
@@ -505,6 +521,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             />
           </Grid>
           <Autocomplete
+            filterOptions={filterOptions}
             multiple
             noOptionsText={t('No Results')}
             loadingText={t('Loading')}
@@ -512,31 +529,38 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             onOpen={() => setServicesTypeOpen(true)}
             onClose={() => {
               setServicesTypeOpen(false);
-              setSelecetedServicesType(pendingValue);
             }}
-            value={pendingValue}
+            value={selecetedServicesType}
             onChange={(event, newValue) => {
-              setPendingValue(newValue);
+              setSelecetedServicesType(newValue);
             }}
             disableCloseOnSelect
             renderTags={() => null}
             renderOption={(option, state) => (
-              <React.Fragment>
-                  <ListItemIcon>
-                    <Checkbox
-                      color='primary'
-                      icon={<CheckBoxOutlineBlankOutlinedOutlined />}
-                      checkedIcon={<CheckBox />}
-                      checked={state.selected}
-                    />
-                  </ListItemIcon>
-                  <ListItemText primary={option.reasonCode.code} />
+              <Grid container justify='flex-end' alignItems='center'>
+                <Grid item xs={3}>
+                  <Checkbox
+                    color='primary'
+                    icon={<CheckBoxOutlineBlankOutlinedOutlined />}
+                    checkedIcon={<CheckBox />}
+                    checked={state.selected}
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <ListItemText>{option.reasonCode.code}</ListItemText>
+                </Grid>
+                <Grid item xs={3}>
                   <ListItemText primary={t(option.serviceType.name)} />
+                </Grid>
+                <Grid item xs={3}>
                   <ListItemText primary={t(option.reasonCode.name)} />
-              </React.Fragment>
+                </Grid>
+              </Grid>
             )}
             options={servicesType}
-            getOptionLabel={option => option.reasonCode.name}
+            // getOptionLabel={option =>
+            //   `${option.reasonCode.code} ${option.serviceType.name} ${option.reasonCode.name}`
+            // not needed for now}
             renderInput={params => (
               <StyledTextField
                 {...params}
@@ -557,8 +581,18 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
               />
             )}
           />
-          
-        {selecetedServicesType.map(selected => <StyledChip label={`${selected.reasonCode.code} | ${t(selected.serviceType.name)} | ${t(selected.reasonCode.name)}`} />)}
+          <Grid container direction='row' wrap='wrap'>
+            {selecetedServicesType.map((selected, selectedIndex) => (
+              <StyledChip
+                deleteIcon={icon}
+                onDelete={onDeleteHandler(selectedIndex)}
+                key={selectedIndex}
+                label={`${selected.reasonCode.code} | ${t(
+                  selected.serviceType.name,
+                )} | ${t(selected.reasonCode.name)}`}
+              />
+            ))}
+          </Grid>
         </StyledFormGroup>
       </StyledForm>
       {/* <DevTool control={control} /> */}
