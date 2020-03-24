@@ -28,10 +28,14 @@ import moment, {now} from "moment";
 import normalizeFhirValueSet from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import {normalizeValueData} from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import StyledButton from "../../../CustomizedTable/CustomizedTableButton/Style";
+import normalizeFhirAppointment
+    from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
+import normalizeFhirEncounter
+    from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
 
 const DrawThisTable = ({result, searchParam}) => {
 
-
+    const {t} = useTranslation();
     const [expanded, setExpanded] = React.useState('');
     const [nextAppointment, setNextAppointment] = React.useState('');
     const [prevEncounter, setPrevEncounter] = React.useState('');
@@ -42,6 +46,18 @@ const DrawThisTable = ({result, searchParam}) => {
     //let patientTrackingStatuses =  null;
 
 
+    const handleTextOfCurrentAppointmentButton  = (curEncounter,nextAppointment) => {
+        let curDayEncounterNormelized = curEncounter && curEncounter.data && curEncounter.data.total >0 ? normalizeFhirEncounter(curEncounter.data.entry[1].resource) : null;
+        let nextAppointmetCheckNormelized = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment (nextAppointment.data.entry[1].resource ): null;
+        let theAppointmentIsToday = nextAppointmetCheckNormelized ? (moment(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY")  === moment().format("DD/MM/YYYY") ?true :false ): false;
+        let thereIsEncounterToday = curDayEncounterNormelized ? (moment(curDayEncounterNormelized.startTime).format("DD/MM/YYYY")  === moment().format("DD/MM/YYYY") ?true :false ): false;
+        if(!theAppointmentIsToday && !thereIsEncounterToday) {
+            return t("Admission without appointment");
+        }
+        else{
+            return  t("Patient admission");
+        }
+    }
     const handleChange = (panel, identifier) => async (event, newExpanded) => {
 
         setExpanded(newExpanded ? panel : false);
@@ -62,7 +78,6 @@ const DrawThisTable = ({result, searchParam}) => {
         }
     };
 
-    const {t} = useTranslation();
 
     function _calculateAge(birthday) { // birthday is a date
         var ageDifMs = Date.now() - Date.parse(birthday);
@@ -114,17 +129,17 @@ const DrawThisTable = ({result, searchParam}) => {
                                                         patientTrackingStatuses = {patientTrackingStatuses}
                                 />
                                 <StyledBottomLinks>
-                                    <StyledHrefButton variant="outlined" color="primary" href="#contained-buttons"
-                                                  disabled= {true}  >
-                                        {t("Go to all encounters and appointments")}
+                                    <StyledHrefButton size={'small'} variant="outlined" color="primary" href="#contained-buttons"
+                                                  disabled= {(nextAppointment && nextAppointment.data && nextAppointment.data.total >0 ) || (curEncounter && curEncounter.data && curEncounter.data.total >0 ) ? false : true}  >
+                                        {t("Encounters and appointments")}
                                     </StyledHrefButton>
-                                    <StyledHrefButton variant="contained" color="primary" href="#contained-buttons"
+                                    <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
                                                   disabled={false} >
-                                        {t("Get new encounter")}
+                                        {t("New appointment")}
                                     </StyledHrefButton>
                                     <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
                                                   disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false}  >
-                                        {t("Receive patient")}
+                                         {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment) }
                                     </StyledHrefButton>
                                 </StyledBottomLinks>
                             </StyledExpansionPanelDetails>

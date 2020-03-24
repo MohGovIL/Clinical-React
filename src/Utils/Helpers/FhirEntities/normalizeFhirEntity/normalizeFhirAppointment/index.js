@@ -16,7 +16,7 @@ const normalizeFhirAppointment = appointment => {
 
     let patient = null;
     let participantHealthcareService = null;
-    if (appointment.participant) {
+    if (appointment.participant && appointment.participant.length > 0) {
         patient = appointment.participant.find(actorObj => actorObj.actor.reference.includes('Patient'));
         patient = patient ? patient.actor.reference.split('/')[1] : null;
 

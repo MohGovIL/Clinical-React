@@ -1,7 +1,6 @@
 import React from 'react';
 import TitleValueComponent from "./TitleValueComponent";
 import {useTranslation} from "react-i18next";
-import Box from "@material-ui/core/Box";
 import {
     StyledBox,
     StyledLabelAppointment,
@@ -10,16 +9,11 @@ import {
     StyledLinkWithIconComponent
 } from "./Style";
 import moment from "moment";
-import {StyledContainer, StyledPaperContainer} from "../Style";
 import normalizeFhirAppointment
     from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
     from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
 import LinkComponentWithIcon from "./LinkComponentWithIcon";
-import {getHealthCareServiceByOrganization, getValueSet} from "../../../../../Utils/Services/FhirAPI";
-import Grid from "@material-ui/core/Grid";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 
@@ -29,12 +23,14 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
     const {t} = useTranslation();
 
     const prevEncounterEntry = prevEncounter && prevEncounter.data && prevEncounter.data.total > 0 ? prevEncounter.data.entry[1].resource : null;
-    // eslint-disable-next-line no-redeclare
     const nextAppointmentElem = nextAppointment && nextAppointment.data && nextAppointment.data.total >0  ? nextAppointment.data.entry[1].resource : null;
     const nextAppointmentEntry = nextAppointmentElem ? normalizeFhirAppointment(nextAppointmentElem) : null;
     const normalizedPrevEncounter = prevEncounterEntry ? normalizeFhirEncounter(prevEncounterEntry) : null;
     let normalizedCurEncounters = [];
-
+    const getAppointmentWithTimeOrNot =(nextAppointmentEntry)=>{
+         let isThisAppToday = moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
+        return  (isThisAppToday ? moment(nextAppointmentEntry.startTime).format("HH:mm DD/MM/YYYY") : moment().format("DD/MM/YYYY"));
+    }
     if (curEncounter.data && curEncounter.data.total > 0) {
         let entry = curEncounter.data.entry;
         entry.map((response, resourceIndex) => {
@@ -49,11 +45,6 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
     }
 
 
-    // const normalizedPrevAppointment = normalizeFhirAppointment(prevEncounterEntry);
-    /* const [healthCareServiceTypes, setHealthCareServiceServiceType] = React.useState(null);
-     if (normalizedPrevEncounter && !healthCareServiceTypes) {
-         setHealthCareServiceServiceType(getHealthCareServiceByOrganization(normalizedPrevEncounter.serviceProvider));
-     }*/
     return (
         <React.Fragment>
 
@@ -110,7 +101,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
                                     <TitleValueComponent name={t("Next appointment")}
                                                          //Check if it is today if so show hour also ...
                                                          //Else Show the future date of the appointment
-                                                         value={moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY")}
+                                                         value={getAppointmentWithTimeOrNot(nextAppointmentEntry)}
                                                          seperator={true}/>
                                 </StyledLabelAppointment>
 

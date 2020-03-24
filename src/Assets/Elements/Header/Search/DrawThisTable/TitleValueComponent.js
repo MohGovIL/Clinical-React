@@ -1,4 +1,5 @@
 import React, {useEffect, useRef} from "react";
+import {StyledEmptyDiv} from "./Style";
 
 const TitleValueComponent = ({name, value, searchParam, seperator}) => {
     const handleChange = event => {
@@ -67,11 +68,15 @@ const TitleValueComponent = ({name, value, searchParam, seperator}) => {
     }
 
 
+    function handleEmptyDiv(divRef, value) {
+       return  value && value !== "" ? <div ref={divRef}>{value}</div> :<StyledEmptyDiv/>;
+    }
+
     return (
         <React.Fragment>
             <span ref={spanRef}>{name}</span>
             {seperator ? <label> - </label> : ""}
-            <div ref={divRef}>{value}</div>
+            {handleEmptyDiv(divRef,value)}
         </React.Fragment>
     );
 

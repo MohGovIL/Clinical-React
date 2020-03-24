@@ -10,7 +10,7 @@ import Button from "@material-ui/core/Button";
 export const StyledExpansionPanel = styled(ExpansionPanel)`
     margin: 0 !important;
     position: inherit !important;
- `;
+`;
 export const StyledExpansionPanelSummary = styled(ExpansionPanelSummary)`
     display: flex;
     max-height: 56px;
@@ -20,24 +20,24 @@ export const StyledExpansionPanelSummary = styled(ExpansionPanelSummary)`
 `;
 
 export const StyledExpansionPanelDetails = styled(ExpansionPanelDetails)`
-  width: 744px;
+    width: 744px;
     height: 315px;
     display: block;
     justify-content: stretch;
 `;
 
 export const StyledBox = styled(Box)`
-  margin-top:24px;
- /* margin-left: 24px;
-  margin-right:28px;*/
-  width: 692px;
-  height: 204px;
-  overflow: auto;
-  /*opacity: 0.2;*/
-  border: solid 1px #000b4024;
-  background-color: #f5f5f526;;
- /*  justify-content: space-evenly;*/
-   /* display: flex;*/
+    margin-top:24px;
+    /* margin-left: 24px;
+    margin-right:28px;*/
+    width: 692px;
+    height: 214px;
+    overflow: auto;
+    /*opacity: 0.2;*/
+    border: solid 1px #000b4024;
+    background-color: #f5f5f526;;
+    /*  justify-content: space-evenly;*/
+    /* display: flex;*/
 `;
 export const StyledBottomLinks = styled(Box)`
     margin: 37px 0px 24px 61px;
@@ -72,17 +72,16 @@ export const StyledHrefButton = styled(Button)`
     height: 32px;
     width: 177px;
     margin: 3px 3px;
-}
+    }
 
 `;
 
 export const StyledLabelAppointment = styled.label`
-
-  display: inline-flex;
- /* max-width: 30%;
-  min-width: 30%;
-  height: 22px;*/
-  margin-top: 10px;
+    display: inline-flex;
+    /* max-width: 30%;
+    min-width: 30%;
+    height: 22px;*/
+    margin-top: 10px;
     label{
         margin-left: 5px;
         margin-right: -12px;
@@ -102,7 +101,7 @@ export const StyledLabelAppointment = styled.label`
         margin-right:19px;
     }
     div{
-        width: 86px;
+        width: 103px;
         height: 19px;
         font-family: OpenSansHebrew;
         font-size: 14px;
@@ -113,16 +112,15 @@ export const StyledLabelAppointment = styled.label`
         letter-spacing: normal;
         text-align: right;
          color: #000b40;
-  }
+    }
 `;
 
 export const StyledLabelStatusAppointment = styled.label`
-
-  display: inline-flex;
- /* max-width: 30%;
-  min-width: 30%;
-  height: 22px;*/
-  margin-top: 10px;
+    display: inline-flex;
+    /* max-width: 30%;
+    min-width: 30%;
+    height: 22px;*/
+    margin-top: 10px;
     label{
         margin-left: 5px;
         margin-right: -12px;
@@ -145,16 +143,15 @@ export const StyledLabelStatusAppointment = styled.label`
     }
     div{
     width:50px;
-  }
+    }
 `;
 
 export const StyledLabelServiceTypeAppointment = styled.label`
-
-  display: inline-flex;
- /* max-width: 30%;
-  min-width: 30%;
-  height: 22px;*/
-  margin-top: 10px;
+    display: inline-flex;
+    /* max-width: 30%;
+    min-width: 30%;
+    height: 22px;*/
+    margin-top: 10px;
     label{
         margin-left: 5px;
         margin-right: -12px;
@@ -172,15 +169,15 @@ export const StyledLabelServiceTypeAppointment = styled.label`
     }
     div{
 
-  }
+    }
 `;
 
 export const StyledLabelName = styled.label`
-  display: inline-flex;
-  max-width: 20%;
-  min-width: 20%;
-  height: 22px;
-  margin-top: 10px;
+    display: inline-flex;
+    max-width: 20%;
+    min-width: 20%;
+    height: 22px;
+    margin-top: 10px;
     span{
 
           font-family: OpenSansHebrew;
@@ -207,16 +204,15 @@ export const StyledLabelName = styled.label`
           color: #00094a;
 
     }
-
 `;
 
 export const StyledLabelTZ = styled.label`
-  display: inline-flex;
-  max-width: 30%;
-  min-width: 30%;
-  height: 22px;
-  margin-top: 10px;
-  span{
+    display: inline-flex;
+    max-width: 30%;
+    min-width: 30%;
+    height: 22px;
+    margin-top: 10px;
+    span{
 
           font-family: OpenSansHebrew;
           font-size: 16px;
@@ -227,8 +223,8 @@ export const StyledLabelTZ = styled.label`
           letter-spacing: normal;
           text-align: right;
           color: #000b40;
-  }
-  div{
+    }
+    div{
 
           font-family: OpenSansHebrew;
           font-size: 16px;
@@ -239,18 +235,17 @@ export const StyledLabelTZ = styled.label`
           letter-spacing: normal;
           text-align: right;
           color: #000b40;
-  }
-
+    }
 `;
 
 
 export const StyledLabelPhone = styled.label`
-  display: inline-flex;
-  max-width: 30%;
-  min-width: 30%;
-  height: 22px;
-  margin-top: 10px;
-  span{
+    display: inline-flex;
+    max-width: 30%;
+    min-width: 30%;
+    height: 22px;
+    margin-top: 10px;
+    span{
         opacity: 0.6;
         font-family: OpenSansHebrew;
         font-size: 13px;
@@ -261,8 +256,8 @@ export const StyledLabelPhone = styled.label`
         letter-spacing: normal;
         text-align: right;
         color: #1e2132;
-  }
-  div{
+    }
+    div{
         font-family: OpenSansHebrew;
         font-size: 16px;
         font-weight: normal;
@@ -272,18 +267,17 @@ export const StyledLabelPhone = styled.label`
         letter-spacing: normal;
         text-align: right;
         color: #00094a;
-  }
-
+    }
 `;
 
 
 export const StyledLabelAge = styled.label`
-  display: inline-flex;
-  max-width: 20%;
-  min-width: 20%;
-  height: 22px;
-  margin-top: 10px;
-  span{
+    display: inline-flex;
+    max-width: 20%;
+    min-width: 20%;
+    height: 22px;
+    margin-top: 10px;
+    span{
         opacity: 0.6;
         font-family: OpenSansHebrew;
         font-size: 13px;
@@ -294,8 +288,8 @@ export const StyledLabelAge = styled.label`
         letter-spacing: normal;
         text-align: right;
         color: #1e2132;
-  }
-  div{
+    }
+    div{
         font-family: OpenSansHebrew;
         font-size: 16px;
         font-weight: normal;
@@ -305,8 +299,7 @@ export const StyledLabelAge = styled.label`
         letter-spacing: normal;
         text-align: right;
         color: #00094a;
-  }
-
+    }
 `;
 
 export const StyledGenderIcon = styled(GenderIcon)`
@@ -320,40 +313,36 @@ export const StyledIcon = styled(Icon)`
     height: 24px;
 `;
 export const StyledIconText = styled.div`
-width: 132px;
-  height: 22px;
-  font-family: OpenSansHebrew;
-  font-size: 16px;
-  font-weight: bold;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  text-align: right;
-  color: #002cb1;
-  margin-top: 2.5%;
+    width: 132px;
+    height: 22px;
+    font-family: OpenSansHebrew;
+    font-size: 16px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: right;
+    color: #002cb1;
+    margin-top: 2.5%;
 `;
 export const StyledValueComponent = styled.label`
-
-        width:100%;
-        margin-top: 20px;
-        margin-left: 25px;
-        opacity: 0.6;
-        font-family: OpenSansHebrew;
-        font-size: 16px;
-        font-weight: normal;
-        font-stretch: normal;
-        font-style: normal;
-        line-height: 1.13;
-        letter-spacing: normal;
-        text-align: center;
-        color: navy;
-
-
+    width:100%;
+    margin-top: 20px;
+    margin-left: 25px;
+    opacity: 0.6;
+    font-family: OpenSansHebrew;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.13;
+    letter-spacing: normal;
+    text-align: center;
+    color: navy;
 `;
 
 export const StyledLinkWithIconComponent = styled.div`
-
     margin: 5px 0px;
     a{
       width: 73px;
@@ -368,12 +357,13 @@ export const StyledLinkWithIconComponent = styled.div`
       text-align: right;
       color: #002398;
      }
-
     ${StyledIcon}{
         width: 7px;
         height: 17px;
         object-fit: contain;
     }
+`;
 
-  }
+export const StyledEmptyDiv = styled.div`
+    width: 55px !important;
 `;
