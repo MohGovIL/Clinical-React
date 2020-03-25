@@ -9,22 +9,6 @@ import {getMenu} from "../../../Utils/Services/API";
 import FilterBox from "./FilterBox";
 import Title from "../../../Assets/Elements/Title";
 import isAllowed from "../../../Utils/Helpers/isAllowed";
-import {
-    finishedTabActiveFunction,
-    finishedTabNotActiveFunction
-} from "../../../Utils/Helpers/patientTrackingTabs/setPatientDataFinishedTableRows";
-import {
-    invitedTabActiveFunction,
-    invitedTabNotActiveFunction
-} from "../../../Utils/Helpers/patientTrackingTabs/setPatientDataInvitedTableRows";
-import {
-    waitingForExaminationTabActiveFunction,
-    waitingForExaminationTabNotActiveFunction
-} from "../../../Utils/Helpers/patientTrackingTabs/setPatientDataWaitingForExaminationTableRows";
-import {
-    waitingForResultsTabActiveFunction,
-    waitingForResultsTabNotActiveFunction
-} from "../../../Utils/Helpers/patientTrackingTabs/setPatientWaitingForResultsTableRows";
 import {getStaticTabsArray} from "../../../Utils/Helpers/patientTrackingTabs/staticTabsArray";
 
 
@@ -40,58 +24,8 @@ const PatientTracking = ({location, vertical, history, selectFilter}) => {
     //The headers menu items
     const [menuItems, setMenuItems] = useState([]);
 
-    //Create an array of permitted tabs according to the user role.
     useEffect(() => {
-        // let allTabs = [
-        //     // Do not change the tabValue if want to change the order just change their place in the array,
-        //     // because there are functionality that depends on the tabValue because it (the tabs) needs to be customized
-        //     // meaning sometimes you have to show them and sometimes you need to add more tabs in between.
-        //     {
-        //         tabName: 'Invited',
-        //         id: 'invited',
-        //         mode: 'hide',
-        //         count: 0,
-        //         tabValue: 0,
-        //         activeAction: invitedTabActiveFunction,
-        //         notActiveAction: invitedTabNotActiveFunction,
-        //     },
-        //     {
-        //         tabName: 'Waiting for examination',
-        //         id: 'waiting_for_examination',
-        //         mode: 'hide',
-        //         count: 0,
-        //         tabValue: 1,
-        //         activeAction: waitingForExaminationTabActiveFunction,
-        //         notActiveAction: waitingForExaminationTabNotActiveFunction
-        //     },
-        //     {
-        //         tabName: 'Waiting for decoding',
-        //         id: 'waiting_for_decoding',
-        //         mode: 'hide',
-        //         count: 0,
-        //         tabValue: 2,
-        //         activeAction: waitingForResultsTabActiveFunction,
-        //         notActiveAction: waitingForResultsTabNotActiveFunction
-        //     },
-        //     {
-        //         tabName: 'Finished treatment',
-        //         id: 'finished',
-        //         mode: 'hide',
-        //         count: 0,
-        //         tabValue: 3,
-        //         activeAction: finishedTabActiveFunction,
-        //         notActiveAction: finishedTabNotActiveFunction
-        //     }
-        // ];
-        // for (let tabIndex = 0; tabIndex < allTabs.length; tabIndex++) {
-        //     const tab = allTabs[tabIndex];
-        //     isAllowed(tab);
-        // }
-        // allTabs = allTabs.filter((tab) => tab.mode !== 'hide');
-        // setTabs(allTabs);
-    }, []);
-    //Filter box mechanism for activeTabs
-    useEffect(() => {
+        //Create an array of permitted tabs according to the user role.
         let tabs = getStaticTabsArray();
         for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
             const tab = tabs[tabIndex];
@@ -100,6 +34,7 @@ const PatientTracking = ({location, vertical, history, selectFilter}) => {
         tabs = tabs.filter((tab) => tab.mode !== 'hide');
         setTabs(tabs);
 
+        //Filter box mechanism for activeTabs
         for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
             const tab = tabs[tabIndex];
             if (tab.tabValue === selectFilter.statusFilterBoxValue) {
