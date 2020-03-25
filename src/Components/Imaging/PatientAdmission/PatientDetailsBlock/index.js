@@ -10,34 +10,33 @@ import {
   StyledSwitch,
   StyledChip,
 } from './Style';
+import CustomizedButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useTranslation } from 'react-i18next';
 import Title from '../../../../Assets/Elements/Title';
-import Switch from '@material-ui/core/Switch';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { DevTool } from 'react-hook-form-devtools';
 import { useForm, Controller } from 'react-hook-form';
 import { connect } from 'react-redux';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import { ExpandMore, ExpandLess, CheckBox, Close } from '@material-ui/icons';
-import CheckBoxOutlineBlankOutlinedOutlined from '@material-ui/icons/CheckBoxOutlineBlankOutlined';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import {
+  ExpandMore,
+  ExpandLess,
+  CheckBox,
+  Close,
+  CheckBoxOutlineBlankOutlined,
+} from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
-import Grid from '@material-ui/core/Grid';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import {
   Checkbox,
-  TextField,
-  Divider,
-  Typography,
-  List,
-  ListItem,
-  ListItemIcon,
   ListItemText,
-  Chip,
-  AppBar,
+  Grid,
+  CircularProgress,
+  Tab,
+  Tabs,
+  Switch,
+  ListSubheader,
 } from '@material-ui/core';
 
 const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
@@ -50,6 +49,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   const [addressCity, setAddressCity] = useState({});
 
   const [selecetedServicesType, setSelecetedServicesType] = useState([]);
+  const [pendingValue, setPendingValue] = useState([]);
 
   const [cities, setCities] = useState([]);
   const [citiesOpen, setCitiesOpen] = useState(false);
@@ -83,17 +83,21 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   };
 
   const filterOptions = (options, { inputValue }) => {
-    if(selecetedServicesType.length){
-      options = matchSorter(options, selecetedServicesType[0].serviceType.code, {keys: ['serviceType.code']})
+    if (selecetedServicesType.length) {
+      options = matchSorter(
+        options,
+        selecetedServicesType[0].serviceType.code,
+        { keys: ['serviceType.code'] },
+      );
     }
-     return matchSorter(options, inputValue, {
+    return matchSorter(options, inputValue, {
       keys: [
         item => t(item.reasonCode.name),
         'reasonCode.code',
         item => t(item.serviceType.name),
       ],
     });
-  }
+  };
   //Tabs
   const [tabValue, setTabValue] = useState(0);
 
@@ -246,6 +250,9 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
     }
     if (!streetsOpen) {
       setStreets([]);
+    }
+    if (!servicesTypeOpen) {
+      setPendingValue([])
     }
   }, [citiesOpen, streetsOpen]);
 
@@ -527,38 +534,43 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             noOptionsText={t('No Results')}
             loadingText={t('Loading')}
             open={servicesTypeOpen}
-            onOpen={() => setServicesTypeOpen(true)}
-            onClose={() => {
+            loading={loadingServicesType}
+            onOpen={() => {
+              setPendingValue(selecetedServicesType)
+              setServicesTypeOpen(true)}}
+            onClose={(event) => {
               setServicesTypeOpen(false);
             }}
-            value={selecetedServicesType}
+            value={pendingValue}
             onChange={(event, newValue) => {
-              setSelecetedServicesType(newValue);
+              setPendingValue(newValue);
             }}
             disableCloseOnSelect
             renderTags={() => null}
             renderOption={(option, state) => (
-              <Grid container justify='flex-end' alignItems='center'>
-                <Grid item xs={3}>
-                  <Checkbox
-                    color='primary'
-                    icon={<CheckBoxOutlineBlankOutlinedOutlined />}
-                    checkedIcon={<CheckBox />}
-                    checked={state.selected}
-                  />
+                <Grid container justify='flex-end' alignItems='center'>
+                  <Grid item xs={3}>
+                    <Checkbox
+                      color='primary'
+                      icon={<CheckBoxOutlineBlankOutlined />}
+                      checkedIcon={<CheckBox />}
+                      checked={state.selected}
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <ListItemText>{option.reasonCode.code}</ListItemText>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <ListItemText primary={t(option.serviceType.name)} />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <ListItemText primary={t(option.reasonCode.name)} />
+                  </Grid>
                 </Grid>
-                <Grid item xs={3}>
-                  <ListItemText>{option.reasonCode.code}</ListItemText>
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.serviceType.name)} />
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.reasonCode.name)} />
-                </Grid>
-              </Grid>
-            )}
+              )
+            }
             ListboxComponent={ListboxComponent}
+            ListboxProps={{pendingValue: pendingValue, setSelecetedServicesType: setSelecetedServicesType, setClose: setServicesTypeOpen}}
             options={servicesType}
             renderInput={params => (
               <StyledTextField
@@ -605,12 +617,49 @@ const mapStateToProps = state => {
 };
 export default connect(mapStateToProps, null)(PatientDetailsBlock);
 
-
-const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) {
-
+const ListboxComponent = React.forwardRef(function ListboxComponent(
+  props,
+  ref,
+) {
+  const {setClose, pendingValue, setSelecetedServicesType, ...other} = props
+  const { t } = useTranslation();
+  const onConfirmHandler = () => {
+    setSelecetedServicesType(pendingValue);
+    setClose(true);
+  };
   return (
-    <div ref={ref}>
-      
+    <div
+      style={{ position: 'relative', maxHeight: '300px', overflowY: 'scroll', marginBottom: '64px' }}
+      ref={ref}
+      {...other}>
+      {props.children}
+      <div
+        style={{
+          position: 'fixed',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: '64px',
+          left: '0',
+          bottom: '0',
+          backgroundColor: '#ffffff',
+          width: 'calc(100% - 15px - 15px)',
+          padding: '0 15px 0 15px',
+        }}>
+        <span>
+          {`${t('Is selected')}
+          ${
+            // props.children.filter(child => child.props['aria-selected']).length
+            pendingValue.length
+          } `}
+        </span>
+        <CustomizedButton
+          label={t('OK')}
+          variant='contained'
+          color='primary'
+          onClickHandler={onConfirmHandler}
+        />
+      </div>
     </div>
-  )
-})
+  );
+});
