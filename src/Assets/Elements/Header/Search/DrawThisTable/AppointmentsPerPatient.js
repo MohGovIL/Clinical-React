@@ -36,7 +36,6 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
         entry.map((response, resourceIndex) => {
             if (response && response.resource && response.resource.resourceType === "Encounter") {
                 let normalizedCurEncounter = normalizeFhirEncounter(response.resource);
-                console.log(normalizedCurEncounter);
                 normalizedCurEncounters.push(normalizedCurEncounter);
             }
 

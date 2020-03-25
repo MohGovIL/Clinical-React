@@ -7,11 +7,8 @@ import StyledSearch, {
     StyledPaper
 } from './Style';
 import {useTranslation} from "react-i18next";
-import normalizeFhirPatient from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import {StyledLabelName, StyledLabelTZ} from "./Style";
-import Typography from "@material-ui/core/Typography";
 import TitleValueComponent from "./TitleValueComponent";
 import GenderIcon from "../../../CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
 import maleIcon from "../../../../Images/maleIcon.png";
@@ -25,9 +22,6 @@ import {
     requestValueSet
 } from "../../../../../Utils/Services/FhirAPI";
 import moment, {now} from "moment";
-import normalizeFhirValueSet from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
-import {normalizeValueData} from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
-import StyledButton from "../../../CustomizedTable/CustomizedTableButton/Style";
 import normalizeFhirAppointment
     from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
@@ -36,27 +30,40 @@ import normalizeFhirEncounter
 const DrawThisTable = ({result, searchParam}) => {
 
     const {t} = useTranslation();
+
     const [expanded, setExpanded] = React.useState('');
     const [nextAppointment, setNextAppointment] = React.useState('');
     const [prevEncounter, setPrevEncounter] = React.useState('');
     const [curEncounter, setCurEncounter] = React.useState('');
     const [encounterStatuses, setEncounterStatuses] = React.useState('');
     const [patientTrackingStatuses, setPatientTrackingStatuses] = React.useState('');
+
+
     let curTotal = 0;
+
     //let patientTrackingStatuses =  null;
 
 
-    const handleTextOfCurrentAppointmentButton  = (curEncounter,nextAppointment) => {
-        let curDayEncounterNormelized = curEncounter && curEncounter.data && curEncounter.data.total >0 ? normalizeFhirEncounter(curEncounter.data.entry[1].resource) : null;
+    const handleTextOfCurrentAppointmentButton  = (curEncounter, nextAppointment) => {
+
+        let thereIsEncounterToday = curEncounter && curEncounter.data && curEncounter.data.total >0 ? true : false;
         let nextAppointmetCheckNormelized = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment (nextAppointment.data.entry[1].resource ): null;
         let theAppointmentIsToday = nextAppointmetCheckNormelized ? (moment(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY")  === moment().format("DD/MM/YYYY") ?true :false ): false;
-        let thereIsEncounterToday = curDayEncounterNormelized ? (moment(curDayEncounterNormelized.startTime).format("DD/MM/YYYY")  === moment().format("DD/MM/YYYY") ?true :false ): false;
-        if(!theAppointmentIsToday && !thereIsEncounterToday) {
-            return t("Admission without appointment");
+
+        if(!thereIsEncounterToday)
+        {
+            if(theAppointmentIsToday)
+            {
+                return t("Patient admission");
+            }
+            else{
+                return t("Admission without appointment");
+
+            }
         }
-        else{
-            return  t("Patient admission");
-        }
+
+        return false;
+
     }
     const handleChange = (panel, identifier) => async (event, newExpanded) => {
 
@@ -137,10 +144,12 @@ const DrawThisTable = ({result, searchParam}) => {
                                                   disabled={false} >
                                         {t("New appointment")}
                                     </StyledHrefButton>
+                                    {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment) ?
                                     <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
                                                   disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false}  >
-                                         {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment) }
+                                         {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment)}
                                     </StyledHrefButton>
+                                        :""}
                                 </StyledBottomLinks>
                             </StyledExpansionPanelDetails>
 
