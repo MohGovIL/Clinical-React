@@ -123,7 +123,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
                         <ListItem key={"nextAppointmentEntry_2"}>
 
                            <StyledLabelAppointment>
-                               <TitleValueComponent name={t("Next encounter")} value={t("Non existence")}
+                               <TitleValueComponent name={t("Next appointment")} value={t("Non existence")}
                                                     seperator={true}/>
                            </StyledLabelAppointment>
 
@@ -145,7 +145,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
 
                                     <StyledLabelStatusAppointment>
                                         <TitleValueComponent
-                                            name={encounterStatuses && normalizedPrevEncounter ? t(encounterStatuses[normalizedPrevEncounter.status]) : ''}/*t(normalizedPrevEncounter.status.charAt(0).toUpperCase() + normalizedPrevEncounter.status.slice(1))}*//>
+                                            name={encounterStatuses && normalizedPrevEncounter ? t(encounterStatuses[normalizedPrevEncounter.status]) : ''}/>
                                     </StyledLabelStatusAppointment>
 
                                     <StyledLinkWithIconComponent>

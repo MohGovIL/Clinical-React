@@ -21,7 +21,7 @@ export const StyledExpansionPanelSummary = styled(ExpansionPanelSummary)`
 
 export const StyledExpansionPanelDetails = styled(ExpansionPanelDetails)`
     width: 744px;
-    height: 315px;
+    height: 100%;
     display: block;
     justify-content: stretch;
 `;
@@ -31,8 +31,7 @@ export const StyledBox = styled(Box)`
     /* margin-left: 24px;
     margin-right:28px;*/
     width: 692px;
-    height: 214px;
-    overflow: auto;
+    height: auto;
     /*opacity: 0.2;*/
     border: solid 1px #000b4024;
     background-color: #f5f5f526;;

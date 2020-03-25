@@ -61,6 +61,9 @@ const DrawThisTable = ({result, searchParam}) => {
 
             }
         }
+        else{
+                return t("Patient admission");
+        }
 
         return false;
 
@@ -144,12 +147,12 @@ const DrawThisTable = ({result, searchParam}) => {
                                                   disabled={false} >
                                         {t("New appointment")}
                                     </StyledHrefButton>
-                                    {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment) ?
+
                                     <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
                                                   disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false}  >
                                          {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment)}
                                     </StyledHrefButton>
-                                        :""}
+
                                 </StyledBottomLinks>
                             </StyledExpansionPanelDetails>
 
