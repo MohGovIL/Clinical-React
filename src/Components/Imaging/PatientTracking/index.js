@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import PatientTrackingStyle, {StyledFilterBox, TableRowStyle} from './Style';
+import PatientTrackingStyle, {StyledFilterBox, TableRowStyle, StyledTitle} from './Style';
 import StatusFilterBox from "../../../Assets/Elements/StatusFilterBox";
 import CustomizedTable from "../../../Assets/Elements/CustomizedTable";
 import {connect} from "react-redux";
@@ -66,7 +66,9 @@ const PatientTracking = ({location, vertical, history, selectFilter}) => {
         <React.Fragment>
             <Header Items={menuItems}/>
             <PatientTrackingStyle>
-                <Title fontSize={'28px'} color={'#002398'} label={'Patient tracking'}/>
+                <StyledTitle>
+                    <Title fontSize={'28px'} color={'#002398'} label={'Patient tracking'}/>
+                </StyledTitle>
                 <StyledFilterBox>
                     <FilterBox/>
                 </StyledFilterBox>

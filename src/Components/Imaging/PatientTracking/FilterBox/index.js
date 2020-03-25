@@ -102,10 +102,10 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
 
     return (
         <StyledFilterBox>
-            <CustomizedDatePicker iconColor={'#076ce9'} isDisabled={tabValue === 2}/>
+            <CustomizedDatePicker iconColor={'#076ce9'} iconSize={'27px'} isDisabled={tabValue === 2}/>
             <StyledCustomizedSelect>
-                <ListItemText>{t("Facility name")}</ListItemText>
-                <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
+                <ListItemText>{t("Branch name")}</ListItemText>
+                <CustomizedSelect background_color={'#c6e0ff'} background_menu_color={'#edf8ff'} icon_color={'#076ce9'} text_color={'#002398'}
                                   defaultValue={selectFilterOrganization} options={optionsOrganization}
                                   onChange={organizationOnChangeHandler}
                                   langDirection={languageDirection}
@@ -113,7 +113,7 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
             </StyledCustomizedSelect>
             <StyledCustomizedSelect>
                 <ListItemText>{t("Service type")}</ListItemText>
-                <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
+                <CustomizedSelect background_color={'#c6e0ff'} background_menu_color={'#edf8ff'} icon_color={'#076ce9'} text_color={'#002398'}
                                   defaultValue={selectFilterServiceType} options={optionsServiceType}
                                   onChange={serviceTypeOnChangeHandler}
                                   langDirection={languageDirection}
