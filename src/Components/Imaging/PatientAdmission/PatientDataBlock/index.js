@@ -83,6 +83,9 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
         'disabled': edit_mode === 1 ? false : true,
         'color': edit_mode === 1 ? "primary" : 'primary',
         'variant': edit_mode === 1 ? "filled" : 'standard',
+        'InputLabelProps': {
+            shrink: true
+        }
     };
 
     useEffect(() => {
