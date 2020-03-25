@@ -12,11 +12,11 @@ export const normalizeValueData = valueData => {
     }
 };
 
-export const normalizeHealhcareServiceValueData = valueData => {
+export const normalizeHealthCareServiceValueData = valueData => {
     if (valueData.resourceType) {
         return {
             code: isNaN(parseInt(valueData.type[0].coding[0].code)) ? valueData.type[0].coding[0].code : parseInt(valueData.type[0].coding[0].code),
-            name: valueData.type[0].text,
+            name: valueData.name,
         }
     }
 };

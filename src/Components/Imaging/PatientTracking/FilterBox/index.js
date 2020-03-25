@@ -5,7 +5,7 @@ import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
-import {normalizeHealhcareServiceValueData, normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import {normalizeHealthCareServiceValueData, normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import ListItemText from "@material-ui/core/ListItemText";
 import errorHandler from "../../../../Utils/Helpers/errorHandler";
 import {
@@ -57,10 +57,10 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
         })()
     }, []);
 
-    //Autoset current facility
+    //Auto set current facility
     useEffect(() => {
-        if (facility !== 0) {
-            organizationOnChangeHandler(facility);
+        if (facility !== 0 && selectFilterOrganization === 0) {
+         organizationOnChangeHandler(facility);
         }
     }, []);
 
@@ -77,7 +77,7 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
 
                 for (let entry of dataServiceType) {
                     if (entry.resource !== undefined) {
-                        const setLabelServiceType = normalizeHealhcareServiceValueData(entry.resource);
+                        const setLabelServiceType = normalizeHealthCareServiceValueData(entry.resource);
                         array.push(setLabelServiceType);
                     }
                 }
