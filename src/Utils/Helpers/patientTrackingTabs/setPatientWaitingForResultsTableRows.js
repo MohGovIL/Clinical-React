@@ -110,6 +110,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
+                        idType: patient.identifierType,
                         priority: encounter.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,
@@ -119,7 +120,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                     break;
                 case 'Encounter sheet':
                     row.push({
-                        label: 'Encounter sheet',
+                        label: 'Encounter Sheet',
                         padding: 'none',
                         align: 'center',
                         color: 'primary',
@@ -169,7 +170,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: encounter.serviceType ? encounter.serviceType.join(' ') : null
+                        label: encounter.serviceType ? encounter.serviceType : null
                     });
                     break;
                 case 'Test':
@@ -183,7 +184,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment(encounter.startTime).format('LT')
+                        label: moment.utc(encounter.startTime).format('LT')
                     });
                     break;
                 default:

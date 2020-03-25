@@ -1,5 +1,5 @@
 import styled, {createGlobalStyle} from "styled-components";
-import {DatePicker} from '@material-ui/pickers/';
+import {DatePicker, KeyboardDatePicker} from '@material-ui/pickers';
 
 export const StyledDatePicker = styled(DatePicker)`
 & .MuiInputBase-root {
@@ -13,15 +13,17 @@ export const StyledDatePicker = styled(DatePicker)`
 }
 `;
 
+export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
+  .Mui-required {
+    color: #ff0000;
+  }
+`;
+
 export const GlobalStyledDatePicker = createGlobalStyle`
   .MuiPopover-paper .MuiPickersCalendarHeader-dayLabel {
     color: #000000;
     font-weight: bold;
     font-size: 16px;
-  }
-
-  button.MuiIconButton-root {
-    padding: 5px;
   }
 
   .MuiPaper-root .MuiPickersCalendarHeader-switchHeader p.MuiTypography-root {

@@ -61,7 +61,7 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
                 notActiveAction: waitingForResultsTabNotActiveFunction
             },
             {
-                tabName: 'Finished',
+                tabName: 'Finished treatment',
                 id: 'finished',
                 mode: 'hide',
                 count: 0,
@@ -110,7 +110,7 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
         <React.Fragment>
             <Header Items={menuItems}/>
             <PatientTrackingStyle>
-                <Title label={'Patient tracking'}/>
+                <Title fontSize={'28px'} color={'#002398'} label={'Patient tracking'}/>
                 <StyledFilterBox>
                     <FilterBox/>
                 </StyledFilterBox>
@@ -125,11 +125,11 @@ const PatientTracking = ({vertical, history, selectFilter}) => {
 
 const mapStateToProps = state => {
     return {
-        fhirDataStatus: state.fhirData.STATUS,
-        appointments: state.fhirData.appointments,
-        patients: state.fhirData.patients,
+        // fhirDataStatus: state.fhirData.STATUS,
+        // appointments: state.fhirData.appointments,
+        // patients: state.fhirData.patients,
         vertical: state.settings.clinikal_vertical,
-        userRole: state.settings.user_role,
+        // userRole: state.settings.user_role,
         selectFilter: state.filters
     };
 };
