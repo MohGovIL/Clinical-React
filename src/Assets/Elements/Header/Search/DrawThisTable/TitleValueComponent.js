@@ -21,7 +21,7 @@ const TitleValueComponent = ({name, value, searchParam, seperator}) => {
 
         if (searchParam) {
 
-            let innerText = ref.current.innerText;
+            let innerText = ref && ref.current  ? ref.current.innerText : "";
             let searchTrimmed = searchParam.trim();
             let index = innerText.indexOf(searchTrimmed);
             let innerHTMLNew = "";
