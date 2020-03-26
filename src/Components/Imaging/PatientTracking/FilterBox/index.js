@@ -5,7 +5,10 @@ import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
 import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
-import {normalizeHealhcareServiceValueData, normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import {
+    normalizeHealthCareServiceValueData,
+    normalizeValueData
+} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import ListItemText from "@material-ui/core/ListItemText";
 import errorHandler from "../../../../Utils/Helpers/errorHandler";
 import {
@@ -57,11 +60,9 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
         })()
     }, []);
 
-    //Autoset current facility
+    //Auto set current facility
     useEffect(() => {
-        if (facility !== 0) {
-            organizationOnChangeHandler(facility);
-        }
+        organizationOnChangeHandler(facility !== 0 && selectFilterOrganization === 0 ? facility : selectFilterOrganization);
     }, []);
 
     const organizationOnChangeHandler = (code) => {
@@ -72,19 +73,18 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
 
             (async () => {
                 try {
-                //Nested destructuring from Promise. ES6 new syntax.
-                const {data: {entry: dataServiceType}} = await getHealhcareService(code);
+                    //Nested destructuring from Promise. ES6 new syntax.
+                    const {data: {entry: dataServiceType}} = await getHealhcareService(code);
 
-                for (let entry of dataServiceType) {
-                    if (entry.resource !== undefined) {
-                        const setLabelServiceType = normalizeHealhcareServiceValueData(entry.resource);
-                        array.push(setLabelServiceType);
+                    for (let entry of dataServiceType) {
+                        if (entry.resource !== undefined) {
+                            const setLabelServiceType = normalizeHealthCareServiceValueData(entry.resource);
+                            array.push(setLabelServiceType);
+                        }
                     }
-                }
-                setFilterServiceTypeAction(0);
-                setLabelServiceType(array);
-                }
-                catch (err) {
+                    setFilterServiceTypeAction(0);
+                    setLabelServiceType(array);
+                } catch (err) {
                     errorHandler(err);
                 }
             })();
@@ -92,18 +92,20 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
             setFilterServiceTypeAction(0);
             setLabelServiceType(emptyArrayAll());
         }
+        return true;
     };
 
     const serviceTypeOnChangeHandler = (code) => {
         setFilterServiceTypeAction(code);
+        return true;
     };
 
     return (
         <StyledFilterBox>
-            <CustomizedDatePicker iconColor={'#076ce9'} isDisabled={tabValue === 2}/>
+            <CustomizedDatePicker iconColor={'#076ce9'} iconSize={'27px'} isDisabled={tabValue === 2}/>
             <StyledCustomizedSelect>
-                <ListItemText>{t("Facility name")}</ListItemText>
-                <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
+                <ListItemText>{t("Branch name")}</ListItemText>
+                <CustomizedSelect background_color={'#c6e0ff'} background_menu_color={'#edf8ff'} icon_color={'#076ce9'} text_color={'#002398'}
                                   defaultValue={selectFilterOrganization} options={optionsOrganization}
                                   onChange={organizationOnChangeHandler}
                                   langDirection={languageDirection}
@@ -111,7 +113,7 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
             </StyledCustomizedSelect>
             <StyledCustomizedSelect>
                 <ListItemText>{t("Service type")}</ListItemText>
-                <CustomizedSelect background_color={'#eaf7ff'} icon_color={'#076ce9'} text_color={'#076ce9'}
+                <CustomizedSelect background_color={'#c6e0ff'} background_menu_color={'#edf8ff'} icon_color={'#076ce9'} text_color={'#002398'}
                                   defaultValue={selectFilterServiceType} options={optionsServiceType}
                                   onChange={serviceTypeOnChangeHandler}
                                   langDirection={languageDirection}
