@@ -102,7 +102,7 @@ export const StyledPatientDetails = styled.div`
 export const StyledChip = styled(Chip)`
   max-width: fit-content;
   background-color: rgba(0, 58, 199, 0.13);
-  
+  margin: 0 14px 14px 14px;
   .MuiChip-deleteIcon {
     margin: 0;
     color: #000b40;

@@ -36,7 +36,6 @@ import {
   Tab,
   Tabs,
   Switch,
-  ListSubheader,
 } from '@material-ui/core';
 
 const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
@@ -83,10 +82,10 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   };
 
   const filterOptions = (options, { inputValue }) => {
-    if (selecetedServicesType.length) {
+    if (pendingValue.length) {
       options = matchSorter(
         options,
-        selecetedServicesType[0].serviceType.code,
+        pendingValue[0].serviceType.code,
         { keys: ['serviceType.code'] },
       );
     }
