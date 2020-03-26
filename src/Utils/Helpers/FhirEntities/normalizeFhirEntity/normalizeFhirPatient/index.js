@@ -16,14 +16,13 @@ const normalizeFhirPatient = patient => {
     let city = null;
     let postalCode = null;
     let country = null;
-
+    let managingOrganization = null;
 
     if(patient.address.length){
         city = patient.address[0].city;
         postalCode = patient.address[0].postalCode;
         country = patient.address[0].country;
     }
-    let managingOrganization = null;
     let ageGenderType = '';
 
 
@@ -33,14 +32,8 @@ const normalizeFhirPatient = patient => {
         identifierType = patient.identifier[0].type.coding.length && patient.identifier[0].type.coding[0].code;
     }
 
-    //Demo data for health managing organization
-    //In future we need change to: patient.managingOrganization
-    managingOrganization = {
-        reference: "Organization/6"
-    };
-
-    if (managingOrganization.reference && managingOrganization.reference.length > 0) {
-        managingOrganization = managingOrganization ? managingOrganization.reference.split('/')[1] : null;
+    if (patient.managingOrganization.reference && patient.managingOrganization.reference.length > 0) {
+        managingOrganization = patient.managingOrganization ? patient.managingOrganization.reference.split('/')[1] : null;
     }
 
     if (patient.name) {
