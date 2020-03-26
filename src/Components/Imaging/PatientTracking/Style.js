@@ -15,7 +15,7 @@ export const TableRowStyle = styled.div`
 export const StyledFilterBox = styled.div`
   display: flex;
   align-items: center;
-  margin: 35px 0 35px 0;
+  margin: 35px 24px 35px 24px;
 
   & .MuiListItemText-root span{
     color: #000d37;
@@ -37,4 +37,10 @@ export default styled.div`
       padding-right: 0;
       padding-left: 0;
     }
+`;
+
+export const StyledTitle = styled.div`
+  margin: 0px 32px 0px 32px;
+  width: 166px;
+  height: 38px;
 `;

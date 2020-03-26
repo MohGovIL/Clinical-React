@@ -95,7 +95,7 @@ export const createNewEncounter = (appointment, facility) => {
 };
 
 export const getOrganization = () => {
-    return fhirTokenInstance().get(`${fhirBasePath}/Organization?active=1`);
+    return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=11`);
 };
 
 export const getHealhcareService = (organization) => {

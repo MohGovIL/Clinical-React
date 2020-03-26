@@ -70,13 +70,14 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                            onCloseClick={handleCloseClick} edit_mode={edit}/>
             <StyledPatientRow>
                 <StyledBackdrop open={true} edit_mode={edit}>
-                    {Object.values(patientData).length && <PatientDataBlock appointmentId={appointmentId} patientData={patientData}
+                    {Object.values(patientData).length &&
+                    <PatientDataBlock appointmentId={appointmentId} patientData={patientData}
                                       onEditButtonClick={handleEditButtonClick} edit_mode={edit}
                                       languageDirection={languageDirection}
                                       formatDate={formatDate}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>
-                {Object.values(patientData).length && <PatientDetailsBlock patientData={patientData} />}
+                {Object.values(patientData).length && <PatientDetailsBlock patientData={patientData}/>}
             </StyledPatientRow>
         </React.Fragment>
     );

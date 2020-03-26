@@ -17,6 +17,9 @@ export const StyledMenu = styled(Menu)`
   & .MuiList-padding {
     padding: 0px;
   }
+  & .MuiList-padding li:hover {
+    background-color: #cfe2fa;
+  }
 `;
 
 export const StyledButton = styled(Button)`
@@ -27,6 +30,7 @@ export const StyledButton = styled(Button)`
   margin: 0 5px 0 5px;
   padding: 5px;
   border-bottom: unset;
+  height: 30px;
 
   .MuiButton-label {
     padding:0 5px 0 5px;
