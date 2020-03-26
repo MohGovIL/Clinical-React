@@ -114,8 +114,8 @@ const DrawThisTable = ({result, searchParam}) => {
                                 </StyledLabelName>
                                 <StyledLabelTZ>
                                     <TitleValueComponent searchParam={searchParam}
-                                                         name={t(patient.identifier.type === 'idtype_1' ? 'Teudat zehut' : patient.identifier.type)}
-                                                         value={patient.identifier.value}/>
+                                                         name={t(patient.identifierType === 'idtype_1' ? 'Teudat zehut' : patient.identifierType)}
+                                                         value={patient.identifier}/>
                                 </StyledLabelTZ>
                                 <StyledLabelPhone>
                                     {
