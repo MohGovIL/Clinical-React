@@ -76,7 +76,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                                       formatDate={formatDate}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>
-                {Object.values(patientData).length && <PatientDetailsBlock patientData={patientData} />}
+                {Object.values(patientData).length && <PatientDetailsBlock patientData={patientData} formatDate={formatDate} languageDirection={languageDirection}  />}
             </StyledPatientRow>
         </React.Fragment>
     );

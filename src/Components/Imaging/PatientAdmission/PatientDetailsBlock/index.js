@@ -21,8 +21,19 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import Grid from '@material-ui/core/Grid';
+import MomentUtils from '@date-io/moment';
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers';
+import CustomizedDatePicker from '../../../../Assets/Elements/CustomizedDatePicker';
+import { StyledTextInput } from '../PatientDataBlock/Style';
 
-const PatientDetailsBlock = ({ languageDirection, patientData }) => {
+const PatientDetailsBlock = ({
+  languageDirection,
+  patientData,
+  formatDate,
+}) => {
   const { t } = useTranslation();
   const { register, control, handleSubmit } = useForm({
     submitFocusError: true,
@@ -39,6 +50,19 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
   const loadingCities = citiesOpen && cities.length === 0;
   const loadingStreets = streetsOpen && streets.length === 0;
 
+  const [
+    commitmentAndPaymentCommitmentDate,
+    setCommitmentAndPaymentCommitmentDate,
+  ] = useState('');
+
+  const commitmentAndPaymentCommitmentDateOnChangeHandler = date => {
+    try {
+      // let newBirthDate = date.format(formatDate).toString();
+      setCommitmentAndPaymentCommitmentDate(date.format(formatDate).toString());
+    } catch (e) {
+      console.log('Error: ' + e);
+    }
+  };
   //Is escorted
   const [isEscorted, setIsEscorted] = useState(false);
   const switchOnChangeHandle = () => {
@@ -46,9 +70,19 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
   };
 
   //Tabs
-  const [tabValue, setTabValue] = useState(0);
-  const tabsChangeHandler = (event, newValue) => {
-    setTabValue(newValue);
+  const [contactInformationTabValue, setContactInformationTabValue] = useState(
+    0,
+  );
+  const contactInformationTabValueChangeHandler = (event, newValue) => {
+    setContactInformationTabValue(newValue);
+  };
+
+  const [
+    commitmentAndPaymentTabValue,
+    setCommitmentAndPaymentTabValue,
+  ] = useState(0);
+  const setCommitmentAndPaymentTabValueChangeHandler = (event, newValue) => {
+    setCommitmentAndPaymentTabValue(newValue);
   };
 
   const onSubmit = data => {
@@ -204,8 +238,8 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
           />
           <StyledDivider variant={'fullWidth'} />
           <Tabs
-            value={tabValue}
-            onChange={tabsChangeHandler}
+            value={contactInformationTabValue}
+            onChange={contactInformationTabValueChangeHandler}
             indicatorColor='primary'
             textColor='primary'
             variant='standard'
@@ -213,7 +247,7 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
             <Tab label={t('Address')} />
             <Tab label={t('PO box')} />
           </Tabs>
-          {tabValue === 0 ? (
+          {contactInformationTabValue === 0 ? (
             <React.Fragment>
               <StyledAutoComplete
                 id='addressCity'
@@ -394,8 +428,103 @@ const PatientDetailsBlock = ({ languageDirection, patientData }) => {
             {t('click here')}
           </a>
         </span>
+        <StyledFormGroup>
+          <Title
+            fontSize={'18px'}
+            color={'#000b40'}
+            label={t('Commitment and payment')}
+            bold
+          />
+          <Title
+            fontSize={'14px'}
+            color={'#000b40'}
+            label={t('Please fill in the payer details for the current test')}
+          />
+          <StyledDivider variant='fullWidth' />
+          <Tabs
+            value={commitmentAndPaymentTabValue}
+            onChange={setCommitmentAndPaymentTabValueChangeHandler}
+            indicatorColor='primary'
+            textColor='primary'
+            variant='standard'
+            aria-label='full width tabs example'>
+            <Tab label={t('HMO')} />
+            <Tab label={t('insurance company')} />
+            <Tab label={t('Private')} />
+          </Tabs>
+          {commitmentAndPaymentTabValue === 0 && (
+            <React.Fragment>
+              <StyledTextField
+                label={t('HMO')}
+                id={'commitmentAndPaymentHMO'}
+              />
+              <StyledTextField
+                label={t('Reference for payment commitment')}
+                id={'commitmentAndPaymentReferenceForPaymentCommitment'}
+                type='number'
+              />
+
+              {/* Add date picker here */}
+              <StyledTextInput languageDirection={languageDirection}>
+                {/* <CustomizedDatePicker
+                  PickerProps={{
+                    id: 'asdasdas',
+                    format: 'DD/MM/YYYY',
+                    name: 'commitmentDate',
+                    // required: true,
+                    disableToolbar: false,
+                    label: t('Commitment date'),
+                    inputValue: commitmentAndPaymentCommitmentDate,
+                    mask: { formatDate },
+                    // InputProps: {
+                    //     disableUnderline: edit_mode === 1 ? false : true,
+                    // },
+                    disableFuture: true,
+                    // color: edit_mode === 1 ? "primary" : 'primary',
+                    // disabled: edit_mode === 1 ? false : true,
+                    variant: 'inline',
+                    inputVariant: 'standard',
+                    onChange: commitmentAndPaymentCommitmentDateOnChangeHandler,
+                    autoOk: true,
+                    // error: errors.birthDate ? true : false,
+                    // helperText: errors.birthDate ? t("Date must be in a date format") : null,
+                  }}
+                  CustomizedProps={{
+                    keyBoardInput: true,
+                    showNextArrow: false,
+                    showPrevArrow: false,
+                  }}
+                /> */}
+                <MuiPickersUtilsProvider utils={MomentUtils}>
+                  <KeyboardDatePicker
+                    disableToolbar
+                    variant='inline'
+                    format='MM/dd/yyyy'
+                    margin='normal'
+                    id='date-picker-inline'
+                    label='Date picker inline'
+                    value={commitmentAndPaymentCommitmentDate}
+                    onChange={commitmentAndPaymentCommitmentDateOnChangeHandler}
+                    KeyboardButtonProps={{
+                      'aria-label': 'change date',
+                    }}
+                  />
+                </MuiPickersUtilsProvider>
+              </StyledTextInput>
+              <StyledTextField
+                label={t('Doctor’s name')}
+                id={'commitmentAndPaymentDoctorsName'}
+              />
+              <StyledTextField
+                label={t('Doctor’s license')}
+                id={'commitmentAndPaymentDoctorsLicense'}
+                type='number'
+              />
+            </React.Fragment>
+          )}
+        </StyledFormGroup>
       </StyledForm>
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
     </StyledPatientDetails>
   );
 };
