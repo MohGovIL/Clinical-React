@@ -6,6 +6,7 @@ import {
   StyledDivider,
   StyledTextField,
   StyledAutoComplete,
+  StyledKeyboardDatePicker,
 } from './Style';
 import { useTranslation } from 'react-i18next';
 import Title from '../../../../Assets/Elements/Title';
@@ -28,6 +29,7 @@ import {
 } from '@material-ui/pickers';
 import CustomizedDatePicker from '../../../../Assets/Elements/CustomizedDatePicker';
 import { StyledTextInput } from '../PatientDataBlock/Style';
+import { Moment } from 'moment';
 
 const PatientDetailsBlock = ({
   languageDirection,
@@ -54,6 +56,15 @@ const PatientDetailsBlock = ({
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,
   ] = useState('');
+
+  const [
+    commitmentAndPaymentCommitmeValidity,
+    setCommitmentAndPaymentCommitmeValidity,
+  ] = useState('');
+
+  const commitmentAndPaymentCommitmeValidityOnChangeHandler = date => {
+    setCommitmentAndPaymentCommitmeValidity(date);
+  };
 
   const commitmentAndPaymentCommitmentDateOnChangeHandler = date => {
     try {
@@ -459,14 +470,15 @@ const PatientDetailsBlock = ({
                 id={'commitmentAndPaymentHMO'}
               />
               <StyledTextField
+                required
                 label={t('Reference for payment commitment')}
                 id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                 type='number'
               />
 
               {/* Add date picker here */}
-              <StyledTextInput languageDirection={languageDirection}>
-                {/* <CustomizedDatePicker
+              {/* <StyledTextInput languageDirection={languageDirection}> */}
+              {/* <CustomizedDatePicker
                   PickerProps={{
                     id: 'asdasdas',
                     format: 'DD/MM/YYYY',
@@ -495,27 +507,46 @@ const PatientDetailsBlock = ({
                     showPrevArrow: false,
                   }}
                 /> */}
-                <MuiPickersUtilsProvider utils={MomentUtils}>
-                  <KeyboardDatePicker
-                    disableToolbar
-                    variant='inline'
-                    format='MM/dd/yyyy'
-                    margin='normal'
-                    id='date-picker-inline'
-                    label='Date picker inline'
-                    value={commitmentAndPaymentCommitmentDate}
-                    onChange={commitmentAndPaymentCommitmentDateOnChangeHandler}
-                    KeyboardButtonProps={{
-                      'aria-label': 'change date',
-                    }}
-                  />
-                </MuiPickersUtilsProvider>
-              </StyledTextInput>
+              <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
+                <StyledKeyboardDatePicker
+                  disableToolbar
+                  variant='inline'
+                  format={formatDate}
+                  margin='normal'
+                  required
+                  id='commitmentAndPaymentCommitmentDate'
+                  label={t('Commitment date')}
+                  // value={commitmentAndPaymentCommitmentDate}
+                  value={undefined}
+                  onChange={commitmentAndPaymentCommitmentDateOnChangeHandler}
+                  KeyboardButtonProps={{
+                    'aria-label': 'change date',
+                  }}
+                />
+                <StyledKeyboardDatePicker
+                  required
+                  
+                  disableToolbar
+                  variant='inline'
+                  format={formatDate}
+                  margin='normal'
+                  id='commitmentAndPaymentCommitmeValidity'
+                  label={t('Commitment validity')}
+                  value={undefined}
+                  onChange={commitmentAndPaymentCommitmeValidityOnChangeHandler}
+                  KeyboardButtonProps={{
+                    'aria-label': 'change date',
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+              {/* </StyledTextInput> */}
               <StyledTextField
+                required
                 label={t('Doctor’s name')}
                 id={'commitmentAndPaymentDoctorsName'}
               />
               <StyledTextField
+                required
                 label={t('Doctor’s license')}
                 id={'commitmentAndPaymentDoctorsLicense'}
                 type='number'

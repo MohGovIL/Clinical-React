@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {devicesValue} from "../../../../Assets/Themes/BreakPoints";
 import {Divider, TextField} from "@material-ui/core";
 import {Autocomplete} from '@material-ui/lab';
+import { KeyboardDatePicker } from '@material-ui/pickers';
 
 export const StyledDivider = styled(Divider)`
   margin: 10px 0 40px 0;
@@ -25,6 +26,23 @@ export const StyledTextField = styled(TextField)`
   }
 `;
 
+export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
+  width: 70%;
+  background-color:  #f8faff;
+  border-radius: 10px;
+  margin: 24px 0 24px 0;
+  transform-origin: top right;
+  .MuiInputLabel-formControl {
+    right: 0;
+    left: unset;
+  }
+
+  .MuiInputLabel-shrink {
+    transform-origin: top right;
+    opacity: 0.6;
+    color: #1e2132;
+  }
+`;
 
 export const StyledAutoComplete = styled(Autocomplete)`
 //TODO make the padding disappear
