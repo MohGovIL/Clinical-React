@@ -7,7 +7,7 @@
 const normalizeFhirAppointment = appointment => {
     let serviceType = null;
     let serviceTypeCode = null;
-    if(appointment.serviceType && appointment.serviceType.length > 0){
+    if(appointment.serviceType){
         if(appointment.serviceType.every(serviceTypeObj => serviceTypeObj.coding)){
             serviceTypeCode = appointment.serviceType.map(serviceTypeCodeObj => serviceTypeCodeObj.coding[0].code);
             serviceType = appointment.serviceType.map(serviceTypeObj => serviceTypeObj.text);

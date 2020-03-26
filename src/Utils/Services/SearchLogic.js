@@ -203,9 +203,9 @@ export function sortPatientRulesByNumberSort(items , value) {
     window.leftover = null;
     window.dataFound = [];
 
-    sortByName(items, 'identifier',value,'value');
+    sortByName(items, 'identifier',value,null);
     sortByName(window.leftover, 'mobileCellPhone',value,null);
-    sortByContains(window.leftover, 'identifier',value,'value');
+    sortByContains(window.leftover, 'identifier',value,null);
     sortByContains(window.leftover, 'mobileCellPhone',value,null);
 
     let obj = [...window.dataFound,...window.leftover];

@@ -69,11 +69,15 @@ export const StyledPaperContainer = styled.div`
     overflow : hidden;
 
     &:hover {
-            overflow :${props => props.height  > props.maxHeight  ? 'auto !important' :'hidden'};
+            overflow-y :${props => props.height  > props.maxHeight  ? 'auto !important' :'hidden'};
 
     }
 
 
 
 
+`;
+export const StyledContainer = styled.div`
+width: 744px;
+height: 315px;
 `;

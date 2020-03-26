@@ -16,7 +16,7 @@ export const normalizeHealthCareServiceValueData = valueData => {
     if (valueData.resourceType) {
         return {
             code: isNaN(parseInt(valueData.type[0].coding[0].code)) ? valueData.type[0].coding[0].code : parseInt(valueData.type[0].coding[0].code),
-            name: valueData.name,
+            name: valueData.name
         }
     }
 };
