@@ -1,5 +1,5 @@
-import styled, {createGlobalStyle} from "styled-components";
-import {devicesValue} from "../../../../Assets/Themes/BreakPoints";
+import styled, { createGlobalStyle } from "styled-components";
+import { devicesValue } from "../../../../Assets/Themes/BreakPoints";
 
 export const StyledDiv = styled.div`
   display: flex;
@@ -14,9 +14,9 @@ export const StyledDiv = styled.div`
   max-width: ${props => props.edit_mode === 1 ? "25%" : "unset"};
 
   @media(min-width: ${devicesValue.desktop}px){
-     flex-basis: 15%;
-     min-width: 15%;
-     max-width: ${props => props.edit_mode === 1 ? "15%" : "unset"};
+     flex-basis: 16%;
+     min-width: 17%;
+     max-width: ${props => props.edit_mode === 1 ? "16%" : "unset"};
    }
 
   .MuiDivider-root {
@@ -88,7 +88,7 @@ export const StyledTextInput = styled.div`
     }
 
     .MuiInputLabel-formControl {
-      right: 0;
+      right: ${props => props.languageDirection === "rtl" ? '0' : 'unset'};
       left: unset;
       line-height: 1.38;
       letter-spacing: normal;
@@ -96,6 +96,11 @@ export const StyledTextInput = styled.div`
       color: #1e2132;
       opacity: 60%;
     }
+
+    .MuiInputLabel-formControl.Mui-error{
+        color: #ff0000;
+    }
+
 
     .MuiInput-formControl {
       width: 100%;

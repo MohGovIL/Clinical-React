@@ -4,8 +4,42 @@ import {
     SET_APPOINTMENTS_WITH_PATIENTS,
     SET_ENCOUNTER_WITH_PATIENTS,
     SET_ENCOUNTER_WITH_PATIENTS_FAILED,
-    SET_ENCOUNTER_WITH_PATIENTS_SUCCESS
+    SET_ENCOUNTER_WITH_PATIENTS_SUCCESS,
+    UPDATE_APPOINTMENT,
+    UPDATE_APPOINTMENT_FAILED,
+    UPDATE_APPOINTMENT_SUCCESS,
+    SET_PATIENT_DATA_SUCCESS
 } from "./fhirActionTypes";
+
+export const updateAppointmentAction = appointment => {
+    return dispatch => {
+        try{
+            dispatch(updateAppointmentStartAction());
+            dispatch(updateAppointmentSuccessAction(appointment))
+        }catch(err){
+            dispatch(updateAppointmentFailedAction());
+        }
+    }
+};
+
+const updateAppointmentSuccessAction = appointment => {
+    return {
+        type: UPDATE_APPOINTMENT_SUCCESS,
+        appointment
+    }
+};
+
+const updateAppointmentFailedAction = () => {
+    return {
+        type: UPDATE_APPOINTMENT_FAILED
+    }
+};
+
+const updateAppointmentStartAction = () => {
+    return {
+        type: UPDATE_APPOINTMENT
+    }
+};
 //TODO use this functions to add the data to redux
 export const setEncounterWithPatientsAction = (patients, encounters) => {
     return dispatch => {
@@ -71,3 +105,10 @@ export const setAppointmentsWithPatientsAction = (patients, appointments) => {
         }
     }
 };
+
+export const setPatientDataAfterSave = (patient) => {
+    return {
+        type: SET_PATIENT_DATA_SUCCESS,
+        patient
+    }
+}

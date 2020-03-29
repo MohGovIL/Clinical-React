@@ -11,41 +11,28 @@ const normalizeFhirPatient = patient => {
     let email = null;
     let firstName = null;
     let lastName = null;
-    let identifier = null;
+    let identifier = '';
+    let identifierType = '';
     let city = null;
     let postalCode = null;
     let country = null;
-
+    let managingOrganization = null;
 
     if(patient.address.length){
         city = patient.address[0].city;
         postalCode = patient.address[0].postalCode;
         country = patient.address[0].country;
     }
-    let managingOrganization = null;
     let ageGenderType = '';
 
 
-    //Temporary fix for checking
-    if (patient.identifier) {
-        // let identifier = patient.identifier ? patient.identifier[0].value : '';
 
-        //bugfix write correct type id
-        //identifier = {value: (patient.identifier ? patient.identifier[0].value : ''), type: "ID"};
-        let id = patient.identifier ? patient.identifier[0].value : '';
-        let type = patient.identifier[0].type.coding[0].code;
-        identifier = {value : id , type : type };
-
+    if (patient.identifier.length) {
+        identifier = patient.identifier[0].value;
+        identifierType = patient.identifier[0].type.coding.length && patient.identifier[0].type.coding[0].code;
     }
-
-    //Demo data for health managing organization
-    //In future we need change to: patient.managingOrganization
-    managingOrganization = {
-        reference: "Organization/6"
-    };
-
-    if (managingOrganization.reference && managingOrganization.reference.length > 0) {
-        managingOrganization = managingOrganization ? managingOrganization.reference.split('/')[1] : null;
+    if (patient.managingOrganization && patient.managingOrganization.reference && patient.managingOrganization.reference.length > 0) {
+        managingOrganization = patient.managingOrganization ? patient.managingOrganization.reference.split('/')[1] : null;
     }
 
     if (patient.name) {
@@ -80,6 +67,7 @@ const normalizeFhirPatient = patient => {
         postalCode,
         country,
         identifier,
+        identifierType,
         firstName,
         lastName,
         middleName,

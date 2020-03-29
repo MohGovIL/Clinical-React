@@ -12,15 +12,27 @@ const normalizeFhirEncounter = encounter => {
             examination = encounter.reasonCode.map(reasonCodeObj => reasonCodeObj.text);
         }
     }
+    let startTime = null;
+    let date = null;
+
+    // if(encounter.period){
+    //     if(encounter.period.start){
+    //         const isPeriodValid = encounter.period.start.split(' ');
+    //         if(isPeriodValid.length > 1){
+    //             date = isPeriodValid[0];
+    //             startTime = isPeriodValid[1];
+    //         }
+    //     }
+    // }
 
     const serviceProvider = encounter.serviceProvider ? encounter.serviceProvider.reference.split('/')[1] : null;
 
     let serviceType = null;
     let serviceTypeCode = null;
-    if(encounter.serviceType && encounter.serviceType.length > 0){
-        if(encounter.serviceType.every(serviceTypeObj => serviceTypeObj.coding)){
-            serviceTypeCode = encounter.serviceType.map(serviceTypeCodeObj => serviceTypeCodeObj.coding[0].code);
-            serviceType = encounter.serviceType.map(serviceTypeObj => serviceTypeObj.text);
+    if(encounter.serviceType){
+        if(encounter.serviceType.coding){
+            serviceTypeCode =  encounter.serviceType.coding[0].code;
+            serviceType = encounter.serviceType.text;
         }
     }
 
@@ -28,7 +40,7 @@ const normalizeFhirEncounter = encounter => {
         id: encounter.id,
         priority: encounter.priority ? encounter.priority.coding[0].code : null,
         status: encounter.status,
-        startTime: encounter.period ? encounter.period.start : null,
+        startTime: encounter.period && encounter.period.start ? encounter.period.start : null,
         patient,
         appointment,
         serviceProvider,

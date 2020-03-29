@@ -8,10 +8,11 @@ import {getAppointmentsWithPatients, getValueSet, updateAppointmentStatus} from 
 import moment from 'moment';
 import 'moment/locale/he';
 import {normalizeFhirAppointmentsWithPatients} from '../FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients';
+import normalizeFhirAppointment from '../FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import normalizeFhirValueSet from '../FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import {store} from '../../../index';
 import {setAppointmentsWithPatientsAction} from '../../../Store/Actions/FhirActions/fhirActions';
-
+import {updateAppointmentAction} from '../../../Store/Actions/FhirActions/fhirActions';
 //מוזמנים
 export const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
@@ -107,6 +108,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
+                        idType: patient.identifierType,
                         priority: appointment.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,
@@ -138,17 +140,19 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                     break;
                 case 'Status':
                     row.push({
-                        onChange() {
-                            // try{
-                            //     const updateAppointmentStatus();
-                            //
-                            // }catch (err) {
-                            //     console.log(err);
-                            // }
+                        async onChange(code) {
+                            try{
+                                const updatedAppointment = await updateAppointmentStatus(appointmentId, code);
+                                const appointment = normalizeFhirAppointment(updatedAppointment.data);
+                                store.dispatch(updateAppointmentAction(appointment))
+                                return true;
+                            }catch (err) {
+                                return false;
+                            }
                         },
                         text_color: '#076ce9',
                         padding: 'none',
-                        value: appointment.status,
+                        defaultValue: appointment.status,
                         options,
                         align: 'center',
                         background_color: '#eaf7ff',

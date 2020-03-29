@@ -110,6 +110,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
+                        idType: patient.identifierType,
                         priority: encounter.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,
@@ -169,7 +170,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: encounter.serviceType ? encounter.serviceType.join(' ') : null
+                        label: encounter.serviceType ? encounter.serviceType : null
                     });
                     break;
                 case 'Test':

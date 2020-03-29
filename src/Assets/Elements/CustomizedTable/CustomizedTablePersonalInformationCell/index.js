@@ -7,7 +7,7 @@ import {useTranslation} from 'react-i18next';
 import GenderIcon from './GenderIcon';
 import {Tooltip, Typography} from '@material-ui/core';
 
-const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName, align, priority}) => {
+const CustomizedTablePersonalInformationCell = ({gender, id, idType, firstName, lastName, align, priority}) => {
 
     const {t} = useTranslation();
 
@@ -22,7 +22,7 @@ const CustomizedTablePersonalInformationCell = ({gender, id, firstName, lastName
                     :
                     <span>{`${firstName} ${lastName}`}</span>
                 }
-                {`${t('Federal Tax ID')} ${id}`}
+                {`${t(idType)} ${id}`}
             </PersonalData>
         </StyledCustomizedTablePersonalInformationCell>
     );

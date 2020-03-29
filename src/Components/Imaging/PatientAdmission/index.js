@@ -10,17 +10,22 @@ import {StyledPatientRow, StyledDummyBlock, StyledBackdrop} from "./Style";
 import {createNewEncounter} from '../../../Utils/Services/FhirAPI';
 import normalizeFhirEncounter from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import {devicesValue} from "../../../Assets/Themes/BreakPoints";
+
 const PatientAdmission = ({location, appointments, patients, languageDirection, formatDate, history, facility}) => {
     const {t} = useTranslation();
-    
+
     const [patientData, setPatientData] = useState({});
     const [appointmentId, setAppointmentId] = useState('');
     const [newEncounter, setNewEncounter] = useState({});
     const [edit, setEdit] = useState(0);
 
+    const isTabletMode = useMediaQuery(`(max-width: ${devicesValue.tabletPortrait}px)`);
+
     useEffect(() => {
-        const appointmentIdFromURL = new URLSearchParams(location.search).get("index");
-   
+        let appointmentIdFromURL = new URLSearchParams(location.search).get("index");
+
         setAppointmentId(appointmentIdFromURL);
 
         const participantPatient = appointments[appointmentIdFromURL].patient;
@@ -35,7 +40,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                 console.log(err)
             }
         })()
-    }, [location]);
+    }, [location, patients]);
 
     const allBreadcrumbs = [
         {
@@ -44,7 +49,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
             url: "#",
         },
         {
-            text: patientData.firstName + " " + patientData.lastName + " " + t("Encounter date") + ": " + Moment(Moment.now()).format(formatDate),
+            text: patientData.firstName + " " + patientData.lastName + " " + (!isTabletMode ? t("Encounter date") + ": " : "") + Moment(Moment.now()).format(formatDate),
             separator: false,
             url: "#"
         }
@@ -65,8 +70,10 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                            onCloseClick={handleCloseClick} edit_mode={edit}/>
             <StyledPatientRow>
                 <StyledBackdrop open={true} edit_mode={edit}>
-                    {Object.values(patientData).length && <PatientDataBlock appointmentId={appointmentId} patientData={patientData}
+                    {Object.values(patientData).length &&
+                    <PatientDataBlock appointmentId={appointmentId} patientData={patientData}
                                       onEditButtonClick={handleEditButtonClick} edit_mode={edit}
+                                      languageDirection={languageDirection}
                                       formatDate={formatDate}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyledButton, StyledMenu, StyledMenuItem, StyledDiv} from './Style'
 
 import {useTranslation} from "react-i18next";
@@ -12,12 +12,12 @@ import {ExpandLess} from "@material-ui/icons";
  * @param icon_color
  * @param textcolor
  * @param value - valueCode
- * @param onChange
+ * @param onChange - onChange can be an async function and can return true or false if wanted to change the value
  * @param options
  * @returns {Component}
  * @constructor
  */
-const CustomizedSelect = ({background_color, icon_color, text_color, value, onChange, options, langDirection, mode}) => {
+const CustomizedSelect = ({background_color, background_menu_color, icon_color, text_color, defaultValue, onChange, options, langDirection, mode}) => {
 
     const {t} = useTranslation();
 
@@ -26,6 +26,14 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
 
     //DO NOT DELETE, FOR FUTURE USE
     // const [selectedIndex, setSelectedIndex] = React.useState(1);
+
+    const [value, setValue] = useState('');
+
+    useEffect(() => {
+        if(defaultValue){
+            setValue(defaultValue);
+        }
+    }, [defaultValue])
 
     const handleClick = event => {
         setClicked(true);
@@ -37,8 +45,12 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
         setAnchorEl(null);
     };
 
-    const handleMenuItemClick = (code) => {
-        onChange(code);
+    const handleMenuItemClick = async code => {
+        // onChange(code);
+        const change = await onChange(code);
+        if(change){
+           setValue(code)
+        }
         setClicked(false);
         setAnchorEl(null);
     };
@@ -74,7 +86,7 @@ const CustomizedSelect = ({background_color, icon_color, text_color, value, onCh
             >{buttonLabel}
             </StyledButton>
             <StyledMenu
-                background_color={background_color}
+                background_color={background_menu_color ? background_menu_color : background_color}
                 icon_color={icon_color}
                 text_color={text_color}
 
