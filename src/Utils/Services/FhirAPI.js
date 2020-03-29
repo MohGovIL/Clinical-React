@@ -1,10 +1,8 @@
 import {tokenInstanceGenerator} from './AxiosWithTokenInstance';
 import {ApiTokens} from './ApiTokens';
 import moment from 'moment';
-import normalizeFhirPatient from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "./SearchLogic";
-import normalizeFhirValueSet from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
-import {normalizeHealhcareServiceValueData} from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import {normalizeHealthCareServiceValueData} from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
@@ -209,7 +207,7 @@ export const getHealthCareServiceByOrganization = async (organizationId) => {
 
     for (let entry of dataServiceType) {
         if (entry.resource !== undefined) {
-            const setLabelServiceType = normalizeHealhcareServiceValueData(entry.resource);
+            const setLabelServiceType = normalizeHealthCareServiceValueData(entry.resource);
             array[setLabelServiceType.code] = setLabelServiceType.name;
         }
     }

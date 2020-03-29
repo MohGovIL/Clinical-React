@@ -307,6 +307,7 @@ export const StyledGenderIcon = styled(GenderIcon)`
 `;
 
 export const StyledIcon = styled(Icon)`
+   font-family: "Material Icons" !important;
     margin-top: 2%;
     color: #002cb1;
     height: 24px;
