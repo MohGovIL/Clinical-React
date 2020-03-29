@@ -131,7 +131,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     }
 
     const organizationData = patientKupatHolimList.find(obj => {
-        return obj.code == (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) >= 0 ? healthManageOrgId : patientData.managingOrganization);
+        return obj.code == (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) >= 0 ? healthManageOrgId : (patientData.managingOrganization === null || patientData.managingOrganization == undefined ? 0 : patientData.managingOrganization));
     });
 
     let patientInitialValues = {
