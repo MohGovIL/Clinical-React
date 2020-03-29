@@ -31,8 +31,7 @@ const normalizeFhirPatient = patient => {
         identifier = patient.identifier[0].value;
         identifierType = patient.identifier[0].type.coding.length && patient.identifier[0].type.coding[0].code;
     }
-
-    if (patient.managingOrganization.reference && patient.managingOrganization.reference.length > 0) {
+    if (patient.managingOrganization && patient.managingOrganization.reference && patient.managingOrganization.reference.length > 0) {
         managingOrganization = patient.managingOrganization ? patient.managingOrganization.reference.split('/')[1] : null;
     }
 
