@@ -12,6 +12,7 @@
     "date-fns": "^2.9.0",
     "i18next": "^19.0.1",
     "i18next-xhr-backend": "^3.2.2",
+    "match-sorter": "^4.0.2",
     "material-icons-font": "^2.0.0",
     "moment": "^2.24.0",
     "proxyquire": "^2.1.3",

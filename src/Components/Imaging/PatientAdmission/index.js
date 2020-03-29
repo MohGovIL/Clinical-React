@@ -28,7 +28,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
 
         setAppointmentId(appointmentIdFromURL);
 
-        let participantPatient = appointments[appointmentIdFromURL].patient;
+        const participantPatient = appointments[appointmentIdFromURL].patient;
 
         setPatientData(patients[participantPatient]);
 
@@ -60,7 +60,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
     };
 
 
-    const handleEditButtonClick = (isEdit) => {
+    const handleEditButtonClick = isEdit => {
         setEdit(isEdit);
     };
 
@@ -77,7 +77,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                                       formatDate={formatDate}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>
-                {Object.values(patientData).length && <PatientDetailsBlock patientData={patientData}/>}
+                {Object.values(patientData).length && Object.values(newEncounter).length && <PatientDetailsBlock encounterData={newEncounter} patientData={patientData} edit_mode={edit} />}
             </StyledPatientRow>
         </React.Fragment>
     );

@@ -13,10 +13,10 @@ import {
 } from '../Actions/FhirActions/fhirActionTypes';
 
 const INITIAL_STATE = {
-  STATUS: '',
-  appointments: null,
-  patients: null,
-  encounters: null,
+    STATUS: '',
+    appointments: {},
+    patients: {},
+    encounters: {}
 };
 
 const FhirDataReducer = (state = INITIAL_STATE, action) => {
