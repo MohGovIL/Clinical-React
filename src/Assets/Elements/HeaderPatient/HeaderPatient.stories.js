@@ -2,14 +2,10 @@ import React from "react";
 import HeaderPatient from "./index";
 import {StylesProvider} from '@material-ui/core/styles'
 import GlobalStyle from "../../Themes/GlobalStyle";
-import {withKnobs, object} from "@storybook/addon-knobs";
+import {withKnobs, object, select, text} from "@storybook/addon-knobs";
 import {store} from "../../../index";
 import ProviderWrapper from "../../../../.storybook/Provider";
-import {statusesData} from "../CustomizedSelect/Select.stories";
 import * as Moment from "moment";
-
-store.getState().settings.lang_dir = "rtl";
-store.getState().settings.lang_code = "he";
 
 export default {
     title: 'HeaderPatient',
@@ -37,7 +33,11 @@ export const breadcrumbsData = [
     }
 ];
 
-export const normalDatePicker = () => {
-    return <HeaderPatient breadcrumbs={object('breadcrumbs', [...breadcrumbsData])} languageDirection={object('languageDirection', 'rtl')}
+export const normalHeaderPatient = () => {
+    const lang_dir = select('languageDirection', {"rtl": "rtl", "ltr": "ltr"},'rtl');
+
+    store.getState().settings.lang_dir = lang_dir;
+
+    return <HeaderPatient breadcrumbs={object('breadcrumbs', [...breadcrumbsData])} languageDirection={lang_dir}
                           edit_mode={object('edit_mode', 0)}/>
 };
