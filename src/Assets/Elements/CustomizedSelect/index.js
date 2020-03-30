@@ -30,7 +30,13 @@ const CustomizedSelect = ({background_color, background_menu_color, icon_color, 
     const [value, setValue] = useState('');
 
     useEffect(() => {
-        if(defaultValue){
+        let defaultValueType = typeof defaultValue;
+        if (defaultValueType === "number" && defaultValue >= 0) {
+            console.log(defaultValueType);
+            setValue(defaultValue);
+        }
+        if (defaultValueType === "string" && defaultValue) {
+            console.log(defaultValueType);
             setValue(defaultValue);
         }
     }, [defaultValue])
@@ -48,8 +54,8 @@ const CustomizedSelect = ({background_color, background_menu_color, icon_color, 
     const handleMenuItemClick = async code => {
         // onChange(code);
         const change = await onChange(code);
-        if(change){
-           setValue(code)
+        if (change) {
+            setValue(code)
         }
         setClicked(false);
         setAnchorEl(null);
@@ -57,7 +63,7 @@ const CustomizedSelect = ({background_color, background_menu_color, icon_color, 
 
     ///
     let opts = {};
-    let iconForButtonMenu = clicked ?  <ExpandLess/> : <ExpandMore/>;
+    let iconForButtonMenu = clicked ? <ExpandLess/> : <ExpandMore/>;
     let typeIcon = (langDirection === 'rtl' ? 'endIcon' : 'startIcon');
     opts[typeIcon] = iconForButtonMenu;
 
