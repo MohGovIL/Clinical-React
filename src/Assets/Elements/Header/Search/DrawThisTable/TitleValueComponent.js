@@ -39,7 +39,7 @@ const TitleValueComponent = ({name, value, searchParam, seperator}) => {
 
                     innerHTMLNew =
                         `
-                <${type} style='margin-left:0;'>${innerText.substr(0, index)}</${type}> +
+                <${type} style='margin-left:0;'>${innerText.substr(0, index)}</${type}>
                 <${type} style='margin:0; font-weight: bold;'>${innerText.substr(index, searchTrimmed.length)}</${type}>
                 <${type} style='margin-right:0;'>${innerText.substr(index + searchTrimmed.length)}</${type}>
                 `;
