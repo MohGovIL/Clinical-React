@@ -86,7 +86,7 @@ const PatientAdmission = ({patient, encounter, languageDirection, formatDate, hi
 const mapStateToProps = state => {
     return {
         patient: state.active.activePatient,
-        encounter: state.active.active.encounter,
+        encounter: state.active.activeEncounter,
         languageDirection: state.settings.lang_dir,
         formatDate: state.settings.format_date,
         facility: state.settings.facility
