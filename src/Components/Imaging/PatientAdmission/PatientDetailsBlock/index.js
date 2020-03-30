@@ -8,7 +8,6 @@ import {
   StyledTextField,
   StyledAutoComplete,
   StyledKeyboardDatePicker,
-  StyledSwitch,
   StyledChip,
 } from './Style';
 import CustomizedButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
@@ -29,11 +28,8 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import MomentUtils from '@date-io/moment';
 import {
-  KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
-import CustomizedDatePicker from '../../../../Assets/Elements/CustomizedDatePicker';
-import { StyledTextInput } from '../PatientDataBlock/Style';
 import { Moment } from 'moment';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
@@ -317,14 +313,6 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
             justify={'flex-start'}
             alignItems={'baseline'}>
             <span>{t('Patient arrived with an escort?')}</span>
-            {/* <StyledSwitch
-              size={'medium'}
-              color={'primary'}
-              onChange={switchOnChangeHandle}
-              value={isEscorted}
-              beforeContent={t('yes')}
-              afterContent={t('no')}
-            /> */}
             <Switch
               size={'medium'}
               color={'primary'}
