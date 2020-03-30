@@ -172,7 +172,7 @@ export const StyledLabelServiceTypeAppointment = styled.label`
 `;
 
 export const StyledLabelName = styled.label`
-    display: inline-flex;
+    display: inline-table;
     max-width: 20%;
     min-width: 20%;
     height: 22px;
@@ -188,7 +188,7 @@ export const StyledLabelName = styled.label`
           letter-spacing: normal;
           text-align: right;
           color: #00094a;
-
+          margin: auto;
     }
     div{
 
