@@ -131,7 +131,6 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                             store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData.data), patient));
                             history.push({
                                 pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-                                search: `?index=${appointmentId}`,
                             });
                         },
                         mode: moment(appointment.startTime).isAfter(moment()) ? 'view' : mode,
