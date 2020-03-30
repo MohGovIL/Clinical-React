@@ -17,6 +17,8 @@ import {StyledLabelName, StyledValueComponent} from "./DrawThisTable/Style";
 import {useTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import PaperContainerComponent from "./DrawThisTable/PaperContainerComponent";
+import CustomizedTableButtonCell from "../../CustomizedTable/CustomizedTableButtonCell";
+import StyledButton from "../../CustomizedTable/CustomizedTableButton/Style";
 
 
 

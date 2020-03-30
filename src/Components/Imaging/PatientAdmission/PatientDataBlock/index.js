@@ -83,6 +83,9 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
         'disabled': edit_mode === 1 ? false : true,
         'color': edit_mode === 1 ? "primary" : 'primary',
         'variant': edit_mode === 1 ? "filled" : 'standard',
+        'InputLabelProps': {
+            shrink: true
+        }
     };
 
     useEffect(() => {
@@ -128,7 +131,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
     }
 
     const organizationData = patientKupatHolimList.find(obj => {
-        return obj.code == (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) >= 0 ? healthManageOrgId : patientData.managingOrganization);
+        return obj.code == (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) >= 0 ? healthManageOrgId : (patientData.managingOrganization === null || patientData.managingOrganization == undefined ? 0 : patientData.managingOrganization));
     });
 
     let patientInitialValues = {

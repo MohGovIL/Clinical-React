@@ -95,7 +95,7 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
             <>
                 {showPrevArrow &&
                 <IconButton onClick={() => scrollDays('prev')} disabled={props.isDisabled}>
-                    <ChevronFirst htmlColor={props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}/>
+                    <ChevronFirst style={props.iconSize ? {fontSize:  props.iconSize}: {}} htmlColor={props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}/>
                 </IconButton>
                 }
                 <DatePickerType
@@ -103,7 +103,7 @@ const CustomizedDatePicker = ({dateFormat, languageDirection, languageCode, filt
                 />
                 {showNextArrow &&
                 <IconButton onClick={() => scrollDays('next')} disabled={props.isDisabled}>
-                    <ChevronSecond htmlColor={props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}/>
+                    <ChevronSecond style={props.iconSize ? {fontSize:  props.iconSize}: {}} htmlColor={props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}/>
                 </IconButton>
                 }
             </>

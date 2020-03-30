@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import {devicesValue} from "../../../../Assets/Themes/BreakPoints";
-import {Divider, TextField} from "@material-ui/core";
-import {Autocomplete} from '@material-ui/lab';
 import { KeyboardDatePicker } from '@material-ui/pickers';
+import styled from 'styled-components';
+import { devicesValue } from '../../../../Assets/Themes/BreakPoints';
+import { Divider, TextField, Switch, Chip } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
 
 export const StyledDivider = styled(Divider)`
   margin: 10px 0 40px 0;
@@ -10,7 +10,7 @@ export const StyledDivider = styled(Divider)`
 
 export const StyledTextField = styled(TextField)`
   width: 70%;
-  background-color:  #f8faff;
+  background-color: #f8faff;
   border-radius: 10px;
   margin: 24px 0 24px 0;
   transform-origin: top right;
@@ -18,11 +18,16 @@ export const StyledTextField = styled(TextField)`
     right: 0;
     left: unset;
   }
-
   .MuiInputLabel-shrink {
     transform-origin: top right;
     opacity: 0.6;
     color: #1e2132;
+  }
+  .MuiSvgIcon-root {
+    color: #076ce9;
+  }
+  .MuiInputBase-root {
+    color: #000b40;
   }
 `;
 
@@ -42,17 +47,25 @@ export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
     opacity: 0.6;
     color: #1e2132;
   }
+  .MuiSvgIcon-root {
+    color: #076ce9;
+  }
+  .MuiInputBase-root {
+    color: #000b40;
+  }
 `;
 
 export const StyledAutoComplete = styled(Autocomplete)`
-//TODO make the padding disappear
-  & .MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon .MuiAutocomplete-inputRoot {
+  //TODO make the padding disappear
+  &
+    .MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon
+    .MuiAutocomplete-inputRoot {
     padding-right: 0;
   }
 `;
 
 export const StyledForm = styled.form`
-  margin: 55px 55px 0 55px;
+  margin: 0px 55px 0 55px;
   width: calc(100% - 110px);
   display: flex;
   flex-direction: column;
@@ -67,15 +80,30 @@ export const StyledPatientDetails = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   margin: 0 25px 0 25px;
+  z-index: ${props => !props.edit_mode && '2'};
 
-   @media(min-width: ${devicesValue.desktop}px){
-     flex-basis: 50%;
-     margin: 0 38px 0 38px;
-   }
+  @media (min-width: ${devicesValue.desktop}px) {
+    flex-basis: 50%;
+    margin: 0 38px 0 38px;
+  }
+`;
+
+export const StyledChip = styled(Chip)`
+  max-width: fit-content;
+  background-color: rgba(0, 58, 199, 0.13);
+  margin: 0 14px 14px 14px;
+  .MuiChip-deleteIcon {
+    margin: 0;
+    color: #000b40;
+  }
+  .MuiChip-label {
+    font-size: 13px;
+    color: #000b40;
+  }
 `;
 
 export const StyledFormGroup = styled.div`
-   display: flex;
-   flex-direction: column;
-   margin: 50px 0 50px 0;
+  display: flex;
+  flex-direction: column;
+  margin: 50px 0 50px 0;
 `;
