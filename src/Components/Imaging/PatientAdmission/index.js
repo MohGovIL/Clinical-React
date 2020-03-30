@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {connect} from "react-redux";
 import HeaderPatient from "../../../Assets/Elements/HeaderPatient";
 import {useTranslation} from "react-i18next";
@@ -7,40 +7,17 @@ import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
 import PatientDataBlock from "./PatientDataBlock";
 import PatientDetailsBlock from "./PatientDetailsBlock";
 import {StyledPatientRow, StyledDummyBlock, StyledBackdrop} from "./Style";
-import {createNewEncounter} from '../../../Utils/Services/FhirAPI';
-import normalizeFhirEncounter from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {devicesValue} from "../../../Assets/Themes/BreakPoints";
 
-const PatientAdmission = ({patient, encounter, languageDirection, formatDate, history, facility}) => {
+const PatientAdmission = ({patient, encounter, languageDirection, formatDate, history}) => {
+
     const {t} = useTranslation();
 
-    // const [patientData, setPatientData] = useState({});
-    // const [appointmentId, setAppointmentId] = useState('');
-    // const [newEncounter, setNewEncounter] = useState({});
     const [edit, setEdit] = useState(0);
 
     const isTabletMode = useMediaQuery(`(max-width: ${devicesValue.tabletPortrait}px)`);
-
-    // useEffect(() => {
-    //     let appointmentIdFromURL = new URLSearchParams(location.search).get("index");
-
-    //     setAppointmentId(appointmentIdFromURL);
-
-    //     const participantPatient = appointments[appointmentIdFromURL].patient;
-
-    //     setPatientData(patients[participantPatient]);
-
-    //     (async () => {
-    //         try {
-    //             const encounterData = await createNewEncounter(appointments[appointmentIdFromURL], facility);
-    //             setNewEncounter(normalizeFhirEncounter(encounterData.data));
-    //         } catch (err) {
-    //             console.log(err)
-    //         }
-    //     })()
-    // }, [location, patients]);
 
     const allBreadcrumbs = [
         {
@@ -89,7 +66,6 @@ const mapStateToProps = state => {
         encounter: state.active.activeEncounter,
         languageDirection: state.settings.lang_dir,
         formatDate: state.settings.format_date,
-        facility: state.settings.facility
     };
 };
 
