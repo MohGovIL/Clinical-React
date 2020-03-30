@@ -32,11 +32,9 @@ const CustomizedSelect = ({background_color, background_menu_color, icon_color, 
     useEffect(() => {
         let defaultValueType = typeof defaultValue;
         if (defaultValueType === "number" && defaultValue >= 0) {
-            console.log(defaultValueType);
             setValue(defaultValue);
         }
         if (defaultValueType === "string" && defaultValue) {
-            console.log(defaultValueType);
             setValue(defaultValue);
         }
     }, [defaultValue])
