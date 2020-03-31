@@ -593,6 +593,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
             onChange={(event, newValue) => {
               setPendingValue(newValue);
             }}
+            
             disableCloseOnSelect
             renderTags={() => null}
             renderOption={(option, state) => (
@@ -787,6 +788,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   const { t } = useTranslation();
   const onConfirmHandler = () => {
     setSelecetedServicesType(pendingValue);
+    // ref = undefined; 
     setClose(true);
   };
   return (
@@ -811,7 +813,6 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
         <span>
           {`${t('Is selected')}
           ${
-            // props.children.filter(child => child.props['aria-selected']).length
             pendingValue.length
           } `}
         </span>
