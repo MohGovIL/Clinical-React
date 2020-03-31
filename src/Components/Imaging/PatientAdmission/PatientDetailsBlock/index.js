@@ -41,7 +41,6 @@ import {
   CircularProgress,
   Tab,
   Tabs,
-  Switch,
 } from '@material-ui/core';
 
 const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate }) => {
@@ -156,6 +155,21 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
       setAddressCity(defaultAddressCityObj);
     }
     if (encounterData) {
+      if(encounterData.examination && encounterData.examination.length){
+        const selectedArr = encounterData.examination.map((reasonCodeEl, reasonCodeElIndex) => {
+          return {
+            serviceType: {
+              name: encounterData.serviceType,
+              code: encounterData.serviceTypeCode
+            },
+            reasonCode: {
+              name: reasonCodeEl,
+              code: encounterData.examinationCode[reasonCodeElIndex]
+            }
+          }
+        })
+        setSelecetedServicesType(selectedArr)
+      }
       if (encounterData.priority > 1) {
         setIsUrgent(true);
       }
