@@ -63,11 +63,6 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
     const handleEditButtonClick = isEdit => {
         setEdit(isEdit);
     };
-
-    console.log("================");
-    console.log(Object.values(patientData).length);
-    console.log(Object.values(newEncounter).length);
-    console.log("================");
     return (
         <React.Fragment>
             <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection}
