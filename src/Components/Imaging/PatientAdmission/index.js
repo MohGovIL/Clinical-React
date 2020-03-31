@@ -64,6 +64,10 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
         setEdit(isEdit);
     };
 
+    console.log("================");
+    console.log(Object.values(patientData).length);
+    console.log(Object.values(newEncounter).length);
+    console.log("================");
     return (
         <React.Fragment>
             <HeaderPatient breadcrumbs={allBreadcrumbs} languageDirection={languageDirection}
@@ -77,7 +81,7 @@ const PatientAdmission = ({location, appointments, patients, languageDirection, 
                                       formatDate={formatDate}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>
-                {Object.values(patientData).length && Object.values(newEncounter).length && <PatientDetailsBlock encounterData={newEncounter} patientData={patientData} edit_mode={edit} />}
+                {Object.values(patientData).length > 0 && Object.values(newEncounter).length > 0 && <PatientDetailsBlock encounterData={newEncounter} patientData={patientData} edit_mode={edit} />}
             </StyledPatientRow>
         </React.Fragment>
     );
