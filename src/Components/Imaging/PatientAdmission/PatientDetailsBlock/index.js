@@ -33,6 +33,7 @@ import {
 import { Moment } from 'moment';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import StyledSwitch from '../../../../Assets/Elements/StyledSwitch'
 import {
   Checkbox,
   ListItemText,
@@ -311,13 +312,15 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
             container
             direction={'row'}
             justify={'flex-start'}
-            alignItems={'baseline'}>
+            alignItems={'center'}>
             <span>{t('Patient arrived with an escort?')}</span>
-            <Switch
-              size={'medium'}
-              color={'primary'}
+            <StyledSwitch 
               onChange={isEscortedSwitchOnChangeHandle}
               checked={isEscorted}
+              label_1={'No'}
+              label_2={'Yes'}
+              marginLeft={'40px'}
+              marginRight={'40px'}
             />
           </Grid>
         </StyledFormGroup>
@@ -548,13 +551,15 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
             container
             direction={'row'}
             justify={'flex-start'}
-            alignItems={'baseline'}>
+            alignItems={'center'}>
             <span>{t('Is urgent?')}</span>
-            <Switch
-              size={'medium'}
-              color={'primary'}
+            <StyledSwitch 
               onChange={isUrgentSwitchOnChangeHandler}
               checked={isUrgent}
+              label_1={'No'}
+              label_2={'Yes'}
+              marginLeft={'40px'}
+              marginRight={'40px'}
             />
           </Grid>
           <Autocomplete
