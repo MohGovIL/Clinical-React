@@ -64,7 +64,7 @@ export const createNewEncounter = (appointment, facility) => {
     // coding = codingArr(appointment.examinationCode);
     // const reasonCode = appointment.examinationCode
     // appointment.examination.forEach(element => {
-        
+
     // });
     const reasonCode = appointment.examinationCode.map(examination => {
         return {
@@ -75,7 +75,6 @@ export const createNewEncounter = (appointment, facility) => {
             ]
         }
     })
-
     return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
         'priority': {
             'coding': [
@@ -205,8 +204,10 @@ export const requestValueSet =  async (id) => {
 
     const {data: {expansion: {contains}}} = await getValueSet(id);
     let options = [];
-    for (let status of contains) {
-        options[status.code]=status.display;
+    if(contains) {
+        for (let status of contains) {
+            options[status.code] = status.display;
+        }
     }
 
     return options;
@@ -216,11 +217,12 @@ export const getHealthCareServiceByOrganization = async (organizationId) => {
 
     let array = [];
     const {data: {entry: dataServiceType}} = await getHealhcareService(organizationId);
-
-    for (let entry of dataServiceType) {
-        if (entry.resource !== undefined) {
-            const setLabelServiceType = normalizeHealthCareServiceValueData(entry.resource);
-            array[setLabelServiceType.code] = setLabelServiceType.name;
+    if(dataServiceType) {
+        for (let entry of dataServiceType) {
+            if (entry.resource !== undefined) {
+                const setLabelServiceType = normalizeHealthCareServiceValueData(entry.resource);
+                array[setLabelServiceType.code] = setLabelServiceType.name;
+            }
         }
     }
 
