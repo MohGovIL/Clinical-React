@@ -66,7 +66,15 @@ export const createNewEncounter = (appointment, facility) => {
     // appointment.examination.forEach(element => {
 
     // });
-
+    const reasonCode = appointment.examinationCode.map(examination => {
+        return {
+            "coding": [
+                {
+                    "code": examination
+                }
+            ]
+        }
+    })
     return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
         'priority': {
             'coding': [
@@ -77,13 +85,7 @@ export const createNewEncounter = (appointment, facility) => {
         },
         'status': 'planned',
         serviceType,
-        'reasonCode': {
-            'coding': [
-                {
-                    'code': appointment.examinationCode,
-                },
-            ],
-        },
+        reasonCode,
         'subject': {
             'reference': `Patient/${appointment.patient}`,
         },
