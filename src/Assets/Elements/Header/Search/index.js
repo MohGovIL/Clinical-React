@@ -69,7 +69,7 @@ const Search = ({languageDirection}) => {
             minSearchParam = 2;
         }
         else{
-            minSearchParam = 1;
+            minSearchParam = 2;
         }
 
         if (tValue.length > minSearchParam) {
