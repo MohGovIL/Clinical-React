@@ -55,7 +55,7 @@ const PatientAdmission = ({patient, encounter, languageDirection, formatDate, hi
                                       priority={encounter.priority}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>
-                {Object.values(patient).length && Object.values(encounter).length && <PatientDetailsBlock encounterData={encounter} patientData={patient} edit_mode={edit} />}
+                {Object.values(patient).length > 0 && Object.values(encounter).length > 0 && <PatientDetailsBlock encounterData={encounter} patientData={patient} edit_mode={edit} />}
             </StyledPatientRow>
         </React.Fragment>
     );
