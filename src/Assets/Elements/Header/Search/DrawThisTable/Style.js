@@ -173,8 +173,8 @@ export const StyledLabelServiceTypeAppointment = styled.label`
 
 export const StyledLabelName = styled.label`
     display: inline-table;
-    max-width: 20%;
-    min-width: 20%;
+    max-width: 24%;
+    min-width: 24%;
     height: 22px;
     margin-top: 10px;
     span{
