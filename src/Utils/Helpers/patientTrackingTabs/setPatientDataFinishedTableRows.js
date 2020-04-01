@@ -149,7 +149,7 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
                         },
                         text_color: '#076ce9',
                         padding: 'none',
-                        value: encounter.status,
+                        defaultValue: encounter.status,
                         options,
                         align: 'center',
                         background_color: '#eaf7ff',
@@ -177,7 +177,7 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: encounter.examination ? encounter.examination.join(' ') : null
+                        label: encounter.examination ? encounter.examination : null
                     });
                     break;
                 case 'Time':
