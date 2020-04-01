@@ -30,18 +30,18 @@ const TitleValueComponent = ({name, value, searchParam, seperator}) => {
                 if (isNumeric(searchParam)) {
 
                     innerHTMLNew =
-                        `<${type} dir = "ltr" style='margin-right:0; '>${innerText.substr(index + searchTrimmed.length)}</${type}>
-                <${type} dir = "ltr" style='margin:0; font-weight: bold;'>${innerText.substr(index, searchTrimmed.length)}</${type}>
-                <${type} dir = "ltr" style='margin-left:0; '>${innerText.substr(0, index)}</${type}>`;
+                        `<${type} style='margin-right:0; '>${innerText.substr(index + searchTrimmed.length)}</${type}>
+                <${type} style='margin:0; font-weight: bold;'>${innerText.substr(index, searchTrimmed.length)}</${type}>
+                <${type} style='margin-left:0; '>${innerText.substr(0, index)}</${type}>`;
 
 
                 } else {
 
                     innerHTMLNew =
                         `
-                <${type} dir = "ltr" style='margin-left:0;'>${innerText.substr(0, index)}</${type}> +
-                <${type} dir = "ltr" style='margin:0; font-weight: bold;'>${innerText.substr(index, searchTrimmed.length)}</${type}>
-                <${type} dir = "ltr" style='margin-right:0;'>${innerText.substr(index + searchTrimmed.length)}</${type}>
+                <${type} style='margin-left:0;'>${innerText.substr(0, index)}</${type}>
+                <${type} style='margin:0; font-weight: bold;'>${innerText.substr(index, searchTrimmed.length)}</${type}>
+                <${type} style='margin-right:0;'>${innerText.substr(index + searchTrimmed.length)}</${type}>
                 `;
 
                 }
@@ -51,12 +51,12 @@ const TitleValueComponent = ({name, value, searchParam, seperator}) => {
             } else {
                 if (index === 0) {
                     if (isNumeric(searchParam)) {
-                        innerHTMLNew = `<${type} dir = "ltr" style='margin-right:0; '>  ${innerText.substr(index + searchTrimmed.length)}  </${type}>
-                        <${type} dir = "ltr" style='margin-left:0; font-weight: bold;'>  ${innerText.substr(0, searchTrimmed.length)}  </${type}>`;
+                        innerHTMLNew = `<${type} style='margin-right:0; '>  ${innerText.substr(index + searchTrimmed.length)}  </${type}>
+                        <${type} style='margin-left:0; font-weight: bold;'>  ${innerText.substr(0, searchTrimmed.length)}  </${type}>`;
 
                     } else {
-                        innerHTMLNew = `<${type} dir = "ltr" style='margin-left:0; font-weight: bold;'>  ${innerText.substr(0, searchTrimmed.length)}  </${type}>
-                        <${type} dir = "ltr" style='margin-right:0; '>  ${innerText.substr(index + searchTrimmed.length)}  </${type}> `;
+                        innerHTMLNew = `<${type} style='margin-left:0; font-weight: bold;'>  ${innerText.substr(0, searchTrimmed.length)}  </${type}>
+                        <${type} style='margin-right:0; '>  ${innerText.substr(index + searchTrimmed.length)}  </${type}> `;
                     }
 
                     if (ref.current.parentElement) {
