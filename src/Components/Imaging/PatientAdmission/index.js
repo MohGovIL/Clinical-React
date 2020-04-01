@@ -47,11 +47,12 @@ const PatientAdmission = ({patient, encounter, languageDirection, formatDate, hi
                            onCloseClick={handleCloseClick} edit_mode={edit}/>
             <StyledPatientRow>
                 <StyledBackdrop open={true} edit_mode={edit}>
-                    {Object.values(patient).length &&
+                    {Object.values(patient).length && Object.values(encounter).length > 0 &&
                     <PatientDataBlock patientData={patient}
                                       onEditButtonClick={handleEditButtonClick} edit_mode={edit}
                                       languageDirection={languageDirection}
-                                      formatDate={formatDate}/>}
+                                      formatDate={formatDate}
+                                      priority={newEncounter.priority}/>}
                 </StyledBackdrop>
                 <StyledDummyBlock edit_mode={edit}/>
                 {Object.values(patient).length && Object.values(encounter).length && <PatientDetailsBlock encounterData={encounter} patientData={patient} edit_mode={edit} />}

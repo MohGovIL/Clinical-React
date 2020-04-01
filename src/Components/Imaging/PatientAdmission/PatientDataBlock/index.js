@@ -34,7 +34,7 @@ import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normali
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
 
 
-const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave}) => {
+const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave, priority}) => {
 
     const {t} = useTranslation();
 
@@ -189,7 +189,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                     }
                     {/*patientEncounter.priority == 2 - the high priority*/}
                     <StyledRoundAvatar
-                        show_red_circle={edit_mode === 0 && patientEncounter.priority == 2 ? true : false}>
+                        show_red_circle={edit_mode === 0 && priority > 1 ? true : false}>
                         <Avatar alt={""} src={avatarIcon}/>
                     </StyledRoundAvatar>
 
