@@ -769,12 +769,12 @@ const PatientDetailsBlock = ({
               {/* </StyledTextInput> */}
               <StyledTextField
                 required
-                label={t('Doctor’s name')}
+                label={t('Doctors name')}
                 id={'commitmentAndPaymentDoctorsName'}
               />
               <StyledTextField
                 required
-                label={t('Doctor’s license')}
+                label={t('Doctors license')}
                 id={'commitmentAndPaymentDoctorsLicense'}
                 type='number'
               />
