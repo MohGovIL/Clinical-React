@@ -14,7 +14,7 @@ export const StyledDiv = styled.div`
   max-width: ${props => props.edit_mode === 1 ? "25%" : "unset"};
 
   @media(min-width: ${devicesValue.desktop}px){
-     flex-basis: 16%;
+     flex-basis: 17%;
      min-width: 17%;
      max-width: ${props => props.edit_mode === 1 ? "16%" : "unset"};
    }
