@@ -1,3 +1,4 @@
+import { KeyboardDatePicker } from '@material-ui/pickers';
 import styled from 'styled-components';
 import { devicesValue } from '../../../../Assets/Themes/BreakPoints';
 import { Divider, TextField, Switch, Chip } from '@material-ui/core';
@@ -17,52 +18,40 @@ export const StyledTextField = styled(TextField)`
     right: 0;
     left: unset;
   }
+  .MuiInputLabel-shrink {
+    transform-origin: top right;
+    opacity: 0.6;
+    color: #1e2132;
+  }
+  .MuiSvgIcon-root {
+    color: #076ce9;
+  }
+  .MuiInputBase-root {
+    color: #000b40;
+  }
+`;
+
+export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
+  width: 70%;
+  background-color:  #f8faff;
+  border-radius: 10px;
+  margin: 24px 0 24px 0;
+  transform-origin: top right;
+  .MuiInputLabel-formControl {
+    right: 0;
+    left: unset;
+  }
 
   .MuiInputLabel-shrink {
     transform-origin: top right;
     opacity: 0.6;
     color: #1e2132;
   }
-`;
-
-export const StyledSwitch = styled(Switch)`
-  width: 80px;
-  height: 39px;
-
-  .MuiSwitch-switchBase{
-    padding: 4px;
+  .MuiSvgIcon-root {
+    color: #076ce9;
   }
-  .MuiSwitch-thumb{
-    width: 30px;
-    height: 30px;
-  }
-
-  .MuiSwitch-track {
-    position: relative;
-    /* background-color: #dadbda; */
-  }
-  .MuiSwitch-track::after {
-    /* content: ${props => props.afterContent}; */
-    content: 'yes';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    color: #656565;
-  }
-  .MuiSwitch-track::before {
-    /* content: ${props => props.beforeContent}; */
-    content: 'yes';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    color: #ffffff;
+  .MuiInputBase-root {
+    color: #000b40;
   }
 `;
 
