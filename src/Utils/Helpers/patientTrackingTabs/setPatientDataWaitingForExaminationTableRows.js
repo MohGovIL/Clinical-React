@@ -177,7 +177,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: encounter.examination ? encounter.examination.join(' ') : null
+                        label: encounter.examination ? encounter.examination : null
                     });
                     break;
                 case 'Time':
