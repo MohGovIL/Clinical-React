@@ -28,7 +28,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
@@ -75,12 +75,12 @@ const PatientDetailsBlock = ({
   const [
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,
-  ] = useState('');
+  ] = useState(undefined);
 
   const [
     commitmentAndPaymentCommitmeValidity,
     setCommitmentAndPaymentCommitmeValidity,
-  ] = useState('');
+  ] = useState(undefined);
 
   const commitmentAndPaymentCommitmeValidityOnChangeHandler = date => {
     setCommitmentAndPaymentCommitmeValidity(date);
@@ -736,17 +736,16 @@ const PatientDetailsBlock = ({
                     showPrevArrow: false,
                   }}
                 /> */}
-              <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
+              <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                 <StyledKeyboardDatePicker
                   disableToolbar
                   variant='inline'
-                  format={formatDate}
+                  format={'DD/MM/YYYY'}
                   margin='normal'
                   required
                   id='commitmentAndPaymentCommitmentDate'
                   label={t('Commitment date')}
-                  // value={commitmentAndPaymentCommitmentDate}
-                  value={undefined}
+                  value={commitmentAndPaymentCommitmentDate}
                   onChange={commitmentAndPaymentCommitmentDateOnChangeHandler}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
@@ -756,11 +755,11 @@ const PatientDetailsBlock = ({
                   required
                   disableToolbar
                   variant='inline'
-                  format={formatDate}
+                  format={'DD/MM/YYYY'}
                   margin='normal'
                   id='commitmentAndPaymentCommitmeValidity'
                   label={t('Commitment validity')}
-                  value={undefined}
+                  value={commitmentAndPaymentCommitmeValidity}
                   onChange={commitmentAndPaymentCommitmeValidityOnChangeHandler}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
