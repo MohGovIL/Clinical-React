@@ -24,12 +24,12 @@ export const StyledPatientRow = styled.div`
 export const StyledDummyBlock = styled.div`
   display: flex;
   flex-direction: column;
-  flex-basis: 25%;
+  flex-basis: 29%;
   height: calc(100vh - 88px);
   z-index: ${props => props.edit_mode === 1 ? 0 : 1};
   position: relative;
 
   @media(min-width: ${devicesValue.desktop}px){
-    flex-basis: 16%;
+    flex-basis: 17%;
   }
 `;

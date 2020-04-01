@@ -80,8 +80,9 @@ export const StyledPatientDetails = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   margin: 0 25px 0 25px;
-  z-index: ${props => !props.edit_mode && '2'};
-
+  z-index: ${props => props.edit ? '0' : '2'};
+  height: calc(100vh - 88px - 32px);
+  overflow-x: scroll;
   @media (min-width: ${devicesValue.desktop}px) {
     flex-basis: 50%;
     margin: 0 38px 0 38px;
