@@ -110,8 +110,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                 <GenderIcon alt={'gender icon'}
                                             src={patient.gender === 'male' ? maleIcon : femaleIcon}/>
                                 <StyledLabelName>
-                                    <TitleValueComponent searchParam={searchParam} name={patient.firstName}
-                                                         value={patient.lastName}/>
+                                    <TitleValueComponent searchParam={searchParam} name={patient.firstName+" "+patient.lastName}/>
                                 </StyledLabelName>
                                 <StyledLabelTZ>
                                     <TitleValueComponent searchParam={searchParam}
