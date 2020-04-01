@@ -5,7 +5,10 @@ const CustomizedTableLabelCell = ({padding, align, label, color}) => {
     const {t} = useTranslation();
     return (
         <StyledTableCell padding={padding} align={align} color={color}>
-            {t(label)}
+            {Array.isArray(label) ? 
+            label.map(labelEl => t(labelEl)).join(', ')
+            :
+            t(label)}
         </StyledTableCell>
     );
 };
