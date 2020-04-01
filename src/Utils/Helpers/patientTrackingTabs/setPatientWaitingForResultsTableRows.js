@@ -76,7 +76,7 @@ const tableHeaders = [
         component: LABEL_CELL
     },
     {
-        tableHeader: 'Time',
+        tableHeader: 'Date',
         hideTableHeader: false,
         component: LABEL_CELL
     },
@@ -180,11 +180,11 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                         label: encounter.examination ? encounter.examination : null
                     });
                     break;
-                case 'Time':
+                case 'Date':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment.utc(encounter.startTime).format('LT')
+                        label: moment.utc(encounter.startTime).format('DD-MM-YYYY')
                     });
                     break;
                 default:
