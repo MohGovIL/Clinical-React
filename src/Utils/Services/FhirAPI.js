@@ -228,3 +228,7 @@ export const getHealthCareServiceByOrganization = async (organizationId) => {
 
     return array;
 }
+
+export const getAllEncounterDocuments = (encounterId, patientId, summary) => {
+    return fhirTokenInstance().get(`${fhirBasePath}/DocumentReference?encounter=${encounterId}&patient=${patientId}${summary ? `&_summary=true`: ''}`)
+}
