@@ -7,44 +7,46 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {Button, Dialog, Typography, DialogActions, DialogContent, IconButton} from "@material-ui/core";
 import CloseIcon from '@material-ui/icons/Close';
-import {StyledMuiDialogTitle} from "./Style";
+import {StyledMuiDialogTitle, StyledDialogActions} from "./Style";
+import {connect} from "react-redux";
+import CustomizedTableButton from "../CustomizedTable/CustomizedTableButton";
 
-const CustomizedPopup = ({children, title, isOpen, onClose}) => {
+const CustomizedPopup = ({children, isOpen, onClose, languageDirection, languageCode, props}) => {
     return (
         <div>
             <Dialog onClose={onClose} aria-labelledby="customized-dialog-title" open={isOpen}>
-                <StyledMuiDialogTitle disableTypography>
-                    <Typography variant="h6">{title}</Typography>
+                <StyledMuiDialogTitle disableTypography language_direction={languageDirection}>
+                    <Typography variant="h6">{props.title}</Typography>
                     {onClose ? (
                         <IconButton aria-label="close" onClick={onClose}>
                             <CloseIcon/>
                         </IconButton>
                     ) : null}
                 </StyledMuiDialogTitle>
-                <DialogContent dividers>
+                <DialogContent dividers={props.content_dividers ? props.content_dividers : false}>
                     <Typography gutterBottom>
                         Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
                         in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
                     </Typography>
-                    <Typography gutterBottom>
-                        Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                        lacus vel augue laoreet rutrum faucibus dolor auctor.
-                    </Typography>
-                    <Typography gutterBottom>
-                        Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                        scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                        auctor fringilla.
-                    </Typography>
                     {children}
                 </DialogContent>
-                <DialogActions>
-                    <Button autoFocus onClick={onClose} color="primary">
-                        Save changes
-                    </Button>
-                </DialogActions>
+                <StyledDialogActions>
+                    {props.bottomButtons && props.bottomButtons.map((button, buttonIndex) => {
+                        return (
+                            <CustomizedTableButton key={buttonIndex} {...button}/>
+                        )
+                    })}
+                </StyledDialogActions>
             </Dialog>
         </div>
     );
 };
 
-export default CustomizedPopup;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        languageDirection: state.settings.lang_dir,
+        languageCode: state.settings.lang_code,
+        props: ownProps,
+    }
+};
+export default connect(mapStateToProps, null)(CustomizedPopup);
