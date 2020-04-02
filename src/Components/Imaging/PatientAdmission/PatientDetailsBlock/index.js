@@ -27,13 +27,11 @@ import {
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import MomentUtils from '@date-io/moment';
-import {
-  MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { Moment } from 'moment';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import StyledSwitch from '../../../../Assets/Elements/StyledSwitch'
+import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
 import {
   Checkbox,
   ListItemText,
@@ -41,9 +39,16 @@ import {
   CircularProgress,
   Tab,
   Tabs,
+  FormControlLabel,
+  FormControl,
 } from '@material-ui/core';
 
-const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate }) => {
+const PatientDetailsBlock = ({
+  patientData,
+  edit_mode,
+  encounterData,
+  formatDate,
+}) => {
   const { t } = useTranslation();
   const { register, control, handleSubmit } = useForm({
     submitFocusError: true,
@@ -111,11 +116,9 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
 
   const filterOptions = (options, { inputValue }) => {
     if (pendingValue.length) {
-      options = matchSorter(
-        options,
-        pendingValue[0].serviceType.code,
-        { keys: ['serviceType.code'] },
-      );
+      options = matchSorter(options, pendingValue[0].serviceType.code, {
+        keys: ['serviceType.code'],
+      });
     }
     return matchSorter(options, inputValue, {
       keys: [
@@ -155,20 +158,22 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
       setAddressCity(defaultAddressCityObj);
     }
     if (encounterData) {
-      if(encounterData.examination && encounterData.examination.length){
-        const selectedArr = encounterData.examination.map((reasonCodeEl, reasonCodeElIndex) => {
-          return {
-            serviceType: {
-              name: encounterData.serviceType,
-              code: encounterData.serviceTypeCode
-            },
-            reasonCode: {
-              name: reasonCodeEl,
-              code: encounterData.examinationCode[reasonCodeElIndex]
-            }
-          }
-        })
-        setSelecetedServicesType(selectedArr)
+      if (encounterData.examination && encounterData.examination.length) {
+        const selectedArr = encounterData.examination.map(
+          (reasonCodeEl, reasonCodeElIndex) => {
+            return {
+              serviceType: {
+                name: encounterData.serviceType,
+                code: encounterData.serviceTypeCode,
+              },
+              reasonCode: {
+                name: reasonCodeEl,
+                code: encounterData.examinationCode[reasonCodeElIndex],
+              },
+            };
+          },
+        );
+        setSelecetedServicesType(selectedArr);
       }
       if (encounterData.priority > 1) {
         setIsUrgent(true);
@@ -307,7 +312,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
       setStreets([]);
     }
     if (!servicesTypeOpen) {
-      setPendingValue([])
+      setPendingValue([]);
     }
   }, [citiesOpen, streetsOpen]);
 
@@ -328,7 +333,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
             justify={'flex-start'}
             alignItems={'center'}>
             <span>{t('Patient arrived with an escort?')}</span>
-            <StyledSwitch 
+            <StyledSwitch
               onChange={isEscortedSwitchOnChangeHandle}
               checked={isEscorted}
               label_1={'No'}
@@ -546,14 +551,14 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
             {t('click here')}
           </a>
         </span>
-          <Title
+        <Title
           marginTop={'80px'}
           fontSize={'28px'}
           color={'#002398'}
           label={'Visit Details'}
         />
 
-          <StyledFormGroup>
+        <StyledFormGroup>
           <Title
             fontSize={'18px'}
             color={'#000b40'}
@@ -567,7 +572,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
             justify={'flex-start'}
             alignItems={'center'}>
             <span>{t('Is urgent?')}</span>
-            <StyledSwitch 
+            <StyledSwitch
               onChange={isUrgentSwitchOnChangeHandler}
               checked={isUrgent}
               label_1={'No'}
@@ -584,42 +589,45 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
             open={servicesTypeOpen}
             loading={loadingServicesType}
             onOpen={() => {
-              setPendingValue(selecetedServicesType)
-              setServicesTypeOpen(true)}}
-            onClose={(event) => {
+              setPendingValue(selecetedServicesType);
+              setServicesTypeOpen(true);
+            }}
+            onClose={event => {
               setServicesTypeOpen(false);
             }}
             value={pendingValue}
             onChange={(event, newValue) => {
               setPendingValue(newValue);
             }}
-            
             disableCloseOnSelect
             renderTags={() => null}
             renderOption={(option, state) => (
-                <Grid container justify='flex-end' alignItems='center'>
-                  <Grid item xs={3}>
-                    <Checkbox
-                      color='primary'
-                      icon={<CheckBoxOutlineBlankOutlined />}
-                      checkedIcon={<CheckBox />}
-                      checked={state.selected}
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ListItemText>{option.reasonCode.code}</ListItemText>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ListItemText primary={t(option.serviceType.name)} />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ListItemText primary={t(option.reasonCode.name)} />
-                  </Grid>
+              <Grid container justify='flex-end' alignItems='center'>
+                <Grid item xs={3}>
+                  <Checkbox
+                    color='primary'
+                    icon={<CheckBoxOutlineBlankOutlined />}
+                    checkedIcon={<CheckBox />}
+                    checked={state.selected}
+                  />
                 </Grid>
-              )
-            }
+                <Grid item xs={3}>
+                  <ListItemText>{option.reasonCode.code}</ListItemText>
+                </Grid>
+                <Grid item xs={3}>
+                  <ListItemText primary={t(option.serviceType.name)} />
+                </Grid>
+                <Grid item xs={3}>
+                  <ListItemText primary={t(option.reasonCode.name)} />
+                </Grid>
+              </Grid>
+            )}
             ListboxComponent={ListboxComponent}
-            ListboxProps={{pendingValue: pendingValue, setSelecetedServicesType: setSelecetedServicesType, setClose: setServicesTypeOpen}}
+            ListboxProps={{
+              pendingValue: pendingValue,
+              setSelecetedServicesType: setSelecetedServicesType,
+              setClose: setServicesTypeOpen,
+            }}
             options={servicesType}
             renderInput={params => (
               <StyledTextField
@@ -653,7 +661,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
               />
             ))}
           </Grid>
-          </StyledFormGroup>
+        </StyledFormGroup>
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
@@ -768,6 +776,24 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData, formatDate
             </React.Fragment>
           )}
         </StyledFormGroup>
+        <StyledFormGroup>
+          <Title
+            fontSize={'18px'}
+            color={'#000b40'}
+            label={t('Upload documents')}
+            bold
+          />
+          <Title
+            fontSize={'14px'}
+            color={'#000b40'}
+            label={t('Uploading documents with a maximum size of up to 2MB')}
+          />
+          <StyledDivider variant='fullWidth' />
+
+          <FormControl required >
+                {/* input[type=file] */}
+          </FormControl>
+        </StyledFormGroup>
       </StyledForm>
       {/* <DevTool control={control} /> */}
     </StyledPatientDetails>
@@ -784,16 +810,21 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   props,
   ref,
 ) {
-  const {setClose, pendingValue, setSelecetedServicesType, ...other} = props
+  const { setClose, pendingValue, setSelecetedServicesType, ...other } = props;
   const { t } = useTranslation();
   const onConfirmHandler = () => {
     setSelecetedServicesType(pendingValue);
-    // ref = undefined; 
+    // ref = undefined;
     setClose(true);
   };
   return (
     <div
-      style={{ position: 'relative', maxHeight: '300px', overflowY: 'scroll', marginBottom: '64px' }}
+      style={{
+        position: 'relative',
+        maxHeight: '300px',
+        overflowY: 'scroll',
+        marginBottom: '64px',
+      }}
       ref={ref}
       {...other}>
       {props.children}
@@ -812,9 +843,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
         }}>
         <span>
           {`${t('Is selected')}
-          ${
-            pendingValue.length
-          } `}
+          ${pendingValue.length} `}
         </span>
         <CustomizedButton
           label={t('OK')}
