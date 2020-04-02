@@ -1,16 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './Components/App/App';
+import 'index.css';
+import App from 'Components/App/App';
 import * as serviceWorker from './serviceWorker';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
-import loginReducer from './Store/Reducers/LoginReducer';
-import facilityReducer from './Store/Reducers/FacilityReducer';
-import SettingsReducer from "./Store/Reducers/SettingsReducer";
-import FiltersReducer from "./Store/Reducers/FiltersReducer";
-import FhirDataReducer from "./Store/Reducers/FhirDataReducer";
-import ActiveDataReducer from './Store/Reducers/ActiveDataReducer';
+import loginReducer from 'Store/Reducers/LoginReducer';
+import facilityReducer from 'Store/Reducers/FacilityReducer';
+import SettingsReducer from "Store/Reducers/SettingsReducer";
+import FiltersReducer from "Store/Reducers/FiltersReducer";
+import FhirDataReducer from "Store/Reducers/FhirDataReducer";
+import ActiveDataReducer from 'Store/Reducers/ActiveDataReducer';
 import 'material-icons-font/material-icons-font.css';
 import thunk from 'redux-thunk';
 
