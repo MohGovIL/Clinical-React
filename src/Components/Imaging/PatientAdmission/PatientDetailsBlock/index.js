@@ -9,6 +9,7 @@ import {
   StyledAutoComplete,
   StyledKeyboardDatePicker,
   StyledChip,
+  StyledButton,
 } from './Style';
 import CustomizedButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,7 @@ import {
   CheckBox,
   Close,
   CheckBoxOutlineBlankOutlined,
+  Scanner,
 } from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
@@ -39,8 +41,7 @@ import {
   CircularProgress,
   Tab,
   Tabs,
-  FormControlLabel,
-  FormControl,
+  Button,
 } from '@material-ui/core';
 
 const PatientDetailsBlock = ({
@@ -54,6 +55,29 @@ const PatientDetailsBlock = ({
     submitFocusError: true,
     mode: 'onBlur',
   });
+
+  const [referralFiles, setReferralFiles] = useState([]);
+  const [comittmentFiles, setCommitmentFiles] = useState([]);
+
+  const referralRef = React.useRef();
+
+  const comittmentRef = React.useRef();
+
+  const calcSizeIfMoreThan2MB = size => {
+    if (size / 1000000 < 2) {
+      return false;
+    }
+    return true;
+  };
+
+  function onChangeFileHandler(event) {
+    const files = event.target.files;
+    if (!calcSizeIfMoreThan2MB(files[files.length - 1].size)) {
+      // If it's not more than 2 MB
+    } else {
+      files.pop();
+    }
+  }
   const icon = <Close fontSize='small' />;
   const [addressCity, setAddressCity] = useState({});
 
@@ -789,10 +813,31 @@ const PatientDetailsBlock = ({
             label={t('Uploading documents with a maximum size of up to 2MB')}
           />
           <StyledDivider variant='fullWidth' />
-
-          <FormControl required >
-                {/* input[type=file] */}
-          </FormControl>
+          <Grid container>
+            <Grid item xs={3}>
+              <input
+                ref={referralRef}
+                id='contained-button-file'
+                multiple
+                type='file'
+                required
+                onChange={onChangeFileHandler}
+              />
+              <label htmlFor='contained-button-file'>
+                <StyledButton
+                  variant='outlined'
+                  color='primary'
+                  component='span'
+                  size={'large'}
+                  startIcon={<Scanner />}>
+                  {t('Upload document')}
+                </StyledButton>
+              </label>
+            </Grid>
+            <Grid item>
+              {/* Add a list of all the selected files use chip if needed */}
+            </Grid>
+          </Grid>
         </StyledFormGroup>
       </StyledForm>
       {/* <DevTool control={control} /> */}

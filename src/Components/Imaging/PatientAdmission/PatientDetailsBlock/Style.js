@@ -1,8 +1,18 @@
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import styled from 'styled-components';
 import { devicesValue } from '../../../../Assets/Themes/BreakPoints';
-import { Divider, TextField, Switch, Chip } from '@material-ui/core';
+import { Divider, TextField, Chip, Button } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
+
+export const StyledButton = styled(Button)`
+  border-radius: 25px;
+  height: 50px;
+  width: 158px;
+  .MuiButton-startIcon {
+    margin-left: 8px;
+  }
+`;
+
 
 export const StyledDivider = styled(Divider)`
   margin: 10px 0 40px 0;
@@ -86,6 +96,9 @@ export const StyledPatientDetails = styled.div`
   @media (min-width: ${devicesValue.desktop}px) {
     flex-basis: 50%;
     margin: 0 38px 0 38px;
+  }
+  input[type=file] {
+    display: none;
   }
 `;
 
