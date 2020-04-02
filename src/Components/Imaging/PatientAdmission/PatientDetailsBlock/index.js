@@ -10,9 +10,9 @@ import {
   StyledKeyboardDatePicker,
   StyledChip,
 } from './Style';
-import CustomizedButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
+import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useTranslation } from 'react-i18next';
-import Title from '../../../../Assets/Elements/Title';
+import Title from 'Assets/Elements/Title';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { DevTool } from 'react-hook-form-devtools';
 import { useForm, Controller } from 'react-hook-form';
