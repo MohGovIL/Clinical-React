@@ -21,9 +21,11 @@ import Appointment from "../../Services/FhirStrategy/Appointment";
 export const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
        /* const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);*/
-        let fhir =  new FhirStrategy(Appointment);
 
-        const appointmentsWithPatients = await  fhir.doWork({"functionName":'getAppointmentsWithPatients','functionParams':{"summery":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type}})
+        const appointmentsWithPatients =  await  FhirStrategy('Appointment','doWork',{"functionName":'getAppointmentsWithPatients','functionParams':{"summery":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type}});
+
+        if(!appointmentsWithPatients || !appointmentsWithPatients.data)
+            return;
 
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
         setTabs(prevTabs => {
