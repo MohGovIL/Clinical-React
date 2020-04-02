@@ -32,6 +32,8 @@ import {connect} from "react-redux";
 import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
 import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
+import Button from "@material-ui/core/Button";
+import CustomizedPopup from "../../../../Assets/Elements/CustomizedPopup";
 
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave, priority}) => {
@@ -53,6 +55,26 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
             birthDate: patientBirthDate
         }
     });
+
+    /*
+    testing popup component
+    */
+    const [popupOpen, setPopupOpen] = useState(false);
+    const [popupNextOpen, setPopupNextOpen] = useState(false);
+
+    const handlePopupOpen = () => {
+        setPopupOpen(true);
+    };
+    const handlePopupClose = () => {
+        setPopupOpen(false);
+    };
+
+    const handlePopupNextOpen = () => {
+        setPopupNextOpen(true);
+    };
+    const handlePopupNextClose = () => {
+        setPopupNextOpen(false);
+    };
 
     const onSubmit = (data, e) => {
         (async () => {
@@ -370,6 +392,18 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
 
                     </form>
                 </StyledTextInput>
+                <Button variant="outlined" color="primary" onClick={handlePopupOpen}>
+                    Open dialog
+                </Button>
+                <CustomizedPopup isOpen={popupOpen} onClose={handlePopupClose}
+                 title={"Patient details"}>Some text and components for popup
+                    {/*<Button variant="outlined" color="primary" onClick={handlePopupNextOpen}>*/}
+                    {/*    Open next dialog*/}
+                    {/*</Button>*/}
+                    {/*<CustomizedPopup isOpen={popupNextOpen} onClose={handlePopupNextClose}>*/}
+                    {/*    customizedpopup component*/}
+                    {/*</CustomizedPopup>*/}
+                </CustomizedPopup>
             </StyledDiv>
         </React.Fragment>
 
