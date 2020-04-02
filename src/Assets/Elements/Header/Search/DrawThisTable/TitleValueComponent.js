@@ -49,7 +49,7 @@ const TitleValueComponent = ({name, value, searchParam, seperator}) => {
 
                     } else {
                         debugger;
-                        innerHTMLNew = ` <${type}  style='margin-left:3px; font-weight: bold;'>${innerText.substr(0, searchTrimmed.length)}</${type}><${type}   style=' '>${innerText.substr(index + searchTrimmed.length)}</${type}>`;
+                        innerHTMLNew = ` <${type}  style='font-weight: bold;'>${innerText.substr(0, searchTrimmed.length)}</${type}><${type}   style=' '>${innerText.substr(index + searchTrimmed.length)}</${type}>`;
                     }
 
                     if (ref.current.parentElement) {
