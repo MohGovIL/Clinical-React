@@ -1,14 +1,24 @@
+import React, { useState } from 'react';
 
-var FhirStrategy = function(){
-    this.strategy = null;
-}
+// 1) You should create new object like Appointment,Encounter,HealthCareService ......
+// 2) Then you should use FhirStrategy.setStrategy(with the object you want);  .
+// 3) Call doWork from the FhirStrategy .
 
-FhirStrategy.prototype ={
-    setStrategy : function(obj){
+
+export class FhirStrategy  {
+
+    constructor(obj){
         this.strategy = obj;
-    },
-    doWork: function(params){
+    };
+
+    setStrategy(obj){
+        this.strategy = obj;
+    };
+
+    doWork(params){
         return this.strategy.doWork(params)
-    }
+    };
+
+
 }
 

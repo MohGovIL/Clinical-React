@@ -70,6 +70,7 @@ const Encounter = () => {
         }
         return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
     };
+
     const getCurrentEncounterPerPatient = (date,patient) =>{
         //PC-216 endpoint: /Encounter?date=eq<TODAY>&patient=<PID>
         try {
