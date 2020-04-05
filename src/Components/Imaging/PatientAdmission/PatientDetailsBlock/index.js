@@ -25,15 +25,17 @@ import {
   Close,
   CheckBoxOutlineBlankOutlined,
   Scanner,
+  Delete,
 } from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
+import ChipWithImage from '../../../../Assets/Elements/StyledChip/index';
 import {
   Checkbox,
   ListItemText,
@@ -41,7 +43,9 @@ import {
   CircularProgress,
   Tab,
   Tabs,
-  Button,
+  FormControl,
+  InputLabel,
+  Chip,
 } from '@material-ui/core';
 
 const PatientDetailsBlock = ({
@@ -56,24 +60,38 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
   });
 
-  const [referralFiles, setReferralFiles] = useState([]);
-  const [comittmentFiles, setCommitmentFiles] = useState([]);
+  const [referralFile, setReferralFile] = useState({});
+  const [comittmentFile, setCommitmentFile] = useState({});
 
   const referralRef = React.useRef();
 
   const comittmentRef = React.useRef();
 
+  const toFix1 = number => {
+    return Number.parseFloat(number).toFixed(1);
+  };
+
   const calcSizeIfMoreThan2MB = size => {
-    if (size / 1000000 < 2) {
-      return false;
+    const SizeInMB = size / 1000000;
+    if (SizeInMB < 2) {
+      return [false, toFix1(SizeInMB)];
     }
-    return true;
+    return [true, toFix1(SizeInMB)];
   };
 
   function onChangeFileHandler(event) {
-    const files = event.target.files;
-    if (!calcSizeIfMoreThan2MB(files[files.length - 1].size)) {
-      // If it's not more than 2 MB
+    const files = referralRef.current.files;
+    const [BoolAnswer, SizeInMB] = calcSizeIfMoreThan2MB(
+      files[files.length - 1].size,
+    );
+    if (!BoolAnswer) {
+      const fileObj = {
+        name: `Referral_${moment().format('L')}_${moment().format('HH:mm')}_${
+          files[files.length - 1].name
+        }`,
+        size: SizeInMB,
+      };
+      setReferralFile({...fileObj});
     } else {
       files.pop();
     }
@@ -571,7 +589,8 @@ const PatientDetailsBlock = ({
             href={
               'https://mypost.israelpost.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/%D7%90%D7%99%D7%AA%D7%95%D7%A8-%D7%9E%D7%99%D7%A7%D7%95%D7%93/'
             }
-            target={'_blank'}>
+            target={'_blank'}
+            rel='noopener noreferrer'>
             {t('click here')}
           </a>
         </span>
@@ -813,29 +832,37 @@ const PatientDetailsBlock = ({
             label={t('Uploading documents with a maximum size of up to 2MB')}
           />
           <StyledDivider variant='fullWidth' />
-          <Grid container>
+          <Grid container alignItems='center'>
             <Grid item xs={3}>
-              <input
-                ref={referralRef}
-                id='contained-button-file'
-                multiple
-                type='file'
-                required
-                onChange={onChangeFileHandler}
-              />
-              <label htmlFor='contained-button-file'>
-                <StyledButton
-                  variant='outlined'
-                  color='primary'
-                  component='span'
-                  size={'large'}
-                  startIcon={<Scanner />}>
-                  {t('Upload document')}
-                </StyledButton>
+              <label style={{ color: '#000b40' }} htmlFor='referral'>
+                {t('Referral')}
               </label>
             </Grid>
-            <Grid item>
-              {/* Add a list of all the selected files use chip if needed */}
+            <Grid item xs={9}>
+              {Object.values(referralFile).length > 0 ? (
+                <ChipWithImage label={referralFile.name} size={referralFile.size} />
+              ) : (
+                <React.Fragment>
+                  <input
+                    ref={referralRef}
+                    id='referral'
+                    type='file'
+                    accept='.pdf'
+                    required
+                    onChange={onChangeFileHandler}
+                  />
+                  <label htmlFor='referral'>
+                    <StyledButton
+                      variant='outlined'
+                      color='primary'
+                      component='span'
+                      size={'large'}
+                      startIcon={<Scanner />}>
+                      {t('Upload document')}
+                    </StyledButton>
+                  </label>
+                </React.Fragment>
+              )}
             </Grid>
           </Grid>
         </StyledFormGroup>

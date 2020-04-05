@@ -13,7 +13,6 @@ export const StyledButton = styled(Button)`
   }
 `;
 
-
 export const StyledDivider = styled(Divider)`
   margin: 10px 0 40px 0;
 `;
