@@ -3,7 +3,6 @@ import {CRUDOperations} from "../CRUDOperations";
 
 const ValueSetStates =  {
     doWork: (parameters = null) => {
-        debugger;
         let  componentFhirURL = "/ValueSet";
         let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
         paramsToCRUD.url = componentFhirURL;
@@ -11,21 +10,26 @@ const ValueSetStates =  {
     },
 
     getValueSet : async (params) => {
-       const valueSet =  await CRUDOperations('read',  params.url+"/"+params.id + "/$expend");
+        debugger;
+        //console.log( await fhirTokenInstance().get(`apis/fhir/v4/ValueSet/encounter_statuses/$expand`));
+       const valueSet =  await CRUDOperations('read',  `${params.url}/${params.id}/$expand`);
        return valueSet;
-        // return fhirTokenInstance().get(`${fhirBasePath}/ValueSet/${id}/$expand`);
+
     },
     requestValueSet : async (params) => {
-
-        const {data: {expansion: {contains}}} = await ValueSetStates['getValueSet'](params);
-        let options = [];
-        if(contains) {
-            for (let status of contains) {
-                options[status.code] = status.display;
+        const valueSet = await ValueSetStates['getValueSet'](params);
+        if(valueSet && valueSet.data && valueSet.expansion) {
+            const {data: {expansion: {contains}}} = await ValueSetStates['getValueSet'](params);
+            let options = [];
+            if (contains) {
+                for (let status of contains) {
+                    options[status.code] = status.display;
+                }
             }
-        }
 
-        return options;
+            return options;
+        }
+        return [];
     }
 
 };

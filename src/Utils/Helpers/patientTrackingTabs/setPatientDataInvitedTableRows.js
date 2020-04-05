@@ -36,10 +36,11 @@ export const invitedTabActiveFunction = async function (setTable, setTabs, histo
         });
        // const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
 
-        const valueSet =  await FhirStrategy('ValueSet','doWork',{"functionName":'getValueSet','functionParams':{id:'patient_tracking_statuses'}});;
+        const valueSet =  await FhirStrategy('ValueSet','doWork',{"functionName":'getValueSet','functionParams':{id:'patient_tracking_statuses'}});
         if(!valueSet) {
             return ;
         }
+        if(valueSet && valueSet.data && valueSet.expansion) {
             const {data: {expansion: {contains}}} = valueSet;
             let options = [];
             for (let status of contains) {
@@ -47,7 +48,7 @@ export const invitedTabActiveFunction = async function (setTable, setTabs, histo
             }
             const table = setPatientDataInvitedTableRows(patients, appointments, options, history, this.mode);
             setTable(table);
-
+        }
             store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
 
 

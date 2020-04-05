@@ -9,14 +9,17 @@ import {ApiTokens} from "../../ApiTokens";
 const CRUDOperationsCalls={
 
     search: async (params, fhirTokenInstance) => {
+        debugger;
         const resolved = await fhirTokenInstance().get(params);
         return resolved;
     },
     read : async (params, fhirTokenInstance) => {
+        debugger;
         const resolved = await fhirTokenInstance().get(params);
         return resolved;
     },
     patch : (params,fhirTokenInstance,data)=>{
+        debugger;
         const resolved = fhirTokenInstance().patch(params,data);
         return resolved;
     },
@@ -36,8 +39,6 @@ const CRUDOperationsCalls={
 export function CRUDOperations (action,url,data){
     let fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName);
     let fhirBasePath = 'apis/fhir/v4';
-    fhirTokenInstance = fhirTokenInstance;
-
     const transformer = CRUDOperationsCalls[action] ?? CRUDOperationsCalls.__default__;
     return transformer(fhirBasePath+ url,fhirTokenInstance,data);
 }

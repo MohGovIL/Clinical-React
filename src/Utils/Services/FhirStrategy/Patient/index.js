@@ -47,11 +47,11 @@ const PatientStats = {
             }
 
         }
-        debugger;
+
         return data;
     },
         updatePatientData : async (params) => {
-            debugger
+
             return await CRUDOperations('patch', `${params.url}/`, [
                 {op: 'replace', path: '/name/0/family', value: params.functionParams.value.lastName},
                 {op: 'replace', path: '/name/0/given', value: [params.functionParams.value.firstName, ""]},

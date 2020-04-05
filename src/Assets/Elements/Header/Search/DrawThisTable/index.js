@@ -78,11 +78,18 @@ const DrawThisTable = ({result, searchParam}) => {
         if (newExpanded) {
 
             let currentDate = moment().utc().format("YYYY-MM-DD");
-            if(!encounterStatuses) setEncounterStatuses(await requestValueSet("encounter_statuses")) ;
-            if(!patientTrackingStatuses) setPatientTrackingStatuses(await requestValueSet("appointment_statuses"));
+
+           //if(!encounterStatuses) setEncounterStatuses(await requestValueSet("encounter_statuses")) ;
+            if(!encounterStatuses) setEncounterStatuses( await FhirStrategy('ValueSet','doWork',{"functionName":'requestValueSet','functionParams':{id:'encounter_statuses'}})) ;
+
+            //if(!patientTrackingStatuses) setPatientTrackingStatuses(await requestValueSet("appointment_statuses"));
+            if(!patientTrackingStatuses) setPatientTrackingStatuses(await FhirStrategy('ValueSet','doWork',{"functionName":'requestValueSet','functionParams':{id:'appointment_statuses'}}));
+
            // setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
             setNextAppointment(await FhirStrategy("Appointment","doWork",{functionName:'getNextPrevAppointmentPerPatient',functionParams:{date:currentDate, patient:identifier, prev:false}}));
+
             setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
+
             setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
           /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
 

@@ -10,7 +10,7 @@ const AppointmentStates = {
     },
     getNextPrevAppointmentPerPatient: async (params) => {
 
-        let CRUD = await CRUDOperations('search', params);
+      //  let CRUD = await CRUDOperations('search', params);
 
         //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
         try {
@@ -39,7 +39,7 @@ const AppointmentStates = {
             if (params.organization) arrayOfsearchParams['actor:HealthcareService.organization'] = params.organization;
             if (params.serviceType) arrayOfsearchParams['service-type'] = params.serviceType;
             search += convertParamsToUrl(arrayOfsearchParams);
-debugger;
+
             return await CRUDOperations('search',  params.url +"?"+ search);
         }
 
