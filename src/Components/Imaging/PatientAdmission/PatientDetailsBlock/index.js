@@ -740,7 +740,7 @@ const PatientDetailsBlock = ({
                 <StyledKeyboardDatePicker
                   disableToolbar
                   variant='inline'
-                  format={'DD/MM/YYYY'}
+                  format={formatDate}
                   margin='normal'
                   required
                   id='commitmentAndPaymentCommitmentDate'
@@ -755,7 +755,7 @@ const PatientDetailsBlock = ({
                   required
                   disableToolbar
                   variant='inline'
-                  format={'DD/MM/YYYY'}
+                  format={formatDate}
                   margin='normal'
                   id='commitmentAndPaymentCommitmeValidity'
                   label={t('Commitment validity')}
