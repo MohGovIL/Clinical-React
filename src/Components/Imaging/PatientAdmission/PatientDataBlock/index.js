@@ -41,8 +41,6 @@ import {connect} from "react-redux";
 import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
 import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
-import Button from "@material-ui/core/Button";
-import CustomizedPopup from "../../../../Assets/Elements/CustomizedPopup";
 
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave, priority}) => {
@@ -64,27 +62,6 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
             birthDate: patientBirthDate
         }
     });
-
-    /*
-    testing popup component
-    */
-    const [popupOpen, setPopupOpen] = useState(false);
-    const [popupNextOpen, setPopupNextOpen] = useState(false);
-
-    const handlePopupOpen = () => {
-        setPopupOpen(true);
-    };
-    const handlePopupClose = () => {
-        setPopupOpen(false);
-    };
-
-    const handlePopupNextOpen = () => {
-        setPopupNextOpen(true);
-    };
-    const handlePopupNextClose = () => {
-        setPopupNextOpen(false);
-    };
-
     const onSubmit = (data, e) => {
         (async () => {
             try {
@@ -401,39 +378,6 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
 
                     </form>
                 </StyledTextInput>
-                <Button variant="outlined" color="primary" onClick={handlePopupOpen}>
-                    Open dialog
-                </Button>
-                <CustomizedPopup isOpen={popupOpen} onClose={handlePopupClose}
-                                 title={t("Patient details")}
-                                 // content_dividers={false}
-                                 bottomButtons={
-                                     [{
-                                         'label': t('Undo editing'),
-                                         'variant': "text",
-                                         'color': "primary",
-                                         'onClickHandler': handlePopupClose
-                                     }, {
-                                         'label': t('save'),
-                                         'variant': "contained",
-                                         'color': "primary",
-                                         'type': "submit"
-                                     }
-                                     ]
-                                 }
-                ><Typography gutterBottom>
-                    LibreOffice auto-generate text: dt and F3<br/>
-                    <hr/>
-                    He heard quiet steps behind him. That didn't bode well. Who could be following him this late at night and in this deadbeat part of town? And at this particular moment, just after he pulled off the big time and was making off with the greenbacks. Was there another crook who'd had the same idea, and was now watching him and waiting for a chance to grab the fruit of his labor? Or did the steps behind him mean that one of many law officers in town was on to him and just waiting to pounce and snap those cuffs on his wrists? He nervously looked all around. Suddenly he saw the alley. Like lightning he darted off to the left and disappeared between the two warehouses almost falling over the trash can lying in the middle of the sidewalk. He tried to nervously tap his way along in the inky darkness and suddenly stiffened: it was a dead-end, he would have to go back the way he had come. The steps got louder and louder, he saw the black outline of a figure coming around the corner. Is this the end of the line? he thought pressing himself back against the wall trying to make himself invisible in the dark, was all that planning and energy wasted? He was dripping with sweat now, cold and wet, he could smell the fear coming off his clothes. Suddenly next to him, with a barely noticeable squeak, a door swung quietly to and fro in the night's breeze. Could this be the haven he'd prayed for? Slowly he slid toward the door, pressing himself more and more into the wall, into the dark, away from his enemy. Would this door save his hide?
-                </Typography>
-                    {/*<Button variant="outlined" color="primary" onClick={handlePopupNextOpen}>*/}
-                    {/*    Open next dialog*/}
-                    {/*</Button>*/}
-                    {/*<CustomizedPopup isOpen={popupNextOpen} onClose={handlePopupNextClose}>*/}
-                    {/*    customizedpopup component*/}
-                    {/*</CustomizedPopup>*/}
-                </CustomizedPopup>
-                <br/><br/><br/>
             </StyledDiv>
         </React.Fragment>
 
