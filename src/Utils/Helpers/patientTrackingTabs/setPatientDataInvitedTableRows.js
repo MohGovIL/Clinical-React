@@ -21,7 +21,7 @@ import Appointment from "../../Services/FhirStrategy/Appointment";
 export const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
        //const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
-        const appointmentsWithPatients =  await  FhirStrategy('Appointment','doWork',{"functionName":'getAppointmentsWithPatients','functionParams':{"summery":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type}});
+        const appointmentsWithPatients =  await  FhirStrategy('Appointment','doWork',{"functionName":'getAppointmentsWithPatients','functionParams':{"summary":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type}});
 
         if(!appointmentsWithPatients || !appointmentsWithPatients.data) {
             return;
@@ -40,7 +40,7 @@ export const invitedTabActiveFunction = async function (setTable, setTabs, histo
         if(!valueSet) {
             return ;
         }
-        if(valueSet && valueSet.data && valueSet.expansion) {
+        if(valueSet && valueSet.data && valueSet.data.expansion) {
             const {data: {expansion: {contains}}} = valueSet;
             let options = [];
             for (let status of contains) {
@@ -59,7 +59,8 @@ export const invitedTabActiveFunction = async function (setTable, setTabs, histo
 
 export const invitedTabNotActiveFunction = async function (setTabs, selectFilter) {
     try {
-        const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
+       // const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
+        const appointmentsWithPatientsSummaryCount =   await  FhirStrategy('Appointment','doWork',{"functionName":'getAppointmentsWithPatients','functionParams':{"summary":true,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type}});
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
             const prevTabsClone = [...prevTabs];
@@ -144,7 +145,9 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         async onClickHandler() {
                             const appointment  = store.getState().fhirData.appointments[appointmentId];
                             const patient = store.getState().fhirData.patients[appointment.patient]
-                            const encounterData = await createNewEncounter(appointment ,store.getState().settings.facility)
+                           // const encounterData = await createNewEncounter(appointment ,store.getState().settings.facility)
+                            const encounterData = await FhirStrategy('Encounter','doWork',{functionName :'createNewEncounter',functionParams  : {appointment :appointment  ,facility : store.getState().settings.facility}});
+
                             store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData.data), patient));
                             history.push({
                                 pathname: `${baseRoutePath()}/imaging/patientAdmission`,

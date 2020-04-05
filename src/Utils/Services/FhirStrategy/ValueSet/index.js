@@ -18,7 +18,8 @@ const ValueSetStates =  {
     },
     requestValueSet : async (params) => {
         const valueSet = await ValueSetStates['getValueSet'](params);
-        if(valueSet && valueSet.data && valueSet.expansion) {
+       debugger;
+        if(valueSet && valueSet.data && valueSet.data.expansion) {
             const {data: {expansion: {contains}}} = await ValueSetStates['getValueSet'](params);
             let options = [];
             if (contains) {
