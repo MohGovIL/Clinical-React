@@ -7,13 +7,14 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body{
-    direction: ${props => (props.lang_id === '7' ? 'rtl' : 'ltr')};
+    direction: ${props => (props.languageDirection === 'rtl' ? 'rtl' : 'ltr')};
   }
 
   ::-webkit-scrollbar {
     width: 4px;
 }
 
+/*Changing of style of scrollbars in Google Chrome*/
 /* Track */
 ::-webkit-scrollbar-track {
     background: #f0f0f0;

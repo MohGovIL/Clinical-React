@@ -11,7 +11,7 @@ import {StyledMuiDialogTitle, StyledDialogActions} from "./Style";
 import {connect} from "react-redux";
 import CustomizedTableButton from "../CustomizedTable/CustomizedTableButton";
 
-const CustomizedPopup = ({children, isOpen, onClose, languageDirection, languageCode, props}) => {
+const CustomizedPopup = ({children, isOpen, onClose, languageDirection, props}) => {
     return (
         <div>
             <Dialog onClose={onClose} aria-labelledby="customized-dialog-title" open={isOpen}>
@@ -41,7 +41,6 @@ const CustomizedPopup = ({children, isOpen, onClose, languageDirection, language
 const mapStateToProps = (state, ownProps) => {
     return {
         languageDirection: state.settings.lang_dir,
-        languageCode: state.settings.lang_code,
         props: ownProps,
     }
 };
