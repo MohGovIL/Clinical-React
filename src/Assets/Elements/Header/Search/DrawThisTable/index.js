@@ -26,6 +26,7 @@ import normalizeFhirAppointment
     from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
     from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
+import {FhirStrategy} from "../../../../../Utils/Services/FhirStrategy";
 
 const DrawThisTable = ({result, searchParam}) => {
 
@@ -79,7 +80,8 @@ const DrawThisTable = ({result, searchParam}) => {
             let currentDate = moment().utc().format("YYYY-MM-DD");
             if(!encounterStatuses) setEncounterStatuses(await requestValueSet("encounter_statuses")) ;
             if(!patientTrackingStatuses) setPatientTrackingStatuses(await requestValueSet("appointment_statuses"));
-            setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
+           // setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
+            setNextAppointment(await FhirStrategy("Appointment","doWork",{functionName:'getNextPrevAppointmentPerPatient',functionParams:{date:currentDate, patient:identifier, prev:false}}));
             setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
             setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
           /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
@@ -95,7 +97,7 @@ const DrawThisTable = ({result, searchParam}) => {
         var ageDate = new Date(ageDifMs); // miliseconds from epoch
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
-
+debugger;
     if (result) {
         return (
             result.map((patient, patientIndex) => {

@@ -50,14 +50,11 @@ const FhirStrategyStates = {
     __default__: null
 };
 
-export function FhirStrategy(state = null, action = null,params = null) {
+export async function FhirStrategy(state = null, action = null, params = null) {
 
 
-    if(action) {
-        const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName);
-        params.fhirBasePath = 'apis/fhir/v4';
-        params.fhirTokenInstance = fhirTokenInstance;
+    if (action) {
         const transformer = FhirStrategyStates[state] ?? FhirStrategy.__default__;
-        return transformer(action,params);
+        return await transformer(action, params);
     }
 }

@@ -32,6 +32,7 @@ import {connect} from "react-redux";
 import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
 import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
+import {FhirStrategy} from "../../../../Utils/Services/FhirStrategy";
 
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave, priority}) => {
@@ -58,7 +59,8 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
         (async () => {
             try {
                 data.birthDate = Moment(data.birthDate, formatDate).format("YYYY-MM-DD");
-                const answer = await updatePatientData(patientData.id, data);
+                //const answer = await updatePatientData(patientData.id, data);
+                const answer = await FhirStrategy('Patient','updatePatientData',{patientData:patientData.id, data:data});
                 const patient = {
                     [patientData.id]: normalizeFhirPatient(answer.data)
                 };

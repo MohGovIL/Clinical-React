@@ -19,6 +19,7 @@ import {connect} from "react-redux";
 import PaperContainerComponent from "./DrawThisTable/PaperContainerComponent";
 import CustomizedTableButtonCell from "../../CustomizedTable/CustomizedTableButtonCell";
 import StyledButton from "../../CustomizedTable/CustomizedTableButton/Style";
+import {FhirStrategy} from "../../../../Utils/Services/FhirStrategy";
 
 
 
@@ -75,7 +76,9 @@ const Search = ({languageDirection}) => {
         if (tValue.length > minSearchParam) {
             (async () => {
                 try {
-                    const patients = await searchPatients(tValue);
+                    //const patients = await searchPatients(tValue);
+
+                    const patients = await FhirStrategy('Patient','doWork', {"functionName":'searchPatients','functionParams':{searchValue:tValue}});
                     if (patients) {
                         //for
                         setResult(patients);

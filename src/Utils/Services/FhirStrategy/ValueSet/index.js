@@ -1,21 +1,23 @@
 import {getValueSet} from "../../FhirAPI";
+import {CRUDOperations} from "../CRUDOperations";
 
-const ValueSet = () => {
-    let fhirTokenInstance = null;
-    let fhirBasePath = null;
+const ValueSetStates =  {
+    doWork: (parameters = null) => {
+        debugger;
+        let  componentFhirURL = "/ValueSet";
+        let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
+        paramsToCRUD.url = componentFhirURL;
+        return ValueSetStates[parameters.functionName](paramsToCRUD);
+    },
 
-    const doWork = (params) => {
-        fhirTokenInstance = params.fhirTokenInstance;
-        fhirBasePath = params.fhirBasePath;
-    };
+    getValueSet : async (params) => {
+       const valueSet =  await CRUDOperations('read',  params.url+"/"+params.id + "/$expend");
+       return valueSet;
+        // return fhirTokenInstance().get(`${fhirBasePath}/ValueSet/${id}/$expand`);
+    },
+    requestValueSet : async (params) => {
 
-    const getValueSet = id => {
-        return fhirTokenInstance().get(`${fhirBasePath}/ValueSet/${id}/$expand`);
-    };
-
-    const requestValueSet =  async (id) => {
-
-        const {data: {expansion: {contains}}} = await getValueSet(id);
+        const {data: {expansion: {contains}}} = await ValueSetStates['getValueSet'](params);
         let options = [];
         if(contains) {
             for (let status of contains) {
@@ -24,8 +26,16 @@ const ValueSet = () => {
         }
 
         return options;
-    };
+    }
 
 };
 
-export default ValueSet;
+export default async function ValueSet(action = null, params = null) {
+
+    if (action) {
+        const transformer = ValueSetStates[action] ?? ValueSetStates.__default__;
+        return await transformer(params);
+    }
+}
+
+

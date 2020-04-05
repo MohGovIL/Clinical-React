@@ -20,12 +20,12 @@ import Appointment from "../../Services/FhirStrategy/Appointment";
 //מוזמנים
 export const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
-       /* const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);*/
-
+       //const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
         const appointmentsWithPatients =  await  FhirStrategy('Appointment','doWork',{"functionName":'getAppointmentsWithPatients','functionParams':{"summery":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type}});
 
-        if(!appointmentsWithPatients || !appointmentsWithPatients.data)
+        if(!appointmentsWithPatients || !appointmentsWithPatients.data) {
             return;
+        }
 
         const [patients, appointments] = normalizeFhirAppointmentsWithPatients(appointmentsWithPatients.data.entry);
         setTabs(prevTabs => {
@@ -34,15 +34,23 @@ export const invitedTabActiveFunction = async function (setTable, setTabs, histo
             prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = appointmentsWithPatients.data.total;
             return prevTabsClone;
         });
-        const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
-        let options = [];
-        for (let status of contains) {
-            options.push(normalizeFhirValueSet(status));
-        }
-        const table = setPatientDataInvitedTableRows(patients, appointments, options, history, this.mode);
-        setTable(table);
+       // const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
 
-        store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
+        const valueSet =  await FhirStrategy('ValueSet','doWork',{"functionName":'getValueSet','functionParams':{id:'patient_tracking_statuses'}});;
+        if(!valueSet) {
+            return ;
+        }
+            const {data: {expansion: {contains}}} = valueSet;
+            let options = [];
+            for (let status of contains) {
+                options.push(normalizeFhirValueSet(status));
+            }
+            const table = setPatientDataInvitedTableRows(patients, appointments, options, history, this.mode);
+            setTable(table);
+
+            store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
+
+
     } catch (err) {
         console.log(err);
     }
