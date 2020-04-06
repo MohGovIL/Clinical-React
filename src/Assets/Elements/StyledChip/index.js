@@ -5,30 +5,32 @@ import { useTranslation } from 'react-i18next';
 import { Delete, Visibility } from '@material-ui/icons';
 import { Typography, Tooltip, Grid } from '@material-ui/core';
 import HeaderIcon from '../Header/HeaderIcon/index';
-const ChipWithImage = ({ label, onDelete, size, onClick }) => {
+const ChipWithImage = ({ label, onDelete, size, onClick, htmlFor }) => {
   const { t } = useTranslation();
 
   return (
-    <Grid container alignItems='center'>
-      <ChipWithImageStyle onClick={onClick || console.log('OnClick')}>
-        <OnHoverElement className='onHover'>
-          <Visibility style={{ color: '#ffffff' }} />
-        </OnHoverElement>
-        <HeaderIcon img={PDF} alt={'PDF'} />
-        <Grid container direction='column'>
-          <Tooltip title={label}>
-            <Typography noWrap style={{ maxWidth: '150px' }}>
-              {t(label)}
-            </Typography>
-          </Tooltip>
-          <Typography>{size}MB</Typography>
-        </Grid>
-      </ChipWithImageStyle>
-      <Delete
-        style={{ color: '#076ce9' }}
-        onClick={onDelete || console.log('noDelete')}
-      />
-    </Grid>
+    <label htmlFor={htmlFor} >
+      <Grid container alignItems='center'>
+        <ChipWithImageStyle onClick={onClick || console.log('OnClick')}>
+          <OnHoverElement className='onHover'>
+            <Visibility style={{ color: '#ffffff' }} />
+          </OnHoverElement>
+          <HeaderIcon img={PDF} alt={'PDF'} />
+          <Grid container direction='column'>
+            <Tooltip title={label}>
+              <Typography noWrap style={{ maxWidth: '150px' }}>
+                {t(label)}
+              </Typography>
+            </Tooltip>
+            <Typography>{size}MB</Typography>
+          </Grid>
+        </ChipWithImageStyle>
+        <Delete
+          style={{ color: '#076ce9', margin: '0 24px 0 24px' }}
+          onClick={onDelete || console.log('noDelete')}
+        />
+      </Grid>
+    </label>
   );
 };
 
