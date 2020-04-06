@@ -32,7 +32,7 @@ import {connect} from "react-redux";
 import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
 import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
-import {FhirStrategy} from "../../../../Utils/Services/FhirStrategy";
+import {FHIR} from "../../../../Utils/Services/FHIR";
 
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave, priority}) => {
@@ -60,7 +60,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
             try {
                 data.birthDate = Moment(data.birthDate, formatDate).format("YYYY-MM-DD");
                 //const answer = await updatePatientData(patientData.id, data);
-                const answer = await FhirStrategy('Patient','updatePatientData',{patientData:patientData.id, data:data});
+                const answer = await FHIR('Patient','updatePatientData',{patientData:patientData.id, data:data});
                 const patient = {
                     [patientData.id]: normalizeFhirPatient(answer.data)
                 };
@@ -106,7 +106,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
             (async () => {
                 try {
                     //const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
-                    const {data: {entry: dataServiceType}} = await FhirStrategy("Organization","doWork",{functionName:'getOrganizationTypeKupatHolim'});
+                    const {data: {entry: dataServiceType}} = await FHIR("Organization","doWork",{functionName:'getOrganizationTypeKupatHolim'});
                     for (let entry of dataServiceType) {
                         if (entry.resource !== undefined) {
                             entry.resource.name = t(entry.resource.name);

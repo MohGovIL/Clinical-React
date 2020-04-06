@@ -1,7 +1,7 @@
 
 // 1) You should create new object like Appointment,Encounter,HealthCareService ......
-// 2) Then you should use FhirStrategy.setStrategy(with the object you want);  .
-// 3) Call doWork from the FhirStrategy .
+// 2) Then you should use FHIR.setStrategy(with the object you want);  .
+// 3) Call doWork from the FHIR .
 
 import {tokenInstanceGenerator} from "../../AxiosWithTokenInstance";
 import {ApiTokens} from "../../ApiTokens";

@@ -26,7 +26,7 @@ import normalizeFhirAppointment
     from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
     from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
-import {FhirStrategy} from "../../../../../Utils/Services/FhirStrategy";
+import {FHIR} from "../../../../../Utils/Services/FHIR";
 
 const DrawThisTable = ({result, searchParam}) => {
 
@@ -76,28 +76,24 @@ const DrawThisTable = ({result, searchParam}) => {
 
 
         if (newExpanded) {
-
             let currentDate = moment().utc().format("YYYY-MM-DD");
 
            //if(!encounterStatuses) setEncounterStatuses(await requestValueSet("encounter_statuses")) ;
-            setEncounterStatuses( await FhirStrategy('ValueSet','doWork',{"functionName":'requestValueSet','functionParams':{id:'encounter_statuses'}})) ;
+            setEncounterStatuses( await FHIR('ValueSet','doWork',{"functionName":'requestValueSet','functionParams':{id:'encounter_statuses'}})) ;
 
             //if(!patientTrackingStatuses) setPatientTrackingStatuses(await requestValueSet("appointment_statuses"));
-            setPatientTrackingStatuses(await FhirStrategy('ValueSet','doWork',{"functionName":'requestValueSet','functionParams':{id:'appointment_statuses'}}));
+            setPatientTrackingStatuses(await FHIR('ValueSet','doWork',{"functionName":'requestValueSet','functionParams':{id:'appointment_statuses'}}));
 
            // setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
-            setNextAppointment(await FhirStrategy("Appointment","doWork",{functionName:'getNextPrevAppointmentPerPatient',functionParams:{date:currentDate, patient:identifier, prev:false}}));
+            setNextAppointment(await FHIR("Appointment","doWork",{functionName:'getNextPrevAppointmentPerPatient',functionParams:{date:currentDate, patient:identifier, prev:false}}));
 
            // setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
-            setPrevEncounter(await FhirStrategy("Encounter","doWork",{functionName:'getNextPrevEncounterPerPatient',functionParams:{date:currentDate, patient:identifier, prev:true}}));
+            setPrevEncounter(await FHIR("Encounter","doWork",{functionName:'getNextPrevEncounterPerPatient',functionParams:{date:currentDate, patient:identifier, prev:true}}));
 
            // setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
-            setCurEncounter(await FhirStrategy("Encounter","doWork",{functionName:'getCurrentEncounterPerPatient',functionParams:{date:currentDate, patient:identifier, prev:false}}));
+            setCurEncounter(await FHIR("Encounter","doWork",{functionName:'getCurrentEncounterPerPatient',functionParams:{date:currentDate, patient:identifier, prev:false}}));
           /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
-
-
-
-        }
+      }
     };
 
 

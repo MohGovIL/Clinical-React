@@ -66,7 +66,7 @@ const EncounterStates = {
         },
     });
     },
-    encountersWithPatientsBasePath : summary => `/Encounter?_sort=date${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
+    encountersWithPatientsBasePath : summary => `_sort=date${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
 
     getEncountersWithPatients : async (params) => {
         let summary = params.functionParams.summary

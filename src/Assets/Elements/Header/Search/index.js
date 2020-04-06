@@ -19,7 +19,7 @@ import {connect} from "react-redux";
 import PaperContainerComponent from "./DrawThisTable/PaperContainerComponent";
 import CustomizedTableButtonCell from "../../CustomizedTable/CustomizedTableButtonCell";
 import StyledButton from "../../CustomizedTable/CustomizedTableButton/Style";
-import {FhirStrategy} from "../../../../Utils/Services/FhirStrategy";
+import {FHIR} from "../../../../Utils/Services/FHIR";
 
 
 
@@ -78,7 +78,7 @@ const Search = ({languageDirection}) => {
                 try {
                     //const patients = await searchPatients(tValue);
 
-                    const patients = await FhirStrategy('Patient','doWork', {"functionName":'searchPatients','functionParams':{searchValue:tValue}});
+                    const patients = await FHIR('Patient','doWork', {"functionName":'searchPatients','functionParams':{searchValue:tValue}});
                     if (patients) {
                         //for
                         setResult(patients);

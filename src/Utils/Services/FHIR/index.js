@@ -7,11 +7,11 @@ import Patient from "./Patient";
 import ValueSet from "./ValueSet";
 
 // 1) You should create new object like Appointment,Encounter,HealthCareService ......
-// 2) Then you should use FhirStrategy.setStrategy(with the object you want);  .
-// 3) Call doWork from the FhirStrategy .
+// 2) Then you should use FHIR.setStrategy(with the object you want);  .
+// 3) Call doWork from the FHIR .
 
 
-export class FhirStrategy  {
+export class FHIR  {
 
     constructor(obj){
         this.strategy = obj;
@@ -39,7 +39,7 @@ import ValueSet from "./ValueSet";
 import {tokenInstanceGenerator} from "../AxiosWithTokenInstance";
 import {ApiTokens} from "../ApiTokens";
 
-const FhirStrategyStates = {
+const FHIRStates = {
     Appointment: Appointment,
     Encounter: Encounter,
     HealthcareService: HealthcareService,
@@ -50,12 +50,12 @@ const FhirStrategyStates = {
     __default__: null
 };
 
-export const FhirStrategy = (state = null, action = null, params = null) => new Promise((resolve,reject)=>
+export const FHIR = (state = null, action = null, params = null) => new Promise((resolve, reject)=>
      {
 
 
         if (action) {
-            const transformer = FhirStrategyStates[state] ?? FhirStrategy.__default__;
+            const transformer = FHIRStates[state] ?? FHIR.__default__;
             resolve(transformer(action, params));
         }
 

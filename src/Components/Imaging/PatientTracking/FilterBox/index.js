@@ -15,7 +15,7 @@ import {
     setFilterOrganizationAction,
     setFilterServiceTypeAction
 } from "../../../../Store/Actions/FilterActions/FilterActions";
-import {FhirStrategy} from "../../../../Utils/Services/FhirStrategy";
+import {FHIR} from "../../../../Utils/Services/FHIR";
 
 /**
  * @author Yuriy Gershem yuriyge@matrix.co.il
@@ -47,7 +47,7 @@ const FilterBox = ({languageDirection, facility, selectFilterOrganization, selec
                 let array = emptyArrayAll();
                 //Nested destructuring from Promise. ES6 new syntax.
                 //const {data: {entry: dataOrganization}} = await getOrganization();
-                const {data: {entry: dataOrganization}} = await FhirStrategy("Organization","doWork",{functionName:'getOrganization'});
+                const {data: {entry: dataOrganization}} = await FHIR("Organization","doWork",{functionName:'getOrganization'});
 
                 for (let entry of dataOrganization) {
                     if (entry.resource !== undefined) {
