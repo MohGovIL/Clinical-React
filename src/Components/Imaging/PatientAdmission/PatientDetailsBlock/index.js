@@ -63,7 +63,7 @@ const PatientDetailsBlock = ({
   const [referralFile, setReferralFile] = useState({});
   const [commitmentFile, setCommitmentFile] = useState({});
   const [additionnalDocumentFile, setAdditionnalDocumentFile] = useState({});
-  const [numOfAdditionnalDocument, setNumOfAdditionnalDocument] = useState(0);
+  const [numOfAdditionnalDocument, setNumOfAdditionnalDocument] = useState([]);
   const [nameOfAddionalDocumentFile, setNameOfAddionalDocumentFile]  = useState('');
 
   const referralRef = React.useRef();
@@ -114,8 +114,12 @@ const PatientDetailsBlock = ({
   };
 
   const onClickAdditionnalDocumentHandler = () => {
-    numOfAdditionnalDocument !== 1 &&
-      setNumOfAdditionnalDocument((prevState) => prevState + 1);
+    numOfAdditionnalDocument.length !== 1 &&
+      setNumOfAdditionnalDocument(prevState => {
+        let clonePrevState = prevState;
+        clonePrevState.push(clonePrevState.length);
+        return [...clonePrevState]; 
+      });
   };
 
   const onChangeAdditionnalDocumentHandler = e => {
@@ -946,13 +950,16 @@ const PatientDetailsBlock = ({
               )}
             </Grid>
           </Grid>
-          {/* AddiotionalDocumentRef  */}
-          {numOfAdditionnalDocument > 0 && (
+          {/* AddiotionalDocumentRef */}
+              {numOfAdditionnalDocument.length > 0 ? <Grid container alignItems='center'>
+                {/* To Do add here the content of the AdditionnalDocument */}
+              </Grid> : null}
+          {/* {numOfAdditionnalDocument.lenght > 0 ? (
             <Grid container alignItems='center'>
               {numOfAdditionnalDocument.map(
                 (additionnalDocumentObj, additionnalDocumentIndex) => {
                   return (
-                    <React.Fragment>
+                    <React.Fragment key={additionnalDocumentIndex}>
                       <Grid item xs={3}>
                         <StyledTextField onChange={onChangeAdditionnalDocumentHandler} label={'Additional document'} />
                       </Grid>
@@ -1002,7 +1009,7 @@ const PatientDetailsBlock = ({
                 },
               )}
             </Grid>
-          )}
+          ): null} */}
           <Grid container alignItems='center'>
             <AddCircle
               style={{ color: '#002398', cursor: 'pointer' }}
