@@ -1,4 +1,4 @@
-import React, {useState}  from "react";
+import React from "react";
 import CustomizedPopup from "./index";
 import {StylesProvider} from '@material-ui/core/styles'
 import GlobalStyle from "../../Themes/GlobalStyle";
@@ -6,7 +6,6 @@ import {withKnobs, object, select, text, boolean} from "@storybook/addon-knobs";
 import {store} from "../../../index";
 import ProviderWrapper from "../../../../.storybook/Provider";
 import {Button, Typography} from "@material-ui/core";
-// import {useState} from "@storybook/addons";
 
 export default {
     title: 'Popup',
@@ -17,15 +16,15 @@ export default {
 }
 
 
-export const normalCustomizedPopup = () => {
+export const NormalCustomizedPopup = () => {
     const lang_dir = select('state.settings.lang_dir', {"rtl": "rtl", "ltr": "ltr"}, 'rtl');
     const withSubPopup = boolean('withSubPopup', false);
     const contentPopup = text("content for popup component", ""); //inner text of component
 
     store.getState().settings.lang_dir = lang_dir;
 
-    const [popupOpen, setPopupOpen] = useState(false);
-    const [popupNextOpen, setPopupNextOpen] = useState(false);
+    const [popupOpen, setPopupOpen] = React.useState(false);
+    const [popupNextOpen, setPopupNextOpen] = React.useState(false);
 
     const handlePopupOpen = () => {
         setPopupOpen(true);
