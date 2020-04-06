@@ -55,7 +55,7 @@ export const normalCustomizedPopup = () => {
     ];
 
     return <>
-        <GlobalStyle languageDirection={lang_dir}/>
+        <GlobalStyle language_direction={lang_dir}/>
         <Button variant="outlined" color="primary" onClick={handlePopupOpen}>Open dialog</Button>
         <CustomizedPopup isOpen={popupOpen} onClose={handlePopupClose}
                          title={text('title', 'Patient details')}
