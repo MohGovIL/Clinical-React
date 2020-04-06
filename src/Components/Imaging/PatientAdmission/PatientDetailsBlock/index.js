@@ -25,6 +25,7 @@ import {
   Close,
   CheckBoxOutlineBlankOutlined,
   Scanner,
+  AddCircle,
 } from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
@@ -60,11 +61,16 @@ const PatientDetailsBlock = ({
   });
 
   const [referralFile, setReferralFile] = useState({});
-  const [comittmentFile, setCommitmentFile] = useState({});
+  const [commitmentFile, setCommitmentFile] = useState({});
+  const [additionnalDocumentFile, setAdditionnalDocumentFile] = useState({});
+  const [numOfAdditionnalDocument, setNumOfAdditionnalDocument] = useState(0);
+  const [nameOfAddionalDocumentFile, setNameOfAddionalDocumentFile]  = useState('');
 
   const referralRef = React.useRef();
 
-  const comittmentRef = React.useRef();
+  const commitmentRef = React.useRef();
+
+  const additionnalDocumentRef = React.useRef();
 
   const toFix1 = (number) => {
     return Number.parseFloat(number).toFixed(1);
@@ -78,36 +84,43 @@ const PatientDetailsBlock = ({
     return [true, toFix1(SizeInMB)];
   };
 
-  function onChangeFileHandler(event) {
-    const files = referralRef.current.files;
+  function onChangeFileHandler(ref, setState, fileName) {
+    const files = ref.current.files;
     const [BoolAnswer, SizeInMB] = calcSizeIfMoreThan2MB(
       files[files.length - 1].size,
     );
     if (!BoolAnswer) {
       const fileObj = {
-        name: `Referral_${moment().format('L')}_${moment().format('HH:mm')}_${
-          files[files.length - 1].name
-        }`,
+        name: `${fileName}_${moment().format('L')}_${moment().format(
+          'HH:mm',
+        )}_${files[files.length - 1].name}`,
         size: SizeInMB,
       };
-      setReferralFile({ ...fileObj });
+      setState({ ...fileObj });
     } else {
-      files.pop();
+      ref.current.value = '';
     }
   }
 
-  const onClickFileHandler = () => {
-    const objUrl = URL.createObjectURL(referralRef.current.files[0]);
-    window.open();
+  const onClickFileHandler = (ref) => {
+    const objUrl = URL.createObjectURL(ref.current.files[0]);
+    window.open(objUrl, ref.current.files[0].name);
   };
 
-
-  const onDeleteFileHandler = () => {
-    const files = referralRef.current.files;
-    files.pop();
+  const onDeleteFileHandler = (ref, setState) => {
+    ref.current.value = '';
     const emptyObj = {};
-    setReferralFile(emptyObj);
+    setState(emptyObj);
   };
+
+  const onClickAdditionnalDocumentHandler = () => {
+    numOfAdditionnalDocument !== 1 &&
+      setNumOfAdditionnalDocument((prevState) => prevState + 1);
+  };
+
+  const onChangeAdditionnalDocumentHandler = e => {
+    setNameOfAddionalDocumentFile(e.target.value)
+  }
 
   const icon = <Close fontSize='small' />;
   const [addressCity, setAddressCity] = useState({});
@@ -845,7 +858,8 @@ const PatientDetailsBlock = ({
             label={t('Uploading documents with a maximum size of up to 2MB')}
           />
           <StyledDivider variant='fullWidth' />
-          <Grid container alignItems='center'>
+          {/* ReferralRef  */}
+          <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
             <Grid item xs={3}>
               <label style={{ color: '#000b40' }} htmlFor='referral'>
                 {t('Referral')}
@@ -858,14 +872,19 @@ const PatientDetailsBlock = ({
                 type='file'
                 accept='.pdf'
                 required
-                onChange={onChangeFileHandler}
+                onChange={() =>
+                  onChangeFileHandler(referralRef, setReferralFile, 'Referral')
+                }
               />
               {Object.values(referralFile).length > 0 ? (
                 <ChipWithImage
                   htmlFor='referral'
                   label={referralFile.name}
                   size={referralFile.size}
-                  onDelete={onDeleteFileHandler}
+                  onDelete={() =>
+                    onDeleteFileHandler(referralRef, setReferralFile)
+                  }
+                  onClick={() => onClickFileHandler(referralRef)}
                 />
               ) : (
                 <label htmlFor='referral'>
@@ -880,6 +899,121 @@ const PatientDetailsBlock = ({
                 </label>
               )}
             </Grid>
+          </Grid>
+          {/* CommitmentRef  */}
+          <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
+            <Grid item xs={3}>
+              <label style={{ color: '#000b40' }} htmlFor='commitment'>
+                {t('Commitment')}
+              </label>
+            </Grid>
+            <Grid item xs={9}>
+              <input
+                ref={commitmentRef}
+                id='commitment'
+                type='file'
+                accept='.pdf'
+                required
+                onChange={() =>
+                  onChangeFileHandler(
+                    commitmentRef,
+                    setCommitmentFile,
+                    'Commitment',
+                  )
+                }
+              />
+              {Object.values(commitmentFile).length > 0 ? (
+                <ChipWithImage
+                  htmlFor='commitment'
+                  label={commitmentFile.name}
+                  size={commitmentFile.size}
+                  onDelete={() =>
+                    onDeleteFileHandler(commitmentRef, setCommitmentFile)
+                  }
+                  onClick={() => onClickFileHandler(commitmentRef)}
+                />
+              ) : (
+                <label htmlFor='commitment'>
+                  <StyledButton
+                    variant='outlined'
+                    color='primary'
+                    component='span'
+                    size={'large'}
+                    startIcon={<Scanner />}>
+                    {t('Upload document')}
+                  </StyledButton>
+                </label>
+              )}
+            </Grid>
+          </Grid>
+          {/* AddiotionalDocumentRef  */}
+          {numOfAdditionnalDocument > 0 && (
+            <Grid container alignItems='center'>
+              {numOfAdditionnalDocument.map(
+                (additionnalDocumentObj, additionnalDocumentIndex) => {
+                  return (
+                    <React.Fragment>
+                      <Grid item xs={3}>
+                        <StyledTextField onChange={onChangeAdditionnalDocumentHandler} label={'Additional document'} />
+                      </Grid>
+                      <Grid item xs={9}>
+                        <input
+                          ref={additionnalDocumentRef}
+                          id='additionnalDocument'
+                          type='file'
+                          accept='.pdf'
+                          required
+                          onChange={() =>
+                            onChangeFileHandler(
+                              additionnalDocumentRef,
+                              setAdditionnalDocumentFile,
+                              nameOfAddionalDocumentFile,
+                            )
+                          }
+                        />
+                        {Object.values(additionnalDocumentFile).length > 0 ? (
+                          <ChipWithImage
+                            htmlFor='additionnalDocument'
+                            label={additionnalDocumentFile.name}
+                            size={additionnalDocumentFile.size}
+                            onDelete={() =>
+                              onDeleteFileHandler(
+                                additionnalDocumentRef,
+                                setAdditionnalDocumentFile,
+                              )
+                            }
+                            onClick={() => onClickFileHandler(additionnalDocumentRef)}
+                          />
+                        ) : (
+                          <label htmlFor='additionnalDocument'>
+                            <StyledButton
+                              variant='outlined'
+                              color='primary'
+                              component='span'
+                              size={'large'}
+                              startIcon={<Scanner />}>
+                              {t('Upload document')}
+                            </StyledButton>
+                          </label>
+                        )}
+                      </Grid>
+                    </React.Fragment>
+                  );
+                },
+              )}
+            </Grid>
+          )}
+          <Grid container alignItems='center'>
+            <AddCircle
+              style={{ color: '#002398', cursor: 'pointer' }}
+              onClick={onClickAdditionnalDocumentHandler}
+            />
+            <Title
+              margin='0 8px 0 8px'
+              bold
+              color={'#002398'}
+              label={'Additional document'}
+            />
           </Grid>
         </StyledFormGroup>
       </StyledForm>

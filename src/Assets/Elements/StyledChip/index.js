@@ -9,7 +9,7 @@ const ChipWithImage = ({ label, onDelete, size, onClick, htmlFor }) => {
   const { t } = useTranslation();
 
   return (
-    <label htmlFor={htmlFor} >
+    <label htmlFor={htmlFor}>
       <Grid container alignItems='center'>
         <ChipWithImageStyle onClick={onClick || console.log('OnClick')}>
           <OnHoverElement className='onHover'>
@@ -26,7 +26,11 @@ const ChipWithImage = ({ label, onDelete, size, onClick, htmlFor }) => {
           </Grid>
         </ChipWithImageStyle>
         <Delete
-          style={{ color: '#076ce9', margin: '0 24px 0 24px' }}
+          style={{
+            color: '#076ce9',
+            margin: '0 24px 0 24px',
+            cursor: 'pointer',
+          }}
           onClick={onDelete || console.log('noDelete')}
         />
       </Grid>
