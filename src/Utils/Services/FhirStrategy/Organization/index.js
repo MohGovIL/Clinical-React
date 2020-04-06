@@ -1,18 +1,28 @@
-const Organization = () => {
-    let fhirTokenInstance = null;
-    let fhirBasePath = null;
 
-    const doWork = (params) => {
-        fhirTokenInstance = params.fhirTokenInstance;
-        fhirBasePath = params.fhirBasePath;
-    };
-    const getOrganizationTypeKupatHolim = () => {
-        return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=71`);
-    };
+import {CRUDOperations} from "../CRUDOperations";
 
-    const getOrganization = () => {
-        return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=11`);
-    };
+const OrganizationStats =   {
+    doWork : (parameters) => {
+        let  componentFhirURL = "/Organization";
+        parameters.url =  componentFhirURL;
+        return OrganizationStats[parameters.functionName](parameters);
+    },
+    getOrganizationTypeKupatHolim : async (params) => {
+        //return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=71`);
+        return await CRUDOperations('search', `${params.url}?type=71`);
+
+    },
+
+    getOrganization : async (params) => {
+       // return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=11`);
+        return await CRUDOperations('search', `${params.url}?type=11`);
+    }
 };
 
-export default Organization;
+export default function Organization(action = null, params = null) {
+
+    if (action) {
+        const transformer = OrganizationStats[action] ?? OrganizationStats.__default__;
+        return transformer(params);
+    }
+}

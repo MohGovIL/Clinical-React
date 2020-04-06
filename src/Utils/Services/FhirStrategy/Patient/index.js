@@ -87,10 +87,10 @@ const PatientStats = {
         }
 };
 
-export default async function Patient(action = null, params = null) {
+export default function Patient(action = null, params = null) {
 
     if (action) {
         const transformer = PatientStats[action] ?? PatientStats.__default__;
-        return await transformer(params);
+        return transformer(params);
     }
 }

@@ -10,7 +10,7 @@ const ValueSetStates =  {
     },
 
     getValueSet : async (params) => {
-        debugger;
+
         //console.log( await fhirTokenInstance().get(`apis/fhir/v4/ValueSet/encounter_statuses/$expand`));
        const valueSet =  await CRUDOperations('read',  `${params.url}/${params.id}/$expand`);
        return valueSet;
@@ -18,7 +18,7 @@ const ValueSetStates =  {
     },
     requestValueSet : async (params) => {
         const valueSet = await ValueSetStates['getValueSet'](params);
-       debugger;
+
         if(valueSet && valueSet.data && valueSet.data.expansion) {
             const {data: {expansion: {contains}}} = await ValueSetStates['getValueSet'](params);
             let options = [];
@@ -35,11 +35,11 @@ const ValueSetStates =  {
 
 };
 
-export default async function ValueSet(action = null, params = null) {
+export default function ValueSet(action = null, params = null) {
 
     if (action) {
         const transformer = ValueSetStates[action] ?? ValueSetStates.__default__;
-        return await transformer(params);
+        return transformer(params);
     }
 }
 

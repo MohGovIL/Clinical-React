@@ -50,11 +50,13 @@ const FhirStrategyStates = {
     __default__: null
 };
 
-export async function FhirStrategy(state = null, action = null, params = null) {
+export const FhirStrategy = (state = null, action = null, params = null) => new Promise((resolve,reject)=>
+     {
 
 
-    if (action) {
-        const transformer = FhirStrategyStates[state] ?? FhirStrategy.__default__;
-        return await transformer(action, params);
-    }
-}
+        if (action) {
+            const transformer = FhirStrategyStates[state] ?? FhirStrategy.__default__;
+            resolve(transformer(action, params));
+        }
+
+});

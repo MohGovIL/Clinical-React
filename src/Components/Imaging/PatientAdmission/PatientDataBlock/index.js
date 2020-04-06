@@ -105,7 +105,8 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
             let array = emptyArrayAll();
             (async () => {
                 try {
-                    const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
+                    //const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
+                    const {data: {entry: dataServiceType}} = await FhirStrategy("Organization","doWork",{functionName:'getOrganizationTypeKupatHolim'});
                     for (let entry of dataServiceType) {
                         if (entry.resource !== undefined) {
                             entry.resource.name = t(entry.resource.name);

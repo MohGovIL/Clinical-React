@@ -88,9 +88,11 @@ const DrawThisTable = ({result, searchParam}) => {
            // setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
             setNextAppointment(await FhirStrategy("Appointment","doWork",{functionName:'getNextPrevAppointmentPerPatient',functionParams:{date:currentDate, patient:identifier, prev:false}}));
 
-            setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
+           // setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
+            setPrevEncounter(await FhirStrategy("Encounter","doWork",{functionName:'getNextPrevEncounterPerPatient',functionParams:{date:currentDate, patient:identifier, prev:true}}));
 
-            setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
+           // setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
+            setCurEncounter(await FhirStrategy("Encounter","doWork",{functionName:'getCurrentEncounterPerPatient',functionParams:{date:currentDate, patient:identifier, prev:false}}));
           /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
 
 
@@ -104,7 +106,7 @@ const DrawThisTable = ({result, searchParam}) => {
         var ageDate = new Date(ageDifMs); // miliseconds from epoch
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
-debugger;
+
     if (result) {
         return (
             result.map((patient, patientIndex) => {

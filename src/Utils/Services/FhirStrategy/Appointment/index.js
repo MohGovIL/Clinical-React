@@ -3,6 +3,7 @@ import {CRUDOperations} from "../CRUDOperations";
 import {convertParamsToUrl} from "../CommonFunctions";
 const AppointmentStates = {
     doWork: (parameters = null) => {
+
         let  componentFhirURL = "/Appointment";
         let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
         paramsToCRUD.url =  componentFhirURL;
@@ -47,10 +48,10 @@ const AppointmentStates = {
 };
 
 
-export default async function Appointment(action = null, params = null) {
+export default function Appointment(action = null, params = null) {
 
     if (action) {
         const transformer = AppointmentStates[action] ?? AppointmentStates.__default__;
-        return await transformer(params);
+        return transformer(params);
     }
 }

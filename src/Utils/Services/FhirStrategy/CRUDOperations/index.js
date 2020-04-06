@@ -8,28 +8,26 @@ import {ApiTokens} from "../../ApiTokens";
 
 const CRUDOperationsCalls={
 
-    search: async (params, fhirTokenInstance) => {
-        debugger;
-        const resolved = await fhirTokenInstance().get(params);
+    search:  (params, fhirTokenInstance) => {
+        const resolved =  CRUDOperationsCalls['read'](params,fhirTokenInstance);
         return resolved;
     },
-    read : async (params, fhirTokenInstance) => {
-        debugger;
-        const resolved = await fhirTokenInstance().get(params);
+    read : (params, fhirTokenInstance) => {
+        const resolved =  fhirTokenInstance().get(params);
         return resolved;
     },
     patch : (params,fhirTokenInstance,data)=>{
-        debugger;
+
         const resolved = fhirTokenInstance().patch(params,data);
         return resolved;
     },
-    update : async function (params, fhirTokenInstance,data) {
-        const resolved =  await fhirTokenInstance().update(params,data);
+    update :  function (params, fhirTokenInstance,data) {
+        const resolved =   fhirTokenInstance().update(params,data);
         return resolved;
 
     },
-    create : async function (params, fhirTokenInstance,data) {
-        const resolved =  await fhirTokenInstance().post(params,data);
+    create :  function (params, fhirTokenInstance,data) {
+        const resolved =   fhirTokenInstance().post(params,data);
         return resolved;
 
     },
