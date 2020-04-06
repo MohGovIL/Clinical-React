@@ -76,7 +76,7 @@ const tableHeaders = [
         component: LABEL_CELL
     },
     {
-        tableHeader: 'Time',
+        tableHeader: 'Date',
         hideTableHeader: false,
         component: LABEL_CELL
     },
@@ -149,7 +149,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                         },
                         text_color: '#076ce9',
                         padding: 'none',
-                        value: encounter.status,
+                        defaultValue: encounter.status,
                         options,
                         align: 'center',
                         background_color: '#eaf7ff',
@@ -177,14 +177,14 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: encounter.examination ? encounter.examination.join(' ') : null
+                        label: encounter.examination ? encounter.examination : null
                     });
                     break;
-                case 'Time':
+                case 'Date':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment.utc(encounter.startTime).format('LT')
+                        label: moment.utc(encounter.startTime).format('DD-MM-YYYY')
                     });
                     break;
                 default:

@@ -18,7 +18,7 @@ const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName)
 const fhirBasePath = 'apis/fhir/v4';
 
 // const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
-const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?status:not=arrived&_sort=date${summary ? '&_summary=count' : '&_include=Appointment:patient'}`;
+const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?status:not=arrived&_sort=priority,date,service-type${summary ? '&_summary=count' : '&_include=Appointment:patient'}`;
 
 export const getAppointmentsWithPatients = (summary = false, date = '', organization = '', serviceType = '') => {
     return fhirTokenInstance().get(`${appointmentsWithPatientsBasePath(summary)}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}`);
@@ -64,9 +64,17 @@ export const createNewEncounter = (appointment, facility) => {
     // coding = codingArr(appointment.examinationCode);
     // const reasonCode = appointment.examinationCode
     // appointment.examination.forEach(element => {
-        
+
     // });
-    
+    const reasonCode = appointment.examinationCode.map(examination => {
+        return {
+            "coding": [
+                {
+                    "code": examination
+                }
+            ]
+        }
+    })
     return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
         'priority': {
             'coding': [
@@ -77,13 +85,7 @@ export const createNewEncounter = (appointment, facility) => {
         },
         'status': 'planned',
         serviceType,
-        'reasonCode': {
-            'coding': [
-                {
-                    'code': appointment.examinationCode,
-                },
-            ],
-        },
+        reasonCode,
         'subject': {
             'reference': `Patient/${appointment.patient}`,
         },
@@ -110,7 +112,7 @@ export const getHealhcareService = (organization) => {
 };
 
 // const encountersWithPatientsBasePath = summary => '/Encounter?_include=Encounter:patient&_sort=date';
-const encountersWithPatientsBasePath = summary => `/Encounter?_sort=date${summary ? '&_summary=count' : '&_include=Encounter:patient'}`;
+const encountersWithPatientsBasePath = summary => `/Encounter?_sort=priority,date,service-type${summary ? '&_summary=count' : '&_include=Encounter:patient'}`;
 
 export const getEncountersWithPatients = (summary = false, date = '', serviceProvider = '', serviceType = '', statuses = []) => {
     let statusesString = '';
@@ -202,8 +204,10 @@ export const requestValueSet =  async (id) => {
 
     const {data: {expansion: {contains}}} = await getValueSet(id);
     let options = [];
-    for (let status of contains) {
-        options[status.code]=status.display;
+    if(contains) {
+        for (let status of contains) {
+            options[status.code] = status.display;
+        }
     }
 
     return options;
@@ -213,11 +217,12 @@ export const getHealthCareServiceByOrganization = async (organizationId) => {
 
     let array = [];
     const {data: {entry: dataServiceType}} = await getHealhcareService(organizationId);
-
-    for (let entry of dataServiceType) {
-        if (entry.resource !== undefined) {
-            const setLabelServiceType = normalizeHealthCareServiceValueData(entry.resource);
-            array[setLabelServiceType.code] = setLabelServiceType.name;
+    if(dataServiceType) {
+        for (let entry of dataServiceType) {
+            if (entry.resource !== undefined) {
+                const setLabelServiceType = normalizeHealthCareServiceValueData(entry.resource);
+                array[setLabelServiceType.code] = setLabelServiceType.name;
+            }
         }
     }
 

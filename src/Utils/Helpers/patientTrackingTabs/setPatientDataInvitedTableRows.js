@@ -4,15 +4,17 @@ import {
     LABEL_CELL,
     PERSONAL_INFORMATION_CELL, SELECT_CELL,
 } from '../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
-import {getAppointmentsWithPatients, getValueSet, updateAppointmentStatus} from '../../Services/FhirAPI';
+import {getAppointmentsWithPatients, getValueSet, updateAppointmentStatus, createNewEncounter} from '../../Services/FhirAPI';
 import moment from 'moment';
 import 'moment/locale/he';
 import {normalizeFhirAppointmentsWithPatients} from '../FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients';
 import normalizeFhirAppointment from '../FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import normalizeFhirValueSet from '../FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import {store} from '../../../index';
-import {setAppointmentsWithPatientsAction} from '../../../Store/Actions/FhirActions/fhirActions';
-import {updateAppointmentAction} from '../../../Store/Actions/FhirActions/fhirActions';
+import {setAppointmentsWithPatientsAction, updateAppointmentAction} from '../../../Store/Actions/FhirActions/fhirActions';
+import { setEncounterAndPatient } from '../../../Store/Actions/ActiveActions';
+import normalizeFhirEncounter from '../FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
+
 //מוזמנים
 export const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
@@ -122,13 +124,16 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         padding: 'none',
                         align: 'center',
                         color: 'primary',
-                        onClickHandler() {
+                        async onClickHandler() {
+                            const appointment  = store.getState().fhirData.appointments[appointmentId];
+                            const patient = store.getState().fhirData.patients[appointment.patient]
+                            const encounterData = await createNewEncounter(appointment ,store.getState().settings.facility)
+                            store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData.data), patient));
                             history.push({
                                 pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-                                search: `?index=${appointmentId}`,
                             });
                         },
-                        mode: moment(appointment.startTime).isAfter(moment()) ? 'view' : mode,
+                        mode: moment(appointment.startTime).isAfter(moment().format()) ? 'view' : mode,
                     });
                     break;
                 case 'Messages':
@@ -173,14 +178,14 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: appointment.serviceType ? appointment.serviceType.join(' ') : null,
+                        label: appointment.serviceType ? appointment.serviceType : null,
                     });
                     break;
                 case 'Test':
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: appointment.examination ? appointment.examination.join(' ') : null,
+                        label: appointment.examination ? appointment.examination : null,
                     });
                     break;
                 case 'Time':

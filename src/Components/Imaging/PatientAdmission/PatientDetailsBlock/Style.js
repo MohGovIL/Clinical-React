@@ -1,3 +1,4 @@
+import { KeyboardDatePicker } from '@material-ui/pickers';
 import styled from 'styled-components';
 import { devicesValue } from '../../../../Assets/Themes/BreakPoints';
 import { Divider, TextField, Switch, Chip } from '@material-ui/core';
@@ -13,6 +14,36 @@ export const StyledTextField = styled(TextField)`
   border-radius: 10px;
   margin: 24px 0 24px 0;
   transform-origin: top right;
+  .MuiInputBase-root {
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+  .MuiInputLabel-formControl {
+    right: 0;
+    left: unset;
+  }
+  .MuiInputLabel-shrink {
+    transform-origin: top right;
+    opacity: 0.6;
+    color: #1e2132;
+  }
+  .MuiSvgIcon-root {
+    color: #076ce9;
+  }
+  .MuiInputBase-root {
+    color: #000b40;
+  }
+`;
+
+export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
+  width: 70%;
+  background-color: #f8faff;
+  border-radius: 10px;
+  margin: 24px 0 24px 0;
+  transform-origin: top right;
   .MuiInputLabel-formControl {
     right: 0;
     left: unset;
@@ -23,46 +54,11 @@ export const StyledTextField = styled(TextField)`
     opacity: 0.6;
     color: #1e2132;
   }
-`;
-
-export const StyledSwitch = styled(Switch)`
-  width: 80px;
-  height: 39px;
-
-  .MuiSwitch-switchBase{
-    padding: 4px;
+  .MuiSvgIcon-root {
+    color: #076ce9;
   }
-  .MuiSwitch-thumb{
-    width: 30px;
-    height: 30px;
-  }
-
-  .MuiSwitch-track {
-    position: relative;
-    /* background-color: #dadbda; */
-  }
-  .MuiSwitch-track::after {
-    /* content: ${props => props.afterContent}; */
-    content: 'yes';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    color: #656565;
-  }
-  .MuiSwitch-track::before {
-    /* content: ${props => props.beforeContent}; */
-    content: 'yes';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    color: #ffffff;
+  .MuiInputBase-root {
+    color: #000b40;
   }
 `;
 
@@ -91,8 +87,9 @@ export const StyledPatientDetails = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   margin: 0 25px 0 25px;
-  z-index: ${props => !props.edit_mode && '2'};
-
+  z-index: ${props => props.edit ? '0' : '2'};
+  height: calc(100vh - 88px - 32px);
+  overflow-x: scroll;
   @media (min-width: ${devicesValue.desktop}px) {
     flex-basis: 50%;
     margin: 0 38px 0 38px;

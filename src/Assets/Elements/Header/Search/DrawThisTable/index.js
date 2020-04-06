@@ -71,13 +71,14 @@ const DrawThisTable = ({result, searchParam}) => {
     const handleChange = (panel, identifier) => async (event, newExpanded) => {
 
         setExpanded(newExpanded ? panel : false);
-        setEncounterStatuses(await requestValueSet("encounter_statuses"));
-        setPatientTrackingStatuses(await requestValueSet("appointment_statuses"));
+
 
 
         if (newExpanded) {
 
             let currentDate = moment().utc().format("YYYY-MM-DD");
+            if(!encounterStatuses) setEncounterStatuses(await requestValueSet("encounter_statuses")) ;
+            if(!patientTrackingStatuses) setPatientTrackingStatuses(await requestValueSet("appointment_statuses"));
             setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
             setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
             setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
@@ -109,8 +110,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                 <GenderIcon alt={'gender icon'}
                                             src={patient.gender === 'male' ? maleIcon : femaleIcon}/>
                                 <StyledLabelName>
-                                    <TitleValueComponent searchParam={searchParam} name={patient.firstName}
-                                                         value={patient.lastName}/>
+                                    <TitleValueComponent searchParam={searchParam} name={patient.firstName+" "+patient.lastName}/>
                                 </StyledLabelName>
                                 <StyledLabelTZ>
                                     <TitleValueComponent searchParam={searchParam}

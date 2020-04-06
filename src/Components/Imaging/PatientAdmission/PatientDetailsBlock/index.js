@@ -7,12 +7,12 @@ import {
   StyledDivider,
   StyledTextField,
   StyledAutoComplete,
-  StyledSwitch,
+  StyledKeyboardDatePicker,
   StyledChip,
 } from './Style';
-import CustomizedButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
+import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useTranslation } from 'react-i18next';
-import Title from '../../../../Assets/Elements/Title';
+import Title from 'Assets/Elements/Title';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { DevTool } from 'react-hook-form-devtools';
 import { useForm, Controller } from 'react-hook-form';
@@ -26,8 +26,12 @@ import {
 } from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
+import MomentUtils from '@date-io/moment';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import moment, { Moment } from 'moment';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
 import {
   Checkbox,
   ListItemText,
@@ -35,15 +39,20 @@ import {
   CircularProgress,
   Tab,
   Tabs,
-  Switch,
 } from '@material-ui/core';
 
-const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
+const PatientDetailsBlock = ({
+  patientData,
+  edit_mode,
+  encounterData,
+  formatDate,
+}) => {
   const { t } = useTranslation();
   const { register, control, handleSubmit } = useForm({
     submitFocusError: true,
     mode: 'onBlur',
   });
+
   const icon = <Close fontSize='small' />;
   const [addressCity, setAddressCity] = useState({});
 
@@ -63,6 +72,29 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
   const loadingStreets = streetsOpen && streets.length === 0;
   const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
 
+  const [
+    commitmentAndPaymentCommitmentDate,
+    setCommitmentAndPaymentCommitmentDate,
+  ] = useState(undefined);
+
+  const [
+    commitmentAndPaymentCommitmeValidity,
+    setCommitmentAndPaymentCommitmeValidity,
+  ] = useState(undefined);
+
+  const commitmentAndPaymentCommitmeValidityOnChangeHandler = date => {
+    setCommitmentAndPaymentCommitmeValidity(date);
+  };
+
+  const commitmentAndPaymentCommitmentDateOnChangeHandler = date => {
+    try {
+      // let newBirthDate = date.format(formatDate).toString();
+      setCommitmentAndPaymentCommitmentDate(date.format(formatDate).toString());
+    } catch (e) {
+      console.log('Error: ' + e);
+    }
+  };
+  //Is escorted
   const [isEscorted, setIsEscorted] = useState(false);
   const isEscortedSwitchOnChangeHandle = () => {
     setIsEscorted(prevState => !prevState);
@@ -83,11 +115,9 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
 
   const filterOptions = (options, { inputValue }) => {
     if (pendingValue.length) {
-      options = matchSorter(
-        options,
-        pendingValue[0].serviceType.code,
-        { keys: ['serviceType.code'] },
-      );
+      options = matchSorter(options, pendingValue[0].serviceType.code, {
+        keys: ['serviceType.code'],
+      });
     }
     return matchSorter(options, inputValue, {
       keys: [
@@ -98,7 +128,20 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
     });
   };
   //Tabs
-  const [tabValue, setTabValue] = useState(0);
+  const [contactInformationTabValue, setContactInformationTabValue] = useState(
+    0,
+  );
+  const contactInformationTabValueChangeHandler = (event, newValue) => {
+    setContactInformationTabValue(newValue);
+  };
+
+  const [
+    commitmentAndPaymentTabValue,
+    setCommitmentAndPaymentTabValue,
+  ] = useState(0);
+  const setCommitmentAndPaymentTabValueChangeHandler = (event, newValue) => {
+    setCommitmentAndPaymentTabValue(newValue);
+  };
 
   //Sending the form
   const onSubmit = data => {
@@ -114,6 +157,23 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
       setAddressCity(defaultAddressCityObj);
     }
     if (encounterData) {
+      if (encounterData.examination && encounterData.examination.length) {
+        const selectedArr = encounterData.examination.map(
+          (reasonCodeEl, reasonCodeElIndex) => {
+            return {
+              serviceType: {
+                name: encounterData.serviceType,
+                code: encounterData.serviceTypeCode,
+              },
+              reasonCode: {
+                name: reasonCodeEl,
+                code: encounterData.examinationCode[reasonCodeElIndex],
+              },
+            };
+          },
+        );
+        setSelecetedServicesType(selectedArr);
+      }
       if (encounterData.priority > 1) {
         setIsUrgent(true);
       }
@@ -251,7 +311,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
       setStreets([]);
     }
     if (!servicesTypeOpen) {
-      setPendingValue([])
+      setPendingValue([]);
     }
   }, [citiesOpen, streetsOpen]);
 
@@ -270,21 +330,15 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             container
             direction={'row'}
             justify={'flex-start'}
-            alignItems={'baseline'}>
+            alignItems={'center'}>
             <span>{t('Patient arrived with an escort?')}</span>
-            {/* <StyledSwitch
-              size={'medium'}
-              color={'primary'}
-              onChange={switchOnChangeHandle}
-              value={isEscorted}
-              beforeContent={t('yes')}
-              afterContent={t('no')}
-            /> */}
-            <Switch
-              size={'medium'}
-              color={'primary'}
+            <StyledSwitch
               onChange={isEscortedSwitchOnChangeHandle}
               checked={isEscorted}
+              label_1={'No'}
+              label_2={'Yes'}
+              marginLeft={'40px'}
+              marginRight={'40px'}
             />
           </Grid>
         </StyledFormGroup>
@@ -320,10 +374,8 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
           />
           <StyledDivider variant={'fullWidth'} />
           <Tabs
-            value={tabValue}
-            onChange={(event, newValue) => {
-              setTabValue(newValue);
-            }}
+            value={contactInformationTabValue}
+            onChange={contactInformationTabValueChangeHandler}
             indicatorColor='primary'
             textColor='primary'
             variant='standard'
@@ -331,7 +383,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             <Tab label={t('Address')} />
             <Tab label={t('PO box')} />
           </Tabs>
-          {tabValue === 0 ? (
+          {contactInformationTabValue === 0 ? (
             <React.Fragment>
               <StyledAutoComplete
                 id='addressCity'
@@ -419,7 +471,7 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
                 }
               />
               <Controller
-                defaultValue={patientData.postalCode}
+                defaultValue={patientData.postalCode || ''}
                 name={'addressPostalCode'}
                 as={
                   <StyledTextField
@@ -498,14 +550,13 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             {t('click here')}
           </a>
         </span>
-
         <Title
           marginTop={'80px'}
           fontSize={'28px'}
           color={'#002398'}
-          label={'Patient Details'}
+          label={'Visit Details'}
         />
-        {/* REQUESTED SERVICE */}
+
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
@@ -518,13 +569,15 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             container
             direction={'row'}
             justify={'flex-start'}
-            alignItems={'baseline'}>
+            alignItems={'center'}>
             <span>{t('Is urgent?')}</span>
-            <Switch
-              size={'medium'}
-              color={'primary'}
+            <StyledSwitch
               onChange={isUrgentSwitchOnChangeHandler}
               checked={isUrgent}
+              label_1={'No'}
+              label_2={'Yes'}
+              marginLeft={'40px'}
+              marginRight={'40px'}
             />
           </Grid>
           <Autocomplete
@@ -535,9 +588,10 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             open={servicesTypeOpen}
             loading={loadingServicesType}
             onOpen={() => {
-              setPendingValue(selecetedServicesType)
-              setServicesTypeOpen(true)}}
-            onClose={(event) => {
+              setPendingValue(selecetedServicesType);
+              setServicesTypeOpen(true);
+            }}
+            onClose={event => {
               setServicesTypeOpen(false);
             }}
             value={pendingValue}
@@ -547,29 +601,32 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             disableCloseOnSelect
             renderTags={() => null}
             renderOption={(option, state) => (
-                <Grid container justify='flex-end' alignItems='center'>
-                  <Grid item xs={3}>
-                    <Checkbox
-                      color='primary'
-                      icon={<CheckBoxOutlineBlankOutlined />}
-                      checkedIcon={<CheckBox />}
-                      checked={state.selected}
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ListItemText>{option.reasonCode.code}</ListItemText>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ListItemText primary={t(option.serviceType.name)} />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ListItemText primary={t(option.reasonCode.name)} />
-                  </Grid>
+              <Grid container justify='flex-end' alignItems='center'>
+                <Grid item xs={3}>
+                  <Checkbox
+                    color='primary'
+                    icon={<CheckBoxOutlineBlankOutlined />}
+                    checkedIcon={<CheckBox />}
+                    checked={state.selected}
+                  />
                 </Grid>
-              )
-            }
+                <Grid item xs={3}>
+                  <ListItemText>{option.reasonCode.code}</ListItemText>
+                </Grid>
+                <Grid item xs={3}>
+                  <ListItemText primary={t(option.serviceType.name)} />
+                </Grid>
+                <Grid item xs={3}>
+                  <ListItemText primary={t(option.reasonCode.name)} />
+                </Grid>
+              </Grid>
+            )}
             ListboxComponent={ListboxComponent}
-            ListboxProps={{pendingValue: pendingValue, setSelecetedServicesType: setSelecetedServicesType, setClose: setServicesTypeOpen}}
+            ListboxProps={{
+              pendingValue: pendingValue,
+              setSelecetedServicesType: setSelecetedServicesType,
+              setClose: setServicesTypeOpen,
+            }}
             options={servicesType}
             renderInput={params => (
               <StyledTextField
@@ -604,6 +661,126 @@ const PatientDetailsBlock = ({ patientData, edit_mode, encounterData }) => {
             ))}
           </Grid>
         </StyledFormGroup>
+        <StyledFormGroup>
+          <Title
+            fontSize={'18px'}
+            color={'#000b40'}
+            label={t('Commitment and payment')}
+            bold
+          />
+          <Title
+            fontSize={'14px'}
+            color={'#000b40'}
+            label={t('Please fill in the payer details for the current test')}
+          />
+          <StyledDivider variant='fullWidth' />
+          <Tabs
+            value={commitmentAndPaymentTabValue}
+            onChange={setCommitmentAndPaymentTabValueChangeHandler}
+            indicatorColor='primary'
+            textColor='primary'
+            variant='standard'
+            aria-label='full width tabs example'>
+            <Tab label={t('HMO')} />
+            {/* <Tab label={t('insurance company')} /> */}
+            {/* <Tab label={t('Private')} /> */}
+          </Tabs>
+          {commitmentAndPaymentTabValue === 0 && (
+            <React.Fragment>
+              <Controller
+                name='HMO'
+                as={
+                  <StyledTextField
+                    label={t('HMO')}
+                    id={'commitmentAndPaymentHMO'}
+                  />
+                }
+                defaultValue={patientData.managingOrganization || ''}
+                control={control}
+              />
+              <StyledTextField
+                required
+                label={t('Reference for payment commitment')}
+                id={'commitmentAndPaymentReferenceForPaymentCommitment'}
+                type='number'
+              />
+
+              {/* Add date picker here */}
+              {/* <StyledTextInput languageDirection={languageDirection}> */}
+              {/* <CustomizedDatePicker
+                  PickerProps={{
+                    id: 'asdasdas',
+                    format: 'DD/MM/YYYY',
+                    name: 'commitmentDate',
+                    // required: true,
+                    disableToolbar: false,
+                    label: t('Commitment date'),
+                    inputValue: commitmentAndPaymentCommitmentDate,
+                    mask: { formatDate },
+                    // InputProps: {
+                    //     disableUnderline: edit_mode === 1 ? false : true,
+                    // },
+                    disableFuture: true,
+                    // color: edit_mode === 1 ? "primary" : 'primary',
+                    // disabled: edit_mode === 1 ? false : true,
+                    variant: 'inline',
+                    inputVariant: 'standard',
+                    onChange: commitmentAndPaymentCommitmentDateOnChangeHandler,
+                    autoOk: true,
+                    // error: errors.birthDate ? true : false,
+                    // helperText: errors.birthDate ? t("Date must be in a date format") : null,
+                  }}
+                  CustomizedProps={{
+                    keyBoardInput: true,
+                    showNextArrow: false,
+                    showPrevArrow: false,
+                  }}
+                /> */}
+              <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
+                <StyledKeyboardDatePicker
+                  disableToolbar
+                  variant='inline'
+                  format={formatDate}
+                  margin='normal'
+                  required
+                  id='commitmentAndPaymentCommitmentDate'
+                  label={t('Commitment date')}
+                  value={commitmentAndPaymentCommitmentDate}
+                  onChange={commitmentAndPaymentCommitmentDateOnChangeHandler}
+                  KeyboardButtonProps={{
+                    'aria-label': 'change date',
+                  }}
+                />
+                <StyledKeyboardDatePicker
+                  required
+                  disableToolbar
+                  variant='inline'
+                  format={formatDate}
+                  margin='normal'
+                  id='commitmentAndPaymentCommitmeValidity'
+                  label={t('Commitment validity')}
+                  value={commitmentAndPaymentCommitmeValidity}
+                  onChange={commitmentAndPaymentCommitmeValidityOnChangeHandler}
+                  KeyboardButtonProps={{
+                    'aria-label': 'change date',
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+              {/* </StyledTextInput> */}
+              <StyledTextField
+                required
+                label={t('Doctors name')}
+                id={'commitmentAndPaymentDoctorsName'}
+              />
+              <StyledTextField
+                required
+                label={t('Doctors license')}
+                id={'commitmentAndPaymentDoctorsLicense'}
+                type='number'
+              />
+            </React.Fragment>
+          )}
+        </StyledFormGroup>
       </StyledForm>
       {/* <DevTool control={control} /> */}
     </StyledPatientDetails>
@@ -620,15 +797,21 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   props,
   ref,
 ) {
-  const {setClose, pendingValue, setSelecetedServicesType, ...other} = props
+  const { setClose, pendingValue, setSelecetedServicesType, ...other } = props;
   const { t } = useTranslation();
   const onConfirmHandler = () => {
     setSelecetedServicesType(pendingValue);
+    // ref = undefined;
     setClose(true);
   };
   return (
     <div
-      style={{ position: 'relative', maxHeight: '300px', overflowY: 'scroll', marginBottom: '64px' }}
+      style={{
+        position: 'relative',
+        maxHeight: '300px',
+        overflowY: 'scroll',
+        marginBottom: '64px',
+      }}
       ref={ref}
       {...other}>
       {props.children}
@@ -647,10 +830,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
         }}>
         <span>
           {`${t('Is selected')}
-          ${
-            // props.children.filter(child => child.props['aria-selected']).length
-            pendingValue.length
-          } `}
+          ${pendingValue.length} `}
         </span>
         <CustomizedButton
           label={t('OK')}
