@@ -34,7 +34,6 @@ const TitleValueComponent = ({name, value, searchParam, seperator}) => {
 
 
                 } else {
-                    debugger;
                     innerHTMLNew =
                         ` <${type}   style='margin-left:0px;'>${innerText.substr(0, index)}</${type}><${type}   style=' font-weight: bold;'>${innerText.substr(index, searchTrimmed.length)}</${type}><${type}   style=''>${innerText.substr(index + searchTrimmed.length)}</${type}>`;
 
@@ -48,7 +47,6 @@ const TitleValueComponent = ({name, value, searchParam, seperator}) => {
                         innerHTMLNew = ` <${type}  dir = "ltr"  style=' '>${innerText.substr(index + searchTrimmed.length)}</${type}><${type}  dir = "ltr"  style=' font-weight: bold;'>${innerText.substr(0, searchTrimmed.length)}</${type}>`;
 
                     } else {
-                        debugger;
                         innerHTMLNew = ` <${type}  style='font-weight: bold;'>${innerText.substr(0, searchTrimmed.length)}</${type}><${type}   style=' '>${innerText.substr(index + searchTrimmed.length)}</${type}>`;
                     }
 
