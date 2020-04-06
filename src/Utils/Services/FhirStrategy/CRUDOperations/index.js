@@ -29,7 +29,7 @@ const CRUDOperationsCalls={
 
     },
     create : async function (params, fhirTokenInstance,data) {
-        const resolved =  await fhirTokenInstance().create(params,data);
+        const resolved =  await fhirTokenInstance().post(params,data);
         return resolved;
 
     },

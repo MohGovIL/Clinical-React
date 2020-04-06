@@ -4,6 +4,7 @@ import {CRUDOperations} from "../CRUDOperations";
 const EncounterStates = {
 
     doWork : (parameters) => {
+        debugger;
         let  componentFhirURL = "/Encounter";
         /*   let fhirTokenInstance = null;
            let fhirBasePath = null;
@@ -16,18 +17,19 @@ const EncounterStates = {
         return arr.map(arrEl => ({'code': arrEl}))
     },
     createNewEncounter : (params) => {
-        //params.appointment, params.facility
-    let coding = EncounterStates['codingArr'](params.appointment.serviceTypeCode);
+        //params.functionParams.appointment, params.functionParams.facility
+        debugger;
+    let coding = EncounterStates['codingArr'](params.functionParams.appointment.serviceTypeCode);
     const serviceType = {
         coding
     };
     // Todo fix reasonCode in here can't do it since I don't have the encounter normalizer fix from develop.
-    // coding = codingArr(params.appointment.examinationCode);
-    // const reasonCode = params.appointment.examinationCode
-    // params.appointment.examination.forEach(element => {
+    // coding = codingArr(params.functionParams.appointment.examinationCode);
+    // const reasonCode = params.functionParams.appointment.examinationCode
+    // params.functionParams.appointment.examination.forEach(element => {
 
     // });
-    const reasonCode = params.appointment.examinationCode.map(examination => {
+    const reasonCode = params.functionParams.appointment.examinationCode.map(examination => {
         return {
             "coding": [
                 {
@@ -37,11 +39,11 @@ const EncounterStates = {
         }
     })
     //return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
-        return CRUDOperations('post',`${params.url}/Encounter`, {
+        return CRUDOperations('create',`${params.url}/Encounter`, {
         'priority': {
             'coding': [
                 {
-                    'code': params.appointment.priority,
+                    'code': params.functionParams.appointment.priority,
                 },
             ],
         },
@@ -49,18 +51,18 @@ const EncounterStates = {
         serviceType,
         reasonCode,
         'subject': {
-            'reference': `Patient/${params.appointment.patient}`,
+            'reference': `Patient/${params.functionParams.appointment.patient}`,
         },
-        'params.appointment': [
+        'params.functionParams.appointment': [
             {
-                'reference': `Appointment/${params.appointment.id}`,
+                'reference': `Appointment/${params.functionParams.appointment.id}`,
             },
         ],
         'period': {
             'start': moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
         },
         'serviceProvider': {
-            'reference': `Organization/${params.facility}`,
+            'reference': `Organization/${params.functionParams.facility}`,
         },
     });
     },
