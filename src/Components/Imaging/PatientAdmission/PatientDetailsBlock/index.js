@@ -49,7 +49,7 @@ const PatientDetailsBlock = ({
   formatDate,
 }) => {
   const { t } = useTranslation();
-  const { control, handleSubmit, errors } = useForm({
+  const { control, handleSubmit, errors, setValue } = useForm({
     mode: 'onBlur',
   });
 
@@ -82,14 +82,10 @@ const PatientDetailsBlock = ({
     setCommitmentAndPaymentCommitmeValidity,
   ] = useState(undefined);
 
-  const commitmentAndPaymentCommitmeValidityOnChangeHandler = (date) => {
-    setCommitmentAndPaymentCommitmeValidity(date);
-  };
-
-  const commitmentAndPaymentCommitmentDateOnChangeHandler = (date) => {
+  const dateOnChangeHandler = (date, valueName, set) => {
     try {
-      // let newBirthDate = date.format(formatDate).toString();
-      setCommitmentAndPaymentCommitmentDate(date.format(formatDate).toString());
+      setValue(valueName, date.format(formatDate), true);
+      set(date.format(formatDate).toString());
     } catch (e) {
       console.log('Error: ' + e);
     }
@@ -487,7 +483,7 @@ const PatientDetailsBlock = ({
                     type='number'
                   />
                 }
-                rules={{maxLength: {value: 7}}}
+                rules={{ maxLength: { value: 7 } }}
                 control={control}
                 error={errors.addressPostalCode}
                 helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
@@ -716,36 +712,89 @@ const PatientDetailsBlock = ({
                 id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                 type='number'
               />
-              <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
-                <StyledKeyboardDatePicker
-                  disableToolbar
-                  variant='inline'
-                  format={formatDate}
-                  margin='normal'
-                  required
-                  id='commitmentAndPaymentCommitmentDate'
-                  label={t('Commitment date')}
-                  value={commitmentAndPaymentCommitmentDate}
-                  onChange={commitmentAndPaymentCommitmentDateOnChangeHandler}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
-                <StyledKeyboardDatePicker
-                  required
-                  disableToolbar
-                  variant='inline'
-                  format={formatDate}
-                  margin='normal'
-                  id='commitmentAndPaymentCommitmeValidity'
-                  label={t('Commitment validity')}
-                  value={commitmentAndPaymentCommitmeValidity}
-                  onChange={commitmentAndPaymentCommitmeValidityOnChangeHandler}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
-              </MuiPickersUtilsProvider>
+              <Controller
+                name='commitmentAndPaymentCommitmentDate'
+                rules={{
+                  validate: {
+                    value: (value) =>
+                      moment(value).isSameOrBefore(moment().utc()),
+                  },
+                }}
+                control={control}
+                // error={errors.commitmentAndPaymentCommitmentDate}
+                // helperText={errors.commitmentAndPaymentCommitmentDate && 'יש להזין תאריך שווה או קטן מהיום'}
+                as={
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
+                    <StyledKeyboardDatePicker
+                      disableToolbar
+                      variant='inline'
+                      format={formatDate}
+                      margin='normal'
+                      required
+                      id='commitmentAndPaymentCommitmentDate'
+                      label={t('Commitment date')}
+                      value={commitmentAndPaymentCommitmentDate}
+                      onChange={(date) =>
+                        dateOnChangeHandler(
+                          date,
+                          'commitmentAndPaymentCommitmentDate',
+                          setCommitmentAndPaymentCommitmentDate,
+                        )
+                      }
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      error={errors.commitmentAndPaymentCommitmentDate}
+                      helperText={
+                        errors.commitmentAndPaymentCommitmentDate &&
+                        'יש להזין תאריך שווה או קטן מהיום'
+                      }
+                    />
+                  </MuiPickersUtilsProvider>
+                }
+              />
+              <Controller
+                name='commitmentAndPaymentCommitmeValidity'
+                control={control}
+                rules={{
+                  validate: {
+                    value: (value) =>
+                      moment(value).isSameOrAfter(moment().utc()),
+                  },
+                }}
+                // error={errors.commitmentAndPaymentCommitmeValidity}
+                // helperText={errors.commitmentAndPaymentCommitmeValidity && 'יש להזין תאריך שווה או גדול מהיום'}
+                as={
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
+                    <StyledKeyboardDatePicker
+                      required
+                      disableToolbar
+                      variant='inline'
+                      format={formatDate}
+                      margin='normal'
+                      id='commitmentAndPaymentCommitmeValidity'
+                      label={t('Commitment validity')}
+                      value={commitmentAndPaymentCommitmeValidity}
+                      onChange={(date) =>
+                        dateOnChangeHandler(
+                          date,
+                          'commitmentAndPaymentCommitmeValidity',
+                          setCommitmentAndPaymentCommitmeValidity,
+                        )
+                      }
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      error={errors.commitmentAndPaymentCommitmeValidity}
+                      helperText={
+                        errors.commitmentAndPaymentCommitmeValidity &&
+                        'יש להזין תאריך שווה או גדול מהיום'
+                      }
+                    />
+                  </MuiPickersUtilsProvider>
+                }
+              />
+
               {/* </StyledTextInput> */}
               <StyledTextField
                 required
