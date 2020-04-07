@@ -18,7 +18,7 @@ import {
     getCurrentEncounterPerPatient,
     getHealthCareServiceByOrganization,
     getNextPrevAppointmentPerPatient,
-    getNextPrevEncounterPerPatient,
+    getNextPrevEncounterPerPatient, getValueSet,
     requestValueSet
 } from "../../../../../Utils/Services/FhirAPI";
 import moment, {now} from "moment";
@@ -68,6 +68,23 @@ const DrawThisTable = ({result, searchParam}) => {
         return false;
 
     }
+
+    const requestValueSet = valueSet => {
+        if(!valueSet) {
+         return;
+        }
+        const {data: {expansion: {contains}}} = valueSet;
+        let options = [];
+        if(contains) {
+            for (let status of contains) {
+                options[status.code] = status.display;
+            }
+        }
+
+        return options;
+    }
+
+
     const handleChange = (panel, identifier) => async (event, newExpanded) => {
 
         setExpanded(newExpanded ? panel : false);
@@ -77,8 +94,14 @@ const DrawThisTable = ({result, searchParam}) => {
         if (newExpanded) {
 
             let currentDate = moment().utc().format("YYYY-MM-DD");
-            if(!encounterStatuses) setEncounterStatuses(await requestValueSet("encounter_statuses")) ;
-            if(!patientTrackingStatuses) setPatientTrackingStatuses(await requestValueSet("appointment_statuses"));
+            const encounterStatPromise =  await getValueSet("encounter_statuses");
+            const encounterStat = requestValueSet(encounterStatPromise);
+            const appointmentStatPromise = await getValueSet("appointment_statuses");
+            const appointmentStat = requestValueSet(appointmentStatPromise);
+
+
+            if(!encounterStatuses) setEncounterStatuses(encounterStat) ;
+            if(!patientTrackingStatuses) setPatientTrackingStatuses(appointmentStat);
             setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
             setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
             setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
