@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {ExpansionPanelDetails, ExpansionPanelSummary} from "@material-ui/core";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import GenderIcon from "../../../CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
+import GenderIcon from "Assets/Elements/CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
 import Icon from "@material-ui/core/Icon";
 import TitleValueComponent from "./TitleValueComponent";
 import Box from "@material-ui/core/Box";
