@@ -64,7 +64,9 @@ const PatientDetailsBlock = ({
   const [commitmentFile, setCommitmentFile] = useState({});
   const [additionnalDocumentFile, setAdditionnalDocumentFile] = useState({});
   const [numOfAdditionnalDocument, setNumOfAdditionnalDocument] = useState([]);
-  const [nameOfAddionalDocumentFile, setNameOfAddionalDocumentFile]  = useState('');
+  const [nameOfAddionalDocumentFile, setNameOfAddionalDocumentFile] = useState(
+    '',
+  );
 
   const referralRef = React.useRef();
 
@@ -115,16 +117,16 @@ const PatientDetailsBlock = ({
 
   const onClickAdditionnalDocumentHandler = () => {
     numOfAdditionnalDocument.length !== 1 &&
-      setNumOfAdditionnalDocument(prevState => {
+      setNumOfAdditionnalDocument((prevState) => {
         let clonePrevState = prevState;
         clonePrevState.push(clonePrevState.length);
-        return [...clonePrevState]; 
+        return [...clonePrevState];
       });
   };
 
-  const onChangeAdditionnalDocumentHandler = e => {
-    setNameOfAddionalDocumentFile(e.target.value)
-  }
+  const onChangeAdditionnalDocumentHandler = (e) => {
+    setNameOfAddionalDocumentFile(e.target.value);
+  };
 
   const icon = <Close fontSize='small' />;
   const [addressCity, setAddressCity] = useState({});
@@ -951,65 +953,59 @@ const PatientDetailsBlock = ({
             </Grid>
           </Grid>
           {/* AddiotionalDocumentRef */}
-              {numOfAdditionnalDocument.length > 0 ? <Grid container alignItems='center'>
-                {/* To Do add here the content of the AdditionnalDocument */}
-              </Grid> : null}
-          {/* {numOfAdditionnalDocument.lenght > 0 ? (
-            <Grid container alignItems='center'>
-              {numOfAdditionnalDocument.map(
-                (additionnalDocumentObj, additionnalDocumentIndex) => {
-                  return (
-                    <React.Fragment key={additionnalDocumentIndex}>
-                      <Grid item xs={3}>
-                        <StyledTextField onChange={onChangeAdditionnalDocumentHandler} label={'Additional document'} />
-                      </Grid>
-                      <Grid item xs={9}>
-                        <input
-                          ref={additionnalDocumentRef}
-                          id='additionnalDocument'
-                          type='file'
-                          accept='.pdf'
-                          required
-                          onChange={() =>
-                            onChangeFileHandler(
-                              additionnalDocumentRef,
-                              setAdditionnalDocumentFile,
-                              nameOfAddionalDocumentFile,
-                            )
-                          }
-                        />
-                        {Object.values(additionnalDocumentFile).length > 0 ? (
-                          <ChipWithImage
-                            htmlFor='additionnalDocument'
-                            label={additionnalDocumentFile.name}
-                            size={additionnalDocumentFile.size}
-                            onDelete={() =>
-                              onDeleteFileHandler(
-                                additionnalDocumentRef,
-                                setAdditionnalDocumentFile,
-                              )
-                            }
-                            onClick={() => onClickFileHandler(additionnalDocumentRef)}
-                          />
-                        ) : (
-                          <label htmlFor='additionnalDocument'>
-                            <StyledButton
-                              variant='outlined'
-                              color='primary'
-                              component='span'
-                              size={'large'}
-                              startIcon={<Scanner />}>
-                              {t('Upload document')}
-                            </StyledButton>
-                          </label>
-                        )}
-                      </Grid>
-                    </React.Fragment>
-                  );
-                },
-              )}
-            </Grid>
-          ): null} */}
+          {numOfAdditionnalDocument.map((_, additionnalDocumentIndex) => {
+            return (
+              <Grid container alignItems='center'>
+                <Grid item xs={3}>
+                  <StyledTextField
+                    onChange={onChangeAdditionnalDocumentHandler}
+                    label={t('Additional document')}
+                  />
+                </Grid>
+                <Grid item xs={9}>
+                  <input
+                    ref={additionnalDocumentRef}
+                    id='additionnalDocument'
+                    type='file'
+                    accept='.pdf'
+                    required
+                    onChange={() =>
+                      onChangeFileHandler(
+                        additionnalDocumentRef,
+                        setAdditionnalDocumentFile,
+                        nameOfAddionalDocumentFile,
+                      )
+                    }
+                  />
+                  {Object.values(additionnalDocumentFile).length > 0 ? (
+                    <ChipWithImage
+                      htmlFor='additionnalDocument'
+                      label={additionnalDocumentFile.name}
+                      size={additionnalDocumentFile.size}
+                      onDelete={() =>
+                        onDeleteFileHandler(
+                          additionnalDocumentRef,
+                          setAdditionnalDocumentFile,
+                        )
+                      }
+                      onClick={() => onClickFileHandler(additionnalDocumentRef)}
+                    />
+                  ) : (
+                    <label htmlFor='additionnalDocument'>
+                      <StyledButton
+                        variant='outlined'
+                        color='primary'
+                        component='span'
+                        size={'large'}
+                        startIcon={<Scanner />}>
+                        {t('Upload document')}
+                      </StyledButton>
+                    </label>
+                  )}
+                </Grid>
+              </Grid>
+            );
+          })}
           <Grid container alignItems='center'>
             <AddCircle
               style={{ color: '#002398', cursor: 'pointer' }}
