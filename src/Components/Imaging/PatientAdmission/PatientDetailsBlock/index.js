@@ -587,75 +587,90 @@ const PatientDetailsBlock = ({
               marginRight={'40px'}
             />
           </Grid>
-          <Autocomplete
-            filterOptions={filterOptions}
-            multiple
-            noOptionsText={t('No Results')}
-            loadingText={t('Loading')}
-            open={servicesTypeOpen}
-            loading={loadingServicesType}
-            onOpen={() => {
-              setPendingValue(selecetedServicesType);
-              setServicesTypeOpen(true);
+          <Controller
+            name='selectTest'
+            control={control}
+            rules={{
+              validate: {
+                value: value => value && value.length > 0
+              }
             }}
-            onClose={(event) => {
-              setServicesTypeOpen(false);
-            }}
-            value={pendingValue}
-            onChange={(event, newValue) => {
-              setPendingValue(newValue);
-            }}
-            disableCloseOnSelect
-            renderTags={() => null}
-            renderOption={(option, state) => (
-              <Grid container justify='flex-end' alignItems='center'>
-                <Grid item xs={3}>
-                  <Checkbox
-                    color='primary'
-                    icon={<CheckBoxOutlineBlankOutlined />}
-                    checkedIcon={<CheckBox />}
-                    checked={state.selected}
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText>{option.reasonCode.code}</ListItemText>
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.serviceType.name)} />
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.reasonCode.name)} />
-                </Grid>
-              </Grid>
-            )}
-            ListboxComponent={ListboxComponent}
-            ListboxProps={{
-              pendingValue: pendingValue,
-              setSelecetedServicesType: setSelecetedServicesType,
-              setClose: setServicesTypeOpen,
-            }}
-            options={servicesType}
-            renderInput={(params) => (
-              <StyledTextField
-                required
-                {...params}
-                label={t('Select test')}
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <React.Fragment>
-                      <InputAdornment position={'end'}>
-                        {loadingServicesType ? (
-                          <CircularProgress color={'inherit'} size={20} />
-                        ) : null}
-                        {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
-                      </InputAdornment>
-                    </React.Fragment>
-                  ),
+            as={
+              <Autocomplete
+                filterOptions={filterOptions}
+                multiple
+                noOptionsText={t('No Results')}
+                loadingText={t('Loading')}
+                open={servicesTypeOpen}
+                loading={loadingServicesType}
+                onOpen={() => {
+                  setPendingValue(selecetedServicesType);
+                  setServicesTypeOpen(true);
                 }}
+                onClose={(event) => {
+                  setServicesTypeOpen(false);
+                }}
+                value={pendingValue}
+                onChange={(event, newValue) => {
+                  setPendingValue(newValue);
+                }}
+                disableCloseOnSelect
+                renderTags={() => null}
+                renderOption={(option, state) => (
+                  <Grid container justify='flex-end' alignItems='center'>
+                    <Grid item xs={3}>
+                      <Checkbox
+                        color='primary'
+                        icon={<CheckBoxOutlineBlankOutlined />}
+                        checkedIcon={<CheckBox />}
+                        checked={state.selected}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText>{option.reasonCode.code}</ListItemText>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText primary={t(option.serviceType.name)} />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText primary={t(option.reasonCode.name)} />
+                    </Grid>
+                  </Grid>
+                )}
+                ListboxComponent={ListboxComponent}
+                ListboxProps={{
+                  pendingValue: pendingValue,
+                  setSelecetedServicesType: setSelecetedServicesType,
+                  setClose: setServicesTypeOpen,
+                  setValue: setValue,
+                }}
+                options={servicesType}
+                renderInput={(params) => (
+                  <StyledTextField
+                    error={errors.selectTest}
+                    helperText={errors.selectTest && 'יש לבחור את הבדיקה המבוצעת בביקור'}
+                    required
+                    {...params}
+                    label={t('Select test')}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <React.Fragment>
+                          <InputAdornment position={'end'}>
+                            {loadingServicesType ? (
+                              <CircularProgress color={'inherit'} size={20} />
+                            ) : null}
+                            {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
+                          </InputAdornment>
+                        </React.Fragment>
+                      ),
+                    }}
+                  />
+                )}
               />
-            )}
+            }
           />
+
           <Grid container direction='row' wrap='wrap'>
             {selecetedServicesType.map((selected, selectedIndex) => (
               <StyledChip
@@ -826,11 +841,18 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   props,
   ref,
 ) {
-  const { setClose, pendingValue, setSelecetedServicesType, ...other } = props;
+  const {
+    setClose,
+    pendingValue,
+    setSelecetedServicesType,
+    setValue,
+    ...other
+  } = props;
   const { t } = useTranslation();
   const onConfirmHandler = () => {
     setSelecetedServicesType(pendingValue);
     // ref = undefined;
+    setValue('selectTest', pendingValue, true);
     setClose(true);
   };
   return (
