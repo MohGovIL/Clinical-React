@@ -17,16 +17,7 @@ import maleIcon from '../../../../Assets/Images/maleIcon.png';
 import femaleIcon from '../../../../Assets/Images/womanIcon.png';
 import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
-import {
-    Avatar,
-    IconButton,
-    Divider,
-    Typography,
-    TextField,
-    MenuItem,
-    InputAdornment,
-    DialogContent
-} from '@material-ui/core';
+import {Avatar, IconButton, Divider, Typography, TextField, MenuItem, InputAdornment} from '@material-ui/core';
 import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
@@ -62,6 +53,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
             birthDate: patientBirthDate
         }
     });
+
     const onSubmit = (data, e) => {
         (async () => {
             try {
