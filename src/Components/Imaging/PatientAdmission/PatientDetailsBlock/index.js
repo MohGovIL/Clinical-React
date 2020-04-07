@@ -973,7 +973,7 @@ const PatientDetailsBlock = ({
                       onChangeFileHandler(
                         additionnalDocumentRef,
                         setAdditionnalDocumentFile,
-                        nameOfAddionalDocumentFile,
+                        nameOfAddionalDocumentFile || "Document1",
                       )
                     }
                   />

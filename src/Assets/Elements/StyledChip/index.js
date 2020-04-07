@@ -12,16 +12,16 @@ const ChipWithImage = ({ label, onDelete, size, onClick, htmlFor }) => {
     <label htmlFor={htmlFor}>
       <Grid container alignItems='center'>
         <ChipWithImageStyle onClick={onClick || console.log('OnClick')}>
-          <OnHoverElement className='onHover'>
-            <Visibility style={{ color: '#ffffff' }} />
-          </OnHoverElement>
+          <Tooltip title={label}>
+            <OnHoverElement className='onHover'>
+              <Visibility style={{ color: '#ffffff' }} />
+            </OnHoverElement>
+          </Tooltip>
           <HeaderIcon img={PDF} alt={'PDF'} />
           <Grid container direction='column'>
-            <Tooltip title={label}>
-              <Typography noWrap style={{ maxWidth: '150px' }}>
-                {t(label)}
-              </Typography>
-            </Tooltip>
+            <Typography noWrap style={{ maxWidth: '150px' }}>
+              {t(label)}
+            </Typography>
             <Typography>{size}MB</Typography>
           </Grid>
         </ChipWithImageStyle>
