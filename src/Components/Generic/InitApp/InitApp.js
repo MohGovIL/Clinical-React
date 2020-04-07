@@ -1,7 +1,7 @@
 import React, {Suspense} from 'react';
 import {connect} from 'react-redux';
-import VerticalRoute from "../../Routes/VerticalRoute";
-import GlobalStyle from "../../../Assets/Themes/GlobalStyle";
+import VerticalRoute from "Components/Routes/VerticalRoute";
+import GlobalStyle from "Assets/Themes/GlobalStyle";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const InitApp = ({lang_id,languageDirection}) => {
