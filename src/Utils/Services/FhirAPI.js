@@ -1,8 +1,8 @@
-import {tokenInstanceGenerator} from './AxiosWithTokenInstance';
-import {ApiTokens} from './ApiTokens';
+import {tokenInstanceGenerator} from 'Utils/Services/AxiosWithTokenInstance';
+import {ApiTokens} from 'Utils/Services/ApiTokens';
 import moment from 'moment';
-import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "./SearchLogic";
-import {normalizeHealthCareServiceValueData} from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "Utils/Services/SearchLogic";
+import {normalizeHealthCareServiceValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
