@@ -1,5 +1,5 @@
-import {getGlobalSettings} from "../../../Utils/Services/API";
-import firstRouteMapper from "../../../Utils/Helpers/firstRouteMapper";
+import {getGlobalSettings} from "Utils/Services/API";
+import firstRouteMapper from "Utils/Helpers/firstRouteMapper";
 import {
     GET_SETTINGS,
     GET_SETTINGS_FAILED,
@@ -8,7 +8,7 @@ import {
     SET_SETTINGS_FAILED,
     SET_SETTINGS_SUCCESS
 } from "./SettingsActionTypes";
-import {geti18n} from '../../../Utils/Services/i18n';
+import {geti18n} from 'Utils/Services/i18n';
 
 export const getSettingsStartAction = () => {
     return {
