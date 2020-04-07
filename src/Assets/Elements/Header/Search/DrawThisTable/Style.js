@@ -82,8 +82,8 @@ export const StyledLabelAppointment = styled.label`
     height: 22px;*/
     margin-top: 10px;
     label{
-        margin-left: 5px;
-        margin-right: -12px;
+        margin-left: 10px;
+        margin-right: 0px;
     }
     span {
         width: 86px;
