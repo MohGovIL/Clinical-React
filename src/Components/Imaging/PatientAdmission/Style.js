@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { devicesValue } from "../../../Assets/Themes/BreakPoints";
-import { Backdrop } from '@material-ui/core';
+import Backdrop from '@material-ui/core/Backdrop';
 
 export const StyledBackdrop = styled(Backdrop)`
   z-index: ${props => props.edit_mode === 1 ? 1 : 2} ;
