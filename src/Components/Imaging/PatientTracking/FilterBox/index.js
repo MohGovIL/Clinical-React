@@ -1,20 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import StyledFilterBox, {StyledCustomizedSelect} from "./Style";
 import {connect} from "react-redux";
-import CustomizedSelect from "../../../../Assets/Elements/CustomizedSelect";
-import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
+import CustomizedSelect from "Assets/Elements/CustomizedSelect";
+import CustomizedDatePicker from "Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
-import {getHealhcareService, getOrganization} from "../../../../Utils/Services/FhirAPI";
+import {getHealhcareService, getOrganization} from "Utils/Services/FhirAPI";
 import {
     normalizeHealthCareServiceValueData,
     normalizeValueData
-} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import ListItemText from "@material-ui/core/ListItemText";
-import errorHandler from "../../../../Utils/Helpers/errorHandler";
+import errorHandler from "Utils/Helpers/errorHandler";
 import {
     setFilterOrganizationAction,
     setFilterServiceTypeAction
-} from "../../../../Store/Actions/FilterActions/FilterActions";
+} from "Store/Actions/FilterActions/FilterActions";
 
 /**
  * @author Yuriy Gershem yuriyge@matrix.co.il
