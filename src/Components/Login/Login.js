@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
-import {loginAction} from "../../Store/Actions/LoginActions/LoginActions";
+import {loginAction} from "Store/Actions/LoginActions/LoginActions";
 import LoginBox from "./LoginBox/LoginBox";
 
 const Login = (props) => {
