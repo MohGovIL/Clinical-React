@@ -47,7 +47,7 @@ export const waitingForExaminationTabActiveFunction = async function (setTable, 
 export const waitingForExaminationTabNotActiveFunction = async function (setTabs, selectFilter) {
     try {
         const statuses = ['arrived', 'triaged', 'in-progress'];
-debugger;
+
         //const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
         const encountersWithPatientsSummaryCount =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":true,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses}});
         setTabs(prevTabs => {

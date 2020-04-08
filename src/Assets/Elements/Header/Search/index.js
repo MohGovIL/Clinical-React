@@ -74,25 +74,29 @@ const Search = ({languageDirection}) => {
         }
 
         if (tValue.length > minSearchParam) {
-            (async () => {
+            (() => {
                 try {
-                    //const patients = await searchPatients(tValue);
-
-                    const patients = await FHIR('Patient','doWork', {"functionName":'searchPatients','functionParams':{searchValue:tValue}});
-                    if (patients) {
-                        //for
-                        setResult(patients);
-                        setShowResult(true);
-                        // setResult(patients);
-                    } else {
-                        setResult(null);
-                        setShowResult(true);
-                    }
+                    //In this example I am calling FHIR without await cause I am making logic inside the search patient.
+                    //for that I need to do then function on the resolved data .
+                    FHIR('Patient','doWork', {"functionName":'searchPatients','functionParams':{searchValue:tValue}}).then(patients=>
+                    {
+                       if (patients) {
+                            //for
+                            setResult(patients);
+                            setShowResult(true);
+                            // setResult(patients);
+                        } else {
+                            setResult(null);
+                            setShowResult(true);
+                        }
+                    });
                 } catch (err) {
                     //  setShowResult(false);
-                    setResult(null);
+                    setResult([]);
                     console.log(err);
                 }
+                setResult(null);
+                setShowResult(true);
             })()
         } else {
             setShowResult(false);

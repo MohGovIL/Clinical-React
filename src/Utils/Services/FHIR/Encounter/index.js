@@ -18,7 +18,7 @@ const EncounterStates = {
     },
     createNewEncounter : (params) => {
         //params.functionParams.appointment, params.functionParams.facility
-        debugger;
+
     let coding = EncounterStates['codingArr'](params.functionParams.appointment.serviceTypeCode);
     const serviceType = {
         coding
@@ -84,7 +84,7 @@ const EncounterStates = {
         return await CRUDOperations('search', `${params.url}?${summaryStat}&${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`)
     },
     getCurrentEncounterPerPatient : async (params) => {
-debugger;
+
         let date = params.functionParams.date;
         let patient = params.functionParams.patient;
 
@@ -99,7 +99,7 @@ debugger;
         }
     },
     getNextPrevEncounterPerPatient : async (params) => {
-        debugger;
+
         //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
         let date = params.functionParams.date;
         let patient = params.functionParams.patient;
