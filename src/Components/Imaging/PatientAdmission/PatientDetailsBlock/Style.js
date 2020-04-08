@@ -14,6 +14,13 @@ export const StyledTextField = styled(TextField)`
   border-radius: 10px;
   margin: 24px 0 24px 0;
   transform-origin: top right;
+  .MuiInputBase-root {
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
   .MuiInputLabel-formControl {
     right: 0;
     left: unset;
@@ -33,7 +40,7 @@ export const StyledTextField = styled(TextField)`
 
 export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
   width: 70%;
-  background-color:  #f8faff;
+  background-color: #f8faff;
   border-radius: 10px;
   margin: 24px 0 24px 0;
   transform-origin: top right;
@@ -80,8 +87,9 @@ export const StyledPatientDetails = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   margin: 0 25px 0 25px;
-  z-index: ${props => !props.edit_mode && '2'};
-
+  z-index: ${props => props.edit ? '0' : '2'};
+  height: calc(100vh - 88px - 32px);
+  overflow-x: scroll;
   @media (min-width: ${devicesValue.desktop}px) {
     flex-basis: 50%;
     margin: 0 38px 0 38px;

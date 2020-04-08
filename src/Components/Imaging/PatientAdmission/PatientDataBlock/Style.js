@@ -9,12 +9,13 @@ export const StyledDiv = styled.div`
   box-shadow: 0 1px 10px 0 rgba(152, 151, 151, 0.3);
   background-color: #ffffff;
   height: calc(100vh - 88px);
+  overflow-x: scroll;
   position: ${props => props.edit_mode === 1 ? "unset" : "fixed"};
   z-index: 100;
   max-width: ${props => props.edit_mode === 1 ? "25%" : "unset"};
 
   @media(min-width: ${devicesValue.desktop}px){
-     flex-basis: 16%;
+     flex-basis: 17%;
      min-width: 17%;
      max-width: ${props => props.edit_mode === 1 ? "16%" : "unset"};
    }

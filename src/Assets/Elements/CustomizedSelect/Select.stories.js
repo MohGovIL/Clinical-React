@@ -44,5 +44,6 @@ export const normalSelect = () => {
                              value={statusesData[0].code}
                              icon_color={object('Icon color', '#076ce9')}
                              background_color={object('Backgroud color', '#eaf7ff')}
+                             langDirection={object('langDirection', 'rtl')}
                              text_color={'#076ce9'}/>
 };

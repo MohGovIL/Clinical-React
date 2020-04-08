@@ -10,7 +10,7 @@ const InitApp = ({lang_id,languageDirection}) => {
     return (
         <React.Fragment>
             <Suspense fallback={<CircularProgress />}>
-                <GlobalStyle lang_id={lang_id} languageDirection={languageDirection}/>
+                <GlobalStyle lang_id={lang_id} language_direction={languageDirection}/>
                 <VerticalRoute/>
             </Suspense>
         </React.Fragment>
