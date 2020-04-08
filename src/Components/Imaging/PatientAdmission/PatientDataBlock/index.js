@@ -32,7 +32,7 @@ import {connect} from "react-redux";
 import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
 import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
-
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave, priority}) => {
 
@@ -281,6 +281,11 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 onChange={handleChangeKupatHolim}
                                 SelectProps={{
                                     // onOpen: handleLoadListKupatHolim,
+                                    IconComponent: (() => (
+                                    <IconButton>
+                                     <KeyboardArrowDownIcon />
+                                    </IconButton>
+                                    )),
                                     MenuProps: {
                                         elevation: 0,
                                         keepMounted: true,
