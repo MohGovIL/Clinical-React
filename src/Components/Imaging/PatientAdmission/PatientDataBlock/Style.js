@@ -96,7 +96,7 @@ export const StyledTextInput = styled.div`
       text-align: right;
       color: #1e2132;
       opacity: 60%;
-      direction: ltr;
+      direction: ${props => props.languageDirection === "rtl" ? 'ltr' : 'rtl'};
     }
 
     .MuiInputLabel-formControl.Mui-error{
