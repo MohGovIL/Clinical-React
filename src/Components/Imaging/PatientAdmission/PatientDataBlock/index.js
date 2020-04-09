@@ -280,12 +280,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 select={edit_mode === 1 ? true : false}
                                 onChange={handleChangeKupatHolim}
                                 SelectProps={{
-                                    // onOpen: handleLoadListKupatHolim,
-                                    IconComponent: (() => (
-                                    <IconButton>
-                                     <KeyboardArrowDownIcon />
-                                    </IconButton>
-                                    )),
+                                    IconComponent: KeyboardArrowDownIcon,
                                     MenuProps: {
                                         elevation: 0,
                                         keepMounted: true,
