@@ -127,6 +127,9 @@ export const StyledTextInput = styled.div`
       right: 10px;
       pointer-events: bounding-box;
     }
+    .MuiSelect-filled.MuiSelect-filled {
+      padding-right: 12px;
+    }
 `;
 
 export const StyledButtonBlock = styled.div`
