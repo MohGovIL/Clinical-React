@@ -29,7 +29,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
     let normalizedCurEncounters = [];
     const getAppointmentWithTimeOrNot =(nextAppointmentEntry)=>{
          let isThisAppToday = moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
-        return  (isThisAppToday ? moment(nextAppointmentEntry.startTime).format("HH:mm DD/MM/YYYY") : moment().format("DD/MM/YYYY"));
+        return  (isThisAppToday ? moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY HH:mm") :moment().format("DD/MM/YYYY")  );
     }
     if (curEncounter.data && curEncounter.data.total > 0) {
         let entry = curEncounter.data.entry;

@@ -50,11 +50,13 @@ const DrawThisTable = ({result, searchParam}) => {
 
     //let patientTrackingStatuses =  null;
 
-    const handleCreateAppointment = async (patient) => {
+    const handleCreateAppointment = async (patient,nextAppointment) => {
+debugger;
+        let encounterData= null;
         switch (admissionState) {
             case ADMISSIONWITHOUTAPPOINTMENT :
                 console.log("admission without appointment");
-                const encounterData = await FHIR("Encounter", "doWork", {
+                encounterData = await FHIR("Encounter", "doWork", {
                     functionName: "createNewEncounter",
                     functionParams: {
                         facility: store.getState().settings.facility,
@@ -69,7 +71,22 @@ const DrawThisTable = ({result, searchParam}) => {
                 });
                 break;
             case ADMISSIONWITHAPPOINTMENT:
-                console.log("admission with appointment");
+                if(nextAppointment) {
+                    let fhirappointment = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment (nextAppointment.data.entry[1].resource ): null;
+                    encounterData = await FHIR("Encounter", "doWork", {
+                        functionName: "createNewEncounter",
+                        functionParams: {
+                            facility: store.getState().settings.facility,
+                            appointment: fhirappointment
+                        }
+                    });
+                    store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData.data), patient));
+                    history.push({
+                        pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                    });
+
+                    console.log("admission with appointment");
+                }
                 break
         }
 
@@ -79,7 +96,10 @@ const DrawThisTable = ({result, searchParam}) => {
 
         let thereIsEncounterToday = curEncounter && curEncounter.data && curEncounter.data.total >0 ? true : false;
         let nextAppointmetCheckNormelized = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment (nextAppointment.data.entry[1].resource ): null;
-        let theAppointmentIsToday = nextAppointmetCheckNormelized ? (moment(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY")  === moment().format("DD/MM/YYYY") ?true :false ): false;
+        let theAppointmentIsToday = false;
+        if(nextAppointmetCheckNormelized) {
+            theAppointmentIsToday = moment(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
+        }
 
         if(!thereIsEncounterToday)
         {
@@ -208,7 +228,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                     </StyledHrefButton>
 
                                     <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
-                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false} onClick = {()=>handleCreateAppointment(patient)}  >
+                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false} onClick = {()=>handleCreateAppointment(patient,nextAppointment)}  >
                                          {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment)}
                                     </StyledHrefButton>
 
