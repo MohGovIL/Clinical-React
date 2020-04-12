@@ -17,7 +17,6 @@ const CRUDOperationsCalls={
         return resolved;
     },
     patch : (params,fhirTokenInstance,data)=>{
-
         const resolved = fhirTokenInstance().patch(params,data);
         return resolved;
     },

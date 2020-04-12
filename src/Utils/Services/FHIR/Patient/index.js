@@ -64,24 +64,24 @@ const PatientStats = {
     },
     updatePatientData: async (params) => {
 
-        return await CRUDOperations('patch', `${params.url}/`, [
-            {op: 'replace', path: '/name/0/family', value: params.functionParams.value.lastName},
-            {op: 'replace', path: '/name/0/given', value: [params.functionParams.value.firstName, ""]},
+        return await CRUDOperations('patch', `${params.url}/${params.functionParams.patientData}`, [
+            {op: 'replace', path: '/name/0/family', value: params.functionParams.data.lastName},
+            {op: 'replace', path: '/name/0/given', value: [params.functionParams.data.firstName, ""]},
             {
                 op: 'replace',
                 path: '/telecom/1',
-                value: {system: "email", value: params.functionParams.value.patientEmail}
+                value: {system: "email", value: params.functionParams.data.patientEmail}
             },
             {
                 op: 'replace',
                 path: '/telecom/2',
-                value: {system: "phone", value: params.functionParams.value.mobilePhone, use: "mobile"}
+                value: {system: "phone", value: params.functionParams.data.mobilePhone, use: "mobile"}
             },
-            {op: 'replace', path: '/birthDate', value: params.functionParams.value.birthDate},
+            {op: 'replace', path: '/birthDate', value: params.functionParams.data.birthDate},
             {
                 op: 'replace',
                 path: '/managingOrganization',
-                value: {reference: "Organization/" + params.functionParams.value.healthManageOrganization}
+                value: {reference: "Organization/" + params.functionParams.data.healthManageOrganization}
             },
         ])
         /*return fhirTokenInstance().patch(`${fhirBasePath}/Patient/${params.patientId}`, [

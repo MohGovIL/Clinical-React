@@ -60,7 +60,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
             try {
                 data.birthDate = Moment(data.birthDate, formatDate).format("YYYY-MM-DD");
                 //const answer = await updatePatientData(patientData.id, data);
-                const answer = await FHIR('Patient','updatePatientData',{patientData:patientData.id, data:data});
+                const answer = await FHIR('Patient','doWork',{functionName:'updatePatientData',functionParams:{patientData:patientData.id, data:data}});
                 const patient = {
                     [patientData.id]: normalizeFhirPatient(answer.data)
                 };
