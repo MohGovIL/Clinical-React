@@ -70,12 +70,13 @@ debugger;
                 ]
             }
         })
+
         //return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
         return CRUDOperations('create', `${params.url}/Encounter`, {
             'priority': {
                 'coding': [
                     {
-                        'code':`$(params.functionParams.appointment.priority)`
+                        'code':`${params.functionParams.appointment.priority}`
                                             },
                 ],
             },
