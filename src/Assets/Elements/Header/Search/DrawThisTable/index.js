@@ -31,19 +31,32 @@ import {FHIR} from "../../../../../Utils/Services/FHIR";
 const DrawThisTable = ({result, searchParam}) => {
 
     const {t} = useTranslation();
-
+    const ADMISSIONWITHOUTAPPOINTMENT = 0;
+    const ADMISSIONWITHAPPOINTMENT = 1;
     const [expanded, setExpanded] = React.useState('');
     const [nextAppointment, setNextAppointment] = React.useState('');
     const [prevEncounter, setPrevEncounter] = React.useState('');
     const [curEncounter, setCurEncounter] = React.useState('');
     const [encounterStatuses, setEncounterStatuses] = React.useState('');
     const [patientTrackingStatuses, setPatientTrackingStatuses] = React.useState('');
-
+    const [admissionState,setAdmissionState] = React.useState(ADMISSIONWITHAPPOINTMENT)
 
     let curTotal = 0;
 
     //let patientTrackingStatuses =  null;
 
+    const handleCreateAppointment = event => {
+        switch (admissionState) {
+            case ADMISSIONWITHOUTAPPOINTMENT :
+                console.log("admission without appointment");
+                FHIR("Encounter","doWork",{functionName:"createNewEncounter",functionParams:{}})
+            break;
+            case ADMISSIONWITHAPPOINTMENT:
+                console.log("admission with appointment");
+            break
+        }
+
+    }
 
     const handleTextOfCurrentAppointmentButton  = (curEncounter, nextAppointment) => {
 
@@ -55,11 +68,16 @@ const DrawThisTable = ({result, searchParam}) => {
         {
             if(theAppointmentIsToday)
             {
+                if(admissionState != ADMISSIONWITHAPPOINTMENT) {
+                    setAdmissionState(ADMISSIONWITHAPPOINTMENT);
+                }
                 return t("Patient admission");
             }
             else{
+                if(admissionState != ADMISSIONWITHOUTAPPOINTMENT) {
+                    setAdmissionState(ADMISSIONWITHOUTAPPOINTMENT);
+                }
                 return t("Admission without appointment");
-
             }
         }
         else{
@@ -173,7 +191,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                     </StyledHrefButton>
 
                                     <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
-                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false}  >
+                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false} onClick = {handleCreateAppointment}  >
                                          {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment)}
                                     </StyledHrefButton>
 
