@@ -73,7 +73,7 @@ const EncounterStates = {
                 })
             }
             //return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
-            return CRUDOperations('create', `${params.url}/Encounter`, {
+            return CRUDOperations('create', `${params.url}`, {
                 'priority': {
                     'coding': [
                         {
