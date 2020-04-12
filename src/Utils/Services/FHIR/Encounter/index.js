@@ -18,53 +18,86 @@ const EncounterStates = {
     },
     createNewEncounter : (params) => {
         //params.functionParams.appointment, params.functionParams.facility
+    if(!params.functionParams.appointment){ //there is no appointment
 
-    let coding = EncounterStates['codingArr'](params.functionParams.appointment.serviceTypeCode);
-    const serviceType = {
-        coding
-    };
-    // Todo fix reasonCode in here can't do it since I don't have the encounter normalizer fix from develop.
-    // coding = codingArr(params.functionParams.appointment.examinationCode);
-    // const reasonCode = params.functionParams.appointment.examinationCode
-    // params.functionParams.appointment.examination.forEach(element => {
+debugger;
+        return CRUDOperations('create', `${params.url}/Encounter`, {
+            'serviceProvider': {
+                'reference': `Organization/${params.functionParams.facility}`,
+            },
+            'status': 'planned',
+            'period': {
+                'start': moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+            },
+            'subject': {
+                'reference': `Patient/${params.functionParams.patient.id}`,
+            },
+            'priority': {
+                'coding': [
+                    {
+                        'code': 0,
+                    },
+                ],
+            },
+            /*'participant': [
+                {
+                    'individual': {
+                        'reference': `Practitioner/${params.functionParams.practitioner.id}`
+                    }
+                }]*/
 
-    // });
-    const reasonCode = params.functionParams.appointment.examinationCode.map(examination => {
-        return {
-            "coding": [
+        });
+
+    }
+    else {
+
+        let coding = EncounterStates['codingArr'](params.functionParams.appointment.serviceTypeCode);
+        const serviceType = {
+            coding
+        };
+        // Todo fix reasonCode in here can't do it since I don't have the encounter normalizer fix from develop.
+        // coding = codingArr(params.functionParams.appointment.examinationCode);
+        // const reasonCode = params.functionParams.appointment.examinationCode
+        // params.functionParams.appointment.examination.forEach(element => {
+
+        // });
+        const reasonCode = params.functionParams.appointment.examinationCode.map(examination => {
+            return {
+                "coding": [
+                    {
+                        "code": examination
+                    }
+                ]
+            }
+        })
+        //return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
+        return CRUDOperations('create', `${params.url}/Encounter`, {
+            'priority': {
+                'coding': [
+                    {
+                        'code':`$(params.functionParams.appointment.priority)`
+                                            },
+                ],
+            },
+            'status': 'planned',
+            serviceType,
+            reasonCode,
+            'subject': {
+                'reference': `Patient/${params.functionParams.appointment.patient}`,
+            },
+            'appointment': [
                 {
-                    "code": examination
-                }
-            ]
-        }
-    })
-    //return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
-        return CRUDOperations('create',`${params.url}/Encounter`, {
-        'priority': {
-            'coding': [
-                {
-                    'code': params.functionParams.appointment.priority,
+                    'reference': `Appointment/${params.functionParams.appointment.id}`,
                 },
             ],
-        },
-        'status': 'planned',
-        serviceType,
-        reasonCode,
-        'subject': {
-            'reference': `Patient/${params.functionParams.appointment.patient}`,
-        },
-        'params.functionParams.appointment': [
-            {
-                'reference': `Appointment/${params.functionParams.appointment.id}`,
+            'period': {
+                'start': moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
             },
-        ],
-        'period': {
-            'start': moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-        },
-        'serviceProvider': {
-            'reference': `Organization/${params.functionParams.facility}`,
-        },
-    });
+            'serviceProvider': {
+                'reference': `Organization/${params.functionParams.facility}`,
+            },
+        });
+    }
     },
     encountersWithPatientsBasePath : summary => `_sort=date${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
 

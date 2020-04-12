@@ -27,6 +27,10 @@ import normalizeFhirAppointment
 import normalizeFhirEncounter
     from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
 import {FHIR} from "../../../../../Utils/Services/FHIR";
+import {store} from "../../../../../index";
+import {setEncounterAndPatient} from "../../../../../Store/Actions/ActiveActions";
+import {baseRoutePath} from "../../../../../Utils/Helpers/baseRoutePath";
+import { useHistory } from 'react-router-dom';
 
 const DrawThisTable = ({result, searchParam}) => {
 
@@ -40,20 +44,33 @@ const DrawThisTable = ({result, searchParam}) => {
     const [encounterStatuses, setEncounterStatuses] = React.useState('');
     const [patientTrackingStatuses, setPatientTrackingStatuses] = React.useState('');
     const [admissionState,setAdmissionState] = React.useState(ADMISSIONWITHAPPOINTMENT)
+    const history = useHistory();
 
     let curTotal = 0;
 
     //let patientTrackingStatuses =  null;
 
-    const handleCreateAppointment = event => {
+    const handleCreateAppointment = async (patient) => {
         switch (admissionState) {
             case ADMISSIONWITHOUTAPPOINTMENT :
                 console.log("admission without appointment");
-                FHIR("Encounter","doWork",{functionName:"createNewEncounter",functionParams:{}})
-            break;
+                const encounterData = await FHIR("Encounter", "doWork", {
+                    functionName: "createNewEncounter",
+                    functionParams: {
+                        facility: store.getState().settings.facility,
+                        practitioner: 'practitioner',
+                        patient: patient,
+                        status: "planned"
+                    }
+                });
+                store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData.data), patient));
+                history.push({
+                    pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                });
+                break;
             case ADMISSIONWITHAPPOINTMENT:
                 console.log("admission with appointment");
-            break
+                break
         }
 
     }
@@ -191,7 +208,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                     </StyledHrefButton>
 
                                     <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
-                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false} onClick = {handleCreateAppointment}  >
+                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false} onClick = {()=>handleCreateAppointment(patient)}  >
                                          {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment)}
                                     </StyledHrefButton>
 
