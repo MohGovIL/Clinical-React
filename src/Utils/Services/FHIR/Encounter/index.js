@@ -119,7 +119,7 @@ const EncounterStates = {
     },
     encountersWithPatientsBasePath: summary => `_sort=date${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
 
-    getEncountersWithPatients: async (params) => {
+    getEncountersWithPatients:  (params) => {
         let summary = params.functionParams.summary
         let date = params.functionParams.date;
         let serviceProvider = params.functionParams.serviceProvider;
@@ -132,9 +132,9 @@ const EncounterStates = {
         }
         let summaryStat = EncounterStates['encountersWithPatientsBasePath'](summary)
         //return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
-        return await CRUDOperations('search', `${params.url}?${summaryStat}&${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`)
+        return CRUDOperations('search', `${params.url}?${summaryStat}&${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`)
     },
-    getCurrentEncounterPerPatient: async (params) => {
+    getCurrentEncounterPerPatient: (params) => {
 
         let date = params.functionParams.date;
         let patient = params.functionParams.patient;
@@ -142,14 +142,14 @@ const EncounterStates = {
 
         //PC-216 endpoint: /Encounter?date=eq<TODAY>&patient=<PID>
         try {
-            return await CRUDOperations('search', `${params.url}?date=eq${date}&patient=${patient}`)
+            return CRUDOperations('search', `${params.url}?date=eq${date}&patient=${patient}`)
             //return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=eq${date}&patient=${patient}`);
         } catch (err) {
             console.log(err);
             return null;
         }
     },
-    getNextPrevEncounterPerPatient: async (params) => {
+    getNextPrevEncounterPerPatient: (params) => {
 
         //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
         let date = params.functionParams.date;
@@ -158,10 +158,9 @@ const EncounterStates = {
         try {
             if (prev) {
                 //return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=le${date}&_count=1&_sort=-date&patient=${patient}`);
-                return await CRUDOperations('search', `${params.url}?date=le${date}&_count=1&_sort=-date&patient=${patient}`);
+                return CRUDOperations('search', `${params.url}?date=le${date}&_count=1&_sort=-date&patient=${patient}`);
             } else {
-                // return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=gt${date}&_count=1&_sort=-date&patient=${patient}`);
-                return await CRUDOperations('search', `${params.url}?date=gt${date}&_count=1&_sort=-date&patient=${patient}`);
+                return CRUDOperations('search', `${params.url}?date=gt${date}&_count=1&_sort=-date&patient=${patient}`);
             }
         } catch (err) {
             console.log(err);

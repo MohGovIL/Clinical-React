@@ -17,17 +17,17 @@ const AppointmentStates = {
         paramsToCRUD.url =  componentFhirURL;
         return AppointmentStates[parameters.functionName](paramsToCRUD);
     },
-    getNextPrevAppointmentPerPatient: async (params) => {
+    getNextPrevAppointmentPerPatient:  (params) => {
 
       //  let CRUD = await CRUDOperations('search', params);
 
         //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
         try {
             if (params.prev) {
-                return await CRUDOperations('search',  params.url +"?"+ `date=le${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+                return CRUDOperations('search',  params.url +"?"+ `date=le${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
                 //    return CRUD.search(url, `date=le${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
             } else {
-                return await CRUDOperations('search',  params.url +"?"+ `date=ge${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+                return CRUDOperations('search',  params.url +"?"+ `date=ge${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
                 //   return CRUD.search(url, `date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
             }
         } catch (err) {
@@ -37,7 +37,7 @@ const AppointmentStates = {
     },
     appointmentsWithPatientsBasePath: summary => `status:not=arrived&_sort=date${summary ? '&_summary=count' : '&_include=Appointment:patient'}`,
 
-    getAppointmentsWithPatients: async (params = null) => {
+    getAppointmentsWithPatients: (params = null) => {
         if (!params.url)
             return;
         if (params) {
@@ -49,7 +49,7 @@ const AppointmentStates = {
             if (params.serviceType) arrayOfsearchParams['service-type'] = params.serviceType;
             search += convertParamsToUrl(arrayOfsearchParams);
 
-            return await CRUDOperations('search',  params.url +"?"+ search);
+            return CRUDOperations('search',  params.url +"?"+ search);
         }
 
     }

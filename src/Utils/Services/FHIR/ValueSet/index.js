@@ -16,10 +16,8 @@ const ValueSetStates =  {
         return ValueSetStates[parameters.functionName](paramsToCRUD);
     },
 
-    getValueSet : async (params) => {
-
-        //console.log( await fhirTokenInstance().get(`apis/fhir/v4/ValueSet/encounter_statuses/$expand`));
-       const valueSet =  await CRUDOperations('read',  `${params.url}/${params.id}/$expand`);
+    getValueSet : (params) => {
+       const valueSet =  CRUDOperations('read',  `${params.url}/${params.id}/$expand`);
        return valueSet;
 
     },

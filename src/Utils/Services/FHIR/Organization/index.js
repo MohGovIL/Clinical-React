@@ -14,15 +14,15 @@ const OrganizationStats =   {
         parameters.url =  componentFhirURL;
         return OrganizationStats[parameters.functionName](parameters);
     },
-    getOrganizationTypeKupatHolim : async (params) => {
+    getOrganizationTypeKupatHolim : (params) => {
         //return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=71`);
-        return await CRUDOperations('search', `${params.url}?type=71`);
+        return CRUDOperations('search', `${params.url}?type=71`);
 
     },
 
-    getOrganization : async (params) => {
+    getOrganization : (params) => {
        // return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=11`);
-        return await CRUDOperations('search', `${params.url}?type=11`);
+        return CRUDOperations('search', `${params.url}?type=11`);
     }
 };
 

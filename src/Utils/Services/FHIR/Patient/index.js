@@ -16,10 +16,6 @@ import {CRUDOperations} from "../CRUDOperations";
 const PatientStats = {
     doWork: (parameters = null) => {
         let componentFhirURL = "/Patient";
-        /*   let fhirTokenInstance = null;
-           let fhirBasePath = null;
-           let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
-           paramsToCRUD.url = parameters.fhirBasePath + componentFhirURL;*/
         parameters.url = componentFhirURL;
         return PatientStats[parameters.functionName](parameters);
     },
@@ -70,9 +66,9 @@ const PatientStats = {
     timeout: (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms));
     },
-    updatePatientData: async (params) => {
+    updatePatientData: (params) => {
 
-        return await CRUDOperations('patch', `${params.url}/${params.functionParams.patientData}`, [
+        return CRUDOperations('patch', `${params.url}/${params.functionParams.patientData}`, [
             {op: 'replace', path: '/name/0/family', value: params.functionParams.data.lastName},
             {op: 'replace', path: '/name/0/given', value: [params.functionParams.data.firstName, ""]},
             {
@@ -92,18 +88,6 @@ const PatientStats = {
                 value: {reference: "Organization/" + params.functionParams.data.healthManageOrganization}
             },
         ])
-        /*return fhirTokenInstance().patch(`${fhirBasePath}/Patient/${params.patientId}`, [
-            {op: 'replace', path: '/name/0/family', value: params.value.lastName},
-            {op: 'replace', path: '/name/0/given', value: [params.value.firstName, ""]},
-            {op: 'replace', path: '/telecom/1', value: {system: "email", value: params.value.patientEmail}},
-            {op: 'replace', path: '/telecom/2', value: {system: "phone", value: params.value.mobilePhone, use: "mobile"}},
-            {op: 'replace', path: '/birthDate', value: params.value.birthDate},
-            {
-                op: 'replace',
-                path: '/managingOrganization',
-                value: {reference: "Organization/" + params.value.healthManageOrganization}
-            },
-        ])*/
     }
 };
 

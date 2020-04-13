@@ -21,7 +21,7 @@ const HealthcareServiceStates  = {
     getHealhcareService : (params) => {
        // return fhirTokenInstance().get(`${fhirBasePath}/?organization=${organization}`);
         const organizationId = params.organizationId;
-        return  CRUDOperations('search', `${params.url}??organization=${organizationId}`);
+        return  CRUDOperations('search', `${params.url}?organization=${organizationId}`);
     },
     getHealthCareServiceByOrganization : async (parameters) => {
 
