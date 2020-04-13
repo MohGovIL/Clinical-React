@@ -3,7 +3,6 @@ import {CRUDOperations} from "../CRUDOperations";
 import {store} from "../../../../index";
 
 const EncounterStates = {
-
     doWork: (parameters) => {
         let componentFhirURL = "/Encounter";
         parameters.url = componentFhirURL;
@@ -14,6 +13,11 @@ const EncounterStates = {
     },
     createNewEncounter: (params) => {
 
+        //There are two possibilities of data sent to createNewEncountrt
+        //1) with appointment ;
+        //2) without appointment
+
+        //i have also added this user Id needed to be saved as written in PC-260 PC-261
         const userID = params.userID ? params.userID : store.getState().login.userID;
 
         if (!params.functionParams.appointment) { //there is no appointment
