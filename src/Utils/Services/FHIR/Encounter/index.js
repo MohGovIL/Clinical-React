@@ -1,15 +1,11 @@
 import moment from "moment";
 import {CRUDOperations} from "../CRUDOperations";
+import {store} from "../../../../index";
 
 const EncounterStates = {
 
     doWork: (parameters) => {
-
         let componentFhirURL = "/Encounter";
-        /*   let fhirTokenInstance = null;
-           let fhirBasePath = null;
-           let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
-           paramsToCRUD.url = parameters.fhirBasePath + componentFhirURL;*/
         parameters.url = componentFhirURL;
         return EncounterStates[parameters.functionName](parameters);
     },
@@ -17,11 +13,12 @@ const EncounterStates = {
         return arr.map(arrEl => ({'code': arrEl}))
     },
     createNewEncounter: (params) => {
-        //params.functionParams.appointment, params.functionParams.facility
+
+        const userID = params.userID ? params.userID : store.getState().login.userID;
+
         if (!params.functionParams.appointment) { //there is no appointment
 
-            debugger;
-            return CRUDOperations('create', `${params.url}`, {
+        return CRUDOperations('create', `${params.url}`, {
                 'serviceProvider': {
                     'reference': `Organization/${params.functionParams.facility}`,
                 },
@@ -39,17 +36,17 @@ const EncounterStates = {
                         },
                     ],
                 },
-                /*'participant': [
+                'participant': [
                     {
                         'individual': {
-                            'reference': `Practitioner/${params.functionParams.practitioner.id}`
+                            'reference': `Practitioner/${userID}`
                         }
-                    }]*/
+                    }]
 
             });
 
         } else {
-            debugger;
+
             let coding = EncounterStates['codingArr'](params.functionParams.appointment.serviceTypeCode);
             const serviceType = {
                 coding
@@ -98,6 +95,12 @@ const EncounterStates = {
                 'serviceProvider': {
                     'reference': `Organization/${params.functionParams.facility}`,
                 },
+                'participant': [
+                    {
+                        'individual': {
+                            'reference': `Practitioner/${userID}`
+                        }
+                    }]
             });
         }
     },
