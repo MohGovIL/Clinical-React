@@ -1,4 +1,11 @@
-import {getValueSet} from "../../FhirAPI";
+/**
+ * @author Dror Golan - drorgo@matrix.co.il
+ * @fileOverview  - this is a valueset strategy  which handles old fhirAPI code logic written by :
+ *                   Idan Gigi - gigiidan@gmail.com
+ *                   Yuriy Gershem - yuriyge@matrix.co.il
+ *                   Dror Golan - drorgo@matrix.co.il
+ */
+
 import {CRUDOperations} from "../CRUDOperations";
 
 const ValueSetStates =  {
@@ -9,10 +16,8 @@ const ValueSetStates =  {
         return ValueSetStates[parameters.functionName](paramsToCRUD);
     },
 
-    getValueSet : async (params) => {
-
-        //console.log( await fhirTokenInstance().get(`apis/fhir/v4/ValueSet/encounter_statuses/$expand`));
-       const valueSet =  await CRUDOperations('read',  `${params.url}/${params.id}/$expand`);
+    getValueSet : (params) => {
+       const valueSet =  CRUDOperations('read',  `${params.url}/${params.id}/$expand`);
        return valueSet;
 
     },

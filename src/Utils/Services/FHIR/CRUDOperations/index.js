@@ -1,7 +1,22 @@
+/**
+ * @author Dror Golan - drorgo@matrix.co.il
+ * @fileOverview  - this is a CRUDOperations which calls fhir server api with
+ * @search
+ * @read
+ * @patch
+ * @update
+ * @create
+ *
+ */
+
+
+
 
 // 1) You should create new object like Appointment,Encounter,HealthCareService ......
 // 2) Then you should use FHIR.setStrategy(with the object you want);  .
 // 3) Call doWork from the FHIR .
+
+
 
 import {tokenInstanceGenerator} from "../../AxiosWithTokenInstance";
 import {ApiTokens} from "../../ApiTokens";
