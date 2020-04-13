@@ -1,3 +1,11 @@
+/**
+ * @author Dror Golan - drorgo@matrix.co.il
+ * @fileOverview  - this is a encounter strategy  which handles old fhirAPI code logic written by :
+ *                   Idan Gigi - gigiidan@gmail.com
+ *                   Yuriy Gershem - yuriyge@matrix.co.il
+ *                   Dror Golan - drorgo@matrix.co.il
+ */
+
 import moment from "moment";
 import {CRUDOperations} from "../CRUDOperations";
 import {store} from "../../../../index";
@@ -20,6 +28,7 @@ const EncounterStates = {
         //i have also added this user Id needed to be saved as written in PC-260 PC-261
         const userID = params.userID ? params.userID : store.getState().login.userID;
 
+        //without appointment
         if (!params.functionParams.appointment) { //there is no appointment
 
         return CRUDOperations('create', `${params.url}`, {
@@ -49,7 +58,7 @@ const EncounterStates = {
 
             });
 
-        } else {
+        } else { //with appointment
 
             let coding = EncounterStates['codingArr'](params.functionParams.appointment.serviceTypeCode);
             const serviceType = {

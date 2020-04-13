@@ -1,33 +1,10 @@
-/*import React, { useState } from 'react';
-import Appointment from "./Appointment";
-import Encounter from "./Encounter";
-import HealthcareService from "./HealthcareService";
-import Organization from "./Organization";
-import Patient from "./Patient";
-import ValueSet from "./ValueSet";
-
-// 1) You should create new object like Appointment,Encounter,HealthCareService ......
-// 2) Then you should use FHIR.setStrategy(with the object you want);  .
-// 3) Call doWork from the FHIR .
-
-
-export class FHIR  {
-
-    constructor(obj){
-        this.strategy = obj;
-    };
-
-    setStrategy(obj){
-        this.strategy = obj;
-    };
-
-    doWork(params){
-        let strategy = this.strategy;
-        return strategy.doWork(params)
-    };
-
-
-}*/
+/**
+ * @author Dror Golan - drorgo@matrix.co.il
+ * @fileOverview  - this is a contaxt strategy entry point which handles old fhirAPI code logic written by :
+ *                   Idan Gigi - gigiidan@gmail.com
+ *                   Yuriy Gershem - yuriyge@matrix.co.il
+ *                   Dror Golan - drorgo@matrix.co.il
+ */
 
 import React, { useState } from 'react';
 import Appointment from "./Appointment";
