@@ -103,7 +103,6 @@ const Search = ({languageDirection}) => {
     };
 
     const onNewPatientButtonClick = () => {
-        console.log("add new patient");
         setPopupNewPatient(true);
     };
     const onCloseNewPatientClick = () => {

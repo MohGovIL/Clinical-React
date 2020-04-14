@@ -9,13 +9,16 @@ import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import {connect} from "react-redux";
 import CustomizedDatePicker from "../../CustomizedDatePicker";
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
-import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
+import {getOrganizationTypeKupatHolim, getValueSet} from "../../../../Utils/Services/FhirAPI";
 import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import {emptyArrayAll} from "../../../../Utils/Helpers/emptyArray";
+import normalizeFhirValueSet from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 
 const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate}) => {
     const {t} = useTranslation();
 
+    const [idTypesList, setIdTypesList] = useState([]);
+    const [genderList, setGenderList] = useState([]);
     const [kupatHolimList, setKupatHolimList] = useState([]);
 
     const {register, control, errors, handleSubmit, reset, setValue} = useForm({
@@ -28,7 +31,22 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
     const onSubmit = (data, e) => {
     };
 
-    useEffect(()=>{
+    useEffect(() => {
+        //Load id types list
+        (async () => {
+            try {
+                const {data: {expansion: {contains}}} = await getValueSet('identifier_type_list');
+                let options = emptyArrayAll(t("Choose"));
+                for (let status of contains) {
+                    options.push(normalizeFhirValueSet(status));
+                }
+                setIdTypesList(options);
+            } catch (err) {
+                console.log(err);
+            }
+        })();
+
+        //Load KupatHolim list
         let array = emptyArrayAll(t("Choose"));
         (async () => {
             try {
@@ -45,7 +63,21 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
                 console.log("Error during load list of kupat holim");
             }
         })();
-    });
+
+        //Load gender list
+        (async () => {
+            try {
+                const {data: {expansion: {contains}}} = await getValueSet('gender');
+                let options = emptyArrayAll(t("Choose"));
+                for (let status of contains) {
+                    options.push(normalizeFhirValueSet(status));
+                }
+                setGenderList(options);
+            } catch (err) {
+                console.log(err);
+            }
+        })();
+    }, []);
 
     const bottomButtonsData = [
         {
@@ -68,33 +100,6 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
         }
     ];
 
-    const idTypeList = [
-        {
-            "code": "id_number",
-            "name": t("idtype_1")
-        },
-        {
-            "code": "passport",
-            "name": t("idtype_2")
-        }
-    ];
-
-    const genderList = [
-        {
-            "code": "Male",
-            "name": t("Male")
-        },
-        {
-            "code": "Female",
-            "name": t("Female")
-        },
-        {
-            "code": "Other",
-            "name": t("Other")
-        }
-
-    ];
-
     const TextFieldOpts = {
         'color': 'primary',
         'variant': 'filled'
@@ -105,7 +110,7 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
                          title={t('Add New Patient')}
                          content_dividers={false}
                          bottomButtons={bottomButtonsData}
-                         dialogMaxWidth={'800px'}
+                         dialogMaxWidth={'md'}
         >
             <StyledForm onSubmit={handleSubmit(onSubmit)} languageDirection={languageDirection}>
                 <StyledBox>
@@ -154,8 +159,8 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
                                     }
                                 }
                             }}
-                            // error={errors.healthManageOrganization ? true : false}
-                            // helperText={errors.healthManageOrganization ? t("is a required field.") : null}
+                            error={errors.healthManageOrganization ? true : false}
+                            helperText={errors.healthManageOrganization ? t("is a required field.") : null}
                             InputProps={{
                                 // disableUnderline: edit_mode === 1 ? false : true,
                                 endAdornment: (errors.healthManageOrganization &&
@@ -168,7 +173,7 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
                         >
                             {genderList.map((option, optionIndex) => (
                                 <MenuItem key={optionIndex} value={option.code}>
-                                    {option.name}
+                                    {t(option.name)}
                                 </MenuItem>
                             ))}
                         </TextField>
@@ -239,11 +244,11 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
                                     }
                                 }
                             }}
-                            // error={errors.healthManageOrganization ? true : false}
-                            // helperText={errors.healthManageOrganization ? t("is a required field.") : null}
+                            error={errors.idNumberType ? true : false}
+                            helperText={errors.idNumberType ? t("is a required field.") : null}
                             InputProps={{
                                 // disableUnderline: edit_mode === 1 ? false : true,
-                                endAdornment: (errors.healthManageOrganization &&
+                                endAdornment: (errors.idNumberType &&
                                     <InputAdornment position="end">
                                         <ErrorOutlineIcon htmlColor={"#ff0000"}/>
                                     </InputAdornment>
@@ -251,9 +256,9 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
                             }}
                             {...TextFieldOpts}
                         >
-                            {idTypeList.map((option, optionIndex) => (
+                            {idTypesList.map((option, optionIndex) => (
                                 <MenuItem key={optionIndex} value={option.code}>
-                                    {option.name}
+                                    {t(option.name)}
                                 </MenuItem>
                             ))}
                         </TextField>
@@ -295,8 +300,8 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
                                         inputVariant: "filled",
                                         // onChange: handleChangeBirthDate,
                                         autoOk: true,
-                                        // error: errors.birthDate ? true : false,
-                                        // helperText: errors.birthDate ? t("Date must be in a date format") : null,
+                                        error: errors.birthDate ? true : false,
+                                        helperText: errors.birthDate ? t("Date must be in a date format") : null,
                                     }}
                                     CustomizedProps={{
                                         keyBoardInput: true,
