@@ -51,7 +51,6 @@ const DrawThisTable = ({result, searchParam}) => {
     //let patientTrackingStatuses =  null;
 
     const handleCreateAppointment = async (patient,nextAppointment) => {
-debugger;
         let encounterData= null;
         switch (admissionState) {
             case ADMISSIONWITHOUTAPPOINTMENT :
