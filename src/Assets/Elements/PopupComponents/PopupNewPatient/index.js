@@ -9,10 +9,15 @@ import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import {connect} from "react-redux";
 import CustomizedDatePicker from "../../CustomizedDatePicker";
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
-import {StyledFormGroup} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
+import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
+import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import {emptyArrayAll} from "../../../../Utils/Helpers/emptyArray";
 
 const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate}) => {
     const {t} = useTranslation();
+
+    const [kupatHolimList, setKupatHolimList] = useState([]);
+
     const {register, control, errors, handleSubmit, reset, setValue} = useForm({
         mode: "onBlur",
         // defaultValues: {
@@ -23,6 +28,24 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
     const onSubmit = (data, e) => {
     };
 
+    useEffect(()=>{
+        let array = emptyArrayAll(t("Choose"));
+        (async () => {
+            try {
+                const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
+                for (let entry of dataServiceType) {
+                    if (entry.resource !== undefined) {
+                        entry.resource.name = t(entry.resource.name);
+                        let setLabelKupatHolim = normalizeValueData(entry.resource);
+                        array.push(setLabelKupatHolim);
+                    }
+                }
+                setKupatHolimList(array);
+            } catch (e) {
+                console.log("Error during load list of kupat holim");
+            }
+        })();
+    });
 
     const bottomButtonsData = [
         {
@@ -173,10 +196,9 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
                                     }
                                 }
                             }}
-                            // error={errors.healthManageOrganization ? true : false}
-                            // helperText={errors.healthManageOrganization ? t("is a required field.") : null}
+                            error={errors.healthManageOrganization ? true : false}
+                            helperText={errors.healthManageOrganization ? t("is a required field.") : null}
                             InputProps={{
-                                // disableUnderline: edit_mode === 1 ? false : true,
                                 endAdornment: (errors.healthManageOrganization &&
                                     <InputAdornment position="end">
                                         <ErrorOutlineIcon htmlColor={"#ff0000"}/>
@@ -185,7 +207,7 @@ const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, format
                             }}
                             {...TextFieldOpts}
                         >
-                            {genderList.map((option, optionIndex) => (
+                            {kupatHolimList.map((option, optionIndex) => (
                                 <MenuItem key={optionIndex} value={option.code}>
                                     {option.name}
                                 </MenuItem>
