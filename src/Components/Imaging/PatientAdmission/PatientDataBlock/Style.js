@@ -1,5 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
-import { devicesValue } from "../../../../Assets/Themes/BreakPoints";
+import { devicesValue } from "Assets/Themes/BreakPoints";
 
 export const StyledDiv = styled.div`
   display: flex;

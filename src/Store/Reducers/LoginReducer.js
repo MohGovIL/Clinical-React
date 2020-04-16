@@ -5,7 +5,7 @@ import {
     LOGOUT_FAILED,
     LOGOUT_START,
     LOGOUT_SUCCESS
-} from '../Actions/LoginActions/LoginActionTypes'
+} from 'Store/Actions/LoginActions/LoginActionTypes'
 
 const INITIAL_STATE = {
     isAuth: false,

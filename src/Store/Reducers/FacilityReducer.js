@@ -1,4 +1,4 @@
-import {GET_FACILITY} from '../Actions/FacilityActions/FacilityActionTypes';
+import {GET_FACILITY} from 'Store/Actions/FacilityActions/FacilityActionTypes';
 
 const INITIAL_STATE = {
     name: "",

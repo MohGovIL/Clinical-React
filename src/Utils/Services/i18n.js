@@ -1,10 +1,10 @@
 import i18n from "i18next";
 import {initReactI18next} from "react-i18next";
 import backend from "i18next-xhr-backend";
-import {getToken} from "../Helpers/getToken"
-import {basePath} from "../Helpers/basePath"
-import {stateLessOrNot} from "../Helpers/StatelessOrNot";
-import {ApiTokens} from "./ApiTokens";
+import {getToken} from "Utils/Helpers/getToken"
+import {basePath} from "Utils/Helpers/basePath"
+import {stateLessOrNot} from "Utils/Helpers/StatelessOrNot";
+import {ApiTokens} from "Utils/Services/ApiTokens";
 // the translations
 // (tip move them in a JSON file and import them)
 /**

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Table from "@material-ui/core/Table";
-import {devicesValue} from "../../Themes/BreakPoints";
+import {devicesValue} from "Assets/Themes/BreakPoints";
 
 const StyledCustomizedTable = styled(Table)`
   background-color: #ffffff;

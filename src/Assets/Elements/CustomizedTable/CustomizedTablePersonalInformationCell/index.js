@@ -1,11 +1,11 @@
 import React from 'react';
 import StyledCustomizedTablePersonalInformationCell from './Style';
-import maleIcon from '../../../Images/maleIcon.png';
-import femaleIcon from '../../../Images/womanIcon.png';
+import maleIcon from 'Assets/Images/maleIcon.png';
+import femaleIcon from 'Assets/Images/womanIcon.png';
 import PersonalData from './PersonalData';
-import {useTranslation} from 'react-i18next';
 import GenderIcon from './GenderIcon';
-import {Tooltip, Typography} from '@material-ui/core';
+import {useTranslation} from 'react-i18next';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const CustomizedTablePersonalInformationCell = ({gender, id, idType, firstName, lastName, align, priority}) => {
 

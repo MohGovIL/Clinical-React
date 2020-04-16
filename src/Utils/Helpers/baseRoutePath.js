@@ -1,4 +1,4 @@
-import {stateLessOrNot} from "./StatelessOrNot";
+import {stateLessOrNot} from "Utils/Helpers/StatelessOrNot";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com

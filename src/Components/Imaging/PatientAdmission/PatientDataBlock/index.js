@@ -13,25 +13,25 @@ import {
     StyledEmptyIconEdit,
     StyledGlobalStyle
 } from "./Style";
-import maleIcon from '../../../../Assets/Images/maleIcon.png';
-import femaleIcon from '../../../../Assets/Images/womanIcon.png';
-import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
-import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
+import maleIcon from 'Assets/Images/maleIcon.png';
+import femaleIcon from 'Assets/Images/womanIcon.png';
+import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
+import ageCalculator from "Utils/Helpers/ageCalculator";
 import {Avatar, IconButton, Divider, Typography, TextField, MenuItem, InputAdornment} from '@material-ui/core';
-import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
+import CustomizedDatePicker from "Assets/Elements/CustomizedDatePicker";
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import {updatePatientData} from "../../../../Utils/Services/FhirAPI";
+import {updatePatientData} from "Utils/Services/FhirAPI";
 import {
     StyledFormGroup,
     StyledPatientDetails
-} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
-import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
-import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+} from "Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
+import {getOrganizationTypeKupatHolim} from "Utils/Services/FhirAPI";
+import {normalizeValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import {connect} from "react-redux";
-import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
-import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
-import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
+import {setPatientDataAfterSave} from "Store/Actions/FhirActions/fhirActions";
+import normalizeFhirPatient from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
+import {getCellPhoneRegexPattern, getEmailRegexPattern} from "Utils/Helpers/validation/patterns";
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave, priority}) => {
@@ -245,7 +245,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                             id: "standard-birthDate",
                                             format: "DD/MM/YYYY",
                                             name: "birthDate",
-                                            required: edit_mode === 1 ? true : false,
+                                            required: true,
                                             disableToolbar: false,
                                             label: t("birth day"),
                                             inputValue: patientBirthDate,
@@ -276,11 +276,11 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 name="healthManageOrganization"
                                 value={patientInitialValues.healthManageOrganizationValue}
                                 label={t("Kupat Cholim")}
-                                required={edit_mode === 1 ? true : false}
+                                required
                                 select={edit_mode === 1 ? true : false}
                                 onChange={handleChangeKupatHolim}
                                 SelectProps={{
-                                    IconComponent: KeyboardArrowDownIcon,
+                                    // onOpen: handleLoadListKupatHolim,
                                     MenuProps: {
                                         elevation: 0,
                                         keepMounted: true,
@@ -333,7 +333,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                         </InputAdornment>
                                     ),
                                 }}
-                                required={edit_mode === 1 ? true : false}
+                                required
                                 {...TextFieldOpts}
                             />
                             <Controller

@@ -1,5 +1,5 @@
 import React from 'react';
-import CustomizedTableButton from "../CustomizedTableButton";
+import CustomizedTableButton from "Assets/Elements/CustomizedTable/CustomizedTableButton";
 import TableCell from "@material-ui/core/TableCell";
 
 const CustomizedTableButtonCell = ({padding, align, onClickHandler, variant, color, label, mode}) => {
