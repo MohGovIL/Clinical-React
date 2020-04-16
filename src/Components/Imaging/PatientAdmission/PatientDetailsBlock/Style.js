@@ -36,6 +36,9 @@ export const StyledTextField = styled(TextField)`
   .MuiInputBase-root {
     color: #000b40;
   }
+  .MuiFormHelperText-root {
+    text-align: right;
+  }
 `;
 
 export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
@@ -59,6 +62,9 @@ export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
   }
   .MuiInputBase-root {
     color: #000b40;
+  }
+  .MuiFormHelperText-root {
+    text-align: right;
   }
 `;
 
@@ -87,7 +93,7 @@ export const StyledPatientDetails = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   margin: 0 25px 0 25px;
-  z-index: ${props => props.edit ? '0' : '2'};
+  z-index: ${(props) => (props.edit ? '0' : '2')};
   height: calc(100vh - 88px - 32px);
   overflow-x: scroll;
   @media (min-width: ${devicesValue.desktop}px) {
