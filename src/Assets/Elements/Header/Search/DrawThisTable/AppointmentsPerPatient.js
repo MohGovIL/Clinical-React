@@ -10,9 +10,9 @@ import {
 } from "./Style";
 import moment from "moment";
 import normalizeFhirAppointment
-    from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
+    from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
-    from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
+    from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
 import LinkComponentWithIcon from "./LinkComponentWithIcon";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";

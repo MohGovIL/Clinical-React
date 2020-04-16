@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import {connect} from "react-redux";
-import HeaderPatient from "../../../Assets/Elements/HeaderPatient";
+import HeaderPatient from "Assets/Elements/HeaderPatient";
 import {useTranslation} from "react-i18next";
 import * as Moment from "moment";
-import {baseRoutePath} from "../../../Utils/Helpers/baseRoutePath";
+import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 import PatientDataBlock from "./PatientDataBlock";
 import PatientDetailsBlock from "./PatientDetailsBlock";
 import {StyledPatientRow, StyledDummyBlock, StyledBackdrop} from "./Style";
 
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {devicesValue} from "../../../Assets/Themes/BreakPoints";
+import {devicesValue} from "Assets/Themes/BreakPoints";
 
 const PatientAdmission = ({patient, encounter, languageDirection, formatDate, history}) => {
 

@@ -1,4 +1,4 @@
-import normalizeFhirPatient from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
+import normalizeFhirPatient from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 
 export function _buildList(patient) {
 

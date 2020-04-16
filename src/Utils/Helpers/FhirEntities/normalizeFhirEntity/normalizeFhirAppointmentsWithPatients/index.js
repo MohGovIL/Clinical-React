@@ -1,5 +1,5 @@
-import normalizeFhirPatient from "../normalizeFhirPatient";
-import normalizeFhirAppointment from "../normalizeFhirAppointment";
+import normalizeFhirPatient from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
+import normalizeFhirAppointment from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
