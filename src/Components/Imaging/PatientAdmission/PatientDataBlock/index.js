@@ -32,7 +32,7 @@ import {connect} from "react-redux";
 import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
 import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
-
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave, priority}) => {
 
@@ -245,7 +245,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                             id: "standard-birthDate",
                                             format: "DD/MM/YYYY",
                                             name: "birthDate",
-                                            required: true,
+                                            required: edit_mode === 1 ? true : false,
                                             disableToolbar: false,
                                             label: t("birth day"),
                                             inputValue: patientBirthDate,
@@ -276,11 +276,11 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                 name="healthManageOrganization"
                                 value={patientInitialValues.healthManageOrganizationValue}
                                 label={t("Kupat Cholim")}
-                                required
+                                required={edit_mode === 1 ? true : false}
                                 select={edit_mode === 1 ? true : false}
                                 onChange={handleChangeKupatHolim}
                                 SelectProps={{
-                                    // onOpen: handleLoadListKupatHolim,
+                                    IconComponent: KeyboardArrowDownIcon,
                                     MenuProps: {
                                         elevation: 0,
                                         keepMounted: true,
@@ -333,7 +333,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                                         </InputAdornment>
                                     ),
                                 }}
-                                required
+                                required={edit_mode === 1 ? true : false}
                                 {...TextFieldOpts}
                             />
                             <Controller

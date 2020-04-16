@@ -5,7 +5,7 @@ import { Backdrop } from '@material-ui/core';
 export const StyledBackdrop = styled(Backdrop)`
   z-index: ${props => props.edit_mode === 1 ? 1 : 2} ;
   display: block;
-  overflow-y: scroll;
+  overflow-y: ${props => (props.edit_mode === 1 ? 'hidden' : null)};
   position:  ${props => props.edit_mode === 1 ? "absolute" : "fixed"};
   margin-bottom: 0px;
   background-color: ${props => props.edit_mode === 1 ? "rgba(0, 13, 55, 0.5)" : "unset"};

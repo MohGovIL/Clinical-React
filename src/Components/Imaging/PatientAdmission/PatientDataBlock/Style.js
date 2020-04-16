@@ -96,6 +96,7 @@ export const StyledTextInput = styled.div`
       text-align: right;
       color: #1e2132;
       opacity: 60%;
+      direction: ${props => props.languageDirection === "rtl" ? 'ltr' : 'rtl'};
     }
 
     .MuiInputLabel-formControl.Mui-error{
@@ -118,6 +119,16 @@ export const StyledTextInput = styled.div`
 
     .MuiFormControl-root {
       margin: 0 0 46px 0;
+    }
+
+    .MuiSelect-iconFilled {
+      position: unset;
+      margin-left: 17px;
+      right: 10px;
+      pointer-events: bounding-box;
+    }
+    .MuiSelect-filled.MuiSelect-filled {
+      padding-right: 12px;
     }
 `;
 
