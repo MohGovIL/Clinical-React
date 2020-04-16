@@ -29,7 +29,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from '../../../../Utils/Services/API';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
@@ -72,20 +72,47 @@ const PatientDetailsBlock = ({
   const loadingStreets = streetsOpen && streets.length === 0;
   const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
 
+  const selectExaminationOnChangeHandler = (event, newValue) => {
+    setPendingValue(newValue);
+  };
+
+  const selectExaminationOnOpenHandler = () => {
+    setPendingValue(selecetedServicesType);
+    setServicesTypeOpen(true);
+  };
+
+  const selectExaminationOnCloseHandelr = () => {
+    setPendingValue([]);
+    setServicesTypeOpen(false);
+  };
+
   const [
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,
-  ] = useState(undefined);
+  ] = useState(new Date());
 
   const [
     commitmentAndPaymentCommitmeValidity,
     setCommitmentAndPaymentCommitmeValidity,
-  ] = useState(undefined);
+  ] = useState(new Date());
+
+  const valdiatorDate = (date, type) => {
+    switch (type) {
+      case 'before':
+        return moment(date).isSameOrBefore(moment(new Date()));
+
+      case 'after':
+        return moment(date).isSameOrAfter(moment(new Date()));
+
+      default:
+        return false;
+    }
+  };
 
   const dateOnChangeHandler = (date, valueName, set) => {
     try {
-      setValue(valueName, date.format(formatDate), true);
-      set(date.format(formatDate).toString());
+      setValue(valueName, date, true);
+      set(date);
     } catch (e) {
       console.log('Error: ' + e);
     }
@@ -592,9 +619,10 @@ const PatientDetailsBlock = ({
             control={control}
             rules={{
               validate: {
-                value: value => value && value.length > 0
-              }
+                value: (value) => value && value.length > 0,
+              },
             }}
+            onChangeName={selectExaminationOnChangeHandler}
             as={
               <Autocomplete
                 filterOptions={filterOptions}
@@ -603,17 +631,17 @@ const PatientDetailsBlock = ({
                 loadingText={t('Loading')}
                 open={servicesTypeOpen}
                 loading={loadingServicesType}
-                onOpen={() => {
-                  setPendingValue(selecetedServicesType);
-                  setServicesTypeOpen(true);
-                }}
-                onClose={(event) => {
-                  setServicesTypeOpen(false);
-                }}
+                // onOpen={() => {
+                //   setPendingValue(selecetedServicesType);
+                //   setServicesTypeOpen(true);
+                // }}
+                onOpen={selectExaminationOnOpenHandler}
+                // onClose={(event) => {
+                //   setServicesTypeOpen(false);
+                // }}
+                onClose={selectExaminationOnCloseHandelr}
                 value={pendingValue}
-                onChange={(event, newValue) => {
-                  setPendingValue(newValue);
-                }}
+                onChange={selectExaminationOnChangeHandler}
                 disableCloseOnSelect
                 renderTags={() => null}
                 renderOption={(option, state) => (
@@ -648,7 +676,9 @@ const PatientDetailsBlock = ({
                 renderInput={(params) => (
                   <StyledTextField
                     error={errors.selectTest}
-                    helperText={errors.selectTest && 'יש לבחור את הבדיקה המבוצעת בביקור'}
+                    helperText={
+                      errors.selectTest && 'יש לבחור את הבדיקה המבוצעת בביקור'
+                    }
                     required
                     {...params}
                     label={t('Select test')}
@@ -731,19 +761,18 @@ const PatientDetailsBlock = ({
                 name='commitmentAndPaymentCommitmentDate'
                 rules={{
                   validate: {
-                    value: (value) =>
-                      moment(value).isSameOrBefore(moment().utc()),
+                    value: (value) => valdiatorDate(value, 'before'),
                   },
                 }}
                 control={control}
-                // error={errors.commitmentAndPaymentCommitmentDate}
-                // helperText={errors.commitmentAndPaymentCommitmentDate && 'יש להזין תאריך שווה או קטן מהיום'}
                 as={
                   <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                     <StyledKeyboardDatePicker
                       disableToolbar
+                      autoOk
                       variant='inline'
                       format={formatDate}
+                      mask={formatDate}
                       margin='normal'
                       required
                       id='commitmentAndPaymentCommitmentDate'
@@ -759,7 +788,7 @@ const PatientDetailsBlock = ({
                       KeyboardButtonProps={{
                         'aria-label': 'change date',
                       }}
-                      error={errors.commitmentAndPaymentCommitmentDate}
+                      error={errors.commitmentAndPaymentCommitmentDate && true}
                       helperText={
                         errors.commitmentAndPaymentCommitmentDate &&
                         'יש להזין תאריך שווה או קטן מהיום'
@@ -773,16 +802,15 @@ const PatientDetailsBlock = ({
                 control={control}
                 rules={{
                   validate: {
-                    value: (value) =>
-                      moment(value).isSameOrAfter(moment().utc()),
+                    value: (value) => valdiatorDate(value, 'after'),
                   },
                 }}
-                // error={errors.commitmentAndPaymentCommitmeValidity}
-                // helperText={errors.commitmentAndPaymentCommitmeValidity && 'יש להזין תאריך שווה או גדול מהיום'}
                 as={
                   <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                     <StyledKeyboardDatePicker
                       required
+                      autoOk
+                      mask={formatDate}
                       disableToolbar
                       variant='inline'
                       format={formatDate}
@@ -800,7 +828,9 @@ const PatientDetailsBlock = ({
                       KeyboardButtonProps={{
                         'aria-label': 'change date',
                       }}
-                      error={errors.commitmentAndPaymentCommitmeValidity}
+                      error={
+                        errors.commitmentAndPaymentCommitmeValidity && true
+                      }
                       helperText={
                         errors.commitmentAndPaymentCommitmeValidity &&
                         'יש להזין תאריך שווה או גדול מהיום'
@@ -850,9 +880,11 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   } = props;
   const { t } = useTranslation();
   const onConfirmHandler = () => {
-    setSelecetedServicesType(pendingValue);
-    // ref = undefined;
-    setValue('selectTest', pendingValue, true);
+    setSelecetedServicesType((prevState) => {
+      setValue('selectTest', pendingValue, true);
+      return pendingValue;
+    });
+    // An idea on how to solve when clicking confirm to make the autoComplete to close is to give a ref to the next element or the inputElement of the autoComplete and make it focus on that element or unfocus.
     setClose(true);
   };
   return (
