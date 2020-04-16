@@ -133,7 +133,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                                 pathname: `${baseRoutePath()}/imaging/patientAdmission`,
                             });
                         },
-                        mode: moment(appointment.startTime).isAfter(moment().format()) ? 'view' : mode,
+                        mode: moment(appointment.startTime).isSame(moment(new Date()), 'day') ? mode : 'view',
                     });
                     break;
                 case 'Messages':
