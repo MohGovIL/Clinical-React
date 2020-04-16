@@ -7,8 +7,29 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body{
-    direction: ${props => (props.lang_id === '7' ? 'rtl' : 'ltr')};
+    direction: ${props => (props.lang_id === '7' || props.language_direction === 'rtl' ? 'rtl' : 'ltr')};
   }
+
+/*Changing of style of scrollbars in Google Chrome*/
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #cdcdd2;
+    border-radius: 9px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover{
+    background: #04C2;
+}
 `;
 
 export default GlobalStyle;
