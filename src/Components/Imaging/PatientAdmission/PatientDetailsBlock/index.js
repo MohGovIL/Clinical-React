@@ -82,7 +82,7 @@ const PatientDetailsBlock = ({
   };
 
   const selectExaminationOnCloseHandelr = () => {
-    setPendingValue([]);
+    setValue('selectTest', selecetedServicesType, true);
     setServicesTypeOpen(false);
   };
 
@@ -631,15 +631,15 @@ const PatientDetailsBlock = ({
                 loadingText={t('Loading')}
                 open={servicesTypeOpen}
                 loading={loadingServicesType}
+                onOpen={selectExaminationOnOpenHandler}
+                onClose={selectExaminationOnCloseHandelr}
                 // onOpen={() => {
                 //   setPendingValue(selecetedServicesType);
                 //   setServicesTypeOpen(true);
                 // }}
-                onOpen={selectExaminationOnOpenHandler}
                 // onClose={(event) => {
                 //   setServicesTypeOpen(false);
                 // }}
-                onClose={selectExaminationOnCloseHandelr}
                 value={pendingValue}
                 onChange={selectExaminationOnChangeHandler}
                 disableCloseOnSelect
