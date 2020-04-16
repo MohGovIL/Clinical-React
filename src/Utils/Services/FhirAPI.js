@@ -66,7 +66,7 @@ export const createNewEncounter = (appointment, facility) => {
     // appointment.examination.forEach(element => {
 
     // });
-    const reasonCode = appointment.examinationCode.map(examination => {
+    const reasonCode = appointment.examinationCode && appointment.examinationCode.map(examination => {
         return {
             "coding": [
                 {
