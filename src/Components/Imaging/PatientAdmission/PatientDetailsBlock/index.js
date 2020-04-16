@@ -856,7 +856,7 @@ const PatientDetailsBlock = ({
           )}
         </StyledFormGroup>
       </StyledForm>
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
     </StyledPatientDetails>
   );
 };
