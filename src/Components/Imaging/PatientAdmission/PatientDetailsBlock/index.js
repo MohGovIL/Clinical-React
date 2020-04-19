@@ -82,11 +82,11 @@ const PatientDetailsBlock = ({
     setCommitmentAndPaymentCommitmeValidity,
   ] = useState(undefined);
 
-  const commitmentAndPaymentCommitmeValidityOnChangeHandler = date => {
+  const commitmentAndPaymentCommitmeValidityOnChangeHandler = (date) => {
     setCommitmentAndPaymentCommitmeValidity(date);
   };
 
-  const commitmentAndPaymentCommitmentDateOnChangeHandler = date => {
+  const commitmentAndPaymentCommitmentDateOnChangeHandler = (date) => {
     try {
       // let newBirthDate = date.format(formatDate).toString();
       setCommitmentAndPaymentCommitmentDate(date.format(formatDate).toString());
@@ -97,15 +97,15 @@ const PatientDetailsBlock = ({
   //Is escorted
   const [isEscorted, setIsEscorted] = useState(false);
   const isEscortedSwitchOnChangeHandle = () => {
-    setIsEscorted(prevState => !prevState);
+    setIsEscorted((prevState) => !prevState);
   };
 
   const [isUrgent, setIsUrgent] = useState(false);
   const isUrgentSwitchOnChangeHandler = () => {
-    setIsUrgent(prevState => !prevState);
+    setIsUrgent((prevState) => !prevState);
   };
 
-  const onDeleteHandler = chipToDeleteIndex => () => {
+  const onDeleteHandler = (chipToDeleteIndex) => () => {
     setSelecetedServicesType(
       selecetedServicesType.filter(
         (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
@@ -121,9 +121,9 @@ const PatientDetailsBlock = ({
     }
     return matchSorter(options, inputValue, {
       keys: [
-        item => t(item.reasonCode.name),
+        (item) => t(item.reasonCode.name),
         'reasonCode.code',
-        item => t(item.serviceType.name),
+        (item) => t(item.serviceType.name),
       ],
     });
   };
@@ -144,7 +144,7 @@ const PatientDetailsBlock = ({
   };
 
   //Sending the form
-  const onSubmit = data => {
+  const onSubmit = (data) => {
     console.log(data);
   };
   // Default values
@@ -194,7 +194,7 @@ const PatientDetailsBlock = ({
           const options = [];
           const servicesTypeObj = {};
           const allReasonsCode = await Promise.all(
-            serviceTypeResponse.data.expansion.contains.map(serviceType => {
+            serviceTypeResponse.data.expansion.contains.map((serviceType) => {
               const normalizedServiceType = normalizeFhirValueSet(serviceType);
               servicesTypeObj[normalizedServiceType.code] = {
                 ...normalizedServiceType,
@@ -209,7 +209,7 @@ const PatientDetailsBlock = ({
             reasonsIndex++
           ) {
             allReasonsCode[reasonsIndex].data.expansion.contains.forEach(
-              reasonCode => {
+              (reasonCode) => {
                 const optionObj = {};
                 optionObj['serviceType'] = {
                   ...servicesTypeObj[
@@ -247,7 +247,7 @@ const PatientDetailsBlock = ({
         const cities = await getCities();
         if (active) {
           setCities(
-            Object.keys(cities.data).map(cityKey => {
+            Object.keys(cities.data).map((cityKey) => {
               let cityObj = {};
               cityObj.code = cities.data[cityKey];
               cityObj.name = t(cities.data[cityKey]);
@@ -279,7 +279,7 @@ const PatientDetailsBlock = ({
         if (active) {
           if (streets.data.length) {
             setStreets(
-              Object.keys(streets.data).map(streetKey => {
+              Object.keys(streets.data).map((streetKey) => {
                 let streetObj = {};
                 streetObj.code = streets.data[streetKey];
                 streetObj.name = t(streets.data[streetKey]);
@@ -288,7 +288,10 @@ const PatientDetailsBlock = ({
               }),
             );
           } else {
-            const emptyResultsObj = {};
+            const emptyResultsObj = {
+              code: 'no_result',
+              name: t('No Results'),
+            };
             const emptyResults = [emptyResultsObj];
             setStreets(emptyResults);
           }
@@ -400,7 +403,7 @@ const PatientDetailsBlock = ({
                 onChange={(event, newValue) => {
                   setAddressCity(newValue);
                 }}
-                getOptionLabel={option =>
+                getOptionLabel={(option) =>
                   Object.keys(option).length === 0 &&
                   option.constructor === Object
                     ? ''
@@ -408,7 +411,7 @@ const PatientDetailsBlock = ({
                 }
                 noOptionsText={t('No Results')}
                 loadingText={t('Loading')}
-                renderInput={params => (
+                renderInput={(params) => (
                   <StyledTextField
                     {...params}
                     label={t('City')}
@@ -436,11 +439,11 @@ const PatientDetailsBlock = ({
                 onOpen={() => addressCity.name && setStreetsOpen(true)}
                 onClose={() => setStreetsOpen(false)}
                 id='addressStreet'
-                getOptionLabel={option => (option === '' ? '' : option.name)}
+                getOptionLabel={(option) => (option === '' ? '' : option.name)}
                 noOptionsText={t('No Results')}
                 loadingText={t('Loading')}
-                getOptionDisabled={option => option.code === 'no_result'}
-                renderInput={params => (
+                getOptionDisabled={(option) => option.code === 'no_result'}
+                renderInput={(params) => (
                   <StyledTextField
                     {...params}
                     InputProps={{
@@ -497,10 +500,10 @@ const PatientDetailsBlock = ({
                 value={addressCity}
                 loading={loadingCities}
                 options={cities}
-                getOptionLabel={option => option.name}
+                getOptionLabel={(option) => option.name}
                 noOptionsText={t('No Results')}
                 loadingText={t('Loading')}
-                renderInput={params => (
+                renderInput={(params) => (
                   <StyledTextField
                     {...params}
                     label={t('City')}
@@ -591,7 +594,7 @@ const PatientDetailsBlock = ({
               setPendingValue(selecetedServicesType);
               setServicesTypeOpen(true);
             }}
-            onClose={event => {
+            onClose={(event) => {
               setServicesTypeOpen(false);
             }}
             value={pendingValue}
@@ -628,7 +631,7 @@ const PatientDetailsBlock = ({
               setClose: setServicesTypeOpen,
             }}
             options={servicesType}
-            renderInput={params => (
+            renderInput={(params) => (
               <StyledTextField
                 {...params}
                 label={t('Select test')}
@@ -786,7 +789,7 @@ const PatientDetailsBlock = ({
     </StyledPatientDetails>
   );
 };
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     languageDirection: state.settings.lang_dir,
   };
