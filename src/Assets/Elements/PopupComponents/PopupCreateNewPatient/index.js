@@ -8,13 +8,13 @@ import {StyledColumnFirst, StyledColumnSecond, StyledForm, StyledRowEmail, Style
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import {connect} from "react-redux";
 import CustomizedDatePicker from "../../CustomizedDatePicker";
-import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
-import {getOrganizationTypeKupatHolim, getValueSet} from "../../../../Utils/Services/FhirAPI";
-import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
-import {emptyArrayAll} from "../../../../Utils/Helpers/emptyArray";
-import normalizeFhirValueSet from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
+import {getCellPhoneRegexPattern, getEmailRegexPattern} from "Utils/Helpers/validation/patterns";
+import {getOrganizationTypeKupatHolim, getValueSet} from "Utils/Services/FhirAPI";
+import {normalizeValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import {emptyArrayAll} from "Utils/Helpers/emptyArray";
+import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 
-const PopupNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate}) => {
+const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate}) => {
     const {t} = useTranslation();
 
     const [idTypesList, setIdTypesList] = useState([]);
@@ -405,4 +405,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps, null)(PopupNewPatient);
+export default connect(mapStateToProps, null)(PopupCreateNewPatient);

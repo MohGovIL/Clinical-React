@@ -20,7 +20,7 @@ import PaperContainerComponent from "./DrawThisTable/PaperContainerComponent";
 import CustomizedTableButtonCell from "Assets/Elements/CustomizedTable/CustomizedTableButtonCell";
 import StyledButton from "Assets/Elements/CustomizedTable/CustomizedTableButton/Style";
 import {FHIR} from "Utils/Services/FHIR";
-import PopupNewPatient from "../../PopupComponents/PopupNewPatient";
+import PopupCreateNewPatient from "Assets/Elements/PopupComponents/PopupCreateNewPatient";
 
 
 
@@ -135,7 +135,7 @@ const Search = ({languageDirection}) => {
                         }
                         <StyledPaperBottom elevation={1} id='results' variant="outlined" square>
                             <StyledIconValueComponent iconType='add_circle' value='Add New Patient' onClickHandler={onNewPatientButtonClick}/>
-                            <PopupNewPatient popupOpen={popupNewPatient} handlePopupClose={onCloseNewPatientClick}/>
+                            <PopupCreateNewPatient popupOpen={popupNewPatient} handlePopupClose={onCloseNewPatientClick}/>
                         </StyledPaperBottom>
                     </StyledPaper>
                 </React.Fragment>
