@@ -1,19 +1,19 @@
-import {baseRoutePath} from '../baseRoutePath';
+import {baseRoutePath} from 'Utils/Helpers/baseRoutePath';
 import {
     BADGE_CELL, BUTTON_CELL,
     LABEL_CELL,
     PERSONAL_INFORMATION_CELL, SELECT_CELL,
-} from '../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
-import {getAppointmentsWithPatients, getValueSet, updateAppointmentStatus, createNewEncounter} from '../../Services/FhirAPI';
+} from 'Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
+import {getAppointmentsWithPatients, getValueSet, updateAppointmentStatus, createNewEncounter} from 'Utils/Services/FhirAPI';
 import moment from 'moment';
 import 'moment/locale/he';
-import {normalizeFhirAppointmentsWithPatients} from '../FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients';
-import normalizeFhirAppointment from '../FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
-import normalizeFhirValueSet from '../FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import {store} from '../../../index';
-import {setAppointmentsWithPatientsAction, updateAppointmentAction} from '../../../Store/Actions/FhirActions/fhirActions';
-import { setEncounterAndPatient } from '../../../Store/Actions/ActiveActions';
-import normalizeFhirEncounter from '../FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
+import {normalizeFhirAppointmentsWithPatients} from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients';
+import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
+import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import {store} from 'index';
+import {setAppointmentsWithPatientsAction, updateAppointmentAction} from 'Store/Actions/FhirActions/fhirActions';
+import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
+import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
 
 //מוזמנים
 export const invitedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
@@ -133,7 +133,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                                 pathname: `${baseRoutePath()}/imaging/patientAdmission`,
                             });
                         },
-                        mode: moment(appointment.startTime).isAfter(moment()) ? 'view' : mode,
+                        mode: moment(appointment.startTime).isSame(moment(new Date()), 'day') ? mode : 'view',
                     });
                     break;
                 case 'Messages':

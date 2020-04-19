@@ -7,8 +7,8 @@
  */
 
 
-import {store} from "../../../src";
-import getUIACOMapping from "./acoMapping";
+import {store} from "index";
+import getUIACOMapping from "Utils/Helpers/acoMapping";
 // import errorHandler from "../../../src/Utils/Helpers/errorHandler";
 const modes = ['write','view'];
 

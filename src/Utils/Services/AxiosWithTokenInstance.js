@@ -1,8 +1,8 @@
 import axios from 'axios';
-import {basePath} from "../Helpers/basePath";
-import {getToken} from "../Helpers/getToken";
-import {stateLessOrNot} from "../Helpers/StatelessOrNot";
-import {ApiTokens} from "./ApiTokens";
+import {basePath} from "Utils/Helpers/basePath";
+import {getToken} from "Utils/Helpers/getToken";
+import {stateLessOrNot} from "Utils/Helpers/StatelessOrNot";
+import {ApiTokens} from "Utils/Services/ApiTokens";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com

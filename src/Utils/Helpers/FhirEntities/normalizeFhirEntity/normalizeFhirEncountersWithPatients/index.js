@@ -1,5 +1,5 @@
-import normalizeFhirPatient from "../normalizeFhirPatient";
-import normalizeFhirEncounter from "../normalizeFhirEncounter";
+import normalizeFhirPatient from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
+import normalizeFhirEncounter from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com

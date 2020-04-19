@@ -10,7 +10,7 @@ import {
   UPDATE_APPOINTMENT_SUCCESS,
   SET_PATIENT_DATA,
   SET_PATIENT_DATA_SUCCESS
-} from '../Actions/FhirActions/fhirActionTypes';
+} from 'Store/Actions/FhirActions/fhirActionTypes';
 
 const INITIAL_STATE = {
     STATUS: '',

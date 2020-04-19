@@ -11,9 +11,9 @@ import {
   StyledChip,
   StyledButton,
 } from './Style';
-import CustomizedButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
+import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useTranslation } from 'react-i18next';
-import Title from '../../../../Assets/Elements/Title';
+import Title from 'Assets/Elements/Title';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { DevTool } from 'react-hook-form-devtools';
 import { useForm, Controller } from 'react-hook-form';
@@ -28,14 +28,14 @@ import {
   AddCircle,
 } from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { getCities, getStreets } from '../../../../Utils/Services/API';
+import { getCities, getStreets } from 'Utils/Services/API';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import moment, { Moment } from 'moment';
-import { getValueSet } from '../../../../Utils/Services/FhirAPI';
-import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
-import ChipWithImage from '../../../../Assets/Elements/StyledChip/index';
+import { getValueSet } from 'Utils/Services/FhirAPI';
+import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import StyledSwitch from 'Assets/Elements/StyledSwitch';
+import ChipWithImage from 'Assets/Elements/StyledChip';
 import {
   Checkbox,
   ListItemText,
@@ -150,12 +150,12 @@ const PatientDetailsBlock = ({
   const [
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,
-  ] = useState('');
+  ] = useState(undefined);
 
   const [
     commitmentAndPaymentCommitmeValidity,
     setCommitmentAndPaymentCommitmeValidity,
-  ] = useState('');
+  ] = useState(undefined);
 
   const commitmentAndPaymentCommitmeValidityOnChangeHandler = (date) => {
     setCommitmentAndPaymentCommitmeValidity(date);
@@ -546,7 +546,7 @@ const PatientDetailsBlock = ({
                 }
               />
               <Controller
-                defaultValue={patientData.postalCode}
+                defaultValue={patientData.postalCode || ''}
                 name={'addressPostalCode'}
                 as={
                   <StyledTextField
@@ -667,7 +667,7 @@ const PatientDetailsBlock = ({
               setPendingValue(selecetedServicesType);
               setServicesTypeOpen(true);
             }}
-            onClose={(event) => {
+            onClose={event => {
               setServicesTypeOpen(false);
             }}
             value={pendingValue}
@@ -763,9 +763,16 @@ const PatientDetailsBlock = ({
           </Tabs>
           {commitmentAndPaymentTabValue === 0 && (
             <React.Fragment>
-              <StyledTextField
-                label={t('HMO')}
-                id={'commitmentAndPaymentHMO'}
+              <Controller
+                name='HMO'
+                as={
+                  <StyledTextField
+                    label={t('HMO')}
+                    id={'commitmentAndPaymentHMO'}
+                  />
+                }
+                defaultValue={patientData.managingOrganization || ''}
+                control={control}
               />
               <StyledTextField
                 required
@@ -805,7 +812,7 @@ const PatientDetailsBlock = ({
                     showPrevArrow: false,
                   }}
                 /> */}
-              <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
+              <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                 <StyledKeyboardDatePicker
                   disableToolbar
                   variant='inline'
@@ -814,8 +821,7 @@ const PatientDetailsBlock = ({
                   required
                   id='commitmentAndPaymentCommitmentDate'
                   label={t('Commitment date')}
-                  // value={commitmentAndPaymentCommitmentDate}
-                  value={undefined}
+                  value={commitmentAndPaymentCommitmentDate}
                   onChange={commitmentAndPaymentCommitmentDateOnChangeHandler}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
@@ -829,7 +835,7 @@ const PatientDetailsBlock = ({
                   margin='normal'
                   id='commitmentAndPaymentCommitmeValidity'
                   label={t('Commitment validity')}
-                  value={undefined}
+                  value={commitmentAndPaymentCommitmeValidity}
                   onChange={commitmentAndPaymentCommitmeValidityOnChangeHandler}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
@@ -839,12 +845,12 @@ const PatientDetailsBlock = ({
               {/* </StyledTextInput> */}
               <StyledTextField
                 required
-                label={t('Doctor’s name')}
+                label={t('Doctors name')}
                 id={'commitmentAndPaymentDoctorsName'}
               />
               <StyledTextField
                 required
-                label={t('Doctor’s license')}
+                label={t('Doctors license')}
                 id={'commitmentAndPaymentDoctorsLicense'}
                 type='number'
               />

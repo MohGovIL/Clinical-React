@@ -1,5 +1,5 @@
 import {GET_FACILITY} from './FacilityActionTypes';
-import {tokenInstance} from '../../../Utils/Services/AxiosWithTokenInstance';
+import {tokenInstance} from 'Utils/Services/AxiosWithTokenInstance';
 
 export const getFacility = () => {
     return async dispatch => {

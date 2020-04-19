@@ -1,5 +1,5 @@
 import React from 'react';
-import {LOGIN_START} from '../../../Store/Actions/LoginActions/LoginActionTypes'
+import {LOGIN_START} from 'Store/Actions/LoginActions/LoginActionTypes'
 import LoginStyleBox from "./LoginBoxStyle";
 
 

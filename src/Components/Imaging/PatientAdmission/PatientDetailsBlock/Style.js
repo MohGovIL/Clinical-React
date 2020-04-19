@@ -1,6 +1,6 @@
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import styled from 'styled-components';
-import { devicesValue } from '../../../../Assets/Themes/BreakPoints';
+import { devicesValue } from 'Assets/Themes/BreakPoints';
 import { Divider, TextField, Chip, Button } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
@@ -23,6 +23,13 @@ export const StyledTextField = styled(TextField)`
   border-radius: 10px;
   margin: 24px 0 24px 0;
   transform-origin: top right;
+  .MuiInputBase-root {
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
   .MuiInputLabel-formControl {
     right: 0;
     left: unset;
@@ -42,7 +49,7 @@ export const StyledTextField = styled(TextField)`
 
 export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
   width: 70%;
-  background-color:  #f8faff;
+  background-color: #f8faff;
   border-radius: 10px;
   margin: 24px 0 24px 0;
   transform-origin: top right;

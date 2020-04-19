@@ -1,7 +1,7 @@
 import React, {Suspense} from 'react';
 import {connect} from 'react-redux';
-import VerticalRoute from "../../Routes/VerticalRoute";
-import GlobalStyle from "../../../Assets/Themes/GlobalStyle";
+import VerticalRoute from "Components/Routes/VerticalRoute";
+import GlobalStyle from "Assets/Themes/GlobalStyle";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const InitApp = ({lang_id,languageDirection}) => {
@@ -10,7 +10,7 @@ const InitApp = ({lang_id,languageDirection}) => {
     return (
         <React.Fragment>
             <Suspense fallback={<CircularProgress />}>
-                <GlobalStyle lang_id={lang_id} languageDirection={languageDirection}/>
+                <GlobalStyle lang_id={lang_id} language_direction={languageDirection}/>
                 <VerticalRoute/>
             </Suspense>
         </React.Fragment>

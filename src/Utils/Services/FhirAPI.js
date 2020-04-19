@@ -1,8 +1,8 @@
-import {tokenInstanceGenerator} from './AxiosWithTokenInstance';
-import {ApiTokens} from './ApiTokens';
+import {tokenInstanceGenerator} from 'Utils/Services/AxiosWithTokenInstance';
+import {ApiTokens} from 'Utils/Services/ApiTokens';
 import moment from 'moment';
-import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "./SearchLogic";
-import {normalizeHealthCareServiceValueData} from "../Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientRulesByNumberSort} from "Utils/Services/SearchLogic";
+import {normalizeHealthCareServiceValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
@@ -18,7 +18,7 @@ const fhirTokenInstance = () => tokenInstanceGenerator(ApiTokens.FHIR.tokenName)
 const fhirBasePath = 'apis/fhir/v4';
 
 // const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
-const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?status:not=arrived&_sort=date${summary ? '&_summary=count' : '&_include=Appointment:patient'}`;
+const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?status:not=arrived&_sort=priority,date,service-type${summary ? '&_summary=count' : '&_include=Appointment:patient'}`;
 
 export const getAppointmentsWithPatients = (summary = false, date = '', organization = '', serviceType = '') => {
     return fhirTokenInstance().get(`${appointmentsWithPatientsBasePath(summary)}${date ? `&date=eq${date}` : ''}${organization ? `&actor:HealthcareService.organization=${organization}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}`);
@@ -112,7 +112,7 @@ export const getHealhcareService = (organization) => {
 };
 
 // const encountersWithPatientsBasePath = summary => '/Encounter?_include=Encounter:patient&_sort=date';
-const encountersWithPatientsBasePath = summary => `/Encounter?_sort=date${summary ? '&_summary=count' : '&_include=Encounter:patient'}`;
+const encountersWithPatientsBasePath = summary => `/Encounter?_sort=priority,date,service-type${summary ? '&_summary=count' : '&_include=Encounter:patient'}`;
 
 export const getEncountersWithPatients = (summary = false, date = '', serviceProvider = '', serviceType = '', statuses = []) => {
     let statusesString = '';

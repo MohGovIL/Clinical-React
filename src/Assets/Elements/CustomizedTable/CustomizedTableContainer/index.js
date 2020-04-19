@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import TableContainer from "@material-ui/core/TableContainer";
-import {devicesValue} from "../../../Themes/BreakPoints";
+import {devicesValue} from "Assets/Themes/BreakPoints";
 
 const CustomizedTableContainer = styled(TableContainer)`
   max-height: calc(100vh - 226px); //The height of all the elements above it

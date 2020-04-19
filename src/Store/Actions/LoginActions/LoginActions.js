@@ -1,9 +1,9 @@
 import {LOGIN_START, LOGIN_FAILED, LOGIN_SUCCESS, LOGOUT_FAILED, LOGOUT_SUCCESS, LOGOUT_START} from './LoginActionTypes'
-import {loginInstance} from '../../../Utils/Services/AxiosLoginInstance';
-import {stateLessOrNot} from "../../../Utils/Helpers/StatelessOrNot";
+import {loginInstance} from 'Utils/Services/AxiosLoginInstance';
+import {stateLessOrNot} from "Utils/Helpers/StatelessOrNot";
 import {getSettingsAction} from "../SettingsActions/SettingsActions";
-import {basePath} from "../../../Utils/Helpers/basePath";
-import {ApiTokens} from "../../../Utils/Services/ApiTokens";
+import {basePath} from "Utils/Helpers/basePath";
+import {ApiTokens} from "Utils/Services/ApiTokens";
 
 
 export const logoutStartAction = () => {
