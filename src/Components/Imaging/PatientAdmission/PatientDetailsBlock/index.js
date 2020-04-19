@@ -55,6 +55,7 @@ const PatientDetailsBlock = ({
 
   const icon = <Close fontSize='small' />;
   const [addressCity, setAddressCity] = useState({});
+  const [POBoxCity, setPOBoxCity] = useState({});
 
   const [selecetedServicesType, setSelecetedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
@@ -155,6 +156,7 @@ const PatientDetailsBlock = ({
         code: patientData.city,
       };
       setAddressCity(defaultAddressCityObj);
+      setPOBoxCity(defaultAddressCityObj);
     }
     if (encounterData) {
       if (encounterData.examination && encounterData.examination.length) {
@@ -504,7 +506,10 @@ const PatientDetailsBlock = ({
                 onClose={() => {
                   setCitiesOpen(false);
                 }}
-                value={addressCity}
+                onChange={(event, newValue) => {
+                  setPOBoxCity(newValue);
+                }}
+                value={POBoxCity}
                 loading={loadingCities}
                 options={cities}
                 getOptionLabel={(option) => option.name}
