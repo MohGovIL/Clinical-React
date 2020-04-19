@@ -466,6 +466,7 @@ const PatientDetailsBlock = ({
               <Controller
                 name={'addressHouseNumber'}
                 control={control}
+                defaultValue={patientData.streetNumber}
                 as={
                   <StyledTextField
                     id={'addressHouseNumber'}
