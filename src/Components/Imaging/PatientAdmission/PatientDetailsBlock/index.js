@@ -328,7 +328,13 @@ const PatientDetailsBlock = ({
           label={'Patient Details'}
         />
         <StyledFormGroup>
-          <Title fontSize={'18px'} variant={'fullWidth'} />
+          <Title
+            fontSize={'18px'}
+            color={'#000b40'}
+            label={t('Accompanying patient')}
+            bold
+          />
+          <StyledDivider variant={'fullWidth'} />
           <Grid
             container
             direction={'row'}
