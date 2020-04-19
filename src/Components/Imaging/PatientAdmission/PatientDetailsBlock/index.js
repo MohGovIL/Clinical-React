@@ -11,6 +11,7 @@ import {
   StyledChip,
 } from './Style';
 import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
+import { normalizeFhirHMO } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirHMO';
 import { useTranslation } from 'react-i18next';
 import Title from 'Assets/Elements/Title';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -67,6 +68,8 @@ const PatientDetailsBlock = ({
 
   const [servicesType, setServicesType] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
+
+  const [HMO, setHMO] = useState({});
 
   const loadingCities = citiesOpen && cities.length === 0;
   const loadingStreets = streetsOpen && streets.length === 0;
@@ -182,9 +185,12 @@ const PatientDetailsBlock = ({
       try {
         if (patientData.managingOrganization) {
           const HMO_Data = await getHMO(patientData.managingOrganization);
-          
+          const normalizedHMO = normalizeFhirHMO(HMO_Data.data);
+          setHMO(normalizedHMO);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     })();
   }, [encounterData, patientData]);
   //Loading services type
@@ -695,16 +701,11 @@ const PatientDetailsBlock = ({
           </Tabs>
           {commitmentAndPaymentTabValue === 0 && (
             <React.Fragment>
-              <Controller
-                name='HMO'
-                as={
-                  <StyledTextField
-                    label={t('HMO')}
-                    id={'commitmentAndPaymentHMO'}
-                  />
-                }
-                defaultValue={patientData.managingOrganization || ''}
-                control={control}
+              <StyledTextField
+                label={t('HMO')}
+                id={'commitmentAndPaymentHMO'}
+                disabled
+                value={HMO.name || ''}
               />
               <StyledTextField
                 required
@@ -712,7 +713,6 @@ const PatientDetailsBlock = ({
                 id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                 type='number'
               />
-
               {/* Add date picker here */}
               {/* <StyledTextInput languageDirection={languageDirection}> */}
               {/* <CustomizedDatePicker
