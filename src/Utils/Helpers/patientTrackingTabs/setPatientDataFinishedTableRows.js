@@ -2,16 +2,16 @@ import {
     BADGE_CELL, BUTTON_CELL,
     LABEL_CELL,
     PERSONAL_INFORMATION_CELL, SELECT_CELL
-} from "../../../Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
+} from "Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes";
 import moment from "moment";
 import "moment/locale/he"
-import {baseRoutePath} from "../baseRoutePath";
-import {getEncountersWithPatients, getValueSet} from "../../Services/FhirAPI";
-import {normalizeFhirEncountersWithPatients} from "../FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
-import normalizeFhirValueSet from "../FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
-import {store} from "../../../index";
-import {setEncounterWithPatientsAction} from "../../../Store/Actions/FhirActions/fhirActions";
-import {FHIR} from "../../Services/FHIR";
+import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
+import {getEncountersWithPatients, getValueSet} from "Utils/Services/FhirAPI";
+import {normalizeFhirEncountersWithPatients} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
+import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
+import {store} from "index";
+import {setEncounterWithPatientsAction} from "Store/Actions/FhirActions/fhirActions";
+import {FHIR} from "Utils/Services/FHIR";
 
 // סיימו טיפול
 export const finishedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {

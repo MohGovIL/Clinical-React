@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import PatientTrackingStyle, {StyledFilterBox, TableRowStyle, StyledTitle} from './Style';
-import StatusFilterBox from "../../../Assets/Elements/StatusFilterBox";
-import CustomizedTable from "../../../Assets/Elements/CustomizedTable";
+import StatusFilterBox from "Assets/Elements/StatusFilterBox";
+import CustomizedTable from "Assets/Elements/CustomizedTable";
 import {connect} from "react-redux";
-import Header from "../../../Assets/Elements/Header";
+import Header from "Assets/Elements/Header";
 import {useTranslation} from "react-i18next";
-import {getMenu} from "../../../Utils/Services/API";
+import {getMenu} from "Utils/Services/API";
 import FilterBox from "./FilterBox";
-import Title from "../../../Assets/Elements/Title";
-import isAllowed from "../../../Utils/Helpers/isAllowed";
-import {getStaticTabsArray} from "../../../Utils/Helpers/patientTrackingTabs/staticTabsArray";
+import Title from "Assets/Elements/Title";
+import isAllowed from "Utils/Helpers/isAllowed";
+import {getStaticTabsArray} from "Utils/Helpers/patientTrackingTabs/staticTabsArray";
 
 
 const PatientTracking = ({location, vertical, history, selectFilter}) => {

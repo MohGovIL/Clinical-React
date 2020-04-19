@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {devicesValue} from "../../../Assets/Themes/BreakPoints";
+import {devicesValue} from "Assets/Themes/BreakPoints";
 
 export const TableRowStyle = styled.div`
   display: flex;

@@ -1,4 +1,4 @@
-import {baseRoutePath} from "./baseRoutePath";
+import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com

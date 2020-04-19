@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {basePath} from '../Helpers/basePath';
+import {basePath} from 'Utils/Helpers/basePath';
 
 const baseURL = basePath();
 /**

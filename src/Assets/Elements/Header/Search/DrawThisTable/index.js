@@ -10,9 +10,9 @@ import {useTranslation} from "react-i18next";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import {StyledLabelName, StyledLabelTZ} from "./Style";
 import TitleValueComponent from "./TitleValueComponent";
-import GenderIcon from "../../../CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
-import maleIcon from "../../../../Images/maleIcon.png";
-import femaleIcon from "../../../../Images/womanIcon.png";
+import GenderIcon from "Assets/Elements/CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
+import maleIcon from "Assets/Images/maleIcon.png";
+import femaleIcon from "Assets/Images/womanIcon.png";
 import AppointmentsPerPatient from "./AppointmentsPerPatient";
 import {
     getCurrentEncounterPerPatient,
@@ -20,16 +20,16 @@ import {
     getNextPrevAppointmentPerPatient,
     getNextPrevEncounterPerPatient, getValueSet,
     requestValueSet
-} from "../../../../../Utils/Services/FhirAPI";
+} from "Utils/Services/FhirAPI";
 import moment, {now} from "moment";
 import normalizeFhirAppointment
-    from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
+    from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
-    from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
-import {FHIR} from "../../../../../Utils/Services/FHIR";
-import {store} from "../../../../../index";
-import {setEncounterAndPatient} from "../../../../../Store/Actions/ActiveActions";
-import {baseRoutePath} from "../../../../../Utils/Helpers/baseRoutePath";
+    from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
+import {FHIR} from "Utils/Services/FHIR";
+import {store} from 'index';
+import {setEncounterAndPatient} from "Store/Actions/ActiveActions";
+import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 import { useHistory } from 'react-router-dom';
 
 const DrawThisTable = ({result, searchParam}) => {
