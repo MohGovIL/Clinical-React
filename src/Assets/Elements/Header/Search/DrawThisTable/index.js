@@ -26,39 +26,94 @@ import normalizeFhirAppointment
     from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
     from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
+import {FHIR} from "Utils/Services/FHIR";
+import {store} from 'index';
+import {setEncounterAndPatient} from "Store/Actions/ActiveActions";
+import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
+import { useHistory } from 'react-router-dom';
 
 const DrawThisTable = ({result, searchParam}) => {
 
     const {t} = useTranslation();
-
+    const ADMISSIONWITHOUTAPPOINTMENT = 0;
+    const ADMISSIONWITHAPPOINTMENT = 1;
     const [expanded, setExpanded] = React.useState('');
     const [nextAppointment, setNextAppointment] = React.useState('');
     const [prevEncounter, setPrevEncounter] = React.useState('');
     const [curEncounter, setCurEncounter] = React.useState('');
     const [encounterStatuses, setEncounterStatuses] = React.useState('');
     const [patientTrackingStatuses, setPatientTrackingStatuses] = React.useState('');
-
+    const [admissionState,setAdmissionState] = React.useState(ADMISSIONWITHAPPOINTMENT)
+    const history = useHistory();
 
     let curTotal = 0;
 
     //let patientTrackingStatuses =  null;
 
+    const handleCreateAppointment = async (patient,nextAppointment) => {
+        let encounterData= null;
+        switch (admissionState) {
+            case ADMISSIONWITHOUTAPPOINTMENT :
+                console.log("admission without appointment");
+                encounterData = await FHIR("Encounter", "doWork", {
+                    functionName: "createNewEncounter",
+                    functionParams: {
+                        facility: store.getState().settings.facility,
+                        practitioner: 'practitioner',
+                        patient: patient,
+                        status: "planned"
+                    }
+                });
+                store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData.data), patient));
+                history.push({
+                    pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                });
+                break;
+            case ADMISSIONWITHAPPOINTMENT:
+                if(nextAppointment) {
+                    let fhirappointment = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment (nextAppointment.data.entry[1].resource ): null;
+                    encounterData = await FHIR("Encounter", "doWork", {
+                        functionName: "createNewEncounter",
+                        functionParams: {
+                            facility: store.getState().settings.facility,
+                            appointment: fhirappointment
+                        }
+                    });
+                    store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData.data), patient));
+                    history.push({
+                        pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                    });
+
+                    console.log("admission with appointment");
+                }
+                break
+        }
+
+    }
 
     const handleTextOfCurrentAppointmentButton  = (curEncounter, nextAppointment) => {
 
         let thereIsEncounterToday = curEncounter && curEncounter.data && curEncounter.data.total >0 ? true : false;
         let nextAppointmetCheckNormelized = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment (nextAppointment.data.entry[1].resource ): null;
-        let theAppointmentIsToday = nextAppointmetCheckNormelized ? (moment(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY")  === moment().format("DD/MM/YYYY") ?true :false ): false;
+        let theAppointmentIsToday = false;
+        if(nextAppointmetCheckNormelized) {
+            theAppointmentIsToday = moment(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
+        }
 
         if(!thereIsEncounterToday)
         {
             if(theAppointmentIsToday)
             {
+                if(admissionState != ADMISSIONWITHAPPOINTMENT) {
+                    setAdmissionState(ADMISSIONWITHAPPOINTMENT);
+                }
                 return t("Patient admission");
             }
             else{
+                if(admissionState != ADMISSIONWITHOUTAPPOINTMENT) {
+                    setAdmissionState(ADMISSIONWITHOUTAPPOINTMENT);
+                }
                 return t("Admission without appointment");
-
             }
         }
         else{
@@ -119,6 +174,10 @@ const DrawThisTable = ({result, searchParam}) => {
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
+    function handleShowAppointmentsAndEncounters(patient, nextAppointment, curEncounter) {
+
+    }
+
     if (result) {
         return (
             result.map((patient, patientIndex) => {
@@ -163,7 +222,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                 />
                                 <StyledBottomLinks>
                                     <StyledHrefButton size={'small'} variant="outlined" color="primary" href="#contained-buttons"
-                                                  disabled= {(nextAppointment && nextAppointment.data && nextAppointment.data.total >0 ) || (curEncounter && curEncounter.data && curEncounter.data.total >0 ) ? false : true}  >
+                                                  disabled= {(nextAppointment && nextAppointment.data && nextAppointment.data.total >0 ) || (curEncounter && curEncounter.data && curEncounter.data.total >0 ) ? false : true}  onClick = {()=>handleShowAppointmentsAndEncounters(patient,nextAppointment,curEncounter)}  >
                                         {t("Encounters and appointments")}
                                     </StyledHrefButton>
                                     <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
@@ -172,7 +231,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                     </StyledHrefButton>
 
                                     <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
-                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false}  >
+                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false} onClick = {()=>handleCreateAppointment(patient,nextAppointment)}  >
                                          {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment)}
                                     </StyledHrefButton>
 
