@@ -191,7 +191,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment.utc(encounter.startTime).format('DD-MM-YYYY')
+                        label: moment.utc(encounter.startTime).format('DD/MM/YYYY')
                     });
                     break;
                 default:
