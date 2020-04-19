@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {ExpansionPanelDetails, ExpansionPanelSummary} from "@material-ui/core";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import GenderIcon from "../../../CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
+import GenderIcon from "Assets/Elements/CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon";
 import Icon from "@material-ui/core/Icon";
 import TitleValueComponent from "./TitleValueComponent";
 import Box from "@material-ui/core/Box";
@@ -82,8 +82,8 @@ export const StyledLabelAppointment = styled.label`
     height: 22px;*/
     margin-top: 10px;
     label{
-        margin-left: 5px;
-        margin-right: -12px;
+        margin-left: 10px;
+        margin-right: 0px;
     }
     span {
         width: 86px;

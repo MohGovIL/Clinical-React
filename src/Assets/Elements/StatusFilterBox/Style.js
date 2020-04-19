@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import AppBar from "@material-ui/core/AppBar";
-import {devicesValue} from "../../Themes/BreakPoints";
+import {devicesValue} from "Assets/Themes/BreakPoints";
 
 export default styled(AppBar)`
   z-index: 0;

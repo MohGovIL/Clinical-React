@@ -7,8 +7,8 @@ import StyledSearch, {
 } from './Style';
 import SearchInput from "./SearchInput";
 import Icon from "./Icon/index";
-import search from '../../../Images/search.png';
-import {searchPatients} from "../../../../Utils/Services/FhirAPI";
+import search from 'Assets/Images/search.png';
+import {searchPatients} from "Utils/Services/FhirAPI";
 import DrawThisTable from "./DrawThisTable";
 import {Paper} from "@material-ui/core";
 import IconValueComponent from "./DrawThisTable/IconValueComponent";
@@ -17,8 +17,8 @@ import {StyledLabelName, StyledValueComponent} from "./DrawThisTable/Style";
 import {useTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import PaperContainerComponent from "./DrawThisTable/PaperContainerComponent";
-import CustomizedTableButtonCell from "../../CustomizedTable/CustomizedTableButtonCell";
-import StyledButton from "../../CustomizedTable/CustomizedTableButton/Style";
+import CustomizedTableButtonCell from "Assets/Elements/CustomizedTable/CustomizedTableButtonCell";
+import StyledButton from "Assets/Elements/CustomizedTable/CustomizedTableButton/Style";
 import PopupNewPatient from "../../PopupComponents/PopupNewPatient";
 
 

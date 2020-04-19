@@ -1,4 +1,4 @@
-import {GET_SETTINGS, GET_SETTINGS_SUCCESS, GET_SETTINGS_FAILED} from "../Actions/SettingsActions/SettingsActionTypes";
+import {GET_SETTINGS, GET_SETTINGS_SUCCESS, GET_SETTINGS_FAILED} from "Store/Actions/SettingsActions/SettingsActionTypes";
 
 const INITIAL_STATE = {
     STATUS: null,
