@@ -159,6 +159,8 @@ export const getOrganizationTypeKupatHolim = () => {
     return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=71`);
 };
 
+export const getHMO = HmoId => fhirTokenInstance().get(`${fhirBasePath}/Organization/${HmoId}`);
+
 export const getNextPrevAppointmentPerPatient = (date, patient,prev) =>{
     //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
     try {
