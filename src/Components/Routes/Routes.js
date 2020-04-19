@@ -1,12 +1,12 @@
 import React from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
-import PrivateRoute from '../PrivateRoute/PrivateRoute';
+import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 import {connect} from 'react-redux';
-import Login from "../Login/Login";
-import LoginWithCSRF from "../Login/LoginWithCSRF";
-import InitApp from "../Generic/InitApp/InitApp";
-import {stateLessOrNot} from "../../Utils/Helpers/StatelessOrNot";
-import {baseRoutePath} from "../../Utils/Helpers/baseRoutePath";
+import Login from "Components/Login/Login";
+import LoginWithCSRF from "Components/Login/LoginWithCSRF";
+import InitApp from "Components/Generic/InitApp/InitApp";
+import {stateLessOrNot} from "Utils/Helpers/StatelessOrNot";
+import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 
 const Routes = ({isAuth}) => {
     return (

@@ -1,12 +1,12 @@
 import {
     SET_STATUS_FILTER_BOX_VALUE
-} from "../Actions/PatientTrackingActions/PatientTrackingTypes";
+} from "Store/Actions/PatientTrackingActions/PatientTrackingTypes";
 import Moment from "moment";
 import {
     SET_FILTER_DATE,
     SET_ORGANIZATION_FILTER_VALUE,
     SET_SERVICE_TYPE_FILTER_VALUE
-} from "../Actions/FilterActions/FilterActionsTypes";
+} from "Store/Actions/FilterActions/FilterActionsTypes";
 
 const INITIAL_STATE = {
     STATUS: '',

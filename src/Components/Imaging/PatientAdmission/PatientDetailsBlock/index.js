@@ -26,13 +26,13 @@ import {
   CheckBoxOutlineBlankOutlined,
 } from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { getCities, getStreets } from '../../../../Utils/Services/API';
+import { getCities, getStreets } from 'Utils/Services/API';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import moment from 'moment';
-import { getValueSet } from '../../../../Utils/Services/FhirAPI';
-import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
+import { getValueSet } from 'Utils/Services/FhirAPI';
+import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import {
   Checkbox,
   ListItemText,

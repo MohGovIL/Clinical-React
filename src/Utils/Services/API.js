@@ -1,5 +1,5 @@
-import {tokenInstanceGenerator} from './AxiosWithTokenInstance';
-import {ApiTokens} from './ApiTokens';
+import {tokenInstanceGenerator} from 'Utils/Services/AxiosWithTokenInstance';
+import {ApiTokens} from 'Utils/Services/ApiTokens';
 
 /**
  * @author Idan Gigi gigiidan@gmail.com

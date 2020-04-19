@@ -6,7 +6,7 @@ import {StyledDatePicker, StyledKeyboardDatePicker, GlobalStyledDatePicker} from
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {IconButton} from "@material-ui/core";
 import {ChevronLeft, ChevronRight} from "@material-ui/icons";
-import {setFilterDateAction} from "../../../Store/Actions/FilterActions/FilterActions";
+import {setFilterDateAction} from "Store/Actions/FilterActions/FilterActions";
 
 import 'moment/locale/en-gb';
 import 'moment/locale/he';

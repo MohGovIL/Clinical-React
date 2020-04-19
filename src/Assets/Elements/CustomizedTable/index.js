@@ -2,7 +2,7 @@ import React from 'react';
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {useTranslation} from "react-i18next";
-import {TableBody} from "@material-ui/core";
+import TableBody from "@material-ui/core/TableBody";
 import CustomizedTableHeaderRow from "./CustomizedTableHeaderRow";
 import CustomizedTableHeaderCell from "./CustomizedTableHeaderCell";
 import StyledCustomizedTable from "./Style";
@@ -86,7 +86,7 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                                         key={tableCellItemIndex}/>;
                                                 default:
                                                     console.log('Not supported component check your components name');
-                                                    break;
+                                                    return null;
                                             }
                                         }
                                     )}

@@ -13,26 +13,26 @@ import {
     StyledEmptyIconEdit,
     StyledGlobalStyle
 } from "./Style";
-import maleIcon from '../../../../Assets/Images/maleIcon.png';
-import femaleIcon from '../../../../Assets/Images/womanIcon.png';
-import CustomizedTableButton from '../../../../Assets/Elements/CustomizedTable/CustomizedTableButton';
-import ageCalculator from "../../../../Utils/Helpers/ageCalculator";
+import maleIcon from 'Assets/Images/maleIcon.png';
+import femaleIcon from 'Assets/Images/womanIcon.png';
+import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
+import ageCalculator from "Utils/Helpers/ageCalculator";
 import {Avatar, IconButton, Divider, Typography, TextField, MenuItem, InputAdornment} from '@material-ui/core';
-import CustomizedDatePicker from "../../../../Assets/Elements/CustomizedDatePicker";
+import CustomizedDatePicker from "Assets/Elements/CustomizedDatePicker";
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import {updatePatientData} from "../../../../Utils/Services/FhirAPI";
+import {updatePatientData} from "Utils/Services/FhirAPI";
 import {
     StyledFormGroup,
     StyledPatientDetails
-} from "../../../../Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
-import {getOrganizationTypeKupatHolim} from "../../../../Utils/Services/FhirAPI";
-import {normalizeValueData} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
+} from "Components/Imaging/PatientAdmission/PatientDetailsBlock/Style";
+import {getOrganizationTypeKupatHolim} from "Utils/Services/FhirAPI";
+import {normalizeValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import {connect} from "react-redux";
-import {setPatientDataAfterSave} from "../../../../Store/Actions/FhirActions/fhirActions";
-import normalizeFhirPatient from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
-import {getCellPhoneRegexPattern, getEmailRegexPattern} from "../../../../Utils/Helpers/validation/patterns";
-
+import {setPatientDataAfterSave} from "Store/Actions/FhirActions/fhirActions";
+import normalizeFhirPatient from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
+import {getCellPhoneRegexPattern, getEmailRegexPattern} from "Utils/Helpers/validation/patterns";
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit_mode, languageDirection, formatDate, setPatientDataAfterSave, priority}) => {
 

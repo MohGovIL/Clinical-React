@@ -1,7 +1,7 @@
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import styled from 'styled-components';
-import { devicesValue } from '../../../../Assets/Themes/BreakPoints';
-import { Divider, TextField, Switch, Chip } from '@material-ui/core';
+import { devicesValue } from 'Assets/Themes/BreakPoints';
+import { Divider, TextField, Chip } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
 export const StyledDivider = styled(Divider)`

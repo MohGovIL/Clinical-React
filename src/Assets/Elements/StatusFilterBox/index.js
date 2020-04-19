@@ -1,10 +1,10 @@
 import React from 'react';
 import StyledAppBar from './Style';
 import StatusFilterBoxTabs from "./StatusFilterBoxTabs";
-import {devicesValue} from "../../Themes/BreakPoints";
+import {devicesValue} from "Assets/Themes/BreakPoints";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {connect} from 'react-redux';
-import {setStatusFilterBoxValueAction} from "../../../Store/Actions/PatientTrackingActions/PatienTrackingActions";
+import {setStatusFilterBoxValueAction} from "Store/Actions/PatientTrackingActions/PatienTrackingActions";
 
 /**
  * @author Idan Gigi gigiidan@gmail.com

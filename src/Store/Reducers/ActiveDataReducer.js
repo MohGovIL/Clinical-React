@@ -2,7 +2,7 @@ import {
   SET_ACTIVE_ENCOUNTER,
   SET_ACTIVE_PATIENT,
   SET_ACTIVE_ENCOUNTER_AND_PATIENT,
-} from '../Actions/ActiveActions/ActiveActionsTypes';
+} from 'Store/Actions/ActiveActions/ActiveActionsTypes';
 
 const INITIAL_STATE = {
   STATUS: '',

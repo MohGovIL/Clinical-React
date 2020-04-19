@@ -1,6 +1,6 @@
 import React from 'react';
 import TableCell from "@material-ui/core/TableCell";
-import CustomizedSelect from "../../CustomizedSelect";
+import CustomizedSelect from "Assets/Elements/CustomizedSelect";
 
 const CustomizedTableSelectCell = ({padding, align, background_color, icon_color, defaultValue, text_color, options, onChange, langDirection, mode}) => {
     return (

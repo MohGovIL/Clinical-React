@@ -1,6 +1,6 @@
 import React from 'react';
 import {Route, Redirect} from 'react-router-dom';
-import {baseRoutePath} from "../../Utils/Helpers/baseRoutePath";
+import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 
 const PrivateRoute = ({component: Component, isAuth, ...rest}) => {
     return (
