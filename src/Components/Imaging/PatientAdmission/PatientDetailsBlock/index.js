@@ -536,6 +536,7 @@ const PatientDetailsBlock = ({
                   <StyledTextField
                     id={'POBoxPostalCode'}
                     label={t('Postal code')}
+                    InputLabelProps={{ shrink: patientData.postalCode && true }}
                   />
                 }
                 control={control}
