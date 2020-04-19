@@ -364,7 +364,7 @@ const PatientDetailsBlock = ({
               inputRef={register}
               name={'escortMobilePhone'}
               id={'escortMobilePhone'}
-              label={t('Escort cell phone ')}
+              label={t('Escort cell phone')}
             />
           </StyledFormGroup>
         ) : null}
