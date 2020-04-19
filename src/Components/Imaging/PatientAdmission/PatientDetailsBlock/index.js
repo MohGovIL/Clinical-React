@@ -564,7 +564,7 @@ const PatientDetailsBlock = ({
             }
             target={'_blank'}
             rel='noopener noreferrer'>
-            {t('click here')}
+            {t('Click here')}
           </a>
         </span>
         <Title
