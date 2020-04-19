@@ -174,6 +174,10 @@ const DrawThisTable = ({result, searchParam}) => {
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
+    function handleShowAppointmentsAndEncounters(patient, nextAppointment, curEncounter) {
+
+    }
+
     if (result) {
         return (
             result.map((patient, patientIndex) => {
@@ -218,7 +222,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                 />
                                 <StyledBottomLinks>
                                     <StyledHrefButton size={'small'} variant="outlined" color="primary" href="#contained-buttons"
-                                                  disabled= {(nextAppointment && nextAppointment.data && nextAppointment.data.total >0 ) || (curEncounter && curEncounter.data && curEncounter.data.total >0 ) ? false : true}  >
+                                                  disabled= {(nextAppointment && nextAppointment.data && nextAppointment.data.total >0 ) || (curEncounter && curEncounter.data && curEncounter.data.total >0 ) ? false : true}  onClick = {()=>handleShowAppointmentsAndEncounters(patient,nextAppointment,curEncounter)}  >
                                         {t("Encounters and appointments")}
                                     </StyledHrefButton>
                                     <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
