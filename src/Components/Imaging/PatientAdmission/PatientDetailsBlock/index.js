@@ -677,7 +677,8 @@ const PatientDetailsBlock = ({
                   <StyledTextField
                     error={errors.selectTest}
                     helperText={
-                      errors.selectTest && 'יש לבחור את הבדיקה המבוצעת בביקור'
+                      errors.selectTest &&
+                      t('The test performed during the visit must be selected')
                     }
                     required
                     {...params}
@@ -791,7 +792,7 @@ const PatientDetailsBlock = ({
                       error={errors.commitmentAndPaymentCommitmentDate && true}
                       helperText={
                         errors.commitmentAndPaymentCommitmentDate &&
-                        'יש להזין תאריך שווה או קטן מהיום'
+                        t('An equal date or less than today must be entered')
                       }
                     />
                   </MuiPickersUtilsProvider>
@@ -833,7 +834,7 @@ const PatientDetailsBlock = ({
                       }
                       helperText={
                         errors.commitmentAndPaymentCommitmeValidity &&
-                        'יש להזין תאריך שווה או גדול מהיום'
+                        t('An equal or greater date must be entered than today')
                       }
                     />
                   </MuiPickersUtilsProvider>
