@@ -98,10 +98,10 @@ export const StyledPatientDetails = styled.div`
   margin: 0 25px 0 25px;
   z-index: ${props => props.edit ? '0' : '2'};
   height: calc(100vh - 88px - 32px);
-  overflow-x: scroll;
+  overflow-y: scroll;
   @media (min-width: ${devicesValue.desktop}px) {
     flex-basis: 50%;
-    margin: 0 38px 0 38px;
+    margin: 120px 38px 0 38px;
   }
   input[type=file] {
     display: none;

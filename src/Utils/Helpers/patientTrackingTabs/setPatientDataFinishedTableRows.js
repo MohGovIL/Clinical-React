@@ -11,12 +11,14 @@ import {normalizeFhirEncountersWithPatients} from "Utils/Helpers/FhirEntities/no
 import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import {store} from "index";
 import {setEncounterWithPatientsAction} from "Store/Actions/FhirActions/fhirActions";
+import {FHIR} from "Utils/Services/FHIR";
 
 // סיימו טיפול
 export const finishedTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const statuses = ['finished'];
-        const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+       // const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        const encountersWithPatients = await FHIR('Encounter','doWork',{functionName:'getEncountersWithPatients',functionParams:{summary:false, date:selectFilter.filter_date, serviceProvider:selectFilter.filter_organization, serviceType:selectFilter.filter_service_type, statuses:statuses}});
         const [patients, encounters] = normalizeFhirEncountersWithPatients(encountersWithPatients.data.entry);
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
@@ -24,7 +26,9 @@ export const finishedTabActiveFunction = async function (setTable, setTabs, hist
             prevTabsClone[prevTabsClone.findIndex(prevTabsObj => prevTabsObj.tabValue === this.tabValue)].count = encountersWithPatients.data.total;
             return prevTabsClone;
         });
-        const {data: {expansion: {contains}}} = await getValueSet('encounter_statuses');
+       // const {data: {expansion: {contains}}} = await getValueSet('encounter_statuses');
+        const {data: {expansion: {contains}}} =  await FHIR('ValueSet','doWork',{"functionName":'getValueSet','functionParams':{id:'encounter_statuses'}});
+
         let options = [];
         for (let status of contains) {
             options.push(normalizeFhirValueSet(status));
@@ -42,7 +46,8 @@ export const finishedTabActiveFunction = async function (setTable, setTabs, hist
 export const finishedTabNotActiveFunction = async function (setTabs, selectFilter) {
     try {
         const statuses = ['finished'];
-        const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        //const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
+        const encountersWithPatientsSummaryCount = await FHIR('Encounter','doWork',{functionName:'getEncountersWithPatients',functionParams:{summary:true, date:selectFilter.filter_date, serviceProvider:selectFilter.filter_organization, serviceType:selectFilter.filter_service_type, statuses:statuses}});
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
             const prevTabsClone = [...prevTabs];
