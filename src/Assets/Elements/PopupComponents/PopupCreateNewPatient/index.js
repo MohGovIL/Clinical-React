@@ -13,6 +13,7 @@ import {getOrganizationTypeKupatHolim, getValueSet} from "Utils/Services/FhirAPI
 import {normalizeValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import {emptyArrayAll} from "Utils/Helpers/emptyArray";
 import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
+import {FHIR} from "../../../../Utils/Services/FHIR";
 
 const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate}) => {
     const {t} = useTranslation();
@@ -43,50 +44,66 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     //useEffect block
     useEffect(() => {
         //Load id types list
-        (async () => {
+        (() => {
             try {
-                const {data: {expansion: {contains}}} = await getValueSet('identifier_type_list');
-                let options = emptyArrayAll(t("Choose"));
-                for (let status of contains) {
-                    options.push(normalizeFhirValueSet(status));
-                }
-                setIdTypesList(options);
-            } catch (err) {
-                console.log(err);
+                FHIR('ValueSet', 'doWork', {
+                    "functionName": 'getValueSet',
+                    'functionParams': {id: 'identifier_type_list'}
+                }).then(type_list => {
+                    const {data: {expansion: {contains}}} = type_list;
+                    let options = emptyArrayAll(t("Choose"));
+                    for (let status of contains) {
+                        options.push(normalizeFhirValueSet(status));
+                    }
+                    setIdTypesList(options);
+                });
+            } catch (e) {
+                console.log(e);
             }
         })();
 
         //Load KupatHolim list
-        let array = emptyArrayAll(t("Choose"));
-        (async () => {
+        (() => {
             try {
-                const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
-                for (let entry of dataServiceType) {
-                    if (entry.resource !== undefined) {
-                        entry.resource.name = t(entry.resource.name);
-                        let setLabelKupatHolim = normalizeValueData(entry.resource);
-                        array.push(setLabelKupatHolim);
+                FHIR('Organization', 'doWork', {
+                    "functionName": 'getOrganizationTypeKupatHolim',
+                    //'functionParams': {id: 'gender'}
+                }).then(kupatHolim_list => {
+                    const {data : {entry}} = kupatHolim_list;
+                    let array = emptyArrayAll(t("Choose"));
+                    for (let row of entry) {
+                        if (row.resource !== undefined) {
+                            row.resource.name = t(row.resource.name);
+                            let setLabelKupatHolim = normalizeValueData(row.resource);
+                            array.push(setLabelKupatHolim);
+                        }
                     }
-                }
-                setKupatHolimList(array);
+                    setKupatHolimList(array);
+                });
             } catch (e) {
-                console.log("Error during load list of kupat holim");
+                console.log(e);
             }
         })();
 
         //Load gender list
-        (async () => {
+        (() => {
             try {
-                const {data: {expansion: {contains}}} = await getValueSet('gender');
-                let options = emptyArrayAll(t("Choose"));
-                for (let status of contains) {
-                    options.push(normalizeFhirValueSet(status));
-                }
-                setGenderList(options);
-            } catch (err) {
-                console.log(err);
+                FHIR('ValueSet', 'doWork', {
+                    "functionName": 'getValueSet',
+                    'functionParams': {id: 'gender'}
+                }).then(gender_list => {
+                    const {data: {expansion: {contains}}} = gender_list;
+                    let options = emptyArrayAll(t("Choose"));
+                    for (let status of contains) {
+                        options.push(normalizeFhirValueSet(status));
+                    }
+                    setGenderList(options);
+                });
+            } catch (e) {
+                console.log(e);
             }
         })();
+
     }, []);
     //end of useEffect block
 
@@ -123,7 +140,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
             'label': t('Save patient'),
             'variant': "text",
             'color': "primary",
-            'other_props': {'type': "submit", 'form': "createNewPatient"}
+            'other': {'type': "submit", 'form': "createNewPatient"}
         },
         {
             'label': t('Patient Admission'),
