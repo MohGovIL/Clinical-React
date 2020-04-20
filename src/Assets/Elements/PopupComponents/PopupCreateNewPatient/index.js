@@ -113,7 +113,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
             'label': t('Save patient'),
             'variant': "text",
             'color': "primary",
-            'other_props': {'type': "submit", 'form': "createNewPatient"}
+            'other': {'type': "submit", 'form': "createNewPatient"}
         },
         {
             'label': t('Patient Admission'),
