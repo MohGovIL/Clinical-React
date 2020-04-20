@@ -17,7 +17,7 @@ export const waitingForResultsTabActiveFunction = async function (setTable, setT
     try {
         const statuses = ['waiting-for-results'];
       //  const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-        const encountersWithPatients =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses}});
+        const encountersWithPatients =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":false, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses}});
 
         const [patients, encounters] = normalizeFhirEncountersWithPatients(encountersWithPatients.data.entry);
         setTabs(prevTabs => {
@@ -48,7 +48,7 @@ export const waitingForResultsTabNotActiveFunction = async function (setTabs, se
     try {
         const statuses = ['waiting-for-results'];
        // const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-          const encountersWithPatientsSummaryCount =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":true,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses}});
+          const encountersWithPatientsSummaryCount =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":true, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses}});
 
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
