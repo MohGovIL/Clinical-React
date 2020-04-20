@@ -74,13 +74,17 @@ const PatientDetailsBlock = ({
 
   const additionnalDocumentRef = React.useRef();
 
+  const MAX_SIZE = 2;
+
+  const UNIT = {type: 'MB', valueInBytes: 1000000};
+
   const toFix1 = (number) => {
     return Number.parseFloat(number).toFixed(1);
   };
 
   const calcSizeIfMoreThan2MB = (size) => {
-    const SizeInMB = size / 1000000;
-    if (SizeInMB < 2) {
+    const SizeInMB = size / UNIT.valueInBytes;
+    if (SizeInMB < MAX_SIZE) {
       return [false, toFix1(SizeInMB)];
     }
     return [true, toFix1(SizeInMB)];
@@ -667,7 +671,7 @@ const PatientDetailsBlock = ({
               setPendingValue(selecetedServicesType);
               setServicesTypeOpen(true);
             }}
-            onClose={event => {
+            onClose={(event) => {
               setServicesTypeOpen(false);
             }}
             value={pendingValue}
@@ -867,7 +871,7 @@ const PatientDetailsBlock = ({
           <Title
             fontSize={'14px'}
             color={'#000b40'}
-            label={t('Uploading documents with a maximum size of up to 2MB')}
+            label={t(`Uploading documents with a maximum size of up to ${MAX_SIZE}${UNIT.type}`)}
           />
           <StyledDivider variant='fullWidth' />
           {/* ReferralRef  */}
@@ -979,7 +983,7 @@ const PatientDetailsBlock = ({
                       onChangeFileHandler(
                         additionnalDocumentRef,
                         setAdditionnalDocumentFile,
-                        nameOfAddionalDocumentFile || "Document1",
+                        nameOfAddionalDocumentFile || 'Document1',
                       )
                     }
                   />
