@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import matchSorter from 'match-sorter';
+import { getCellPhoneRegexPattern } from 'Utils/Helpers/validation/patterns';
 import {
   StyledForm,
   StyledPatientDetails,
@@ -28,7 +29,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from 'Utils/Services/API';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
@@ -48,8 +49,7 @@ const PatientDetailsBlock = ({
   formatDate,
 }) => {
   const { t } = useTranslation();
-  const { register, control, handleSubmit } = useForm({
-    submitFocusError: true,
+  const { control, handleSubmit, errors, setValue } = useForm({
     mode: 'onBlur',
   });
 
@@ -73,24 +73,47 @@ const PatientDetailsBlock = ({
   const loadingStreets = streetsOpen && streets.length === 0;
   const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
 
+  const selectExaminationOnChangeHandler = (event, newValue) => {
+    setPendingValue(newValue);
+  };
+
+  const selectExaminationOnOpenHandler = () => {
+    setPendingValue(selecetedServicesType);
+    setServicesTypeOpen(true);
+  };
+
+  const selectExaminationOnCloseHandelr = () => {
+    setValue('selectTest', selecetedServicesType, true);
+    setServicesTypeOpen(false);
+  };
+
   const [
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,
-  ] = useState(undefined);
+  ] = useState(new Date());
 
   const [
     commitmentAndPaymentCommitmeValidity,
     setCommitmentAndPaymentCommitmeValidity,
-  ] = useState(undefined);
+  ] = useState(new Date());
 
-  const commitmentAndPaymentCommitmeValidityOnChangeHandler = (date) => {
-    setCommitmentAndPaymentCommitmeValidity(date);
+  const valdiatorDate = (date, type) => {
+    switch (type) {
+      case 'before':
+        return moment(date).isSameOrBefore(moment(new Date()));
+
+      case 'after':
+        return moment(date).isSameOrAfter(moment(new Date()));
+
+      default:
+        return false;
+    }
   };
 
-  const commitmentAndPaymentCommitmentDateOnChangeHandler = (date) => {
+  const dateOnChangeHandler = (date, valueName, set) => {
     try {
-      // let newBirthDate = date.format(formatDate).toString();
-      setCommitmentAndPaymentCommitmentDate(date.format(formatDate).toString());
+      setValue(valueName, date, true);
+      set(date);
     } catch (e) {
       console.log('Error: ' + e);
     }
@@ -353,7 +376,7 @@ const PatientDetailsBlock = ({
             />
           </Grid>
         </StyledFormGroup>
-        {isEscorted ? (
+        {isEscorted && (
           <StyledFormGroup>
             <Title
               fontSize={'18px'}
@@ -362,20 +385,27 @@ const PatientDetailsBlock = ({
               bold
             />
             <StyledDivider variant={'fullWidth'} />
-            <StyledTextField
-              inputRef={register}
+            <Controller
+              as={<StyledTextField label={t('Escort name')} />}
               name={'escortName'}
-              id={'escortName'}
-              label={t('Escort name')}
+              control={control}
+              defaultValue=''
             />
-            <StyledTextField
-              inputRef={register}
+            <Controller
+              as={<StyledTextField label={t('Escort cell phone')} />}
               name={'escortMobilePhone'}
-              id={'escortMobilePhone'}
-              label={t('Escort cell phone')}
+              control={control}
+              defaultValue=''
+              rules={{
+                pattern: getCellPhoneRegexPattern(),
+              }}
+              error={errors.escortMobilePhone}
+              helperText={
+                errors.escortMobilePhone && t('The number entered is incorrect')
+              }
             />
           </StyledFormGroup>
-        ) : null}
+        )}
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
@@ -489,9 +519,13 @@ const PatientDetailsBlock = ({
                   <StyledTextField
                     id={'addressPostalCode'}
                     label={t('Postal code')}
+                    type='number'
                   />
                 }
+                rules={{ maxLength: { value: 7 } }}
                 control={control}
+                error={errors.addressPostalCode}
+                helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
               />
             </React.Fragment>
           ) : (
@@ -597,75 +631,94 @@ const PatientDetailsBlock = ({
               marginRight={'40px'}
             />
           </Grid>
-          <Autocomplete
-            filterOptions={filterOptions}
-            multiple
-            noOptionsText={t('No Results')}
-            loadingText={t('Loading')}
-            open={servicesTypeOpen}
-            loading={loadingServicesType}
-            onOpen={() => {
-              setPendingValue(selecetedServicesType);
-              setServicesTypeOpen(true);
+          <Controller
+            name='selectTest'
+            control={control}
+            rules={{
+              validate: {
+                value: (value) => value && value.length > 0,
+              },
             }}
-            onClose={(event) => {
-              setServicesTypeOpen(false);
-            }}
-            value={pendingValue}
-            onChange={(event, newValue) => {
-              setPendingValue(newValue);
-            }}
-            disableCloseOnSelect
-            renderTags={() => null}
-            renderOption={(option, state) => (
-              <Grid container justify='flex-end' alignItems='center'>
-                <Grid item xs={3}>
-                  <Checkbox
-                    color='primary'
-                    icon={<CheckBoxOutlineBlankOutlined />}
-                    checkedIcon={<CheckBox />}
-                    checked={state.selected}
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText>{option.reasonCode.code}</ListItemText>
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.serviceType.name)} />
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.reasonCode.name)} />
-                </Grid>
-              </Grid>
-            )}
-            ListboxComponent={ListboxComponent}
-            ListboxProps={{
-              pendingValue: pendingValue,
-              setSelecetedServicesType: setSelecetedServicesType,
-              setClose: setServicesTypeOpen,
-            }}
-            options={servicesType}
-            renderInput={(params) => (
-              <StyledTextField
-                required
-                {...params}
-                label={t('Select test')}
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <React.Fragment>
-                      <InputAdornment position={'end'}>
-                        {loadingServicesType ? (
-                          <CircularProgress color={'inherit'} size={20} />
-                        ) : null}
-                        {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
-                      </InputAdornment>
-                    </React.Fragment>
-                  ),
+            onChangeName={selectExaminationOnChangeHandler}
+            as={
+              <Autocomplete
+                filterOptions={filterOptions}
+                multiple
+                noOptionsText={t('No Results')}
+                loadingText={t('Loading')}
+                open={servicesTypeOpen}
+                loading={loadingServicesType}
+                onOpen={selectExaminationOnOpenHandler}
+                onClose={selectExaminationOnCloseHandelr}
+                // onOpen={() => {
+                //   setPendingValue(selecetedServicesType);
+                //   setServicesTypeOpen(true);
+                // }}
+                // onClose={(event) => {
+                //   setServicesTypeOpen(false);
+                // }}
+                value={pendingValue}
+                onChange={selectExaminationOnChangeHandler}
+                disableCloseOnSelect
+                renderTags={() => null}
+                renderOption={(option, state) => (
+                  <Grid container justify='flex-end' alignItems='center'>
+                    <Grid item xs={3}>
+                      <Checkbox
+                        color='primary'
+                        icon={<CheckBoxOutlineBlankOutlined />}
+                        checkedIcon={<CheckBox />}
+                        checked={state.selected}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText>{option.reasonCode.code}</ListItemText>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText primary={t(option.serviceType.name)} />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText primary={t(option.reasonCode.name)} />
+                    </Grid>
+                  </Grid>
+                )}
+                ListboxComponent={ListboxComponent}
+                ListboxProps={{
+                  pendingValue: pendingValue,
+                  setSelecetedServicesType: setSelecetedServicesType,
+                  setClose: setServicesTypeOpen,
+                  setValue: setValue,
                 }}
+                options={servicesType}
+                renderInput={(params) => (
+                  <StyledTextField
+                    error={errors.selectTest}
+                    helperText={
+                      errors.selectTest &&
+                      t('The test performed during the visit must be selected')
+                    }
+                    required
+                    {...params}
+                    label={t('Select test')}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <React.Fragment>
+                          <InputAdornment position={'end'}>
+                            {loadingServicesType ? (
+                              <CircularProgress color={'inherit'} size={20} />
+                            ) : null}
+                            {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
+                          </InputAdornment>
+                        </React.Fragment>
+                      ),
+                    }}
+                  />
+                )}
               />
-            )}
+            }
           />
+
           <Grid container direction='row' wrap='wrap'>
             {selecetedServicesType.map((selected, selectedIndex) => (
               <StyledChip
@@ -722,68 +775,89 @@ const PatientDetailsBlock = ({
                 id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                 type='number'
               />
+              <Controller
+                name='commitmentAndPaymentCommitmentDate'
+                rules={{
+                  validate: {
+                    value: (value) => valdiatorDate(value, 'before'),
+                  },
+                }}
+                control={control}
+                as={
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
+                    <StyledKeyboardDatePicker
+                      disableToolbar
+                      autoOk
+                      variant='inline'
+                      format={formatDate}
+                      mask={formatDate}
+                      margin='normal'
+                      required
+                      id='commitmentAndPaymentCommitmentDate'
+                      label={t('Commitment date')}
+                      value={commitmentAndPaymentCommitmentDate}
+                      onChange={(date) =>
+                        dateOnChangeHandler(
+                          date,
+                          'commitmentAndPaymentCommitmentDate',
+                          setCommitmentAndPaymentCommitmentDate,
+                        )
+                      }
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      error={errors.commitmentAndPaymentCommitmentDate && true}
+                      helperText={
+                        errors.commitmentAndPaymentCommitmentDate &&
+                        t('An equal date or less than today must be entered')
+                      }
+                    />
+                  </MuiPickersUtilsProvider>
+                }
+              />
+              <Controller
+                name='commitmentAndPaymentCommitmeValidity'
+                control={control}
+                rules={{
+                  validate: {
+                    value: (value) => valdiatorDate(value, 'after'),
+                  },
+                }}
+                as={
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
+                    <StyledKeyboardDatePicker
+                      required
+                      autoOk
+                      mask={formatDate}
+                      disableToolbar
+                      variant='inline'
+                      format={formatDate}
+                      margin='normal'
+                      id='commitmentAndPaymentCommitmeValidity'
+                      label={t('Commitment validity')}
+                      value={commitmentAndPaymentCommitmeValidity}
+                      onChange={(date) =>
+                        dateOnChangeHandler(
+                          date,
+                          'commitmentAndPaymentCommitmeValidity',
+                          setCommitmentAndPaymentCommitmeValidity,
+                        )
+                      }
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      error={
+                        errors.commitmentAndPaymentCommitmeValidity && true
+                      }
+                      helperText={
+                        errors.commitmentAndPaymentCommitmeValidity &&
+                        t('An equal or greater date must be entered than today')
+                      }
+                    />
+                  </MuiPickersUtilsProvider>
+                }
+              />
 
-              {/* Add date picker here */}
-              {/* <StyledTextInput languageDirection={languageDirection}> */}
-              {/* <CustomizedDatePicker
-                  PickerProps={{
-                    id: 'asdasdas',
-                    format: 'DD/MM/YYYY',
-                    name: 'commitmentDate',
-                    // required: true,
-                    disableToolbar: false,
-                    label: t('Commitment date'),
-                    inputValue: commitmentAndPaymentCommitmentDate,
-                    mask: { formatDate },
-                    // InputProps: {
-                    //     disableUnderline: edit_mode === 1 ? false : true,
-                    // },
-                    disableFuture: true,
-                    // color: edit_mode === 1 ? "primary" : 'primary',
-                    // disabled: edit_mode === 1 ? false : true,
-                    variant: 'inline',
-                    inputVariant: 'standard',
-                    onChange: commitmentAndPaymentCommitmentDateOnChangeHandler,
-                    autoOk: true,
-                    // error: errors.birthDate ? true : false,
-                    // helperText: errors.birthDate ? t("Date must be in a date format") : null,
-                  }}
-                  CustomizedProps={{
-                    keyBoardInput: true,
-                    showNextArrow: false,
-                    showPrevArrow: false,
-                  }}
-                /> */}
-              <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
-                <StyledKeyboardDatePicker
-                  disableToolbar
-                  variant='inline'
-                  format={formatDate}
-                  margin='normal'
-                  required
-                  id='commitmentAndPaymentCommitmentDate'
-                  label={t('Commitment date')}
-                  value={commitmentAndPaymentCommitmentDate}
-                  onChange={commitmentAndPaymentCommitmentDateOnChangeHandler}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
-                <StyledKeyboardDatePicker
-                  required
-                  disableToolbar
-                  variant='inline'
-                  format={formatDate}
-                  margin='normal'
-                  id='commitmentAndPaymentCommitmeValidity'
-                  label={t('Commitment validity')}
-                  value={commitmentAndPaymentCommitmeValidity}
-                  onChange={commitmentAndPaymentCommitmeValidityOnChangeHandler}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
-              </MuiPickersUtilsProvider>
               {/* </StyledTextInput> */}
               <StyledTextField
                 required
@@ -815,11 +889,20 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   props,
   ref,
 ) {
-  const { setClose, pendingValue, setSelecetedServicesType, ...other } = props;
+  const {
+    setClose,
+    pendingValue,
+    setSelecetedServicesType,
+    setValue,
+    ...other
+  } = props;
   const { t } = useTranslation();
   const onConfirmHandler = () => {
-    setSelecetedServicesType(pendingValue);
-    // ref = undefined;
+    setSelecetedServicesType((prevState) => {
+      setValue('selectTest', pendingValue, true);
+      return pendingValue;
+    });
+    // An idea on how to solve when clicking confirm to make the autoComplete to close is to give a ref to the next element or the inputElement of the autoComplete and make it focus on that element or unfocus.
     setClose(true);
   };
   return (
