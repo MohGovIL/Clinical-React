@@ -82,7 +82,7 @@ const PatientDetailsBlock = ({
     return Number.parseFloat(number).toFixed(1);
   };
 
-  const calcSizeIfMoreThan2MB = (size) => {
+  const calculateSize = (size) => {
     const SizeInMB = size / UNIT.valueInBytes;
     if (SizeInMB < MAX_SIZE) {
       return [false, toFix1(SizeInMB)];
@@ -92,7 +92,7 @@ const PatientDetailsBlock = ({
 
   function onChangeFileHandler(ref, setState, fileName) {
     const files = ref.current.files;
-    const [BoolAnswer, SizeInMB] = calcSizeIfMoreThan2MB(
+    const [BoolAnswer, SizeInMB] = calculateSize(
       files[files.length - 1].size,
     );
     if (!BoolAnswer) {
