@@ -871,7 +871,7 @@ const PatientDetailsBlock = ({
           <Title
             fontSize={'14px'}
             color={'#000b40'}
-            label={t(`Uploading documents with a maximum size of up to ${MAX_SIZE}${UNIT.type}`)}
+            label={`${t('Uploading documents with a maximum size of up to')} ${MAX_SIZE}${UNIT.type}`}
           />
           <StyledDivider variant='fullWidth' />
           {/* ReferralRef  */}
@@ -886,7 +886,7 @@ const PatientDetailsBlock = ({
                 ref={referralRef}
                 id='referral'
                 type='file'
-                accept='.pdf'
+                accept='.pdf,.gpf,.png,.gif,.jpg'
                 required
                 onChange={() =>
                   onChangeFileHandler(referralRef, setReferralFile, 'Referral')
@@ -928,7 +928,7 @@ const PatientDetailsBlock = ({
                 ref={commitmentRef}
                 id='commitment'
                 type='file'
-                accept='.pdf'
+                accept='.pdf,.gpf,.png,.gif,.jpg'
                 required
                 onChange={() =>
                   onChangeFileHandler(
@@ -965,7 +965,7 @@ const PatientDetailsBlock = ({
           {/* AddiotionalDocumentRef */}
           {numOfAdditionnalDocument.map((_, additionnalDocumentIndex) => {
             return (
-              <Grid container alignItems='center'>
+              <Grid container alignItems='center' key={additionnalDocumentIndex}>
                 <Grid item xs={3}>
                   <StyledTextField
                     onChange={onChangeAdditionnalDocumentHandler}
@@ -977,7 +977,7 @@ const PatientDetailsBlock = ({
                     ref={additionnalDocumentRef}
                     id='additionnalDocument'
                     type='file'
-                    accept='.pdf'
+                    accept='.pdf,.gpf,.png,.gif,.jpg'
                     required
                     onChange={() =>
                       onChangeFileHandler(
