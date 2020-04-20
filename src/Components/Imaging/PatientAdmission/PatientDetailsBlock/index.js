@@ -55,6 +55,7 @@ const PatientDetailsBlock = ({
 
   const icon = <Close fontSize='small' />;
   const [addressCity, setAddressCity] = useState({});
+  const [POBoxCity, setPOBoxCity] = useState({});
 
   const [selecetedServicesType, setSelecetedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
@@ -178,6 +179,7 @@ const PatientDetailsBlock = ({
         code: patientData.city,
       };
       setAddressCity(defaultAddressCityObj);
+      setPOBoxCity(defaultAddressCityObj);
     }
     if (encounterData) {
       if (encounterData.examination && encounterData.examination.length) {
@@ -311,7 +313,10 @@ const PatientDetailsBlock = ({
               }),
             );
           } else {
-            const emptyResultsObj = {};
+            const emptyResultsObj = {
+              code: 'no_result',
+              name: t('No Results'),
+            };
             const emptyResults = [emptyResultsObj];
             setStreets(emptyResults);
           }
@@ -348,7 +353,13 @@ const PatientDetailsBlock = ({
           label={'Patient Details'}
         />
         <StyledFormGroup>
-          <Title fontSize={'18px'} variant={'fullWidth'} />
+          <Title
+            fontSize={'18px'}
+            color={'#000b40'}
+            label={t('Accompanying patient')}
+            bold
+          />
+          <StyledDivider variant={'fullWidth'} />
           <Grid
             container
             direction={'row'}
@@ -493,6 +504,7 @@ const PatientDetailsBlock = ({
               <Controller
                 name={'addressHouseNumber'}
                 control={control}
+                defaultValue={patientData.streetNumber}
                 as={
                   <StyledTextField
                     id={'addressHouseNumber'}
@@ -528,7 +540,10 @@ const PatientDetailsBlock = ({
                 onClose={() => {
                   setCitiesOpen(false);
                 }}
-                value={addressCity}
+                onChange={(event, newValue) => {
+                  setPOBoxCity(newValue);
+                }}
+                value={POBoxCity}
                 loading={loadingCities}
                 options={cities}
                 getOptionLabel={(option) => option.name}
@@ -567,6 +582,7 @@ const PatientDetailsBlock = ({
                   <StyledTextField
                     id={'POBoxPostalCode'}
                     label={t('Postal code')}
+                    InputLabelProps={{ shrink: patientData.postalCode && true }}
                   />
                 }
                 control={control}
@@ -580,8 +596,9 @@ const PatientDetailsBlock = ({
             href={
               'https://mypost.israelpost.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/%D7%90%D7%99%D7%AA%D7%95%D7%A8-%D7%9E%D7%99%D7%A7%D7%95%D7%93/'
             }
-            target={'_blank'}>
-            {t('click here')}
+            target={'_blank'}
+            rel='noopener noreferrer'>
+            {t('Click here')}
           </a>
         </span>
         <Title
