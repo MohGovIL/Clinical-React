@@ -2,7 +2,7 @@ import React from 'react';
 import StyledButton from './Style';
 import {useTranslation} from "react-i18next";
 
-const CustomizedTableButton = ({variant, color, label, onClickHandler, mode, other_props}) => {
+const CustomizedTableButton = ({variant, color, label, onClickHandler, mode, type, ...props}) => {
     const {t} = useTranslation();
   /*  debugger;
     console.log("--------------------");
@@ -10,7 +10,7 @@ const CustomizedTableButton = ({variant, color, label, onClickHandler, mode, oth
     console.log("--------------------");*/
     return (
         <StyledButton variant={variant} color={color} onClick={onClickHandler}
-                      disabled={mode === 'view'} {...other_props}>
+                      disabled={mode === 'view'} {...props}>
             {t(label)}
         </StyledButton>
     );

@@ -128,7 +128,7 @@ const EncounterStates = {
 
         let statusesString = '';
         for (let status of statuses) {
-            statusesString = statusesString.concat(`&status=${status}`)
+            statusesString = statusesString.concat(`status=${status}`)
         }
         let summaryStat = EncounterStates['encountersWithPatientsBasePath'](summary)
         //return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
