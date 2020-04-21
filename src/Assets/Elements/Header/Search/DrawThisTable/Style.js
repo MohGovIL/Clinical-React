@@ -311,8 +311,12 @@ export const StyledIcon = styled(Icon)`
     margin-top: 2%;
     color: #002cb1;
     height: 24px;
+    cursor: pointer;
+    user-select: none;
 `;
 export const StyledIconText = styled.div`
+    cursor: pointer;
+    user-select: none;
     width: 132px;
     height: 22px;
     font-family: OpenSansHebrew;

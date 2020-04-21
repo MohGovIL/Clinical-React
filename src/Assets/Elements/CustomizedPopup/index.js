@@ -14,7 +14,7 @@ import CustomizedTableButton from "../CustomizedTable/CustomizedTableButton";
 const CustomizedPopup = ({children, isOpen, onClose, languageDirection, props}) => {
     return (
         <div>
-            <Dialog onClose={onClose} aria-labelledby="customized-dialog-title" open={isOpen}>
+            <Dialog onClose={onClose} aria-labelledby="customized-dialog-title" open={isOpen} maxWidth={props.dialogMaxWidth}>
                 <StyledMuiDialogTitle disableTypography language_direction={languageDirection}>
                     <Typography variant="h6">{props.title}</Typography>
                     {onClose ? (

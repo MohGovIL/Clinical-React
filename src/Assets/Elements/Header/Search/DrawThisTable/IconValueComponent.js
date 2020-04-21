@@ -4,13 +4,13 @@ import {StyledIcon, StyledIconText} from "./Style";
 import {useTranslation} from "react-i18next";
 
 
-const IconValueComponent = ({iconType, value}) => {
+const IconValueComponent = ({iconType, value, onClickHandler}) => {
 
     const {t} = useTranslation();
     return (
         <React.Fragment>
-            {iconType ? <StyledIcon>{iconType}</StyledIcon>:''}
-            {value ? <StyledIconText>{t(value)}</StyledIconText> : ''}
+            {iconType ? <StyledIcon onClick={onClickHandler}>{iconType}</StyledIcon>:''}
+            {value ? <StyledIconText onClick={onClickHandler}>{t(value)}</StyledIconText> : ''}
         </React.Fragment>
     );
 

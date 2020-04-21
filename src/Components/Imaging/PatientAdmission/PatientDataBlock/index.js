@@ -367,7 +367,7 @@ const PatientDataBlock = ({appointmentData, patientData, onEditButtonClick, edit
                             <CustomizedTableButton variant={"text"} color={"primary"} label={t("Undo editing")}
                                                    onClickHandler={handleUndoEdittingClick}/>
                             <CustomizedTableButton variant={"contained"} color={"primary"} label={t("save")}
-                                                   type={"submit"}/>
+                                                   other={{type: "submit"}}/>
                         </StyledButtonBlock>
                         }
 
