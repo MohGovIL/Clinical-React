@@ -31,8 +31,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
     //const methods = useForm({
-    const {register, control, errors, handleSubmit, watch, reset, setValue, getValues} = useForm({
-         mode: "onChange",
+    const {register, control, errors, handleSubmit, reset, setValue, getValues} = useForm({
+        mode: "onChange",
         // defaultValues: {
         //     birthDate: patientBirthDate
         // }
@@ -43,6 +43,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         // console.log(data);
         // console.log("===============data of form==================");
     };
+
+    //Register TextField components in react-hook-forms
     useEffect(() => {
         register({name: "healthManageOrganization"});
         register({name: "birthDate"});
@@ -59,9 +61,6 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                     'functionParams': {id: 'identifier_type_list'}
                 }).then(type_list => {
                     const {data: {expansion: {contains}}} = type_list;
-                    console.log(">>>>>>>");
-                    console.log(type_list);
-                    console.log("<<<<<<<");
                     let options = emptyArrayAll(t("Choose"));
                     for (let status of contains) {
                         options.push(normalizeFhirValueSet(status));
@@ -139,12 +138,15 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     };
 
     const handleIdTypeChange = (event) => {
-        console.log("=eeee=e=e=e=e=e=e");
-        console.log(event.target.value);
-        try{
+        try {
+            const formValues = getValues();
+            console.log("=====d======");
+            console.log(formValues.idNumber + " - " + formValues.idNumberType);
+            console.log("======d=====");
+
             setValue("idNumberType", event.target.value, true);
             setPatientIdType(event.target.value);
-        }catch (e) {
+        } catch (e) {
             console.log("Error: " + e);
         }
 
@@ -211,9 +213,9 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 rules={{
                                     validate: async value => {
                                         await sleep(1000);
-                                        const formValues = getValues();
+                                        const formValues = getValues("idNumberType");
                                         console.log("===========");
-                                        console.log(formValues);
+                                        console.log(formValues.idNumber + " - " + formValues.idNumberType);
                                         console.log("===========");
                                         return value === "bill";
                                     }
@@ -341,8 +343,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                         }
                                     }
                                 }}
-                               // error={errors.idNumberType ? true : false}
-                               // helperText={errors.idNumberType ? t("is a required field.") : null}
+                                // error={errors.idNumberType ? true : false}
+                                // helperText={errors.idNumberType ? t("is a required field.") : null}
                                 InputProps={{
                                     // disableUnderline: edit_mode === 1 ? false : true,
                                     endAdornment: (errors.idNumberType &&
