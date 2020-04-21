@@ -56,7 +56,7 @@ const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => 
 
             <React.Fragment>
                 <CustomizedPopup isOpen={popupOpen} onClose={handlePopupClose}
-                                 title={t('Appointments and encounters')}
+                                 title={t('Appointments And Encounters')+" > "+content.patient.firstName + " " + content.patient.lastName}
                                  content_dividers={false}
                                  fullWidth = {true}
                                  maxWidth = 'md'

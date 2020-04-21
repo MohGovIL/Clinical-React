@@ -2,7 +2,8 @@ import React from 'react';
 import TitleValueComponent from "./TitleValueComponent";
 import {useTranslation} from "react-i18next";
 import {
-    StyledBox,
+    StyledBottomLinks,
+    StyledBox, StyledHrefButton,
     StyledLabelAppointment,
     StyledLabelName, StyledLabelServiceTypeAppointment,
     StyledLabelStatusAppointment,
@@ -77,9 +78,9 @@ debugger;
                         <Table    aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="right">{t("Current encounter")}</TableCell>
-                                    <TableCell align="right">{t("Service type")}</TableCell>
-                                    <TableCell align="right">{t("Status")}</TableCell>
+                                    <TableCell align="right">{t("Encounter's hour")}</TableCell>
+                                    <TableCell align="right">{t("Lab test type")}</TableCell>
+                                    <TableCell align="center">{t("Status")}</TableCell>
                                     <TableCell align="right"></TableCell>
                                     <TableCell align="right"></TableCell>
                                 </TableRow>
@@ -89,19 +90,34 @@ debugger;
                                     return(
                                     <TableRow key={encounterID}>
                                         <TableCell  align="right" omponent="th" scope="row">
-                                            {moment(encounter.startTime).format("DD/MM/YYYY")}
+                                            {moment(encounter.startTime).format("HH:mm")}
                                         </TableCell>
                                         <TableCell align="right">
                                            {t(encounter.serviceType)}
                                         </TableCell>
-                                        <TableCell align="right">
-                                            {encounterStatuses && encounter ? t(encounterStatuses[encounter.status]) : ''}
+                                        <TableCell align="center">
+                                            <StyledLabelStatusAppointment>
+                                                <TitleValueComponent
+                                                    name={encounterStatuses && encounter ? t(encounterStatuses[encounter.status]) : ''}/>
+                                            </StyledLabelStatusAppointment>
                                         </TableCell>
                                         <TableCell align="right">
-                                            <Button variant="outlined" color="primary" onClick={handleChartClickOpen}>{t("navigate to encounter sheet")}</Button>
+                                            <StyledHrefButton size={'small'} variant="outlined" color="primary"
+                                                              href="#contained-buttons"
+                                                              disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}
+                                                              /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
+                                                               >
+                                                              {t("navigate to encounter sheet")}
+                                            </StyledHrefButton>
                                         </TableCell>
                                         <TableCell align="right">
-                                            <Button variant="outlined" color="primary" onClick={handleAdmissionClickOpen}>{t("Patient admission")}</Button>
+                                            <StyledHrefButton size={'large'} variant="outlined" color="primary"
+                                                              href="#contained-buttons"
+                                                              disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}
+                                                              /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
+                                                              >
+                                                             {t("Admission form")}
+                                            </StyledHrefButton>
                                         </TableCell>
                                     </TableRow>
                                     );
@@ -117,41 +133,40 @@ debugger;
             {
 
                         nextAppointmentEntry ?
-                            <ListItem key={nextAppointmentEntry.id+"_nextAppointmentEntry"} >
+
+                            <React.Fragment>
+                                <StyledLabelAppointment><TitleValueComponent name={t("Future encounters")}/></StyledLabelAppointment>
+                                <ul></ul>
+                                <TableContainer component={Paper}>
+                                    <Table    aria-label="simple table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell align="right">{t("Encounter's date")}</TableCell>
+                                                <TableCell align="right">{t("Lab test type")}</TableCell>
+                                                <TableCell align="center">{t("Status")}</TableCell>
+                                                <TableCell align="right"></TableCell>
+                                                <TableCell align="right"></TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            <TableRow>
+                                            <StyledLabelAppointment>
+                                                <TitleValueComponent name={t("Next appointment")} value={t("Non existence")}
+                                                                     seperator={true}/>
+                                            </StyledLabelAppointment>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </React.Fragment>
 
 
-                                <StyledLabelAppointment>
-                                    <TitleValueComponent name={t("Next appointment")}
-                                        //Check if it is today if so show hour also ...
-                                        //Else Show the future date of the appointment
-                                                         value={getAppointmentWithTimeOrNot(nextAppointmentEntry)}
-                                                         seperator={true}/>
-                                </StyledLabelAppointment>
-
-                                <StyledLabelAppointment>
-                                    <TitleValueComponent name={t(nextAppointmentEntry.serviceType)}/>
-                                </StyledLabelAppointment>
-
-                                <StyledLabelStatusAppointment>
-                                    <TitleValueComponent
-                                        name={patientTrackingStatuses && nextAppointmentEntry ? t(patientTrackingStatuses[nextAppointmentEntry.status]) : ''}/*t(normalizedPrevEncounter.status.charAt(0).toUpperCase() + normalizedPrevEncounter.status.slice(1))}*//>
-                                </StyledLabelStatusAppointment>
-
-                                <StyledLinkWithIconComponent>
-                                    <LinkComponentWithIcon linkHeader={t("Navigate to appointment details")}
-                                                           linkUrl={"#"}/>
-                                </StyledLinkWithIconComponent>
-
-                            </ListItem>
                             :
-                            <ListItem key={"nextAppointmentEntry_2"}>
 
-                                <StyledLabelAppointment>
-                                    <TitleValueComponent name={t("Next appointment")} value={t("Non existence")}
-                                                         seperator={true}/>
-                                </StyledLabelAppointment>
 
-                            </ListItem>
+                              null
+
+
                     }
                     {normalizedPrevEncounter !== null ?
                         <ListItem key={normalizedPrevEncounter.id+"_normalizedPrevEncounter"} >

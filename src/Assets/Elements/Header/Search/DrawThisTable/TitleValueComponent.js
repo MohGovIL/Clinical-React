@@ -60,7 +60,7 @@ const TitleValueComponent = ({name, value, searchParam, seperator}) => {
 
 
     function handleEmptyDiv(divRef, value) {
-       return  value && value !== "" ? <div ref={divRef}>{value}</div> :<StyledEmptyDiv/>;
+       return  value && value !== "" ? <div ref={divRef}>{value}</div> :"";
     }
 
     return (

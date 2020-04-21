@@ -343,7 +343,7 @@ export const StyledValueComponent = styled.label`
 `;
 
 export const StyledLinkWithIconComponent = styled.div`
-    margin: 5px 0px;
+    margin: 5px 63px;
     a{
       width: 73px;
       height: 18px;
