@@ -1,8 +1,6 @@
 import styled from "styled-components";
-import TableCell from "@material-ui/core/TableCell";
 
-export default styled(TableCell)`
+export default styled.div`
   display: flex;
   flex-direction: row;
-  padding: 14px 0;
 `;
