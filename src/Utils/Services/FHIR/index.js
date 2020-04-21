@@ -14,6 +14,7 @@ import Organization from "./Organization";
 import Patient from "./Patient";
 import ValueSet from "./ValueSet";
 import RelatedPerson from "./RelatedPerson"
+import Questionnaire from "./Questionnaire"
 import {tokenInstanceGenerator} from "../AxiosWithTokenInstance";
 import {ApiTokens} from "../ApiTokens";
 
@@ -25,6 +26,7 @@ const FHIRStates = {
     Patient: Patient,
     ValueSet: ValueSet,
     RelatedPerson: RelatedPerson,
+    Questionnaire: Questionnaire,
     /* More transformers */
     __default__: null
 };
