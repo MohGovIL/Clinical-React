@@ -1,15 +1,14 @@
 import React, {useState, useEffect} from "react";
 import * as Moment from "moment";
-import CustomizedPopup from "../../CustomizedPopup";
+import CustomizedPopup from "Assets/Elements/CustomizedPopup";
 import {useTranslation} from "react-i18next";
 import {useForm, FormContext, useFormContext, Controller} from "react-hook-form";
 import {InputAdornment, MenuItem, TextField} from "@material-ui/core";
 import {StyledColumnFirst, StyledColumnSecond, StyledForm, StyledRowEmail, StyledBox} from "./Style";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import {connect} from "react-redux";
-import CustomizedDatePicker from "../../CustomizedDatePicker";
+import CustomizedDatePicker from "Assets/Elements/CustomizedDatePicker";
 import {getCellPhoneRegexPattern, getEmailRegexPattern} from "Utils/Helpers/validation/patterns";
-import {getOrganizationTypeKupatHolim, getValueSet} from "Utils/Services/FhirAPI";
 import {normalizeValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import {emptyArrayAll} from "Utils/Helpers/emptyArray";
 import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";

@@ -20,8 +20,7 @@ import PaperContainerComponent from "./DrawThisTable/PaperContainerComponent";
 import CustomizedTableButtonCell from "Assets/Elements/CustomizedTable/CustomizedTableButtonCell";
 import StyledButton from "Assets/Elements/CustomizedTable/CustomizedTableButton/Style";
 import {FHIR} from "Utils/Services/FHIR";
-import PopupCreateNewPatient from "Assets/Elements/PopupComponents/PopupCreateNewPatient";
-
+import PopupCreateNewPatient from "Components/Generic/PopupComponents/PopupCreateNewPatient";
 
 
 
