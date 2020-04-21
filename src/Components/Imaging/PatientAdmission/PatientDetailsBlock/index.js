@@ -34,6 +34,7 @@ import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
+import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import ChipWithImage from 'Assets/Elements/StyledChip';
@@ -64,9 +65,10 @@ const PatientDetailsBlock = ({
   const [commitmentFile, setCommitmentFile] = useState({});
   const [additionalDocumentFile, setAdditionalDocumentFile] = useState({});
   const [numOfAdditionalDocument, setNumOfAdditionalDocument] = useState([]);
-  const [nameOfAdditionalDocumentFile, setNameOfAdditionalDocumentFile] = useState(
-    '',
-  );
+  const [
+    nameOfAdditionalDocumentFile,
+    setNameOfAdditionalDocumentFile,
+  ] = useState('');
 
   const referralRef = React.useRef();
 
@@ -76,7 +78,7 @@ const PatientDetailsBlock = ({
 
   const MAX_SIZE = 2;
 
-  const UNIT = {type: 'MB', valueInBytes: 1000000};
+  const UNIT = { type: 'MB', valueInBytes: 1000000 };
 
   const toFix1 = (number) => {
     return Number.parseFloat(number).toFixed(1);
@@ -92,9 +94,7 @@ const PatientDetailsBlock = ({
 
   function onChangeFileHandler(ref, setState, fileName) {
     const files = ref.current.files;
-    const [BoolAnswer, SizeInMB] = calculateSize(
-      files[files.length - 1].size,
-    );
+    const [BoolAnswer, SizeInMB] = calculateSize(files[files.length - 1].size);
     if (!BoolAnswer) {
       const fileObj = {
         name: `${fileName}_${moment().format('L')}_${moment().format(
@@ -285,8 +285,12 @@ const PatientDetailsBlock = ({
       }
       if (encounterData.relatedPerson) {
         (async () => {
-          //TODO Use the FHIR API to get the related person and then set relatedPerson state.
-        })()
+          const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
+            functionName: 'getRelatedPerson',
+            functionParams: { RelatedPersonId: encounterData.relatedPerson },
+          });
+          console.log(relatedPerson + '-----------------------------');
+        })();
       }
     }
   }, [encounterData, patientData]);
@@ -968,7 +972,9 @@ const PatientDetailsBlock = ({
           <Title
             fontSize={'14px'}
             color={'#000b40'}
-            label={`${t('Uploading documents with a maximum size of up to')} ${MAX_SIZE}${UNIT.type}`}
+            label={`${t(
+              'Uploading documents with a maximum size of up to',
+            )} ${MAX_SIZE}${UNIT.type}`}
           />
           <StyledDivider variant='fullWidth' />
           {/* ReferralRef  */}
@@ -1062,7 +1068,10 @@ const PatientDetailsBlock = ({
           {/* AddiotionalDocumentRef */}
           {numOfAdditionalDocument.map((_, additionnalDocumentIndex) => {
             return (
-              <Grid container alignItems='center' key={additionnalDocumentIndex}>
+              <Grid
+                container
+                alignItems='center'
+                key={additionnalDocumentIndex}>
                 <Grid item xs={3}>
                   <StyledTextField
                     onChange={onChangeAdditionalDocumentHandler}

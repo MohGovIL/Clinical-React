@@ -14,16 +14,17 @@ const normalizeFhirEncounter = (encounter) => {
   let examination = null;
   let relatedPerson = '';
 
-  encounter.participant.forEach((participantObj) => {
-    if (participantObj.individual) {
-      if (participantObj.individual.reference) {
-        if (participantObj.individual.reference.includes('RelatedPerson')) {
-          relatedPerson = participantObj.individual.reference.split('/')[1];
+  if (encounter.participant) {
+    encounter.participant.forEach((participantObj) => {
+      if (participantObj.individual) {
+        if (participantObj.individual.reference) {
+          if (participantObj.individual.reference.includes('RelatedPerson')) {
+            relatedPerson = participantObj.individual.reference.split('/')[1];
+          }
         }
       }
-    }
-  });
-
+    });
+  }
   if (encounter.reasonCode && encounter.reasonCode.length > 0) {
     if (encounter.reasonCode.every((reasonCodeObj) => reasonCodeObj.coding)) {
       examinationCode = encounter.reasonCode.map(
