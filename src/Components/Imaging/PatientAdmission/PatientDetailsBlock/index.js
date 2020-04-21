@@ -905,7 +905,7 @@ const PatientDetailsBlock = ({
                 }
               />
               <Controller
-                name='commitmentAndPaymentCommitmeValidity'
+                name='commitmentAndPaymentCommitmentValidity'
                 control={control}
                 rules={{
                   validate: {
@@ -922,13 +922,13 @@ const PatientDetailsBlock = ({
                       variant='inline'
                       format={formatDate}
                       margin='normal'
-                      id='commitmentAndPaymentCommitmeValidity'
+                      id='commitmentAndPaymentCommitmentValidity'
                       label={t('Commitment validity')}
                       value={commitmentAndPaymentCommitmentValidity}
                       onChange={(date) =>
                         dateOnChangeHandler(
                           date,
-                          'commitmentAndPaymentCommitmeValidity',
+                          'commitmentAndPaymentCommitmentValidity',
                           setCommitmentAndPaymentCommitmentValidity,
                         )
                       }
@@ -936,10 +936,10 @@ const PatientDetailsBlock = ({
                         'aria-label': 'change date',
                       }}
                       error={
-                        errors.commitmentAndPaymentCommitmeValidity && true
+                        errors.commitmentAndPaymentCommitmentValidity && true
                       }
                       helperText={
-                        errors.commitmentAndPaymentCommitmeValidity &&
+                        errors.commitmentAndPaymentCommitmentValidity &&
                         t('An equal or greater date must be entered than today')
                       }
                     />
@@ -1065,13 +1065,10 @@ const PatientDetailsBlock = ({
               )}
             </Grid>
           </Grid>
-          {/* AddiotionalDocumentRef */}
-          {numOfAdditionalDocument.map((_, additionnalDocumentIndex) => {
+          {/* AdditionalDocumentRef */}
+          {numOfAdditionalDocument.map((_, additionalDocumentIndex) => {
             return (
-              <Grid
-                container
-                alignItems='center'
-                key={additionnalDocumentIndex}>
+              <Grid container alignItems='center' key={additionalDocumentIndex}>
                 <Grid item xs={3}>
                   <StyledTextField
                     onChange={onChangeAdditionalDocumentHandler}
@@ -1081,7 +1078,7 @@ const PatientDetailsBlock = ({
                 <Grid item xs={9}>
                   <input
                     ref={additionalDocumentRef}
-                    id='additionnalDocument'
+                    id='additionalDocument'
                     type='file'
                     accept='.pdf,.gpf,.png,.gif,.jpg'
                     required
@@ -1095,7 +1092,7 @@ const PatientDetailsBlock = ({
                   />
                   {Object.values(additionalDocumentFile).length > 0 ? (
                     <ChipWithImage
-                      htmlFor='additionnalDocument'
+                      htmlFor='additionalDocument'
                       label={additionalDocumentFile.name}
                       size={additionalDocumentFile.size}
                       onDelete={() =>
@@ -1107,7 +1104,7 @@ const PatientDetailsBlock = ({
                       onClick={() => onClickFileHandler(additionalDocumentRef)}
                     />
                   ) : (
-                    <label htmlFor='additionnalDocument'>
+                    <label htmlFor='additionalDocument'>
                       <StyledButton
                         variant='outlined'
                         color='primary'
