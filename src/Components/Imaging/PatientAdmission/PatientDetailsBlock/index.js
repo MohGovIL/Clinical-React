@@ -35,6 +35,7 @@ import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import moment from 'moment';
 import { getValueSet, getHMO } from 'Utils/Services/FhirAPI';
+import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import ChipWithImage from 'Assets/Elements/StyledChip';
@@ -288,7 +289,8 @@ const PatientDetailsBlock = ({
     (async () => {
       try {
         if (patientData.managingOrganization) {
-          const HMO_Data = await getHMO(patientData.managingOrganization);
+          // const HMO_Data = await getHMO(patientData.managingOrganization);
+          const HMO_Data = await FHIR('Organization', 'doWork', {functionName: "getHMO", functionParams: {HMO_ID: patientData.managingOrganization}})
           const normalizedHMO = normalizeFhirHMO(HMO_Data.data);
           setHMO(normalizedHMO);
         }
