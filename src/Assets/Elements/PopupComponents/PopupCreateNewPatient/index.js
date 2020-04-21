@@ -13,7 +13,7 @@ import {getOrganizationTypeKupatHolim, getValueSet} from "Utils/Services/FhirAPI
 import {normalizeValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 import {emptyArrayAll} from "Utils/Helpers/emptyArray";
 import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
-import {FHIR} from "../../../../Utils/Services/FHIR";
+import {FHIR} from "Utils/Services/FHIR";
 
 const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate}) => {
     const {t} = useTranslation();
