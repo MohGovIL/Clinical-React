@@ -36,8 +36,10 @@ const CustomizedPopup = ({children, isOpen, onClose, languageDirection, props}) 
                 TransitionComponent={props.TransitionComponent}
                 transitionDuration={props.transitionDuration}
                 TransitionProps={props.TransitionProps}
+                aria-labelledby={props.labelledby ? props.labelledby :"customized-dialog-title"}
+                aria-describedby={props.describedby}
                 onClose={onClose}
-                aria-labelledby="customized-dialog-title"
+
                 open={isOpen}>
                 <StyledMuiDialogTitle disableTypography language_direction={languageDirection}>
                     <Typography variant="h6">{props.title}</Typography>

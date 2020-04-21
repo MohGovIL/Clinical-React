@@ -61,6 +61,8 @@ const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => 
                                  fullWidth = {true}
                                  maxWidth = 'md'
                                  TransitionComponent = {Transition}
+                                 labelledby="alert-dialog-slide-title"
+                                 describedby="alert-dialog-slide-description"
                                  /*bottomButtons={bottomButtonsData}*/>
                     <AppointmentsAndEncountersTables
                         nextAppointment={nextAppointment}
