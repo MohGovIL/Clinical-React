@@ -14,6 +14,8 @@ import {emptyArrayAll} from "Utils/Helpers/emptyArray";
 import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import {FHIR} from "Utils/Services/FHIR";
 
+// const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate}) => {
     const {t} = useTranslation();
 
@@ -26,19 +28,26 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const [patientIdType, setPatientIdType] = useState(0);
     const [patientBirthDate, setPatientBirthDate] = useState(0);
 
-    const methods = useForm({
-    // const {register, control, errors, handleSubmit, reset, setValue, getValues} = useForm({
-        //mode: "onBlur",
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    //const methods = useForm({
+    const {register, control, errors, handleSubmit, watch, reset, setValue, getValues} = useForm({
+         mode: "onChange",
         // defaultValues: {
         //     birthDate: patientBirthDate
         // }
     });
 
     const onSubmit = (data, e) => {
-        //console.log("===============data of form==================");
-        //console.log(data);
-        //console.log("===============data of form==================");
+        // console.log("===============data of form==================");
+        // console.log(data);
+        // console.log("===============data of form==================");
     };
+    useEffect(() => {
+        register({name: "healthManageOrganization"});
+        register({name: "birthDate"});
+        register({name: "idNumberType"});
+    }, []);
 
     //useEffect block
     useEffect(() => {
@@ -50,6 +59,9 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                     'functionParams': {id: 'identifier_type_list'}
                 }).then(type_list => {
                     const {data: {expansion: {contains}}} = type_list;
+                    console.log(">>>>>>>");
+                    console.log(type_list);
+                    console.log("<<<<<<<");
                     let options = emptyArrayAll(t("Choose"));
                     for (let status of contains) {
                         options.push(normalizeFhirValueSet(status));
@@ -68,7 +80,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                     "functionName": 'getOrganizationTypeKupatHolim',
                     //'functionParams': {id: 'gender'}
                 }).then(kupatHolim_list => {
-                    const {data : {entry}} = kupatHolim_list;
+                    const {data: {entry}} = kupatHolim_list;
                     let array = emptyArrayAll(t("Choose"));
                     for (let row of entry) {
                         if (row.resource !== undefined) {
@@ -110,8 +122,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const handleChangeBirthDate = date => {
         try {
             let newBirthDate = date.format(formatDate).toString();
-             methods.setValue("birthDate", newBirthDate, true);
-            //setValue("birthDate", newBirthDate, true);
+            //methods.setValue("birthDate", newBirthDate, true);
+            setValue("birthDate", newBirthDate, true);
             setPatientBirthDate(newBirthDate);
         } catch (e) {
             console.log("Error: " + e);
@@ -120,13 +132,22 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
     const handleIdNumber = (event) => {
         console.log("==========Id number=============");
-        console.log(methods.getValues('idNumber'));
+        console.log(getValues());
+        // console.log(methods.getValues());
         // setPatientIdNumber
         console.log("==========Id number=============");
     };
 
     const handleIdTypeChange = (event) => {
-        setPatientIdType(event.target.value);
+        console.log("=eeee=e=e=e=e=e=e");
+        console.log(event.target.value);
+        try{
+            setValue("idNumberType", event.target.value, true);
+            setPatientIdType(event.target.value);
+        }catch (e) {
+            console.log("Error: " + e);
+        }
+
     };
 
     const handleGenderChange = (event) => {
@@ -168,37 +189,49 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                          dialogMaxWidth={'md'}
         >
             {/*<FormContext {...methods}>*/}
-            <form onSubmit={methods.handleSubmit(onSubmit)} id={"createNewPatient"}>
+            <form onSubmit={handleSubmit(onSubmit)} id={"createNewPatient"}>
                 <StyledForm languageDirection={languageDirection}>
                     <StyledBox>
                         <StyledColumnFirst>
                             <Controller
                                 as={TextField}
-                                control={methods.control}
+                                control={control}
                                 id="standard-idNumber"
                                 name="idNumber"
                                 //value={patientIdNumber}
                                 defaultValue={patientIdNumber}
-                                onChange={e => {
-                                    //const value = e.target.value;
-                                    const values = methods.getValues();
-                                    console.log(values);
-                                    //handleIdNumber(value);
-                                }}
+                                // onChange={e => {
+                                //     //const value = e.target.value;
+                                //     const values = getValues();
+                                //     console.log(values);
+                                //     //handleIdNumber(value);
+                                // }}
                                 label={t("id number")}
+                                // required
+                                rules={{
+                                    validate: async value => {
+                                        await sleep(1000);
+                                        const formValues = getValues();
+                                        console.log("===========");
+                                        console.log(formValues);
+                                        console.log("===========");
+                                        return value === "bill";
+                                    }
+                                }}
+                                {...TextFieldOpts}
+                                error={errors.idNumber ? true : false}
+                                helperText={errors.idNumber ? t("is a required field.") : null}
+                            />
+                            <Controller
+                                as={TextField}
+                                control={control}
+                                id="standard-firstName"
+                                name="firstName"
+                                // defaultValue={patientInitialValues.firstName}
+                                label={t("First Name")}
                                 // required
                                 {...TextFieldOpts}
                             />
-                            {/*<Controller*/}
-                            {/*    as={TextField}*/}
-                            {/*    control={methods.control}*/}
-                            {/*    id="standard-firstName"*/}
-                            {/*    name="firstName"*/}
-                            {/*    // defaultValue={patientInitialValues.firstName}*/}
-                            {/*    label={t("First Name")}*/}
-                            {/*    // required*/}
-                            {/*    {...TextFieldOpts}*/}
-                            {/*/>*/}
                             {/*<TextField*/}
                             {/*    id="standard-gender"*/}
                             {/*    name="gender"*/}
@@ -223,11 +256,11 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             {/*            }*/}
                             {/*        }*/}
                             {/*    }}*/}
-                            {/*    error={methods.errors.healthManageOrganization ? true : false}*/}
-                            {/*    helperText={methods.errors.healthManageOrganization ? t("is a required field.") : null}*/}
+                            {/*    error={errors.healthManageOrganization ? true : false}*/}
+                            {/*    helperText={errors.healthManageOrganization ? t("is a required field.") : null}*/}
                             {/*    InputProps={{*/}
                             {/*        // disableUnderline: edit_mode === 1 ? false : true,*/}
-                            {/*        endAdornment: (methods.errors.healthManageOrganization &&*/}
+                            {/*        endAdornment: (errors.healthManageOrganization &&*/}
                             {/*            <InputAdornment position="end">*/}
                             {/*                <ErrorOutlineIcon htmlColor={"#ff0000"}/>*/}
                             {/*            </InputAdornment>*/}
@@ -265,10 +298,10 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             {/*            }*/}
                             {/*        }*/}
                             {/*    }}*/}
-                            {/*    error={methods.errors.healthManageOrganization ? true : false}*/}
-                            {/*    helperText={methods.errors.healthManageOrganization ? t("is a required field.") : null}*/}
+                            {/*    error={errors.healthManageOrganization ? true : false}*/}
+                            {/*    helperText={errors.healthManageOrganization ? t("is a required field.") : null}*/}
                             {/*    InputProps={{*/}
-                            {/*        endAdornment: (methods.errors.healthManageOrganization &&*/}
+                            {/*        endAdornment: (errors.healthManageOrganization &&*/}
                             {/*            <InputAdornment position="end">*/}
                             {/*                <ErrorOutlineIcon htmlColor={"#ff0000"}/>*/}
                             {/*            </InputAdornment>*/}
@@ -284,146 +317,146 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             {/*</TextField>*/}
                         </StyledColumnFirst>
                         <StyledColumnSecond>
-                            {/*<TextField*/}
-                            {/*    id="standard-idNumberType"*/}
-                            {/*    name="idNumberType"*/}
-                            {/*    value={patientIdType}*/}
-                            {/*    label={t("ID type")}*/}
-                            {/*    // required*/}
-                            {/*    select*/}
-                            {/*    onChange={handleIdTypeChange}*/}
-                            {/*    SelectProps={{*/}
-                            {/*        // onOpen: handleLoadListKupatHolim,*/}
-                            {/*        MenuProps: {*/}
-                            {/*            elevation: 0,*/}
-                            {/*            keepMounted: true,*/}
-                            {/*            getContentAnchorEl: null,*/}
-                            {/*            anchorOrigin: {*/}
-                            {/*                vertical: 'bottom',*/}
-                            {/*                horizontal: 'center',*/}
-                            {/*            },*/}
-                            {/*            transformOrigin: {*/}
-                            {/*                vertical: 'top',*/}
-                            {/*                horizontal: 'center',*/}
-                            {/*            }*/}
-                            {/*        }*/}
-                            {/*    }}*/}
-                            {/*    error={methods.errors.idNumberType ? true : false}*/}
-                            {/*    helperText={methods.errors.idNumberType ? t("is a required field.") : null}*/}
-                            {/*    InputProps={{*/}
-                            {/*        // disableUnderline: edit_mode === 1 ? false : true,*/}
-                            {/*        endAdornment: (methods.errors.idNumberType &&*/}
-                            {/*            <InputAdornment position="end">*/}
-                            {/*                <ErrorOutlineIcon htmlColor={"#ff0000"}/>*/}
-                            {/*            </InputAdornment>*/}
-                            {/*        ),*/}
-                            {/*    }}*/}
-                            {/*    {...TextFieldOpts}*/}
-                            {/*>*/}
-                            {/*    {idTypesList.map((option, optionIndex) => (*/}
-                            {/*        <MenuItem key={optionIndex} value={option.code}>*/}
-                            {/*            {t(option.name)}*/}
-                            {/*        </MenuItem>*/}
-                            {/*    ))}*/}
-                            {/*</TextField>*/}
-                            {/*<Controller*/}
-                            {/*    as={TextField}*/}
-                            {/*    control={methods.control}*/}
-                            {/*    id="standard-lastName"*/}
-                            {/*    name="lastName"*/}
-                            {/*    // defaultValue={patientInitialValues.firstName}*/}
-                            {/*    label={t("Last Name")}*/}
-                            {/*    // required*/}
-                            {/*    {...TextFieldOpts}*/}
-                            {/*/>*/}
-                            {/*<Controller*/}
-                            {/*    name="birthDate"*/}
-                            {/*    control={methods.control}*/}
-                            {/*    rules={{*/}
-                            {/*        //validate: {*/}
-                            {/*        //    value: value => Moment(value, formatDate, true).isValid() === true*/}
-                            {/*        //}*/}
-                            {/*    }}*/}
-                            {/*    as={*/}
-                            {/*        <CustomizedDatePicker*/}
-                            {/*            PickerProps={{*/}
-                            {/*                id: "standard-birthDate",*/}
-                            {/*                format: "DD/MM/YYYY",*/}
-                            {/*                name: "birthDate",*/}
-                            {/*                // required: true,*/}
-                            {/*                disableToolbar: false,*/}
-                            {/*                label: t("birth day"),*/}
-                            {/*                inputValue: patientBirthDate,*/}
-                            {/*                mask: {formatDate},*/}
-                            {/*                InputProps: {*/}
-                            {/*                    // disableUnderline: edit_mode === 1 ? false : true,*/}
-                            {/*                },*/}
-                            {/*                disableFuture: true,*/}
-                            {/*                color: 'primary',*/}
-                            {/*                variant: 'inline',*/}
-                            {/*                inputVariant: "filled",*/}
-                            {/*                onChange: handleChangeBirthDate,*/}
-                            {/*                autoOk: true,*/}
-                            {/*                error: methods.errors.birthDate ? true : false,*/}
-                            {/*                helperText: methods.errors.birthDate ? t("Date must be in a date format") : null,*/}
-                            {/*            }}*/}
-                            {/*            CustomizedProps={{*/}
-                            {/*                keyBoardInput: true,*/}
-                            {/*                showNextArrow: false,*/}
-                            {/*                showPrevArrow: false,*/}
-                            {/*            }}*/}
-                            {/*        />*/}
-                            {/*    }*/}
-                            {/*/>*/}
-                            {/*<Controller*/}
-                            {/*    as={TextField}*/}
-                            {/*    control={methods.control}*/}
-                            {/*    id="standard-mobilePhone"*/}
-                            {/*    name="mobilePhone"*/}
-                            {/*    // defaultValue={patientInitialValues.mobilePhone}*/}
-                            {/*    label={t("Cell phone")}*/}
-                            {/*    rules={{*/}
-                            {/*        pattern: getCellPhoneRegexPattern()*/}
-                            {/*    }}*/}
-                            {/*    error={methods.errors.mobilePhone ? true : false}*/}
-                            {/*    helperText={methods.errors.mobilePhone ? t("The number entered is incorrect") : null}*/}
-                            {/*    InputProps={{*/}
-                            {/*        // disableUnderline: edit_mode === 1 ? false : true,*/}
-                            {/*        endAdornment: (methods.errors.mobilePhone &&*/}
-                            {/*            <InputAdornment position="end">*/}
-                            {/*                <ErrorOutlineIcon htmlColor={"#ff0000"}/>*/}
-                            {/*            </InputAdornment>*/}
-                            {/*        ),*/}
-                            {/*    }}*/}
-                            {/*    // required*/}
-                            {/*    {...TextFieldOpts}*/}
-                            {/*/>*/}
+                            <TextField
+                                id="standard-idNumberType"
+                                name="idNumberType"
+                                value={patientIdType}
+                                label={t("ID type")}
+                                // required
+                                select
+                                onChange={handleIdTypeChange}
+                                SelectProps={{
+                                    // onOpen: handleLoadListKupatHolim,
+                                    MenuProps: {
+                                        elevation: 0,
+                                        keepMounted: true,
+                                        getContentAnchorEl: null,
+                                        anchorOrigin: {
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        },
+                                        transformOrigin: {
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }
+                                    }
+                                }}
+                               // error={errors.idNumberType ? true : false}
+                               // helperText={errors.idNumberType ? t("is a required field.") : null}
+                                InputProps={{
+                                    // disableUnderline: edit_mode === 1 ? false : true,
+                                    endAdornment: (errors.idNumberType &&
+                                        <InputAdornment position="end">
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                {...TextFieldOpts}
+                            >
+                                {idTypesList.map((option, optionIndex) => (
+                                    <MenuItem key={optionIndex} value={option.code} name={option.code}>
+                                        {t(option.name)}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <Controller
+                                as={TextField}
+                                control={control}
+                                id="standard-lastName"
+                                name="lastName"
+                                // defaultValue={patientInitialValues.firstName}
+                                label={t("Last Name")}
+                                // required
+                                {...TextFieldOpts}
+                            />
+                            <Controller
+                                name="birthDate"
+                                control={control}
+                                rules={{
+                                    //validate: {
+                                    //    value: value => Moment(value, formatDate, true).isValid() === true
+                                    //}
+                                }}
+                                as={
+                                    <CustomizedDatePicker
+                                        PickerProps={{
+                                            id: "standard-birthDate",
+                                            format: "DD/MM/YYYY",
+                                            name: "birthDate",
+                                            // required: true,
+                                            disableToolbar: false,
+                                            label: t("birth day"),
+                                            inputValue: patientBirthDate,
+                                            mask: {formatDate},
+                                            InputProps: {
+                                                // disableUnderline: edit_mode === 1 ? false : true,
+                                            },
+                                            disableFuture: true,
+                                            color: 'primary',
+                                            variant: 'inline',
+                                            inputVariant: "filled",
+                                            onChange: handleChangeBirthDate,
+                                            autoOk: true,
+                                            error: errors.birthDate ? true : false,
+                                            helperText: errors.birthDate ? t("Date must be in a date format") : null,
+                                        }}
+                                        CustomizedProps={{
+                                            keyBoardInput: true,
+                                            showNextArrow: false,
+                                            showPrevArrow: false,
+                                        }}
+                                    />
+                                }
+                            />
+                            <Controller
+                                as={TextField}
+                                control={control}
+                                id="standard-mobilePhone"
+                                name="mobilePhone"
+                                // defaultValue={patientInitialValues.mobilePhone}
+                                label={t("Cell phone")}
+                                rules={{
+                                    pattern: getCellPhoneRegexPattern()
+                                }}
+                                error={errors.mobilePhone ? true : false}
+                                helperText={errors.mobilePhone ? t("The number entered is incorrect") : null}
+                                InputProps={{
+                                    // disableUnderline: edit_mode === 1 ? false : true,
+                                    endAdornment: (errors.mobilePhone &&
+                                        <InputAdornment position="end">
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                // required
+                                {...TextFieldOpts}
+                            />
                         </StyledColumnSecond>
                     </StyledBox>
-                    {/*<StyledRowEmail>*/}
-                    {/*    <Controller*/}
-                    {/*        as={TextField}*/}
-                    {/*        control={methods.control}*/}
-                    {/*        id="standard-patientEmail"*/}
-                    {/*        name="patientEmail"*/}
-                    {/*        // defaultValue={patientInitialValues.patientEmail}*/}
-                    {/*        label={t("Mail address")}*/}
-                    {/*        error={methods.errors.patientEmail ? true : false}*/}
-                    {/*        helperText={methods.errors.patientEmail ? t("Invalid email address") : null}*/}
-                    {/*        InputProps={{*/}
-                    {/*            // disableUnderline: edit_mode === 1 ? false : true,*/}
-                    {/*            endAdornment: (methods.errors.patientEmail &&*/}
-                    {/*                <InputAdornment position="end">*/}
-                    {/*                    <ErrorOutlineIcon htmlColor={"#ff0000"}/>*/}
-                    {/*                </InputAdornment>*/}
-                    {/*            ),*/}
-                    {/*        }}*/}
-                    {/*        rules={{*/}
-                    {/*            pattern: getEmailRegexPattern()*/}
-                    {/*        }}*/}
-                    {/*        {...TextFieldOpts}*/}
-                    {/*    />*/}
-                    {/*</StyledRowEmail>*/}
+                    <StyledRowEmail>
+                        <Controller
+                            as={TextField}
+                            control={control}
+                            id="standard-patientEmail"
+                            name="patientEmail"
+                            // defaultValue={patientInitialValues.patientEmail}
+                            label={t("Mail address")}
+                            error={errors.patientEmail ? true : false}
+                            helperText={errors.patientEmail ? t("Invalid email address") : null}
+                            InputProps={{
+                                // disableUnderline: edit_mode === 1 ? false : true,
+                                endAdornment: (errors.patientEmail &&
+                                    <InputAdornment position="end">
+                                        <ErrorOutlineIcon htmlColor={"#ff0000"}/>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            rules={{
+                                pattern: getEmailRegexPattern()
+                            }}
+                            {...TextFieldOpts}
+                        />
+                    </StyledRowEmail>
                 </StyledForm>
             </form>
             {/*</FormContext>*/}
