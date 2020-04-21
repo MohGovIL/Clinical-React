@@ -9,16 +9,24 @@ import normalizeFhirAppointment
     from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
     from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
+import Slide from "@material-ui/core/Slide";
+import AppointmentsAndEncountersTables from "./AppointmentsAndEncountersTables";
 
+
+const Transition = React.forwardRef(function Transition(props, ref,direction) {
+    return <Slide direction={direction?direction:'top'} ref={ref} {...props} />;
+});
 
 
 const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => {
     const {t} = useTranslation();
+    debugger;
     if(!content)
         return null;
 
-        const nextAppointment = content && content.nextAppointment && content.nextAppointment.data && content.nextAppointment.data.total > 0 ? normalizeFhirAppointment(content.nextAppointment.data.entry[1].resource) : null;
-        const curEncounter = content && content.curEncounter  && content.curEncounter.data && content.curEncounter.data.total > 0 ?  normalizeFhirEncounter(content.curEncounter.data.entry[1].resource): null;
+        const nextAppointment = content.nextAppointment;
+        const curEncounter = content.curEncounter;
+        const prevEncounter = content.prevEncounter ;
         const patientTrackingStatuses = content && content.patientTrackingStatuses ? content.patientTrackingStatuses : null ;
         const encounterStatuses = content && content.encounterStatuses ? content.encounterStatuses : null;
 
@@ -51,17 +59,17 @@ const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => 
                                  title={t('Appointments and encounters')}
                                  content_dividers={false}
                                  fullWidth = {true}
-                                 maxWidth = 'xl'
-
+                                 maxWidth = 'md'
+                                 TransitionComponent = {Transition}
                                  /*bottomButtons={bottomButtonsData}*/>
-                    <AppointmentsPerPatient
+                    <AppointmentsAndEncountersTables
                         nextAppointment={nextAppointment}
                         curEncounter={curEncounter}
-
+                        prevEncounter={curEncounter}
                         patientTrackingStatuses={patientTrackingStatuses}
                         encounterStatuses={encounterStatuses}>
 
-                    </AppointmentsPerPatient>
+                    </AppointmentsAndEncountersTables>
                 </CustomizedPopup>
             </React.Fragment>
         ) : null;

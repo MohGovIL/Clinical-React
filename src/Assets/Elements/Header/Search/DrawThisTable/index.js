@@ -172,14 +172,15 @@ const DrawThisTable = ({result, searchParam}) => {
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
-    const handleShowAppointmentsAndEncounters = (patient, nextAppointment, curEncounter, encounterStatuses,patientTrackingStatuses) => {
+    const handleShowAppointmentsAndEncounters = (patient, prevEncounter,nextAppointment, curEncounter, encounterStatuses,patientTrackingStatuses) => {
         debugger;
-        setAppointmentPopUpData({patient:patient, nextAppointment:nextAppointment, curEncounter:curEncounter,encounterStatuses:encounterStatuses,patientTrackingStatuses:patientTrackingStatuses});
+        setAppointmentPopUpData({patient:patient, prevEncounter:prevEncounter, nextAppointment:nextAppointment, curEncounter:curEncounter,encounterStatuses:encounterStatuses,patientTrackingStatuses:patientTrackingStatuses});
         setPopUpAppointmentsPerPatient(true);
 
     }
 
     const handlePopupClose = () => {
+        debugger;
         setPopUpAppointmentsPerPatient(false);
         setAppointmentPopUpData(null);
     }
@@ -191,7 +192,7 @@ const DrawThisTable = ({result, searchParam}) => {
                 if (patient) {
                     return (
                         <React.Fragment>
-                            <PopUpAppointmentsPerPatient popupOpen={true}
+                            <PopUpAppointmentsPerPatient popupOpen={popUpAppointmentsPerPatient}
                                                         content={appointmentPopUpData} handlePopupClose={handlePopupClose} ></PopUpAppointmentsPerPatient>
                             <StyledExpansionPanel expanded={expanded === 'panel' + patientIndex} key={patientIndex}
                                                   onChange={handleChange('panel' + patientIndex, patient.id)}>
@@ -235,7 +236,7 @@ const DrawThisTable = ({result, searchParam}) => {
                                         <StyledHrefButton size={'small'} variant="outlined" color="primary"
                                                           href="#contained-buttons"
                                                           disabled={(nextAppointment && nextAppointment.data && nextAppointment.data.total > 0) || (curEncounter && curEncounter.data && curEncounter.data.total > 0) ? false : true}
-                                                          onClick={() => handleShowAppointmentsAndEncounters(patient, nextAppointment, curEncounter, encounterStatuses,patientTrackingStatuses)}>
+                                                          onClick={() => handleShowAppointmentsAndEncounters(patient, prevEncounter , nextAppointment, curEncounter, encounterStatuses,patientTrackingStatuses)}>
                                             {t("Encounters and appointments")}
                                         </StyledHrefButton>
                                         <StyledHrefButton size={'small'} variant="contained" color="primary"
