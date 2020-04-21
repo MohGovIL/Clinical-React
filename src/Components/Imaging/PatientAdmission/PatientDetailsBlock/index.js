@@ -62,9 +62,9 @@ const PatientDetailsBlock = ({
 
   const [referralFile, setReferralFile] = useState({});
   const [commitmentFile, setCommitmentFile] = useState({});
-  const [additionnalDocumentFile, setAdditionnalDocumentFile] = useState({});
-  const [numOfAdditionnalDocument, setNumOfAdditionnalDocument] = useState([]);
-  const [nameOfAddionalDocumentFile, setNameOfAddionalDocumentFile] = useState(
+  const [additionalDocumentFile, setAdditionalDocumentFile] = useState({});
+  const [numOfAdditionalDocument, setNumOfAdditionalDocument] = useState([]);
+  const [nameOfAdditionalDocumentFile, setNameOfAdditionalDocumentFile] = useState(
     '',
   );
 
@@ -72,7 +72,7 @@ const PatientDetailsBlock = ({
 
   const commitmentRef = React.useRef();
 
-  const additionnalDocumentRef = React.useRef();
+  const additionalDocumentRef = React.useRef();
 
   const MAX_SIZE = 2;
 
@@ -119,24 +119,24 @@ const PatientDetailsBlock = ({
     setState(emptyObj);
   };
 
-  const onClickAdditionnalDocumentHandler = () => {
-    numOfAdditionnalDocument.length !== 1 &&
-      setNumOfAdditionnalDocument((prevState) => {
+  const onClickAdditionalDocumentHandler = () => {
+    numOfAdditionalDocument.length !== 1 &&
+      setNumOfAdditionalDocument((prevState) => {
         let clonePrevState = prevState;
         clonePrevState.push(clonePrevState.length);
         return [...clonePrevState];
       });
   };
 
-  const onChangeAdditionnalDocumentHandler = (e) => {
-    setNameOfAddionalDocumentFile(e.target.value);
+  const onChangeAdditionalDocumentHandler = (e) => {
+    setNameOfAdditionalDocumentFile(e.target.value);
   };
 
   const icon = <Close fontSize='small' />;
   const [addressCity, setAddressCity] = useState({});
   const [POBoxCity, setPOBoxCity] = useState({});
 
-  const [selecetedServicesType, setSelecetedServicesType] = useState([]);
+  const [selectedServicesType, setSelectedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
 
   const [cities, setCities] = useState([]);
@@ -157,12 +157,12 @@ const PatientDetailsBlock = ({
   };
 
   const selectExaminationOnOpenHandler = () => {
-    setPendingValue(selecetedServicesType);
+    setPendingValue(selectedServicesType);
     setServicesTypeOpen(true);
   };
 
-  const selectExaminationOnCloseHandelr = () => {
-    setValue('selectTest', selecetedServicesType, true);
+  const selectExaminationOnCloseHandler = () => {
+    setValue('selectTest', selectedServicesType, true);
     setServicesTypeOpen(false);
   };
 
@@ -172,11 +172,11 @@ const PatientDetailsBlock = ({
   ] = useState(new Date());
 
   const [
-    commitmentAndPaymentCommitmeValidity,
-    setCommitmentAndPaymentCommitmeValidity,
+    commitmentAndPaymentCommitmentValidity,
+    setCommitmentAndPaymentCommitmentValidity,
   ] = useState(new Date());
 
-  const valdiatorDate = (date, type) => {
+  const validateDate = (date, type) => {
     switch (type) {
       case 'before':
         return moment(date).isSameOrBefore(moment(new Date()));
@@ -209,8 +209,8 @@ const PatientDetailsBlock = ({
   };
 
   const onDeleteHandler = (chipToDeleteIndex) => () => {
-    setSelecetedServicesType(
-      selecetedServicesType.filter(
+    setSelectedServicesType(
+      selectedServicesType.filter(
         (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
       ),
     );
@@ -246,6 +246,8 @@ const PatientDetailsBlock = ({
     setCommitmentAndPaymentTabValue(newValue);
   };
 
+  const [relatedPerson, setRelatedPerson] = useState({});
+
   //Sending the form
   const onSubmit = (data) => {
     console.log(data);
@@ -276,10 +278,15 @@ const PatientDetailsBlock = ({
             };
           },
         );
-        setSelecetedServicesType(selectedArr);
+        setSelectedServicesType(selectedArr);
       }
       if (encounterData.priority > 1) {
         setIsUrgent(true);
+      }
+      if (encounterData.relatedPerson) {
+        (async () => {
+          //TODO Use the FHIR API to get the related person and then set relatedPerson state.
+        })()
       }
     }
   }, [encounterData, patientData]);
@@ -336,7 +343,6 @@ const PatientDetailsBlock = ({
       active = false;
     };
   }, [loadingServicesType]);
-  // loadingServiceType add it to useEffect dep
 
   //Loading cities
   useEffect(() => {
@@ -728,7 +734,7 @@ const PatientDetailsBlock = ({
                 open={servicesTypeOpen}
                 loading={loadingServicesType}
                 onOpen={selectExaminationOnOpenHandler}
-                onClose={selectExaminationOnCloseHandelr}
+                onClose={selectExaminationOnCloseHandler}
                 // onOpen={() => {
                 //   setPendingValue(selecetedServicesType);
                 //   setServicesTypeOpen(true);
@@ -764,7 +770,7 @@ const PatientDetailsBlock = ({
                 ListboxComponent={ListboxComponent}
                 ListboxProps={{
                   pendingValue: pendingValue,
-                  setSelecetedServicesType: setSelecetedServicesType,
+                  setSelecetedServicesType: setSelectedServicesType,
                   setClose: setServicesTypeOpen,
                   setValue: setValue,
                 }}
@@ -799,7 +805,7 @@ const PatientDetailsBlock = ({
           />
 
           <Grid container direction='row' wrap='wrap'>
-            {selecetedServicesType.map((selected, selectedIndex) => (
+            {selectedServicesType.map((selected, selectedIndex) => (
               <StyledChip
                 deleteIcon={icon}
                 onDelete={onDeleteHandler(selectedIndex)}
@@ -858,7 +864,7 @@ const PatientDetailsBlock = ({
                 name='commitmentAndPaymentCommitmentDate'
                 rules={{
                   validate: {
-                    value: (value) => valdiatorDate(value, 'before'),
+                    value: (value) => validateDate(value, 'before'),
                   },
                 }}
                 control={control}
@@ -899,7 +905,7 @@ const PatientDetailsBlock = ({
                 control={control}
                 rules={{
                   validate: {
-                    value: (value) => valdiatorDate(value, 'after'),
+                    value: (value) => validateDate(value, 'after'),
                   },
                 }}
                 as={
@@ -914,12 +920,12 @@ const PatientDetailsBlock = ({
                       margin='normal'
                       id='commitmentAndPaymentCommitmeValidity'
                       label={t('Commitment validity')}
-                      value={commitmentAndPaymentCommitmeValidity}
+                      value={commitmentAndPaymentCommitmentValidity}
                       onChange={(date) =>
                         dateOnChangeHandler(
                           date,
                           'commitmentAndPaymentCommitmeValidity',
-                          setCommitmentAndPaymentCommitmeValidity,
+                          setCommitmentAndPaymentCommitmentValidity,
                         )
                       }
                       KeyboardButtonProps={{
@@ -1054,42 +1060,42 @@ const PatientDetailsBlock = ({
             </Grid>
           </Grid>
           {/* AddiotionalDocumentRef */}
-          {numOfAdditionnalDocument.map((_, additionnalDocumentIndex) => {
+          {numOfAdditionalDocument.map((_, additionnalDocumentIndex) => {
             return (
               <Grid container alignItems='center' key={additionnalDocumentIndex}>
                 <Grid item xs={3}>
                   <StyledTextField
-                    onChange={onChangeAdditionnalDocumentHandler}
+                    onChange={onChangeAdditionalDocumentHandler}
                     label={t('Additional document')}
                   />
                 </Grid>
                 <Grid item xs={9}>
                   <input
-                    ref={additionnalDocumentRef}
+                    ref={additionalDocumentRef}
                     id='additionnalDocument'
                     type='file'
                     accept='.pdf,.gpf,.png,.gif,.jpg'
                     required
                     onChange={() =>
                       onChangeFileHandler(
-                        additionnalDocumentRef,
-                        setAdditionnalDocumentFile,
-                        nameOfAddionalDocumentFile || 'Document1',
+                        additionalDocumentRef,
+                        setAdditionalDocumentFile,
+                        nameOfAdditionalDocumentFile || 'Document1',
                       )
                     }
                   />
-                  {Object.values(additionnalDocumentFile).length > 0 ? (
+                  {Object.values(additionalDocumentFile).length > 0 ? (
                     <ChipWithImage
                       htmlFor='additionnalDocument'
-                      label={additionnalDocumentFile.name}
-                      size={additionnalDocumentFile.size}
+                      label={additionalDocumentFile.name}
+                      size={additionalDocumentFile.size}
                       onDelete={() =>
                         onDeleteFileHandler(
-                          additionnalDocumentRef,
-                          setAdditionnalDocumentFile,
+                          additionalDocumentRef,
+                          setAdditionalDocumentFile,
                         )
                       }
-                      onClick={() => onClickFileHandler(additionnalDocumentRef)}
+                      onClick={() => onClickFileHandler(additionalDocumentRef)}
                     />
                   ) : (
                     <label htmlFor='additionnalDocument'>
@@ -1110,7 +1116,7 @@ const PatientDetailsBlock = ({
           <Grid container alignItems='center'>
             <AddCircle
               style={{ color: '#002398', cursor: 'pointer' }}
-              onClick={onClickAdditionnalDocumentHandler}
+              onClick={onClickAdditionalDocumentHandler}
             />
             <Title
               margin='0 8px 0 8px'
