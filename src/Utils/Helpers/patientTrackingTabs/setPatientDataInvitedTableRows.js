@@ -133,6 +133,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         gender: patient.gender,
                         firstName: patient.firstName,
                         lastName: patient.lastName,
+                        padding: 'none', // TODO add this prop all the way down
                         align: 'right',
                     });
                     break;
