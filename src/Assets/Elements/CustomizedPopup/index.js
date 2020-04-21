@@ -12,9 +12,10 @@ import {connect} from "react-redux";
 import CustomizedTableButton from "../CustomizedTable/CustomizedTableButton";
 
 const CustomizedPopup = ({children, isOpen, onClose, languageDirection, props}) => {
+debugger;
     return (
         <div>
-            <Dialog onClose={onClose} aria-labelledby="customized-dialog-title" open={isOpen}>
+            <Dialog props={props} onClose={onClose} aria-labelledby="customized-dialog-title" open={isOpen}>
                 <StyledMuiDialogTitle disableTypography language_direction={languageDirection}>
                     <Typography variant="h6">{props.title}</Typography>
                     {onClose ? (

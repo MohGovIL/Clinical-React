@@ -1,5 +1,8 @@
 import React from 'react';
 
+import {useTranslation} from "react-i18next";
+
+
 import AppointmentsPerPatient from "./AppointmentsPerPatient";
 import CustomizedPopup from "../../../CustomizedPopup";
 import normalizeFhirAppointment
@@ -8,10 +11,12 @@ import normalizeFhirEncounter
     from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
 
 
+
 const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => {
+    const {t} = useTranslation();
     if(!content)
         return null;
-debugger;
+
         const nextAppointment = content && content.nextAppointment && content.nextAppointment.data && content.nextAppointment.data.total > 0 ? normalizeFhirAppointment(content.nextAppointment.data.entry[1].resource) : null;
         const curEncounter = content && content.curEncounter  && content.curEncounter.data && content.curEncounter.data.total > 0 ?  normalizeFhirEncounter(content.curEncounter.data.entry[1].resource): null;
         const patientTrackingStatuses = content && content.patientTrackingStatuses ? content.patientTrackingStatuses : null ;
@@ -43,8 +48,11 @@ debugger;
 
             <React.Fragment>
                 <CustomizedPopup isOpen={popupOpen} onClose={handlePopupClose}
-                                 title={'Create new patient'}
+                                 title={t('Appointments and encounters')}
                                  content_dividers={false}
+                                 fullWidth = {true}
+                                 maxWidth = 'xl'
+
                                  /*bottomButtons={bottomButtonsData}*/>
                     <AppointmentsPerPatient
                         nextAppointment={nextAppointment}
