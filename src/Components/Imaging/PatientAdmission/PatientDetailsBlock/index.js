@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import matchSorter from 'match-sorter';
+import { getCellPhoneRegexPattern } from 'Utils/Helpers/validation/patterns';
 import {
   StyledForm,
   StyledPatientDetails,
@@ -9,6 +10,7 @@ import {
   StyledAutoComplete,
   StyledKeyboardDatePicker,
   StyledChip,
+  StyledButton,
 } from './Style';
 import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { normalizeFhirHMO } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirHMO';
@@ -24,6 +26,8 @@ import {
   CheckBox,
   Close,
   CheckBoxOutlineBlankOutlined,
+  Scanner,
+  AddCircle,
 } from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { getCities, getStreets } from 'Utils/Services/API';
@@ -33,6 +37,7 @@ import moment from 'moment';
 import { getValueSet, getHMO } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
+import ChipWithImage from 'Assets/Elements/StyledChip';
 import {
   Checkbox,
   ListItemText,
@@ -40,6 +45,9 @@ import {
   CircularProgress,
   Tab,
   Tabs,
+  FormControl,
+  InputLabel,
+  Chip,
 } from '@material-ui/core';
 
 const PatientDetailsBlock = ({
@@ -49,13 +57,85 @@ const PatientDetailsBlock = ({
   formatDate,
 }) => {
   const { t } = useTranslation();
-  const { register, control, handleSubmit } = useForm({
-    submitFocusError: true,
+  const { control, handleSubmit, errors, setValue } = useForm({
     mode: 'onBlur',
   });
 
+  const [referralFile, setReferralFile] = useState({});
+  const [commitmentFile, setCommitmentFile] = useState({});
+  const [additionnalDocumentFile, setAdditionnalDocumentFile] = useState({});
+  const [numOfAdditionnalDocument, setNumOfAdditionnalDocument] = useState([]);
+  const [nameOfAddionalDocumentFile, setNameOfAddionalDocumentFile] = useState(
+    '',
+  );
+
+  const referralRef = React.useRef();
+
+  const commitmentRef = React.useRef();
+
+  const additionnalDocumentRef = React.useRef();
+
+  const MAX_SIZE = 2;
+
+  const UNIT = {type: 'MB', valueInBytes: 1000000};
+
+  const toFix1 = (number) => {
+    return Number.parseFloat(number).toFixed(1);
+  };
+
+  const calculateSize = (size) => {
+    const SizeInMB = size / UNIT.valueInBytes;
+    if (SizeInMB < MAX_SIZE) {
+      return [false, toFix1(SizeInMB)];
+    }
+    return [true, toFix1(SizeInMB)];
+  };
+
+  function onChangeFileHandler(ref, setState, fileName) {
+    const files = ref.current.files;
+    const [BoolAnswer, SizeInMB] = calculateSize(
+      files[files.length - 1].size,
+    );
+    if (!BoolAnswer) {
+      const fileObj = {
+        name: `${fileName}_${moment().format('L')}_${moment().format(
+          'HH:mm',
+        )}_${files[files.length - 1].name}`,
+        size: SizeInMB,
+      };
+      setState({ ...fileObj });
+    } else {
+      ref.current.value = '';
+    }
+  }
+
+  const onClickFileHandler = (ref) => {
+    const objUrl = URL.createObjectURL(ref.current.files[0]);
+    window.open(objUrl, ref.current.files[0].name);
+  };
+
+  const onDeleteFileHandler = (ref, setState) => {
+    ref.current.value = '';
+    const emptyObj = {};
+    setState(emptyObj);
+  };
+
+  const onClickAdditionnalDocumentHandler = () => {
+    numOfAdditionnalDocument.length !== 1 &&
+      setNumOfAdditionnalDocument((prevState) => {
+        let clonePrevState = prevState;
+        clonePrevState.push(clonePrevState.length);
+        return [...clonePrevState];
+      });
+  };
+
+  const onChangeAdditionnalDocumentHandler = (e) => {
+    setNameOfAddionalDocumentFile(e.target.value);
+  };
+
   const icon = <Close fontSize='small' />;
   const [addressCity, setAddressCity] = useState({});
+  const [POBoxCity, setPOBoxCity] = useState({});
 
   const [selecetedServicesType, setSelecetedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
@@ -75,24 +155,47 @@ const PatientDetailsBlock = ({
   const loadingStreets = streetsOpen && streets.length === 0;
   const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
 
+  const selectExaminationOnChangeHandler = (event, newValue) => {
+    setPendingValue(newValue);
+  };
+
+  const selectExaminationOnOpenHandler = () => {
+    setPendingValue(selecetedServicesType);
+    setServicesTypeOpen(true);
+  };
+
+  const selectExaminationOnCloseHandelr = () => {
+    setValue('selectTest', selecetedServicesType, true);
+    setServicesTypeOpen(false);
+  };
+
   const [
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,
-  ] = useState(undefined);
+  ] = useState(new Date());
 
   const [
     commitmentAndPaymentCommitmeValidity,
     setCommitmentAndPaymentCommitmeValidity,
-  ] = useState(undefined);
+  ] = useState(new Date());
 
-  const commitmentAndPaymentCommitmeValidityOnChangeHandler = (date) => {
-    setCommitmentAndPaymentCommitmeValidity(date);
+  const valdiatorDate = (date, type) => {
+    switch (type) {
+      case 'before':
+        return moment(date).isSameOrBefore(moment(new Date()));
+
+      case 'after':
+        return moment(date).isSameOrAfter(moment(new Date()));
+
+      default:
+        return false;
+    }
   };
 
-  const commitmentAndPaymentCommitmentDateOnChangeHandler = (date) => {
+  const dateOnChangeHandler = (date, valueName, set) => {
     try {
-      // let newBirthDate = date.format(formatDate).toString();
-      setCommitmentAndPaymentCommitmentDate(date.format(formatDate).toString());
+      setValue(valueName, date, true);
+      set(date);
     } catch (e) {
       console.log('Error: ' + e);
     }
@@ -158,6 +261,7 @@ const PatientDetailsBlock = ({
         code: patientData.city,
       };
       setAddressCity(defaultAddressCityObj);
+      setPOBoxCity(defaultAddressCityObj);
     }
     if (encounterData) {
       if (encounterData.examination && encounterData.examination.length) {
@@ -302,7 +406,10 @@ const PatientDetailsBlock = ({
               }),
             );
           } else {
-            const emptyResultsObj = {};
+            const emptyResultsObj = {
+              code: 'no_result',
+              name: t('No Results'),
+            };
             const emptyResults = [emptyResultsObj];
             setStreets(emptyResults);
           }
@@ -339,7 +446,13 @@ const PatientDetailsBlock = ({
           label={'Patient Details'}
         />
         <StyledFormGroup>
-          <Title fontSize={'18px'} variant={'fullWidth'} />
+          <Title
+            fontSize={'18px'}
+            color={'#000b40'}
+            label={t('Accompanying patient')}
+            bold
+          />
+          <StyledDivider variant={'fullWidth'} />
           <Grid
             container
             direction={'row'}
@@ -356,7 +469,7 @@ const PatientDetailsBlock = ({
             />
           </Grid>
         </StyledFormGroup>
-        {isEscorted ? (
+        {isEscorted && (
           <StyledFormGroup>
             <Title
               fontSize={'18px'}
@@ -365,20 +478,27 @@ const PatientDetailsBlock = ({
               bold
             />
             <StyledDivider variant={'fullWidth'} />
-            <StyledTextField
-              inputRef={register}
+            <Controller
+              as={<StyledTextField label={t('Escort name')} />}
               name={'escortName'}
-              id={'escortName'}
-              label={t('Escort name')}
+              control={control}
+              defaultValue=''
             />
-            <StyledTextField
-              inputRef={register}
+            <Controller
+              as={<StyledTextField label={t('Escort cell phone')} />}
               name={'escortMobilePhone'}
-              id={'escortMobilePhone'}
-              label={t('Escort cell phone ')}
+              control={control}
+              defaultValue=''
+              rules={{
+                pattern: getCellPhoneRegexPattern(),
+              }}
+              error={errors.escortMobilePhone}
+              helperText={
+                errors.escortMobilePhone && t('The number entered is incorrect')
+              }
             />
           </StyledFormGroup>
-        ) : null}
+        )}
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
@@ -477,6 +597,7 @@ const PatientDetailsBlock = ({
               <Controller
                 name={'addressHouseNumber'}
                 control={control}
+                defaultValue={patientData.streetNumber}
                 as={
                   <StyledTextField
                     id={'addressHouseNumber'}
@@ -491,9 +612,13 @@ const PatientDetailsBlock = ({
                   <StyledTextField
                     id={'addressPostalCode'}
                     label={t('Postal code')}
+                    type='number'
                   />
                 }
+                rules={{ maxLength: { value: 7 } }}
                 control={control}
+                error={errors.addressPostalCode}
+                helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
               />
             </React.Fragment>
           ) : (
@@ -508,7 +633,10 @@ const PatientDetailsBlock = ({
                 onClose={() => {
                   setCitiesOpen(false);
                 }}
-                value={addressCity}
+                onChange={(event, newValue) => {
+                  setPOBoxCity(newValue);
+                }}
+                value={POBoxCity}
                 loading={loadingCities}
                 options={cities}
                 getOptionLabel={(option) => option.name}
@@ -547,6 +675,7 @@ const PatientDetailsBlock = ({
                   <StyledTextField
                     id={'POBoxPostalCode'}
                     label={t('Postal code')}
+                    InputLabelProps={{ shrink: patientData.postalCode && true }}
                   />
                 }
                 control={control}
@@ -560,8 +689,9 @@ const PatientDetailsBlock = ({
             href={
               'https://mypost.israelpost.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/%D7%90%D7%99%D7%AA%D7%95%D7%A8-%D7%9E%D7%99%D7%A7%D7%95%D7%93/'
             }
-            target={'_blank'}>
-            {t('click here')}
+            target={'_blank'}
+            rel='noopener noreferrer'>
+            {t('Click here')}
           </a>
         </span>
         <Title
@@ -594,74 +724,94 @@ const PatientDetailsBlock = ({
               marginRight={'40px'}
             />
           </Grid>
-          <Autocomplete
-            filterOptions={filterOptions}
-            multiple
-            noOptionsText={t('No Results')}
-            loadingText={t('Loading')}
-            open={servicesTypeOpen}
-            loading={loadingServicesType}
-            onOpen={() => {
-              setPendingValue(selecetedServicesType);
-              setServicesTypeOpen(true);
+          <Controller
+            name='selectTest'
+            control={control}
+            rules={{
+              validate: {
+                value: (value) => value && value.length > 0,
+              },
             }}
-            onClose={(event) => {
-              setServicesTypeOpen(false);
-            }}
-            value={pendingValue}
-            onChange={(event, newValue) => {
-              setPendingValue(newValue);
-            }}
-            disableCloseOnSelect
-            renderTags={() => null}
-            renderOption={(option, state) => (
-              <Grid container justify='flex-end' alignItems='center'>
-                <Grid item xs={3}>
-                  <Checkbox
-                    color='primary'
-                    icon={<CheckBoxOutlineBlankOutlined />}
-                    checkedIcon={<CheckBox />}
-                    checked={state.selected}
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText>{option.reasonCode.code}</ListItemText>
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.serviceType.name)} />
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.reasonCode.name)} />
-                </Grid>
-              </Grid>
-            )}
-            ListboxComponent={ListboxComponent}
-            ListboxProps={{
-              pendingValue: pendingValue,
-              setSelecetedServicesType: setSelecetedServicesType,
-              setClose: setServicesTypeOpen,
-            }}
-            options={servicesType}
-            renderInput={(params) => (
-              <StyledTextField
-                {...params}
-                label={t('Select test')}
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <React.Fragment>
-                      <InputAdornment position={'end'}>
-                        {loadingServicesType ? (
-                          <CircularProgress color={'inherit'} size={20} />
-                        ) : null}
-                        {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
-                      </InputAdornment>
-                    </React.Fragment>
-                  ),
+            onChangeName={selectExaminationOnChangeHandler}
+            as={
+              <Autocomplete
+                filterOptions={filterOptions}
+                multiple
+                noOptionsText={t('No Results')}
+                loadingText={t('Loading')}
+                open={servicesTypeOpen}
+                loading={loadingServicesType}
+                onOpen={selectExaminationOnOpenHandler}
+                onClose={selectExaminationOnCloseHandelr}
+                // onOpen={() => {
+                //   setPendingValue(selecetedServicesType);
+                //   setServicesTypeOpen(true);
+                // }}
+                // onClose={(event) => {
+                //   setServicesTypeOpen(false);
+                // }}
+                value={pendingValue}
+                onChange={selectExaminationOnChangeHandler}
+                disableCloseOnSelect
+                renderTags={() => null}
+                renderOption={(option, state) => (
+                  <Grid container justify='flex-end' alignItems='center'>
+                    <Grid item xs={3}>
+                      <Checkbox
+                        color='primary'
+                        icon={<CheckBoxOutlineBlankOutlined />}
+                        checkedIcon={<CheckBox />}
+                        checked={state.selected}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText>{option.reasonCode.code}</ListItemText>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText primary={t(option.serviceType.name)} />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText primary={t(option.reasonCode.name)} />
+                    </Grid>
+                  </Grid>
+                )}
+                ListboxComponent={ListboxComponent}
+                ListboxProps={{
+                  pendingValue: pendingValue,
+                  setSelecetedServicesType: setSelecetedServicesType,
+                  setClose: setServicesTypeOpen,
+                  setValue: setValue,
                 }}
+                options={servicesType}
+                renderInput={(params) => (
+                  <StyledTextField
+                    error={errors.selectTest}
+                    helperText={
+                      errors.selectTest &&
+                      t('The test performed during the visit must be selected')
+                    }
+                    required
+                    {...params}
+                    label={t('Select test')}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <React.Fragment>
+                          <InputAdornment position={'end'}>
+                            {loadingServicesType ? (
+                              <CircularProgress color={'inherit'} size={20} />
+                            ) : null}
+                            {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
+                          </InputAdornment>
+                        </React.Fragment>
+                      ),
+                    }}
+                  />
+                )}
               />
-            )}
+            }
           />
+
           <Grid container direction='row' wrap='wrap'>
             {selecetedServicesType.map((selected, selectedIndex) => (
               <StyledChip
@@ -713,67 +863,89 @@ const PatientDetailsBlock = ({
                 id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                 type='number'
               />
-              {/* Add date picker here */}
-              {/* <StyledTextInput languageDirection={languageDirection}> */}
-              {/* <CustomizedDatePicker
-                  PickerProps={{
-                    id: 'asdasdas',
-                    format: 'DD/MM/YYYY',
-                    name: 'commitmentDate',
-                    // required: true,
-                    disableToolbar: false,
-                    label: t('Commitment date'),
-                    inputValue: commitmentAndPaymentCommitmentDate,
-                    mask: { formatDate },
-                    // InputProps: {
-                    //     disableUnderline: edit_mode === 1 ? false : true,
-                    // },
-                    disableFuture: true,
-                    // color: edit_mode === 1 ? "primary" : 'primary',
-                    // disabled: edit_mode === 1 ? false : true,
-                    variant: 'inline',
-                    inputVariant: 'standard',
-                    onChange: commitmentAndPaymentCommitmentDateOnChangeHandler,
-                    autoOk: true,
-                    // error: errors.birthDate ? true : false,
-                    // helperText: errors.birthDate ? t("Date must be in a date format") : null,
-                  }}
-                  CustomizedProps={{
-                    keyBoardInput: true,
-                    showNextArrow: false,
-                    showPrevArrow: false,
-                  }}
-                /> */}
-              <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
-                <StyledKeyboardDatePicker
-                  disableToolbar
-                  variant='inline'
-                  format={formatDate}
-                  margin='normal'
-                  required
-                  id='commitmentAndPaymentCommitmentDate'
-                  label={t('Commitment date')}
-                  value={commitmentAndPaymentCommitmentDate}
-                  onChange={commitmentAndPaymentCommitmentDateOnChangeHandler}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
-                <StyledKeyboardDatePicker
-                  required
-                  disableToolbar
-                  variant='inline'
-                  format={formatDate}
-                  margin='normal'
-                  id='commitmentAndPaymentCommitmeValidity'
-                  label={t('Commitment validity')}
-                  value={commitmentAndPaymentCommitmeValidity}
-                  onChange={commitmentAndPaymentCommitmeValidityOnChangeHandler}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
-              </MuiPickersUtilsProvider>
+              <Controller
+                name='commitmentAndPaymentCommitmentDate'
+                rules={{
+                  validate: {
+                    value: (value) => valdiatorDate(value, 'before'),
+                  },
+                }}
+                control={control}
+                as={
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
+                    <StyledKeyboardDatePicker
+                      disableToolbar
+                      autoOk
+                      variant='inline'
+                      format={formatDate}
+                      mask={formatDate}
+                      margin='normal'
+                      required
+                      id='commitmentAndPaymentCommitmentDate'
+                      label={t('Commitment date')}
+                      value={commitmentAndPaymentCommitmentDate}
+                      onChange={(date) =>
+                        dateOnChangeHandler(
+                          date,
+                          'commitmentAndPaymentCommitmentDate',
+                          setCommitmentAndPaymentCommitmentDate,
+                        )
+                      }
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      error={errors.commitmentAndPaymentCommitmentDate && true}
+                      helperText={
+                        errors.commitmentAndPaymentCommitmentDate &&
+                        t('An equal date or less than today must be entered')
+                      }
+                    />
+                  </MuiPickersUtilsProvider>
+                }
+              />
+              <Controller
+                name='commitmentAndPaymentCommitmeValidity'
+                control={control}
+                rules={{
+                  validate: {
+                    value: (value) => valdiatorDate(value, 'after'),
+                  },
+                }}
+                as={
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
+                    <StyledKeyboardDatePicker
+                      required
+                      autoOk
+                      mask={formatDate}
+                      disableToolbar
+                      variant='inline'
+                      format={formatDate}
+                      margin='normal'
+                      id='commitmentAndPaymentCommitmeValidity'
+                      label={t('Commitment validity')}
+                      value={commitmentAndPaymentCommitmeValidity}
+                      onChange={(date) =>
+                        dateOnChangeHandler(
+                          date,
+                          'commitmentAndPaymentCommitmeValidity',
+                          setCommitmentAndPaymentCommitmeValidity,
+                        )
+                      }
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      error={
+                        errors.commitmentAndPaymentCommitmeValidity && true
+                      }
+                      helperText={
+                        errors.commitmentAndPaymentCommitmeValidity &&
+                        t('An equal or greater date must be entered than today')
+                      }
+                    />
+                  </MuiPickersUtilsProvider>
+                }
+              />
+
               {/* </StyledTextInput> */}
               <StyledTextField
                 required
@@ -788,6 +960,174 @@ const PatientDetailsBlock = ({
               />
             </React.Fragment>
           )}
+        </StyledFormGroup>
+        <StyledFormGroup>
+          <Title
+            fontSize={'18px'}
+            color={'#000b40'}
+            label={t('Upload documents')}
+            bold
+          />
+          <Title
+            fontSize={'14px'}
+            color={'#000b40'}
+            label={`${t('Uploading documents with a maximum size of up to')} ${MAX_SIZE}${UNIT.type}`}
+          />
+          <StyledDivider variant='fullWidth' />
+          {/* ReferralRef  */}
+          <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
+            <Grid item xs={3}>
+              <label style={{ color: '#000b40' }} htmlFor='referral'>
+                {t('Referral')}
+              </label>
+            </Grid>
+            <Grid item xs={9}>
+              <input
+                ref={referralRef}
+                id='referral'
+                type='file'
+                accept='.pdf,.gpf,.png,.gif,.jpg'
+                required
+                onChange={() =>
+                  onChangeFileHandler(referralRef, setReferralFile, 'Referral')
+                }
+              />
+              {Object.values(referralFile).length > 0 ? (
+                <ChipWithImage
+                  htmlFor='referral'
+                  label={referralFile.name}
+                  size={referralFile.size}
+                  onDelete={() =>
+                    onDeleteFileHandler(referralRef, setReferralFile)
+                  }
+                  onClick={() => onClickFileHandler(referralRef)}
+                />
+              ) : (
+                <label htmlFor='referral'>
+                  <StyledButton
+                    variant='outlined'
+                    color='primary'
+                    component='span'
+                    size={'large'}
+                    startIcon={<Scanner />}>
+                    {t('Upload document')}
+                  </StyledButton>
+                </label>
+              )}
+            </Grid>
+          </Grid>
+          {/* CommitmentRef  */}
+          <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
+            <Grid item xs={3}>
+              <label style={{ color: '#000b40' }} htmlFor='commitment'>
+                {t('Commitment')}
+              </label>
+            </Grid>
+            <Grid item xs={9}>
+              <input
+                ref={commitmentRef}
+                id='commitment'
+                type='file'
+                accept='.pdf,.gpf,.png,.gif,.jpg'
+                required
+                onChange={() =>
+                  onChangeFileHandler(
+                    commitmentRef,
+                    setCommitmentFile,
+                    'Commitment',
+                  )
+                }
+              />
+              {Object.values(commitmentFile).length > 0 ? (
+                <ChipWithImage
+                  htmlFor='commitment'
+                  label={commitmentFile.name}
+                  size={commitmentFile.size}
+                  onDelete={() =>
+                    onDeleteFileHandler(commitmentRef, setCommitmentFile)
+                  }
+                  onClick={() => onClickFileHandler(commitmentRef)}
+                />
+              ) : (
+                <label htmlFor='commitment'>
+                  <StyledButton
+                    variant='outlined'
+                    color='primary'
+                    component='span'
+                    size={'large'}
+                    startIcon={<Scanner />}>
+                    {t('Upload document')}
+                  </StyledButton>
+                </label>
+              )}
+            </Grid>
+          </Grid>
+          {/* AddiotionalDocumentRef */}
+          {numOfAdditionnalDocument.map((_, additionnalDocumentIndex) => {
+            return (
+              <Grid container alignItems='center' key={additionnalDocumentIndex}>
+                <Grid item xs={3}>
+                  <StyledTextField
+                    onChange={onChangeAdditionnalDocumentHandler}
+                    label={t('Additional document')}
+                  />
+                </Grid>
+                <Grid item xs={9}>
+                  <input
+                    ref={additionnalDocumentRef}
+                    id='additionnalDocument'
+                    type='file'
+                    accept='.pdf,.gpf,.png,.gif,.jpg'
+                    required
+                    onChange={() =>
+                      onChangeFileHandler(
+                        additionnalDocumentRef,
+                        setAdditionnalDocumentFile,
+                        nameOfAddionalDocumentFile || 'Document1',
+                      )
+                    }
+                  />
+                  {Object.values(additionnalDocumentFile).length > 0 ? (
+                    <ChipWithImage
+                      htmlFor='additionnalDocument'
+                      label={additionnalDocumentFile.name}
+                      size={additionnalDocumentFile.size}
+                      onDelete={() =>
+                        onDeleteFileHandler(
+                          additionnalDocumentRef,
+                          setAdditionnalDocumentFile,
+                        )
+                      }
+                      onClick={() => onClickFileHandler(additionnalDocumentRef)}
+                    />
+                  ) : (
+                    <label htmlFor='additionnalDocument'>
+                      <StyledButton
+                        variant='outlined'
+                        color='primary'
+                        component='span'
+                        size={'large'}
+                        startIcon={<Scanner />}>
+                        {t('Upload document')}
+                      </StyledButton>
+                    </label>
+                  )}
+                </Grid>
+              </Grid>
+            );
+          })}
+          <Grid container alignItems='center'>
+            <AddCircle
+              style={{ color: '#002398', cursor: 'pointer' }}
+              onClick={onClickAdditionnalDocumentHandler}
+            />
+            <Title
+              margin='0 8px 0 8px'
+              bold
+              color={'#002398'}
+              label={'Additional document'}
+            />
+          </Grid>
         </StyledFormGroup>
       </StyledForm>
       {/* <DevTool control={control} /> */}
@@ -805,11 +1145,20 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   props,
   ref,
 ) {
-  const { setClose, pendingValue, setSelecetedServicesType, ...other } = props;
+  const {
+    setClose,
+    pendingValue,
+    setSelecetedServicesType,
+    setValue,
+    ...other
+  } = props;
   const { t } = useTranslation();
   const onConfirmHandler = () => {
-    setSelecetedServicesType(pendingValue);
-    // ref = undefined;
+    setSelecetedServicesType((prevState) => {
+      setValue('selectTest', pendingValue, true);
+      return pendingValue;
+    });
+    // An idea on how to solve when clicking confirm to make the autoComplete to close is to give a ref to the next element or the inputElement of the autoComplete and make it focus on that element or unfocus.
     setClose(true);
   };
   return (

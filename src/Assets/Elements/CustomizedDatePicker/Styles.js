@@ -2,7 +2,7 @@ import styled, {createGlobalStyle} from "styled-components";
 import {DatePicker, KeyboardDatePicker} from '@material-ui/pickers';
 
 export const StyledDatePicker = styled(DatePicker)`
-   width: 130px;
+   width: 135px;
    height: 22px;
 & .MuiInputBase-root {
    text-align: center !important;

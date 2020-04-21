@@ -1,8 +1,17 @@
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import styled from 'styled-components';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
-import { Divider, TextField, Chip } from '@material-ui/core';
+import { Divider, TextField, Chip, Button } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
+
+export const StyledButton = styled(Button)`
+  border-radius: 25px;
+  height: 50px;
+  width: 158px;
+  .MuiButton-startIcon {
+    margin-left: 8px;
+  }
+`;
 
 export const StyledDivider = styled(Divider)`
   margin: 10px 0 40px 0;
@@ -36,6 +45,9 @@ export const StyledTextField = styled(TextField)`
   .MuiInputBase-root {
     color: #000b40;
   }
+  .MuiFormHelperText-root {
+    text-align: right;
+  }
 `;
 
 export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
@@ -59,6 +71,9 @@ export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
   }
   .MuiInputBase-root {
     color: #000b40;
+  }
+  .MuiFormHelperText-root {
+    text-align: right;
   }
 `;
 
@@ -87,12 +102,15 @@ export const StyledPatientDetails = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   margin: 0 25px 0 25px;
-  z-index: ${props => props.edit ? '0' : '2'};
+  z-index: ${(props) => (props.edit ? '0' : '2')};
   height: calc(100vh - 88px - 32px);
-  overflow-x: scroll;
+  overflow-y: scroll;
   @media (min-width: ${devicesValue.desktop}px) {
     flex-basis: 50%;
-    margin: 0 38px 0 38px;
+    margin: 120px 38px 0 38px;
+  }
+  input[type=file] {
+    display: none;
   }
 `;
 
