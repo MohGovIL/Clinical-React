@@ -1,6 +1,16 @@
+// Other
 import React, { useEffect, useState } from 'react';
 import matchSorter from 'match-sorter';
 import { getCellPhoneRegexPattern } from 'Utils/Helpers/validation/patterns';
+// import { DevTool } from 'react-hook-form-devtools'; // Used to see the state of the form
+import { useForm, Controller } from 'react-hook-form';
+import { connect } from 'react-redux';
+
+// Helpers
+import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
+
+// Styles
 import {
   StyledForm,
   StyledPatientDetails,
@@ -12,43 +22,40 @@ import {
   StyledChip,
   StyledButton,
 } from './Style';
-import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useTranslation } from 'react-i18next';
+
+// Assets, Customized elements
 import Title from 'Assets/Elements/Title';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { DevTool } from 'react-hook-form-devtools';
-import { useForm, Controller } from 'react-hook-form';
-import { connect } from 'react-redux';
-import {
-  ExpandMore,
-  ExpandLess,
-  CheckBox,
-  Close,
-  CheckBoxOutlineBlankOutlined,
-  Scanner,
-  AddCircle,
-} from '@material-ui/icons';
+import ListboxComponent from './ListboxComponent/index';
+import StyledSwitch from 'Assets/Elements/StyledSwitch';
+import ChipWithImage from 'Assets/Elements/StyledChip';
+
+// Material-UI Icons
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import CheckBox from '@material-ui/icons/CheckBox';
+import Close from '@material-ui/icons/Close';
+import CheckBoxOutlineBlankOutlined from '@material-ui/icons/CheckBoxOutlineBlankOutlined';
+import Scanner from '@material-ui/icons/Scanner';
+import AddCircle from '@material-ui/icons/AddCircle';
+
+// Material-UI core, lab, pickers components
+import Checkbox from '@material-ui/core/Checkbox';
+import ListItemText from '@material-ui/core/ListItemText';
+import Grid from '@material-ui/core/Grid';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { getCities, getStreets } from 'Utils/Services/API';
-import MomentUtils from '@date-io/moment';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
+
+// APIs
+import { getCities, getStreets } from 'Utils/Services/API';
 import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
-import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import StyledSwitch from 'Assets/Elements/StyledSwitch';
-import ChipWithImage from 'Assets/Elements/StyledChip';
-import {
-  Checkbox,
-  ListItemText,
-  Grid,
-  CircularProgress,
-  Tab,
-  Tabs,
-  FormControl,
-  InputLabel,
-  Chip,
-} from '@material-ui/core';
 
 const PatientDetailsBlock = ({
   patientData,
@@ -57,165 +64,151 @@ const PatientDetailsBlock = ({
   formatDate,
 }) => {
   const { t } = useTranslation();
+
   const { control, handleSubmit, errors, setValue } = useForm({
     mode: 'onBlur',
   });
 
-  const [referralFile, setReferralFile] = useState({});
-  const [commitmentFile, setCommitmentFile] = useState({});
-  const [additionalDocumentFile, setAdditionalDocumentFile] = useState({});
-  const [numOfAdditionalDocument, setNumOfAdditionalDocument] = useState([]);
-  const [
-    nameOfAdditionalDocumentFile,
-    setNameOfAdditionalDocumentFile,
-  ] = useState('');
-
-  const referralRef = React.useRef();
-
-  const commitmentRef = React.useRef();
-
-  const additionalDocumentRef = React.useRef();
-
-  const MAX_SIZE = 2;
-
-  const UNIT = { type: 'MB', valueInBytes: 1000000 };
-
-  const toFix1 = (number) => {
-    return Number.parseFloat(number).toFixed(1);
-  };
-
-  const calculateSize = (size) => {
-    const SizeInMB = size / UNIT.valueInBytes;
-    if (SizeInMB < MAX_SIZE) {
-      return [false, toFix1(SizeInMB)];
-    }
-    return [true, toFix1(SizeInMB)];
-  };
-
-  function onChangeFileHandler(ref, setState, fileName) {
-    const files = ref.current.files;
-    const [BoolAnswer, SizeInMB] = calculateSize(files[files.length - 1].size);
-    if (!BoolAnswer) {
-      const fileObj = {
-        name: `${fileName}_${moment().format('L')}_${moment().format(
-          'HH:mm',
-        )}_${files[files.length - 1].name}`,
-        size: SizeInMB,
-      };
-      setState({ ...fileObj });
-    } else {
-      ref.current.value = '';
-    }
-  }
-
-  const onClickFileHandler = (ref) => {
-    const objUrl = URL.createObjectURL(ref.current.files[0]);
-    window.open(objUrl, ref.current.files[0].name);
-  };
-
-  const onDeleteFileHandler = (ref, setState) => {
-    ref.current.value = '';
-    const emptyObj = {};
-    setState(emptyObj);
-  };
-
-  const onClickAdditionalDocumentHandler = () => {
-    numOfAdditionalDocument.length !== 1 &&
-      setNumOfAdditionalDocument((prevState) => {
-        let clonePrevState = prevState;
-        clonePrevState.push(clonePrevState.length);
-        return [...clonePrevState];
-      });
-  };
-
-  const onChangeAdditionalDocumentHandler = (e) => {
-    setNameOfAdditionalDocumentFile(e.target.value);
-  };
-
-  const icon = <Close fontSize='small' />;
-  const [addressCity, setAddressCity] = useState({});
-  const [POBoxCity, setPOBoxCity] = useState({});
-
-  const [selectedServicesType, setSelectedServicesType] = useState([]);
-  const [pendingValue, setPendingValue] = useState([]);
-
-  const [cities, setCities] = useState([]);
-  const [citiesOpen, setCitiesOpen] = useState(false);
-
-  const [streets, setStreets] = useState([]);
-  const [streetsOpen, setStreetsOpen] = useState(false);
-
-  const [servicesType, setServicesType] = useState([]);
-  const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
-
-  const loadingCities = citiesOpen && cities.length === 0;
-  const loadingStreets = streetsOpen && streets.length === 0;
-  const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
-
-  const selectExaminationOnChangeHandler = (event, newValue) => {
-    setPendingValue(newValue);
-  };
-
-  const selectExaminationOnOpenHandler = () => {
-    setPendingValue(selectedServicesType);
-    setServicesTypeOpen(true);
-  };
-
-  const selectExaminationOnCloseHandler = () => {
-    setValue('selectTest', selectedServicesType, true);
-    setServicesTypeOpen(false);
-  };
-
-  const [
-    commitmentAndPaymentCommitmentDate,
-    setCommitmentAndPaymentCommitmentDate,
-  ] = useState(new Date());
-
-  const [
-    commitmentAndPaymentCommitmentValidity,
-    setCommitmentAndPaymentCommitmentValidity,
-  ] = useState(new Date());
-
-  const validateDate = (date, type) => {
-    switch (type) {
-      case 'before':
-        return moment(date).isSameOrBefore(moment(new Date()));
-
-      case 'after':
-        return moment(date).isSameOrAfter(moment(new Date()));
-
-      default:
-        return false;
-    }
-  };
-
-  const dateOnChangeHandler = (date, valueName, set) => {
-    try {
-      setValue(valueName, date, true);
-      set(date);
-    } catch (e) {
-      console.log('Error: ' + e);
-    }
-  };
-  //Is escorted
+  // Escorted Information
+  // Escorted Information - vars
   const [isEscorted, setIsEscorted] = useState(false);
+  const [relatedPerson, setRelatedPerson] = useState({});
+  // Escorted Information - functions
   const isEscortedSwitchOnChangeHandle = () => {
     setIsEscorted((prevState) => !prevState);
   };
 
+  // Contact Information
+  // Contact Information - cities var
+  const [cities, setCities] = useState([]);
+  const [citiesOpen, setCitiesOpen] = useState(false);
+  const loadingCities = citiesOpen && cities.length === 0;
+  // Contact Information - streets var
+  const [streets, setStreets] = useState([]);
+  const [streetsOpen, setStreetsOpen] = useState(false);
+  const loadingStreets = streetsOpen && streets.length === 0;
+  // Contact Information - tabs var
+  const [contactInformationTabValue, setContactInformationTabValue] = useState(
+    0,
+  );
+  // Contact Information - tabs function
+  const contactInformationTabValueChangeHandler = (event, newValue) => {
+    setContactInformationTabValue(newValue);
+  };
+  // Contact Information - address city - var
+  const [addressCity, setAddressCity] = useState({});
+  // Contact Information - PObox city - var
+  const [POBoxCity, setPOBoxCity] = useState({});
+  // Contact Information - functions / useEffect
+  // Contact Information - functions / useEffect - reset cities and streets
+  useEffect(() => {
+    if (!citiesOpen) {
+      setCities([]);
+    }
+    if (!streetsOpen) {
+      setStreets([]);
+    }
+    // if (!servicesTypeOpen) {
+    //   setPendingValue([]);
+    // }
+  }, [citiesOpen, streetsOpen]);
+  // Contact Information - functions / useEffect - loading cities
+  useEffect(() => {
+    let active = true;
+
+    if (!loadingCities) {
+      return undefined;
+    }
+
+    (async () => {
+      try {
+        const cities = await getCities();
+        if (active) {
+          setCities(
+            Object.keys(cities.data).map((cityKey) => {
+              let cityObj = {};
+              cityObj.code = cities.data[cityKey];
+              cityObj.name = t(cities.data[cityKey]);
+
+              return cityObj;
+            }),
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loadingCities]);
+  // Contact Information - functions / useEffect - loading streets
+  useEffect(() => {
+    let active = true;
+
+    if (!loadingStreets) {
+      return undefined;
+    }
+
+    (async () => {
+      try {
+        const streets = await getStreets(addressCity.code.split('_')[1]);
+        if (active) {
+          if (streets.data.length) {
+            setStreets(
+              Object.keys(streets.data).map((streetKey) => {
+                let streetObj = {};
+                streetObj.code = streets.data[streetKey];
+                streetObj.name = t(streets.data[streetKey]);
+
+                return streetObj;
+              }),
+            );
+          } else {
+            const emptyResultsObj = {
+              code: 'no_result',
+              name: t('No Results'),
+            };
+            const emptyResults = [emptyResultsObj];
+            setStreets(emptyResults);
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loadingStreets]);
+
+  // Requested service
+  // Requested service - is urgent - vars
   const [isUrgent, setIsUrgent] = useState(false);
+  // Requested service - is urgent - functions
   const isUrgentSwitchOnChangeHandler = () => {
     setIsUrgent((prevState) => !prevState);
   };
-
-  const onDeleteHandler = (chipToDeleteIndex) => () => {
-    setSelectedServicesType(
-      selectedServicesType.filter(
-        (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
-      ),
-    );
+  // Requested service - select examination - vars
+  const [selectedServicesType, setSelectedServicesType] = useState([]);
+  const [pendingValue, setPendingValue] = useState([]);
+  const [servicesType, setServicesType] = useState([]);
+  const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
+  const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
+  // Requested service - select examination - functions / useEffect
+  const selectExaminationOnChangeHandler = (event, newValue) => {
+    setPendingValue(newValue);
   };
-
+  const selectExaminationOnOpenHandler = () => {
+    setPendingValue(selectedServicesType);
+    setServicesTypeOpen(true);
+  };
+  const selectExaminationOnCloseHandler = () => {
+    setValue('selectTest', selectedServicesType, true);
+    setServicesTypeOpen(false);
+  };
   const filterOptions = (options, { inputValue }) => {
     if (pendingValue.length) {
       options = matchSorter(options, pendingValue[0].serviceType.code, {
@@ -230,23 +223,162 @@ const PatientDetailsBlock = ({
       ],
     });
   };
-  //Tabs
-  const [contactInformationTabValue, setContactInformationTabValue] = useState(
-    0,
-  );
-  const contactInformationTabValueChangeHandler = (event, newValue) => {
-    setContactInformationTabValue(newValue);
-  };
+  useEffect(() => {
+    let active = true;
 
+    if (!loadingServicesType) {
+      return undefined;
+    }
+
+    (async () => {
+      try {
+        const serviceTypeResponse = await getValueSet('service_types');
+        if (active) {
+          const options = [];
+          const servicesTypeObj = {};
+          const allReasonsCode = await Promise.all(
+            serviceTypeResponse.data.expansion.contains.map((serviceType) => {
+              const normalizedServiceType = normalizeFhirValueSet(serviceType);
+              servicesTypeObj[normalizedServiceType.code] = {
+                ...normalizedServiceType,
+              };
+              return getValueSet(`reason_codes_${normalizedServiceType.code}`);
+            }),
+          );
+
+          for (
+            let reasonsIndex = 0;
+            reasonsIndex < allReasonsCode.length;
+            reasonsIndex++
+          ) {
+            allReasonsCode[reasonsIndex].data.expansion.contains.forEach(
+              (reasonCode) => {
+                const optionObj = {};
+                optionObj['serviceType'] = {
+                  ...servicesTypeObj[
+                    allReasonsCode[reasonsIndex].data.id.split('_')[2]
+                  ],
+                };
+                optionObj['reasonCode'] = normalizeFhirValueSet(reasonCode);
+                options.push(optionObj);
+              },
+            );
+          }
+          setServicesType(options);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loadingServicesType]);
+  // Requested service - select examination - chips - functions
+  const chipOnDeleteHandler = (chipToDeleteIndex) => () => {
+    setSelectedServicesType(
+      selectedServicesType.filter(
+        (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
+      ),
+    );
+  };
+  // Commitment And Payment - vars
+  const [
+    commitmentAndPaymentCommitmentDate,
+    setCommitmentAndPaymentCommitmentDate,
+  ] = useState(new Date());
+  const [
+    commitmentAndPaymentCommitmentValidity,
+    setCommitmentAndPaymentCommitmentValidity,
+  ] = useState(new Date());
   const [
     commitmentAndPaymentTabValue,
     setCommitmentAndPaymentTabValue,
   ] = useState(0);
+  // Commitment And Payment - functions
+  const validateDate = (date, type) => {
+    switch (type) {
+      case 'before':
+        return moment(date).isSameOrBefore(moment(new Date()));
+
+      case 'after':
+        return moment(date).isSameOrAfter(moment(new Date()));
+
+      default:
+        return false;
+    }
+  };
+  const dateOnChangeHandler = (date, valueName, set) => {
+    try {
+      setValue(valueName, date, true);
+      set(date);
+    } catch (e) {
+      console.log('Error: ' + e);
+    }
+  };
   const setCommitmentAndPaymentTabValueChangeHandler = (event, newValue) => {
     setCommitmentAndPaymentTabValue(newValue);
   };
 
-  const [relatedPerson, setRelatedPerson] = useState({});
+  // Files scan
+  // Files scan - vars
+  // Files scan - vars - states
+  const [referralFile, setReferralFile] = useState({});
+  const [commitmentFile, setCommitmentFile] = useState({});
+  const [additionalDocumentFile, setAdditionalDocumentFile] = useState({});
+  const [numOfAdditionalDocument, setNumOfAdditionalDocument] = useState([]);
+  const [
+    nameOfAdditionalDocumentFile,
+    setNameOfAdditionalDocumentFile,
+  ] = useState('');
+  // Files scan - vars - refs
+  const referralRef = React.useRef();
+  const commitmentRef = React.useRef();
+  const additionalDocumentRef = React.useRef();
+  // Files scan - vars - globals
+  const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
+  // Files scan - functions
+  function onChangeFileHandler(ref, setState, fileName) {
+    const files = ref.current.files;
+    const [BoolAnswer, SizeInMB] = calculateFileSize(
+      files[files.length - 1].size,
+      FILES_OBJ.valueInBytes,
+      FILES_OBJ.fix,
+      FILES_OBJ.maxSize,
+    );
+    if (!BoolAnswer) {
+      const fileObj = {
+        name: `${fileName}_${moment().format('L')}_${moment().format(
+          'HH:mm',
+        )}_${files[files.length - 1].name}`,
+        size: SizeInMB,
+      };
+      setState({ ...fileObj });
+    } else {
+      ref.current.value = '';
+    }
+  }
+  const onClickFileHandler = (ref) => {
+    const objUrl = URL.createObjectURL(ref.current.files[0]);
+    window.open(objUrl, ref.current.files[0].name);
+  };
+  const onDeleteFileHandler = (ref, setState) => {
+    ref.current.value = '';
+    const emptyObj = {};
+    setState(emptyObj);
+  };
+  const onClickAdditionalDocumentHandler = () => {
+    numOfAdditionalDocument.length !== 1 &&
+      setNumOfAdditionalDocument((prevState) => {
+        let clonePrevState = prevState;
+        clonePrevState.push(clonePrevState.length);
+        return [...clonePrevState];
+      });
+  };
+  const onChangeAdditionalDocumentHandler = (e) => {
+    setNameOfAdditionalDocumentFile(e.target.value);
+  };
 
   //Sending the form
   const onSubmit = (data) => {
@@ -308,153 +440,18 @@ const PatientDetailsBlock = ({
       // TODO when there will be data inside store the needed data inside a state.
     })();
   }, [encounterData, patientData]);
-  //Loading services type
-  useEffect(() => {
-    let active = true;
-
-    if (!loadingServicesType) {
-      return undefined;
-    }
-
-    (async () => {
-      try {
-        const serviceTypeResponse = await getValueSet('service_types');
-        if (active) {
-          const options = [];
-          const servicesTypeObj = {};
-          const allReasonsCode = await Promise.all(
-            serviceTypeResponse.data.expansion.contains.map((serviceType) => {
-              const normalizedServiceType = normalizeFhirValueSet(serviceType);
-              servicesTypeObj[normalizedServiceType.code] = {
-                ...normalizedServiceType,
-              };
-              return getValueSet(`reason_codes_${normalizedServiceType.code}`);
-            }),
-          );
-
-          for (
-            let reasonsIndex = 0;
-            reasonsIndex < allReasonsCode.length;
-            reasonsIndex++
-          ) {
-            allReasonsCode[reasonsIndex].data.expansion.contains.forEach(
-              (reasonCode) => {
-                const optionObj = {};
-                optionObj['serviceType'] = {
-                  ...servicesTypeObj[
-                    allReasonsCode[reasonsIndex].data.id.split('_')[2]
-                  ],
-                };
-                optionObj['reasonCode'] = normalizeFhirValueSet(reasonCode);
-                options.push(optionObj);
-              },
-            );
-          }
-          setServicesType(options);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loadingServicesType]);
-
-  //Loading cities
-  useEffect(() => {
-    let active = true;
-
-    if (!loadingCities) {
-      return undefined;
-    }
-
-    (async () => {
-      try {
-        const cities = await getCities();
-        if (active) {
-          setCities(
-            Object.keys(cities.data).map((cityKey) => {
-              let cityObj = {};
-              cityObj.code = cities.data[cityKey];
-              cityObj.name = t(cities.data[cityKey]);
-
-              return cityObj;
-            }),
-          );
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loadingCities]);
-  //Loading streets
-  useEffect(() => {
-    let active = true;
-
-    if (!loadingStreets) {
-      return undefined;
-    }
-
-    (async () => {
-      try {
-        const streets = await getStreets(addressCity.code.split('_')[1]);
-        if (active) {
-          if (streets.data.length) {
-            setStreets(
-              Object.keys(streets.data).map((streetKey) => {
-                let streetObj = {};
-                streetObj.code = streets.data[streetKey];
-                streetObj.name = t(streets.data[streetKey]);
-
-                return streetObj;
-              }),
-            );
-          } else {
-            const emptyResultsObj = {
-              code: 'no_result',
-              name: t('No Results'),
-            };
-            const emptyResults = [emptyResultsObj];
-            setStreets(emptyResults);
-          }
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loadingStreets]);
-  //Reset options for auto compelete
-  useEffect(() => {
-    if (!citiesOpen) {
-      setCities([]);
-    }
-    if (!streetsOpen) {
-      setStreets([]);
-    }
-    if (!servicesTypeOpen) {
-      setPendingValue([]);
-    }
-  }, [citiesOpen, streetsOpen]);
 
   return (
     <StyledPatientDetails edit={edit_mode}>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
+        {/* Patient Details */}
         <Title
           marginTop={'55px'}
           fontSize={'28px'}
           color={'#002398'}
           label={'Patient Details'}
         />
+        {/* Escorted */}
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
@@ -469,6 +466,7 @@ const PatientDetailsBlock = ({
             justify={'flex-start'}
             alignItems={'center'}>
             <span>{t('Patient arrived with an escort?')}</span>
+            {/* Escorted Information Switch */}
             <StyledSwitch
               onChange={isEscortedSwitchOnChangeHandle}
               checked={isEscorted}
@@ -479,6 +477,7 @@ const PatientDetailsBlock = ({
             />
           </Grid>
         </StyledFormGroup>
+        {/* Escorted Information */}
         {isEscorted && (
           <StyledFormGroup>
             <Title
@@ -488,12 +487,14 @@ const PatientDetailsBlock = ({
               bold
             />
             <StyledDivider variant={'fullWidth'} />
+            {/* Escorted Information name */}
             <Controller
               as={<StyledTextField label={t('Escort name')} />}
               name={'escortName'}
               control={control}
               defaultValue=''
             />
+            {/* Escorted Information cell phone */}
             <Controller
               as={<StyledTextField label={t('Escort cell phone')} />}
               name={'escortMobilePhone'}
@@ -509,6 +510,7 @@ const PatientDetailsBlock = ({
             />
           </StyledFormGroup>
         )}
+        {/* Contact Information */}
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
@@ -517,6 +519,7 @@ const PatientDetailsBlock = ({
             bold
           />
           <StyledDivider variant={'fullWidth'} />
+          {/* Contact Information tabs */}
           <Tabs
             value={contactInformationTabValue}
             onChange={contactInformationTabValueChangeHandler}
@@ -527,8 +530,10 @@ const PatientDetailsBlock = ({
             <Tab label={t('Address')} />
             <Tab label={t('PO box')} />
           </Tabs>
+          {/* Contact Information tabs - address */}
           {contactInformationTabValue === 0 ? (
             <React.Fragment>
+              {/* Contact Information - address - city */}
               <StyledAutoComplete
                 id='addressCity'
                 open={citiesOpen}
@@ -572,7 +577,7 @@ const PatientDetailsBlock = ({
                   />
                 )}
               />
-
+              {/* Contact Information - address - streets */}
               <Autocomplete
                 options={streets}
                 loading={loadingStreets}
@@ -603,7 +608,7 @@ const PatientDetailsBlock = ({
                   />
                 )}
               />
-
+              {/* Contact Information - address - house number */}
               <Controller
                 name={'addressHouseNumber'}
                 control={control}
@@ -615,6 +620,7 @@ const PatientDetailsBlock = ({
                   />
                 }
               />
+              {/* Contact Information - address - postal code */}
               <Controller
                 defaultValue={patientData.postalCode || ''}
                 name={'addressPostalCode'}
@@ -633,6 +639,7 @@ const PatientDetailsBlock = ({
             </React.Fragment>
           ) : (
             <React.Fragment>
+              {/* Contact Information - POBox - city */}
               <StyledAutoComplete
                 name='POBoxCity'
                 id='POBoxCity'
@@ -673,11 +680,13 @@ const PatientDetailsBlock = ({
                   />
                 )}
               />
+              {/* Contact Information - POBox - POBox */}
               <Controller
                 name={'POBox'}
                 control={control}
                 as={<StyledTextField id={'POBox'} label={t('PO box')} />}
               />
+              {/* Contact Information - POBox - postal code */}
               <Controller
                 defaultValue={patientData.postalCode}
                 name={'POBoxPostalCode'}
@@ -704,13 +713,14 @@ const PatientDetailsBlock = ({
             {t('Click here')}
           </a>
         </span>
+        {/* Visit Details */}
         <Title
           marginTop={'80px'}
           fontSize={'28px'}
           color={'#002398'}
           label={'Visit Details'}
         />
-
+        {/* Requested service */}
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
@@ -725,6 +735,7 @@ const PatientDetailsBlock = ({
             justify={'flex-start'}
             alignItems={'center'}>
             <span>{t('Is urgent?')}</span>
+            {/* Requested service - switch */}
             <StyledSwitch
               onChange={isUrgentSwitchOnChangeHandler}
               checked={isUrgent}
@@ -734,6 +745,7 @@ const PatientDetailsBlock = ({
               marginRight={'40px'}
             />
           </Grid>
+          {/* Requested service - select test */}
           <Controller
             name='selectTest'
             control={control}
@@ -753,13 +765,6 @@ const PatientDetailsBlock = ({
                 loading={loadingServicesType}
                 onOpen={selectExaminationOnOpenHandler}
                 onClose={selectExaminationOnCloseHandler}
-                // onOpen={() => {
-                //   setPendingValue(selecetedServicesType);
-                //   setServicesTypeOpen(true);
-                // }}
-                // onClose={(event) => {
-                //   setServicesTypeOpen(false);
-                // }}
                 value={pendingValue}
                 onChange={selectExaminationOnChangeHandler}
                 disableCloseOnSelect
@@ -821,12 +826,12 @@ const PatientDetailsBlock = ({
               />
             }
           />
-
+          {/* Requested service - selected test - chips */}
           <Grid container direction='row' wrap='wrap'>
             {selectedServicesType.map((selected, selectedIndex) => (
               <StyledChip
-                deleteIcon={icon}
-                onDelete={onDeleteHandler(selectedIndex)}
+                deleteIcon={<Close fontSize='small' />}
+                onDelete={chipOnDeleteHandler(selectedIndex)}
                 key={selectedIndex}
                 label={`${selected.reasonCode.code} | ${t(
                   selected.serviceType.name,
@@ -835,6 +840,7 @@ const PatientDetailsBlock = ({
             ))}
           </Grid>
         </StyledFormGroup>
+        {/* Commitment and payment */}
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
@@ -848,6 +854,7 @@ const PatientDetailsBlock = ({
             label={t('Please fill in the payer details for the current test')}
           />
           <StyledDivider variant='fullWidth' />
+          {/* Commitment and payment - tabs */}
           <Tabs
             value={commitmentAndPaymentTabValue}
             onChange={setCommitmentAndPaymentTabValueChangeHandler}
@@ -960,8 +967,6 @@ const PatientDetailsBlock = ({
                   </MuiPickersUtilsProvider>
                 }
               />
-
-              {/* </StyledTextInput> */}
               <StyledTextField
                 required
                 label={t('Doctors name')}
@@ -986,9 +991,9 @@ const PatientDetailsBlock = ({
           <Title
             fontSize={'14px'}
             color={'#000b40'}
-            label={`${t(
-              'Uploading documents with a maximum size of up to',
-            )} ${MAX_SIZE}${UNIT.type}`}
+            label={`${t('Uploading documents with a maximum size of up to')} ${
+              FILES_OBJ.maxSize
+            }${FILES_OBJ.type}`}
           />
           <StyledDivider variant='fullWidth' />
           {/* ReferralRef  */}
@@ -1157,62 +1162,3 @@ const mapStateToProps = (state) => {
   };
 };
 export default connect(mapStateToProps, null)(PatientDetailsBlock);
-
-const ListboxComponent = React.forwardRef(function ListboxComponent(
-  props,
-  ref,
-) {
-  const {
-    setClose,
-    pendingValue,
-    setSelectedServicesType,
-    setValue,
-    ...other
-  } = props;
-  const { t } = useTranslation();
-  const onConfirmHandler = () => {
-    setSelectedServicesType((prevState) => {
-      setValue('selectTest', pendingValue, true);
-      return pendingValue;
-    });
-    // An idea on how to solve when clicking confirm to make the autoComplete to close is to give a ref to the next element or the inputElement of the autoComplete and make it focus on that element or unfocus.
-    setClose(true);
-  };
-  return (
-    <div
-      style={{
-        position: 'relative',
-        maxHeight: '300px',
-        overflowY: 'scroll',
-        marginBottom: '64px',
-      }}
-      ref={ref}
-      {...other}>
-      {props.children}
-      <div
-        style={{
-          position: 'fixed',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          height: '64px',
-          left: '0',
-          bottom: '0',
-          backgroundColor: '#ffffff',
-          width: 'calc(100% - 15px - 15px)',
-          padding: '0 15px 0 15px',
-        }}>
-        <span>
-          {`${t('Is selected')}
-          ${pendingValue.length} `}
-        </span>
-        <CustomizedButton
-          label={t('OK')}
-          variant='contained'
-          color='primary'
-          onClickHandler={onConfirmHandler}
-        />
-      </div>
-    </div>
-  );
-});
