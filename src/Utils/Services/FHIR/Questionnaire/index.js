@@ -11,7 +11,7 @@ const QuestionnaireStats = {
         return QuestionnaireStats[parameters.functionName](parameters);
     },
     getQuestionnaire: (params) => {
-        CRUDOperations('search', `${params.url}?`) //TODO need to understand what is the difference between Questionnaire and QuestionnaireRerespond
+        CRUDOperations('search', `${params.url}?name=${params.functionParams.QuestionnaireName}&status=active`) //TODO need to understand what is the difference between Questionnaire and QuestionnaireRerespond
     }
 };
 

@@ -774,7 +774,7 @@ const PatientDetailsBlock = ({
                 ListboxComponent={ListboxComponent}
                 ListboxProps={{
                   pendingValue: pendingValue,
-                  setSelecetedServicesType: setSelectedServicesType,
+                  setSelectedServicesType: setSelectedServicesType,
                   setClose: setServicesTypeOpen,
                   setValue: setValue,
                 }}
@@ -1151,13 +1151,13 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   const {
     setClose,
     pendingValue,
-    setSelecetedServicesType,
+    setSelectedServicesType,
     setValue,
     ...other
   } = props;
   const { t } = useTranslation();
   const onConfirmHandler = () => {
-    setSelecetedServicesType((prevState) => {
+    setSelectedServicesType((prevState) => {
       setValue('selectTest', pendingValue, true);
       return pendingValue;
     });
