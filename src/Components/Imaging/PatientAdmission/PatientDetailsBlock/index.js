@@ -289,10 +289,17 @@ const PatientDetailsBlock = ({
             functionName: 'getRelatedPerson',
             functionParams: { RelatedPersonId: encounterData.relatedPerson },
           });
-          console.log(relatedPerson + '-----------------------------');
         })();
       }
     }
+    (async () => {
+      const questionnaire = await FHIR('Questionnaire', 'doWork', {
+        functionName: 'getQuestionnaire',
+        functionParams: { QuestionnaireName: 'commitment_questionnaire' },
+      });
+      // TODO when there will be data inside store the needed data inside a state.
+      // console.log(questionnaire);
+    })();
   }, [encounterData, patientData]);
   //Loading services type
   useEffect(() => {
