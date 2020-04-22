@@ -285,20 +285,27 @@ const PatientDetailsBlock = ({
       }
       if (encounterData.relatedPerson) {
         (async () => {
-          const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
-            functionName: 'getRelatedPerson',
-            functionParams: { RelatedPersonId: encounterData.relatedPerson },
-          });
+          try {
+            const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
+              functionName: 'getRelatedPerson',
+              functionParams: { RelatedPersonId: encounterData.relatedPerson },
+            });
+          } catch (error) {
+            console.log(error);
+          }
         })();
       }
     }
     (async () => {
-      const questionnaire = await FHIR('Questionnaire', 'doWork', {
-        functionName: 'getQuestionnaire',
-        functionParams: { QuestionnaireName: 'commitment_questionnaire' },
-      });
+      try {
+        const questionnaire = await FHIR('Questionnaire', 'doWork', {
+          functionName: 'getQuestionnaire',
+          functionParams: { QuestionnaireName: 'commitment_questionnaire' },
+        });
+      } catch (error) {
+        console.log(error);
+      }
       // TODO when there will be data inside store the needed data inside a state.
-      // console.log(questionnaire);
     })();
   }, [encounterData, patientData]);
   //Loading services type
