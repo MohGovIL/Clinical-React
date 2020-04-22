@@ -28,10 +28,13 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const [patientIdType, setPatientIdType] = useState(0);
     const [patientBirthDate, setPatientBirthDate] = useState(0);
 
+    const [isFound, setIsFound] = useState(false);
+
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const textFieldSelectNotEmptyRule = {validate: {value: value => parseInt(value) !== 0}};
 
     //const methods = useForm({
-    const {register, control, errors, handleSubmit, reset, setValue, getValues} = useForm({
+    const {register, control, errors, handleSubmit, triggerValidation, setValue, getValues} = useForm({
         mode: "onChange",
         // defaultValues: {
         //     birthDate: patientBirthDate
@@ -39,16 +42,14 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     });
 
     const onSubmit = (data, e) => {
-        // console.log("===============data of form==================");
-        // console.log(data);
-        // console.log("===============data of form==================");
+        console.log("===============data of form==================");
+        console.log(data);
+        console.log("===============data of form==================");
     };
 
     //Register TextField components in react-hook-forms
     useEffect(() => {
-        register({name: "healthManageOrganization"});
-        register({name: "birthDate"});
-        register({name: "idNumberType"});
+        register({name: "idNumberType"}, textFieldSelectNotEmptyRule);
     }, []);
 
     //useEffect block
@@ -129,28 +130,31 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         }
     };
 
-    const handleIdNumber = (event) => {
-        console.log("==========Id number=============");
-        console.log(getValues());
-        // console.log(methods.getValues());
-        // setPatientIdNumber
-        console.log("==========Id number=============");
-    };
+    useEffect(() => {
+        (async () => {
+            if (patientIdType !== 0 && patientIdNumber.length > 0) {
+                console.log("===========findPatientWithIdTypeAndNumber=============");
+                console.log(patientIdNumber + ' of ' + patientIdType + " ===== ");
+                setIsFound(true);
+                const result = await triggerValidation("idNumber");
+                console.log(result);
+                console.log("===========findPatientWithIdTypeAndNumber=============");
+            }
+        })();
+    }, [patientIdNumber, patientIdType, isFound]);
 
     const handleIdTypeChange = (event) => {
         try {
-            const formValues = getValues();
-            console.log("=====d======");
-            console.log(formValues.idNumber + " - " + formValues.idNumberType);
-            console.log("======d=====");
-
             setValue("idNumberType", event.target.value, true);
             setPatientIdType(event.target.value);
         } catch (e) {
             console.log("Error: " + e);
         }
-
     };
+
+    const getIsFound = () => {
+        return isFound;
+    }
 
     const handleGenderChange = (event) => {
         setPatientGender(event.target.value);
@@ -183,6 +187,16 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         'variant': 'filled'
     };
 
+    let patientInitialValues = {
+        firstName: '',
+        lastName: '',
+        healthManageOrganization: 0,
+        healthManageOrganizationValue: '',
+        mobilePhone: '',
+        patientEmail: '',
+        patientIdType: 0
+    };
+
     return (
         <CustomizedPopup isOpen={popupOpen} onClose={handlePopupClose}
                          title={t('Add New Patient')}
@@ -202,22 +216,14 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 name="idNumber"
                                 //value={patientIdNumber}
                                 defaultValue={patientIdNumber}
-                                // onChange={e => {
-                                //     //const value = e.target.value;
-                                //     const values = getValues();
-                                //     console.log(values);
-                                //     //handleIdNumber(value);
-                                // }}
                                 label={t("id number")}
-                                // required
+                                required
                                 rules={{
-                                    validate: async value => {
-                                        await sleep(1000);
+                                    validate: value => {
+                                        sleep(1000);
                                         const formValues = getValues("idNumberType");
-                                        console.log("===========");
-                                        console.log(formValues.idNumber + " - " + formValues.idNumberType);
-                                        console.log("===========");
-                                        return value === "bill";
+                                        setPatientIdNumber(formValues.idNumber);
+                                        return getIsFound() === true;
                                     }
                                 }}
                                 {...TextFieldOpts}
@@ -229,7 +235,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 control={control}
                                 id="standard-firstName"
                                 name="firstName"
-                                // defaultValue={patientInitialValues.firstName}
+                                defaultValue={patientInitialValues.firstName}
                                 label={t("First Name")}
                                 // required
                                 {...TextFieldOpts}
@@ -324,11 +330,10 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 name="idNumberType"
                                 value={patientIdType}
                                 label={t("ID type")}
-                                // required
+                                required
                                 select
                                 onChange={handleIdTypeChange}
                                 SelectProps={{
-                                    // onOpen: handleLoadListKupatHolim,
                                     MenuProps: {
                                         elevation: 0,
                                         keepMounted: true,
@@ -343,10 +348,9 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                         }
                                     }
                                 }}
-                                // error={errors.idNumberType ? true : false}
-                                // helperText={errors.idNumberType ? t("is a required field.") : null}
+                                error={errors.idNumberType ? true : false}
+                                helperText={errors.idNumberType ? t("is a required field.") : null}
                                 InputProps={{
-                                    // disableUnderline: edit_mode === 1 ? false : true,
                                     endAdornment: (errors.idNumberType &&
                                         <InputAdornment position="end">
                                             <ErrorOutlineIcon htmlColor={"#ff0000"}/>
@@ -366,7 +370,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 control={control}
                                 id="standard-lastName"
                                 name="lastName"
-                                // defaultValue={patientInitialValues.firstName}
+                                //defaultValue={patientInitialValues.firstName}
                                 label={t("Last Name")}
                                 // required
                                 {...TextFieldOpts}
@@ -415,7 +419,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 control={control}
                                 id="standard-mobilePhone"
                                 name="mobilePhone"
-                                // defaultValue={patientInitialValues.mobilePhone}
+                                defaultValue={patientInitialValues.mobilePhone}
                                 label={t("Cell phone")}
                                 rules={{
                                     pattern: getCellPhoneRegexPattern()
@@ -441,7 +445,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             control={control}
                             id="standard-patientEmail"
                             name="patientEmail"
-                            // defaultValue={patientInitialValues.patientEmail}
+                            defaultValue={patientInitialValues.patientEmail}
                             label={t("Mail address")}
                             error={errors.patientEmail ? true : false}
                             helperText={errors.patientEmail ? t("Invalid email address") : null}
