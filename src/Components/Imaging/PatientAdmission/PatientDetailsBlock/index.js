@@ -13,6 +13,7 @@ import {
   StyledButton,
 } from './Style';
 import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
+import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirOrganization';
 import { useTranslation } from 'react-i18next';
 import Title from 'Assets/Elements/Title';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -34,6 +35,7 @@ import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
+import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import ChipWithImage from 'Assets/Elements/StyledChip';
@@ -147,6 +149,8 @@ const PatientDetailsBlock = ({
 
   const [servicesType, setServicesType] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
+
+  const [HMO, setHMO] = useState({});
 
   const loadingCities = citiesOpen && cities.length === 0;
   const loadingStreets = streetsOpen && streets.length === 0;
@@ -282,6 +286,18 @@ const PatientDetailsBlock = ({
         setIsUrgent(true);
       }
     }
+    (async () => {
+      try {
+        if (patientData.managingOrganization) {
+          // const HMO_Data = await getHMO(patientData.managingOrganization);
+          const Organization = await FHIR('Organization', 'doWork', {functionName: "readOrganization", functionParams: {OrganizationId: patientData.managingOrganization}})
+          const normalizedOrganization = normalizeFhirOrganization(Organization.data);
+          setHMO(normalizedOrganization);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
   }, [encounterData, patientData]);
   //Loading services type
   useEffect(() => {
@@ -837,16 +853,11 @@ const PatientDetailsBlock = ({
           </Tabs>
           {commitmentAndPaymentTabValue === 0 && (
             <React.Fragment>
-              <Controller
-                name='HMO'
-                as={
-                  <StyledTextField
-                    label={t('HMO')}
-                    id={'commitmentAndPaymentHMO'}
-                  />
-                }
-                defaultValue={patientData.managingOrganization || ''}
-                control={control}
+              <StyledTextField
+                label={t('HMO')}
+                id={'commitmentAndPaymentHMO'}
+                disabled
+                value={HMO.name || ''}
               />
               <StyledTextField
                 required

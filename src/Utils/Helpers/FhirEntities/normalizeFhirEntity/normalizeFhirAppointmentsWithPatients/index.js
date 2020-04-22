@@ -19,7 +19,7 @@ export const normalizeFhirAppointmentsWithPatients = appointmentsData => {
             const entry = appointmentsData[entryIndex].resource;
             if (entry.resourceType === 'Patient') {
                 const patient = normalizeFhirPatient(entry);
-                patientsObj[`${patient.id}`] = {...patient};
+                patientsObj[`#${patient.id}`] = {...patient};
             }
         }
     }
@@ -29,7 +29,7 @@ export const normalizeFhirAppointmentsWithPatients = appointmentsData => {
             const entry = appointmentsData[entryIndex].resource;
             if (entry.resourceType === 'Appointment') {
                 const appointment = normalizeFhirAppointment(entry);
-                appointmentsObj[`${appointment.id}`] = {...appointment}
+                appointmentsObj[`#${appointment.id}`] = {...appointment}
             }
         }
     }

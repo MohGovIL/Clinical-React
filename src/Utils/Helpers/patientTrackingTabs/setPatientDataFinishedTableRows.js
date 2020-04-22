@@ -110,7 +110,7 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
     for (let [encountersId, encounter] of Object.entries(encounters)) {
         let row = [];
         for (let columnIndex = 0; columnIndex < tableHeaders.length; columnIndex++) {
-            const patient = patients[encounter.patient];
+            const patient = patients[`#${encounter.patient}`];
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({

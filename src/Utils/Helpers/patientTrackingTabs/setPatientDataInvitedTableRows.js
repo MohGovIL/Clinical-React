@@ -123,7 +123,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
     for (let [appointmentId, appointment] of Object.entries(appointments)) {
         let row = [];
         for (let columnIndex = 0; columnIndex < tableHeaders.length; columnIndex++) {
-            const patient = patients[appointment.patient];
+            const patient = patients[`#${appointment.patient}`];
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({
@@ -133,6 +133,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         gender: patient.gender,
                         firstName: patient.firstName,
                         lastName: patient.lastName,
+                        padding: 'none', // TODO add this prop all the way down
                         align: 'right',
                     });
                     break;
@@ -144,7 +145,7 @@ const setPatientDataInvitedTableRows = (patients, appointments, options, history
                         color: 'primary',
                         async onClickHandler() {
                             const appointment  = store.getState().fhirData.appointments[appointmentId];
-                            const patient = store.getState().fhirData.patients[appointment.patient]
+                            const patient = store.getState().fhirData.patients[`#${appointment.patient}`]
                            // const encounterData = await createNewEncounter(appointment ,store.getState().settings.facility)
                             const encounterData = await FHIR('Encounter','doWork',{functionName :'createNewEncounter',functionParams  : {appointment :appointment  ,facility : store.getState().settings.facility}});
 

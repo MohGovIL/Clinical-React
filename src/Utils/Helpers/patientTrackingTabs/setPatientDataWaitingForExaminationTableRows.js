@@ -112,7 +112,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
     for (let [encountersId, encounter] of Object.entries(encounters)) {
         let row = [];
         for (let columnIndex = 0; columnIndex < tableHeaders.length; columnIndex++) {
-            const patient = patients[encounter.patient];
+            const patient = patients[`#${encounter.patient}`];
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({
@@ -162,7 +162,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                         background_color: '#eaf7ff',
                         icon_color: '#076ce9',
                         langDirection: 'rtl',
-                        mode
+                        mode: 'view'
                     });
                     break;
                 case 'Cell phone':
