@@ -24,8 +24,8 @@ const OrganizationStats =   {
        // return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=11`);
         return CRUDOperations('search', `${params.url}?type=11`);
     },
-    getHMO: (params) => {
-        return CRUDOperations('search', `${params.url}/${params.functionParams.HMO_ID}`)
+    readOrganization: (params) => {
+        return CRUDOperations('read', `${params.url}/${params.functionParams.OrganizationId}`)
     }
 };
 

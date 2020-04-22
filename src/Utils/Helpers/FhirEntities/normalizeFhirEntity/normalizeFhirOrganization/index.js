@@ -1,4 +1,4 @@
-export const normalizeFhirHMO = (HMO) => {
+export const normalizeFhirOrganization = (Organization) => {
     // TODO 
     // Finish normalizing all the data that is given from HMO end point
   let name = '';
@@ -6,8 +6,8 @@ export const normalizeFhirHMO = (HMO) => {
   let city = '';
   let state = '';
 
-  name = HMO.name || name;
-  id = HMO.id || id;
+  name = Organization.name || name;
+  id = Organization.id || id;
 
   return {
     name,

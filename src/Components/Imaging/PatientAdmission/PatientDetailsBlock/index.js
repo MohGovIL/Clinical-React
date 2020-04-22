@@ -13,7 +13,7 @@ import {
   StyledButton,
 } from './Style';
 import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
-import { normalizeFhirHMO } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirHMO';
+import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirOrganization';
 import { useTranslation } from 'react-i18next';
 import Title from 'Assets/Elements/Title';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -34,7 +34,7 @@ import { getCities, getStreets } from 'Utils/Services/API';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import moment from 'moment';
-import { getValueSet, getHMO } from 'Utils/Services/FhirAPI';
+import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
@@ -290,9 +290,9 @@ const PatientDetailsBlock = ({
       try {
         if (patientData.managingOrganization) {
           // const HMO_Data = await getHMO(patientData.managingOrganization);
-          const HMO_Data = await FHIR('Organization', 'doWork', {functionName: "getHMO", functionParams: {HMO_ID: patientData.managingOrganization}})
-          const normalizedHMO = normalizeFhirHMO(HMO_Data.data);
-          setHMO(normalizedHMO);
+          const Organization = await FHIR('Organization', 'doWork', {functionName: "readOrganization", functionParams: {OrganizationId: patientData.managingOrganization}})
+          const normalizedOrganization = normalizeFhirOrganization(Organization.data);
+          setHMO(normalizedOrganization);
         }
       } catch (error) {
         console.log(error);
