@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import matchSorter from 'match-sorter';
 import { getCellPhoneRegexPattern } from 'Utils/Helpers/validation/patterns';
-// import { DevTool } from 'react-hook-form-devtools'; // Used to see the state of the form
 import { useForm, Controller } from 'react-hook-form';
 import { connect } from 'react-redux';
+// import { DevTool } from 'react-hook-form-devtools'; // Used to see the state of the form
 
 // Helpers
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
 import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
 
 // Styles
@@ -418,10 +419,18 @@ const PatientDetailsBlock = ({
       if (encounterData.relatedPerson) {
         (async () => {
           try {
-            const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
-              functionName: 'getRelatedPerson',
-              functionParams: { RelatedPersonId: encounterData.relatedPerson },
-            });
+            if (encounterData.relatedPerson) {
+              const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
+                functionName: 'getRelatedPerson',
+                functionParams: {
+                  RelatedPersonId: encounterData.relatedPerson,
+                },
+              });
+              const normalizedRelatedPerson = normalizeFhirRelatedPerson(
+                relatedPerson.data,
+              );
+              setRelatedPerson({ ...normalizedRelatedPerson });
+            }
           } catch (error) {
             console.log(error);
           }

@@ -1,3 +1,8 @@
+/**
+ * @author Idan Gigi idangi@matrix.co.il
+ * @param {object} relatedPerson
+ * @returns {object}
+ */
 const normalizeFhirRelatedPerson = (relatedPerson) => {
   let active = '';
   let patient = '';
