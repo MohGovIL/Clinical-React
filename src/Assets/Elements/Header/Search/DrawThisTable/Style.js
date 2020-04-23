@@ -54,7 +54,22 @@ export const StyledBottomLinks = styled(Box)`
     color: #002398 !important;
     }
 `;
+export const StyledHrefTableButton = styled(Button)`
 
+      width: auto;
+      height: 32px;
+      border-radius: 25px;
+
+      font-family: OpenSansHebrew;
+      font-size: 15px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      text-align: center;
+      color: #002398;
+`;
 export const StyledHrefButton = styled(Button)`
     border-radius: 25px;
     font-family: OpenSansHebrew;
@@ -366,4 +381,32 @@ export const StyledLinkWithIconComponent = styled.div`
 
 export const StyledEmptyDiv = styled.div`
     width: 55px !important;
+`;
+
+export const StyledTableTextCell = styled.div`
+  width: 36px;
+  height: 18px;
+  font-family: OpenSansHebrew;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.29;
+  letter-spacing: normal;
+  text-align: right;
+  color: #000b40;
+`;
+
+export const StyledHeaderTableAppointment = styled.div`
+ width: 110px;
+  height: 24px;
+  font-family: OpenSansHebrew;
+  font-size: 18px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: right;
+  color: #000b40;
 `;

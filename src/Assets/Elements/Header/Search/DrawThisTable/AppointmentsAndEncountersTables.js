@@ -3,11 +3,11 @@ import TitleValueComponent from "./TitleValueComponent";
 import {useTranslation} from "react-i18next";
 import {
     StyledBottomLinks,
-    StyledBox, StyledHrefButton,
+    StyledBox, StyledHeaderTableAppointment, StyledHrefButton, StyledHrefTableButton,
     StyledLabelAppointment,
     StyledLabelName, StyledLabelServiceTypeAppointment,
     StyledLabelStatusAppointment,
-    StyledLinkWithIconComponent
+    StyledLinkWithIconComponent, StyledTableTextCell
 } from "./Style";
 import moment from "moment";
 import normalizeFhirAppointment
@@ -40,6 +40,7 @@ const AppointmentsAndEncountersTables = ({nextAppointment, curEncounter, prevEnc
     const curEncounterElem = curEncounter ? curEncounter : null;
     const nextAppointmentEntry = nextAppointmentElem ? normalizeFhirAppointment(nextAppointmentElem) : null;
     const normalizedPrevEncounter = prevEncounterEntry ? normalizeFhirEncounter(prevEncounterEntry) : null;
+debugger;
     let normalizedCurEncounters = [];
     const getAppointmentWithTimeOrNot =(nextAppointmentEntry)=>{
         let isThisAppToday = moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
@@ -72,7 +73,7 @@ debugger;
         <React.Fragment>
             {normalizedCurEncounters.length > 0 ?
                 <React.Fragment>
-                    <StyledLabelAppointment><TitleValueComponent name={t("Current encounter")}/></StyledLabelAppointment>
+                    <StyledHeaderTableAppointment>t("Current encounter")}</StyledHeaderTableAppointment>
                     <ul></ul>
                     <TableContainer component={Paper}>
                         <Table    aria-label="simple table">
@@ -90,10 +91,10 @@ debugger;
                                     return(
                                     <TableRow key={encounterID}>
                                         <TableCell  align="right" omponent="th" scope="row">
-                                            {moment(encounter.startTime).format("HH:mm")}
+                                            <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
                                         </TableCell>
                                         <TableCell align="right">
-                                           {t(encounter.serviceType)}
+                                            <StyledTableTextCell>{t(encounter.serviceType)} - {t(encounter.examination)}</StyledTableTextCell>
                                         </TableCell>
                                         <TableCell align="center">
                                             <StyledLabelStatusAppointment>
@@ -102,22 +103,22 @@ debugger;
                                             </StyledLabelStatusAppointment>
                                         </TableCell>
                                         <TableCell align="right">
-                                            <StyledHrefButton size={'small'} variant="outlined" color="primary"
+                                            <StyledHrefTableButton size={'small'} variant="outlined" color="primary"
                                                               href="#contained-buttons"
                                                               disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}
                                                               /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
                                                                >
                                                               {t("navigate to encounter sheet")}
-                                            </StyledHrefButton>
+                                            </StyledHrefTableButton>
                                         </TableCell>
                                         <TableCell align="right">
-                                            <StyledHrefButton size={'large'} variant="outlined" color="primary"
+                                            <StyledHrefTableButton size={'large'} variant="outlined" color="primary"
                                                               href="#contained-buttons"
                                                               disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}
                                                               /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
                                                               >
                                                              {t("Admission form")}
-                                            </StyledHrefButton>
+                                            </StyledHrefTableButton>
                                         </TableCell>
                                     </TableRow>
                                     );
