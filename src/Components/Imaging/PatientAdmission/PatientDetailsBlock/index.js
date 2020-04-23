@@ -456,7 +456,7 @@ const PatientDetailsBlock = ({
 
   return (
     <StyledPatientDetails edit={edit_mode}>
-      <StyledForm onSubmit={handleSubmit(onSubmit)}>
+      <StyledForm onSubmit={handleSubmit(onSubmit)} novalidate>
         {/* Patient Details */}
         <Title
           marginTop={'55px'}
@@ -516,7 +516,7 @@ const PatientDetailsBlock = ({
               rules={{
                 pattern: getCellPhoneRegexPattern(),
               }}
-              error={errors.escortMobilePhone}
+              error={errors.escortMobilePhone && true}
               helperText={
                 errors.escortMobilePhone && t('The number entered is incorrect')
               }
@@ -646,7 +646,7 @@ const PatientDetailsBlock = ({
                 }
                 rules={{ maxLength: { value: 7 } }}
                 control={control}
-                error={errors.addressPostalCode}
+                error={errors.addressPostalCode && true}
                 helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
               />
             </React.Fragment>
@@ -813,14 +813,13 @@ const PatientDetailsBlock = ({
                 options={servicesType}
                 renderInput={(params) => (
                   <StyledTextField
-                    error={errors.selectTest}
+                    error={errors.selectTest && true}
                     helperText={
                       errors.selectTest &&
                       t('The test performed during the visit must be selected')
                     }
-                    required
                     {...params}
-                    label={t('Select test')}
+                    label={`${t('Select test')} *`}
                     InputProps={{
                       ...params.InputProps,
                       endAdornment: (
@@ -897,8 +896,7 @@ const PatientDetailsBlock = ({
                 inputRef={register({
                   required: true,
                 })}
-                required
-                label={t('Reference for payment commitment')}
+                label={`${t('Reference for payment commitment')} *`}
                 id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                 type='number'
               />
@@ -920,9 +918,8 @@ const PatientDetailsBlock = ({
                       format={formatDate}
                       mask={formatDate}
                       margin='normal'
-                      required
                       id='commitmentAndPaymentCommitmentDate'
-                      label={t('Commitment date')}
+                      label={`${t('Commitment date')} *`}
                       value={commitmentAndPaymentCommitmentDate}
                       onChange={(date) =>
                         dateOnChangeHandler(
@@ -955,7 +952,6 @@ const PatientDetailsBlock = ({
                 as={
                   <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                     <StyledKeyboardDatePicker
-                      required
                       autoOk
                       mask={formatDate}
                       disableToolbar
@@ -963,7 +959,7 @@ const PatientDetailsBlock = ({
                       format={formatDate}
                       margin='normal'
                       id='commitmentAndPaymentCommitmentValidity'
-                      label={t('Commitment validity')}
+                      label={`${t('Commitment validity')} *`}
                       value={commitmentAndPaymentCommitmentValidity}
                       onChange={(date) =>
                         dateOnChangeHandler(
@@ -991,8 +987,7 @@ const PatientDetailsBlock = ({
                 inputRef={register({
                   required: true,
                 })}
-                required
-                label={t('Doctors name')}
+                label={`${t('Doctors name')} *`}
                 id={'commitmentAndPaymentDoctorsName'}
               />
               <StyledTextField
@@ -1000,8 +995,7 @@ const PatientDetailsBlock = ({
                 inputRef={register({
                   required: true,
                 })}
-                required
-                label={t('Doctors license')}
+                label={`${t('Doctors license')} *`}
                 id={'commitmentAndPaymentDoctorsLicense'}
                 type='number'
               />
@@ -1027,7 +1021,7 @@ const PatientDetailsBlock = ({
           <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
             <Grid item xs={3}>
               <label style={{ color: '#000b40' }} htmlFor='referral'>
-                {t('Referral')}
+                {`${t('Referral')} *`}
               </label>
             </Grid>
             <Grid item xs={9}>
@@ -1037,7 +1031,6 @@ const PatientDetailsBlock = ({
                 id='referral'
                 type='file'
                 accept='.pdf,.gpf,.png,.gif,.jpg'
-                required
                 onChange={() =>
                   onChangeFileHandler(referralRef, setReferralFile, 'Referral')
                 }
@@ -1070,7 +1063,7 @@ const PatientDetailsBlock = ({
           <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
             <Grid item xs={3}>
               <label style={{ color: '#000b40' }} htmlFor='commitment'>
-                {t('Commitment')}
+                {`${t('Commitment')} *`}
               </label>
             </Grid>
             <Grid item xs={9}>
@@ -1080,7 +1073,6 @@ const PatientDetailsBlock = ({
                 id='commitment'
                 type='file'
                 accept='.pdf,.gpf,.png,.gif,.jpg'
-                required
                 onChange={() =>
                   onChangeFileHandler(
                     commitmentRef,
@@ -1120,7 +1112,8 @@ const PatientDetailsBlock = ({
                 <Grid item xs={3}>
                   <StyledTextField
                     onChange={onChangeAdditionalDocumentHandler}
-                    label={t('Additional document')}
+                    label={`${t('Additional document')}`}
+                    required
                   />
                 </Grid>
                 <Grid item xs={9}>
@@ -1129,7 +1122,6 @@ const PatientDetailsBlock = ({
                     id='additionalDocument'
                     type='file'
                     accept='.pdf,.gpf,.png,.gif,.jpg'
-                    required
                     onChange={() =>
                       onChangeFileHandler(
                         additionalDocumentRef,
