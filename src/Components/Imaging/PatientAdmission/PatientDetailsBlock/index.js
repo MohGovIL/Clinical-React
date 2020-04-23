@@ -66,7 +66,7 @@ const PatientDetailsBlock = ({
 }) => {
   const { t } = useTranslation();
 
-  const { control, handleSubmit, errors, setValue } = useForm({
+  const { control, handleSubmit, errors, setValue, register } = useForm({
     mode: 'onBlur',
   });
 
@@ -383,6 +383,10 @@ const PatientDetailsBlock = ({
 
   //Sending the form
   const onSubmit = (data) => {
+    // 1. Check if the encounter has ref to any appointment if there is any ref change their status to 'arrived'
+    // 2. Change the encounter status to arrived ONLY if the current status of the encounter is 'planned'
+    // 3. Save the commitment data
+    // 4. Go back to PatientTracking route
     console.log(data);
   };
   // Default values
@@ -878,7 +882,7 @@ const PatientDetailsBlock = ({
           {commitmentAndPaymentTabValue === 0 && (
             <React.Fragment>
               <Controller
-                name='HMO'
+                name='commitmentAndPaymentHMO'
                 as={
                   <StyledTextField
                     label={t('HMO')}
@@ -889,6 +893,10 @@ const PatientDetailsBlock = ({
                 control={control}
               />
               <StyledTextField
+                name='commitmentAndPaymentReferenceForPaymentCommitment'
+                inputRef={register({
+                  required: true,
+                })}
                 required
                 label={t('Reference for payment commitment')}
                 id={'commitmentAndPaymentReferenceForPaymentCommitment'}
@@ -900,6 +908,7 @@ const PatientDetailsBlock = ({
                   validate: {
                     value: (value) => validateDate(value, 'before'),
                   },
+                  required: true,
                 }}
                 control={control}
                 as={
@@ -941,6 +950,7 @@ const PatientDetailsBlock = ({
                   validate: {
                     value: (value) => validateDate(value, 'after'),
                   },
+                  required: true,
                 }}
                 as={
                   <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
@@ -977,11 +987,19 @@ const PatientDetailsBlock = ({
                 }
               />
               <StyledTextField
+                name='commitmentAndPaymentDoctorsName'
+                inputRef={register({
+                  required: true,
+                })}
                 required
                 label={t('Doctors name')}
                 id={'commitmentAndPaymentDoctorsName'}
               />
               <StyledTextField
+                name='commitmentAndPaymentDoctorsLicense'
+                inputRef={register({
+                  required: true,
+                })}
                 required
                 label={t('Doctors license')}
                 id={'commitmentAndPaymentDoctorsLicense'}
@@ -1014,6 +1032,7 @@ const PatientDetailsBlock = ({
             </Grid>
             <Grid item xs={9}>
               <input
+                name='ReferralFile'
                 ref={referralRef}
                 id='referral'
                 type='file'
@@ -1056,6 +1075,7 @@ const PatientDetailsBlock = ({
             </Grid>
             <Grid item xs={9}>
               <input
+                name='CommitmentFile'
                 ref={commitmentRef}
                 id='commitment'
                 type='file'
@@ -1158,6 +1178,28 @@ const PatientDetailsBlock = ({
               color={'#002398'}
               label={'Additional document'}
             />
+          </Grid>
+        </StyledFormGroup>
+        <StyledFormGroup>
+          <Grid container direction='row' justify='flex-end'>
+            <Grid item xs={3}>
+              <StyledButton
+                color='primary'
+                variant='outlined'
+                type='submit'
+                letterSpacing={'0.1'}>
+                {t('Save & Close')}
+              </StyledButton>
+            </Grid>
+            <Grid item xs={3}>
+              <StyledButton
+                color='primary'
+                variant='contained'
+                type='submit'
+                fontWeight={'bold'}>
+                {t('Medical questionnaire')}
+              </StyledButton>
+            </Grid>
           </Grid>
         </StyledFormGroup>
       </StyledForm>

@@ -8,6 +8,8 @@ export const StyledButton = styled(Button)`
   border-radius: 25px;
   height: 50px;
   width: 158px;
+  letter-spacing: ${({ letterSpacing }) => letterSpacing || null};
+  font-weight: ${({ fontWeight }) => fontWeight || null};
   .MuiButton-startIcon {
     margin-left: 8px;
   }
@@ -109,7 +111,7 @@ export const StyledPatientDetails = styled.div`
     flex-basis: 50%;
     margin: 120px 38px 0 38px;
   }
-  input[type=file] {
+  input[type='file'] {
     display: none;
   }
 `;
