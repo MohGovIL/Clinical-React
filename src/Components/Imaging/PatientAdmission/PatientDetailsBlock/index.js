@@ -66,9 +66,123 @@ const PatientDetailsBlock = ({
 }) => {
   const { t } = useTranslation();
 
-  const { control, handleSubmit, errors, setValue, register } = useForm({
+  const {
+    control,
+    handleSubmit,
+    errors,
+    setValue,
+    register,
+    setError,
+  } = useForm({
     mode: 'onBlur',
   });
+
+  //Sending the form
+  const onSubmit = (data) => {
+    if (isRequiredValidation(data)) {
+      // Continue is required is true.
+    }
+    return;
+    // 0. Run isRequired validation
+    // 1. Check if the encounter has ref to any appointment if there is any ref change their status to 'arrived'
+    // 2. Change the encounter status to arrived ONLY if the current status of the encounter is 'planned'
+    // 3. Save the commitment data
+    // 4. Go back to PatientTracking route
+  };
+
+  const isRequiredValidation = (data) => {
+    const requiredFields = {
+      selectTest: {
+        name: 'selectTest',
+        code: '',
+        required: () => {
+          return selectedServicesType.length > 0;
+        },
+      },
+      commitmentAndPaymentReferenceForPaymentCommitment: {
+        name: 'commitmentAndPaymentReferenceForPaymentCommitment',
+        code: '',
+        required: () => {
+          return (
+            data.commitmentAndPaymentReferenceForPaymentCommitment &&
+            data.commitmentAndPaymentReferenceForPaymentCommitment.trim().length
+          );
+        },
+      },
+      commitmentAndPaymentCommitmentDate: {
+        name: 'commitmentAndPaymentCommitmentDate',
+        code: '',
+        required: () => {
+          return (
+            data.commitmentAndPaymentCommitmentDate &&
+            moment(data.commitmentAndPaymentCommitmentDate).toString().length >
+              0 &&
+            moment(data.commitmentAndPaymentCommitmentDate).isValid
+          );
+        },
+      },
+      commitmentAndPaymentCommitmentValidity: {
+        name: 'commitmentAndPaymentCommitmentValidity',
+        code: '',
+        required: () => {
+          return (
+            data.commitmentAndPaymentCommitmentValidity &&
+            moment(data.commitmentAndPaymentCommitmentValidity).toString()
+              .length > 0 &&
+            moment(data.commitmentAndPaymentCommitmentValidity).isValid
+          );
+        },
+      },
+      commitmentAndPaymentDoctorsName: {
+        name: 'commitmentAndPaymentDoctorsName',
+        code: '',
+        required: () => {
+          return (
+            data.commitmentAndPaymentDoctorsName &&
+            data.commitmentAndPaymentDoctorsName.trim().length
+          );
+        },
+      },
+      commitmentAndPaymentDoctorsLicense: {
+        name: 'commitmentAndPaymentDoctorsLicense',
+        code: '',
+        required: () => {
+          return (
+            data.commitmentAndPaymentDoctorsLicense &&
+            data.commitmentAndPaymentDoctorsLicense.trim().length
+          );
+        },
+      },
+      ReferralFile: {
+        name: 'ReferralFile',
+        code: '',
+        required: () => {
+          return Object.values(referralFile).length > 0;
+        },
+      },
+      CommitmentFile: {
+        name: 'CommitmentFile',
+        code: '',
+        required: () => {
+          return Object.values(commitmentFile).length > 0;
+        },
+      },
+    };
+    let clean = true;
+    for (const fieldKey in requiredFields) {
+      if (requiredFields.hasOwnProperty(fieldKey)) {
+        if (!requiredFields[fieldKey].required()) {
+          setError(
+            requiredFields[fieldKey].name,
+            'required',
+            'This field is required',
+          );
+          clean = false;
+        }
+      }
+    }
+    return clean;
+  };
 
   // Escorted Information
   // Escorted Information - vars
@@ -381,14 +495,6 @@ const PatientDetailsBlock = ({
     setNameOfAdditionalDocumentFile(e.target.value);
   };
 
-  //Sending the form
-  const onSubmit = (data) => {
-    // 1. Check if the encounter has ref to any appointment if there is any ref change their status to 'arrived'
-    // 2. Change the encounter status to arrived ONLY if the current status of the encounter is 'planned'
-    // 3. Save the commitment data
-    // 4. Go back to PatientTracking route
-    console.log(data);
-  };
   // Default values
   useEffect(() => {
     if (patientData.city) {
@@ -415,6 +521,7 @@ const PatientDetailsBlock = ({
             };
           },
         );
+        setValue('selectTest', selectedArr, true);
         setSelectedServicesType(selectedArr);
       }
       if (encounterData.priority > 1) {
@@ -762,12 +869,13 @@ const PatientDetailsBlock = ({
           <Controller
             name='selectTest'
             control={control}
-            rules={{
-              validate: {
-                value: (value) => value && value.length > 0,
-              },
-            }}
+            // rules={{
+            //   validate: {
+            //     value: (value) => value && value.length > 0,
+            //   },
+            // }}
             onChangeName={selectExaminationOnChangeHandler}
+            defaultValue={selectedServicesType}
             as={
               <Autocomplete
                 filterOptions={filterOptions}
@@ -893,12 +1001,19 @@ const PatientDetailsBlock = ({
               />
               <StyledTextField
                 name='commitmentAndPaymentReferenceForPaymentCommitment'
-                inputRef={register({
-                  required: true,
-                })}
+                inputRef={register()}
                 label={`${t('Reference for payment commitment')} *`}
                 id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                 type='number'
+                defaultValue=''
+                error={
+                  errors.commitmentAndPaymentReferenceForPaymentCommitment &&
+                  true
+                }
+                helperText={
+                  errors.commitmentAndPaymentReferenceForPaymentCommitment &&
+                  t('Required field')
+                }
               />
               <Controller
                 name='commitmentAndPaymentCommitmentDate'
@@ -906,8 +1021,8 @@ const PatientDetailsBlock = ({
                   validate: {
                     value: (value) => validateDate(value, 'before'),
                   },
-                  required: true,
                 }}
+                defaultValue={commitmentAndPaymentCommitmentDate}
                 control={control}
                 as={
                   <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
@@ -947,8 +1062,8 @@ const PatientDetailsBlock = ({
                   validate: {
                     value: (value) => validateDate(value, 'after'),
                   },
-                  required: true,
                 }}
+                defaultValue={commitmentAndPaymentCommitmentValidity}
                 as={
                   <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                     <StyledKeyboardDatePicker
@@ -983,18 +1098,16 @@ const PatientDetailsBlock = ({
                 }
               />
               <StyledTextField
+                defaultValue=''
                 name='commitmentAndPaymentDoctorsName'
-                inputRef={register({
-                  required: true,
-                })}
+                inputRef={register()}
                 label={`${t('Doctors name')} *`}
                 id={'commitmentAndPaymentDoctorsName'}
               />
               <StyledTextField
+                defaultValue=''
                 name='commitmentAndPaymentDoctorsLicense'
-                inputRef={register({
-                  required: true,
-                })}
+                inputRef={register()}
                 label={`${t('Doctors license')} *`}
                 id={'commitmentAndPaymentDoctorsLicense'}
                 type='number'
