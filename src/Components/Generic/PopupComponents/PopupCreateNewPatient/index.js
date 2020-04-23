@@ -138,6 +138,28 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                 setIsFound(true);
                 const result = await triggerValidation("idNumber");
                 console.log(result);
+                try {
+                    //In this example I am calling FHIR without await cause I am making logic inside the search patient.
+                    //for that I need to do then function on the resolved data .
+                    FHIR('Patient', 'doWork', {
+                        "functionName": 'searchPatientsById',
+                        'functionParams': {identifierValue: patientIdNumber, identifierType: patientIdType}
+                    }).then(patients => {
+                        console.log(patients);
+                        // if (patients) {
+                        //     //for
+                        //     setResult(patients);
+                        //     setShowResult(true);
+                        //     // setResult(patients);
+                        // } else {
+                        //     setResult(null);
+                        //     setShowResult(true);
+                        // }
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
+
                 console.log("===========findPatientWithIdTypeAndNumber=============");
             }
         })();
