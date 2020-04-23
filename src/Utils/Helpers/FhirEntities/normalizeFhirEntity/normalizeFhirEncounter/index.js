@@ -35,8 +35,8 @@ const normalizeFhirEncounter = (encounter) => {
       );
     }
   }
-  let startTime = null;
-  let date = null;
+  // let startTime = null;
+  // let date = null;
 
   // if(encounter.period){
   //     if(encounter.period.start){
