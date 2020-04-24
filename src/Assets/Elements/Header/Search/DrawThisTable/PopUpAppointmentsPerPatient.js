@@ -14,19 +14,19 @@ import AppointmentsAndEncountersTables from "./AppointmentsAndEncountersTables";
 
 
 const Transition = React.forwardRef(function Transition(props, ref,direction) {
-    return <Slide direction={direction?direction:'top'} ref={ref} {...props} />;
+    return <Slide direction={direction?direction:"up"} ref={ref} {...props} />;
 });
 
 
 const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => {
     const {t} = useTranslation();
-    debugger;
+
     if(!content)
         return null;
 
-        const nextAppointment = content.nextAppointment;
-        const curEncounter = content.curEncounter;
-        const prevEncounter = content.prevEncounter ;
+        const nextAppointments = content && content.nextAppointment ? content.nextAppointment  :null;
+        const curEncounters = content && content.curEncounter ? content.curEncounter : null;
+        const prevEncounters = content && content.prevEncounter ? content.prevEncounter : null;
         const patientTrackingStatuses = content && content.patientTrackingStatuses ? content.patientTrackingStatuses : null ;
         const encounterStatuses = content && content.encounterStatuses ? content.encounterStatuses : null;
 
@@ -65,9 +65,9 @@ const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => 
                                  describedby="alert-dialog-slide-description"
                                  /*bottomButtons={bottomButtonsData}*/>
                     <AppointmentsAndEncountersTables
-                        nextAppointment={nextAppointment}
-                        curEncounter={curEncounter}
-                        prevEncounter={curEncounter}
+                        nextAppointments={nextAppointments}
+                        curEncounters={curEncounters}
+                        prevEncounters={prevEncounters}
                         patientTrackingStatuses={patientTrackingStatuses}
                         encounterStatuses={encounterStatuses}>
 

@@ -21,8 +21,8 @@ const PaperContainerComponent = ({result, searchParam}) => {
     const containerRef = useRef(null);
 
     return (
-        <StyledPaperContainer ref={containerRef} height={height} maxHeight={maxHeight}>
-            <DrawThisTable result={result} searchParam={searchParam}/>
+        <StyledPaperContainer key={searchParam+"_patientSearchContainer"} ref={containerRef} height={height} maxHeight={maxHeight}>
+            <DrawThisTable key={searchParam+"_DrawThisTable"} result={result} searchParam={searchParam}/>
         </StyledPaperContainer>
 
     );

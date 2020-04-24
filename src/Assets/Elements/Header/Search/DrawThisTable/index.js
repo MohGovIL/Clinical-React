@@ -17,8 +17,8 @@ import AppointmentsPerPatient from "./AppointmentsPerPatient";
 import {
     getCurrentEncounterPerPatient,
     getHealthCareServiceByOrganization,
-    getNextPrevAppointmentPerPatient,
-    getNextPrevEncounterPerPatient, getValueSet,
+    getNextPrevAppointmentPerPatient, getNextPrevAppointmentsPerPatient,
+    getNextPrevEncounterPerPatient, getNextPrevEncountersPerPatient, getValueSet,
     requestValueSet
 } from "Utils/Services/FhirAPI";
 import moment, {now} from "moment";
@@ -42,7 +42,9 @@ const DrawThisTable = ({result, searchParam}) => {
     const ADMISSIONWITHAPPOINTMENT = 1;
     const [expanded, setExpanded] = React.useState('');
     const [nextAppointment, setNextAppointment] = React.useState('');
+    const [nextAppointments, setNextAppointments] = React.useState('');
     const [prevEncounter, setPrevEncounter] = React.useState('');
+    const [prevEncounters, setPrevEncounters] = React.useState('');
     const [curEncounter, setCurEncounter] = React.useState('');
     const [encounterStatuses, setEncounterStatuses] = React.useState('');
     const [patientTrackingStatuses, setPatientTrackingStatuses] = React.useState('');
@@ -140,13 +142,13 @@ const DrawThisTable = ({result, searchParam}) => {
     }
 
 
-    const handleChange = (panel, identifier) => async (event, newExpanded) => {
+    const handleChange = (panel, patient) => async (event, newExpanded) => {
 
         setExpanded(newExpanded ? panel : false);
 
 
         if (newExpanded) {
-
+            let identifier = patient.id;
             let currentDate = moment().utc().format("YYYY-MM-DD");
             const encounterStatPromise = await getValueSet("encounter_statuses");
             const encounterStat = requestValueSet(encounterStatPromise);
@@ -161,6 +163,9 @@ const DrawThisTable = ({result, searchParam}) => {
             setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
             /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
 
+            setNextAppointments(await getNextPrevAppointmentsPerPatient(currentDate, identifier, false));
+            setPrevEncounters(await getNextPrevEncountersPerPatient(currentDate, identifier, true));
+
 
         }
     };
@@ -172,17 +177,24 @@ const DrawThisTable = ({result, searchParam}) => {
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
-    const handleShowAppointmentsAndEncounters = (patient, prevEncounter,nextAppointment, curEncounter, encounterStatuses,patientTrackingStatuses) => {
-        debugger;
-        setAppointmentPopUpData({patient:patient, prevEncounter:prevEncounter, nextAppointment:nextAppointment, curEncounter:curEncounter,encounterStatuses:encounterStatuses,patientTrackingStatuses:patientTrackingStatuses});
+    const handleShowAppointmentsAndEncounters = (patient, prevEncounters,nextAppointments, curEncounter, encounterStatuses,patientTrackingStatuses) => {
+
+        if(!patient)
+            return;
+        setAppointmentPopUpData({patient:patient, prevEncounter:prevEncounters, nextAppointment:nextAppointments, curEncounter:curEncounter,encounterStatuses:encounterStatuses,patientTrackingStatuses:patientTrackingStatuses})
         setPopUpAppointmentsPerPatient(true);
+
+
 
     }
 
     const handlePopupClose = () => {
-        debugger;
+
         setPopUpAppointmentsPerPatient(false);
-        setAppointmentPopUpData(null);
+        if(!popUpAppointmentsPerPatient)
+        {
+            setAppointmentPopUpData(null);
+        }
     }
 
 
@@ -192,10 +204,10 @@ const DrawThisTable = ({result, searchParam}) => {
                 if (patient) {
                     return (
                         <React.Fragment>
-                            <PopUpAppointmentsPerPatient popupOpen={popUpAppointmentsPerPatient}
+                            <PopUpAppointmentsPerPatient  key={"PopUp"+patientIndex} popupOpen={popUpAppointmentsPerPatient}
                                                         content={appointmentPopUpData} handlePopupClose={handlePopupClose} ></PopUpAppointmentsPerPatient>
-                            <StyledExpansionPanel expanded={expanded === 'panel' + patientIndex} key={patientIndex}
-                                                  onChange={handleChange('panel' + patientIndex, patient.id)}>
+                            <StyledExpansionPanel key={"ExpansionPanel_"+patientIndex} expanded={expanded === 'panel' + patientIndex} key={patientIndex}
+                                                  onChange={handleChange('panel' + patientIndex, patient)}>
                                 <StyledExpansionPanelSummary
                                     expandIcon={<ExpandMoreIcon/>}
                                     aria-controls="panel1a-content"
@@ -235,8 +247,8 @@ const DrawThisTable = ({result, searchParam}) => {
                                     <StyledBottomLinks>
                                         <StyledHrefButton size={'small'} variant="outlined" color="primary"
                                                           href="#contained-buttons"
-                                                          disabled={(nextAppointment && nextAppointment.data && nextAppointment.data.total > 0) || (curEncounter && curEncounter.data && curEncounter.data.total > 0) ? false : true}
-                                                          onClick={() => handleShowAppointmentsAndEncounters(patient, prevEncounter , nextAppointment, curEncounter, encounterStatuses,patientTrackingStatuses)}>
+                                                          disabled={(nextAppointments && nextAppointments.data && nextAppointments.data.total > 0) ||  (prevEncounters && prevEncounters.data && prevEncounters.data.total > 0) || (curEncounter && curEncounter.data && curEncounter.data.total > 0) ? false : true}
+                                                          onClick={() => handleShowAppointmentsAndEncounters(patient, prevEncounters , nextAppointments, curEncounter, encounterStatuses,patientTrackingStatuses)}>
                                             {t("Encounters and appointments")}
                                         </StyledHrefButton>
                                         <StyledHrefButton size={'small'} variant="contained" color="primary"

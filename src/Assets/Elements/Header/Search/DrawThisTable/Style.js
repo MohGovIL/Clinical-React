@@ -384,7 +384,7 @@ export const StyledEmptyDiv = styled.div`
 `;
 
 export const StyledTableTextCell = styled.div`
-  width: 36px;
+  width: 109px;
   height: 18px;
   font-family: OpenSansHebrew;
   font-size: 14px;
@@ -398,7 +398,7 @@ export const StyledTableTextCell = styled.div`
 `;
 
 export const StyledHeaderTableAppointment = styled.div`
- width: 110px;
+    width: auto;
   height: 24px;
   font-family: OpenSansHebrew;
   font-size: 18px;

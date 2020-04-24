@@ -12,7 +12,7 @@ import {connect} from "react-redux";
 import CustomizedTableButton from "../CustomizedTable/CustomizedTableButton";
 
 const CustomizedPopup = ({children, isOpen, onClose, languageDirection, props}) => {
-    debugger;
+
     return (
         <div>
             <Dialog
