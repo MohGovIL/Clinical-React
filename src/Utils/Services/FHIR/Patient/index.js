@@ -66,7 +66,7 @@ const PatientStats = {
     searchPatientsById: async (params) =>{
         try{
             let data = null;
-            let identifierData = await CRUDOperations('search', params.url + "?" + "identifier:contains=" + params.functionParams.identifierValue + "&identifier.type=" + params.functionParams.identifierType);
+            let identifierData = await CRUDOperations('search', params.url + "?" + "identifier:contains=" + params.functionParams.identifierValue + (params.functionParams.identifierType ? "&identifier.type=" + params.functionParams.identifierType : "") ) ;
             data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData, data) : data;
             return data;
         } catch (e) {

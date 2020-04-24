@@ -132,7 +132,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
     useEffect(() => {
         (async () => {
-            if (patientIdType !== 0 && patientIdNumber.length > 0) {
+            if (/*patientIdType !== 0 &&*/ patientIdNumber.length > 0) {
                 console.log("===========findPatientWithIdTypeAndNumber=============");
                 console.log(patientIdNumber + ' of ' + patientIdType + " ===== ");
                 setIsFound(true);
@@ -143,7 +143,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                     //for that I need to do then function on the resolved data .
                     FHIR('Patient', 'doWork', {
                         "functionName": 'searchPatientsById',
-                        'functionParams': {identifierValue: patientIdNumber, identifierType: patientIdType}
+                        'functionParams': {identifierValue: patientIdNumber}
                     }).then(patients => {
                         console.log(patients);
                         // if (patients) {
