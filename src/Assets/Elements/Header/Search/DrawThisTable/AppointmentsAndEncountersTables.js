@@ -76,7 +76,7 @@ debugger;
         let entry = nextAppointments.data.entry;
         entry.map((response, resourceIndex) => {
             if (response && response.resource && response.resource.resourceType === "Appointment") {
-                let normalizedNextAppointmentElem = normalizeFhirAppointmentsWithPatients(response.resource);
+                let normalizedNextAppointmentElem = normalizeFhirAppointment(response.resource);
                 normalizedNextAppointments.push(normalizedNextAppointmentElem);
             }
 
