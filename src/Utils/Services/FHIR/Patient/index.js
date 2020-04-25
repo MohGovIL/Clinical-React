@@ -63,11 +63,11 @@ const PatientStats = {
         }
         return data;
     },
-    searchPatientsById: async (params) =>{
+    searchPatientById: async (params) =>{
         try{
             let data = null;
-            let identifierData = await CRUDOperations('search', params.url + "?" + "identifier:contains=" + params.functionParams.identifierValue + (params.functionParams.identifierType ? "&identifier.type=" + params.functionParams.identifierType : "") ) ;
-            data = identifierData.data.total > 0 ? FHIRPersontoDataArray(identifierData, data) : data;
+            let identifierData = await CRUDOperations('search', params.url + "?" + "identifier=" + params.functionParams.identifierValue + (params.functionParams.identifierType ? "&identifier.type=" + params.functionParams.identifierType : "") ) ;
+            data = identifierData.data.total === 1 ? FHIRPersontoDataArray(identifierData, data)[0] : data;
             return data;
         } catch (e) {
             console.log(e);

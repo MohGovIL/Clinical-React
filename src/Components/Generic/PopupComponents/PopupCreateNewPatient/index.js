@@ -34,7 +34,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const textFieldSelectNotEmptyRule = {validate: {value: value => parseInt(value) !== 0}};
 
     //const methods = useForm({
-    const {register, control, errors, handleSubmit, triggerValidation, setValue, getValues} = useForm({
+    const {register, control, errors, setError, clearError, handleSubmit, triggerValidation, setValue, getValues} = useForm({
         mode: "onChange",
         // defaultValues: {
         //     birthDate: patientBirthDate
@@ -133,34 +133,35 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     useEffect(() => {
         (async () => {
             if (/*patientIdType !== 0 &&*/ patientIdNumber.length > 0) {
-                console.log("===========findPatientWithIdTypeAndNumber=============");
-                console.log(patientIdNumber + ' of ' + patientIdType + " ===== ");
+                //console.log("===========findPatientWithIdTypeAndNumber=============");
+                //console.log(patientIdNumber + ' of ' + patientIdType + " ===== ");
                 setIsFound(true);
                 const result = await triggerValidation("idNumber");
-                console.log(result);
+                //console.log(result);
                 try {
                     //In this example I am calling FHIR without await cause I am making logic inside the search patient.
                     //for that I need to do then function on the resolved data .
                     FHIR('Patient', 'doWork', {
-                        "functionName": 'searchPatientsById',
+                        "functionName": 'searchPatientById',
                         'functionParams': {identifierValue: patientIdNumber}
                     }).then(patients => {
-                        console.log(patients);
-                        // if (patients) {
-                        //     //for
-                        //     setResult(patients);
-                        //     setShowResult(true);
-                        //     // setResult(patients);
-                        // } else {
-                        //     setResult(null);
-                        //     setShowResult(true);
-                        // }
+                        if (patients && result) {
+                            console.log(patients);
+                            setValue("firstName",patients.firstName );
+                            setValue("lastName",patients.lastName );
+                            setValue("birthDate",patients.birthDate );
+                            setValue("mobilePhone",patients.mobileCellPhone );
+                            setValue("patientEmail",patients.email );
+                            setError("idNumber", "patientExist", "The patient exists in the system")
+                        } else {
+                            clearError("idNumber");
+                        }
                     });
                 } catch (err) {
                     console.log(err);
                 }
 
-                console.log("===========findPatientWithIdTypeAndNumber=============");
+               // console.log("===========findPatientWithIdTypeAndNumber=============");
             }
         })();
     }, [patientIdNumber, patientIdType, isFound]);
@@ -250,7 +251,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 }}
                                 {...TextFieldOpts}
                                 error={errors.idNumber ? true : false}
-                                helperText={errors.idNumber ? t("is a required field.") : null}
+                                helperText={errors.idNumber ? t(errors.idNumber.message) : null}
                             />
                             <Controller
                                 as={TextField}
