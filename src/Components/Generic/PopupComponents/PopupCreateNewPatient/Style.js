@@ -29,6 +29,8 @@ export const StyledForm = styled.div`
     .MuiInputLabel-shrink {
       color: #1e2132;
       opacity: 60%;
+      right: 0;
+      margin-right: 2px;
     }
 
     .MuiFormLabel-filled {
@@ -53,6 +55,10 @@ export const StyledForm = styled.div`
    .MuiFormHelperText-root {
        position: absolute;
        top: 56px;
+   }
+
+   .MuiInputLabel-root{
+      right: 23px;
    }
 `;
 

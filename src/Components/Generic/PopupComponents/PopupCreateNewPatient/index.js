@@ -156,6 +156,12 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             setValue("birthDate",patients.birthDate );
                             setValue("mobilePhone",patients.mobileCellPhone );
                             setValue("patientEmail",patients.email );
+                            setValue("idNumberType", patients.identifierType);
+                            setValue("gender", patients.gender);
+                            setValue("healthManageOrganization", patients.managingOrganization);
+                            setPatientIdType(patients.identifierType);
+                            setPatientGender(patients.gender);
+                            setPatientKupatHolim(patients.managingOrganization);
                             setError("idNumber", "patientExist", "The patient exists in the system");
                             setFormMode('view');
                         } else {
@@ -190,7 +196,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         }
     };
 
-    const handleChangeKupatHolim = (event) => {
+    const handleChangeHealthManageOrg = (event) => {
         try {
             setValue("healthManageOrganization", event.target.value, true);
             setPatientKupatHolim(event.target.value);
@@ -227,7 +233,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         }
     ];
 
-    const TextFieldOpts = {
+    const PopupTextFieldOpts = {
         'color': 'primary',
         'variant': 'filled',
         'disabled': formViewMode === 'view'
@@ -236,11 +242,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     let patientInitialValues = {
         firstName: '',
         lastName: '',
-        healthManageOrganization: 0,
-        healthManageOrganizationValue: '',
         mobilePhone: '',
         patientEmail: '',
-        patientIdType: 0
     };
 
     return (
@@ -283,15 +286,15 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 name="firstName"
                                 defaultValue={patientInitialValues.firstName}
                                 label={t("First Name")}
-                                // required
-                                {...TextFieldOpts}
+                                required
+                                {...PopupTextFieldOpts}
                             />
                             <TextField
                                 id="standard-gender"
                                 name="gender"
                                 value={patientGender}
-                                label={t("Gender")}
-                                // required
+                                label={t("Sex")}
+                                required
                                 select
                                 onChange={handleGenderChange}
                                 SelectProps={{
@@ -319,7 +322,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                         </InputAdornment>
                                     ),
                                 }}
-                                {...TextFieldOpts}
+                                {...PopupTextFieldOpts}
                             >
                                 {genderList.map((option, optionIndex) => (
                                     <MenuItem key={optionIndex} value={option.code}>
@@ -332,11 +335,10 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 name="healthManageOrganization"
                                 value={patientHealthManageOrganizationValue}
                                 label={t("Kupat Cholim")}
-                                // required
+                                required
                                 select
-                                onChange={handleChangeKupatHolim}
+                                onChange={handleChangeHealthManageOrg}
                                 SelectProps={{
-                                    // onOpen: handleLoadListKupatHolim,
                                     MenuProps: {
                                         elevation: 0,
                                         keepMounted: true,
@@ -354,13 +356,14 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 error={errors.healthManageOrganization ? true : false}
                                 helperText={errors.healthManageOrganization ? t("is a required field.") : null}
                                 InputProps={{
+                                    // disableUnderline: edit_mode === 1 ? false : true,
                                     endAdornment: (errors.healthManageOrganization &&
                                         <InputAdornment position="end">
                                             <ErrorOutlineIcon htmlColor={"#ff0000"}/>
                                         </InputAdornment>
                                     ),
                                 }}
-                                {...TextFieldOpts}
+                                {...PopupTextFieldOpts}
                             >
                                 {kupatHolimList.map((option, optionIndex) => (
                                     <MenuItem key={optionIndex} value={option.code}>
@@ -402,7 +405,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                         </InputAdornment>
                                     ),
                                 }}
-                                {...TextFieldOpts}
+                                {...PopupTextFieldOpts}
                             >
                                 {idTypesList.map((option, optionIndex) => (
                                     <MenuItem key={optionIndex} value={option.code} name={option.code}>
@@ -417,8 +420,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 name="lastName"
                                 defaultValue={patientInitialValues.lastName}
                                 label={t("Last Name")}
-                                // required
-                                {...TextFieldOpts}
+                                required
+                                {...PopupTextFieldOpts}
                             />
                             <Controller
                                 name="birthDate"
@@ -480,8 +483,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                         </InputAdornment>
                                     ),
                                 }}
-                                // required
-                                {...TextFieldOpts}
+                                required
+                                {...PopupTextFieldOpts}
                             />
                         </StyledColumnSecond>
                     </StyledBox>
@@ -506,7 +509,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             rules={{
                                 pattern: getEmailRegexPattern()
                             }}
-                            {...TextFieldOpts}
+                            {...PopupTextFieldOpts}
                         />
                     </StyledRowEmail>
                 </StyledForm>
