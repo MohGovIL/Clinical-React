@@ -1,5 +1,5 @@
 {
-  "name": "clinikal/client-app",
+  "name": "israeli-moh/client-app",
   "description": "React app for OpenEMR",
   "type": "clinikal-react",
   "authors": [
@@ -14,6 +14,6 @@
     }
   ],
   "require": {
-    "clinikal/composer-installers-clinikal-extender": "dev-master"
+    "israeli-moh/composer-installers-clinikal-extender": "dev-master"
   }
 }
