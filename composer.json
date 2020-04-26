@@ -1,5 +1,5 @@
 {
-  "name": "israeli-moh/client-app",
+  "name": "clinikal/client-app",
   "description": "React app for OpenEMR",
   "type": "clinikal-react",
   "authors": [
@@ -10,10 +10,10 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "git@bitbucket.org:clinikal/composer-installers-clinikal-extender.git"
+      "url": "git@bitbucket.org:israeli-moh/composer-installers-clinikal-extender.git"
     }
   ],
   "require": {
-    "israeli-moh/composer-installers-clinikal-extender": "dev-master"
+    "clinikal/composer-installers-clinikal-extender": "dev-master"
   }
 }
