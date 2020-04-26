@@ -65,6 +65,7 @@ const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => 
                                  describedby="alert-dialog-slide-description"
                                  /*bottomButtons={bottomButtonsData}*/>
                     <AppointmentsAndEncountersTables
+                        patientId={content.patient}
                         nextAppointments={nextAppointments}
                         curEncounters={curEncounters}
                         prevEncounters={prevEncounters}

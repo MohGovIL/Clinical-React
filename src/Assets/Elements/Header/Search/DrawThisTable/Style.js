@@ -409,4 +409,8 @@ export const StyledHeaderTableAppointment = styled.div`
   letter-spacing: normal;
   text-align: right;
   color: #000b40;
+  a{
+      float: left;
+    width: auto;
+  }
 `;
