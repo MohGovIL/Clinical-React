@@ -27,7 +27,9 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const [patientGender, setPatientGender] = useState("");
     const [patientIdType, setPatientIdType] = useState(0);
     const [patientBirthDate, setPatientBirthDate] = useState(0);
+    const [patientHealthManageOrganizationValue, setPatientKupatHolim] = useState(0);
 
+    const [formViewMode, setFormMode] = useState('write');
     const [isFound, setIsFound] = useState(false);
 
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -50,6 +52,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     //Register TextField components in react-hook-forms
     useEffect(() => {
         register({name: "idNumberType"}, textFieldSelectNotEmptyRule);
+        register({name: "gender"}, textFieldSelectNotEmptyRule);
+        register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
     }, []);
 
     //useEffect block
@@ -152,9 +156,11 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             setValue("birthDate",patients.birthDate );
                             setValue("mobilePhone",patients.mobileCellPhone );
                             setValue("patientEmail",patients.email );
-                            setError("idNumber", "patientExist", "The patient exists in the system")
+                            setError("idNumber", "patientExist", "The patient exists in the system");
+                            setFormMode('view');
                         } else {
                             clearError("idNumber");
+                            setFormMode('write');
                         }
                     });
                 } catch (err) {
@@ -175,13 +181,28 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         }
     };
 
+    const handleGenderChange = (event) => {
+        try {
+            setValue("gender", event.target.value, true);
+            setPatientGender(event.target.value);
+        } catch (e) {
+            console.log("Error: " + e);
+        }
+    };
+
+    const handleChangeKupatHolim = (event) => {
+        try {
+            setValue("healthManageOrganization", event.target.value, true);
+            setPatientKupatHolim(event.target.value);
+        } catch (e) {
+            console.log("Error: " + e);
+        }
+    };
+
     const getIsFound = () => {
         return isFound;
     }
 
-    const handleGenderChange = (event) => {
-        setPatientGender(event.target.value);
-    };
     //End block of handle's function
 
     const bottomButtonsData = [
@@ -189,6 +210,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
             'label': t('Save patient'),
             'variant': "text",
             'color': "primary",
+            'mode': formViewMode,
             'other': {'type': "submit", 'form': "createNewPatient"}
         },
         {
@@ -207,7 +229,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
     const TextFieldOpts = {
         'color': 'primary',
-        'variant': 'filled'
+        'variant': 'filled',
+        'disabled': formViewMode === 'view'
     };
 
     let patientInitialValues = {
@@ -237,7 +260,6 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 control={control}
                                 id="standard-idNumber"
                                 name="idNumber"
-                                //value={patientIdNumber}
                                 defaultValue={patientIdNumber}
                                 label={t("id number")}
                                 required
@@ -249,7 +271,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                         return getIsFound() === true;
                                     }
                                 }}
-                                {...TextFieldOpts}
+                                color={'primary'}
+                                variant={'filled'}
                                 error={errors.idNumber ? true : false}
                                 helperText={errors.idNumber ? t(errors.idNumber.message) : null}
                             />
@@ -263,89 +286,88 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 // required
                                 {...TextFieldOpts}
                             />
-                            {/*<TextField*/}
-                            {/*    id="standard-gender"*/}
-                            {/*    name="gender"*/}
-                            {/*    value={patientGender}*/}
-                            {/*    label={t("Gender")}*/}
-                            {/*    // required*/}
-                            {/*    select*/}
-                            {/*    onChange={handleGenderChange}*/}
-                            {/*    SelectProps={{*/}
-                            {/*        // onOpen: handleLoadListKupatHolim,*/}
-                            {/*        MenuProps: {*/}
-                            {/*            elevation: 0,*/}
-                            {/*            keepMounted: true,*/}
-                            {/*            getContentAnchorEl: null,*/}
-                            {/*            anchorOrigin: {*/}
-                            {/*                vertical: 'bottom',*/}
-                            {/*                horizontal: 'center',*/}
-                            {/*            },*/}
-                            {/*            transformOrigin: {*/}
-                            {/*                vertical: 'top',*/}
-                            {/*                horizontal: 'center',*/}
-                            {/*            }*/}
-                            {/*        }*/}
-                            {/*    }}*/}
-                            {/*    error={errors.healthManageOrganization ? true : false}*/}
-                            {/*    helperText={errors.healthManageOrganization ? t("is a required field.") : null}*/}
-                            {/*    InputProps={{*/}
-                            {/*        // disableUnderline: edit_mode === 1 ? false : true,*/}
-                            {/*        endAdornment: (errors.healthManageOrganization &&*/}
-                            {/*            <InputAdornment position="end">*/}
-                            {/*                <ErrorOutlineIcon htmlColor={"#ff0000"}/>*/}
-                            {/*            </InputAdornment>*/}
-                            {/*        ),*/}
-                            {/*    }}*/}
-                            {/*    {...TextFieldOpts}*/}
-                            {/*>*/}
-                            {/*    {genderList.map((option, optionIndex) => (*/}
-                            {/*        <MenuItem key={optionIndex} value={option.code}>*/}
-                            {/*            {t(option.name)}*/}
-                            {/*        </MenuItem>*/}
-                            {/*    ))}*/}
-                            {/*</TextField>*/}
-                            {/*<TextField*/}
-                            {/*    id="standard-healthManageOrganization"*/}
-                            {/*    name="healthManageOrganization"*/}
-                            {/*    // value={patientInitialValues.healthManageOrganizationValue}*/}
-                            {/*    label={t("Kupat Cholim")}*/}
-                            {/*    // required*/}
-                            {/*    select*/}
-                            {/*    // onChange={handleChangeKupatHolim}*/}
-                            {/*    SelectProps={{*/}
-                            {/*        // onOpen: handleLoadListKupatHolim,*/}
-                            {/*        MenuProps: {*/}
-                            {/*            elevation: 0,*/}
-                            {/*            keepMounted: true,*/}
-                            {/*            getContentAnchorEl: null,*/}
-                            {/*            anchorOrigin: {*/}
-                            {/*                vertical: 'bottom',*/}
-                            {/*                horizontal: 'center',*/}
-                            {/*            },*/}
-                            {/*            transformOrigin: {*/}
-                            {/*                vertical: 'top',*/}
-                            {/*                horizontal: 'center',*/}
-                            {/*            }*/}
-                            {/*        }*/}
-                            {/*    }}*/}
-                            {/*    error={errors.healthManageOrganization ? true : false}*/}
-                            {/*    helperText={errors.healthManageOrganization ? t("is a required field.") : null}*/}
-                            {/*    InputProps={{*/}
-                            {/*        endAdornment: (errors.healthManageOrganization &&*/}
-                            {/*            <InputAdornment position="end">*/}
-                            {/*                <ErrorOutlineIcon htmlColor={"#ff0000"}/>*/}
-                            {/*            </InputAdornment>*/}
-                            {/*        ),*/}
-                            {/*    }}*/}
-                            {/*    {...TextFieldOpts}*/}
-                            {/*>*/}
-                            {/*    {kupatHolimList.map((option, optionIndex) => (*/}
-                            {/*        <MenuItem key={optionIndex} value={option.code}>*/}
-                            {/*            {option.name}*/}
-                            {/*        </MenuItem>*/}
-                            {/*    ))}*/}
-                            {/*</TextField>*/}
+                            <TextField
+                                id="standard-gender"
+                                name="gender"
+                                value={patientGender}
+                                label={t("Gender")}
+                                // required
+                                select
+                                onChange={handleGenderChange}
+                                SelectProps={{
+                                    MenuProps: {
+                                        elevation: 0,
+                                        keepMounted: true,
+                                        getContentAnchorEl: null,
+                                        anchorOrigin: {
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        },
+                                        transformOrigin: {
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }
+                                    }
+                                }}
+                                error={errors.gender ? true : false}
+                                helperText={errors.gender ? t("is a required field.") : null}
+                                InputProps={{
+                                    // disableUnderline: edit_mode === 1 ? false : true,
+                                    endAdornment: (errors.gender &&
+                                        <InputAdornment position="end">
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                {...TextFieldOpts}
+                            >
+                                {genderList.map((option, optionIndex) => (
+                                    <MenuItem key={optionIndex} value={option.code}>
+                                        {t(option.name)}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <TextField
+                                id="standard-healthManageOrganization"
+                                name="healthManageOrganization"
+                                value={patientHealthManageOrganizationValue}
+                                label={t("Kupat Cholim")}
+                                // required
+                                select
+                                onChange={handleChangeKupatHolim}
+                                SelectProps={{
+                                    // onOpen: handleLoadListKupatHolim,
+                                    MenuProps: {
+                                        elevation: 0,
+                                        keepMounted: true,
+                                        getContentAnchorEl: null,
+                                        anchorOrigin: {
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        },
+                                        transformOrigin: {
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }
+                                    }
+                                }}
+                                error={errors.healthManageOrganization ? true : false}
+                                helperText={errors.healthManageOrganization ? t("is a required field.") : null}
+                                InputProps={{
+                                    endAdornment: (errors.healthManageOrganization &&
+                                        <InputAdornment position="end">
+                                            <ErrorOutlineIcon htmlColor={"#ff0000"}/>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                {...TextFieldOpts}
+                            >
+                                {kupatHolimList.map((option, optionIndex) => (
+                                    <MenuItem key={optionIndex} value={option.code}>
+                                        {option.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </StyledColumnFirst>
                         <StyledColumnSecond>
                             <TextField
@@ -393,7 +415,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 control={control}
                                 id="standard-lastName"
                                 name="lastName"
-                                //defaultValue={patientInitialValues.firstName}
+                                defaultValue={patientInitialValues.lastName}
                                 label={t("Last Name")}
                                 // required
                                 {...TextFieldOpts}
@@ -426,6 +448,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                             inputVariant: "filled",
                                             onChange: handleChangeBirthDate,
                                             autoOk: true,
+                                            disabled: formViewMode === 'view',
                                             error: errors.birthDate ? true : false,
                                             helperText: errors.birthDate ? t("Date must be in a date format") : null,
                                         }}

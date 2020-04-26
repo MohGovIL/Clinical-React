@@ -49,6 +49,11 @@ export const StyledForm = styled.div`
   .MuiFormControl-root {
         margin: 0 0 46px 0;
    }
+
+   .MuiFormHelperText-root {
+       position: absolute;
+       top: 56px;
+   }
 `;
 
 export const StyledBox = styled.div`
