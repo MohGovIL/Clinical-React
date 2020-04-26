@@ -4,7 +4,7 @@ import matchSorter from 'match-sorter';
 import { getCellPhoneRegexPattern } from 'Utils/Helpers/validation/patterns';
 import { useForm, Controller } from 'react-hook-form';
 import { connect } from 'react-redux';
-// import { DevTool } from 'react-hook-form-devtools'; // Used to see the state of the form
+import { DevTool } from 'react-hook-form-devtools'; // Used to see the state of the form
 
 // Helpers
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
@@ -75,103 +75,118 @@ const PatientDetailsBlock = ({
     setError,
   } = useForm({
     mode: 'onBlur',
+    submitFocusError: true,
   });
 
   //Sending the form
-  const onSubmit = (data) => {
-    if (isRequiredValidation(data)) {
-      // Continue is required is true.
+  const onSubmit = async (data) => {
+    try {
+      if (isRequiredValidation(data)) {
+        // Continue if required is true.
+
+        const patientPatchParams = {
+          address: {
+            type: 'both',
+            city: data.addressCity || data.POBoxCity,
+            postalCode: data.addressPostalCode || data.POBoxPostalCode,
+            country: '',
+          },
+          addressLine: [data.addressStreet, '', ''],
+        };
+        const patient = await FHIR('Patient', 'doWork', {
+          functionName: 'updatePatient',
+          functionParams: patientPatchParams,
+        });
+      }
+      return;
+    } catch (error) {
+      console.log(error);
     }
-    return;
+
     // 0. Run isRequired validation
     // 1. Check if the encounter has ref to any appointment if there is any ref change their status to 'arrived'
     // 2. Change the encounter status to arrived ONLY if the current status of the encounter is 'planned'
     // 3. Save the commitment data
     // 4. Go back to PatientTracking route
   };
-
+  const requiredFields = {
+    selectTest: {
+      name: 'selectTest',
+      required: function(data) {
+        return (
+          data[this.name] &&
+          data[this.name] === '' &&
+          selectedServicesType.length > 0
+        );
+      },
+    },
+    commitmentAndPaymentReferenceForPaymentCommitment: {
+      name: 'commitmentAndPaymentReferenceForPaymentCommitment',
+      linkId: '1',
+      codeText: 'Commitment number',
+      required: function(data) {
+        return data[this.name] && data[this.name].trim().length;
+      },
+    },
+    commitmentAndPaymentCommitmentDate: {
+      name: 'commitmentAndPaymentCommitmentDate',
+      linkId: '2',
+      codeText: 'Commitment date',
+      required: function(data) {
+        return (
+          data[this.name] &&
+          moment(data[this.name]).toString().length > 0 &&
+          moment(data[this.name]).isValid
+        );
+      },
+    },
+    commitmentAndPaymentCommitmentValidity: {
+      name: 'commitmentAndPaymentCommitmentValidity',
+      linkId: '3',
+      required: function(data) {
+        return (
+          data[this.name] &&
+          moment(data[this.name]).toString().length > 0 &&
+          moment(data[this.name]).isValid
+        );
+      },
+    },
+    commitmentAndPaymentDoctorsName: {
+      name: 'commitmentAndPaymentDoctorsName',
+      linkId: '4',
+      codeText: 'Signing doctor',
+      required: function(data) {
+        return data[this.name] && data[this.name].trim().length;
+      },
+    },
+    commitmentAndPaymentDoctorsLicense: {
+      name: 'commitmentAndPaymentDoctorsLicense',
+      linkId: '5',
+      codeText: 'doctor license number',
+      required: function(data) {
+        return data[this.name] && data[this.name].trim().length;
+      },
+    },
+    ReferralFile: {
+      name: 'ReferralFile',
+      linkId: '',
+      required: function(data) {
+        return data[this.name] && Object.values(referralFile).length > 0;
+      },
+    },
+    CommitmentFile: {
+      name: 'CommitmentFile',
+      linkId: '',
+      required: function(data) {
+        return data[this.name] && Object.values(commitmentFile).length > 0;
+      },
+    },
+  };
   const isRequiredValidation = (data) => {
-    const requiredFields = {
-      selectTest: {
-        name: 'selectTest',
-        code: '',
-        required: () => {
-          return selectedServicesType.length > 0;
-        },
-      },
-      commitmentAndPaymentReferenceForPaymentCommitment: {
-        name: 'commitmentAndPaymentReferenceForPaymentCommitment',
-        code: '',
-        required: () => {
-          return (
-            data.commitmentAndPaymentReferenceForPaymentCommitment &&
-            data.commitmentAndPaymentReferenceForPaymentCommitment.trim().length
-          );
-        },
-      },
-      commitmentAndPaymentCommitmentDate: {
-        name: 'commitmentAndPaymentCommitmentDate',
-        code: '',
-        required: () => {
-          return (
-            data.commitmentAndPaymentCommitmentDate &&
-            moment(data.commitmentAndPaymentCommitmentDate).toString().length >
-              0 &&
-            moment(data.commitmentAndPaymentCommitmentDate).isValid
-          );
-        },
-      },
-      commitmentAndPaymentCommitmentValidity: {
-        name: 'commitmentAndPaymentCommitmentValidity',
-        code: '',
-        required: () => {
-          return (
-            data.commitmentAndPaymentCommitmentValidity &&
-            moment(data.commitmentAndPaymentCommitmentValidity).toString()
-              .length > 0 &&
-            moment(data.commitmentAndPaymentCommitmentValidity).isValid
-          );
-        },
-      },
-      commitmentAndPaymentDoctorsName: {
-        name: 'commitmentAndPaymentDoctorsName',
-        code: '',
-        required: () => {
-          return (
-            data.commitmentAndPaymentDoctorsName &&
-            data.commitmentAndPaymentDoctorsName.trim().length
-          );
-        },
-      },
-      commitmentAndPaymentDoctorsLicense: {
-        name: 'commitmentAndPaymentDoctorsLicense',
-        code: '',
-        required: () => {
-          return (
-            data.commitmentAndPaymentDoctorsLicense &&
-            data.commitmentAndPaymentDoctorsLicense.trim().length
-          );
-        },
-      },
-      ReferralFile: {
-        name: 'ReferralFile',
-        code: '',
-        required: () => {
-          return Object.values(referralFile).length > 0;
-        },
-      },
-      CommitmentFile: {
-        name: 'CommitmentFile',
-        code: '',
-        required: () => {
-          return Object.values(commitmentFile).length > 0;
-        },
-      },
-    };
     let clean = true;
     for (const fieldKey in requiredFields) {
       if (requiredFields.hasOwnProperty(fieldKey)) {
-        if (!requiredFields[fieldKey].required()) {
+        if (!requiredFields[fieldKey].required(data)) {
           setError(
             requiredFields[fieldKey].name,
             'required',
@@ -190,7 +205,10 @@ const PatientDetailsBlock = ({
   const [relatedPerson, setRelatedPerson] = useState({});
   // Escorted Information - functions
   const isEscortedSwitchOnChangeHandle = () => {
-    setIsEscorted((prevState) => !prevState);
+    setIsEscorted((prevState) => {
+      setValue('isEscorted', !prevState);
+      return !prevState;
+    });
   };
 
   // Contact Information
@@ -312,6 +330,7 @@ const PatientDetailsBlock = ({
   const [servicesType, setServicesType] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
   const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
+  const selectTestRef = React.useRef();
   // Requested service - select examination - functions / useEffect
   const selectExaminationOnChangeHandler = (event, newValue) => {
     setPendingValue(newValue);
@@ -321,7 +340,6 @@ const PatientDetailsBlock = ({
     setServicesTypeOpen(true);
   };
   const selectExaminationOnCloseHandler = () => {
-    setValue('selectTest', selectedServicesType, true);
     setServicesTypeOpen(false);
   };
   const filterOptions = (options, { inputValue }) => {
@@ -390,13 +408,16 @@ const PatientDetailsBlock = ({
       active = false;
     };
   }, [loadingServicesType]);
+  const unFocusSelectTest = () => {
+    selectTestRef.current.blur();
+    // Should work don't know why it doesn't work. This function is to close the listBox in the autoComplete
+  };
   // Requested service - select examination - chips - functions
   const chipOnDeleteHandler = (chipToDeleteIndex) => () => {
-    setSelectedServicesType(
-      selectedServicesType.filter(
-        (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
-      ),
+    const filteredSelectedServicesType = selectedServicesType.filter(
+      (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
     );
+    setSelectedServicesType(filteredSelectedServicesType);
   };
   // Commitment And Payment - vars
   const [
@@ -469,6 +490,7 @@ const PatientDetailsBlock = ({
         )}_${files[files.length - 1].name}`,
         size: SizeInMB,
       };
+      setValue(`${fileName}File`, fileObj.name, true);
       setState({ ...fileObj });
     } else {
       ref.current.value = '';
@@ -478,9 +500,10 @@ const PatientDetailsBlock = ({
     const objUrl = URL.createObjectURL(ref.current.files[0]);
     window.open(objUrl, ref.current.files[0].name);
   };
-  const onDeleteFileHandler = (ref, setState) => {
+  const onDeleteFileHandler = (ref, setState, fileName) => {
     ref.current.value = '';
     const emptyObj = {};
+    setValue(`${fileName}File`, '');
     setState(emptyObj);
   };
   const onClickAdditionalDocumentHandler = () => {
@@ -521,7 +544,6 @@ const PatientDetailsBlock = ({
             };
           },
         );
-        setValue('selectTest', selectedArr, true);
         setSelectedServicesType(selectedArr);
       }
       if (encounterData.priority > 1) {
@@ -563,7 +585,7 @@ const PatientDetailsBlock = ({
 
   return (
     <StyledPatientDetails edit={edit_mode}>
-      <StyledForm onSubmit={handleSubmit(onSubmit)} novalidate>
+      <StyledForm onSubmit={handleSubmit(onSubmit)}>
         {/* Patient Details */}
         <Title
           marginTop={'55px'}
@@ -587,13 +609,21 @@ const PatientDetailsBlock = ({
             alignItems={'center'}>
             <span>{t('Patient arrived with an escort?')}</span>
             {/* Escorted Information Switch */}
-            <StyledSwitch
-              onChange={isEscortedSwitchOnChangeHandle}
-              checked={isEscorted}
-              label_1={'No'}
-              label_2={'Yes'}
-              marginLeft={'40px'}
-              marginRight={'40px'}
+            <Controller
+              name='isEscorted'
+              control={control}
+              defaultValue={isEscorted}
+              as={
+                <StyledSwitch
+                  name='isEscorted'
+                  onChange={isEscortedSwitchOnChangeHandle}
+                  checked={isEscorted}
+                  label_1={'No'}
+                  label_2={'Yes'}
+                  marginLeft={'40px'}
+                  marginRight={'40px'}
+                />
+              }
             />
           </Grid>
         </StyledFormGroup>
@@ -619,7 +649,7 @@ const PatientDetailsBlock = ({
               as={<StyledTextField label={t('Escort cell phone')} />}
               name={'escortMobilePhone'}
               control={control}
-              defaultValue=''
+              defaultValue={relatedPerson.mobilePhone || ''}
               rules={{
                 pattern: getCellPhoneRegexPattern(),
               }}
@@ -679,6 +709,8 @@ const PatientDetailsBlock = ({
                 loadingText={t('Loading')}
                 renderInput={(params) => (
                   <StyledTextField
+                    name='addressCity'
+                    inputRef={register()}
                     {...params}
                     label={t('City')}
                     InputProps={{
@@ -712,6 +744,8 @@ const PatientDetailsBlock = ({
                 renderInput={(params) => (
                   <StyledTextField
                     {...params}
+                    name='addressStreet'
+                    inputRef={register()}
                     InputProps={{
                       ...params.InputProps,
 
@@ -751,7 +785,7 @@ const PatientDetailsBlock = ({
                     type='number'
                   />
                 }
-                rules={{ maxLength: { value: 7 } }}
+                rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
                 control={control}
                 error={errors.addressPostalCode && true}
                 helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
@@ -782,6 +816,8 @@ const PatientDetailsBlock = ({
                 renderInput={(params) => (
                   <StyledTextField
                     {...params}
+                    name='POBoxCity'
+                    inputRef={register()}
                     label={t('City')}
                     InputProps={{
                       ...params.InputProps,
@@ -804,6 +840,7 @@ const PatientDetailsBlock = ({
               <Controller
                 name={'POBox'}
                 control={control}
+                defaultValue={patientData.POBox}
                 as={<StyledTextField id={'POBox'} label={t('PO box')} />}
               />
               {/* Contact Information - POBox - postal code */}
@@ -817,7 +854,10 @@ const PatientDetailsBlock = ({
                     InputLabelProps={{ shrink: patientData.postalCode && true }}
                   />
                 }
+                rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
                 control={control}
+                error={errors.addressPostalCode && true}
+                helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
               />
             </React.Fragment>
           )}
@@ -866,85 +906,78 @@ const PatientDetailsBlock = ({
             />
           </Grid>
           {/* Requested service - select test */}
-          <Controller
-            name='selectTest'
-            control={control}
-            // rules={{
-            //   validate: {
-            //     value: (value) => value && value.length > 0,
-            //   },
-            // }}
-            onChangeName={selectExaminationOnChangeHandler}
-            defaultValue={selectedServicesType}
-            as={
-              <Autocomplete
-                filterOptions={filterOptions}
-                multiple
-                noOptionsText={t('No Results')}
-                loadingText={t('Loading')}
-                open={servicesTypeOpen}
-                loading={loadingServicesType}
-                onOpen={selectExaminationOnOpenHandler}
-                onClose={selectExaminationOnCloseHandler}
-                value={pendingValue}
-                onChange={selectExaminationOnChangeHandler}
-                disableCloseOnSelect
-                renderTags={() => null}
-                renderOption={(option, state) => (
-                  <Grid container justify='flex-end' alignItems='center'>
-                    <Grid item xs={3}>
-                      <Checkbox
-                        color='primary'
-                        icon={<CheckBoxOutlineBlankOutlined />}
-                        checkedIcon={<CheckBox />}
-                        checked={state.selected}
-                      />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <ListItemText>{option.reasonCode.code}</ListItemText>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <ListItemText primary={t(option.serviceType.name)} />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <ListItemText primary={t(option.reasonCode.name)} />
-                    </Grid>
-                  </Grid>
-                )}
-                ListboxComponent={ListboxComponent}
-                ListboxProps={{
-                  pendingValue: pendingValue,
-                  setSelectedServicesType: setSelectedServicesType,
-                  setClose: setServicesTypeOpen,
-                  setValue: setValue,
-                }}
-                options={servicesType}
-                renderInput={(params) => (
-                  <StyledTextField
-                    error={errors.selectTest && true}
-                    helperText={
-                      errors.selectTest &&
-                      t('The test performed during the visit must be selected')
-                    }
-                    {...params}
-                    label={`${t('Select test')} *`}
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <React.Fragment>
-                          <InputAdornment position={'end'}>
-                            {loadingServicesType ? (
-                              <CircularProgress color={'inherit'} size={20} />
-                            ) : null}
-                            {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
-                          </InputAdornment>
-                        </React.Fragment>
-                      ),
-                    }}
+          <Autocomplete
+            filterOptions={filterOptions}
+            multiple
+            noOptionsText={t('No Results')}
+            loadingText={t('Loading')}
+            open={servicesTypeOpen}
+            loading={loadingServicesType}
+            onOpen={selectExaminationOnOpenHandler}
+            onClose={selectExaminationOnCloseHandler}
+            value={pendingValue}
+            onChange={selectExaminationOnChangeHandler}
+            disableCloseOnSelect
+            renderTags={() => null}
+            renderOption={(option, state) => (
+              <Grid container justify='flex-end' alignItems='center'>
+                <Grid item xs={3}>
+                  <Checkbox
+                    color='primary'
+                    icon={<CheckBoxOutlineBlankOutlined />}
+                    checkedIcon={<CheckBox />}
+                    checked={state.selected}
                   />
-                )}
+                </Grid>
+                <Grid item xs={3}>
+                  <ListItemText>{option.reasonCode.code}</ListItemText>
+                </Grid>
+                <Grid item xs={3}>
+                  <ListItemText primary={t(option.serviceType.name)} />
+                </Grid>
+                <Grid item xs={3}>
+                  <ListItemText primary={t(option.reasonCode.name)} />
+                </Grid>
+              </Grid>
+            )}
+            ListboxComponent={ListboxComponent}
+            ListboxProps={{
+              pendingValue: pendingValue,
+              setSelectedServicesType: setSelectedServicesType,
+              setClose: setServicesTypeOpen,
+              setValue: setValue,
+              close: unFocusSelectTest,
+            }}
+            options={servicesType}
+            renderInput={(params) => (
+              <StyledTextField
+                name='selectTest'
+                inputRef={(e) => {
+                  selectTestRef.current = e;
+                  register(e);
+                }}
+                error={errors.selectTest && true}
+                helperText={
+                  errors.selectTest &&
+                  t('The test performed during the visit must be selected')
+                }
+                {...params}
+                label={`${t('Select test')} *`}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      <InputAdornment position={'end'}>
+                        {loadingServicesType ? (
+                          <CircularProgress color={'inherit'} size={20} />
+                        ) : null}
+                        {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
+                      </InputAdornment>
+                    </React.Fragment>
+                  ),
+                }}
               />
-            }
+            )}
           />
           {/* Requested service - selected test - chips */}
           <Grid container direction='row' wrap='wrap'>
@@ -1140,7 +1173,10 @@ const PatientDetailsBlock = ({
             <Grid item xs={9}>
               <input
                 name='ReferralFile'
-                ref={referralRef}
+                ref={(e) => {
+                  referralRef.current = e;
+                  register();
+                }}
                 id='referral'
                 type='file'
                 accept='.pdf,.gpf,.png,.gif,.jpg'
@@ -1154,7 +1190,11 @@ const PatientDetailsBlock = ({
                   label={referralFile.name}
                   size={referralFile.size}
                   onDelete={() =>
-                    onDeleteFileHandler(referralRef, setReferralFile)
+                    onDeleteFileHandler(
+                      referralRef,
+                      setReferralFile,
+                      'Referral',
+                    )
                   }
                   onClick={() => onClickFileHandler(referralRef)}
                 />
@@ -1182,7 +1222,10 @@ const PatientDetailsBlock = ({
             <Grid item xs={9}>
               <input
                 name='CommitmentFile'
-                ref={commitmentRef}
+                ref={(e) => {
+                  commitmentRef.current = e;
+                  register();
+                }}
                 id='commitment'
                 type='file'
                 accept='.pdf,.gpf,.png,.gif,.jpg'
@@ -1200,7 +1243,11 @@ const PatientDetailsBlock = ({
                   label={commitmentFile.name}
                   size={commitmentFile.size}
                   onDelete={() =>
-                    onDeleteFileHandler(commitmentRef, setCommitmentFile)
+                    onDeleteFileHandler(
+                      commitmentRef,
+                      setCommitmentFile,
+                      'Commitment',
+                    )
                   }
                   onClick={() => onClickFileHandler(commitmentRef)}
                 />
@@ -1231,7 +1278,11 @@ const PatientDetailsBlock = ({
                 </Grid>
                 <Grid item xs={9}>
                   <input
-                    ref={additionalDocumentRef}
+                    name={nameOfAdditionalDocumentFile || 'Document1'}
+                    ref={(e) => {
+                      additionalDocumentRef.current = e;
+                      register();
+                    }}
                     id='additionalDocument'
                     type='file'
                     accept='.pdf,.gpf,.png,.gif,.jpg'
@@ -1252,6 +1303,7 @@ const PatientDetailsBlock = ({
                         onDeleteFileHandler(
                           additionalDocumentRef,
                           setAdditionalDocumentFile,
+                          nameOfAdditionalDocumentFile || 'Document1',
                         )
                       }
                       onClick={() => onClickFileHandler(additionalDocumentRef)}
@@ -1308,7 +1360,7 @@ const PatientDetailsBlock = ({
           </Grid>
         </StyledFormGroup>
       </StyledForm>
-      {/* <DevTool control={control} /> */}
+      <DevTool control={control} />
     </StyledPatientDetails>
   );
 };
