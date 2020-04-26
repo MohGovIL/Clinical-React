@@ -27,6 +27,8 @@ import Paper from "@material-ui/core/Paper";
 import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
 import {normalizeFhirAppointmentsWithPatients} from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
+import {StyledIconValueComponent} from "../Style";
+import Link from "@material-ui/core/Link";
 
 
 
@@ -165,9 +167,13 @@ debugger;
                             })
                             :
 
-                                <TableRow>
-                                    <TableCell align="center" omponent="th" scope="row">{t("No data found for display")}</TableCell>
+
+                                <TableRow key={"encounters_no_past_rows"}>
+                                    <TableCell></TableCell>
+                                    <TableCell></TableCell>
+                                    <TableCell align="right" omponent="th" scope="row">{t("No data found for display")}</TableCell>
                                 </TableRow>
+
                             }
                             </TableBody>
                             </Table>
@@ -241,9 +247,13 @@ debugger;
                                     :
 
 
-                                        <TableRow key={"appointments_no_rows"}>
-                                            <TableCell align="center" omponent="th" scope="row">{t("No data found for display")}</TableCell>
+
+                                        <TableRow key={"encounters_no_past_rows"}>
+                                            <TableCell></TableCell>
+                                            <TableCell></TableCell>
+                                            <TableCell align="right" omponent="th" scope="row">{t("No data found for display")}</TableCell>
                                         </TableRow>
+
 
 
 
@@ -251,14 +261,8 @@ debugger;
                             </TableBody>
                             </Table>
                             </TableContainer>
-                            <StyledHrefTableButton   size={'large'} variant="outlined" color="primary"
-                                                   href="#contained-buttons"
-                                /* disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}*/
-                                /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                            >
 
-                                {t("Show all appointments")}
-                            </StyledHrefTableButton>
+                              <label>{t("Show all appointments")}<StyledIconValueComponent iconType={'keyboard_arrow_down'}/></label>
                         </React.Fragment>
             <React.Fragment>
                         <br/>
@@ -323,20 +327,17 @@ debugger;
 
 
                                                 <TableRow key={"encounters_no_past_rows"}>
-                                                    <TableCell align="center" omponent="th" scope="row">{t("No data found for display")}</TableCell>
+                                                    <TableCell></TableCell>
+                                                    <TableCell></TableCell>
+                                                    <TableCell align="right" omponent="th" scope="row">{t("No data found for display")}</TableCell>
                                                 </TableRow>
                                     }
                                 </TableBody>
                             </Table>
                         </TableContainer>
 
-                                <StyledHrefTableButton left={"40%"} size={'large'} variant="outlined" color="primary"
-                                                       href="#contained-buttons"
-                                    /* disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}*/
-                                    /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                                >
-                                    {t("Show all encounters")}
-                                </StyledHrefTableButton>
+                                    <label>{t('Show all encounters')}<StyledIconValueComponent iconType={'keyboard_arrow_down'}/></label>
+
 
                     </React.Fragment>
         </React.Fragment>
