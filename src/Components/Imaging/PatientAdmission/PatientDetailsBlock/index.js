@@ -86,7 +86,9 @@ const PatientDetailsBlock = ({
 
         const patientPatchParams = {
           address: {
-            type: 'both',
+            type: data.addressStreetNumber && data.POBoxPostalCode ? 'both'
+            : data.addressStreetNumber ? 'physical'
+            : 'postal' ,
             city: data.addressCity || data.POBoxCity,
             postalCode: data.addressPostalCode || data.POBoxPostalCode,
             country: '',
@@ -764,12 +766,12 @@ const PatientDetailsBlock = ({
               />
               {/* Contact Information - address - house number */}
               <Controller
-                name={'addressHouseNumber'}
+                name={'addressStreetNumber'}
                 control={control}
                 defaultValue={patientData.streetNumber}
                 as={
                   <StyledTextField
-                    id={'addressHouseNumber'}
+                    id={'addressStreetNumber'}
                     label={t('House number')}
                   />
                 }

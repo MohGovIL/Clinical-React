@@ -12,8 +12,8 @@ const normalizeFhirPatient = (patient) => {
   let lastName = null;
   let identifier = '';
   let identifierType = '';
-  let city = null;
-  let postalCode = null;
+  let city = '';
+  let postalCode = '';
   let country = null;
   let managingOrganization = null;
   let streetName = '';
