@@ -206,7 +206,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                             </React.Fragment>
             <React.Fragment>
                             <br/>
-                            <StyledHeaderTableAppointment>{t("Fututre appointments")}
+                            <StyledHeaderTableAppointment>{t("Future appointments")}
                             <StyledHrefButton size={'small'} variant="contained" color="primary"
                                               href="#contained-buttons"
                                               disabled={false}
