@@ -146,6 +146,20 @@ const PatientStats = {
     const address = { op: 'replace', path: '/address/0', value: {} };
     const addressLine = { op: 'replace', path: '/address/0/line', value: [] };
     const given = { op: 'replace', path: '/name/0/given', value: [] };
+    let addressType = '';
+    if (params.functionParams.patientPatchParams['POBox']) {
+      if (params.functionParams.patientPatchParams['streetName']) {
+        addressType = 'both';
+      } else {
+        addressType = 'postal';
+      }
+    } else {
+      addressType = 'physical';
+    }
+
+    if (addressType) {
+      address.value['type'] = addressType;
+    }
 
     for (const dataKey in params.functionParams.patientPatchParams) {
       if (params.functionParams.patientPatchParams.hasOwnProperty(dataKey)) {
@@ -237,10 +251,6 @@ const PatientStats = {
               value: params.functionParams.patientPatchParams[dataKey],
             });
             break;
-          case 'addressType':
-            address.value['type'] =
-              params.functionParams.patientPatchParams[dataKey];
-            break;
           case 'city':
             address.value['city'] =
               params.functionParams.patientPatchParams[dataKey];
@@ -253,46 +263,25 @@ const PatientStats = {
             address.value['country'] =
               params.functionParams.patientPatchParams[dataKey];
             break;
-          case 'addressLine':
-            // AddressLine is an array [streetName, streetNumber, POBox] this depends on the type of the addressType
-            patchArr.push({
-              op: 'replace',
-              path: '/address/0/line',
-              value: params.functionParams.patientPatchParams[dataKey],
-            });
-            break;
           case 'streetName':
-            if (params.functionParams.patientPatchParams['addressType']) {
-              if (
-                params.functionParams.patientPatchParams['addressType'] ===
-                  'both' ||
-                params.functionParams.patientPatchParams['addressType'] ===
-                  'physical'
-              ) {
+            if (addressType) {
+              if (addressType === 'both' || addressType === 'physical') {
                 addressLine.value[0] =
                   params.functionParams.patientPatchParams[dataKey];
               }
             }
             break;
           case 'streetNumber':
-            if (params.functionParams.patientPatchParams['addressType']) {
-              if (
-                params.functionParams.patientPatchParams['addressType'] ===
-                  'both' ||
-                params.functionParams.patientPatchParams['addressType'] ===
-                  'physical'
-              ) {
+            if (addressType) {
+              if (addressType === 'both' || addressType === 'physical') {
                 addressLine.value[1] =
                   params.functionParams.patientPatchParams[dataKey];
               }
             }
             break;
           case 'POBox':
-            if (params.functionParams.patientPatchParams['addressType']) {
-              if (
-                params.functionParams.patientPatchParams['addressType'] ===
-                'both'
-              ) {
+            if (addressType) {
+              if (addressType === 'both') {
                 if (params.functionParams.patientPatchParams['streetNumber']) {
                   addressLine.value[2] =
                     params.functionParams.patientPatchParams[dataKey];
@@ -300,10 +289,7 @@ const PatientStats = {
                   addressLine.value[1] =
                     params.functionParams.patientPatchParams[dataKey];
                 }
-              } else if (
-                params.functionParams.patientPatchParams['addressType'] ===
-                'postal'
-              ) {
+              } else if (addressType === 'postal') {
                 addressLine.value[0] =
                   params.functionParams.patientPatchParams[dataKey];
               }

@@ -85,6 +85,7 @@ const PatientDetailsBlock = ({
         // Continue if required is true.
 
         const patientPatchParams = {
+          
           address: {
             type: data.addressStreetNumber && data.POBoxPostalCode ? 'both'
             : data.addressStreetNumber ? 'physical'
