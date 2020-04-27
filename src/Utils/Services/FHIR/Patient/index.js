@@ -143,8 +143,12 @@ const PatientStats = {
   },
   updatePatient: (params) => {
     const patchArr = [];
+    const address = { op: 'replace', path: '/address/0', value: {} };
+    const addressLine = { op: 'replace', path: '/address/0/line', value: [] };
+    const given = { op: 'replace', path: '/name/0/given', value: [] };
+
     for (const dataKey in params.functionParams.patientPatchParams) {
-      if (params.functionParams.data.hasOwnProperty(dataKey)) {
+      if (params.functionParams.patientPatchParams.hasOwnProperty(dataKey)) {
         switch (dataKey) {
           case 'identifier':
             patchArr.push({
@@ -161,31 +165,41 @@ const PatientStats = {
             });
             break;
           case 'firstName':
-            patchArr.push({
-              op: 'replace',
-              path: '/name/0/given',
-              value: params.functionParams.patientPatchParams[dataKey],
-            });
+            given[0] = params.functionParams.patientPatchParams[dataKey];
+            break;
+          case 'middleName':
+            given[1] = params.functionParams.patientPatchParams[dataKey];
             break;
           case 'homePhone':
             patchArr.push({
               op: 'replace',
               path: '/telecom/0',
-              value: params.functionParams.patientPatchParams[dataKey],
+              value: {
+                system: 'phone',
+                value: params.functionParams.patientPatchParams[dataKey],
+                use: 'home',
+              },
             });
             break;
           case 'email':
             patchArr.push({
               op: 'replace',
               path: '/telecom/1',
-              value: params.functionParams.patientPatchParams[dataKey],
+              value: {
+                system: 'email',
+                value: params.functionParams.patientPatchParams[dataKey],
+              },
             });
             break;
           case 'mobilePhone':
             patchArr.push({
               op: 'replace',
               path: '/telecom/2',
-              value: params.functionParams.patientPatchParams[dataKey],
+              value: {
+                system: 'phone',
+                value: params.functionParams.patientPatchParams[dataKey],
+                use: 'mobile',
+              },
             });
             break;
           case 'gender':
@@ -216,13 +230,28 @@ const PatientStats = {
               value: params.functionParams.patientPatchParams[dataKey],
             });
             break;
-          case 'address':
-            // Address is an object of [addressType, city, postalCode, country]
+          case 'managingOrganization':
             patchArr.push({
               op: 'replace',
-              path: '/address/0',
+              path: '/managingOrganization',
               value: params.functionParams.patientPatchParams[dataKey],
             });
+            break;
+          case 'addressType':
+            address.value['type'] =
+              params.functionParams.patientPatchParams[dataKey];
+            break;
+          case 'city':
+            address.value['city'] =
+              params.functionParams.patientPatchParams[dataKey];
+            break;
+          case 'postalCode':
+            address.value['postalCode'] =
+              params.functionParams.patientPatchParams[dataKey];
+            break;
+          case 'country':
+            address.value['country'] =
+              params.functionParams.patientPatchParams[dataKey];
             break;
           case 'addressLine':
             // AddressLine is an array [streetName, streetNumber, POBox] this depends on the type of the addressType
@@ -232,18 +261,62 @@ const PatientStats = {
               value: params.functionParams.patientPatchParams[dataKey],
             });
             break;
-          case 'managingOrganization':
-            patchArr.push({
-              op: 'replace',
-              path: '/managingOrganization',
-              value: params.functionParams.patientPatchParams[dataKey],
-            });
+          case 'streetName':
+            if (params.functionParams.patientPatchParams['addressType']) {
+              if (
+                params.functionParams.patientPatchParams['addressType'] ===
+                  'both' ||
+                params.functionParams.patientPatchParams['addressType'] ===
+                  'physical'
+              ) {
+                addressLine.value[0] =
+                  params.functionParams.patientPatchParams[dataKey];
+              }
+            }
+            break;
+          case 'streetNumber':
+            if (params.functionParams.patientPatchParams['addressType']) {
+              if (
+                params.functionParams.patientPatchParams['addressType'] ===
+                  'both' ||
+                params.functionParams.patientPatchParams['addressType'] ===
+                  'physical'
+              ) {
+                addressLine.value[1] =
+                  params.functionParams.patientPatchParams[dataKey];
+              }
+            }
+            break;
+          case 'POBox':
+            if (params.functionParams.patientPatchParams['addressType']) {
+              if (
+                params.functionParams.patientPatchParams['addressType'] ===
+                'both'
+              ) {
+                if (params.functionParams.patientPatchParams['streetNumber']) {
+                  addressLine.value[2] =
+                    params.functionParams.patientPatchParams[dataKey];
+                } else {
+                  addressLine.value[1] =
+                    params.functionParams.patientPatchParams[dataKey];
+                }
+              } else if (
+                params.functionParams.patientPatchParams['addressType'] ===
+                'postal'
+              ) {
+                addressLine.value[0] =
+                  params.functionParams.patientPatchParams[dataKey];
+              }
+            }
             break;
           default:
             break;
         }
       }
     }
+    given.value.length && patchArr.push(given);
+    Object.values(address.value).length && patchArr.push(address);
+    Object.values(addressLine.value).length && patchArr.push(addressLine);
     return CRUDOperations(
       'patch',
       `${params.url}/${params.functionParams.patientId}`,
