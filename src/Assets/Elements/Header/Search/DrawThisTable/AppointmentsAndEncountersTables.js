@@ -53,8 +53,32 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
         let isThisAppToday = moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
         return  (isThisAppToday ? moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY HH:mm") :moment().format("DD/MM/YYYY")  );
     }
+    const [showAllPastEncounter,setShowAllPastEncounter]= React.useState(false);
+    let [pastEncounterCounter,setPastEncounterCounter]= React.useState(2);
 
+    const [showAllFutureAppointments,setShowAllFutureAppointments]= React.useState(false);
+    let [futureAppointmentsCounter,setFutureAppointmentsCounter]= React.useState(2);
 
+    const togglePastEncountersTable = ()=>{
+        if(showAllPastEncounter) {
+            setShowAllPastEncounter(false);
+            setPastEncounterCounter(2)
+        }else{
+            setShowAllPastEncounter(true);
+            setPastEncounterCounter(prevEncounters.data.total)
+        }
+    }
+
+    const toggleFutureAppointmentsTable = ()=>{
+       if(showAllFutureAppointments){
+           setShowAllFutureAppointments(false);
+           setFutureAppointmentsCounter (2);
+       }else{
+           setShowAllFutureAppointments(true);
+           setFutureAppointmentsCounter( nextAppointments.data.total);
+       }
+
+    }
     const handleChartClickOpen = ()=> {
             //TODO:
     }
@@ -74,6 +98,8 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
 
         });
     }
+
+
 debugger;
     if (nextAppointments && nextAppointments.data && nextAppointments.data.total > 0) {
         let entry = nextAppointments.data.entry;
@@ -132,7 +158,7 @@ debugger;
                             normalizedCurEncounters.map((encounter, encounterID) => {
                                 return(
                                 <TableRow key={encounterID}>
-                                    <TableCell  align="right" omponent="th" scope="row">
+                                    <TableCell  align="right" omponent="td" scope="row">
                                         <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
                                     </TableCell>
                                     <TableCell align="right">
@@ -169,9 +195,8 @@ debugger;
 
 
                                 <TableRow key={"encounters_no_past_rows"}>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell align="right" omponent="th" scope="row">{t("No data found for display")}</TableCell>
+
+                                    <TableCell colspan="5" align="center" omponent="td" scope="row">{t("No data found for display")}</TableCell>
                                 </TableRow>
 
                             }
@@ -206,9 +231,10 @@ debugger;
                                     {
                                     normalizedNextAppointments.length > 0 ?
                                     normalizedNextAppointments.map((appointment, appointmentID) => {
-                                        return(
+                                       if(futureAppointmentsCounter--)
+                                            return(
                                             <TableRow key={appointmentID}>
-                                                <TableCell  align="right" omponent="th" scope="row">
+                                                <TableCell  align="right" omponent="td" scope="row">
                                                     <StyledTableTextCell> {moment(appointment.startTime).format("HH:mm")} </StyledTableTextCell>
                                                 </TableCell>
                                                 <TableCell align="right">
@@ -249,9 +275,7 @@ debugger;
 
 
                                         <TableRow key={"encounters_no_past_rows"}>
-                                            <TableCell></TableCell>
-                                            <TableCell></TableCell>
-                                            <TableCell align="right" omponent="th" scope="row">{t("No data found for display")}</TableCell>
+                                            <TableCell colspan="6" align="center" omponent="td" scope="row">{t("No data found for display")}</TableCell>
                                         </TableRow>
 
 
@@ -261,8 +285,9 @@ debugger;
                             </TableBody>
                             </Table>
                             </TableContainer>
-
-                              <label>{t("Show all appointments")}<StyledIconValueComponent iconType={'keyboard_arrow_down'}/></label>
+                            {normalizedNextAppointments.length > 2 ?
+                                <label onClick={toggleFutureAppointmentsTable}>{t(!showAllFutureAppointments?"Show all appointments":"Show less appointments")}<StyledIconValueComponent iconType={!showAllFutureAppointments?'keyboard_arrow_down':'keyboard_arrow_up'}/></label> :null
+                            }
                         </React.Fragment>
             <React.Fragment>
                         <br/>
@@ -281,45 +306,49 @@ debugger;
                                 </TableHead>
                                 <TableBody>
                                         {
-                                            normalizedPrevEncounters !== null ?
-                                        normalizedPrevEncounters.map((encounter, encounterID) => {
-                                        return(
-                                            <TableRow key={encounterID}>
-                                                <TableCell  align="right" omponent="th" scope="row">
-                                                    <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType?'-':''} {t(encounter.examination)}</StyledTableTextCell>
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <StyledLabelStatusAppointment>
-                                                        <TitleValueComponent
-                                                            name={encounterStatuses && encounter ? t(encounterStatuses[encounter.status]) : ''}/>
-                                                    </StyledLabelStatusAppointment>
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    <StyledHrefTableButton size={'small'} variant="outlined" color="primary"
-                                                                           href="#contained-buttons"
-                                                        /* disabled={curEncounters && curEncounters.data && curEncounters.data.total > 0 ? true : false}*/
-                                                        /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                                                    >
-                                                        {t("Encounter sheet")}
-                                                    </StyledHrefTableButton>
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    <StyledHrefTableButton size={'large'} variant="outlined" color="primary"
-                                                                           href="#contained-buttons"
-                                                        /* disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}*/
-                                                        /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                                                    >
-                                                        {t("Send result")}
-                                                    </StyledHrefTableButton>
-                                                </TableCell>
+                                            normalizedPrevEncounters !== null  &&  normalizedPrevEncounters.length > 0 ?
+                                            normalizedPrevEncounters.map((encounter, encounterID) => {
+                                            if(pastEncounterCounter--) {
+                                                return (
+                                                    <TableRow key={encounterID}>
+                                                        <TableCell align="right" omponent="td" scope="row">
+                                                            <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType ? '-' : ''} {t(encounter.examination)}</StyledTableTextCell>
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <StyledLabelStatusAppointment>
+                                                                <TitleValueComponent
+                                                                    name={encounterStatuses && encounter ? t(encounterStatuses[encounter.status]) : ''}/>
+                                                            </StyledLabelStatusAppointment>
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            <StyledHrefTableButton size={'small'} variant="outlined"
+                                                                                   color="primary"
+                                                                                   href="#contained-buttons"
+                                                                /* disabled={curEncounters && curEncounters.data && curEncounters.data.total > 0 ? true : false}*/
+                                                                /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
+                                                            >
+                                                                {t("Encounter sheet")}
+                                                            </StyledHrefTableButton>
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            <StyledHrefTableButton size={'large'} variant="outlined"
+                                                                                   color="primary"
+                                                                                   href="#contained-buttons"
+                                                                /* disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}*/
+                                                                /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
+                                                            >
+                                                                {t("Send result")}
+                                                            </StyledHrefTableButton>
+                                                        </TableCell>
 
 
-                                            </TableRow>
+                                                    </TableRow>
 
-                                        );
+                                                );
+                                            }
                                     }
 
                                     )
@@ -327,18 +356,17 @@ debugger;
 
 
                                                 <TableRow key={"encounters_no_past_rows"}>
-                                                    <TableCell></TableCell>
-                                                    <TableCell></TableCell>
-                                                    <TableCell align="right" omponent="th" scope="row">{t("No data found for display")}</TableCell>
+                                                    <TableCell colspan="5" align="center" omponent="td" scope="row">{t("No data found for display")}</TableCell>
                                                 </TableRow>
                                     }
                                 </TableBody>
                             </Table>
                         </TableContainer>
-
-                                    <label>{t('Show all encounters')}<StyledIconValueComponent iconType={'keyboard_arrow_down'}/></label>
-
-
+                            {
+                                normalizedPrevEncounters.length > 2 ?
+                                    <label onClick={togglePastEncountersTable}>{t(!showAllPastEncounter?'Show all encounters':'Show less encounters')}<StyledIconValueComponent iconType={!showAllPastEncounter?'keyboard_arrow_down':'keyboard_arrow_up'}/></label>
+                                    : null
+                            }
                     </React.Fragment>
         </React.Fragment>
     );
