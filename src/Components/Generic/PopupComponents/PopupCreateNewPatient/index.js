@@ -24,7 +24,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const [kupatHolimList, setKupatHolimList] = useState([]);
 
     const [patientIdNumber, setPatientIdNumber] = useState("");
-    const [patientGender, setPatientGender] = useState("");
+    const [patientGender, setPatientGender] = useState(0);
     const [patientIdType, setPatientIdType] = useState(0);
     const [patientBirthDate, setPatientBirthDate] = useState(0);
     const [patientHealthManageOrganizationValue, setPatientKupatHolim] = useState(0);
@@ -35,8 +35,15 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
     const textFieldSelectNotEmptyRule = {validate: {value: value => parseInt(value) !== 0}};
 
+    let patientInitialValues = {
+        firstName: '',
+        lastName: '',
+        mobilePhone: '',
+        patientEmail: '',
+    };
+
     //const methods = useForm({
-    const {register, control, errors, setError, clearError, handleSubmit, triggerValidation, setValue, getValues} = useForm({
+    const {register, control, errors, reset, setError, clearError, handleSubmit, triggerValidation, setValue, getValues} = useForm({
         mode: "onChange",
         // defaultValues: {
         //     birthDate: patientBirthDate
@@ -137,23 +144,18 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     useEffect(() => {
         (async () => {
             if (/*patientIdType !== 0 &&*/ patientIdNumber.length > 0) {
-                //console.log("===========findPatientWithIdTypeAndNumber=============");
-                //console.log(patientIdNumber + ' of ' + patientIdType + " ===== ");
                 setIsFound(true);
                 const result = await triggerValidation("idNumber");
-                //console.log(result);
                 try {
-                    //In this example I am calling FHIR without await cause I am making logic inside the search patient.
-                    //for that I need to do then function on the resolved data .
                     FHIR('Patient', 'doWork', {
                         "functionName": 'searchPatientById',
                         'functionParams': {identifierValue: patientIdNumber}
                     }).then(patients => {
                         if (patients && result) {
-                            console.log(patients);
+                            setPatientBirthDate(Moment(patients.birthDate).format(formatDate));
                             setValue("firstName",patients.firstName );
                             setValue("lastName",patients.lastName );
-                            setValue("birthDate",patients.birthDate );
+                            setValue("birthDate", Moment(patients.birthDate).format(formatDate));
                             setValue("mobilePhone",patients.mobileCellPhone );
                             setValue("patientEmail",patients.email );
                             setValue("idNumberType", patients.identifierType);
@@ -167,13 +169,15 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                         } else {
                             clearError("idNumber");
                             setFormMode('write');
+                            reset(patientInitialValues);
+                            setPatientIdType(0);
+                            setPatientGender(0);
+                            setPatientKupatHolim(0);
                         }
                     });
                 } catch (err) {
                     console.log(err);
                 }
-
-               // console.log("===========findPatientWithIdTypeAndNumber=============");
             }
         })();
     }, [patientIdNumber, patientIdType, isFound]);
@@ -226,7 +230,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
             'onClickHandler': handlePopupClose //user function
         },
         {
-            'label': t('Create Appointment'),
+            'label': t('Create appointment'),
             'variant': "contained",
             'color': "primary",
             'onClickHandler': handlePopupClose //user function
@@ -237,13 +241,6 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         'color': 'primary',
         'variant': 'filled',
         'disabled': formViewMode === 'view'
-    };
-
-    let patientInitialValues = {
-        firstName: '',
-        lastName: '',
-        mobilePhone: '',
-        patientEmail: '',
     };
 
     return (
@@ -427,9 +424,9 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 name="birthDate"
                                 control={control}
                                 rules={{
-                                    //validate: {
-                                    //    value: value => Moment(value, formatDate, true).isValid() === true
-                                    //}
+                                    validate: {
+                                        value: value => Moment(value, formatDate, true).isValid() === true
+                                    }
                                 }}
                                 as={
                                     <CustomizedDatePicker
@@ -437,7 +434,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                             id: "standard-birthDate",
                                             format: "DD/MM/YYYY",
                                             name: "birthDate",
-                                            // required: true,
+                                            required: true,
                                             disableToolbar: false,
                                             label: t("birth day"),
                                             inputValue: patientBirthDate,

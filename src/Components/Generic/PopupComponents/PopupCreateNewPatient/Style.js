@@ -11,7 +11,7 @@ export const StyledForm = styled.div`
    }
 
     .MuiInputLabel-formControl {
-      right: ${props => props.languageDirection === "rtl" ? '24px' : 'unset'};
+      //right: ${props => props.languageDirection === "rtl" ? '24px' : 'unset'};
       left: unset;
       color: #000b40;
       font-size: 16px;
@@ -31,14 +31,16 @@ export const StyledForm = styled.div`
       opacity: 60%;
       right: 0;
       margin-right: 2px;
+      transform-origin: top right;
     }
 
-    .MuiFormLabel-filled {
+    .MuiInputLabel-filled {
       line-height: 1.38;
       letter-spacing: normal;
       text-align: right;
       color: #1e2132;
-      opacity: 60%;
+      margin-right: 20px;
+      //opacity: 60%;
     }
 
     .MuiSelect-iconFilled {
@@ -58,7 +60,11 @@ export const StyledForm = styled.div`
    }
 
    .MuiInputLabel-root{
-      right: 23px;
+      //right: 23px;
+   }
+
+   .MuiSelect-filled.MuiSelect-filled, .MuiSelect-select.MuiSelect-select {
+      padding-right: 12px;
    }
 `;
 
