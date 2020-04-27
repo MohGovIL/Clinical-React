@@ -384,7 +384,7 @@ export const StyledEmptyDiv = styled.div`
 `;
 
 export const StyledTableTextCell = styled.div`
-  width: 109px;
+  width: auto;
   height: 18px;
   font-family: OpenSansHebrew;
   font-size: 14px;
@@ -413,4 +413,9 @@ export const StyledHeaderTableAppointment = styled.div`
       float: left;
     width: auto;
   }
+`;
+
+export const StyledLabelTableButton= styled.label`
+
+    float:left
 `;

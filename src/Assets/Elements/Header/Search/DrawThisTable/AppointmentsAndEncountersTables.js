@@ -6,7 +6,7 @@ import {
     StyledBox, StyledHeaderTableAppointment, StyledHrefButton, StyledHrefTableButton,
     StyledLabelAppointment,
     StyledLabelName, StyledLabelServiceTypeAppointment,
-    StyledLabelStatusAppointment,
+    StyledLabelStatusAppointment, StyledLabelTableButton,
     StyledLinkWithIconComponent, StyledTableTextCell
 } from "./Style";
 import moment from "moment";
@@ -100,7 +100,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
     }
 
 
-debugger;
+
     if (nextAppointments && nextAppointments.data && nextAppointments.data.total > 0) {
         let entry = nextAppointments.data.entry;
         entry.map((response, resourceIndex) => {
@@ -129,7 +129,7 @@ debugger;
 
 
 
- debugger;
+
 
     function handleCreateAppointment(patient) {
         return undefined;
@@ -162,7 +162,7 @@ debugger;
                                         <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
                                     </TableCell>
                                     <TableCell align="right">
-                                        <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType?'-':''} {t(encounter.examination)}</StyledTableTextCell>
+                                        <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType!="" && encounter.examination!="" ?'-':''} {t(encounter.examination)}</StyledTableTextCell>
                                     </TableCell>
                                     <TableCell align="center">
                                         <StyledLabelStatusAppointment>
@@ -238,7 +238,7 @@ debugger;
                                                     <StyledTableTextCell> {moment(appointment.startTime).format("HH:mm")} </StyledTableTextCell>
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    <StyledTableTextCell>{t(appointment.serviceType)} {appointment.serviceType?'-':''} {t(appointment.examination)}</StyledTableTextCell>
+                                                    <StyledTableTextCell>{t(appointment.serviceType)} {appointment.serviceType!="" && appointment.examination!="" ?'-':''} {t(appointment.examination)}</StyledTableTextCell>
                                                 </TableCell>
                                                 <TableCell align="center">
                                                     <StyledLabelStatusAppointment>
@@ -286,7 +286,7 @@ debugger;
                             </Table>
                             </TableContainer>
                             {normalizedNextAppointments.length > 2 ?
-                                <label onClick={toggleFutureAppointmentsTable}>{t(!showAllFutureAppointments?"Show all appointments":"Show less appointments")}<StyledIconValueComponent iconType={!showAllFutureAppointments?'keyboard_arrow_down':'keyboard_arrow_up'}/></label> :null
+                                <StyledLabelTableButton onClick={toggleFutureAppointmentsTable}>{t(!showAllFutureAppointments?"Show all appointments":"Show less appointments")}<StyledIconValueComponent iconType={!showAllFutureAppointments?'keyboard_arrow_down':'keyboard_arrow_up'}/></StyledLabelTableButton> :null
                             }
                         </React.Fragment>
             <React.Fragment>
@@ -315,7 +315,7 @@ debugger;
                                                             <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
                                                         </TableCell>
                                                         <TableCell align="right">
-                                                            <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType ? '-' : ''} {t(encounter.examination)}</StyledTableTextCell>
+                                                            <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType!="" && encounter.examination!="" ? '-' : ''} {t(encounter.examination)}</StyledTableTextCell>
                                                         </TableCell>
                                                         <TableCell align="center">
                                                             <StyledLabelStatusAppointment>
@@ -364,7 +364,7 @@ debugger;
                         </TableContainer>
                             {
                                 normalizedPrevEncounters.length > 2 ?
-                                    <label onClick={togglePastEncountersTable}>{t(!showAllPastEncounter?'Show all encounters':'Show less encounters')}<StyledIconValueComponent iconType={!showAllPastEncounter?'keyboard_arrow_down':'keyboard_arrow_up'}/></label>
+                                    <StyledLabelTableButton onClick={togglePastEncountersTable}>{t(!showAllPastEncounter?'Show all encounters':'Show less encounters')}<StyledIconValueComponent iconType={!showAllPastEncounter?'keyboard_arrow_down':'keyboard_arrow_up'}/></StyledLabelTableButton>
                                     : null
                             }
                     </React.Fragment>
