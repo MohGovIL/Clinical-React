@@ -217,6 +217,7 @@ const PatientStats = {
             });
             break;
           case 'address':
+            // Address is an object of [addressType, city, postalCode, country]
             patchArr.push({
               op: 'replace',
               path: '/address/0',
@@ -224,6 +225,7 @@ const PatientStats = {
             });
             break;
           case 'addressLine':
+            // AddressLine is an array [streetName, streetNumber, POBox] this depends on the type of the addressType
             patchArr.push({
               op: 'replace',
               path: '/address/0/line',
