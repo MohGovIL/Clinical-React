@@ -13,6 +13,7 @@ import {normalizeValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity
 import {emptyArrayAll} from "Utils/Helpers/emptyArray";
 import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import {FHIR} from "Utils/Services/FHIR";
+import moment from "moment";
 
 // const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -23,6 +24,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const [genderList, setGenderList] = useState([]);
     const [kupatHolimList, setKupatHolimList] = useState([]);
 
+    const [patientIdentifier, setPatientIdentifier] = useState(0);
     const [patientIdNumber, setPatientIdNumber] = useState("");
     const [patientGender, setPatientGender] = useState(0);
     const [patientIdType, setPatientIdType] = useState(0);
@@ -152,12 +154,13 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                         'functionParams': {identifierValue: patientIdNumber}
                     }).then(patients => {
                         if (patients && result) {
+                            setPatientIdentifier(patients.id);
                             setPatientBirthDate(Moment(patients.birthDate).format(formatDate));
-                            setValue("firstName",patients.firstName );
-                            setValue("lastName",patients.lastName );
+                            setValue("firstName", patients.firstName);
+                            setValue("lastName", patients.lastName);
                             setValue("birthDate", Moment(patients.birthDate).format(formatDate));
-                            setValue("mobilePhone",patients.mobileCellPhone );
-                            setValue("patientEmail",patients.email );
+                            setValue("mobilePhone", patients.mobileCellPhone);
+                            setValue("patientEmail", patients.email);
                             setValue("idNumberType", patients.identifierType);
                             setValue("gender", patients.gender);
                             setValue("healthManageOrganization", patients.managingOrganization);
@@ -170,6 +173,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             clearError("idNumber");
                             setFormMode('write');
                             reset(patientInitialValues);
+                            setPatientIdentifier(0);
                             setPatientIdType(0);
                             setPatientGender(0);
                             setPatientKupatHolim(0);
@@ -213,6 +217,28 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         return isFound;
     }
 
+    const patientAdmissionAction = () => {
+        let currentDate = moment().utc().format("YYYY-MM-DD");
+        console.log("=============patientAdmissionAction==================");
+        (async () => {
+            try {
+                FHIR('Appointment', 'doWork', {
+                    "functionName": 'getNextPrevAppointmentPerPatient',
+                    'functionParams': {date: currentDate, patient: patientIdentifier}
+                }).then(appointments => {
+                    //If appointment exists, will check for encounter
+                    if(appointments && appointments.data && appointments.data.total > 0){
+                        console.log(appointments);
+                    }
+
+                });
+            } catch (e) {
+                console.log("Error: " + e);
+            }
+        })();
+        console.log("=============patientAdmissionAction==================");
+    };
+
     //End block of handle's function
 
     const bottomButtonsData = [
@@ -227,7 +253,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
             'label': t('Patient Admission'),
             'variant': "contained",
             'color': "primary",
-            'onClickHandler': handlePopupClose //user function
+            'onClickHandler': patientAdmissionAction //user function
         },
         {
             'label': t('Create appointment'),
