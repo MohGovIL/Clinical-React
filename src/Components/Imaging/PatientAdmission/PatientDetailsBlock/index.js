@@ -79,6 +79,7 @@ const PatientDetailsBlock = ({
     submitFocusError: true,
   });
 
+  const [relatedPerson, setRelatedPerson] = useState({});
   //Sending the form
   const onSubmit = async (data) => {
     try {
@@ -86,34 +87,52 @@ const PatientDetailsBlock = ({
       if (true) {
         // Continue if required is true.
         //Updating patient
-        let patientPatchParams = {};
-        if (contactInformationTabValue === 0) {
-          if (data.addressCity) {
-            patientPatchParams['city'] = addressCity.code;
-          }
-          if (data.addressStreet || '1') {
-            patientPatchParams['streetName'] = addressStreet.code || '1'; //Added 1 just for checking if the API works since there are no valueSet for streets.
-          }
-          if (data.addressStreetNumber) {
-            patientPatchParams['streetNumber'] = data.addressStreetNumber;
-          }
-          if (data.addressPostalCode) {
-            patientPatchParams['postalCode'] = data.addressPostalCode;
-          }
-        } else {
-          if (data.POBoxCity) {
-            patientPatchParams['city'] = POBoxCity.code;
-          }
-          if (data.POBox) {
-            patientPatchParams['POBox'] = data.POBox;
-          }
-          if (data.POBoxPostalCode) {
-            patientPatchParams['postalCode'] = data.POBoxPostalCode;
-          }
-        }
-        const patient = await FHIR('Patient', 'doWork', {
-          functionName: 'updatePatient',
-          functionParams: { patientPatchParams, patientId: patientData.id },
+        // let patientPatchParams = {};
+        // if (contactInformationTabValue === 0) {
+        //   if (data.addressCity) {
+        //     patientPatchParams['city'] = addressCity.code;
+        //   }
+        //   if (data.addressStreet) {
+        //     patientPatchParams['streetName'] = addressStreet.code; //Added 1 just for checking if the API works since there are no valueSet for streets.
+        //   }
+        //   if (data.addressStreetNumber) {
+        //     patientPatchParams['streetNumber'] = data.addressStreetNumber;
+        //   }
+        //   if (data.addressPostalCode) {
+        //     patientPatchParams['postalCode'] = data.addressPostalCode;
+        //   }
+        // } else {
+        //   if (data.POBoxCity) {
+        //     patientPatchParams['city'] = POBoxCity.code;
+        //   }
+        //   if (data.POBox) {
+        //     patientPatchParams['POBox'] = data.POBox;
+        //   }
+        //   if (data.POBoxPostalCode) {
+        //     patientPatchParams['postalCode'] = data.POBoxPostalCode;
+        //   }
+        // }
+        // if (data.isEscorted) {
+        //   let relatedPerson = {};
+        //   if (data.escortName) {
+        //   }
+        //   if (data.escortMobilePhone) {
+        //   }
+        // }
+
+        // const patient = await FHIR('Patient', 'doWork', {
+        //   functionName: 'updatePatient',
+        //   functionParams: { patientPatchParams, patientId: patientData.id },
+        // });
+        //Updating relatedPerson
+        let relatedPersonParams = {};
+
+        const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
+          functionName: 'updateRelatedPerson',
+          functionParams: {
+            relatedPersonParams,
+            relatedPersonId: relatedPerson.id,
+          },
         });
       } else {
         triggerValidation();
@@ -222,7 +241,6 @@ const PatientDetailsBlock = ({
   // Escorted Information
   // Escorted Information - vars
   const [isEscorted, setIsEscorted] = useState(false);
-  const [relatedPerson, setRelatedPerson] = useState({});
   // Escorted Information - functions
   const isEscortedSwitchOnChangeHandle = () => {
     setIsEscorted((prevState) => {
@@ -673,7 +691,7 @@ const PatientDetailsBlock = ({
               as={<StyledTextField label={t('Escort name')} />}
               name={'escortName'}
               control={control}
-              defaultValue=''
+              defaultValue={relatedPerson.name || ''}
             />
             {/* Escorted Information cell phone */}
             <Controller
