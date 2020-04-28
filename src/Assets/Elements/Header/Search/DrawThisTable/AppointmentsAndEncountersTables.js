@@ -44,7 +44,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
     const nextAppointmentEntry = nextAppointmentsElem ? normalizeFhirAppointment(nextAppointmentsElem) : null;
     const normalizedPrevEncounter = prevEncountersEntry ? normalizeFhirEncounter(prevEncountersEntry) : null;
     const patientData = patient;
-
+    const curDate = moment().utc().format("DD/MM/YYYY");
     let normalizedCurEncounters = [];
     let normalizedNextAppointments = [];
     let normalizedPrevEncounters = [];
@@ -80,9 +80,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
 
     }
 
-    const handleMultipleEncounters = (serviceType,examination) =>{
-        debugger;
-
+    const parseMultipleExaminations = (serviceType,examination) =>{
         if(!examination || !examination[0] || examination.lenghth == 0)
         {
             return t(serviceType);
@@ -186,11 +184,12 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                         <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
                                     </TableCell>
                                     <TableCell align="right">
-                                        {encounter.serviceType && encounter.serviceType.length>0?
-                                            <StyledTableTextCell>{handleMultipleEncounters(encounter.serviceType,encounter.examination)}</StyledTableTextCell>
+                                       {/* {encounter.examination && encounter.serviceType.examination>1?
+                                            <StyledTableTextCell>{parseMultipleExaminations(encounter.serviceType,encounter.examination)}</StyledTableTextCell>
                                             :
                                             <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType != "" && encounter.examination != "" ? '-' : ''} {t(encounter.examination)} </StyledTableTextCell>
-                                        }
+                                        }*/}
+                                        <StyledTableTextCell>{parseMultipleExaminations(encounter.serviceType,encounter.examination)}</StyledTableTextCell>
 
                                     </TableCell>
                                     <TableCell align="center">
@@ -225,7 +224,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
 
                                 <TableRow key={"encounters_no_past_rows"}>
 
-                                    <TableCell colspan="5" align="center" omponent="td" scope="row">{t("No data found for display")}</TableCell>
+                                    <TableCell colSpan="5" align="center" omponent="td" scope="row">{t("No data found for display")}</TableCell>
                                 </TableRow>
 
                             }
@@ -264,10 +263,16 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                             return(
                                             <TableRow key={appointmentID}>
                                                 <TableCell  align="right" omponent="td" scope="row">
-                                                    <StyledTableTextCell> {moment(appointment.startTime).format("HH:mm")} </StyledTableTextCell>
+                                                    <StyledTableTextCell>  {curDate === moment(appointment.startTime).format("DD/MM/YYYY") ? `${t('today')} - ${moment(appointment.startTime).format("HH:mm")}` : moment(appointment.startTime).format("DD/MM/YYYY HH:mm")} </StyledTableTextCell>
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    <StyledTableTextCell>{t(appointment.serviceType)} {appointment.serviceType!="" && appointment.examination!="" ?'-':''} {t(appointment.examination)}</StyledTableTextCell>
+                                                  {/*  <StyledTableTextCell>{t(appointment.serviceType)} {appointment.serviceType!="" && appointment.examination!="" ?'-':''} {t(appointment.examination)}</StyledTableTextCell>*/}
+                                                    {/*{appointment.examination && appointment.examination.length>1?
+                                                        <StyledTableTextCell>{parseMultipleExaminations(appointment.serviceType,appointment.examination)}</StyledTableTextCell>
+                                                        :
+                                                        <StyledTableTextCell>{t(appointment.serviceType)} {appointment.serviceType != "" && appointment.examination != "" ? '-' : ''} {t(appointment.examination)} </StyledTableTextCell>
+                                                    }*/}
+                                                    <StyledTableTextCell>{parseMultipleExaminations(appointment.serviceType,appointment.examination)}</StyledTableTextCell>
                                                 </TableCell>
                                                 <TableCell align="center">
                                                     <StyledLabelStatusAppointment>
@@ -304,7 +309,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
 
 
                                         <TableRow key={"encounters_no_past_rows"}>
-                                            <TableCell colspan="6" align="center" omponent="td" scope="row">{t("No data found for display")}</TableCell>
+                                            <TableCell colSpan="6" align="center" omponent="td" scope="row">{t("No data found for display")}</TableCell>
                                         </TableRow>
 
 
@@ -341,10 +346,16 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                                 return (
                                                     <TableRow key={encounterID}>
                                                         <TableCell align="right" omponent="td" scope="row">
-                                                            <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
+                                                            <StyledTableTextCell> {moment(encounter.startTime).format("DD/MM/YYYY")} </StyledTableTextCell>
                                                         </TableCell>
                                                         <TableCell align="right">
-                                                            <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType!="" && encounter.examination!="" ? '-' : ''} {t(encounter.examination)}</StyledTableTextCell>
+                                                           {/* <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType!="" && encounter.examination!="" ? '-' : ''} {t(encounter.examination)}</StyledTableTextCell>*/}
+                                                            {/*{encounter.examination && encounter.examination.length>1?
+                                                                <StyledTableTextCell>{parseMultipleExaminations(encounter.serviceType,encounter.examination)}</StyledTableTextCell>
+                                                                :
+                                                                <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType != "" && encounter.examination != "" ? '-' : ''} {t(encounter.examination)} </StyledTableTextCell>
+                                                            }*/}
+                                                            <StyledTableTextCell>{parseMultipleExaminations(encounter.serviceType,encounter.examination)}</StyledTableTextCell>
                                                         </TableCell>
                                                         <TableCell align="center">
                                                             <StyledLabelStatusAppointment>
@@ -385,7 +396,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
 
 
                                                 <TableRow key={"encounters_no_past_rows"}>
-                                                    <TableCell colspan="5" align="center" omponent="td" scope="row">{t("No data found for display")}</TableCell>
+                                                    <TableCell colSpan="5" align="center" omponent="td" scope="row">{t("No data found for display")}</TableCell>
                                                 </TableRow>
                                     }
                                 </TableBody>

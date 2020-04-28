@@ -150,22 +150,66 @@ const DrawThisTable = ({result, searchParam}) => {
         if (newExpanded) {
             let identifier = patient.id;
             let currentDate = moment().utc().format("YYYY-MM-DD");
-            const encounterStatPromise = await getValueSet("encounter_statuses");
+           // const encounterStatPromise = await getValueSet("encounter_statuses");
+            const encounterStatPromise = await FHIR('ValueSet','doWork',{"functionName":'getValueSet','functionParams':{id:'encounter_statuses'}});
             const encounterStat = requestValueSet(encounterStatPromise);
-            const appointmentStatPromise = await getValueSet("appointment_statuses");
+            //const appointmentStatPromise = await getValueSet("appointment_statuses");
+            const appointmentStatPromise = await FHIR('ValueSet','doWork',{"functionName":'getValueSet','functionParams':{id:'appointment_statuses'}});
             const appointmentStat = requestValueSet(appointmentStatPromise);
 
 
             if (!encounterStatuses) setEncounterStatuses(encounterStat);
             if (!patientTrackingStatuses) setPatientTrackingStatuses(appointmentStat);
-            setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
-            setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
-            setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
+            //setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
+
+            const FHIRNextAppointment = await FHIR("Appointment", "doWork", {
+                functionName: "getNextPrevAppointmentPerPatient",functionParams:{
+                    date:currentDate,
+                    patient:identifier,
+                    prev:false
+                }})
+            setNextAppointment(FHIRNextAppointment);
+
+            //setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
+           const FHIRPrevEncounter = await FHIR("Encounter", "doWork", {
+                functionName: "getNextPrevEncounterPerPatient",functionParams:{
+                    date:currentDate,
+                   patient:identifier,
+                    prev:true
+                }})
+            setPrevEncounter(FHIRPrevEncounter);
+
+
+            //setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
+            const FHIRCurEncounter = await FHIR("Encounter", "doWork", {
+                functionName: "getCurrentEncounterPerPatient",functionParams:{
+                    date:currentDate,
+                    patient:identifier
+                }})
+            setCurEncounter(FHIRCurEncounter);
+
             /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
 
-            setNextAppointments(await getNextPrevAppointmentsPerPatient(currentDate, identifier, false));
-            setPrevEncounters(await getNextPrevEncountersPerPatient(currentDate, identifier, true));
+            //setNextAppointments(await getNextPrevAppointmentsPerPatient(currentDate, identifier, false));
 
+            const FHIRNextAppointments = await FHIR("Appointment", "doWork", {
+                functionName: "getNextPrevAppointmentsPerPatient",functionParams:{
+                    date:currentDate,
+                    patient:identifier,
+                    prev:false
+                }})
+            setNextAppointments(FHIRNextAppointments);
+
+            //setPrevEncounters(await getNextPrevEncountersPerPatient(currentDate, identifier, true));
+
+            const FHIRPrevEncounters = await FHIR("Encounter", "doWork", {
+                functionName: "getNextPrevEncountersPerPatient",functionParams:{
+                    date:currentDate,
+                    patient:identifier,
+                    prev:true
+                }})
+
+            setPrevEncounters(FHIRPrevEncounters);
 
         }
     };
