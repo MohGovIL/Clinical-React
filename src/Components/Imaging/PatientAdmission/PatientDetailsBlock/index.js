@@ -73,6 +73,7 @@ const PatientDetailsBlock = ({
     setValue,
     register,
     setError,
+    triggerValidation,
   } = useForm({
     mode: 'onBlur',
     submitFocusError: true,
@@ -81,25 +82,41 @@ const PatientDetailsBlock = ({
   //Sending the form
   const onSubmit = async (data) => {
     try {
-      if (isRequiredValidation(data)) {
+      // if (isRequiredValidation(data)) {
+      if (true) {
         // Continue if required is true.
-
-        const patientPatchParams = {
-          
-          address: {
-            type: data.addressStreetNumber && data.POBoxPostalCode ? 'both'
-            : data.addressStreetNumber ? 'physical'
-            : 'postal' ,
-            city: data.addressCity || data.POBoxCity,
-            postalCode: data.addressPostalCode || data.POBoxPostalCode,
-            country: '',
-          },
-          addressLine: [data.addressStreet, '', ''],
-        };
+        //Updating patient
+        let patientPatchParams = {};
+        if (contactInformationTabValue === 0) {
+          if (data.addressCity) {
+            patientPatchParams['city'] = addressCity.code;
+          }
+          if (data.addressStreet || '1') {
+            patientPatchParams['streetName'] = addressStreet.code || '1'; //Added 1 just for checking if the API works since there are no valueSet for streets.
+          }
+          if (data.addressStreetNumber) {
+            patientPatchParams['streetNumber'] = data.addressStreetNumber;
+          }
+          if (data.addressPostalCode) {
+            patientPatchParams['postalCode'] = data.addressPostalCode;
+          }
+        } else {
+          if (data.POBoxCity) {
+            patientPatchParams['city'] = POBoxCity.code;
+          }
+          if (data.POBox) {
+            patientPatchParams['POBox'] = data.POBox;
+          }
+          if (data.POBoxPostalCode) {
+            patientPatchParams['postalCode'] = data.POBoxPostalCode;
+          }
+        }
         const patient = await FHIR('Patient', 'doWork', {
           functionName: 'updatePatient',
-          functionParams: patientPatchParams,
+          functionParams: { patientPatchParams, patientId: patientData.id },
         });
+      } else {
+        triggerValidation();
       }
       return;
     } catch (error) {
@@ -233,6 +250,7 @@ const PatientDetailsBlock = ({
   };
   // Contact Information - address city - var
   const [addressCity, setAddressCity] = useState({});
+  const [addressStreet, setAddressStreet] = useState({});
   // Contact Information - PObox city - var
   const [POBoxCity, setPOBoxCity] = useState({});
   // Contact Information - functions / useEffect
@@ -740,6 +758,10 @@ const PatientDetailsBlock = ({
                 onOpen={() => addressCity.name && setStreetsOpen(true)}
                 onClose={() => setStreetsOpen(false)}
                 id='addressStreet'
+                value={addressStreet}
+                onChange={(event, newValue) => {
+                  setAddressStreet(newValue);
+                }}
                 getOptionLabel={(option) => (option === '' ? '' : option.name)}
                 noOptionsText={t('No Results')}
                 loadingText={t('Loading')}
@@ -1276,7 +1298,6 @@ const PatientDetailsBlock = ({
                   <StyledTextField
                     onChange={onChangeAdditionalDocumentHandler}
                     label={`${t('Additional document')}`}
-                    required
                   />
                 </Grid>
                 <Grid item xs={9}>
