@@ -79,6 +79,32 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
        }
 
     }
+
+    const handleMultipleEncounters = (serviceType,examination) =>{
+        debugger;
+
+        if(!examination || !examination[0] || examination.lenghth == 0)
+        {
+            return t(serviceType);
+        }
+        let  returnThisServiceTypesExaminations = "";
+        returnThisServiceTypesExaminations += t(serviceType)
+        if(examination.length>1)
+        {
+            returnThisServiceTypesExaminations += "-";
+            for(let id=0;id<examination.length;id++)
+            {
+                returnThisServiceTypesExaminations += t(examination[id]) + (id+1 < examination.length ? "," : "");
+            }
+        }
+        else{
+            returnThisServiceTypesExaminations += "-" + t(examination[0]);
+        }
+
+
+
+        return returnThisServiceTypesExaminations;
+    }
     const handleChartClickOpen = ()=> {
             //TODO:
     }
@@ -129,8 +155,6 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
 
 
 
-
-
     function handleCreateAppointment(patient) {
         return undefined;
     }
@@ -162,7 +186,12 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                         <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
                                     </TableCell>
                                     <TableCell align="right">
-                                        <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType!="" && encounter.examination!="" ?'-':''} {t(encounter.examination)}</StyledTableTextCell>
+                                        {encounter.serviceType && encounter.serviceType.length>0?
+                                            <StyledTableTextCell>{handleMultipleEncounters(encounter.serviceType,encounter.examination)}</StyledTableTextCell>
+                                            :
+                                            <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType != "" && encounter.examination != "" ? '-' : ''} {t(encounter.examination)} </StyledTableTextCell>
+                                        }
+
                                     </TableCell>
                                     <TableCell align="center">
                                         <StyledLabelStatusAppointment>
@@ -231,7 +260,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                     {
                                     normalizedNextAppointments.length > 0 ?
                                     normalizedNextAppointments.map((appointment, appointmentID) => {
-                                       if(futureAppointmentsCounter--)
+                                       if(--futureAppointmentsCounter>=0)
                                             return(
                                             <TableRow key={appointmentID}>
                                                 <TableCell  align="right" omponent="td" scope="row">
@@ -308,7 +337,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                         {
                                             normalizedPrevEncounters !== null  &&  normalizedPrevEncounters.length > 0 ?
                                             normalizedPrevEncounters.map((encounter, encounterID) => {
-                                            if(pastEncounterCounter--) {
+                                            if(--pastEncounterCounter>=0) {
                                                 return (
                                                     <TableRow key={encounterID}>
                                                         <TableCell align="right" omponent="td" scope="row">
