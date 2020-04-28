@@ -14,16 +14,21 @@ import {emptyArrayAll} from "Utils/Helpers/emptyArray";
 import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import {FHIR} from "Utils/Services/FHIR";
 import moment from "moment";
-
+import {store} from "../../../../index";
+import {setEncounterAndPatient} from "../../../../Store/Actions/ActiveActions";
+import normalizeFhirEncounter from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
+import {baseRoutePath} from "../../../../Utils/Helpers/baseRoutePath";
+import {useHistory} from 'react-router-dom';
 // const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate}) => {
+const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate, facility}) => {
     const {t} = useTranslation();
 
     const [idTypesList, setIdTypesList] = useState([]);
     const [genderList, setGenderList] = useState([]);
     const [kupatHolimList, setKupatHolimList] = useState([]);
 
+    const [patientData, setPatientData] = useState([])
     const [patientIdentifier, setPatientIdentifier] = useState(0);
     const [patientIdNumber, setPatientIdNumber] = useState("");
     const [patientGender, setPatientGender] = useState(0);
@@ -36,6 +41,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
     const textFieldSelectNotEmptyRule = {validate: {value: value => parseInt(value) !== 0}};
+    const history = useHistory();
 
     let patientInitialValues = {
         firstName: '',
@@ -164,6 +170,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             setValue("idNumberType", patients.identifierType);
                             setValue("gender", patients.gender);
                             setValue("healthManageOrganization", patients.managingOrganization);
+                            setPatientData(patients);
                             setPatientIdType(patients.identifierType);
                             setPatientGender(patients.gender);
                             setPatientKupatHolim(patients.managingOrganization);
@@ -218,19 +225,42 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     }
 
     const patientAdmissionAction = () => {
-        let currentDate = moment().utc().format("YYYY-MM-DD");
+        let currentDate = moment().format("YYYY-MM-DD");
         console.log("=============patientAdmissionAction==================");
         (async () => {
             try {
                 FHIR('Appointment', 'doWork', {
-                    "functionName": 'getNextPrevAppointmentPerPatient',
-                    'functionParams': {date: currentDate, patient: patientIdentifier}
+                    "functionName": 'getAppointmentPerPatient',
+                    'functionParams': {dayPosition: 'current', date: currentDate, patient: patientIdentifier}
                 }).then(appointments => {
                     //If appointment exists, will check for encounter
-                    if(appointments && appointments.data && appointments.data.total > 0){
+                    if (appointments && appointments.data && appointments.data.total === 1) {
                         console.log(appointments);
-                    }
+                        console.log("appointment exist, we will set data to reducer and go to patientAdmission");
+                        //set data to reducers appointment and change route tp patientAdmission
+                        //store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData), patientData));
+                        history.push({
+                            pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                        })
+                    } else {
+                        console.log("admission without appointment");
 
+                        if (patientData) {
+                            let encounterData = FHIR("Encounter", "doWork", {
+                                functionName: "createNewEncounter",
+                                functionParams: {
+                                    facility: facility,
+                                    practitioner: 'practitioner',
+                                    patient: patientData,
+                                    status: "planned"
+                                }
+                            });
+                            store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData), patientData));
+                            history.push({
+                                pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                            });
+                        }
+                    }
                 });
             } catch (e) {
                 console.log("Error: " + e);
@@ -545,6 +575,7 @@ const mapStateToProps = state => {
     return {
         languageDirection: state.settings.lang_dir,
         formatDate: state.settings.format_date,
+        facility: state.settings.facility,
     }
 };
 
