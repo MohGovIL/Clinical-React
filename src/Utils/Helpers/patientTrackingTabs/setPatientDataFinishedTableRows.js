@@ -18,7 +18,7 @@ export const finishedTabActiveFunction = async function (setTable, setTabs, hist
         const statuses = ['finished'];
         const sort = 'date,-priority,service-type';
        // const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-        const encountersWithPatients = await FHIR('Encounter','doWork',{functionName:'getEncountersWithPatients',functionParams:{summary:false, date:selectFilter.filter_date, serviceProvider:selectFilter.filter_organization, serviceType:selectFilter.filter_service_type, statuses:statuses,"sortParams": sort}});
+        const encountersWithPatients = await FHIR('Encounter','doWork',{functionName:'getEncountersWithPatients',functionParams:{summary:false, date:selectFilter.filter_date, serviceProvider:selectFilter.filter_organization, serviceType:selectFilter.filter_service_type, statuses:statuses,sortParams: sort}});
         const [patients, encounters] = normalizeFhirEncountersWithPatients(encountersWithPatients.data.entry);
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs

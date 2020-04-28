@@ -16,7 +16,7 @@ import {FHIR} from "Utils/Services/FHIR";
 export const waitingForExaminationTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const statuses = ['arrived', 'triaged', 'in-progress'];
-        const sort = '-priority,date,service-type';
+        const sort = 'date,-priority,service-type';
         //const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
         const encountersWithPatients =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses,"sortParams": sort}});
 
