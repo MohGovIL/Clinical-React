@@ -117,7 +117,7 @@ const EncounterStates = {
             });
         }
     },
-    encountersWithPatientsBasePath: summary => `_sort=date${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
+    encountersWithPatientsBasePath: summary => `${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
 
     getEncountersWithPatients:  (params) => {
         let summary = params.functionParams.summary
@@ -125,6 +125,7 @@ const EncounterStates = {
         let serviceProvider = params.functionParams.serviceProvider;
         let serviceType = '';
         let statuses = params.functionParams.statuses;
+        let sortParams = params.functionParams.sortParams;
 
         let statusesString = '';
         for (let status of statuses) {
@@ -133,7 +134,7 @@ const EncounterStates = {
         // let summaryStat = EncounterStates['encountersWithPatientsBasePath'](summary)
         //return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
         // return CRUDOperations('search', `${params.url}?${summaryStat}&${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`)
-        return CRUDOperations('search', `${params.url}?${EncounterStates.encountersWithPatientsBasePath(summary)}${statusesString}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}`)
+        return CRUDOperations('search', `${params.url}?${EncounterStates.encountersWithPatientsBasePath(summary)}${statusesString}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}&_sort=${sortParams}`)
 
     },
     getCurrentEncounterPerPatient: (params) => {

@@ -35,7 +35,7 @@ const AppointmentStates = {
             return null;
         }
     },
-    appointmentsWithPatientsBasePath: summary => `status:not=arrived&_sort=date,priority,service-type${summary ? '&_summary=count' : '&_include=Appointment:patient'}`,
+    appointmentsWithPatientsBasePath: summary => `status:not=arrived&_sort=date,-priority,service-type${summary ? '&_summary=count' : '&_include=Appointment:patient'}`,
 
     getAppointmentsWithPatients: (params = null) => {
         if (!params.url)
