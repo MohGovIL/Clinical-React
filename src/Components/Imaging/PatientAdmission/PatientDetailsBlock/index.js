@@ -309,7 +309,7 @@ const PatientDetailsBlock = ({
       try {
         const streets = await getStreets(addressCity.code.split('_')[1]);
         if (active) {
-          if (streets.data.length) {
+          if (Object.keys(streets.data).length) {
             setStreets(
               Object.keys(streets.data).map((streetKey) => {
                 let streetObj = {};
@@ -541,13 +541,23 @@ const PatientDetailsBlock = ({
 
   // Default values
   useEffect(() => {
-    if (patientData.city) {
-      const defaultAddressCityObj = {
-        name: t(patientData.city),
-        code: patientData.city,
-      };
-      setAddressCity(defaultAddressCityObj);
-      setPOBoxCity(defaultAddressCityObj);
+    if (patientData) {
+      if (patientData.city) {
+        const defaultAddressCityObj = {
+          name: t(patientData.city),
+          code: patientData.city,
+        };
+        setAddressCity(defaultAddressCityObj);
+        setPOBoxCity(defaultAddressCityObj);
+      }
+      // If there is a streetName there might be streetNumber but that is not required streetName is required according to FHIR.
+      if (patientData.streetName) {
+        const defaultAddressStreetObj = {
+          name: t(patientData.streetName),
+          code: patientData.streetName,
+        };
+        setAddressStreet(defaultAddressStreetObj);
+      }
     }
     if (encounterData) {
       if (encounterData.examination && encounterData.examination.length) {
@@ -762,7 +772,12 @@ const PatientDetailsBlock = ({
                 onChange={(event, newValue) => {
                   setAddressStreet(newValue);
                 }}
-                getOptionLabel={(option) => (option === '' ? '' : option.name)}
+                getOptionLabel={(option) =>
+                  Object.keys(option).length === 0 &&
+                  option.constructor === Object
+                    ? ''
+                    : option.name
+                }
                 noOptionsText={t('No Results')}
                 loadingText={t('Loading')}
                 getOptionDisabled={(option) => option.code === 'no_result'}
