@@ -3,6 +3,7 @@
  */
 
 import { CRUDOperations } from '../CRUDOperations/index';
+import denormalizeRelatedPerson from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirRelatedPerson';
 
 const RelatedPersonStats = {
   doWork: (parameters = null) => {
@@ -17,9 +18,10 @@ const RelatedPersonStats = {
     );
   },
   createRelatedPerson: (params) => {
-    const relatedPerson = {};
-
-    return CRUDOperations('post', `${params.url}`, relatedPerson);
+    const denormalizedRelatedPerson = denormalizeRelatedPerson(
+      params.relatedPersonParams,
+    );
+    return CRUDOperations('post', `${params.url}`, denormalizedRelatedPerson);
   },
   updateRelatedPerson: (params) => {
     const patchArr = [];
