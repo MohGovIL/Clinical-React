@@ -103,7 +103,7 @@ const DrawThisTable = ({result, searchParam}) => {
         let nextAppointmetCheckNormelized = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment(nextAppointment.data.entry[1].resource) : null;
         let theAppointmentIsToday = false;
         if (nextAppointmetCheckNormelized) {
-            theAppointmentIsToday = moment(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
+            theAppointmentIsToday = moment.utc(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY") === moment.utc().format("DD/MM/YYYY") ? true : false;
         }
 
         if (!thereIsEncounterToday) {
@@ -184,7 +184,8 @@ const DrawThisTable = ({result, searchParam}) => {
             const FHIRCurEncounter = await FHIR("Encounter", "doWork", {
                 functionName: "getCurrentEncounterPerPatient",functionParams:{
                     date:currentDate,
-                    patient:identifier
+                    patient:identifier,
+                    specialOrder:`_sort=service-type,-priority,date`
                 }})
             setCurEncounter(FHIRCurEncounter);
 

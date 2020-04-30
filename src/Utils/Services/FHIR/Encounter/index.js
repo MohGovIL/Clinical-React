@@ -137,13 +137,13 @@ const EncounterStates = {
     },
     getCurrentEncounterPerPatient: (params) => {
 
-        let date = params.date;
-        let patient = params.patient;
-        let url = params.url;
-
+        let date = params.date,
+        patient = params.patient,
+        url = params.url,
+        specialOrder= `&${params.specialOrder?params.specialOrder:''}`;
         //PC-216 endpoint: /Encounter?date=eq<TODAY>&patient=<PID>
         try {
-            return CRUDOperations('search', `${params.url}?date=eq${date}&patient=${patient}`)
+            return CRUDOperations('search', `${url}?date=eq${date}${specialOrder}&patient=${patient}`)
             //return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=eq${date}&patient=${patient}`);
         } catch (err) {
             console.log(err);
@@ -153,16 +153,18 @@ const EncounterStates = {
     getNextPrevEncounterPerPatient: (params) => {
 
         //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
-        let date = params.date;
-        let patient = params.patient;
-        let prev = params.prev;
-        let url = params.url;
+        let date = params.date,
+        patient = params.patient,
+        prev = params.prev,
+        url = params.url,
+        specialOrder= `${params.specialOrder?params.specialOrder:'_sort=-date'}`;
+
         try {
             if (prev) {
                 //return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=le${date}&_count=1&_sort=-date&patient=${patient}`);
-                return CRUDOperations('search', `${url}?date=le${date}&_count=1&_sort=-date&patient=${patient}`);
+                return CRUDOperations('search', `${url}?date=le${date}&_count=1&${specialOrder}&patient=${patient}`);
             } else {
-                return CRUDOperations('search', `${url}?date=gt${date}&_count=1&_sort=-date&patient=${patient}`);
+                return CRUDOperations('search', `${url}?date=gt${date}&_count=1&${specialOrder}&patient=${patient}`);
             }
         } catch (err) {
             console.log(err);
@@ -172,14 +174,18 @@ const EncounterStates = {
     },
     getNextPrevEncountersPerPatient :(params) =>{
 
-        let  date = params.date,patient= params.patient,prev = params.prev,url=params.url;
+        let date = params.date,
+            patient= params.patient,
+            prev = params.prev,
+            url=params.url,
+            specialOrder=params.specialOrder?params.specialOrder:'_sort=-date';
 
         //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
         try {
             if (prev) {
-                return CRUDOperations('search', `${url}?date=le${date}&_sort=-date&patient=${patient}`);
+                return CRUDOperations('search', `${url}?date=le${date}&${specialOrder}&patient=${patient}`);
             } else {
-                return CRUDOperations('search', `${url}?date=gt${date}&_sort=-date&patient=${patient}`);
+                return CRUDOperations('search', `${url}?date=gt${date}&${specialOrder}&patient=${patient}`);
             }
         }
         catch(err){

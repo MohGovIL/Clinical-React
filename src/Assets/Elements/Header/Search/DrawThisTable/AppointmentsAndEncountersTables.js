@@ -50,8 +50,8 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
     let normalizedPrevEncounters = [];
 
     const getAppointmentWithTimeOrNot =(nextAppointmentEntry)=>{
-        let isThisAppToday = moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
-        return  (isThisAppToday ? moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY HH:mm") :moment().format("DD/MM/YYYY")  );
+        let isThisAppToday = moment.utc(nextAppointmentEntry.startTime).format("DD/MM/YYYY") === moment().utc().format("DD/MM/YYYY") ? true : false;
+        return  (isThisAppToday ? moment.utc(nextAppointmentEntry.startTime).format("DD/MM/YYYY HH:mm") :moment().utc().format("DD/MM/YYYY")  );
     }
     const [showAllPastEncounter,setShowAllPastEncounter]= React.useState(false);
     let [pastEncounterCounter,setPastEncounterCounter]= React.useState(2);
@@ -181,7 +181,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                 return(
                                 <TableRow key={encounterID}>
                                     <TableCell  align="right" omponent="td" scope="row">
-                                        <StyledTableTextCell> {moment(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
+                                        <StyledTableTextCell> {moment.utc(encounter.startTime).format("HH:mm")} </StyledTableTextCell>
                                     </TableCell>
                                     <TableCell align="right">
                                        {/* {encounter.examination && encounter.serviceType.examination>1?
@@ -263,7 +263,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                             return(
                                             <TableRow key={appointmentID}>
                                                 <TableCell  align="right" omponent="td" scope="row">
-                                                    <StyledTableTextCell>  {curDate === moment(appointment.startTime).format("DD/MM/YYYY") ? `${t('today')} - ${moment(appointment.startTime).format("HH:mm")}` : moment(appointment.startTime).format("DD/MM/YYYY HH:mm")} </StyledTableTextCell>
+                                                    <StyledTableTextCell>  {curDate === moment.utc(appointment.startTime).format("DD/MM/YYYY") ? `${t('today')} - ${moment.utc(appointment.startTime).format("HH:mm")}` : moment.utc(appointment.startTime).format("DD/MM/YYYY HH:mm")} </StyledTableTextCell>
                                                 </TableCell>
                                                 <TableCell align="right">
                                                   {/*  <StyledTableTextCell>{t(appointment.serviceType)} {appointment.serviceType!="" && appointment.examination!="" ?'-':''} {t(appointment.examination)}</StyledTableTextCell>*/}
@@ -346,7 +346,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                                 return (
                                                     <TableRow key={encounterID}>
                                                         <TableCell align="right" omponent="td" scope="row">
-                                                            <StyledTableTextCell> {moment(encounter.startTime).format("DD/MM/YYYY")} </StyledTableTextCell>
+                                                            <StyledTableTextCell> {moment.utc(encounter.startTime).format("DD/MM/YYYY")} </StyledTableTextCell>
                                                         </TableCell>
                                                         <TableCell align="right">
                                                            {/* <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType!="" && encounter.examination!="" ? '-' : ''} {t(encounter.examination)}</StyledTableTextCell>*/}
