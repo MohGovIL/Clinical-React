@@ -94,7 +94,7 @@ const PatientDetailsBlock = ({
             patientPatchParams['city'] = addressCity.code;
           }
           if (data.addressStreet) {
-            patientPatchParams['streetName'] = addressStreet.code; //Added 1 just for checking if the API works since there are no valueSet for streets.
+            patientPatchParams['streetName'] = addressStreet.code;
           }
           if (data.addressStreetNumber) {
             patientPatchParams['streetNumber'] = data.addressStreetNumber;
@@ -113,24 +113,28 @@ const PatientDetailsBlock = ({
             patientPatchParams['postalCode'] = data.POBoxPostalCode;
           }
         }
-        const patient = await FHIR('Patient', 'doWork', {
-          functionName: 'updatePatient',
-          functionParams: { patientPatchParams, patientId: patientData.id },
-        });
+        APIsArray.push(
+          FHIR('Patient', 'doWork', {
+            functionName: 'updatePatient',
+            functionParams: { patientPatchParams, patientId: patientData.id },
+          }),
+        );
 
         //Updating/Creating relatedPerson
         if (encounterData.appointment) {
-          const updateAppointment = await FHIR('Appointment', 'doWork', {
-            functionName: 'updateAppointment',
-            functionParams: {
+          APIsArray.push(
+            FHIR('Appointment', 'doWork', {
+              functionName: 'updateAppointment',
               functionParams: {
-                appointmentId: encounterData.appointment,
-                appointmentParams: {
-                  status: 'arrived',
+                functionParams: {
+                  appointmentId: encounterData.appointment,
+                  appointmentParams: {
+                    status: 'arrived',
+                  },
                 },
               },
-            },
-          });
+            }),
+          );
         }
 
         if (data.isEscorted) {
@@ -142,10 +146,8 @@ const PatientDetailsBlock = ({
             ) {
               relatedPersonParams['name'] = data.escortName;
               relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
-              const relatedPersonResponse = await FHIR(
-                'RelatedPerson',
-                'doWork',
-                {
+              APIsArray.push(
+                FHIR('RelatedPerson', 'doWork', {
                   // eslint-disable-next-line no-use-before-define
                   functionName: 'updateRelatedPerson',
                   functionParams: {
@@ -153,7 +155,7 @@ const PatientDetailsBlock = ({
                     // eslint-disable-next-line no-use-before-define
                     relatedPersonId: relatedPerson.id,
                   },
-                },
+                }),
               );
             }
           } else {
@@ -163,21 +165,18 @@ const PatientDetailsBlock = ({
             if (data.escortMobilePhone) {
               relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
             }
-            const relatedPersonResponse = await FHIR(
-              'RelatedPerson',
-              'doWork',
-              {
+            APIsArray.push(
+              FHIR('RelatedPerson', 'doWork', {
                 // eslint-disable-next-line no-use-before-define
                 functionName: 'createRelatedPerson',
                 functionParams: {
                   relatedPersonParams,
                 },
-              },
+              }),
             );
           }
         }
-        // TODO when all API's checked use a Promise.All to check for all the API's so if one fails all fail as well.
-        // Promise.all(allPromisesArray)
+        await Promise.all(APIsArray);
       } else {
         triggerValidation();
       }
