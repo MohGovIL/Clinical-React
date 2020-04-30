@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import * as Moment from "moment";
 import CustomizedPopup from "Assets/Elements/CustomizedPopup";
 import {useTranslation} from "react-i18next";
-import {useForm, FormContext, useFormContext, Controller} from "react-hook-form";
+import {useForm, Controller} from "react-hook-form";
 import {InputAdornment, MenuItem, TextField} from "@material-ui/core";
 import {StyledColumnFirst, StyledColumnSecond, StyledForm, StyledRowEmail, StyledBox} from "./Style";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
@@ -15,9 +15,10 @@ import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntit
 import {FHIR} from "Utils/Services/FHIR";
 import moment from "moment";
 import {store} from "../../../../index";
-import {setEncounterAndPatient} from "../../../../Store/Actions/ActiveActions";
-import normalizeFhirEncounter from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
-import {baseRoutePath} from "../../../../Utils/Helpers/baseRoutePath";
+import {setEncounterAndPatient} from "Store/Actions/ActiveActions";
+import normalizeFhirEncounter from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
+import normalizeFhirAppointment from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
+import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 import {useHistory} from 'react-router-dom';
 // const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -226,7 +227,6 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
     const patientAdmissionAction = () => {
         let currentDate = moment().format("YYYY-MM-DD");
-        console.log("=============patientAdmissionAction==================");
         (async () => {
             try {
                 FHIR('Appointment', 'doWork', {
@@ -235,17 +235,21 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                 }).then(appointments => {
                     //If appointment exists, will check for encounter
                     if (appointments && appointments.data && appointments.data.total === 1) {
-                        console.log(appointments);
-                        console.log("appointment exist, we will set data to reducer and go to patientAdmission");
+                        let appointment = normalizeFhirAppointment(appointments.data.entry[1].resource);
                         //set data to reducers appointment and change route tp patientAdmission
-                        //store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData), patientData));
+                        let encounterData = FHIR("Encounter", "doWork", {
+                            functionName: "createNewEncounter",
+                            functionParams: {
+                                facility: facility,
+                                appointment: appointment
+                            }
+                        });
+                        store.dispatch(setEncounterAndPatient(normalizeFhirEncounter(encounterData), patientData));
                         history.push({
                             pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-                        })
+                        });
                     } else {
-                        console.log("admission without appointment");
-
-                        if (patientData) {
+                        if (patientData !== null) {
                             let encounterData = FHIR("Encounter", "doWork", {
                                 functionName: "createNewEncounter",
                                 functionParams: {
@@ -266,7 +270,6 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                 console.log("Error: " + e);
             }
         })();
-        console.log("=============patientAdmissionAction==================");
     };
 
     //End block of handle's function
