@@ -61,7 +61,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
     const onSubmit = (data, e) => {
         console.log("===============data of form==================");
-        console.log(data);
+        console.log(data);console.log(errors);
         console.log("===============data of form==================");
     };
 
@@ -150,6 +150,27 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         }
     };
 
+    function valid_credit_card(value) {
+        // Accept only digits, dashes or spaces
+        if (/[^0-9-\s]+/.test(value)) return false;
+
+        // The Luhn Algorithm. It's so pretty.
+        let nCheck = 0, bEven = false;
+        value = value.replace(/\D/g, "");
+
+        for (var n = value.length - 1; n >= 0; n--) {
+            var cDigit = value.charAt(n),
+                nDigit = parseInt(cDigit, 10);
+
+            if (bEven && (nDigit *= 2) > 9) nDigit -= 9;
+
+            nCheck += nDigit;
+            bEven = !bEven;
+        }
+
+        return (nCheck % 10) == 0;
+    }
+
     useEffect(() => {
         (async () => {
             if (/*patientIdType !== 0 &&*/ patientIdNumber.length > 0) {
@@ -178,13 +199,21 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             setError("idNumber", "patientExist", "The patient exists in the system");
                             setFormMode('view');
                         } else {
-                            clearError("idNumber");
-                            setFormMode('write');
-                            reset(patientInitialValues);
-                            setPatientIdentifier(0);
-                            setPatientIdType(0);
-                            setPatientGender(0);
-                            setPatientKupatHolim(0);
+                            console.log("patient not found, we will make a new");
+                            console.log(patientIdType);
+                            if (!valid_credit_card(patientIdNumber) && patientIdType === "teudat_zehut") {
+                                console.log(patientIdNumber);
+                                setError("idNumber", "notValid", "The number entered is incorrect");
+                            } else {
+                                clearError("idNumber");
+                                setPatientIdentifier(0);
+                                //setPatientIdType(0);
+                                setFormMode('write');
+                                reset(patientInitialValues);
+                                setPatientGender(0);
+                                setPatientKupatHolim(0);
+                            }
+                            //check if number is valid
                         }
                     });
                 } catch (err) {
