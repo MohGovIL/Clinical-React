@@ -112,33 +112,58 @@ const PatientDetailsBlock = ({
         //     patientPatchParams['postalCode'] = data.POBoxPostalCode;
         //   }
         // }
-        // if (data.isEscorted) {
-        //   let relatedPerson = {};
-        //   if (data.escortName) {
-        //   }
-        //   if (data.escortMobilePhone) {
-        //   }
-        // }
-
         // const patient = await FHIR('Patient', 'doWork', {
         //   functionName: 'updatePatient',
         //   functionParams: { patientPatchParams, patientId: patientData.id },
         // });
 
-        //Updating relatedPerson
-
-        let relatedPersonParams = {};
-        const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
-          // eslint-disable-next-line no-use-before-define
-          functionName: Object.values(relatedPerson).length
-            ? 'updateRelatedPerson'
-            : 'createRelatedPerson',
-          functionParams: {
-            relatedPersonParams,
-            // eslint-disable-next-line no-use-before-define
-            relatedPersonId: relatedPerson.id,
-          },
-        });
+        //Updating/Creating relatedPerson
+        if (data.isEscorted) {
+          let relatedPersonParams = {};
+          if (Object.values(relatedPerson).length) {
+            if (
+              data.escortName !== relatedPerson.name &&
+              data.escortMobilePhone !== relatedPerson.mobilePhone
+            ) {
+              relatedPersonParams['name'] = data.escortName;
+              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+              const relatedPersonResponse = await FHIR(
+                'RelatedPerson',
+                'doWork',
+                {
+                  // eslint-disable-next-line no-use-before-define
+                  functionName: 'updateRelatedPerson',
+                  functionParams: {
+                    relatedPersonParams,
+                    // eslint-disable-next-line no-use-before-define
+                    relatedPersonId: relatedPerson.id,
+                  },
+                },
+              );
+            }
+            // Right now there is no name implemented in the server so this is false.
+          } else {
+            if (data.escortName) {
+              relatedPersonParams['name'] = data.escortName;
+            }
+            if (data.escortMobilePhone) {
+              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+            }
+            const relatedPersonResponse = await FHIR(
+              'RelatedPerson',
+              'doWork',
+              {
+                // eslint-disable-next-line no-use-before-define
+                functionName: 'createRelatedPerson',
+                functionParams: {
+                  relatedPersonParams,
+                },
+              },
+            );
+          }
+        }
+        // TODO when all API's checked use a Promise.All to check for all the API's so if one fails all fail as well.
+        // Promise.all(allPromisesArray)
       } else {
         triggerValidation();
       }
@@ -667,6 +692,7 @@ const PatientDetailsBlock = ({
               name='isEscorted'
               control={control}
               defaultValue={isEscorted}
+              onChangeName={isEscortedSwitchOnChangeHandle}
               as={
                 <StyledSwitch
                   name='isEscorted'

@@ -19,9 +19,9 @@ const RelatedPersonStats = {
   },
   createRelatedPerson: (params) => {
     const denormalizedRelatedPerson = denormalizeRelatedPerson(
-      params.relatedPersonParams,
+      params.functionParams.relatedPersonParams,
     );
-    return CRUDOperations('post', `${params.url}`, denormalizedRelatedPerson);
+    return CRUDOperations('create', `${params.url}`, denormalizedRelatedPerson);
   },
   updateRelatedPerson: (params) => {
     const patchArr = [];
