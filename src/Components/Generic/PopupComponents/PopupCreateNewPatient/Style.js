@@ -11,7 +11,6 @@ export const StyledForm = styled.div`
    }
 
     .MuiInputLabel-formControl {
-      //right: ${props => props.languageDirection === "rtl" ? '24px' : 'unset'};
       left: unset;
       color: #000b40;
       font-size: 16px;
@@ -40,7 +39,6 @@ export const StyledForm = styled.div`
       text-align: right;
       color: #1e2132;
       margin-right: 20px;
-      //opacity: 60%;
     }
 
     .MuiSelect-iconFilled {
@@ -60,7 +58,7 @@ export const StyledForm = styled.div`
    }
 
    .MuiInputLabel-root{
-      //right: 23px;
+
    }
 
    .MuiSelect-filled.MuiSelect-filled, .MuiSelect-select.MuiSelect-select {
