@@ -1,3 +1,8 @@
+/**
+ * @author Idan Gigi idangi@matrix.co.il
+ * @param {object} relatedPerson
+ * @returns {object} denormalizedRelatedPerson
+ */
 const denormalizeRelatedPerson = (relatedPerson) => {
   const telecom = [];
   const identifierObj = {};
@@ -71,6 +76,7 @@ const denormalizeRelatedPerson = (relatedPerson) => {
   if (telecom.length) {
     denormalizedRelatedPerson['telecom'] = telecom;
   }
+  return denormalizedRelatedPerson;
 };
 
 export default denormalizeRelatedPerson;
