@@ -18,7 +18,7 @@ const QuestionnaireResponseStats = {
   },
 };
 
-export default function Questionnaire(action = null, params = null) {
+export default function QuestionnaireResponse(action = null, params = null) {
   if (action) {
     const transformer =
       QuestionnaireResponseStats[action] ??

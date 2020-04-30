@@ -118,6 +118,11 @@ const PatientDetailsBlock = ({
         // });
 
         //Updating/Creating relatedPerson
+        if (encounterData.appointment) {
+          // Updating the appointment related to the encounter to status 'arrived'
+          const updateAppointment = FHIR('Appointment', 'doWork', {});
+        }
+
         if (data.isEscorted) {
           let relatedPersonParams = {};
           if (Object.values(relatedPerson).length) {
@@ -172,7 +177,7 @@ const PatientDetailsBlock = ({
       console.log(error);
     }
 
-    // 0. Run isRequired validation
+    // 0. Run isRequired validation - done but didn't check
     // 1. Check if the encounter has ref to any appointment if there is any ref change their status to 'arrived'
     // 2. Change the encounter status to arrived ONLY if the current status of the encounter is 'planned'
     // 3. Save the commitment data
@@ -649,17 +654,31 @@ const PatientDetailsBlock = ({
         })();
       }
     }
-    (async () => {
-      try {
-        const questionnaire = await FHIR('Questionnaire', 'doWork', {
-          functionName: 'getQuestionnaire',
-          functionParams: { QuestionnaireName: 'commitment_questionnaire' },
-        });
-      } catch (error) {
-        console.log(error);
-      }
-      // TODO when there will be data inside store the needed data inside a state.
-    })();
+    if (encounterData && patientData) {
+      (async () => {
+        try {
+          const questionnaire = await FHIR('Questionnaire', 'doWork', {
+            functionName: 'getQuestionnaire',
+            functionParams: { QuestionnaireName: 'commitment_questionnaire' },
+          });
+          const questionnaireResponse = await FHIR(
+            'QuestionnaireResponse',
+            'doWork',
+            {
+              functionName: 'getQuestionnaireResponse',
+              functionParams: {
+                patientId: patientData.id,
+                encounterId: encounterData.id,
+                questionnaireId: questionnaire.data.entry[1].resource.id,
+              },
+            },
+          );
+        } catch (error) {
+          console.log(error);
+        }
+        // TODO when there will be data inside store the needed data inside a state.
+      })();
+    }
   }, [encounterData, patientData]);
 
   return (
