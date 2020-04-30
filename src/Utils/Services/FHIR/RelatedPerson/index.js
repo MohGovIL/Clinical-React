@@ -18,27 +18,26 @@ const RelatedPersonStats = {
   },
   createRelatedPerson: (params) => {
     const relatedPerson = {};
+
     return CRUDOperations('post', `${params.url}`, relatedPerson);
   },
   updateRelatedPerson: (params) => {
     const patchArr = [];
-    for (const dataKey in params.functionParams.relatedPersonPatchParams) {
-      if (
-        params.functionParams.relatedPersonPatchParams.hasOwnProperty(dataKey)
-      ) {
+    for (const dataKey in params.functionParams.relatedPersonParams) {
+      if (params.functionParams.relatedPersonParams.hasOwnProperty(dataKey)) {
         switch (dataKey) {
           case 'active':
             patchArr.push({
               op: 'replace',
               path: '/active',
-              value: params.functionParams.relatedPersonPatchParams[dataKey],
+              value: params.functionParams.relatedPersonParams[dataKey],
             });
             break;
           case 'patient':
             patchArr.push({
               op: 'replace',
               path: '/patient/reference',
-              value: params.functionParams.relatedPersonPatchParams[dataKey],
+              value: params.functionParams.relatedPersonParams[dataKey],
             });
             break;
           case 'email':
@@ -47,7 +46,7 @@ const RelatedPersonStats = {
               path: '/telecom/0',
               value: {
                 system: 'email',
-                value: params.functionParams.relatedPersonPatchParams[dataKey],
+                value: params.functionParams.relatedPersonParams[dataKey],
               },
             });
             break;
@@ -57,7 +56,7 @@ const RelatedPersonStats = {
               path: '/telecom/0',
               value: {
                 system: 'phone',
-                value: params.functionParams.relatedPersonPatchParams[dataKey],
+                value: params.functionParams.relatedPersonParams[dataKey],
                 use: 'mobile',
               },
             });
@@ -68,7 +67,7 @@ const RelatedPersonStats = {
               path: '/telecom/0',
               value: {
                 system: 'phone',
-                value: params.functionParams.relatedPersonPatchParams[dataKey],
+                value: params.functionParams.relatedPersonParams[dataKey],
                 use: 'home',
               },
             });
@@ -77,28 +76,28 @@ const RelatedPersonStats = {
             patchArr.push({
               op: 'replace',
               path: '/relationship/0/coding/0/code',
-              value: params.functionParams.relatedPersonPatchParams[dataKey],
+              value: params.functionParams.relatedPersonParams[dataKey],
             });
             break;
           case 'identifierType':
             patchArr.push({
               op: 'replace',
               path: '/identifier/0/type/coding/0/code',
-              value: params.functionParams.relatedPersonPatchParams[dataKey],
+              value: params.functionParams.relatedPersonParams[dataKey],
             });
             break;
           case 'identifier':
             patchArr.push({
               op: 'replace',
               path: '/identifier/0/value',
-              value: params.functionParams.relatedPersonPatchParams[dataKey],
+              value: params.functionParams.relatedPersonParams[dataKey],
             });
             break;
           case 'gender':
             patchArr.push({
               op: 'replace',
               path: '/gender',
-              value: params.functionParams.relatedPersonPatchParams[dataKey],
+              value: params.functionParams.relatedPersonParams[dataKey],
             });
             break;
           default:

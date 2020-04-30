@@ -124,13 +124,18 @@ const PatientDetailsBlock = ({
         //   functionName: 'updatePatient',
         //   functionParams: { patientPatchParams, patientId: patientData.id },
         // });
-        //Updating relatedPerson
-        let relatedPersonParams = {};
 
+        //Updating relatedPerson
+
+        let relatedPersonParams = {};
         const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
-          functionName: 'updateRelatedPerson',
+          // eslint-disable-next-line no-use-before-define
+          functionName: Object.values(relatedPerson).length
+            ? 'updateRelatedPerson'
+            : 'createRelatedPerson',
           functionParams: {
             relatedPersonParams,
+            // eslint-disable-next-line no-use-before-define
             relatedPersonId: relatedPerson.id,
           },
         });
