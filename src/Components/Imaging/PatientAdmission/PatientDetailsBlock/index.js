@@ -85,42 +85,52 @@ const PatientDetailsBlock = ({
     try {
       // if (isRequiredValidation(data)) {
       if (true) {
+        const APIsArray = [];
         // Continue if required is true.
         //Updating patient
-        // let patientPatchParams = {};
-        // if (contactInformationTabValue === 0) {
-        //   if (data.addressCity) {
-        //     patientPatchParams['city'] = addressCity.code;
-        //   }
-        //   if (data.addressStreet) {
-        //     patientPatchParams['streetName'] = addressStreet.code; //Added 1 just for checking if the API works since there are no valueSet for streets.
-        //   }
-        //   if (data.addressStreetNumber) {
-        //     patientPatchParams['streetNumber'] = data.addressStreetNumber;
-        //   }
-        //   if (data.addressPostalCode) {
-        //     patientPatchParams['postalCode'] = data.addressPostalCode;
-        //   }
-        // } else {
-        //   if (data.POBoxCity) {
-        //     patientPatchParams['city'] = POBoxCity.code;
-        //   }
-        //   if (data.POBox) {
-        //     patientPatchParams['POBox'] = data.POBox;
-        //   }
-        //   if (data.POBoxPostalCode) {
-        //     patientPatchParams['postalCode'] = data.POBoxPostalCode;
-        //   }
-        // }
-        // const patient = await FHIR('Patient', 'doWork', {
-        //   functionName: 'updatePatient',
-        //   functionParams: { patientPatchParams, patientId: patientData.id },
-        // });
+        let patientPatchParams = {};
+        if (contactInformationTabValue === 0) {
+          if (data.addressCity) {
+            patientPatchParams['city'] = addressCity.code;
+          }
+          if (data.addressStreet) {
+            patientPatchParams['streetName'] = addressStreet.code; //Added 1 just for checking if the API works since there are no valueSet for streets.
+          }
+          if (data.addressStreetNumber) {
+            patientPatchParams['streetNumber'] = data.addressStreetNumber;
+          }
+          if (data.addressPostalCode) {
+            patientPatchParams['postalCode'] = data.addressPostalCode;
+          }
+        } else {
+          if (data.POBoxCity) {
+            patientPatchParams['city'] = POBoxCity.code;
+          }
+          if (data.POBox) {
+            patientPatchParams['POBox'] = data.POBox;
+          }
+          if (data.POBoxPostalCode) {
+            patientPatchParams['postalCode'] = data.POBoxPostalCode;
+          }
+        }
+        const patient = await FHIR('Patient', 'doWork', {
+          functionName: 'updatePatient',
+          functionParams: { patientPatchParams, patientId: patientData.id },
+        });
 
         //Updating/Creating relatedPerson
         if (encounterData.appointment) {
-          // Updating the appointment related to the encounter to status 'arrived'
-          const updateAppointment = FHIR('Appointment', 'doWork', {});
+          const updateAppointment = await FHIR('Appointment', 'doWork', {
+            functionName: 'updateAppointment',
+            functionParams: {
+              functionParams: {
+                appointmentId: encounterData.appointment,
+                appointmentParams: {
+                  status: 'arrived',
+                },
+              },
+            },
+          });
         }
 
         if (data.isEscorted) {
@@ -146,7 +156,6 @@ const PatientDetailsBlock = ({
                 },
               );
             }
-            // Right now there is no name implemented in the server so this is false.
           } else {
             if (data.escortName) {
               relatedPersonParams['name'] = data.escortName;
