@@ -83,100 +83,99 @@ const PatientDetailsBlock = ({
   //Sending the form
   const onSubmit = async (data) => {
     try {
-      // if (isRequiredValidation(data)) {
-      if (true) {
-        const APIsArray = [];
-        // Continue if required is true.
-        //Updating patient
-        let patientPatchParams = {};
-        if (contactInformationTabValue === 0) {
-          if (data.addressCity) {
-            patientPatchParams['city'] = addressCity.code;
-          }
-          if (data.addressStreet) {
-            patientPatchParams['streetName'] = addressStreet.code;
-          }
-          if (data.addressStreetNumber) {
-            patientPatchParams['streetNumber'] = data.addressStreetNumber;
-          }
-          if (data.addressPostalCode) {
-            patientPatchParams['postalCode'] = data.addressPostalCode;
-          }
-        } else {
-          if (data.POBoxCity) {
-            patientPatchParams['city'] = POBoxCity.code;
-          }
-          if (data.POBox) {
-            patientPatchParams['POBox'] = data.POBox;
-          }
-          if (data.POBoxPostalCode) {
-            patientPatchParams['postalCode'] = data.POBoxPostalCode;
-          }
-        }
-        APIsArray.push(
-          FHIR('Patient', 'doWork', {
-            functionName: 'updatePatient',
-            functionParams: { patientPatchParams, patientId: patientData.id },
-          }),
-        );
-
-        //Updating/Creating relatedPerson
-        if (encounterData.appointment) {
-          APIsArray.push(
-            FHIR('Appointment', 'doWork', {
-              functionName: 'updateAppointment',
-              functionParams: {
-                functionParams: {
-                  appointmentId: encounterData.appointment,
-                  appointmentParams: {
-                    status: 'arrived',
-                  },
-                },
-              },
-            }),
-          );
-        }
-
-        if (data.isEscorted) {
-          let relatedPersonParams = {};
-          if (Object.values(relatedPerson).length) {
-            if (
-              data.escortName !== relatedPerson.name &&
-              data.escortMobilePhone !== relatedPerson.mobilePhone
-            ) {
-              relatedPersonParams['name'] = data.escortName;
-              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
-              APIsArray.push(
-                FHIR('RelatedPerson', 'doWork', {
-                  // eslint-disable-next-line no-use-before-define
-                  functionName: 'updateRelatedPerson',
-                  functionParams: {
-                    relatedPersonParams,
-                    // eslint-disable-next-line no-use-before-define
-                    relatedPersonId: relatedPerson.id,
-                  },
-                }),
-              );
-            }
-          } else {
-            if (data.escortName) {
-              relatedPersonParams['name'] = data.escortName;
-            }
-            if (data.escortMobilePhone) {
-              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
-            }
-            APIsArray.push(
-              FHIR('RelatedPerson', 'doWork', {
-                // eslint-disable-next-line no-use-before-define
-                functionName: 'createRelatedPerson',
-                functionParams: {
-                  relatedPersonParams,
-                },
-              }),
-            );
-          }
-        }
-        await Promise.all(APIsArray);
+      const clear = isRequiredValidation(data);
+      console.log(errors);
+      if (clear) {
+        // if (true) {
+        //   const APIsArray = [];
+        //   //Updating patient
+        //   let patientPatchParams = {};
+        //   if (contactInformationTabValue === 0) {
+        //     if (data.addressCity) {
+        //       patientPatchParams['city'] = addressCity.code;
+        //     }
+        //     if (data.addressStreet) {
+        //       patientPatchParams['streetName'] = addressStreet.code;
+        //     }
+        //     if (data.addressStreetNumber) {
+        //       patientPatchParams['streetNumber'] = data.addressStreetNumber;
+        //     }
+        //     if (data.addressPostalCode) {
+        //       patientPatchParams['postalCode'] = data.addressPostalCode;
+        //     }
+        //   } else {
+        //     if (data.POBoxCity) {
+        //       patientPatchParams['city'] = POBoxCity.code;
+        //     }
+        //     if (data.POBox) {
+        //       patientPatchParams['POBox'] = data.POBox;
+        //     }
+        //     if (data.POBoxPostalCode) {
+        //       patientPatchParams['postalCode'] = data.POBoxPostalCode;
+        //     }
+        //   }
+        //   APIsArray.push(
+        //     FHIR('Patient', 'doWork', {
+        //       functionName: 'updatePatient',
+        //       functionParams: { patientPatchParams, patientId: patientData.id },
+        //     }),
+        //   );
+        //   //Updating/Creating relatedPerson
+        //   if (encounterData.appointment) {
+        //     APIsArray.push(
+        //       FHIR('Appointment', 'doWork', {
+        //         functionName: 'updateAppointment',
+        //         functionParams: {
+        //           functionParams: {
+        //             appointmentId: encounterData.appointment,
+        //             appointmentParams: {
+        //               status: 'arrived',
+        //             },
+        //           },
+        //         },
+        //       }),
+        //     );
+        //   }
+        //   if (data.isEscorted) {
+        //     let relatedPersonParams = {};
+        //     if (Object.values(relatedPerson).length) {
+        //       if (
+        //         data.escortName !== relatedPerson.name &&
+        //         data.escortMobilePhone !== relatedPerson.mobilePhone
+        //       ) {
+        //         relatedPersonParams['name'] = data.escortName;
+        //         relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+        //         APIsArray.push(
+        //           FHIR('RelatedPerson', 'doWork', {
+        //             // eslint-disable-next-line no-use-before-define
+        //             functionName: 'updateRelatedPerson',
+        //             functionParams: {
+        //               relatedPersonParams,
+        //               // eslint-disable-next-line no-use-before-define
+        //               relatedPersonId: relatedPerson.id,
+        //             },
+        //           }),
+        //         );
+        //       }
+        //     } else {
+        //       if (data.escortName) {
+        //         relatedPersonParams['name'] = data.escortName;
+        //       }
+        //       if (data.escortMobilePhone) {
+        //         relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+        //       }
+        //       APIsArray.push(
+        //         FHIR('RelatedPerson', 'doWork', {
+        //           // eslint-disable-next-line no-use-before-define
+        //           functionName: 'createRelatedPerson',
+        //           functionParams: {
+        //             relatedPersonParams,
+        //           },
+        //         }),
+        //       );
+        //     }
+        //   }
+        //   await Promise.all(APIsArray);
       } else {
         triggerValidation();
       }
@@ -518,10 +517,10 @@ const PatientDetailsBlock = ({
   const validateDate = (date, type) => {
     switch (type) {
       case 'before':
-        return moment(date).isSameOrBefore(moment(new Date()));
+        return moment(date).isSameOrBefore(moment(), 'day');
 
       case 'after':
-        return moment(date).isSameOrAfter(moment(new Date()));
+        return moment(date).isSameOrAfter(moment(), 'day');
 
       default:
         return false;
@@ -1216,10 +1215,10 @@ const PatientDetailsBlock = ({
                 as={
                   <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                     <StyledKeyboardDatePicker
+                      disabledToolbar
                       autoOk
-                      mask={formatDate}
-                      disableToolbar
                       variant='inline'
+                      mask={formatDate}
                       format={formatDate}
                       margin='normal'
                       id='commitmentAndPaymentCommitmentValidity'
