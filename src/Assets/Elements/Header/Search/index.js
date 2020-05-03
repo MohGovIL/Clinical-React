@@ -47,8 +47,14 @@ const Search = ({languageDirection}) => {
     const [isClickedAway, setIsClickedAway] = useState(false);
     const [result, setResult] = useState({});
 
-
+    const onFocusHandler = async e =>{
+        if (e.target.value.length > 2) {
+           e.target.value+=" ";
+            e.target.value = e.target.value.trim();
+        }
+    }
     const onChangeHandler = async e => {
+
         setIsClickedAway(false);
         const target = e.target;
         let tValue = target.value;
@@ -104,7 +110,7 @@ const Search = ({languageDirection}) => {
 
     };
     const handleOnClickAway = () => {
-        debugger;
+
         setIsClickedAway(true);
     }
 

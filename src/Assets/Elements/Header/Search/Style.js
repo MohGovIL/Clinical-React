@@ -81,7 +81,7 @@ height: 315px;
 
 export const WrapperSearchPaper = styled.div`
     position: relative;
-        position: absolute;
+   position: absolute;
     left: 30%;
     top: 100%;
 }

@@ -243,7 +243,7 @@ const DrawThisTable = ({result, searchParam}) => {
     }
 
 
-    debugger;
+
     if (result) {
         return (
             result.map((patient, patientIndex) => {
