@@ -79,7 +79,6 @@ const PatientDetailsBlock = ({
     submitFocusError: true,
   });
 
-  const [relatedPerson, setRelatedPerson] = useState({});
   //Sending the form
   const onSubmit = async (data) => {
     try {
@@ -283,6 +282,7 @@ const PatientDetailsBlock = ({
   // Escorted Information
   // Escorted Information - vars
   const [isEscorted, setIsEscorted] = useState(false);
+  const [relatedPerson, setRelatedPerson] = useState({});
   // Escorted Information - functions
   const isEscortedSwitchOnChangeHandle = () => {
     setIsEscorted((prevState) => {
@@ -501,6 +501,7 @@ const PatientDetailsBlock = ({
     setSelectedServicesType(filteredSelectedServicesType);
   };
   // Commitment And Payment - vars
+  const [questionnaireResponse, setQuestionnaireResponse] = useState();
   const [
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,
