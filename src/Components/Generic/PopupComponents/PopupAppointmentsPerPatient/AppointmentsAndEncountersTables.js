@@ -1,5 +1,5 @@
 import React from 'react';
-import TitleValueComponent from "./TitleValueComponent";
+import TitleValueComponent from "../../../../Assets/Elements/Header/Search/DrawThisTable/TitleValueComponent";
 import {useTranslation} from "react-i18next";
 import {
     StyledBottomLinks,
@@ -8,16 +8,16 @@ import {
     StyledLabelName, StyledLabelServiceTypeAppointment,
     StyledLabelStatusAppointment, StyledLabelTableButton,
     StyledLinkWithIconComponent, StyledTableTextCell
-} from "./Style";
+} from "../../../../Assets/Elements/Header/Search/DrawThisTable/Style";
 import moment from "moment";
 import normalizeFhirAppointment
     from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
     from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
-import LinkComponentWithIcon from "./LinkComponentWithIcon";
+import LinkComponentWithIcon from "../../../../Assets/Elements/Header/Search/DrawThisTable/LinkComponentWithIcon";
 
 import ListItem from "@material-ui/core/ListItem";
-import Header from "../../index";
+import Header from "../../../../Assets/Elements/Header";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -26,8 +26,8 @@ import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
-import {normalizeFhirAppointmentsWithPatients} from "../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
-import {StyledIconValueComponent} from "../Style";
+import {normalizeFhirAppointmentsWithPatients} from "../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients";
+import {StyledIconValueComponent} from "Assets/Elements/Header/Search/Style";
 import Link from "@material-ui/core/Link";
 
 

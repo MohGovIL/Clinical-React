@@ -3,8 +3,8 @@ import React from 'react';
 import {useTranslation} from "react-i18next";
 
 
-import AppointmentsPerPatient from "./AppointmentsPerPatient";
-import CustomizedPopup from "../../../CustomizedPopup";
+import AppointmentsPerPatient from "Assets/Elements/Header/Search/DrawThisTable/AppointmentsPerPatient";
+import CustomizedPopup from "Assets/Elements/CustomizedPopup";
 import normalizeFhirAppointment
     from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import normalizeFhirEncounter
@@ -18,7 +18,7 @@ const Transition = React.forwardRef(function Transition(props, ref,direction) {
 });
 
 
-const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => {
+const Index = ({content, popupOpen, handlePopupClose}) => {
     const {t} = useTranslation();
 
     if(!content)
@@ -29,28 +29,6 @@ const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => 
         const prevEncounters = content && content.prevEncounter ? content.prevEncounter : null;
         const patientTrackingStatuses = content && content.patientTrackingStatuses ? content.patientTrackingStatuses : null ;
         const encounterStatuses = content && content.encounterStatuses ? content.encounterStatuses : null;
-
-
-        /*const bottomButtonsData = [
-            {
-                'label': 'Encounters and appointments',
-                'variant': "text",
-                'color': "primary",
-                'type': "submit"
-            },
-            {
-                'label': 'Encounters and appointments',
-                'variant': "contained",
-                'color': "primary",
-                'onClickHandler': handlePopupClose //user function
-            },
-            {
-                'label': 'Encounters and appointments',
-                'variant': "contained",
-                'color': "primary",
-                'onClickHandler': handlePopupClose //user function
-            }
-        ];*/
 
         return content ? (
 
@@ -81,4 +59,4 @@ const PopUpAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => 
 };
 
 
-export default PopUpAppointmentsPerPatient;
+export default Index;
