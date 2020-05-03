@@ -3,6 +3,7 @@
  */
 
 import { CRUDOperations } from '../CRUDOperations/index';
+import denormalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirQuestionnaireResponse';
 
 const QuestionnaireResponseStats = {
   doWork: (parameters = null) => {
@@ -16,10 +17,17 @@ const QuestionnaireResponseStats = {
       `${params.url}?encounter=${params.functionParams.encounterId}&patient=${params.functionParams.patientId}&questionnaire=${params.functionParams.questionnaireId}`,
     );
   },
-  questionnaireResponse: (params) => {
+  createQuestionnaireResponse: (params) => {
     // TODO call a denormalize for questionnaireResponse;
     // params.functionParams.questionnaireResponse;
-    return CRUDOperations('create', `${params.url}`);
+    const denormalizedQuestionnaireResponse = denormalizeFhirQuestionnaireResponse(
+      params.functionParams.questionnaireResponse,
+    );
+    return CRUDOperations(
+      'create',
+      `${params.url}`,
+      denormalizedQuestionnaireResponse,
+    );
   },
 };
 
