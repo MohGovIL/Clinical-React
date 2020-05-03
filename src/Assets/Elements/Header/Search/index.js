@@ -110,7 +110,7 @@ const Search = ({languageDirection}) => {
 
     };
     const handleOnClickAway = () => {
-
+        return ;
         setIsClickedAway(true);
     }
 
