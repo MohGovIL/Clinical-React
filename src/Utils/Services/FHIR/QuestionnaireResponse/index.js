@@ -16,6 +16,11 @@ const QuestionnaireResponseStats = {
       `${params.url}?encounter=${params.functionParams.encounterId}&patient=${params.functionParams.patientId}&questionnaire=${params.functionParams.questionnaireId}`,
     );
   },
+  createQuestionnaireResponse: (params) => {
+    // TODO call a denormalize for questionnaireResponse;
+    // params.functionParams.questionnaireResponse;
+    return CRUDOperations('create', `${params.url}`);
+  },
 };
 
 export default function QuestionnaireResponse(action = null, params = null) {

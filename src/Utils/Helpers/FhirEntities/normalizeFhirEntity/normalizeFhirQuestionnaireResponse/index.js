@@ -12,7 +12,7 @@ const normalizeFhirQuestionnaireResponse = (questionnaireResponse) => {
   let authored = '';
   let author = '';
   let source = '';
-  let item = [];
+  let items = [];
 
   if (questionnaireResponse.questionnaire) {
     questionnaire = questionnaireResponse.questionnaire.split('/')[1];
@@ -38,7 +38,7 @@ const normalizeFhirQuestionnaireResponse = (questionnaireResponse) => {
     }
   }
   if (questionnaireResponse.item.length) {
-    item = [...questionnaireResponse.item];
+    items = [...questionnaireResponse.item];
   }
 
   return {
@@ -50,7 +50,7 @@ const normalizeFhirQuestionnaireResponse = (questionnaireResponse) => {
     authored: questionnaireResponse.authored || authored,
     author,
     source,
-    item,
+    items,
   };
 };
 

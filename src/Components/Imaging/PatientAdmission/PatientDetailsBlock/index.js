@@ -10,6 +10,7 @@ import { DevTool } from 'react-hook-form-devtools'; // Used to see the state of 
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
 import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
+import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 
 // Styles
 import {
@@ -175,6 +176,12 @@ const PatientDetailsBlock = ({
         //     }
         //   }
         //   await Promise.all(APIsArray);
+
+        if (Object.values(questionnaireResponse).length) {
+          //Update existing questionnaireResponse
+        } else {
+          // Create a new questionnaireResponse
+        }
       } else {
         triggerValidation();
       }
@@ -501,7 +508,7 @@ const PatientDetailsBlock = ({
     setSelectedServicesType(filteredSelectedServicesType);
   };
   // Commitment And Payment - vars
-  const [questionnaireResponse, setQuestionnaireResponse] = useState();
+  const [questionnaireResponse, setQuestionnaireResponse] = useState({});
   const [
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,
@@ -669,7 +676,7 @@ const PatientDetailsBlock = ({
             functionName: 'getQuestionnaire',
             functionParams: { QuestionnaireName: 'commitment_questionnaire' },
           });
-          const questionnaireResponse = await FHIR(
+          const questionnaireResponseData = await FHIR(
             'QuestionnaireResponse',
             'doWork',
             {
@@ -681,6 +688,30 @@ const PatientDetailsBlock = ({
               },
             },
           );
+          if (questionnaireResponse.data.total !== 0) {
+            const normalizedQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
+              questionnaireResponseData.data.entry[1].resource,
+            );
+            setQuestionnaireResponse(normalizedQuestionnaireResponse);
+            if (normalizedQuestionnaireResponse.items.length) {
+              const commitmentDate = normalizedQuestionnaireResponse.items.find(
+                (item) => item.text === 'Commitment date',
+              );
+              const commitmentValidity = normalizedQuestionnaireResponse.items.find(
+                (item) => item.text === 'Commitment expiration date',
+              );
+              if (commitmentDate) {
+                setCommitmentAndPaymentCommitmentDate(
+                  moment(commitmentDate.answer[0].valueDate),
+                );
+              }
+              if (commitmentValidity) {
+                setCommitmentAndPaymentCommitmentValidity(
+                  moment(commitmentValidity.answer[0].valueDate),
+                );
+              }
+            }
+          }
         } catch (error) {
           console.log(error);
         }
@@ -1148,22 +1179,35 @@ const PatientDetailsBlock = ({
                 defaultValue={patientData.managingOrganization || ''}
                 control={control}
               />
-              <StyledTextField
+              <Controller
+                control={control}
                 name='commitmentAndPaymentReferenceForPaymentCommitment'
-                inputRef={register()}
-                label={`${t('Reference for payment commitment')} *`}
-                id={'commitmentAndPaymentReferenceForPaymentCommitment'}
-                type='number'
-                defaultValue=''
-                error={
-                  errors.commitmentAndPaymentReferenceForPaymentCommitment &&
-                  true
+                defaultValue={
+                  questionnaireResponse.items
+                    ? questionnaireResponse.items.find(
+                        (item) => item.linkId === '1',
+                      ).answer[0].valueInteger || ''
+                    : ''
                 }
-                helperText={
-                  errors.commitmentAndPaymentReferenceForPaymentCommitment &&
-                  t('Required field')
+                as={
+                  <StyledTextField
+                    name='commitmentAndPaymentReferenceForPaymentCommitment'
+                    inputRef={register()}
+                    label={`${t('Reference for payment commitment')} *`}
+                    id={'commitmentAndPaymentReferenceForPaymentCommitment'}
+                    type='number'
+                    error={
+                      errors.commitmentAndPaymentReferenceForPaymentCommitment &&
+                      true
+                    }
+                    helperText={
+                      errors.commitmentAndPaymentReferenceForPaymentCommitment &&
+                      t('Required field')
+                    }
+                  />
                 }
               />
+
               <Controller
                 name='commitmentAndPaymentCommitmentDate'
                 rules={{
@@ -1216,7 +1260,7 @@ const PatientDetailsBlock = ({
                 as={
                   <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                     <StyledKeyboardDatePicker
-                      disabledToolbar
+                      disableToolbar
                       autoOk
                       variant='inline'
                       mask={formatDate}
@@ -1246,20 +1290,44 @@ const PatientDetailsBlock = ({
                   </MuiPickersUtilsProvider>
                 }
               />
-              <StyledTextField
-                defaultValue=''
+              <Controller
+                control={control}
                 name='commitmentAndPaymentDoctorsName'
-                inputRef={register()}
-                label={`${t('Doctors name')} *`}
-                id={'commitmentAndPaymentDoctorsName'}
+                defaultValue={
+                  questionnaireResponse.items
+                    ? questionnaireResponse.items.find(
+                        (item) => item.linkId === '4',
+                      ).answer[0].valueString || ''
+                    : ''
+                }
+                as={
+                  <StyledTextField
+                    // name='commitmentAndPaymentDoctorsName'
+                    inputRef={register()}
+                    label={`${t('Doctors name')} *`}
+                    id={'commitmentAndPaymentDoctorsName'}
+                  />
+                }
               />
-              <StyledTextField
-                defaultValue=''
+              <Controller
+                control={control}
                 name='commitmentAndPaymentDoctorsLicense'
-                inputRef={register()}
-                label={`${t('Doctors license')} *`}
-                id={'commitmentAndPaymentDoctorsLicense'}
-                type='number'
+                defaultValue={
+                  questionnaireResponse.items
+                    ? questionnaireResponse.items.find(
+                        (item) => item.linkId === '5',
+                      ).answer[0].valueInteger || ''
+                    : ''
+                }
+                as={
+                  <StyledTextField
+                    // name='commitmentAndPaymentDoctorsLicense'
+                    inputRef={register()}
+                    label={`${t('Doctors license')} *`}
+                    id={'commitmentAndPaymentDoctorsLicense'}
+                    type='number'
+                  />
+                }
               />
             </React.Fragment>
           )}
