@@ -374,6 +374,8 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                                             </StyledHrefTableButton>
                                                         </TableCell>
                                                         <TableCell align="right">
+
+                                                            {encounter.status === "Finished"?
                                                             <StyledHrefTableButton size={'large'} variant="outlined"
                                                                                    color="primary"
                                                                                    href="#contained-buttons"
@@ -381,7 +383,7 @@ const AppointmentsAndEncountersTables = ({patient, nextAppointments, curEncounte
                                                                 /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
                                                             >
                                                                 {t("Send result")}
-                                                            </StyledHrefTableButton>
+                                                            </StyledHrefTableButton> : ""}
                                                         </TableCell>
 
 

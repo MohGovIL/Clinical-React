@@ -23,10 +23,10 @@ const AppointmentStates = {
         //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
         try {
             if (params.prev) {
-                return CRUDOperations('search',  `${params.url}?date=le${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+                return CRUDOperations('search',  `${params.url}?date=le${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
                 //    return CRUD.search(url, `date=le${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
             } else {
-                return CRUDOperations('search',  `${params.url}?date=ge${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+                return CRUDOperations('search',  `${params.url}?date=ge${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
                 //   return CRUD.search(url, `date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
             }
         } catch (err) {
@@ -41,11 +41,11 @@ const AppointmentStates = {
         try {
             if (prev) {
                 //return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=le${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
-                return CRUDOperations('search',  `${params.url}?date=le${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+                return CRUDOperations('search',  `${params.url}?date=le${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
             } else {
 
                 //return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
-                return CRUDOperations('search',  `${params.url}?date=ge${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+                return CRUDOperations('search',  `${params.url}?date=ge${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
             }
         }
         catch(err){

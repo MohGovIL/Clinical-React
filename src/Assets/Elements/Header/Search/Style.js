@@ -22,27 +22,24 @@ export default styled.div`
 export const StyledPaper = styled(Paper)`
     width: 744px;
     height: auto;
-
     border-radius: 2px;
     box-shadow: 0 0 10px 0 rgba(152,151,151,0.3);
     background-color: #ffffff;
     position: absolute;
-    margin: 26% -56%;
+    margin: 26% -710%;
     border-top: 0;
-
-
-
 `;
 
 export const StyledTriangle = styled.div`
-    content: '';
-    position: absolute;
-    height: 23px;
+   content: '';
+    height: 31px;
     width: 53px;
-    top: 100%;
-    right: -2%;
+    margin: -42% 0%;
+    right: 279px;
+    -webkit-clip-path: polygon(50% 0%,0% 100%,100% 100%);
+    -webkit-clip-path: polygon(50% 0%,0% 100%,100% 100%);
     clip-path: polygon(50% 0%,0% 100%,100% 100%);
-    z-index: 1;
+    z-index: 5;
     background-color: #ffffff;
 `;
 
@@ -80,4 +77,12 @@ export const StyledPaperContainer = styled.div`
 export const StyledContainer = styled.div`
 width: 744px;
 height: 315px;
+`;
+
+export const WrapperSearchPaper = styled.div`
+    position: relative;
+        position: absolute;
+    left: 30%;
+    top: 100%;
+}
 `;

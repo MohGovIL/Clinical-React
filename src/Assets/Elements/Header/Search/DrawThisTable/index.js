@@ -243,6 +243,7 @@ const DrawThisTable = ({result, searchParam}) => {
     }
 
 
+    debugger;
     if (result) {
         return (
             result.map((patient, patientIndex) => {
@@ -251,7 +252,7 @@ const DrawThisTable = ({result, searchParam}) => {
                         <React.Fragment>
                             <PopUpAppointmentsPerPatient  key={"PopUp"+patientIndex} popupOpen={popUpAppointmentsPerPatient}
                                                         content={appointmentPopUpData} handlePopupClose={handlePopupClose} ></PopUpAppointmentsPerPatient>
-                            <StyledExpansionPanel key={"ExpansionPanel_"+patientIndex} expanded={expanded === 'panel' + patientIndex} key={patientIndex}
+                            <StyledExpansionPanel  key={"ExpansionPanel_"+patientIndex} expanded={expanded === 'panel' + patientIndex} key={patientIndex}
                                                   onChange={handleChange('panel' + patientIndex, patient)}>
                                 <StyledExpansionPanelSummary
                                     expandIcon={<ExpandMoreIcon/>}
