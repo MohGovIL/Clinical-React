@@ -13,7 +13,7 @@ import { store } from '../../../../index';
 const EncounterStates = {
   doWork: (parameters) => {
     let componentFhirURL = '/Encounter';
-    let paramsToCRUD = parameters.functionParams; //convertParamsToUrl(parameters.functionParams);
+    let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
     paramsToCRUD.url = componentFhirURL;
     return EncounterStates[parameters.functionName](paramsToCRUD);
   },
@@ -124,7 +124,7 @@ const EncounterStates = {
     }
   },
   encountersWithPatientsBasePath: (summary) =>
-    `_sort=date${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
+    `${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
 
   getEncountersWithPatients: (params) => {
     let summary = params.summary;
@@ -132,7 +132,6 @@ const EncounterStates = {
     let serviceProvider = params.serviceProvider;
     let serviceType = '';
     let statuses = params.statuses;
-
     let statusesString = '';
     for (let status of statuses) {
       statusesString = statusesString.concat(`&status=${status}`);

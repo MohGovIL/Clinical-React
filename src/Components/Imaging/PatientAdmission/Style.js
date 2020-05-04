@@ -16,8 +16,7 @@ export const StyledPatientRow = styled.div`
   display: flex;
   flex-direction: row;
   background-color: #f6f6f6;
-  padding: 32px 0 0 0;
-  margin-top: 88px;
+  padding: 0 0 0 0;
   width: 100%;
 `;
 
@@ -25,7 +24,8 @@ export const StyledDummyBlock = styled.div`
   display: flex;
   flex-direction: column;
   flex-basis: 29%;
-  height: calc(100vh - 88px);
+  margin-top: 120px;
+  height: calc(100vh - 88px - 32px);
   z-index: ${props => props.edit_mode === 1 ? 0 : 1};
   position: relative;
 

@@ -19,7 +19,7 @@ export const normalizeFhirEncountersWithPatients = encountersData => {
             const entry = encountersData[entryIndex].resource;
             if (entry.resourceType === 'Patient') {
                 const patient = normalizeFhirPatient(entry);
-                patientsObj[`${patient.id}`] = {...patient};
+                patientsObj[`#${patient.id}`] = {...patient};
             }
         }
     }
@@ -29,7 +29,7 @@ export const normalizeFhirEncountersWithPatients = encountersData => {
             const entry = encountersData[entryIndex].resource;
             if (entry.resourceType === 'Encounter') {
                 const encounter = normalizeFhirEncounter(entry);
-                encountersObj[`${encounter.id}`] = {...encounter}
+                encountersObj[`#${encounter.id}`] = {...encounter}
             }
         }
     }

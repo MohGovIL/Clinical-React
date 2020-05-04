@@ -6,6 +6,7 @@ import AppointmentsAndEncountersTables from "./AppointmentsAndEncountersTables";
 
 
 const Transition = React.forwardRef(function Transition(props, ref,direction) {
+    debugger;
     return <Slide direction={direction?direction:"up"} ref={ref} {...props} />;
 });
 
@@ -21,18 +22,22 @@ const PopAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => {
         const prevEncounters = content && content.prevEncounter ? content.prevEncounter : null;
         const patientTrackingStatuses = content && content.patientTrackingStatuses ? content.patientTrackingStatuses : null ;
         const encounterStatuses = content && content.encounterStatuses ? content.encounterStatuses : null;
-
+        const dialog_props = {
+            fullWidth:true,
+            maxWidth : 'md',
+            TransitionComponent : Transition,
+            labelledby:"alert-dialog-slide-title",
+            describedby:"alert-dialog-slide-description"
+        };
         return content ? (
 
             <React.Fragment>
-                <CustomizedPopup isOpen={popupOpen} onClose={handlePopupClose}
-                                 title={t('Appointments And Encounters')+" > "+content.patient.firstName + " " + content.patient.lastName}
-                                 content_dividers={false}
-                                 fullWidth = {true}
-                                 maxWidth = 'md'
-                                 TransitionComponent = {Transition}
-                                 labelledby="alert-dialog-slide-title"
-                                 describedby="alert-dialog-slide-description"
+                <CustomizedPopup  title={t('Appointments And Encounters')+" > "+content.patient.firstName + " " + content.patient.lastName}
+                                  isOpen={popupOpen}
+                                  onClose={handlePopupClose}
+                                  dialog_props={dialog_props}
+                                  content_dividers={false}
+
                                  /*bottomButtons={bottomButtonsData}*/>
                     <AppointmentsAndEncountersTables
                         patientId={content.patient}

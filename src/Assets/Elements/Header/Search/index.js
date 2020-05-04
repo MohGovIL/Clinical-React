@@ -20,6 +20,7 @@ import PaperContainerComponent from "./DrawThisTable/PaperContainerComponent";
 import CustomizedTableButtonCell from "Assets/Elements/CustomizedTable/CustomizedTableButtonCell";
 import StyledButton from "Assets/Elements/CustomizedTable/CustomizedTableButton/Style";
 import {FHIR} from "Utils/Services/FHIR";
+import PopupCreateNewPatient from "Components/Generic/PopupComponents/PopupCreateNewPatient";
 
 
 const Search = ({languageDirection}) => {
@@ -46,6 +47,11 @@ const Search = ({languageDirection}) => {
     const [showResult, setShowResult] = useState(false);
     const [isClickedAway, setIsClickedAway] = useState(false);
     const [result, setResult] = useState({});
+
+    //Create new patient
+    const [popupNewPatient, setPopupNewPatient] = useState(false);
+    //
+
 
     const onFocusHandler = async e =>{
         if (e.target.value.length > 2) {
@@ -109,6 +115,14 @@ const Search = ({languageDirection}) => {
 
 
     };
+
+    const onNewPatientButtonClick = () => {
+        setPopupNewPatient(true);
+    };
+    const onCloseNewPatientClick = () => {
+        setPopupNewPatient(false);
+    };
+
     const handleOnClickAway = () => {
         return ;
         setIsClickedAway(true);
@@ -134,7 +148,8 @@ const Search = ({languageDirection}) => {
                                 </StyledPaperBottom>
                             }
                             <StyledPaperBottom elevation={1} id='results' variant="outlined" square>
-                                <StyledIconValueComponent iconType='add_circle' value='Add New Patient'/>
+                                <StyledIconValueComponent iconType='add_circle' value='Add New Patient' onClickHandler={onNewPatientButtonClick}/>
+                                <PopupCreateNewPatient popupOpen={popupNewPatient} handlePopupClose={onCloseNewPatientClick}/>
                             </StyledPaperBottom>
                         </StyledPaper>
                     </WrapperSearchPaper>
