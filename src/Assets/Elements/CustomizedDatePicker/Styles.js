@@ -17,7 +17,7 @@ export const StyledDatePicker = styled(DatePicker)`
 
 export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
   .Mui-required {
-    color: #ff0000;
+   // color: #ff0000;
   }
 `;
 
