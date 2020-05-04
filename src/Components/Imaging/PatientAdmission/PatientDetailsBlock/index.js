@@ -180,6 +180,14 @@ const PatientDetailsBlock = ({
         if (Object.values(questionnaireResponse).length) {
           //Update existing questionnaireResponse
         } else {
+          FHIR('QuestionnaireResponse', 'doWork', {
+            functionName: 'createQuestionnaireResponse',
+            functionParams: {
+              questionnaireResponse: {
+                questionnaire: '',
+              },
+            },
+          });
           // Create a new questionnaireResponse
         }
       } else {

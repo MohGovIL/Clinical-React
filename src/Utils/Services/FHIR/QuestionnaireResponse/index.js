@@ -18,8 +18,6 @@ const QuestionnaireResponseStats = {
     );
   },
   createQuestionnaireResponse: (params) => {
-    // TODO call a denormalize for questionnaireResponse;
-    // params.functionParams.questionnaireResponse;
     const denormalizedQuestionnaireResponse = denormalizeFhirQuestionnaireResponse(
       params.functionParams.questionnaireResponse,
     );
