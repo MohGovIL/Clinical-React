@@ -3,5 +3,5 @@
  * @returns {string} Returns the base path of the projects
  */
 export const basePath = () => {
-        return `${window.location.protocol}//${window.location.host}:${process.env.API_PORT}/openemr/`;
+        return `${process.env.API_BASE_URL}`;
 };
