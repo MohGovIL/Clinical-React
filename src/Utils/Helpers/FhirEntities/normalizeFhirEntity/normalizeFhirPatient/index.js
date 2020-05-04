@@ -48,7 +48,7 @@ const normalizeFhirPatient = (patient) => {
   let ageGenderType = '';
 
   if (patient.identifier.length) {
-    if(patient.identifier.type) {
+    if(patient.identifier[0].type) {
       identifierTypeText = patient.identifier[0].type.text;
       if (patient.identifier[0].type.coding) {
         identifierType =
