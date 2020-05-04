@@ -85,7 +85,7 @@ const PatientDetailsBlock = ({
     try {
       const clear = isRequiredValidation(data);
       console.log(errors);
-      if (clear) {
+      if (true) {
         // if (true) {
         //   const APIsArray = [];
         //   //Updating patient
@@ -180,15 +180,66 @@ const PatientDetailsBlock = ({
         if (Object.values(questionnaireResponse).length) {
           //Update existing questionnaireResponse
         } else {
-          FHIR('QuestionnaireResponse', 'doWork', {
+          await FHIR('QuestionnaireResponse', 'doWork', {
             functionName: 'createQuestionnaireResponse',
             functionParams: {
               questionnaireResponse: {
-                questionnaire: '',
+                questionnaire: questionnaireId,
+                status: 'completed',
+                patient: patientData.id,
+                encounter: encounterData.id,
+                authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                source: patientData.id,
+                items: [
+                  {
+                    linkId: '1',
+                    text: 'Commitment number',
+                    answer: [
+                      {
+                        valueInteger: data.commitmentAndPaymentReferenceForPaymentCommitment
+                      }
+                    ]
+                  },
+                  {
+                    linkId: '2',
+                    text: 'Commitment date',
+                    answer: [
+                      {
+                        valueInteger: data.commitmentAndPaymentCommitmentDate
+                      }
+                    ]
+                  },
+                  {
+                    linkId: '3',
+                    text: 'Commitment expiration date',
+                    answer: [
+                      {
+                        valueInteger: data.commitmentAndPaymentCommitmentValidity
+                      }
+                    ]
+                  },
+                  {
+                    linkId: '4',
+                    text: 'Signing doctor',
+                    answer: [
+                      {
+                        valueInteger: data.commitmentAndPaymentDoctorsName
+                      }
+                    ]
+                  },
+                  {
+                    linkId: '5',
+                    text: 'doctor license number',
+                    answer: [
+                      {
+                        valueInteger: data.commitmentAndPaymentDoctorsLicense
+                      }
+                    ]
+                  },
+                ]
               },
             },
           });
-          // Create a new questionnaireResponse
         }
       } else {
         triggerValidation();
@@ -238,6 +289,7 @@ const PatientDetailsBlock = ({
     commitmentAndPaymentCommitmentValidity: {
       name: 'commitmentAndPaymentCommitmentValidity',
       linkId: '3',
+      codeText: 'Commitment expiration date',
       required: function(data) {
         return (
           data[this.name] &&
@@ -517,6 +569,7 @@ const PatientDetailsBlock = ({
   };
   // Commitment And Payment - vars
   const [questionnaireResponse, setQuestionnaireResponse] = useState({});
+  const [questionnaireId, setQuestionnaireId] = useState('');
   const [
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,
@@ -684,6 +737,9 @@ const PatientDetailsBlock = ({
             functionName: 'getQuestionnaire',
             functionParams: { QuestionnaireName: 'commitment_questionnaire' },
           });
+          if (questionnaire.data.total) {
+            setQuestionnaireId(questionnaire.data.entry[1].resource.id);
+          }
           const questionnaireResponseData = await FHIR(
             'QuestionnaireResponse',
             'doWork',
@@ -696,7 +752,7 @@ const PatientDetailsBlock = ({
               },
             },
           );
-          if (questionnaireResponse.data.total !== 0) {
+          if (questionnaireResponseData.data.total !== 0) {
             const normalizedQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
               questionnaireResponseData.data.entry[1].resource,
             );
