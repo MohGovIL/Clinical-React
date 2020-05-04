@@ -27,6 +27,9 @@ const QuestionnaireResponseStats = {
       denormalizedQuestionnaireResponse,
     );
   },
+  patchQuestionnaireResponse: (params) => {
+    // return CRUDOperations('patch', `${params.url}/${}`)
+  }
 };
 
 export default function QuestionnaireResponse(action = null, params = null) {
