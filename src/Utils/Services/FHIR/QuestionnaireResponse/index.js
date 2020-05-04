@@ -29,15 +29,15 @@ const QuestionnaireResponseStats = {
   },
   patchQuestionnaireResponse: (params) => {
     const patchArr = [];
-    for (const dataKey in params.functionParams.relatedPersonParams) {
-      if (params.functionParams.relatedPersonParams.hasOwnProperty(dataKey)) {
+    for (const dataKey in params.functionParams.questionnaireResponseParams) {
+      if (params.functionParams.questionnaireResponseParams.hasOwnProperty(dataKey)) {
         // params.functionParams.relatedPersonParams[dataKey];
         switch (dataKey) {
           case 'item':
               patchArr.push({
                 op: 'replace',
                 path: '/item',
-                value: params.functionParams.relatedPersonParams[dataKey],
+                value: params.functionParams.questionnaireResponseParams[dataKey],
               })
             break;
         
