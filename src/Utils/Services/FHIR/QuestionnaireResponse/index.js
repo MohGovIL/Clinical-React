@@ -36,7 +36,8 @@ const QuestionnaireResponseStats = {
           case 'item':
               patchArr.push({
                 op: 'replace',
-                path: '/item'
+                path: '/item',
+                value: params.functionParams.relatedPersonParams[dataKey],
               })
             break;
         
