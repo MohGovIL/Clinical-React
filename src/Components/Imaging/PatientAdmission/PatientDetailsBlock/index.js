@@ -205,7 +205,7 @@ const PatientDetailsBlock = ({
                     text: 'Commitment date',
                     answer: [
                       {
-                        valueInteger: data.commitmentAndPaymentCommitmentDate
+                        valueDate: data.commitmentAndPaymentCommitmentDate
                       }
                     ]
                   },
@@ -214,7 +214,7 @@ const PatientDetailsBlock = ({
                     text: 'Commitment expiration date',
                     answer: [
                       {
-                        valueInteger: data.commitmentAndPaymentCommitmentValidity
+                        valueDate: data.commitmentAndPaymentCommitmentValidity
                       }
                     ]
                   },
@@ -223,7 +223,7 @@ const PatientDetailsBlock = ({
                     text: 'Signing doctor',
                     answer: [
                       {
-                        valueInteger: data.commitmentAndPaymentDoctorsName
+                        valueString: data.commitmentAndPaymentDoctorsName
                       }
                     ]
                   },
