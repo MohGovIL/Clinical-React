@@ -1,14 +1,6 @@
 import React from 'react';
-
 import {useTranslation} from "react-i18next";
-
-
-import AppointmentsPerPatient from "Assets/Elements/Header/Search/DrawThisTable/AppointmentsPerPatient";
 import CustomizedPopup from "Assets/Elements/CustomizedPopup";
-import normalizeFhirAppointment
-    from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
-import normalizeFhirEncounter
-    from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter";
 import Slide from "@material-ui/core/Slide";
 import AppointmentsAndEncountersTables from "./AppointmentsAndEncountersTables";
 
@@ -18,7 +10,7 @@ const Transition = React.forwardRef(function Transition(props, ref,direction) {
 });
 
 
-const Index = ({content, popupOpen, handlePopupClose}) => {
+const PopAppointmentsPerPatient = ({content, popupOpen, handlePopupClose}) => {
     const {t} = useTranslation();
 
     if(!content)
@@ -59,4 +51,4 @@ const Index = ({content, popupOpen, handlePopupClose}) => {
 };
 
 
-export default Index;
+export default PopAppointmentsPerPatient;

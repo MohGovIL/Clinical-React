@@ -32,6 +32,7 @@ import {setEncounterAndPatient} from "Store/Actions/ActiveActions";
 import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 import {useHistory} from 'react-router-dom';
 import Index from "Components/Generic/PopupComponents/PopupAppointmentsPerPatient";
+import PopAppointmentsPerPatient from "Components/Generic/PopupComponents/PopupAppointmentsPerPatient";
 
 
 
@@ -250,8 +251,8 @@ const DrawThisTable = ({result, searchParam}) => {
                 if (patient) {
                     return (
                         <React.Fragment>
-                            <Index key={"PopUp"+patientIndex} popupOpen={popUpAppointmentsPerPatient}
-                                   content={appointmentPopUpData} handlePopupClose={handlePopupClose} ></Index>
+                            <PopAppointmentsPerPatient key={"PopUp"+patientIndex} popupOpen={popUpAppointmentsPerPatient}
+                                   content={appointmentPopUpData} handlePopupClose={handlePopupClose} ></PopAppointmentsPerPatient>
                             <StyledExpansionPanel  key={"ExpansionPanel_"+patientIndex} expanded={expanded === 'panel' + patientIndex} key={patientIndex}
                                                   onChange={handleChange('panel' + patientIndex, patient)}>
                                 <StyledExpansionPanelSummary
