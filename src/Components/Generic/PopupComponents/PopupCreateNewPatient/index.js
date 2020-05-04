@@ -20,7 +20,6 @@ import normalizeFhirEncounter from "Utils/Helpers/FhirEntities/normalizeFhirEnti
 import normalizeFhirAppointment from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 import {useHistory} from 'react-router-dom';
-// const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate, facility}) => {
     const {t} = useTranslation();
@@ -34,13 +33,12 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const [patientIdNumber, setPatientIdNumber] = useState("");
     const [patientGender, setPatientGender] = useState(0);
     const [patientIdType, setPatientIdType] = useState(0);
-    const [patientBirthDate, setPatientBirthDate] = useState(0);
+    const [patientBirthDate, setPatientBirthDate] = useState(null);
     const [patientHealthManageOrganizationValue, setPatientKupatHolim] = useState(0);
 
     const [formViewMode, setFormMode] = useState('write');
     const [isFound, setIsFound] = useState(false);
 
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
     const textFieldSelectNotEmptyRule = {validate: {value: value => parseInt(value) !== 0}};
     const history = useHistory();
 
@@ -49,20 +47,16 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         lastName: '',
         mobilePhone: '',
         patientEmail: '',
+        birthDate: null,
     };
 
     //const methods = useForm({
     const {register, control, errors, reset, setError, clearError, handleSubmit, triggerValidation, setValue, getValues} = useForm({
         mode: "onChange",
-        // defaultValues: {
-        //     birthDate: patientBirthDate
-        // }
     });
 
     const onSubmit = (data, e) => {
-        console.log("===============data of form==================");
-        console.log(data);
-        console.log("===============data of form==================");
+
     };
 
     //Register TextField components in react-hook-forms
@@ -161,8 +155,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                         'functionParams': {identifierValue: patientIdNumber}
                     }).then(patients => {
                         if (patients && result) {
-                            setPatientIdentifier(patients.id);
-                            setPatientBirthDate(Moment(patients.birthDate).format(formatDate));
+                            patients.birthDate = Moment(patients.birthDate, "YYYY-MM-DD");
                             setValue("firstName", patients.firstName);
                             setValue("lastName", patients.lastName);
                             setValue("birthDate", Moment(patients.birthDate).format(formatDate));
@@ -171,6 +164,8 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             setValue("idNumberType", patients.identifierType);
                             setValue("gender", patients.gender);
                             setValue("healthManageOrganization", patients.managingOrganization);
+                            setPatientIdentifier(patients.id);
+                            setPatientBirthDate(patients.birthDate);
                             setPatientData(patients);
                             setPatientIdType(patients.identifierType);
                             setPatientGender(patients.gender);
@@ -185,6 +180,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             setPatientIdType(0);
                             setPatientGender(0);
                             setPatientKupatHolim(0);
+                            setPatientBirthDate(null);
                         }
                     });
                 } catch (err) {
@@ -324,7 +320,6 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 required
                                 rules={{
                                     validate: value => {
-                                        sleep(1000);
                                         const formValues = getValues("idNumberType");
                                         setPatientIdNumber(formValues.idNumber);
                                         return getIsFound() === true;
@@ -496,7 +491,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                             required: true,
                                             disableToolbar: false,
                                             label: t("birth day"),
-                                            inputValue: patientBirthDate,
+                                            value: patientBirthDate,
                                             mask: {formatDate},
                                             InputProps: {
                                                 // disableUnderline: edit_mode === 1 ? false : true,
