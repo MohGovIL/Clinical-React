@@ -115,7 +115,7 @@ const setPatientDataFinishedTableRows = (patients, encounters, options, history,
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
-                        idType: patient.identifierType,
+                        idType: patient.identifierTypeText,
                         priority: encounter.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,
