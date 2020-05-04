@@ -12,6 +12,7 @@ const normalizeFhirPatient = (patient) => {
   let lastName = null;
   let identifier = '';
   let identifierType = '';
+  let identifierTypeText = '';
   let city = null;
   let postalCode = null;
   let country = null;
@@ -47,10 +48,17 @@ const normalizeFhirPatient = (patient) => {
   let ageGenderType = '';
 
   if (patient.identifier.length) {
-    identifier = patient.identifier[0].value;
-    identifierType =
-      patient.identifier[0].type.coding.length &&
-      patient.identifier[0].type.coding[0].code;
+    if(patient.identifier.type) {
+      identifierTypeText = patient.identifier[0].type.text;
+      if (patient.identifier[0].type.coding) {
+        identifierType =
+        patient.identifier[0].type.coding.length &&
+        patient.identifier[0].type.coding[0].code;
+      }
+    }
+    if(patient.identifier[0].value) {
+      identifier = patient.identifier[0].value;
+    } 
   }
   if (
     patient.managingOrganization &&
@@ -117,6 +125,7 @@ const normalizeFhirPatient = (patient) => {
     streetName,
     streetNumber,
     POBox,
+    identifierTypeText,
   };
 };
 
