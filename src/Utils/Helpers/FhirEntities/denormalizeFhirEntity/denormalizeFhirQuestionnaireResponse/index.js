@@ -43,7 +43,7 @@ const denormalizeFhirQuestionnaireResponse = (questionnaireResponse) => {
             reference: `Patient/${questionnaireResponse[questionnaireResponseKey]}`,
           };
           break;
-        case 'items':
+        case 'item':
           denormalizedFhirQuestionnaireResponse['item'] =
             questionnaireResponse[questionnaireResponseKey];
           break;

@@ -28,7 +28,24 @@ const QuestionnaireResponseStats = {
     );
   },
   patchQuestionnaireResponse: (params) => {
-    // return CRUDOperations('patch', `${params.url}/${}`)
+    const patchArr = [];
+    for (const dataKey in params.functionParams.relatedPersonParams) {
+      if (params.functionParams.relatedPersonParams.hasOwnProperty(dataKey)) {
+        // params.functionParams.relatedPersonParams[dataKey];
+        switch (dataKey) {
+          case 'item':
+              patchArr.push({
+                op: 'replace',
+                path: '/item'
+              })
+            break;
+        
+          default:
+            break;
+        }
+      }
+    }
+    return CRUDOperations('patch', `${params.url}/${params.questionnaireResponseId}`, patchArr)
   }
 };
 

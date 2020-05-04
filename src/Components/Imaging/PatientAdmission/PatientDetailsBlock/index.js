@@ -190,7 +190,7 @@ const PatientDetailsBlock = ({
                 encounter: encounterData.id,
                 authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
                 source: patientData.id,
-                items: [
+                item: [
                   {
                     linkId: '1',
                     text: 'Commitment number',
