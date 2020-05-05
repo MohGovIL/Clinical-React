@@ -9,6 +9,7 @@
 import moment from 'moment';
 import { CRUDOperations } from '../CRUDOperations';
 import { store } from '../../../../index';
+import denormalizeFhirEncounter from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirEncounter';
 
 const EncounterStates = {
   doWork: (parameters) => {
@@ -191,7 +192,12 @@ const EncounterStates = {
     }
   },
   updateEncounter: (params) => {
-    return CRUDOperations('update', `${params.url}/${params.encounterId}`);
+    const denormalizedEncounter = denormalizeFhirEncounter(params.encounter);
+    return CRUDOperations(
+      'update',
+      `${params.url}/${params.encounterId}`,
+      denormalizedEncounter,
+    );
   },
 };
 

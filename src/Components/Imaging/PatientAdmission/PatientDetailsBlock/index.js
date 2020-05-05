@@ -83,11 +83,10 @@ const PatientDetailsBlock = ({
   //Sending the form
   const onSubmit = async (data) => {
     try {
-      const clear = isRequiredValidation(data);
+      // const clear = isRequiredValidation(data);
       console.log(errors);
       if (true) {
-        // if (true) {
-          // const APIsArray = [];
+        // const APIsArray = [];
         //   //Updating patient
         //   let patientPatchParams = {};
         //   if (contactInformationTabValue === 0) {
@@ -138,7 +137,7 @@ const PatientDetailsBlock = ({
         //   }
         //   if (data.isEscorted) {
         //     let relatedPersonParams = {};
-        //     if (Object.values(relatedPerson).length) {
+        //     if (encounter.relatedPerson) {
         //       if (
         //         data.escortName !== relatedPerson.name &&
         //         data.escortMobilePhone !== relatedPerson.mobilePhone
@@ -175,8 +174,7 @@ const PatientDetailsBlock = ({
         //       );
         //     }
         //   }
-        
-        
+
         // if (Object.values(questionnaireResponse).length) {
         //   APIsArray.push(FHIR('QuestionnaireResponse', 'doWork', {
         //     functionName: 'patchQuestionnaireResponse',
@@ -230,7 +228,7 @@ const PatientDetailsBlock = ({
         //         },
         //       ]
         //     }
-        //   })) 
+        //   }))
         // } else {
         //   APIsArray.push(FHIR('QuestionnaireResponse', 'doWork', {
         //     functionName: 'createQuestionnaireResponse',
@@ -293,7 +291,29 @@ const PatientDetailsBlock = ({
         //     },
         //   }));
         // }
-        // await Promise.all(APIsArray);
+        // const promises = await Promise.all(APIsArray);
+        const encounter = { ...encounterData };
+        // if (data.isEscorted) {
+        //   if (!encounter.relatedPerson) {
+        //     const NewRelatedPerson = normalizeFhirRelatedPerson(promises[3]);
+        //     encounter['relatedPerson'] = NewRelatedPerson.id;
+        //   }
+        // }
+        if (selectedServicesType.length) {
+          encounter.examinationCode = selectedServicesType.map((option) => {
+            return option.reasonCode.code;
+          });
+          encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
+        } else {
+          encounter.serviceType = '';
+          encounter.examinationCode = '';
+        }
+        const data = await FHIR('Encounter', 'doWork', {
+          functionName: 'updateEncounter',
+          encounterId: encounter.id,
+          encounter: encounter,
+        });
+        console.log(data);
       } else {
         triggerValidation();
       }
@@ -311,7 +331,7 @@ const PatientDetailsBlock = ({
   const requiredFields = {
     selectTest: {
       name: 'selectTest',
-      required: function(data) {
+      required: function (data) {
         return (
           data[this.name] &&
           data[this.name] === '' &&
@@ -323,7 +343,7 @@ const PatientDetailsBlock = ({
       name: 'commitmentAndPaymentReferenceForPaymentCommitment',
       linkId: '1',
       codeText: 'Commitment number',
-      required: function(data) {
+      required: function (data) {
         return data[this.name] && data[this.name].trim().length;
       },
     },
@@ -331,7 +351,7 @@ const PatientDetailsBlock = ({
       name: 'commitmentAndPaymentCommitmentDate',
       linkId: '2',
       codeText: 'Commitment date',
-      required: function(data) {
+      required: function (data) {
         return (
           data[this.name] &&
           moment(data[this.name]).toString().length > 0 &&
@@ -343,7 +363,7 @@ const PatientDetailsBlock = ({
       name: 'commitmentAndPaymentCommitmentValidity',
       linkId: '3',
       codeText: 'Commitment expiration date',
-      required: function(data) {
+      required: function (data) {
         return (
           data[this.name] &&
           moment(data[this.name]).toString().length > 0 &&
@@ -355,7 +375,7 @@ const PatientDetailsBlock = ({
       name: 'commitmentAndPaymentDoctorsName',
       linkId: '4',
       codeText: 'Signing doctor',
-      required: function(data) {
+      required: function (data) {
         return data[this.name] && data[this.name].trim().length;
       },
     },
@@ -363,21 +383,21 @@ const PatientDetailsBlock = ({
       name: 'commitmentAndPaymentDoctorsLicense',
       linkId: '5',
       codeText: 'doctor license number',
-      required: function(data) {
+      required: function (data) {
         return data[this.name] && data[this.name].trim().length;
       },
     },
     ReferralFile: {
       name: 'ReferralFile',
       linkId: '',
-      required: function(data) {
+      required: function (data) {
         return data[this.name] && Object.values(referralFile).length > 0;
       },
     },
     CommitmentFile: {
       name: 'CommitmentFile',
       linkId: '',
-      required: function(data) {
+      required: function (data) {
         return data[this.name] && Object.values(commitmentFile).length > 0;
       },
     },
