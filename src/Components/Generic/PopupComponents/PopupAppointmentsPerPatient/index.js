@@ -6,7 +6,6 @@ import AppointmentsAndEncountersTables from "./AppointmentsAndEncountersTables";
 
 
 const Transition = React.forwardRef(function Transition(props, ref,direction) {
-    debugger;
     return <Slide direction={direction?direction:"up"} ref={ref} {...props} />;
 });
 
