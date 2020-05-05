@@ -13,8 +13,9 @@ import { store } from '../../../../index';
 const EncounterStates = {
   doWork: (parameters) => {
     let componentFhirURL = '/Encounter';
-    parameters.url = componentFhirURL;
-    return EncounterStates[parameters.functionName](parameters);
+    let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
+    paramsToCRUD.url = componentFhirURL;
+    return EncounterStates[parameters.functionName](paramsToCRUD);
   },
   codingArr: (arr) => {
     return arr.map((arrEl) => ({ code: arrEl }));
@@ -30,19 +31,19 @@ const EncounterStates = {
       : store.getState().login.userID;
 
     //without appointment
-    if (!params.functionParams.appointment) {
+    if (!params.appointment) {
       //there is no appointment
 
       return CRUDOperations('create', `${params.url}`, {
         serviceProvider: {
-          reference: `Organization/${params.functionParams.facility}`,
+          reference: `Organization/${params.facility}`,
         },
         status: 'planned',
         period: {
           start: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
         },
         subject: {
-          reference: `Patient/${params.functionParams.patient.id}`,
+          reference: `Patient/${params.patient.id}`,
         },
         priority: {
           coding: [
@@ -63,37 +64,35 @@ const EncounterStates = {
       //with appointment
 
       let coding = EncounterStates['codingArr'](
-        params.functionParams.appointment.serviceTypeCode,
+        params.appointment.serviceTypeCode,
       );
       const serviceType = {
         coding,
       };
       // Todo fix reasonCode in here can't do it since I don't have the encounter normalizer fix from develop.
-      // coding = codingArr(params.functionParams.appointment.examinationCode);
-      // const reasonCode = params.functionParams.appointment.examinationCode
-      // params.functionParams.appointment.examination.forEach(element => {
+      // coding = codingArr(params.appointment.examinationCode);
+      // const reasonCode = params.appointment.examinationCode
+      // params.appointment.examination.forEach(element => {
 
       // });
       let reasonCode = null;
-      if (params.functionParams.appointment.examinationCode) {
-        reasonCode = params.functionParams.appointment.examinationCode.map(
-          (examination) => {
-            return {
-              coding: [
-                {
-                  code: examination,
-                },
-              ],
-            };
-          },
-        );
+      if (params.appointment.examinationCode) {
+        reasonCode = params.appointment.examinationCode.map((examination) => {
+          return {
+            coding: [
+              {
+                code: examination,
+              },
+            ],
+          };
+        });
       }
       //return fhirTokenInstance().post(`${fhirBasePath}/Encounter`, {
       return CRUDOperations('create', `${params.url}`, {
         priority: {
           coding: [
             {
-              code: `${params.functionParams.appointment.priority}`,
+              code: `${params.appointment.priority}`,
             },
           ],
         },
@@ -101,18 +100,18 @@ const EncounterStates = {
         serviceType,
         reasonCode,
         subject: {
-          reference: `Patient/${params.functionParams.appointment.patient}`,
+          reference: `Patient/${params.appointment.patient}`,
         },
         appointment: [
           {
-            reference: `Appointment/${params.functionParams.appointment.id}`,
+            reference: `Appointment/${params.appointment.id}`,
           },
         ],
         period: {
           start: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
         },
         serviceProvider: {
-          reference: `Organization/${params.functionParams.facility}`,
+          reference: `Organization/${params.facility}`,
         },
         participant: [
           {
@@ -128,40 +127,38 @@ const EncounterStates = {
     `${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
 
   getEncountersWithPatients: (params) => {
-    let summary = params.functionParams.summary;
-    let date = params.functionParams.date;
-    let serviceProvider = params.functionParams.serviceProvider;
+    let summary = params.summary;
+    let date = params.date;
+    let serviceProvider = params.serviceProvider;
     let serviceType = '';
-    let statuses = params.functionParams.statuses;
-    let sortParams = params.functionParams.sortParams;
-
+    let statuses = params.statuses;
     let statusesString = '';
     for (let status of statuses) {
       statusesString = statusesString.concat(`&status=${status}`);
     }
-    // let summaryStat = EncounterStates['encountersWithPatientsBasePath'](summary)
+    let summaryStat = EncounterStates['encountersWithPatientsBasePath'](
+      summary,
+    );
     //return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
-    // return CRUDOperations('search', `${params.url}?${summaryStat}&${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`)
     return CRUDOperations(
       'search',
-      `${params.url}?${EncounterStates.encountersWithPatientsBasePath(
-        summary,
-      )}${statusesString}${date ? `&date=eq${date}` : ''}${
-        serviceProvider ? `&service-provider=${serviceProvider}` : ''
-      }${serviceType ? `&service-type=${serviceType}` : ''}${
-        sortParams ? `&_sort=${sortParams}` : ''
-      }`,
+      `${params.url}?${summaryStat}&${statusesString ? statusesString : ''}${
+        date ? `&date=eq${date}` : ''
+      }${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${
+        serviceType ? `&service-type=${serviceType}` : ''
+      }${summary ? `&_summary=count` : ''}`,
     );
   },
   getCurrentEncounterPerPatient: (params) => {
-    let date = params.functionParams.date;
-    let patient = params.functionParams.patient;
-
+    let date = params.date,
+      patient = params.patient,
+      url = params.url,
+      specialOrder = `&${params.specialOrder ? params.specialOrder : ''}`;
     //PC-216 endpoint: /Encounter?date=eq<TODAY>&patient=<PID>
     try {
       return CRUDOperations(
         'search',
-        `${params.url}?date=eq${date}&patient=${patient}`,
+        `${url}?date=eq${date}${specialOrder}&patient=${patient}`,
       );
       //return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=eq${date}&patient=${patient}`);
     } catch (err) {
@@ -171,20 +168,50 @@ const EncounterStates = {
   },
   getNextPrevEncounterPerPatient: (params) => {
     //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
-    let date = params.functionParams.date;
-    let patient = params.functionParams.patient;
-    let prev = params.functionParams.prev;
+    let date = params.date,
+      patient = params.patient,
+      prev = params.prev,
+      url = params.url,
+      specialOrder = `${
+        params.specialOrder ? params.specialOrder : '_sort=-date'
+      }`;
+
     try {
       if (prev) {
         //return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=le${date}&_count=1&_sort=-date&patient=${patient}`);
         return CRUDOperations(
           'search',
-          `${params.url}?date=le${date}&_count=1&_sort=-date&patient=${patient}`,
+          `${url}?date=le${date}&_count=1&${specialOrder}&patient=${patient}`,
         );
       } else {
         return CRUDOperations(
           'search',
-          `${params.url}?date=gt${date}&_count=1&_sort=-date&patient=${patient}`,
+          `${url}?date=gt${date}&_count=1&${specialOrder}&patient=${patient}`,
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  },
+  getNextPrevEncountersPerPatient: (params) => {
+    let date = params.date,
+      patient = params.patient,
+      prev = params.prev,
+      url = params.url,
+      specialOrder = params.specialOrder ? params.specialOrder : '_sort=-date';
+
+    //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
+    try {
+      if (prev) {
+        return CRUDOperations(
+          'search',
+          `${url}?date=le${date}&${specialOrder}&patient=${patient}`,
+        );
+      } else {
+        return CRUDOperations(
+          'search',
+          `${url}?date=gt${date}&${specialOrder}&patient=${patient}`,
         );
       }
     } catch (err) {
