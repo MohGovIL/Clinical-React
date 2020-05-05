@@ -315,6 +315,7 @@ const PatientDetailsBlock = ({
         //   encounterId: encounter.id,
         //   encounter: encounter,
         // });
+        console.log(referralFile_64);
       } else {
         triggerValidation();
       }
@@ -684,6 +685,12 @@ const PatientDetailsBlock = ({
   // Files scan
   // Files scan - vars
   // Files scan - vars - states
+  const [referralFile_64, setReferralFile_64] = useState('');
+  const [commitmentFile_64, setCommitmentFile_64] = useState('');
+  const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState(
+    '',
+  );
+
   const [referralFile, setReferralFile] = useState({});
   const [commitmentFile, setCommitmentFile] = useState({});
   const [additionalDocumentFile, setAdditionalDocumentFile] = useState({});
@@ -699,7 +706,8 @@ const PatientDetailsBlock = ({
   // Files scan - vars - globals
   const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
   // Files scan - functions
-  function onChangeFileHandler(ref, setState, fileName) {
+
+  async function onChangeFileHandler(ref, setState, fileName) {
     const files = ref.current.files;
     const [BoolAnswer, SizeInMB] = calculateFileSize(
       files[files.length - 1].size,
@@ -708,14 +716,25 @@ const PatientDetailsBlock = ({
       FILES_OBJ.maxSize,
     );
     if (!BoolAnswer) {
-      const fileObj = {
-        name: `${fileName}_${moment().format('L')}_${moment().format(
-          'HH:mm',
-        )}_${files[files.length - 1].name}`,
-        size: SizeInMB,
+      const fileObject = {};
+      const reader = new FileReader();
+      const onChangeFileReader = (event) => {
+        if (fileName === 'Referral') {
+          setReferralFile_64(event.target.result);
+        } else if (fileName === 'Commitment') {
+          setCommitmentFile_64(event.target.result);
+        } else {
+          setAdditionalDocumentFile_64(event.target.result);
+        }
       };
-      setValue(`${fileName}File`, fileObj.name, true);
-      setState({ ...fileObj });
+      reader.onload = onChangeFileReader;
+      reader.readAsDataURL(ref.current.files[0]);
+      fileObject['name'] = `${fileName}_${moment().format(
+        'L',
+      )}_${moment().format('HH:mm')}_${files[files.length - 1].name}`;
+      fileObject['size'] = SizeInMB;
+      setValue(`${fileName}File`, fileObject.name, true);
+      setState({ ...fileObject });
     } else {
       ref.current.value = '';
     }
