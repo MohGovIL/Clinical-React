@@ -64,6 +64,7 @@
     "@storybook/react": "^5.3.3",
     "cra-build-watch": "^3.0.0",
     "error-overlay-webpack-plugin": "^0.4.1",
+    "prettier": "^2.0.5",
     "react-hook-form-devtools": "^1.1.2",
     "webpack-cli": "^3.3.10"
   }
