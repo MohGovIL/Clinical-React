@@ -87,7 +87,7 @@ const PatientDetailsBlock = ({
       console.log(errors);
       if (true) {
         // if (true) {
-        //   const APIsArray = [];
+          // const APIsArray = [];
         //   //Updating patient
         //   let patientPatchParams = {};
         //   if (contactInformationTabValue === 0) {
@@ -175,124 +175,125 @@ const PatientDetailsBlock = ({
         //       );
         //     }
         //   }
-        //   await Promise.all(APIsArray);
-
-        if (Object.values(questionnaireResponse).length) {
-          await FHIR('QuestionnaireResponse', 'doWork', {
-            functionName: 'patchQuestionnaireResponse',
-            questionnaireResponseId: questionnaireResponse.id,
-            questionnaireResponseParams: {
-              item: [
-                {
-                  linkId: '1',
-                  text: 'Commitment number',
-                  answer: [
-                    {
-                      valueInteger: data.commitmentAndPaymentReferenceForPaymentCommitment
-                    }
-                  ]
-                },
-                {
-                  linkId: '2',
-                  text: 'Commitment date',
-                  answer: [
-                    {
-                      valueDate: data.commitmentAndPaymentCommitmentDate
-                    }
-                  ]
-                },
-                {
-                  linkId: '3',
-                  text: 'Commitment expiration date',
-                  answer: [
-                    {
-                      valueDate: data.commitmentAndPaymentCommitmentValidity
-                    }
-                  ]
-                },
-                {
-                  linkId: '4',
-                  text: 'Signing doctor',
-                  answer: [
-                    {
-                      valueString: data.commitmentAndPaymentDoctorsName
-                    }
-                  ]
-                },
-                {
-                  linkId: '5',
-                  text: 'doctor license number',
-                  answer: [
-                    {
-                      valueInteger: data.commitmentAndPaymentDoctorsLicense
-                    }
-                  ]
-                },
-              ]
-            }
-          })
-        } else {
-          await FHIR('QuestionnaireResponse', 'doWork', {
-            functionName: 'createQuestionnaireResponse',
-            functionParams: {
-              questionnaireResponse: {
-                questionnaire: questionnaireId,
-                status: 'completed',
-                patient: patientData.id,
-                encounter: encounterData.id,
-                authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-                source: patientData.id,
-                item: [
-                  {
-                    linkId: '1',
-                    text: 'Commitment number',
-                    answer: [
-                      {
-                        valueInteger: data.commitmentAndPaymentReferenceForPaymentCommitment
-                      }
-                    ]
-                  },
-                  {
-                    linkId: '2',
-                    text: 'Commitment date',
-                    answer: [
-                      {
-                        valueDate: data.commitmentAndPaymentCommitmentDate
-                      }
-                    ]
-                  },
-                  {
-                    linkId: '3',
-                    text: 'Commitment expiration date',
-                    answer: [
-                      {
-                        valueDate: data.commitmentAndPaymentCommitmentValidity
-                      }
-                    ]
-                  },
-                  {
-                    linkId: '4',
-                    text: 'Signing doctor',
-                    answer: [
-                      {
-                        valueString: data.commitmentAndPaymentDoctorsName
-                      }
-                    ]
-                  },
-                  {
-                    linkId: '5',
-                    text: 'doctor license number',
-                    answer: [
-                      {
-                        valueInteger: data.commitmentAndPaymentDoctorsLicense
-                      }
-                    ]
-                  },
-                ]
-              },
-            },
-          });
-        }
+        
+        
+        // if (Object.values(questionnaireResponse).length) {
+        //   APIsArray.push(FHIR('QuestionnaireResponse', 'doWork', {
+        //     functionName: 'patchQuestionnaireResponse',
+        //     questionnaireResponseId: questionnaireResponse.id,
+        //     questionnaireResponseParams: {
+        //       item: [
+        //         {
+        //           linkId: '1',
+        //           text: 'Commitment number',
+        //           answer: [
+        //             {
+        //               valueInteger: data.commitmentAndPaymentReferenceForPaymentCommitment
+        //             }
+        //           ]
+        //         },
+        //         {
+        //           linkId: '2',
+        //           text: 'Commitment date',
+        //           answer: [
+        //             {
+        //               valueDate: data.commitmentAndPaymentCommitmentDate
+        //             }
+        //           ]
+        //         },
+        //         {
+        //           linkId: '3',
+        //           text: 'Commitment expiration date',
+        //           answer: [
+        //             {
+        //               valueDate: data.commitmentAndPaymentCommitmentValidity
+        //             }
+        //           ]
+        //         },
+        //         {
+        //           linkId: '4',
+        //           text: 'Signing doctor',
+        //           answer: [
+        //             {
+        //               valueString: data.commitmentAndPaymentDoctorsName
+        //             }
+        //           ]
+        //         },
+        //         {
+        //           linkId: '5',
+        //           text: 'doctor license number',
+        //           answer: [
+        //             {
+        //               valueInteger: data.commitmentAndPaymentDoctorsLicense
+        //             }
+        //           ]
+        //         },
+        //       ]
+        //     }
+        //   })) 
+        // } else {
+        //   APIsArray.push(FHIR('QuestionnaireResponse', 'doWork', {
+        //     functionName: 'createQuestionnaireResponse',
+        //     functionParams: {
+        //       questionnaireResponse: {
+        //         questionnaire: questionnaireId,
+        //         status: 'completed',
+        //         patient: patientData.id,
+        //         encounter: encounterData.id,
+        //         authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        //         source: patientData.id,
+        //         item: [
+        //           {
+        //             linkId: '1',
+        //             text: 'Commitment number',
+        //             answer: [
+        //               {
+        //                 valueInteger: data.commitmentAndPaymentReferenceForPaymentCommitment
+        //               }
+        //             ]
+        //           },
+        //           {
+        //             linkId: '2',
+        //             text: 'Commitment date',
+        //             answer: [
+        //               {
+        //                 valueDate: data.commitmentAndPaymentCommitmentDate
+        //               }
+        //             ]
+        //           },
+        //           {
+        //             linkId: '3',
+        //             text: 'Commitment expiration date',
+        //             answer: [
+        //               {
+        //                 valueDate: data.commitmentAndPaymentCommitmentValidity
+        //               }
+        //             ]
+        //           },
+        //           {
+        //             linkId: '4',
+        //             text: 'Signing doctor',
+        //             answer: [
+        //               {
+        //                 valueString: data.commitmentAndPaymentDoctorsName
+        //               }
+        //             ]
+        //           },
+        //           {
+        //             linkId: '5',
+        //             text: 'doctor license number',
+        //             answer: [
+        //               {
+        //                 valueInteger: data.commitmentAndPaymentDoctorsLicense
+        //               }
+        //             ]
+        //           },
+        //         ]
+        //       },
+        //     },
+        //   }));
+        // }
+        // await Promise.all(APIsArray);
       } else {
         triggerValidation();
       }
