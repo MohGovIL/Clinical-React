@@ -12,7 +12,7 @@ import {convertParamsToUrl} from "../CommonFunctions";
 
 const AppointmentStates = {
     doWork: (parameters = null) => {
-
+debugger;
         let componentFhirURL = "/Appointment";
         let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
         paramsToCRUD.url = componentFhirURL;
@@ -24,11 +24,24 @@ const AppointmentStates = {
         //instead params.prev: dayPosition = 'prev'|'next'|'current'
         let date_eq = (params.dayPosition === 'prev' ? 'le' : (params.dayPosition === 'next' ? 'ge' : ''));
         try {
+            return CRUDOperations('search', params.url + "?" + `date=${date_eq}${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
+            //return CRUD.search(url, `date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+        } catch (err) {
+            console.log(err);
+            return null;
+        }
+    },
+    getNextPrevAppointmentPerPatient:  (params) => {
+
+        //  let CRUD = await CRUDOperations('search', params);
+
+        //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
+        try {
             if (params.prev) {
-                return CRUDOperations('search',  `${params.url}?date=le${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
+                return CRUDOperations('search',  params.url +"?"+ `date=le${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
                 //    return CRUD.search(url, `date=le${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
             } else {
-                return CRUDOperations('search',  `${params.url}?date=ge${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
+                return CRUDOperations('search',  params.url +"?"+ `date=ge${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
                 //   return CRUD.search(url, `date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
             }
         } catch (err) {
