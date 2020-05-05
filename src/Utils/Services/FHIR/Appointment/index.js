@@ -12,7 +12,7 @@ import {convertParamsToUrl} from "../CommonFunctions";
 
 const AppointmentStates = {
     doWork: (parameters = null) => {
-
+debugger;
         let componentFhirURL = "/Appointment";
         let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
         paramsToCRUD.url = componentFhirURL;
@@ -24,14 +24,51 @@ const AppointmentStates = {
         //instead params.prev: dayPosition = 'prev'|'next'|'current'
         let date_eq = (params.dayPosition === 'prev' ? 'le' : (params.dayPosition === 'next' ? 'ge' : ''));
         try {
-            return CRUDOperations('search', params.url + "?" + `date=${date_eq}${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+            return CRUDOperations('search', params.url + "?" + `date=${date_eq}${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
             //return CRUD.search(url, `date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
         } catch (err) {
             console.log(err);
             return null;
         }
     },
-    appointmentsWithPatientsBasePath: summary => `status:not=arrived&_sort=date,priority,service-type${summary ? '&_summary=count' : '&_include=Appointment:patient'}`,
+    getNextPrevAppointmentPerPatient:  (params) => {
+
+        //  let CRUD = await CRUDOperations('search', params);
+
+        //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
+        try {
+            if (params.prev) {
+                return CRUDOperations('search',  params.url +"?"+ `date=le${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
+                //    return CRUD.search(url, `date=le${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+            } else {
+                return CRUDOperations('search',  params.url +"?"+ `date=ge${params.date}&_count=1&_sort=date&patient=${params.patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
+                //   return CRUD.search(url, `date=ge${date}&_count=1&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+            }
+        } catch (err) {
+            console.log(err);
+            return null;
+        }
+    },
+    getNextPrevAppointmentsPerPatient : (params) => {
+
+        let date=params.date, patient=params.patient,prev=params.prev;
+        //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
+        try {
+            if (prev) {
+                //return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=le${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+                return CRUDOperations('search',  `${params.url}?date=le${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
+            } else {
+
+                //return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+                return CRUDOperations('search',  `${params.url}?date=ge${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=noshow&status:not=cancelled`);
+            }
+        }
+        catch(err){
+            console.log(err);
+            return null;
+        }
+    },
+    appointmentsWithPatientsBasePath: summary => `status:not=arrived&_sort=date,-priority,service-type${summary ? '&_summary=count' : '&_include=Appointment:patient'}`,
 
     getAppointmentsWithPatients: (params = null) => {
         if (!params.url)

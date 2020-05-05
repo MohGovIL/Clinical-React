@@ -6,7 +6,6 @@ import {
 import moment from "moment";
 import "moment/locale/he"
 import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
-import {getEncountersWithPatients, getValueSet} from "Utils/Services/FhirAPI";
 import {normalizeFhirEncountersWithPatients} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
 import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import {store} from "index";
@@ -17,8 +16,9 @@ import {FHIR} from "Utils/Services/FHIR";
 export const waitingForExaminationTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const statuses = ['arrived', 'triaged', 'in-progress'];
+        const sort = 'date,-priority,service-type';
         //const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-        const encountersWithPatients =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses}});
+        const encountersWithPatients =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses,"sortParams": sort}});
 
         const [patients, encounters] = normalizeFhirEncountersWithPatients(encountersWithPatients.data.entry);
         setTabs(prevTabs => {
@@ -117,7 +117,7 @@ const setPatientDataWaitingForExaminationTableRows = (patients, encounters, opti
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
-                        idType: patient.identifierType,
+                        idType: patient.identifierTypeText,
                         priority: encounter.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,
