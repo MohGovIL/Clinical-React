@@ -28,8 +28,8 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
     const normalizedPrevEncounter = prevEncounterEntry ? normalizeFhirEncounter(prevEncounterEntry) : null;
     let normalizedCurEncounters = [];
     const getAppointmentWithTimeOrNot =(nextAppointmentEntry)=>{
-         let isThisAppToday = moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
-        return  (isThisAppToday ? moment(nextAppointmentEntry.startTime).format("DD/MM/YYYY HH:mm") :moment().format("DD/MM/YYYY")  );
+         let isThisAppToday = moment.utc(nextAppointmentEntry.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
+        return  (isThisAppToday ? moment.utc(nextAppointmentEntry.startTime).format("DD/MM/YYYY HH:mm") :moment().format("DD/MM/YYYY")  );
     }
     if (curEncounter.data && curEncounter.data.total > 0) {
         let entry = curEncounter.data.entry;
@@ -57,7 +57,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
 
                                             <StyledLabelAppointment>
                                                 <TitleValueComponent name={t("Current encounter")}
-                                                                     value={moment(encounter.startTime).format("DD/MM/YYYY")}
+                                                                     value={moment.utc(encounter.startTime).format("DD/MM/YYYY")}
                                                                      seperator={true}/>
                                             </StyledLabelAppointment>
 
@@ -135,7 +135,7 @@ const AppointmentsPerPatient = ({nextAppointment, curEncounter, prevEncounter, p
 
                                     <StyledLabelAppointment>
                                         <TitleValueComponent name={t("Previous encounter")}
-                                                             value={moment(normalizedPrevEncounter.startTime).format("DD/MM/YYYY")}
+                                                             value={moment.utc(normalizedPrevEncounter.startTime).format("DD/MM/YYYY")}
                                                              seperator={true}/>
                                     </StyledLabelAppointment>
 

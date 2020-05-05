@@ -17,8 +17,8 @@ import AppointmentsPerPatient from "./AppointmentsPerPatient";
 import {
     getCurrentEncounterPerPatient,
     getHealthCareServiceByOrganization,
-    getNextPrevAppointmentPerPatient,
-    getNextPrevEncounterPerPatient, getValueSet,
+    getNextPrevAppointmentPerPatient, getNextPrevAppointmentsPerPatient,
+    getNextPrevEncounterPerPatient, getNextPrevEncountersPerPatient, getValueSet,
     requestValueSet
 } from "Utils/Services/FhirAPI";
 import moment, {now} from "moment";
@@ -30,7 +30,10 @@ import {FHIR} from "Utils/Services/FHIR";
 import {store} from 'index';
 import {setEncounterAndPatient} from "Store/Actions/ActiveActions";
 import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
-import { useHistory } from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
+import Index from "Components/Generic/PopupComponents/PopupAppointmentsPerPatient";
+import PopAppointmentsPerPatient from "Components/Generic/PopupComponents/PopupAppointmentsPerPatient";
+
 
 const DrawThisTable = ({result, searchParam}) => {
 
@@ -39,19 +42,22 @@ const DrawThisTable = ({result, searchParam}) => {
     const ADMISSIONWITHAPPOINTMENT = 1;
     const [expanded, setExpanded] = React.useState('');
     const [nextAppointment, setNextAppointment] = React.useState('');
+    const [nextAppointments, setNextAppointments] = React.useState('');
     const [prevEncounter, setPrevEncounter] = React.useState('');
+    const [prevEncounters, setPrevEncounters] = React.useState('');
     const [curEncounter, setCurEncounter] = React.useState('');
     const [encounterStatuses, setEncounterStatuses] = React.useState('');
     const [patientTrackingStatuses, setPatientTrackingStatuses] = React.useState('');
-    const [admissionState,setAdmissionState] = React.useState(ADMISSIONWITHAPPOINTMENT)
+    const [admissionState, setAdmissionState] = React.useState(ADMISSIONWITHAPPOINTMENT);
+    const [appointmentPopUpData, setAppointmentPopUpData] = React.useState(null);
     const history = useHistory();
-
+    const [popUpAppointmentsPerPatient, setPopUpAppointmentsPerPatient] = React.useState(false);
     let curTotal = 0;
 
     //let patientTrackingStatuses =  null;
 
-    const handleCreateAppointment = async (patient,nextAppointment) => {
-        let encounterData= null;
+    const handleCreateAppointment = async (patient, nextAppointment) => {
+        let encounterData = null;
         switch (admissionState) {
             case ADMISSIONWITHOUTAPPOINTMENT :
                 console.log("admission without appointment");
@@ -70,8 +76,8 @@ const DrawThisTable = ({result, searchParam}) => {
                 });
                 break;
             case ADMISSIONWITHAPPOINTMENT:
-                if(nextAppointment) {
-                    let fhirappointment = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment (nextAppointment.data.entry[1].resource ): null;
+                if (nextAppointment) {
+                    let fhirappointment = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment(nextAppointment.data.entry[1].resource) : null;
                     encounterData = await FHIR("Encounter", "doWork", {
                         functionName: "createNewEncounter",
                         functionParams: {
@@ -91,33 +97,29 @@ const DrawThisTable = ({result, searchParam}) => {
 
     }
 
-    const handleTextOfCurrentAppointmentButton  = (curEncounter, nextAppointment) => {
+    const handleTextOfCurrentAppointmentButton = (curEncounter, nextAppointment) => {
 
-        let thereIsEncounterToday = curEncounter && curEncounter.data && curEncounter.data.total >0 ? true : false;
-        let nextAppointmetCheckNormelized = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment (nextAppointment.data.entry[1].resource ): null;
+        let thereIsEncounterToday = curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false;
+        let nextAppointmetCheckNormelized = nextAppointment && nextAppointment.data && nextAppointment.data.total > 0 ? normalizeFhirAppointment(nextAppointment.data.entry[1].resource) : null;
         let theAppointmentIsToday = false;
-        if(nextAppointmetCheckNormelized) {
-            theAppointmentIsToday = moment(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY") === moment().format("DD/MM/YYYY") ? true : false;
+        if (nextAppointmetCheckNormelized) {
+            theAppointmentIsToday = moment.utc(nextAppointmetCheckNormelized.startTime).format("DD/MM/YYYY") === moment.utc().format("DD/MM/YYYY") ? true : false;
         }
 
-        if(!thereIsEncounterToday)
-        {
-            if(theAppointmentIsToday)
-            {
-                if(admissionState != ADMISSIONWITHAPPOINTMENT) {
+        if (!thereIsEncounterToday) {
+            if (theAppointmentIsToday) {
+                if (admissionState != ADMISSIONWITHAPPOINTMENT) {
                     setAdmissionState(ADMISSIONWITHAPPOINTMENT);
                 }
                 return t("Patient admission");
-            }
-            else{
-                if(admissionState != ADMISSIONWITHOUTAPPOINTMENT) {
+            } else {
+                if (admissionState != ADMISSIONWITHOUTAPPOINTMENT) {
                     setAdmissionState(ADMISSIONWITHOUTAPPOINTMENT);
                 }
                 return t("Admission without appointment");
             }
-        }
-        else{
-                return t("Patient admission");
+        } else {
+            return t("Patient admission");
         }
 
         return false;
@@ -125,12 +127,12 @@ const DrawThisTable = ({result, searchParam}) => {
     }
 
     const requestValueSet = valueSet => {
-        if(!valueSet) {
-         return;
+        if (!valueSet) {
+            return;
         }
         const {data: {expansion: {contains}}} = valueSet;
         let options = [];
-        if(contains) {
+        if (contains) {
             for (let status of contains) {
                 options[status.code] = status.display;
             }
@@ -140,29 +142,86 @@ const DrawThisTable = ({result, searchParam}) => {
     }
 
 
-    const handleChange = (panel, identifier) => async (event, newExpanded) => {
+    const handleChange = (panel, patient) => async (event, newExpanded) => {
 
         setExpanded(newExpanded ? panel : false);
 
 
-
         if (newExpanded) {
-
+            let identifier = patient.id;
             let currentDate = moment().utc().format("YYYY-MM-DD");
-            const encounterStatPromise =  await getValueSet("encounter_statuses");
+            // const encounterStatPromise = await getValueSet("encounter_statuses");
+            const encounterStatPromise = await FHIR('ValueSet', 'doWork', {
+                "functionName": 'getValueSet',
+                'functionParams': {id: 'encounter_statuses'}
+            });
             const encounterStat = requestValueSet(encounterStatPromise);
-            const appointmentStatPromise = await getValueSet("appointment_statuses");
+            //const appointmentStatPromise = await getValueSet("appointment_statuses");
+            const appointmentStatPromise = await FHIR('ValueSet', 'doWork', {
+                "functionName": 'getValueSet',
+                'functionParams': {id: 'appointment_statuses'}
+            });
             const appointmentStat = requestValueSet(appointmentStatPromise);
 
 
-            if(!encounterStatuses) setEncounterStatuses(encounterStat) ;
-            if(!patientTrackingStatuses) setPatientTrackingStatuses(appointmentStat);
-            setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
-            setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
-            setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
-          /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
+            if (!encounterStatuses) setEncounterStatuses(encounterStat);
+            if (!patientTrackingStatuses) setPatientTrackingStatuses(appointmentStat);
+            //setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
+
+            const FHIRNextAppointment = await FHIR("Appointment", "doWork", {
+                functionName: "getNextPrevAppointmentPerPatient", functionParams: {
+                    date: currentDate,
+                    patient: identifier,
+                    prev: false
+                }
+            })
+            setNextAppointment(FHIRNextAppointment);
+
+            //setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
+            const FHIRPrevEncounter = await FHIR("Encounter", "doWork", {
+                functionName: "getNextPrevEncounterPerPatient", functionParams: {
+                    date: currentDate,
+                    patient: identifier,
+                    prev: true
+                }
+            })
+            setPrevEncounter(FHIRPrevEncounter);
 
 
+            //setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
+            const FHIRCurEncounter = await FHIR("Encounter", "doWork", {
+                functionName: "getCurrentEncounterPerPatient", functionParams: {
+                    date: currentDate,
+                    patient: identifier,
+                    specialOrder: `_sort=service-type,-priority,date`
+                }
+            })
+            setCurEncounter(FHIRCurEncounter);
+
+            /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
+
+            //setNextAppointments(await getNextPrevAppointmentsPerPatient(currentDate, identifier, false));
+
+            const FHIRNextAppointments = await FHIR("Appointment", "doWork", {
+                functionName: "getNextPrevAppointmentsPerPatient", functionParams: {
+                    date: currentDate,
+                    patient: identifier,
+                    prev: false
+                }
+            })
+            setNextAppointments(FHIRNextAppointments);
+
+            //setPrevEncounters(await getNextPrevEncountersPerPatient(currentDate, identifier, true));
+
+            const FHIRPrevEncounters = await FHIR("Encounter", "doWork", {
+                functionName: "getNextPrevEncountersPerPatient", functionParams: {
+                    date: currentDate,
+                    patient: identifier,
+                    prev: true
+                }
+            })
+
+            setPrevEncounters(FHIRPrevEncounters);
 
         }
     };
@@ -174,71 +233,107 @@ const DrawThisTable = ({result, searchParam}) => {
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
-    function handleShowAppointmentsAndEncounters(patient, nextAppointment, curEncounter) {
+    const handleShowAppointmentsAndEncounters = (patient, prevEncounters, nextAppointments, curEncounter, encounterStatuses, patientTrackingStatuses) => {
+
+        if (!patient)
+            return;
+        setAppointmentPopUpData({
+            patient: patient,
+            prevEncounter: prevEncounters,
+            nextAppointment: nextAppointments,
+            curEncounter: curEncounter,
+            encounterStatuses: encounterStatuses,
+            patientTrackingStatuses: patientTrackingStatuses
+        })
+        setPopUpAppointmentsPerPatient(true);
+
 
     }
+
+    const handlePopupClose = () => {
+
+        setPopUpAppointmentsPerPatient(false);
+        if (!popUpAppointmentsPerPatient) {
+            setAppointmentPopUpData(null);
+        }
+    }
+
 
     if (result) {
         return (
             result.map((patient, patientIndex) => {
                 if (patient) {
                     return (
-                        <StyledExpansionPanel expanded={expanded === 'panel' + patientIndex} key={patientIndex}
-                                              onChange={handleChange('panel' + patientIndex, patient.id)}>
-                            <StyledExpansionPanelSummary
-                                expandIcon={<ExpandMoreIcon/>}
-                                aria-controls="panel1a-content"
-                                id="panel1a-header">
-                                <GenderIcon alt={'gender icon'}
-                                            src={patient.gender === 'male' ? maleIcon : femaleIcon}/>
-                                <StyledLabelName>
-                                    <TitleValueComponent searchParam={searchParam} name={patient.firstName+" "+patient.lastName}/>
-                                </StyledLabelName>
-                                <StyledLabelTZ>
-                                    <TitleValueComponent searchParam={searchParam}
-                                                         name={t(patient.identifierType === 'idtype_1' ? 'Teudat zehut' : patient.identifierType)}
-                                                         value={patient.identifier}/>
-                                </StyledLabelTZ>
-                                <StyledLabelPhone>
-                                    {
-                                        patient.mobileCellPhone ?
-                                            < TitleValueComponent searchParam={searchParam} name={t('Mobile Phone')}
-                                                                  value={patient.mobileCellPhone}/> : ''
-                                        /*patient.homePhone ? < TitleValueComponent name = {t('Phone number')}   value = {patient.homePhone} /> : ''*/
-                                    }
-                                </StyledLabelPhone>
-                                <StyledLabelAge>
-                                    <TitleValueComponent name={t(patient.ageGenderType)}
-                                                         value={_calculateAge(patient.birthDate)}/>
-                                </StyledLabelAge>
+                        <React.Fragment>
+                            <PopAppointmentsPerPatient key={"PopUp" + patientIndex}
+                                                       popupOpen={popUpAppointmentsPerPatient}
+                                                       content={appointmentPopUpData}
+                                                       handlePopupClose={handlePopupClose}>
+                            </PopAppointmentsPerPatient>
+                            <StyledExpansionPanel key={"ExpansionPanel_" + patientIndex}
+                                                  expanded={expanded === 'panel' + patientIndex} key={patientIndex}
+                                                  onChange={handleChange('panel' + patientIndex, patient)}>
+                                <StyledExpansionPanelSummary
+                                    expandIcon={<ExpandMoreIcon/>}
+                                    aria-controls="panel1a-content"
+                                    id="panel1a-header">
+                                    <GenderIcon alt={'gender icon'}
+                                                src={patient.gender === 'male' ? maleIcon : femaleIcon}/>
+                                    <StyledLabelName>
+                                        <TitleValueComponent searchParam={searchParam}
+                                                             name={patient.firstName + " " + patient.lastName}/>
+                                    </StyledLabelName>
+                                    <StyledLabelTZ>
+                                        <TitleValueComponent searchParam={searchParam}
+                                                             name={t(patient.identifierType === 'idtype_1' ? 'Teudat zehut' : patient.identifierType)}
+                                                             value={patient.identifier}/>
+                                    </StyledLabelTZ>
+                                    <StyledLabelPhone>
+                                        {
+                                            patient.mobileCellPhone ?
+                                                < TitleValueComponent searchParam={searchParam} name={t('Mobile Phone')}
+                                                                      value={patient.mobileCellPhone}/> : ''
+                                            /*patient.homePhone ? < TitleValueComponent name = {t('Phone number')}   value = {patient.homePhone} /> : ''*/
+                                        }
+                                    </StyledLabelPhone>
+                                    <StyledLabelAge>
+                                        <TitleValueComponent name={t(patient.ageGenderType)}
+                                                             value={_calculateAge(patient.birthDate)}/>
+                                    </StyledLabelAge>
 
-                            </StyledExpansionPanelSummary>
-                            <StyledExpansionPanelDetails>
-                                <AppointmentsPerPatient nextAppointment={nextAppointment}
-                                                        prevEncounter={prevEncounter}
-                                                        curEncounter={curEncounter}
-                                                        encounterStatuses = {encounterStatuses}
-                                                        patientTrackingStatuses = {patientTrackingStatuses}
-                                />
-                                <StyledBottomLinks>
-                                    <StyledHrefButton size={'small'} variant="outlined" color="primary" href="#contained-buttons"
-                                                  disabled= {(nextAppointment && nextAppointment.data && nextAppointment.data.total >0 ) || (curEncounter && curEncounter.data && curEncounter.data.total >0 ) ? false : true}  onClick = {()=>handleShowAppointmentsAndEncounters(patient,nextAppointment,curEncounter)}  >
-                                        {t("Encounters and appointments")}
-                                    </StyledHrefButton>
-                                    <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
-                                                  disabled={false} >
-                                        {t("New appointment")}
-                                    </StyledHrefButton>
+                                </StyledExpansionPanelSummary>
+                                <StyledExpansionPanelDetails>
+                                    <AppointmentsPerPatient nextAppointment={nextAppointment}
+                                                            prevEncounter={prevEncounter}
+                                                            curEncounter={curEncounter}
+                                                            encounterStatuses={encounterStatuses}
+                                                            patientTrackingStatuses={patientTrackingStatuses}
+                                    />
+                                    <StyledBottomLinks>
+                                        <StyledHrefButton size={'small'} variant="outlined" color="primary"
+                                                          href="#contained-buttons"
+                                                          disabled={(nextAppointments && nextAppointments.data && nextAppointments.data.total > 0) || (prevEncounters && prevEncounters.data && prevEncounters.data.total > 0) || (curEncounter && curEncounter.data && curEncounter.data.total > 0) ? false : true}
+                                                          onClick={() => handleShowAppointmentsAndEncounters(patient, prevEncounters, nextAppointments, curEncounter, encounterStatuses, patientTrackingStatuses)}>
+                                            {t("Encounters and appointments")}
+                                        </StyledHrefButton>
+                                        <StyledHrefButton size={'small'} variant="contained" color="primary"
+                                                          href="#contained-buttons"
+                                                          disabled={false}>
+                                            {t("New appointment")}
+                                        </StyledHrefButton>
 
-                                    <StyledHrefButton size={'small'} variant="contained" color="primary" href="#contained-buttons"
-                                                  disabled={curEncounter && curEncounter.data && curEncounter.data.total  > 0 ? true : false} onClick = {()=>handleCreateAppointment(patient,nextAppointment)}  >
-                                         {handleTextOfCurrentAppointmentButton(curEncounter,nextAppointment)}
-                                    </StyledHrefButton>
+                                        <StyledHrefButton size={'small'} variant="contained" color="primary"
+                                                          href="#contained-buttons"
+                                                          disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}
+                                                          onClick={() => handleCreateAppointment(patient, nextAppointment)}>
+                                            {handleTextOfCurrentAppointmentButton(curEncounter, nextAppointment)}
+                                        </StyledHrefButton>
 
-                                </StyledBottomLinks>
-                            </StyledExpansionPanelDetails>
+                                    </StyledBottomLinks>
+                                </StyledExpansionPanelDetails>
 
-                        </StyledExpansionPanel>
+                            </StyledExpansionPanel>
+                        </React.Fragment>
                     );
                 } else {
                     return null;

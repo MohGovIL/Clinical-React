@@ -6,7 +6,7 @@ const SearchInput = ({searchInput,onChange}) => {
     const {t} = useTranslation();
 
     return (
-        <StyledInputBase placeholder={t('Locate patient')} value={searchInput} onChange={onChange}/>
+        <StyledInputBase placeholder={t('Locate patient')} value={searchInput} onChange={onChange} /*onClick={onChange}*//>
     );
 };
 
