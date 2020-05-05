@@ -190,6 +190,9 @@ const EncounterStates = {
       return null;
     }
   },
+  updateEncounter: (params) => {
+    return CRUDOperations('update', `${params.url}/${params.encounterId}`);
+  },
 };
 
 export default function Encounter(action = null, params = null) {
