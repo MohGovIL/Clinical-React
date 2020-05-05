@@ -3,5 +3,5 @@
  * @returns {string} Returns the base path of the projects
  */
 export const basePath = () => {
-        return `${process.env.API_BASE_URL}`;
+        return `${window.location.protocol}//${process.env.API_BASE_URL}/`;
 };
