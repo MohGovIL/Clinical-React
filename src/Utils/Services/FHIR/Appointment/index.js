@@ -12,7 +12,6 @@ import {convertParamsToUrl} from "../CommonFunctions";
 
 const AppointmentStates = {
     doWork: (parameters = null) => {
-debugger;
         let componentFhirURL = "/Appointment";
         let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
         paramsToCRUD.url = componentFhirURL;
