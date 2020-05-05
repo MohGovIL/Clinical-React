@@ -43,10 +43,11 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const [errorIdNumber, setErrorIdNumber] = useState(false);
     const [errorIdNumberText, setErrorIdNumberText] = useState('');
 
-    const textFieldSelectNotEmptyRule = {validate: {value: value => parseInt(value) !== 0}};
+    const textFieldSelectNotEmptyRule = {validate: {value: value => (value !== undefined && value !== 0) || 'error' }};
     const history = useHistory();
 
     let patientInitialValues = {
+        idNumber: '',
         firstName: '',
         lastName: '',
         mobilePhone: '',
@@ -64,9 +65,21 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
         console.log("===============data of form==================");
         if (!formState.isValid) {
-            setFormMode('view');
+            console.log(data);
             console.log(errors);
+            console.log('blocked');
+            setFormMode('view');
         } else {
+            console.log(data);
+            console.log(errors);
+
+            if (!valid_credit_card(data.idNumber) && data.idNumberType  === patientIdTypeMain) {
+                console.log(data.idNumberType  + '===' + patientIdTypeMain);
+                setError("idNumber", "notValid", "The number entered is incorrect");
+                setErrorIdNumber(true);
+                setErrorIdNumberText(t(errors?.idNumber?.message));
+                setFormMode('write');
+            }
             console.log("we will save a new patient, hooray!!!!");
         }
         console.log("===============data of form==================");
@@ -179,9 +192,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
     useEffect(() => {
         (async () => {
-            console.log("Length of idnumber: " + patientIdNumber.length);
-            console.log("patient bday: " + patientBirthDate);
-            if (/*patientIdType !== 0 &&*/ patientIdNumber.length > 0 && patientIdNumber != 0) {
+            if (/*patientIdType !== 0 &&*/ patientIdNumber && patientIdNumber.length > 0) {
                 setIsFound(true);
                 const result = await triggerValidation("idNumber");
                 try {
@@ -189,12 +200,9 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                         "functionName": 'searchPatientById',
                         'functionParams': {identifierValue: patientIdNumber}
                     }).then(patients => {
-                        console.log("====");
-                        console.log(patients);
-                        console.log("====");
+
                         if (patients && result && patients.id > 0) {
                             patients.birthDate = Moment(patients.birthDate, "YYYY-MM-DD");
-
                             setValue("firstName", patients.firstName);
                             setValue("lastName", patients.lastName);
                             setValue("birthDate", Moment(patients.birthDate).format(formatDate));
@@ -216,29 +224,14 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             setErrorIdNumberText(t(errors?.idNumber?.message));
                             setFormMode('view');
                         } else {
-                            console.log("patient not found, we will make a new");
-                            console.log(patientIdType);
-                            console.log("Begining of checking id number:....");
                             if (!valid_credit_card(patientIdNumber) && patientIdType === patientIdTypeMain) {
-                                console.log(patientIdNumber + 'is not valid');
                                 setError("idNumber", "notValid", "The number entered is incorrect");
                                 setErrorIdNumber(true);
                                 setErrorIdNumberText(t(errors?.idNumber?.message));
                                 setFormMode('write');
                             } else {
-                                console.log("....:number is valid or patient exist in system");
-                                //clearing errors for idNumber field
-                                clearError("idNumber");
-                                setErrorIdNumber(false);
-                                setErrorIdNumberText('');
-
+                                clearIdNumber();
                                 setFormMode('write');
-                                //reset(patientInitialValues);
-                                setPatientIdentifier(0);
-                                //setPatientIdType(0);
-                                setPatientGender(0);
-                                setPatientKupatHolim(0);
-                                setPatientBirthDate(null);
                             }
                         }
                     });
@@ -279,6 +272,12 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const getIsFound = () => {
         return isFound;
     }
+
+    const clearIdNumber = () => {
+        clearError("idNumber");
+        setErrorIdNumber(false);
+        setErrorIdNumberText('');
+    };
 
     const patientAdmissionAction = () => {
         let currentDate = moment().format("YYYY-MM-DD");
@@ -327,6 +326,24 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         })();
     };
 
+    const handlePopupCloseAndClear = () => {
+        reset(patientInitialValues);
+        setPatientIdNumber('');
+        setValue("idNumber","");
+
+        clearIdNumber();
+        setFormMode('write');
+        setPatientIdType(0);
+        setPatientGender(0);
+        setPatientKupatHolim(0);
+        setPatientBirthDate(null);
+
+        register({name: "idNumberType"}, textFieldSelectNotEmptyRule);
+        register({name: "gender"}, textFieldSelectNotEmptyRule);
+        register({name: "healthManageOrganization"}, textFieldSelectNotEmptyRule);
+
+        handlePopupClose();
+    };
     //End block of handle's function
 
     const bottomButtonsData = [
@@ -361,7 +378,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
 
     return (
-        <CustomizedPopup isOpen={popupOpen} onClose={handlePopupClose}
+        <CustomizedPopup isOpen={popupOpen} onClose={handlePopupCloseAndClear}
                          title={t('Add New Patient')}
                          content_dividers={false}
                          bottomButtons={bottomButtonsData}
@@ -390,12 +407,10 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 color={'primary'}
                                 variant={'filled'}
                                 error={errorIdNumber}
-                                // error={errors.idNumber ? true : false}
                                 helperText={errorIdNumberText}
                                 inputProps={{
                                         autoComplete: 'off',
                                 }}
-                                // helperText={errors.idNumber ? t(errors.idNumber.message) : null}
                             />
                             <Controller
                                 as={TextField}
@@ -415,6 +430,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 required
                                 select
                                 onChange={handleGenderChange}
+                                defaultValue={{}}
                                 SelectProps={{
                                     MenuProps: {
                                         elevation: 0,
