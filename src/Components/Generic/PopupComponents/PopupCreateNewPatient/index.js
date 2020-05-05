@@ -36,8 +36,12 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const [patientBirthDate, setPatientBirthDate] = useState(null);
     const [patientHealthManageOrganizationValue, setPatientKupatHolim] = useState(0);
 
+    const patientIdTypeMain = "teudat_zehut";
     const [formViewMode, setFormMode] = useState('write');
     const [isFound, setIsFound] = useState(false);
+
+    const [errorIdNumber, setErrorIdNumber] = useState(false);
+    const [errorIdNumberText, setErrorIdNumberText] = useState('');
 
     const textFieldSelectNotEmptyRule = {validate: {value: value => parseInt(value) !== 0}};
     const history = useHistory();
@@ -51,14 +55,20 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     };
 
     //const methods = useForm({
-    const {register, control, errors, reset, setError, clearError, handleSubmit, triggerValidation, setValue, getValues} = useForm({
+    const {register, control, errors, reset, setError, clearError, handleSubmit, triggerValidation, setValue, getValues, formState} = useForm({
         mode: "onChange",
+        validateCriteriaMode: "all"
     });
 
     const onSubmit = (data, e) => {
 
         console.log("===============data of form==================");
-        console.log(data);console.log(errors);
+        if (!formState.isValid) {
+            setFormMode('view');
+            console.log(errors);
+        } else {
+            console.log("we will save a new patient, hooray!!!!");
+        }
         console.log("===============data of form==================");
     };
 
@@ -139,7 +149,6 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const handleChangeBirthDate = date => {
         try {
             let newBirthDate = date.format(formatDate).toString();
-            //methods.setValue("birthDate", newBirthDate, true);
             setValue("birthDate", newBirthDate, true);
             setPatientBirthDate(newBirthDate);
         } catch (e) {
@@ -170,7 +179,9 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
 
     useEffect(() => {
         (async () => {
-            if (/*patientIdType !== 0 &&*/ patientIdNumber.length > 0) {
+            console.log("Length of idnumber: " + patientIdNumber.length);
+            console.log("patient bday: " + patientBirthDate);
+            if (/*patientIdType !== 0 &&*/ patientIdNumber.length > 0 && patientIdNumber != 0) {
                 setIsFound(true);
                 const result = await triggerValidation("idNumber");
                 try {
@@ -178,8 +189,12 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                         "functionName": 'searchPatientById',
                         'functionParams': {identifierValue: patientIdNumber}
                     }).then(patients => {
-                        if (patients && result) {
+                        console.log("====");
+                        console.log(patients);
+                        console.log("====");
+                        if (patients && result && patients.id > 0) {
                             patients.birthDate = Moment(patients.birthDate, "YYYY-MM-DD");
+
                             setValue("firstName", patients.firstName);
                             setValue("lastName", patients.lastName);
                             setValue("birthDate", Moment(patients.birthDate).format(formatDate));
@@ -188,24 +203,37 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             setValue("idNumberType", patients.identifierType);
                             setValue("gender", patients.gender);
                             setValue("healthManageOrganization", patients.managingOrganization);
+
                             setPatientIdentifier(patients.id);
                             setPatientBirthDate(patients.birthDate);
                             setPatientData(patients);
                             setPatientIdType(patients.identifierType);
                             setPatientGender(patients.gender);
                             setPatientKupatHolim(patients.managingOrganization);
+
                             setError("idNumber", "patientExist", "The patient exists in the system");
+                            setErrorIdNumber(true);
+                            setErrorIdNumberText(t(errors?.idNumber?.message));
                             setFormMode('view');
                         } else {
                             console.log("patient not found, we will make a new");
                             console.log(patientIdType);
-                            if (!valid_credit_card(patientIdNumber) && patientIdType === "teudat_zehut") {
-                                console.log(patientIdNumber);
+                            console.log("Begining of checking id number:....");
+                            if (!valid_credit_card(patientIdNumber) && patientIdType === patientIdTypeMain) {
+                                console.log(patientIdNumber + 'is not valid');
                                 setError("idNumber", "notValid", "The number entered is incorrect");
-                            } else {
-                                clearError("idNumber");
+                                setErrorIdNumber(true);
+                                setErrorIdNumberText(t(errors?.idNumber?.message));
                                 setFormMode('write');
-                                reset(patientInitialValues);
+                            } else {
+                                console.log("....:number is valid or patient exist in system");
+                                //clearing errors for idNumber field
+                                clearError("idNumber");
+                                setErrorIdNumber(false);
+                                setErrorIdNumberText('');
+
+                                setFormMode('write');
+                                //reset(patientInitialValues);
                                 setPatientIdentifier(0);
                                 //setPatientIdType(0);
                                 setPatientGender(0);
@@ -326,8 +354,11 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
     const PopupTextFieldOpts = {
         'color': 'primary',
         'variant': 'filled',
-        'disabled': formViewMode === 'view'
+        'disabled': formViewMode === 'view',
+        'autoComplete': 'off',
     };
+
+
 
     return (
         <CustomizedPopup isOpen={popupOpen} onClose={handlePopupClose}
@@ -352,14 +383,19 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 rules={{
                                     validate: value => {
                                         const formValues = getValues("idNumberType");
-                                        setPatientIdNumber(formValues.idNumber);
+                                        setPatientIdNumber(formValues.idNumber.trim());
                                         return getIsFound() === true;
                                     }
                                 }}
                                 color={'primary'}
                                 variant={'filled'}
-                                error={errors.idNumber ? true : false}
-                                helperText={errors.idNumber ? t(errors.idNumber.message) : null}
+                                error={errorIdNumber}
+                                // error={errors.idNumber ? true : false}
+                                helperText={errorIdNumberText}
+                                inputProps={{
+                                        autoComplete: 'off',
+                                }}
+                                // helperText={errors.idNumber ? t(errors.idNumber.message) : null}
                             />
                             <Controller
                                 as={TextField}
@@ -397,7 +433,6 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 error={errors.gender ? true : false}
                                 helperText={errors.gender ? t("is a required field.") : null}
                                 InputProps={{
-                                    // disableUnderline: edit_mode === 1 ? false : true,
                                     endAdornment: (errors.gender &&
                                         <InputAdornment position="end">
                                             <ErrorOutlineIcon htmlColor={"#ff0000"}/>
@@ -417,7 +452,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                 name="healthManageOrganization"
                                 value={patientHealthManageOrganizationValue}
                                 label={t("Kupat Cholim")}
-                                required
+                                required={patientIdType === patientIdTypeMain}
                                 select
                                 onChange={handleChangeHealthManageOrg}
                                 SelectProps={{
@@ -525,7 +560,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                                             value: patientBirthDate,
                                             mask: {formatDate},
                                             InputProps: {
-                                                // disableUnderline: edit_mode === 1 ? false : true,
+                                                autoComplete: 'off',
                                             },
                                             disableFuture: true,
                                             color: 'primary',
