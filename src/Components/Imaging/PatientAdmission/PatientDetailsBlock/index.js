@@ -174,7 +174,6 @@ const PatientDetailsBlock = ({
         //       );
         //     }
         //   }
-
         // if (Object.values(questionnaireResponse).length) {
         //   APIsArray.push(FHIR('QuestionnaireResponse', 'doWork', {
         //     functionName: 'patchQuestionnaireResponse',
@@ -292,28 +291,30 @@ const PatientDetailsBlock = ({
         //   }));
         // }
         // const promises = await Promise.all(APIsArray);
-        const encounter = { ...encounterData };
+        // const encounter = { ...encounterData };
         // if (data.isEscorted) {
         //   if (!encounter.relatedPerson) {
         //     const NewRelatedPerson = normalizeFhirRelatedPerson(promises[3]);
         //     encounter['relatedPerson'] = NewRelatedPerson.id;
         //   }
         // }
-        if (selectedServicesType.length) {
-          encounter.examinationCode = selectedServicesType.map((option) => {
-            return option.reasonCode.code;
-          });
-          encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
-        } else {
-          encounter.serviceType = '';
-          encounter.examinationCode = '';
-        }
-        const data = await FHIR('Encounter', 'doWork', {
-          functionName: 'updateEncounter',
-          encounterId: encounter.id,
-          encounter: encounter,
-        });
-        console.log(data);
+        // if (selectedServicesType.length) {
+        //   encounter.examinationCode = selectedServicesType.map((option) => {
+        //     return option.reasonCode.code;
+        //   });
+        //   encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
+        // } else {
+        //   encounter.serviceType = '';
+        //   encounter.examinationCode = '';
+        // }
+        // if (encounter.status === 'planned') {
+        //  encounter.status = 'arrived';
+        // }
+        // await FHIR('Encounter', 'doWork', {
+        //   functionName: 'updateEncounter',
+        //   encounterId: encounter.id,
+        //   encounter: encounter,
+        // });
       } else {
         triggerValidation();
       }
