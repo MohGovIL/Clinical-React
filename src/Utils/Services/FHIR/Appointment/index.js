@@ -1,7 +1,7 @@
 /**
  * @author Dror Golan - drorgo@matrix.co.il
  * @fileOverview  - this is a appointment strategy  which handles old fhirAPI code logic written by :
- *                   Idan Gigi - gigiidan@gmail.com
+ *                   Idan Gigi - idangi@matrix.co.il
  *                   Yuriy Gershem - yuriyge@matrix.co.il
  *                   Dror Golan - drorgo@matrix.co.il
  */

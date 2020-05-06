@@ -5,7 +5,7 @@ import {stateLessOrNot} from "Utils/Helpers/StatelessOrNot";
 import {ApiTokens} from "Utils/Services/ApiTokens";
 
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @param tokenName - the token needed for the api
  * @returns {AxiosInstance} Axios instance with the token stored inside the axios instance
  */

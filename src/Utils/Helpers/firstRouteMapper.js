@@ -1,7 +1,7 @@
 import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @param vertical - name of the vertical
  * @returns {string} - url for the first component to load from the router
  */

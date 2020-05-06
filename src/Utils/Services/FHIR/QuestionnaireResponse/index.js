@@ -1,5 +1,5 @@
 /**
- * @author Idan Gigi - gigiidan@gmail.com
+ * @author Idan Gigi - idangi@matrix.co.il
  */
 
 import { CRUDOperations } from '../CRUDOperations/index';
@@ -40,7 +40,7 @@ const QuestionnaireResponseStats = {
                 value: params.functionParams.questionnaireResponseParams[dataKey],
               })
             break;
-        
+
           default:
             break;
         }

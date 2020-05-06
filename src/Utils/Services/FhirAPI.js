@@ -5,7 +5,7 @@ import {FHIRPersontoDataArray, sortPatientRulesByLexicogrphicsSort, sortPatientR
 import {normalizeHealthCareServiceValueData} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData";
 
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @fileOverview Where all the apis that uses the normal FhirApi Token
  */
 

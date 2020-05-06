@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {ExpandLess} from "@material-ui/icons";
 
 /**
- * @author Idan Gigi gigiidan@gmail.com, Yuriy Gershem yuriyge@matrix.co.il
+ * @author Idan Gigi idangi@matrix.co.il, Yuriy Gershem yuriyge@matrix.co.il
  * @param background_color
  * @param icon_color
  * @param textcolor

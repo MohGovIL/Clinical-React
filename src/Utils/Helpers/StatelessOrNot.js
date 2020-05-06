@@ -1,5 +1,5 @@
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @returns {boolean} If the application is in stateless(stored in .env.development.local) mode returns
  * true otherwise return false
  */

@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import {setStatusFilterBoxValueAction} from "Store/Actions/PatientTrackingActions/PatienTrackingActions";
 
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @param tabs - array
  * @param setStatusFilterBoxIndexAction - redux action
  * @returns {Component}

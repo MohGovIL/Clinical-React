@@ -1,5 +1,5 @@
 /**
- * @author Idan Gigi - gigiidan@gmail.com
+ * @author Idan Gigi - idangi@matrix.co.il
  */
 
 import { CRUDOperations } from '../CRUDOperations/index';
