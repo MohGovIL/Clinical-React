@@ -12,6 +12,7 @@ import {
   sortPatientRulesByNumberSort,
 } from '../../SearchLogic';
 import { CRUDOperations } from '../CRUDOperations';
+import denormalizationFhirPatient from "../../../Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirPatient";
 
 const PatientStats = {
   doWork: (parameters = null) => {
@@ -192,11 +193,11 @@ const PatientStats = {
       } else {
         addressType = 'physical';
       }
-  
+
       if (addressType) {
         address.value['type'] = addressType;
       }
-  
+
       for (const dataKey in params.functionParams.patientPatchParams) {
         if (params.functionParams.patientPatchParams.hasOwnProperty(dataKey)) {
           switch (dataKey) {
@@ -345,7 +346,17 @@ const PatientStats = {
       `${params.url}/${params.functionParams.patientId}`,
       patchArr,
     );
-  }}}
+  }},
+    createPatient: (params) => {
+        const denormalizationFhirPatient = denormalizationFhirPatient(
+            params.functionParams.patient,
+        );
+        console.log("====denormalizationFhirPatient=====");
+        console.log(denormalizationFhirPatient);
+        console.log("====denormalizationFhirPatient=====");
+        //return CRUDOperations('create', `${params.url}`, denormalizationFhirPatient);
+    }
+}
 
 export default function Patient(action = null, params = null) {
   if (action) {
