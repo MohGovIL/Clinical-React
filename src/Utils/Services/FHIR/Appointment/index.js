@@ -6,7 +6,6 @@
  *                   Dror Golan - drorgo@matrix.co.il
  */
 
-import React, {useState} from 'react';
 import {CRUDOperations} from "../CRUDOperations";
 import {convertParamsToUrl} from "../CommonFunctions";
 
@@ -83,15 +82,110 @@ const AppointmentStates = {
 
             return CRUDOperations('search', params.url + "?" + search);
         }
-
+      },
+updateAppointment: (params) => {
+  try {
+    const patchArr = [];
+    const participant = {
+      op: 'replace',
+      path: '/participant',
+      value: [],
+    };
+    for (const dataKey in params.functionParams.appointmentParams) {
+      if (params.functionParams.appointmentParams.hasOwnProperty(dataKey)) {
+        switch (dataKey) {
+          case 'priority':
+            patchArr.push({
+              op: 'replace',
+              path: '/priority',
+              value: params.functionParams.appointmentParams[dataKey],
+            });
+            break;
+          case 'status':
+            patchArr.push({
+              op: 'replace',
+              path: '/status',
+              value: params.functionParams.appointmentParams[dataKey],
+            });
+            break;
+          case 'startTime':
+            patchArr.push({
+              op: 'replace',
+              path: '/start',
+              value: params.functionParams.appointmentParams[dataKey],
+            });
+            break;
+          case 'examinationCode':
+            const reasonCode = params.functionParams.appointmentParams[
+              dataKey
+            ].map((examinationCode) => {
+              return {
+                coding: [
+                  {
+                    code: examinationCode,
+                  },
+                ],
+              };
+            });
+            patchArr.push({
+              op: 'replace',
+              path: '/reasonCode',
+              value: reasonCode,
+            });
+            break;
+          case 'participantHealthcareService':
+            participant.value.push({
+              actor: {
+                reference: `HealthcareService/${params.functionParams.appointmentParams[dataKey]}`,
+              },
+            });
+            break;
+          case 'serviceTypeCode':
+            patchArr.push({
+              op: 'replace',
+              path: '/serviceType',
+              value: [
+                {
+                  coding: [
+                    {
+                      code: params.functionParams.appointmentParams[dataKey],
+                    },
+                  ],
+                },
+              ],
+            });
+            break;
+          case 'patient':
+            participant.value.push({
+              actor: {
+                reference: `Patient/${params.functionParams.appointmentParams[dataKey]}`,
+              },
+            });
+            break;
+          default:
+            break;
+        }
+      }
     }
+
+    if (participant.value.length) {
+      patchArr.push(participant);
+    }
+      return CRUDOperations(
+        'patch',
+        `${params.url}/${params.functionParams.appointmentId}`,
+        patchArr,
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
-
 export default function Appointment(action = null, params = null) {
-
-    if (action) {
-        const transformer = AppointmentStates[action] ?? AppointmentStates.__default__;
-        return transformer(params);
-    }
+  if (action) {
+    const transformer =
+      AppointmentStates[action] ?? AppointmentStates.__default__;
+    return transformer(params);
+  }
 }

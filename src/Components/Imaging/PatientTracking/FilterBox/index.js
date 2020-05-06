@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import CustomizedSelect from "Assets/Elements/CustomizedSelect";
 import CustomizedDatePicker from "Assets/Elements/CustomizedDatePicker";
 import {useTranslation} from "react-i18next";
-import {getHealhcareService, getOrganization, getValueSet} from "Utils/Services/FhirAPI";
+import {getHealhcareService, getValueSet} from "Utils/Services/FhirAPI";
 import {
     normalizeHealthCareServiceValueData,
     normalizeValueData
