@@ -16,6 +16,7 @@ import ValueSet from './ValueSet';
 import RelatedPerson from './RelatedPerson';
 import Questionnaire from './Questionnaire';
 import QuestionnaireResponse from './QuestionnaireResponse/index';
+import DocumentReference from './DocumentReference';
 import { tokenInstanceGenerator } from '../AxiosWithTokenInstance';
 import { ApiTokens } from '../ApiTokens';
 
@@ -29,6 +30,7 @@ const FHIRStates = {
   RelatedPerson: RelatedPerson,
   Questionnaire: Questionnaire,
   QuestionnaireResponse: QuestionnaireResponse,
+  DocumentReference:DocumentReference,
   /* More transformers */
   __default__: null,
 };
