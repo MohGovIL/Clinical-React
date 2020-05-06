@@ -20,6 +20,7 @@ import normalizeFhirEncounter from "Utils/Helpers/FhirEntities/normalizeFhirEnti
 import normalizeFhirAppointment from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
 import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
 import {useHistory} from 'react-router-dom';
+import {validateLuhnAlgorithm} from "Utils/Helpers/validation/validateLuhnAlgorithm";
 
 const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, formatDate, facility}) => {
     const {t} = useTranslation();
@@ -73,7 +74,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
             console.log(data);
             console.log(errors);
 
-            if (!valid_credit_card(data.idNumber) && data.idNumberType  === patientIdTypeMain) {
+            if (!validateLuhnAlgorithm(data.idNumber) && data.idNumberType  === patientIdTypeMain) {
                 console.log(data.idNumberType  + '===' + patientIdTypeMain);
                 setError("idNumber", "notValid", "The number entered is incorrect");
                 setErrorIdNumber(true);
@@ -169,27 +170,6 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
         }
     };
 
-    function valid_credit_card(value) {
-        // Accept only digits, dashes or spaces
-        if (/[^0-9-\s]+/.test(value)) return false;
-
-        // The Luhn Algorithm. It's so pretty.
-        let nCheck = 0, bEven = false;
-        value = value.replace(/\D/g, "");
-
-        for (var n = value.length - 1; n >= 0; n--) {
-            var cDigit = value.charAt(n),
-                nDigit = parseInt(cDigit, 10);
-
-            if (bEven && (nDigit *= 2) > 9) nDigit -= 9;
-
-            nCheck += nDigit;
-            bEven = !bEven;
-        }
-
-        return (nCheck % 10) == 0;
-    }
-
     useEffect(() => {
         (async () => {
             if (/*patientIdType !== 0 &&*/ patientIdNumber && patientIdNumber.length > 0) {
@@ -224,7 +204,7 @@ const PopupCreateNewPatient = ({popupOpen, handlePopupClose, languageDirection, 
                             setErrorIdNumberText(t(errors?.idNumber?.message));
                             setFormMode('view');
                         } else {
-                            if (!valid_credit_card(patientIdNumber) && patientIdType === patientIdTypeMain) {
+                            if (!validateLuhnAlgorithm(patientIdNumber) && patientIdType === patientIdTypeMain) {
                                 setError("idNumber", "notValid", "The number entered is incorrect");
                                 setErrorIdNumber(true);
                                 setErrorIdNumberText(t(errors?.idNumber?.message));
