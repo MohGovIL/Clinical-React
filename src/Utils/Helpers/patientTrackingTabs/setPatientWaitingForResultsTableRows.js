@@ -6,7 +6,6 @@ import {
 import moment from "moment";
 import "moment/locale/he"
 import {baseRoutePath} from "Utils/Helpers/baseRoutePath";
-import {getEncountersWithPatients, getValueSet} from "Utils/Services/FhirAPI";
 import {normalizeFhirEncountersWithPatients} from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients";
 import normalizeFhirValueSet from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet";
 import {store} from "index";
@@ -16,8 +15,9 @@ import {FHIR} from "Utils/Services/FHIR";
 export const waitingForResultsTabActiveFunction = async function (setTable, setTabs, history, selectFilter) {
     try {
         const statuses = ['waiting-for-results'];
+        const sort = '-priority,date,service-type';
       //  const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-        const encountersWithPatients =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":false,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses}});
+        const encountersWithPatients =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":false, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses,"sortParams": sort}});
 
         const [patients, encounters] = normalizeFhirEncountersWithPatients(encountersWithPatients.data.entry);
         setTabs(prevTabs => {
@@ -48,7 +48,7 @@ export const waitingForResultsTabNotActiveFunction = async function (setTabs, se
     try {
         const statuses = ['waiting-for-results'];
        // const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-          const encountersWithPatientsSummaryCount =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":true,'date' : selectFilter.filter_date, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses}});
+          const encountersWithPatientsSummaryCount =  await  FHIR('Encounter','doWork',{"functionName":'getEncountersWithPatients','functionParams':{"summary":true, 'organization' : selectFilter.filter_organization, 'serviceType' : selectFilter.filter_service_type,statuses:statuses}});
 
         setTabs(prevTabs => {
             //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
@@ -112,12 +112,12 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
     for (let [encountersId, encounter] of Object.entries(encounters)) {
         let row = [];
         for (let columnIndex = 0; columnIndex < tableHeaders.length; columnIndex++) {
-            const patient = patients[encounter.patient];
+            const patient = patients[`#${encounter.patient}`];
             switch (tableHeaders[columnIndex].tableHeader) {
                 case 'Personal information':
                     row.push({
                         id: patient.identifier,
-                        idType: patient.identifierType,
+                        idType: patient.identifierTypeText,
                         priority: encounter.priority,
                         gender: patient.gender,
                         firstName: patient.firstName,
@@ -191,7 +191,7 @@ const setPatientDataWaitingForResultsTableRows = (patients, encounters, options,
                     row.push({
                         padding: 'none',
                         align: 'center',
-                        label: moment.utc(encounter.startTime).format('DD-MM-YYYY')
+                        label: moment.utc(encounter.startTime).format(store.getState().settings.format_date)
                     });
                     break;
                 default:

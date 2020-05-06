@@ -83,6 +83,7 @@ const CustomizedTable = ({tableHeaders, tableData}) => {
                                                         idType={rowData.idType}
                                                         firstName={rowData.firstName}
                                                         lastName={rowData.lastName}
+                                                        padding={rowData.padding}
                                                         key={tableCellItemIndex}/>;
                                                 default:
                                                     console.log('Not supported component check your components name');

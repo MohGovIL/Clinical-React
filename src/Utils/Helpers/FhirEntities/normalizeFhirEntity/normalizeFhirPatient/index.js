@@ -1,5 +1,5 @@
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @param patient {object}
  * @returns {object}
  */
@@ -16,6 +16,7 @@ const normalizeFhirPatient = (patient) => {
   let postalCode = '';
   let country = '';
   let managingOrganization = '';
+  let identifierTypeText = '';
   let streetName = '';
   let streetNumber = '';
   let POBox = '';
@@ -50,10 +51,17 @@ const normalizeFhirPatient = (patient) => {
   let ageGenderType = '';
 
   if (patient.identifier.length) {
-    identifier = patient.identifier[0].value;
-    identifierType =
-      patient.identifier[0].type.coding.length &&
-      patient.identifier[0].type.coding[0].code;
+    if(patient.identifier[0].type) {
+      identifierTypeText = patient.identifier[0].type.text;
+      if (patient.identifier[0].type.coding) {
+        identifierType =
+        patient.identifier[0].type.coding.length &&
+        patient.identifier[0].type.coding[0].code;
+      }
+    }
+    if(patient.identifier[0].value) {
+      identifier = patient.identifier[0].value;
+    } 
   }
   if (
     patient.managingOrganization &&
@@ -119,6 +127,7 @@ const normalizeFhirPatient = (patient) => {
     streetName,
     streetNumber,
     POBox,
+    identifierTypeText,
   };
 };
 

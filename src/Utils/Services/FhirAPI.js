@@ -159,6 +159,8 @@ export const getOrganizationTypeKupatHolim = () => {
     return fhirTokenInstance().get(`${fhirBasePath}/Organization?type=71`);
 };
 
+export const getHMO = HmoId => fhirTokenInstance().get(`${fhirBasePath}/Organization/${HmoId}`);
+
 export const getNextPrevAppointmentPerPatient = (date, patient,prev) =>{
     //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
     try {
@@ -232,3 +234,33 @@ export const getHealthCareServiceByOrganization = async (organizationId) => {
 export const getAllEncounterDocuments = (encounterId, patientId, summary) => {
     return fhirTokenInstance().get(`${fhirBasePath}/DocumentReference?encounter=${encounterId}&patient=${patientId}${summary ? `&_summary=true`: ''}`)
 }
+export const getNextPrevAppointmentsPerPatient = (date, patient,prev) =>{
+    //PC-216 endpoint: /Appointment?date=ge<DATE>&_count=1&_sort=date&patient=<PID>&status:not=arrived&status:not=booked&status:not=cancelled
+    try {
+        if (prev) {
+            return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=le${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+        } else {
+            return fhirTokenInstance().get(`${fhirBasePath}/Appointment?date=ge${date}&_sort=date&patient=${patient}&status:not=arrived&status:not=booked&status:not=cancelled`);
+        }
+    }
+    catch(err){
+        console.log(err);
+        return null;
+    }
+};
+
+export const getNextPrevEncountersPerPatient = (date,patient,prev) =>{
+    //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
+    try {
+        if (prev) {
+            return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=le${date}&_sort=-date&patient=${patient}`);
+        } else {
+            return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=gt${date}&_sort=-date&patient=${patient}`);
+        }
+    }
+    catch(err){
+        console.log(err);
+        return null;
+    }
+
+};

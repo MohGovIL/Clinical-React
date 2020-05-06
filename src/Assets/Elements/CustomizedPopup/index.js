@@ -11,10 +11,10 @@ import {StyledMuiDialogTitle, StyledDialogActions} from "./Style";
 import {connect} from "react-redux";
 import CustomizedTableButton from "../CustomizedTable/CustomizedTableButton";
 
-const CustomizedPopup = ({children, isOpen, onClose, languageDirection, props}) => {
+const CustomizedPopup = ({children, isOpen, onClose, languageDirection, props,dialog_props}) => {
     return (
         <div>
-            <Dialog onClose={onClose} aria-labelledby="customized-dialog-title" open={isOpen}>
+            <Dialog onClose={onClose} aria-labelledby="customized-dialog-title" open={isOpen} maxWidth={props.dialogMaxWidth} {...dialog_props}  >
                 <StyledMuiDialogTitle disableTypography language_direction={languageDirection}>
                     <Typography variant="h6">{props.title}</Typography>
                     {onClose ? (

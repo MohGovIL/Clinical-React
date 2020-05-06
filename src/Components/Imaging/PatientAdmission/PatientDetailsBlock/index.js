@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { DevTool } from 'react-hook-form-devtools'; // Used to see the state of the form
 
 // Helpers
+import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirOrganization';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
 import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
@@ -59,7 +60,8 @@ import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
 
-const PatientDetailsBlock = ({
+
+ const PatientDetailsBlock = ({  
   patientData,
   edit_mode,
   encounterData,
@@ -552,6 +554,9 @@ const PatientDetailsBlock = ({
   const [pendingValue, setPendingValue] = useState([]);
   const [servicesType, setServicesType] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
+
+  const [HMO, setHMO] = useState({});
+
   const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
   const selectTestRef = React.useRef();
   // Requested service - select examination - functions / useEffect
@@ -764,6 +769,19 @@ const PatientDetailsBlock = ({
   // Default values
   useEffect(() => {
     if (patientData) {
+      if (patientData.managingOrganization) {
+      (async () => {
+        try {
+            // const HMO_Data = await getHMO(patientData.managingOrganization);
+            const Organization = await FHIR('Organization', 'doWork', {functionName: "readOrganization", functionParams: {OrganizationId: patientData.managingOrganization}})
+            const normalizedOrganization = normalizeFhirOrganization(Organization.data);
+            setHMO(normalizedOrganization);
+          }
+         catch (error) {
+          console.log(error);
+        }
+      })();
+    }
       if (patientData.city) {
         const defaultAddressCityObj = {
           name: t(patientData.city),
@@ -803,6 +821,7 @@ const PatientDetailsBlock = ({
         setIsUrgent(true);
       }
       if (encounterData.relatedPerson) {
+
         (async () => {
           try {
             if (encounterData.relatedPerson) {
@@ -820,7 +839,7 @@ const PatientDetailsBlock = ({
           } catch (error) {
             console.log(error);
           }
-        })();
+        })()
       }
     }
     if (encounterData && patientData) {
@@ -872,11 +891,10 @@ const PatientDetailsBlock = ({
         } catch (error) {
           console.log(error);
         }
-        // TODO when there will be data inside store the needed data inside a state.
       })();
     }
   }, [encounterData, patientData]);
-
+    
   return (
     <StyledPatientDetails edit={edit_mode}>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
@@ -1333,7 +1351,7 @@ const PatientDetailsBlock = ({
                     id={'commitmentAndPaymentHMO'}
                   />
                 }
-                defaultValue={patientData.managingOrganization || ''}
+                defaultValue={patientData.managingOrganization ? HMO.name : ''}
                 control={control}
               />
               <Controller
@@ -1700,13 +1718,17 @@ const PatientDetailsBlock = ({
           </Grid>
         </StyledFormGroup>
       </StyledForm>
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
     </StyledPatientDetails>
   );
 };
+
+
+        
 const mapStateToProps = (state) => {
   return {
     languageDirection: state.settings.lang_dir,
-  };
+    };
 };
-export default connect(mapStateToProps, null)(PatientDetailsBlock);
+
+export default connect(mapStateToProps)(PatientDetailsBlock);
