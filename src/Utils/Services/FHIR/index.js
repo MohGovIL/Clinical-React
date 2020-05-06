@@ -7,33 +7,36 @@
  */
 
 import React, { useState } from 'react';
-import Appointment from "./Appointment";
-import Encounter from "./Encounter";
-import HealthcareService from "./HealthcareService";
-import Organization from "./Organization";
-import Patient from "./Patient";
-import ValueSet from "./ValueSet";
-import {tokenInstanceGenerator} from "../AxiosWithTokenInstance";
-import {ApiTokens} from "../ApiTokens";
+import Appointment from './Appointment';
+import Encounter from './Encounter';
+import HealthcareService from './HealthcareService';
+import Organization from './Organization';
+import Patient from './Patient';
+import ValueSet from './ValueSet';
+import RelatedPerson from './RelatedPerson';
+import Questionnaire from './Questionnaire';
+import QuestionnaireResponse from './QuestionnaireResponse/index';
+import { tokenInstanceGenerator } from '../AxiosWithTokenInstance';
+import { ApiTokens } from '../ApiTokens';
 
 const FHIRStates = {
-    Appointment: Appointment,
-    Encounter: Encounter,
-    HealthcareService: HealthcareService,
-    Organization: Organization,
-    Patient: Patient,
-    ValueSet: ValueSet,
-    /* More transformers */
-    __default__: null
+  Appointment: Appointment,
+  Encounter: Encounter,
+  HealthcareService: HealthcareService,
+  Organization: Organization,
+  Patient: Patient,
+  ValueSet: ValueSet,
+  RelatedPerson: RelatedPerson,
+  Questionnaire: Questionnaire,
+  QuestionnaireResponse: QuestionnaireResponse,
+  /* More transformers */
+  __default__: null,
 };
 
-export const FHIR = (state = null, action = null, params = null) => new Promise((resolve, reject)=>
-     {
-
-
-        if (action) {
-            const transformer = FHIRStates[state] ?? FHIR.__default__;
-            resolve(transformer(action, params));
-        }
-
-});
+export const FHIR = (state = null, action = null, params = null) =>
+  new Promise((resolve, reject) => {
+    if (action) {
+      const transformer = FHIRStates[state] ?? FHIR.__default__;
+      resolve(transformer(action, params));
+    }
+  });

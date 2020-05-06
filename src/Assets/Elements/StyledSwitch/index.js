@@ -2,20 +2,28 @@ import React from 'react';
 import Label from './Style';
 import { useTranslation } from 'react-i18next';
 
-export default function Switches({ checked, onChange, label_1, label_2, marginRight, marginLeft }) {
+export default function Switches({
+  checked,
+  onChange,
+  label_1,
+  label_2,
+  marginRight,
+  marginLeft,
+}) {
   const { t } = useTranslation();
 
-  const onChangeHandler = event => {
+  const onChangeHandler = (event) => {
     if (onChange) {
       onChange(event);
     }
   };
 
   return (
-    <Label marginRight={marginRight} marginLeft={marginLeft} >
+    <Label marginRight={marginRight} marginLeft={marginLeft}>
       <input
+        value={checked}
         type='checkbox'
-        checked={checked || undefined}
+        checked={checked}
         onChange={onChangeHandler}
       />
       <span>
