@@ -1,7 +1,7 @@
 /**
  * @author Dror Golan - drorgo@matrix.co.il
  * @fileOverview  - this is a patient strategy  which handles old fhirAPI code logic written by :
- *                   Idan Gigi - idangi@matrix.co.il
+ *                   Idan Gigi - gigiidan@gmail.com
  *                   Yuriy Gershem - yuriyge@matrix.co.il
  *                   Dror Golan - drorgo@matrix.co.il
  */
@@ -150,32 +150,6 @@ const PatientStats = {
         } catch (e) {
             console.log(e);
         }
-    },
-    timeout: (ms) => {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    },
-    updatePatientData: (params) => {
-
-        return CRUDOperations('patch', `${params.url}/${params.functionParams.patientData}`, [
-            {op: 'replace', path: '/name/0/family', value: params.functionParams.data.lastName},
-            {op: 'replace', path: '/name/0/given', value: [params.functionParams.data.firstName, ""]},
-            {
-                op: 'replace',
-                path: '/telecom/1',
-                value: {system: "email", value: params.functionParams.data.patientEmail}
-            },
-            {
-                op: 'replace',
-                path: '/telecom/2',
-                value: {system: "phone", value: params.functionParams.data.mobilePhone, use: "mobile"}
-            },
-            {op: 'replace', path: '/birthDate', value: params.functionParams.data.birthDate},
-            {
-                op: 'replace',
-                path: '/managingOrganization',
-                value: {reference: "Organization/" + params.functionParams.data.healthManageOrganization}
-            },
-        ])
     },
     updatePatient: (params) => {
       const patchArr = [];
