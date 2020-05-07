@@ -6,46 +6,48 @@
  *                   Dror Golan - drorgo@matrix.co.il
  */
 
-import {CRUDOperations} from "../CRUDOperations";
+import { CRUDOperations } from '../CRUDOperations';
 
-const ValueSetStates =  {
-    doWork: (parameters = null) => {
-        let  componentFhirURL = "/ValueSet";
-        let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
-        paramsToCRUD.url = componentFhirURL;
-        return ValueSetStates[parameters.functionName](paramsToCRUD);
-    },
+const ValueSetStates = {
+  doWork: (parameters = null) => {
+    let componentFhirURL = '/ValueSet';
+    let paramsToCRUD = parameters.functionParams; //convertParamsToUrl(parameters.functionParams);
+    paramsToCRUD.url = componentFhirURL;
+    return ValueSetStates[parameters.functionName](paramsToCRUD);
+  },
 
-    getValueSet : (params) => {
-       const valueSet =  CRUDOperations('read',  `${params.url}/${params.id}/$expand`);
-       return valueSet;
+  getValueSet: (params) => {
+    const valueSet = CRUDOperations(
+      'read',
+      `${params.url}/${params.id}/$expand`,
+    );
+    return valueSet;
+  },
+  requestValueSet: async (params) => {
+    const valueSet = await ValueSetStates['getValueSet'](params);
 
-    },
-    requestValueSet : async (params) => {
-        const valueSet = await ValueSetStates['getValueSet'](params);
-
-        if(valueSet && valueSet.data && valueSet.data.expansion) {
-            const {data: {expansion: {contains}}} = await ValueSetStates['getValueSet'](params);
-            let options = [];
-            if (contains) {
-                for (let status of contains) {
-                    options[status.code] = status.display;
-                }
-            }
-
-            return options;
+    if (valueSet && valueSet.data && valueSet.data.expansion) {
+      const {
+        data: {
+          expansion: { contains },
+        },
+      } = await ValueSetStates['getValueSet'](params);
+      let options = [];
+      if (contains) {
+        for (let status of contains) {
+          options[status.code] = status.display;
         }
-        return [];
-    }
+      }
 
+      return options;
+    }
+    return [];
+  },
 };
 
 export default function ValueSet(action = null, params = null) {
-
-    if (action) {
-        const transformer = ValueSetStates[action] ?? ValueSetStates.__default__;
-        return transformer(params);
-    }
+  if (action) {
+    const transformer = ValueSetStates[action] ?? ValueSetStates.__default__;
+    return transformer(params);
+  }
 }
-
-

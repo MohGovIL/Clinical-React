@@ -832,12 +832,12 @@ const PopupCreateNewPatient = ({
     </CustomizedPopup>
   );
 };
-const mapStateToProps = (state) => {
-  return {
-    languageDirection: state.settings.lang_dir,
-    formatDate: state.settings.format_date,
-    facility: state.settings.facility,
-  };
+const mapStateToProps = state => {
+    return {
+        languageDirection: state.settings.lang_dir,
+        formatDate: state.settings.format_date,
+        facility: state.settings.facility,
+    }
 };
 
 export default connect(mapStateToProps, null)(PopupCreateNewPatient);

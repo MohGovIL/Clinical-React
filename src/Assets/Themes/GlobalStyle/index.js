@@ -1,4 +1,4 @@
-import {createGlobalStyle} from "styled-components";
+import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
   *{
@@ -7,7 +7,10 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body{
-    direction: ${props => (props.lang_id === '7' || props.language_direction === 'rtl' ? 'rtl' : 'ltr')};
+    direction: ${(props) =>
+      props.lang_id === '7' || props.language_direction === 'rtl'
+        ? 'rtl'
+        : 'ltr'};
   }
 
 /*Changing of style of scrollbars in Google Chrome*/

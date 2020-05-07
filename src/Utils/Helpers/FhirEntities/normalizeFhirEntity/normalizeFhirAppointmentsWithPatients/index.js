@@ -1,5 +1,5 @@
-import normalizeFhirPatient from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient";
-import normalizeFhirAppointment from "Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment";
+import normalizeFhirPatient from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient';
+import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 
 /**
  * @author Idan Gigi gigiidan@gmail.com
@@ -9,30 +9,30 @@ import normalizeFhirAppointment from "Utils/Helpers/FhirEntities/normalizeFhirEn
  * appointmentsObj stores all the appointments each appointment key is his ID.
  */
 
-export const normalizeFhirAppointmentsWithPatients = appointmentsData => {
-    const response = [];
-    const appointmentsObj = {};
-    const patientsObj = {};
-    //Looping over the appointments data and store all the Patients in an array like a dictionary
-    for (let entryIndex = 0; entryIndex < appointmentsData.length; entryIndex++) {
-        if (appointmentsData[entryIndex].resource) {
-            const entry = appointmentsData[entryIndex].resource;
-            if (entry.resourceType === 'Patient') {
-                const patient = normalizeFhirPatient(entry);
-                patientsObj[`#${patient.id}`] = {...patient};
-            }
-        }
+export const normalizeFhirAppointmentsWithPatients = (appointmentsData) => {
+  const response = [];
+  const appointmentsObj = {};
+  const patientsObj = {};
+  //Looping over the appointments data and store all the Patients in an array like a dictionary
+  for (let entryIndex = 0; entryIndex < appointmentsData.length; entryIndex++) {
+    if (appointmentsData[entryIndex].resource) {
+      const entry = appointmentsData[entryIndex].resource;
+      if (entry.resourceType === 'Patient') {
+        const patient = normalizeFhirPatient(entry);
+        patientsObj[`#${patient.id}`] = { ...patient };
+      }
     }
-    response[0] = patientsObj;
-    for (let entryIndex = 0; entryIndex < appointmentsData.length; entryIndex++) {
-        if (appointmentsData[entryIndex].resource) {
-            const entry = appointmentsData[entryIndex].resource;
-            if (entry.resourceType === 'Appointment') {
-                const appointment = normalizeFhirAppointment(entry);
-                appointmentsObj[`#${appointment.id}`] = {...appointment}
-            }
-        }
+  }
+  response[0] = patientsObj;
+  for (let entryIndex = 0; entryIndex < appointmentsData.length; entryIndex++) {
+    if (appointmentsData[entryIndex].resource) {
+      const entry = appointmentsData[entryIndex].resource;
+      if (entry.resourceType === 'Appointment') {
+        const appointment = normalizeFhirAppointment(entry);
+        appointmentsObj[`#${appointment.id}`] = { ...appointment };
+      }
     }
-    response[1] = appointmentsObj;
-    return response;
+  }
+  response[1] = appointmentsObj;
+  return response;
 };

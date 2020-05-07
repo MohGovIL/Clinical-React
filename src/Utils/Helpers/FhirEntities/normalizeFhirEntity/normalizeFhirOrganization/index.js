@@ -1,6 +1,6 @@
 export const normalizeFhirOrganization = (Organization) => {
-    // TODO 
-    // Finish normalizing all the data that is given from HMO end point
+  // TODO
+  // Finish normalizing all the data that is given from HMO end point
   let name = '';
   let id = '';
   let city = '';

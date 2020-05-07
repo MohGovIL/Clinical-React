@@ -4,14 +4,14 @@ import {
   SET_ACTIVE_ENCOUNTER_AND_PATIENT,
 } from './ActiveActionsTypes';
 
-export const setPatientAction = patient => {
+export const setPatientAction = (patient) => {
   return {
     type: SET_ACTIVE_PATIENT,
     patient,
   };
 };
 
-export const setEncounterAction = encounter => {
+export const setEncounterAction = (encounter) => {
   return {
     type: SET_ACTIVE_ENCOUNTER,
     encounter,

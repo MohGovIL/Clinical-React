@@ -51,17 +51,17 @@ const normalizeFhirPatient = (patient) => {
   let ageGenderType = '';
 
   if (patient.identifier.length) {
-    if(patient.identifier[0].type) {
+    if (patient.identifier[0].type) {
       identifierTypeText = patient.identifier[0].type.text;
       if (patient.identifier[0].type.coding) {
         identifierType =
-        patient.identifier[0].type.coding.length &&
-        patient.identifier[0].type.coding[0].code;
+          patient.identifier[0].type.coding.length &&
+          patient.identifier[0].type.coding[0].code;
       }
     }
-    if(patient.identifier[0].value) {
+    if (patient.identifier[0].value) {
       identifier = patient.identifier[0].value;
-    } 
+    }
   }
   if (
     patient.managingOrganization &&

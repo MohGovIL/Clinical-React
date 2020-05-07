@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export default styled.div`
   position: relative;
@@ -7,7 +7,7 @@ export default styled.div`
   background-color: #28d957;
   clip-path: circle(50% at 50% 50%);
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
-  ::before{
+  ::before {
     background-blend-mode: multiply;
     content: '';
     width: 47px;
