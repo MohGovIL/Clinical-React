@@ -71,6 +71,7 @@ const PatientDetailsBlock = ({
     setError,
     triggerValidation,
     formState,
+    clearError,
   } = useForm({
     mode: 'onBlur',
     submitFocusError: true,
@@ -311,20 +312,56 @@ const PatientDetailsBlock = ({
         //   encounterId: encounter.id,
         //   encounter: encounter,
         // });
-
-        const { data, type } = splitBase_64(referralFile_64);
-        const documentReference = {
+        const APIsFILE = [];
+        const referral_64Obj = splitBase_64(referralFile_64);
+        const documentReferenceReferral = {
           encounter: encounterData.id,
           patient: patientData.id,
-          contentType: type,
-          data: data,
+          contentType: referral_64Obj.type,
+          data: referral_64Obj.data,
           categoryCode: '2',
           url: referralFile.name,
         };
-        await FHIR('DocumentReference', 'doWork', {
-          documentReference: documentReference,
-          functionName: 'createDocumentReference',
-        });
+        APIsFILE.push(
+          FHIR('DocumentReference', 'doWork', {
+            documentReference: documentReferenceReferral,
+            functionName: 'createDocumentReference',
+          }),
+        );
+
+        const commitment_64Obj = splitBase_64(commitmentFile_64);
+        const documentReferenceCommitment = {
+          encounter: encounterData.id,
+          patient: patientData.id,
+          contentType: commitment_64Obj.type,
+          data: commitment_64Obj.data,
+          categoryCode: '2',
+          url: commitmentFile.name,
+        };
+        APIsFILE.push(
+          FHIR('DocumentReference', 'doWork', {
+            documentReference: documentReferenceCommitment,
+            functionName: 'createDocumentReference',
+          }),
+        );
+        if (additionalDocumentFile_64.length) {
+          const additional_64Obj = splitBase_64(additionalDocumentFile_64);
+          const documentReferenceAdditionalDocument = {
+            encounter: encounterData.id,
+            patient: patientData.id,
+            contentType: additional_64Obj.type,
+            data: additional_64Obj.data,
+            categoryCode: '2',
+            url: additionalDocumentFile.name,
+          };
+          APIsFILE.push(
+            FHIR('DocumentReference', 'doWork', {
+              documentReference: documentReferenceAdditionalDocument,
+              functionName: 'createDocumentReference',
+            }),
+          );
+        }
+        await Promise.all(APIsFILE);
       } else {
         triggerValidation();
       }
@@ -755,9 +792,16 @@ const PatientDetailsBlock = ({
     window.open(objUrl, ref.current.files[0].name);
   };
   const onDeleteFileHandler = (ref, setState, fileName) => {
+    if (fileName === 'Referral') {
+      setReferralFile_64('');
+    } else if (fileName === 'Commitment') {
+      setCommitmentFile_64('');
+    } else {
+      setAdditionalDocumentFile_64('');
+    }
     ref.current.value = '';
     const emptyObj = {};
-    setValue(`${fileName}File`, '');
+    clearError(`${fileName}File`);
     setState(emptyObj);
   };
   const onClickAdditionalDocumentHandler = () => {
