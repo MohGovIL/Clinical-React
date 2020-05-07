@@ -60,8 +60,7 @@ import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
 
-
- const PatientDetailsBlock = ({  
+const PatientDetailsBlock = ({
   patientData,
   edit_mode,
   encounterData,
@@ -770,18 +769,24 @@ import { FHIR } from 'Utils/Services/FHIR';
   useEffect(() => {
     if (patientData) {
       if (patientData.managingOrganization) {
-      (async () => {
-        try {
+        (async () => {
+          try {
             // const HMO_Data = await getHMO(patientData.managingOrganization);
-            const Organization = await FHIR('Organization', 'doWork', {functionName: "readOrganization", functionParams: {OrganizationId: patientData.managingOrganization}})
-            const normalizedOrganization = normalizeFhirOrganization(Organization.data);
+            const Organization = await FHIR('Organization', 'doWork', {
+              functionName: 'readOrganization',
+              functionParams: {
+                OrganizationId: patientData.managingOrganization,
+              },
+            });
+            const normalizedOrganization = normalizeFhirOrganization(
+              Organization.data,
+            );
             setHMO(normalizedOrganization);
+          } catch (error) {
+            console.log(error);
           }
-         catch (error) {
-          console.log(error);
-        }
-      })();
-    }
+        })();
+      }
       if (patientData.city) {
         const defaultAddressCityObj = {
           name: t(patientData.city),
@@ -821,7 +826,6 @@ import { FHIR } from 'Utils/Services/FHIR';
         setIsUrgent(true);
       }
       if (encounterData.relatedPerson) {
-
         (async () => {
           try {
             if (encounterData.relatedPerson) {
@@ -839,7 +843,7 @@ import { FHIR } from 'Utils/Services/FHIR';
           } catch (error) {
             console.log(error);
           }
-        })()
+        })();
       }
     }
     if (encounterData && patientData) {
@@ -894,7 +898,7 @@ import { FHIR } from 'Utils/Services/FHIR';
       })();
     }
   }, [encounterData, patientData]);
-    
+
   return (
     <StyledPatientDetails edit={edit_mode}>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
@@ -1723,12 +1727,10 @@ import { FHIR } from 'Utils/Services/FHIR';
   );
 };
 
-
-        
 const mapStateToProps = (state) => {
   return {
     languageDirection: state.settings.lang_dir,
-    };
+  };
 };
 
 export default connect(mapStateToProps)(PatientDetailsBlock);

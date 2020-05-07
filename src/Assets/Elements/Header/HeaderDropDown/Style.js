@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export default styled.div`
   display: flex;
@@ -15,7 +15,7 @@ export default styled.div`
   border-radius: 2px;
   color: #0027a5;
   z-index: 9999;
-  ::before{
+  ::before {
     content: '';
     background-color: #ffffff;
     top: 0;

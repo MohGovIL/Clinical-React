@@ -5,8 +5,8 @@ const Label = styled.label`
   display: inline-block;
   width: 80px;
   height: 40px;
-  margin-right: ${props => props.marginRight || null};
-  margin-left: ${props => props.marginLeft || null};
+  margin-right: ${(props) => props.marginRight || null};
+  margin-left: ${(props) => props.marginLeft || null};
   & input {
     opacity: 0;
     width: 0;

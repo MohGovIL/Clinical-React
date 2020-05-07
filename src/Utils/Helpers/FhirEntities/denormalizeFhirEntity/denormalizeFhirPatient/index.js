@@ -1,5 +1,3 @@
-const denormalizationFhirPatient = patient => {
-    
-};
+const denormalizationFhirPatient = (patient) => {};
 
 export default denormalizationFhirPatient;

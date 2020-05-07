@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import {Button, Menu, MenuItem} from "@material-ui/core";
+import styled from 'styled-components';
+import { Button, Menu, MenuItem } from '@material-ui/core';
 
 export const StyledDiv = styled.div`
   display: flex;
@@ -9,9 +9,10 @@ export const StyledDiv = styled.div`
 
 export const StyledMenu = styled(Menu)`
   & .MuiMenu-paper {
-     background-color: ${props => props.background_color ? props.background_color : null};
-     color: ${props => props.text_color ? props.text_color : null};
-     min-width: 130px;
+    background-color: ${(props) =>
+      props.background_color ? props.background_color : null};
+    color: ${(props) => (props.text_color ? props.text_color : null)};
+    min-width: 130px;
   }
 
   & .MuiList-padding {
@@ -23,9 +24,10 @@ export const StyledMenu = styled(Menu)`
 `;
 
 export const StyledButton = styled(Button)`
-  background-color: ${props => props.background_color ? props.background_color : null};
+  background-color: ${(props) =>
+    props.background_color ? props.background_color : null};
   border-radius: 14.5px;
-  color: ${props => props.text_color ? props.text_color : null};
+  color: ${(props) => (props.text_color ? props.text_color : null)};
   font-weight: bold;
   margin: 0 5px 0 5px;
   padding: 5px;
@@ -33,7 +35,7 @@ export const StyledButton = styled(Button)`
   height: 30px;
 
   .MuiButton-label {
-    padding:0 5px 0 5px;
+    padding: 0 5px 0 5px;
     justify-content: space-between;
     min-width: 130px;
   }
@@ -41,16 +43,16 @@ export const StyledButton = styled(Button)`
   .MuiButton-endIcon {
     padding-left: 0;
     margin-right: auto;
-
   }
   .MuiButton-startIcon {
     margin-left: auto;
-    padding-right: ${props => props.languageDirection === 'ltr' ? '0px' : null};
-    padding-left: ${props => props.languageDirection === 'ltr' ? '0px' : null};
+    padding-right: ${(props) =>
+      props.languageDirection === 'ltr' ? '0px' : null};
+    padding-left: ${(props) =>
+      props.languageDirection === 'ltr' ? '0px' : null};
   }
 `;
 
 export const StyledMenuItem = styled(MenuItem)`
-    text-align: right;
+  text-align: right;
 `;
-
