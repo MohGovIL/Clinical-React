@@ -1,19 +1,30 @@
 import React from 'react';
-import {LOGIN_START} from 'Store/Actions/LoginActions/LoginActionTypes'
-import LoginStyleBox from "./LoginBoxStyle";
-
+import { LOGIN_START } from 'Store/Actions/LoginActions/LoginActionTypes';
+import LoginStyleBox from './LoginBoxStyle';
 
 const LoginBox = (props) => {
-    return (
-        <LoginStyleBox>
-            <h1>LOGIN</h1>
-            <input type="text" placeholder="user name" onChange={props.userNameHandler} value={props.userName}/>
-            <input type="password" placeholder="password" onChange={props.passwordHandler}
-                   value={props.password}/>
-            {props.status !== LOGIN_START ? <input type="submit" value="Login"
-                                                   onClick={() => props.login()}/> : <p>Insert Loader</p>}
-        </LoginStyleBox>
-    );
+  return (
+    <LoginStyleBox>
+      <h1>LOGIN</h1>
+      <input
+        type='text'
+        placeholder='user name'
+        onChange={props.userNameHandler}
+        value={props.userName}
+      />
+      <input
+        type='password'
+        placeholder='password'
+        onChange={props.passwordHandler}
+        value={props.password}
+      />
+      {props.status !== LOGIN_START ? (
+        <input type='submit' value='Login' onClick={() => props.login()} />
+      ) : (
+        <p>Insert Loader</p>
+      )}
+    </LoginStyleBox>
+  );
 };
 
 export default LoginBox;

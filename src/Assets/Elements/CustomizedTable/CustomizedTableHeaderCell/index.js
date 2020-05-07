@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import TableCell from "@material-ui/core/TableCell";
+import styled from 'styled-components';
+import TableCell from '@material-ui/core/TableCell';
 
 const CustomizedTableHeaderCell = styled(TableCell)`
   padding: 0;

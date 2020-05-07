@@ -2,7 +2,6 @@ import React from 'react';
 import TitleValueComponent from '../../../../Assets/Elements/Header/Search/DrawThisTable/TitleValueComponent';
 import { useTranslation } from 'react-i18next';
 import {
-  StyledBottomLinks,
   StyledBox,
   StyledHeaderTableAppointment,
   StyledHrefButton,
@@ -18,10 +17,6 @@ import {
 import moment from 'moment';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
-import LinkComponentWithIcon from '../../../../Assets/Elements/Header/Search/DrawThisTable/LinkComponentWithIcon';
-
-import ListItem from '@material-ui/core/ListItem';
-import Header from '../../../../Assets/Elements/Header';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -220,16 +215,11 @@ const AppointmentsAndEncountersTables = ({
                         </StyledTableTextCell>
                       </TableCell>
                       <TableCell align='right'>
-                        {/* {encounter.examination && encounter.serviceType.examination>1?
-                                            <StyledTableTextCell>{parseMultipleExaminations(encounter.serviceType,encounter.examination)}</StyledTableTextCell>
-                                            :
-                                            <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType != "" && encounter.examination != "" ? '-' : ''} {t(encounter.examination)} </StyledTableTextCell>
-                                        }*/}
-                        <StyledTableTextCell
-                          title={parseMultipleExaminations(
-                            encounter.serviceType,
-                            encounter.examination,
-                          )}>
+                          <StyledTableTextCell
+                              title={parseMultipleExaminations(
+                                  encounter.serviceType,
+                                  encounter.examination,
+                              )}>
                           {parseMultipleExaminations(
                             encounter.serviceType,
                             encounter.examination,
@@ -252,10 +242,7 @@ const AppointmentsAndEncountersTables = ({
                           size={'small'}
                           variant='outlined'
                           color='primary'
-                          href='#contained-buttons'
-                          /* disabled={curEncounters && curEncounters.data && curEncounters.data.total > 0 ? true : false}*/
-                          /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                        >
+                          href='#contained-buttons'>
                           {t('navigate to encounter sheet')}
                         </StyledHrefTableButton>
                       </TableCell>
@@ -264,10 +251,7 @@ const AppointmentsAndEncountersTables = ({
                           size={'large'}
                           variant='outlined'
                           color='primary'
-                          href='#contained-buttons'
-                          /* disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}*/
-                          /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                        >
+                          href='#contained-buttons'>
                           {t('Admission form')}
                         </StyledHrefTableButton>
                       </TableCell>
@@ -338,22 +322,11 @@ const AppointmentsAndEncountersTables = ({
                           </StyledTableTextCell>
                         </TableCell>
                         <TableCell align='right'>
-                          {/*  <StyledTableTextCell>{t(appointment.serviceType)} {appointment.serviceType!="" && appointment.examination!="" ?'-':''} {t(appointment.examination)}</StyledTableTextCell>*/}
-                          {/*{appointment.examination && appointment.examination.length>1?
-                                                        <StyledTableTextCell>{parseMultipleExaminations(appointment.serviceType,appointment.examination)}</StyledTableTextCell>
-                                                        :
-                                                        <StyledTableTextCell>{t(appointment.serviceType)} {appointment.serviceType != "" && appointment.examination != "" ? '-' : ''} {t(appointment.examination)} </StyledTableTextCell>
-                                                    }*/}
-                          <StyledTableTextCell
-                            title={parseMultipleExaminations(
-                              appointment.serviceType,
-                              appointment.examination,
-                            )}>
-                            >
-                            {parseMultipleExaminations(
-                              appointment.serviceType,
-                              appointment.examination,
-                            )}
+                            <StyledTableTextCell
+                                title={parseMultipleExaminations(
+                                    appointment.serviceType,
+                                    appointment.examination,
+                                )}>
                           </StyledTableTextCell>
                         </TableCell>
                         <TableCell align='center'>
@@ -376,10 +349,7 @@ const AppointmentsAndEncountersTables = ({
                             size={'small'}
                             variant='outlined'
                             color='primary'
-                            href='#contained-buttons'
-                            /* disabled={curEncounters && curEncounters.data && curEncounters.data.total > 0 ? true : false}*/
-                            /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                          >
+                            href='#contained-buttons'>
                             {t('Appointment details')}
                           </StyledHrefTableButton>
                         </TableCell>
@@ -388,10 +358,7 @@ const AppointmentsAndEncountersTables = ({
                             size={'large'}
                             variant='outlined'
                             color='primary'
-                            href='#contained-buttons'
-                            /* disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}*/
-                            /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                          >
+                            href='#contained-buttons'>
                             {t('Cancel appointment')}
                           </StyledHrefTableButton>
                         </TableCell>
@@ -462,17 +429,11 @@ const AppointmentsAndEncountersTables = ({
                           </StyledTableTextCell>
                         </TableCell>
                         <TableCell align='right'>
-                          {/* <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType!="" && encounter.examination!="" ? '-' : ''} {t(encounter.examination)}</StyledTableTextCell>*/}
-                          {/*{encounter.examination && encounter.examination.length>1?
-                                                                <StyledTableTextCell>{parseMultipleExaminations(encounter.serviceType,encounter.examination)}</StyledTableTextCell>
-                                                                :
-                                                                <StyledTableTextCell>{t(encounter.serviceType)} {encounter.serviceType != "" && encounter.examination != "" ? '-' : ''} {t(encounter.examination)} </StyledTableTextCell>
-                                                            }*/}
-                          <StyledTableTextCell
-                            title={parseMultipleExaminations(
-                              encounter.serviceType,
-                              encounter.examination,
-                            )}>
+                            <StyledTableTextCell
+                                title={parseMultipleExaminations(
+                                    encounter.serviceType,
+                                    encounter.examination,
+                                )}>
                             {parseMultipleExaminations(
                               encounter.serviceType,
                               encounter.examination,
@@ -495,23 +456,17 @@ const AppointmentsAndEncountersTables = ({
                             size={'small'}
                             variant='outlined'
                             color='primary'
-                            href='#contained-buttons'
-                            /* disabled={curEncounters && curEncounters.data && curEncounters.data.total > 0 ? true : false}*/
-                            /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                          >
+                            href='#contained-buttons'>
                             {t('Encounter sheet')}
                           </StyledHrefTableButton>
                         </TableCell>
                         <TableCell align='right'>
-                          {encounter.status === 'Finished' ? (
+                          {encounter.status === 'finished' ? (
                             <StyledHrefTableButton
                               size={'large'}
                               variant='outlined'
                               color='primary'
-                              href='#contained-buttons'
-                              /* disabled={curEncounter && curEncounter.data && curEncounter.data.total > 0 ? true : false}*/
-                              /*onClick={() => handleCreateAppointment(patient, nextAppointment)}>*/
-                            >
+                              href='#contained-buttons'>
                               {t('Send result')}
                             </StyledHrefTableButton>
                           ) : (
@@ -556,5 +511,6 @@ const AppointmentsAndEncountersTables = ({
     </React.Fragment>
   );
 };
+
 
 export default AppointmentsAndEncountersTables;

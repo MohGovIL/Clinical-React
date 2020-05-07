@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import Tabs from "@material-ui/core/Tabs";
+import styled from 'styled-components';
+import Tabs from '@material-ui/core/Tabs';
 
 export default styled(Tabs)`
   color: #002398;
@@ -7,7 +7,7 @@ export default styled(Tabs)`
     background-color: #002398;
     width: 5px;
   }
-   & .Mui-selected {
+  & .Mui-selected {
     font-weight: bold;
     background-color: #eaf7ff;
   }
