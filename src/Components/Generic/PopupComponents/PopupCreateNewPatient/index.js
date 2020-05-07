@@ -108,32 +108,32 @@ const PopupCreateNewPatient = ({
 
   const onSubmit = (data, e) => {
     console.log('===============data of form==================');
+    console.log(formState.isValid);
+    console.log(errors.length);
+    // if (errors && errors.length > 0) {
     if (!formState.isValid) {
-      setFormButtonSave('view');
+     setFormButtonSave('view');
     } else {
-      if (
-        !validateLuhnAlgorithm(data.idNumber) &&
-        data.idNumberType === patientIdTypeMain
-      ) {
+      if (!validateLuhnAlgorithm(data.idNumber) && data.idNumberType === patientIdTypeMain) {
         setError('idNumber', 'notValid', 'The number entered is incorrect');
         setErrorIdNumber(true);
         setErrorIdNumberText(t(errors?.idNumber?.message));
         setFormButtonSave('write');
+      } else {
+          (() => {
+              try {
+                  FHIR('Patient', 'doWork', {
+                      // eslint-disable-next-line no-use-before-define
+                      functionName: 'createPatient',
+                      functionParams: {
+                          data,
+                      },
+                  });
+              } catch (e) {
+
+              }
+          })();
       }
-
-        (() => {
-            try {
-                FHIR('Patient', 'doWork', {
-                    // eslint-disable-next-line no-use-before-define
-                    functionName: 'createPatient',
-                    functionParams: {
-                        data,
-                    },
-                });
-            } catch (e) {
-
-            }
-        })();
       console.log('we will save a new patient, hooray!!!!');
     }
     console.log('===============data of form==================');
