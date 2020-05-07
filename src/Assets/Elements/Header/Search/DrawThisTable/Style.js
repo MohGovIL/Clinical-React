@@ -6,6 +6,7 @@ import {
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import GenderIcon from 'Assets/Elements/CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon';
 import Icon from '@material-ui/core/Icon';
+import TitleValueComponent from './TitleValueComponent';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
@@ -378,7 +379,7 @@ export const StyledEmptyDiv = styled.div`
 `;
 
 export const StyledTableTextCell = styled.div`
-  width: auto;
+  width: 200px;
   height: 18px;
   font-family: OpenSansHebrew;
   font-size: 14px;
@@ -389,6 +390,9 @@ export const StyledTableTextCell = styled.div`
   letter-spacing: normal;
   text-align: right;
   color: #000b40;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const StyledHeaderTableAppointment = styled.div`

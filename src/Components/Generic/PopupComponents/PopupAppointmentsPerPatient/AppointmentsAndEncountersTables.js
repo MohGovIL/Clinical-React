@@ -215,7 +215,11 @@ const AppointmentsAndEncountersTables = ({
                         </StyledTableTextCell>
                       </TableCell>
                       <TableCell align='right'>
-                        <StyledTableTextCell>
+                          <StyledTableTextCell
+                              title={parseMultipleExaminations(
+                                  encounter.serviceType,
+                                  encounter.examination,
+                              )}>
                           {parseMultipleExaminations(
                             encounter.serviceType,
                             encounter.examination,
@@ -318,11 +322,11 @@ const AppointmentsAndEncountersTables = ({
                           </StyledTableTextCell>
                         </TableCell>
                         <TableCell align='right'>
-                          <StyledTableTextCell>
-                            {parseMultipleExaminations(
-                              appointment.serviceType,
-                              appointment.examination,
-                            )}
+                            <StyledTableTextCell
+                                title={parseMultipleExaminations(
+                                    appointment.serviceType,
+                                    appointment.examination,
+                                )}>
                           </StyledTableTextCell>
                         </TableCell>
                         <TableCell align='center'>
@@ -425,7 +429,11 @@ const AppointmentsAndEncountersTables = ({
                           </StyledTableTextCell>
                         </TableCell>
                         <TableCell align='right'>
-                          <StyledTableTextCell>
+                            <StyledTableTextCell
+                                title={parseMultipleExaminations(
+                                    encounter.serviceType,
+                                    encounter.examination,
+                                )}>
                             {parseMultipleExaminations(
                               encounter.serviceType,
                               encounter.examination,
@@ -503,5 +511,6 @@ const AppointmentsAndEncountersTables = ({
     </React.Fragment>
   );
 };
+
 
 export default AppointmentsAndEncountersTables;
