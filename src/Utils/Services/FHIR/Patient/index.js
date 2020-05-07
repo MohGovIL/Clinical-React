@@ -12,7 +12,8 @@ import {
   sortPatientRulesByNumberSort,
 } from '../../SearchLogic';
 import { CRUDOperations } from '../CRUDOperations';
-import denormalizationFhirPatient from "../../../Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirPatient";
+import denormalizeFhirPatient from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirPatient';
+// import denormalizeFhirEncounter from "Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirEncounter";
 
 const PatientStats = {
   doWork: (parameters = null) => {
@@ -90,9 +91,6 @@ const PatientStats = {
     }
     return data;
   },
-  timeout: (ms) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  },
   updatePatientData: (params) => {
     return CRUDOperations(
       'patch',
@@ -166,55 +164,6 @@ const PatientStats = {
   },
   timeout: (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
-  },
-  updatePatientData: (params) => {
-    return CRUDOperations(
-      'patch',
-      `${params.url}/${params.functionParams.patientData}`,
-      [
-        {
-          op: 'replace',
-          path: '/name/0/family',
-          value: params.functionParams.data.lastName,
-        },
-        {
-          op: 'replace',
-          path: '/name/0/given',
-          value: [params.functionParams.data.firstName, ''],
-        },
-        {
-          op: 'replace',
-          path: '/telecom/1',
-          value: {
-            system: 'email',
-            value: params.functionParams.data.patientEmail,
-          },
-        },
-        {
-          op: 'replace',
-          path: '/telecom/2',
-          value: {
-            system: 'phone',
-            value: params.functionParams.data.mobilePhone,
-            use: 'mobile',
-          },
-        },
-        {
-          op: 'replace',
-          path: '/birthDate',
-          value: params.functionParams.data.birthDate,
-        },
-        {
-          op: 'replace',
-          path: '/managingOrganization',
-          value: {
-            reference:
-              'Organization/' +
-              params.functionParams.data.healthManageOrganization,
-          },
-        },
-      ],
-    );
   },
   updatePatient: (params) => {
     const patchArr = [];
@@ -384,6 +333,12 @@ const PatientStats = {
         patchArr,
       );
     }
+  },
+  createPatient: (params) => {
+    const denormalizationFhirPatient = denormalizeFhirPatient(
+      params.functionParams.patient,
+    );
+    return CRUDOperations('create', `${params.url}`, denormalizationFhirPatient);
   },
 };
 

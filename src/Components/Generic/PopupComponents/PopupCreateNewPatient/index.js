@@ -50,7 +50,7 @@ const PopupCreateNewPatient = ({
   const [patientGender, setPatientGender] = useState(0);
   const [patientIdType, setPatientIdType] = useState(0);
   const [patientBirthDate, setPatientBirthDate] = useState(null);
-  const [patientHealthManageOrganizationValue, setPatientKupatHolim] = useState(
+  const [patientManagingOrganizationValue, setPatientKupatHolim] = useState(
     0,
   );
 
@@ -62,11 +62,11 @@ const PopupCreateNewPatient = ({
   const [isFound, setIsFound] = useState(false);
 
   const [errorRequired, setErrorRequired] = useState({
-    idNumber: false,
+    identifier: false,
     firstName: false,
     lastName: false,
-    mobilePhone: false,
-    patientEmail: false,
+    mobileCellPhone: false,
+    email: false,
   });
 
   const [errorIdNumber, setErrorIdNumber] = useState(false);
@@ -80,11 +80,11 @@ const PopupCreateNewPatient = ({
   const history = useHistory();
 
   let patientInitialValues = {
-    idNumber: '',
+    identifier: '',
     firstName: '',
     lastName: '',
-    mobilePhone: '',
-    patientEmail: '',
+    mobileCellPhone: '',
+    email: '',
     birthDate: null,
   };
 
@@ -106,7 +106,7 @@ const PopupCreateNewPatient = ({
     validateCriteriaMode: 'all',
   });
 
-  const onSubmit = (data, e) => {
+  const onSubmit = (patient, e) => {
     console.log('===============data of form==================');
     console.log(formState.isValid);
     console.log(errors.length);
@@ -114,10 +114,10 @@ const PopupCreateNewPatient = ({
     if (!formState.isValid) {
      setFormButtonSave('view');
     } else {
-      if (!validateLuhnAlgorithm(data.idNumber) && data.idNumberType === patientIdTypeMain) {
-        setError('idNumber', 'notValid', 'The number entered is incorrect');
+      if (!validateLuhnAlgorithm(patient.identifier) && patient.identifierType === patientIdTypeMain) {
+        setError('identifier', 'notValid', 'The number entered is incorrect');
         setErrorIdNumber(true);
-        setErrorIdNumberText(t(errors?.idNumber?.message));
+        setErrorIdNumberText(t(errors?.identifier?.message));
         setFormButtonSave('write');
       } else {
           (() => {
@@ -126,8 +126,12 @@ const PopupCreateNewPatient = ({
                       // eslint-disable-next-line no-use-before-define
                       functionName: 'createPatient',
                       functionParams: {
-                          data,
+                          patient,
                       },
+                  }).then((saved_patient)=>{
+                      console.log("====saved data=====");
+                      console.log(saved_patient);
+                      console.log("===================");
                   });
               } catch (e) {
 
@@ -141,9 +145,9 @@ const PopupCreateNewPatient = ({
 
   //Register TextField components in react-hook-forms
   useEffect(() => {
-    register({ name: 'idNumberType' }, textFieldSelectNotEmptyRule);
+    register({ name: 'identifierType' }, textFieldSelectNotEmptyRule);
     register({ name: 'gender' }, textFieldSelectNotEmptyRule);
-    register({ name: 'healthManageOrganization' }, textFieldSelectNotEmptyRule);
+    register({ name: 'managingOrganization' }, textFieldSelectNotEmptyRule);
   }, []);
 
   //useEffect block
@@ -244,7 +248,7 @@ const PopupCreateNewPatient = ({
         patientIdNumber.length > 0
       ) {
         setIsFound(true);
-        const result = await triggerValidation('idNumber');
+        const result = await triggerValidation('identifier');
         setFormButtonCreatApp('view');
         setFormButtonPatientAdm('view');
         try {
@@ -260,12 +264,12 @@ const PopupCreateNewPatient = ({
                 'birthDate',
                 Moment(patients.birthDate).format(formatDate),
               );
-              setValue('mobilePhone', patients.mobileCellPhone);
-              setValue('patientEmail', patients.email);
-              setValue('idNumberType', patients.identifierType);
+              setValue('mobileCellPhone', patients.mobileCellPhone);
+              setValue('email', patients.email);
+              setValue('identifierType', patients.identifierType);
               setValue('gender', patients.gender);
               setValue(
-                'healthManageOrganization',
+                'managingOrganization',
                 patients.managingOrganization,
               );
 
@@ -277,21 +281,21 @@ const PopupCreateNewPatient = ({
               setPatientKupatHolim(patients.managingOrganization);
 
               setError(
-                'idNumber',
+                'identifier',
                 'patientExist',
                 'The patient exists in the system',
               );
               setErrorIdNumber(true);
-              setErrorIdNumberText(t(errors?.idNumber?.message));
+              setErrorIdNumberText(t(errors?.identifier?.message));
 
               //clear required error
               setErrorRequired({
                 ...errorRequired,
                 birthDate: false,
-                idNumber: false,
+                identifier: false,
                 firstName: false,
                 lastName: false,
-                mobilePhone: false,
+                mobileCellPhone: false,
               });
               setFormButtonSave('view');
               setFormButtonCreatApp('write');
@@ -302,12 +306,12 @@ const PopupCreateNewPatient = ({
                 patientIdType === patientIdTypeMain
               ) {
                 setError(
-                  'idNumber',
+                  'identifier',
                   'notValid',
                   'The number entered is incorrect',
                 );
                 setErrorIdNumber(true);
-                setErrorIdNumberText(t(errors?.idNumber?.message));
+                setErrorIdNumberText(t(errors?.identifier?.message));
                 setFormButtonSave('write');
               } else {
                 clearIdNumber();
@@ -324,7 +328,7 @@ const PopupCreateNewPatient = ({
 
   const handleIdTypeChange = (event) => {
     try {
-      setValue('idNumberType', event.target.value, true);
+      setValue('identifierType', event.target.value, true);
       setPatientIdType(event.target.value);
     } catch (e) {
       console.log('Error: ' + e);
@@ -342,7 +346,7 @@ const PopupCreateNewPatient = ({
 
   const handleChangeHealthManageOrg = (event) => {
     try {
-      setValue('healthManageOrganization', event.target.value, true);
+      setValue('managingOrganization', event.target.value, true);
       setPatientKupatHolim(event.target.value);
     } catch (e) {
       console.log('Error: ' + e);
@@ -354,7 +358,7 @@ const PopupCreateNewPatient = ({
   };
 
   const clearIdNumber = () => {
-    clearError('idNumber');
+    clearError('identifier');
     setErrorIdNumber(false);
     setErrorIdNumberText('');
   };
@@ -429,7 +433,7 @@ const PopupCreateNewPatient = ({
   const handlePopupCloseAndClear = () => {
     reset(patientInitialValues);
     setPatientIdNumber('');
-    setValue('idNumber', '');
+    setValue('identifier', '');
 
     clearIdNumber();
     setFormButtonSave('write');
@@ -438,9 +442,9 @@ const PopupCreateNewPatient = ({
     setPatientKupatHolim(0);
     setPatientBirthDate(null);
 
-    register({ name: 'idNumberType' }, textFieldSelectNotEmptyRule);
+    register({ name: 'identifierType' }, textFieldSelectNotEmptyRule);
     register({ name: 'gender' }, textFieldSelectNotEmptyRule);
-    register({ name: 'healthManageOrganization' }, textFieldSelectNotEmptyRule);
+    register({ name: 'managingOrganization' }, textFieldSelectNotEmptyRule);
 
     handlePopupClose();
   };
@@ -482,7 +486,7 @@ const PopupCreateNewPatient = ({
     event.target.setCustomValidity('');
     let field = event.target.name;
 
-    if (field == 'idNumber') {
+    if (field == 'identifier') {
       setErrorIdNumberText(t('Value is required'));
     }
     setErrorRequired({
@@ -506,8 +510,8 @@ const PopupCreateNewPatient = ({
               <Controller
                 as={TextField}
                 control={control}
-                id='standard-idNumber'
-                name='idNumber'
+                id='standard-identifier'
+                name='identifier'
                 defaultValue={patientIdNumber}
                 label={t('id number')}
                 required
@@ -515,9 +519,9 @@ const PopupCreateNewPatient = ({
                 onInput={handlerOnInvalidField}
                 rules={{
                   validate: (value) => {
-                    const formValues = getValues('idNumberType');
-                    if (formValues && formValues.idNumber !== undefined) {
-                      setPatientIdNumber(formValues.idNumber.trim());
+                    const formValues = getValues('identifierType');
+                    if (formValues && formValues.identifier !== undefined) {
+                      setPatientIdNumber(formValues.identifier.trim());
                     }
                     return getIsFound() === true;
                   },
@@ -525,12 +529,12 @@ const PopupCreateNewPatient = ({
                 color={'primary'}
                 variant={'filled'}
                 error={
-                  errorIdNumber || (!errorRequired.idNumber ? false : true)
+                  errorIdNumber || (!errorRequired.identifier ? false : true)
                 }
-                helperText={errorIdNumberText || errorRequired.idNumber}
+                helperText={errorIdNumberText || errorRequired.identifier}
                 InputProps={{
                   autoComplete: 'off',
-                  endAdornment: (!errorRequired.idNumber ? false : true) && (
+                  endAdornment: (!errorRequired.identifier ? false : true) && (
                     <InputAdornment position='end'>
                       <ErrorOutlineIcon htmlColor={'#ff0000'} />
                     </InputAdornment>
@@ -600,9 +604,9 @@ const PopupCreateNewPatient = ({
                 ))}
               </TextField>
               <TextField
-                id='standard-healthManageOrganization'
-                name='healthManageOrganization'
-                value={patientHealthManageOrganizationValue}
+                id='standard-managingOrganization'
+                name='managingOrganization'
+                value={patientManagingOrganizationValue}
                 label={t('Kupat Cholim')}
                 required={patientIdType === patientIdTypeMain}
                 select
@@ -622,14 +626,14 @@ const PopupCreateNewPatient = ({
                     },
                   },
                 }}
-                error={errors.healthManageOrganization ? true : false}
+                error={errors.managingOrganization ? true : false}
                 helperText={
-                  errors.healthManageOrganization
+                  errors.managingOrganization
                     ? t('is a required field.')
                     : null
                 }
                 InputProps={{
-                  endAdornment: errors.healthManageOrganization && (
+                  endAdornment: errors.managingOrganization && (
                     <InputAdornment position='end'>
                       <ErrorOutlineIcon htmlColor={'#ff0000'} />
                     </InputAdornment>
@@ -645,8 +649,8 @@ const PopupCreateNewPatient = ({
             </StyledColumnFirst>
             <StyledColumnSecond>
               <TextField
-                id='standard-idNumberType'
-                name='idNumberType'
+                id='standard-identifierType'
+                name='identifierType'
                 value={patientIdType}
                 label={t('ID type')}
                 required
@@ -667,12 +671,12 @@ const PopupCreateNewPatient = ({
                     },
                   },
                 }}
-                error={errors.idNumberType ? true : false}
+                error={errors.identifierType ? true : false}
                 helperText={
-                  errors.idNumberType ? t('is a required field.') : null
+                  errors.identifierType ? t('is a required field.') : null
                 }
                 InputProps={{
-                  endAdornment: errors.idNumberType && (
+                  endAdornment: errors.identifierType && (
                     <InputAdornment position='end'>
                       <ErrorOutlineIcon htmlColor={'#ff0000'} />
                     </InputAdornment>
@@ -765,29 +769,29 @@ const PopupCreateNewPatient = ({
               <Controller
                 as={TextField}
                 control={control}
-                id='standard-mobilePhone'
-                name='mobilePhone'
-                defaultValue={patientInitialValues.mobilePhone}
+                id='standard-mobileCellPhone'
+                name='mobileCellPhone'
+                defaultValue={patientInitialValues.mobileCellPhone}
                 label={t('Cell phone')}
                 rules={{
                   pattern: getCellPhoneRegexPattern(),
                 }}
                 error={
-                  errors.mobilePhone ||
-                  (!errorRequired.mobilePhone ? false : true)
+                  errors.mobileCellPhone ||
+                  (!errorRequired.mobileCellPhone ? false : true)
                     ? true
                     : false
                 }
                 helperText={
-                  errors.mobilePhone
+                  errors.mobileCellPhone
                     ? t('The number entered is incorrect')
-                    : errorRequired.mobilePhone
-                    ? errorRequired.mobilePhone
+                    : errorRequired.mobileCellPhone
+                    ? errorRequired.mobileCellPhone
                     : null
                 }
                 InputProps={{
-                  endAdornment: (errors.mobilePhone ||
-                  !errorRequired.mobilePhone
+                  endAdornment: (errors.mobileCellPhone ||
+                  !errorRequired.mobileCellPhone
                     ? false
                     : true) && (
                     <InputAdornment position='end'>
@@ -806,16 +810,16 @@ const PopupCreateNewPatient = ({
             <Controller
               as={TextField}
               control={control}
-              id='standard-patientEmail'
-              name='patientEmail'
-              defaultValue={patientInitialValues.patientEmail}
+              id='standard-email'
+              name='email'
+              defaultValue={patientInitialValues.email}
               label={t('Mail address')}
-              error={errors.patientEmail ? true : false}
+              error={errors.email ? true : false}
               helperText={
-                errors.patientEmail ? t('Invalid email address') : null
+                errors.email ? t('Invalid email address') : null
               }
               InputProps={{
-                endAdornment: errors.patientEmail && (
+                endAdornment: errors.email && (
                   <InputAdornment position='end'>
                     <ErrorOutlineIcon htmlColor={'#ff0000'} />
                   </InputAdornment>
