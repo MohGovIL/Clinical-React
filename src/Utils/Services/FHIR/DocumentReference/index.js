@@ -39,7 +39,10 @@ const DocumentReferenceStates = {
       }
     }
 
-    return CRUDOperations('search', `${params.url}${searchString}`);
+    return CRUDOperations(
+      'search',
+      `${params.url}${searchString.length ? '?' : ''}${searchString}`,
+    );
   },
   createDocumentReference: (params) => {
     const denormalizedDocumentReference = denormalizerFhirDocumentReference(

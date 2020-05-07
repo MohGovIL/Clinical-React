@@ -971,41 +971,52 @@ const PatientDetailsBlock = ({
           console.log(error);
         }
       })();
-    //   if (encounterData.id || patientData.id) {
-    //     (async () => {
-    //       const df = await FHIR('DocumentReference', 'doWork', {
-    //         functionName: 'getDocumentReference',
-    //         searchParams: {
-    //           encounter: encounterData.id,
-    //           patient: patientData.id,
-    //         },
-    //       });
-    //       console.log(df);
-    //     })();
-    //   }
+      if (encounterData.id || patientData.id) {
+        (async () => {
+          const documentReferenceData = await FHIR(
+            'DocumentReference',
+            'doWork',
+            {
+              functionName: 'getDocumentReference',
+              searchParams: {
+                encounter: encounterData.id,
+                patient: patientData.id,
+              },
+            },
+          );
+          if (documentReferenceData.data.total) {
+            // There is data inside
+            // No need to implement now since there is no way to get to this page with encounter
+          }
+        })();
+      }
     }
   }, [encounterData, patientData]);
-
+  const handlePopUpClose = () => {
+    setIsPopUpOpen(false);
+  };
   return (
     <React.Fragment>
-      {/*<CustomizedPopup*/}
-      {/*  isOpen={isPopUpOpen}*/}
-      {/*  onClose={setIsPopUpOpen((prevState) => !prevState)}*/}
-      {/*  title={t('System notification')}*/}
-      {/*  bottomButtons={[*/}
-      {/*    {*/}
-      {/*      color: 'primary',*/}
-      {/*      label: 'Delete',*/}
-      {/*      variant: 'contained',*/}
-      {/*      onClick: '',*/}
-      {/*    },*/}
-      {/*    {*/}
-      {/*      color: 'primary',*/}
-      {/*      label: 'Do not delete',*/}
-      {/*      variant: 'outlined',*/}
-      {/*      onClick: '',*/}
-      {/*    },*/}
-      {/*  ]}></CustomizedPopup>*/}
+      <CustomizedPopup
+        isOpen={isPopUpOpen}
+        onClose={handlePopUpClose}
+        bottomButtons={[
+          {
+            color: 'primary',
+            label: 'Delete',
+            variant: 'contained',
+            onClick: '',
+          },
+          {
+            color: 'primary',
+            label: 'Do not delete',
+            variant: 'outlined',
+            onClick: '',
+          },
+        ]}
+        title={t('System notification')}>
+        {` ${t('Do you want to continue?')}`}
+      </CustomizedPopup>
       <StyledPatientDetails edit={edit_mode}>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
           {/* Patient Details */}
@@ -1391,7 +1402,7 @@ const PatientDetailsBlock = ({
                     selectTestRef.current = e;
                     register(e);
                   }}
-                  error={requiredErrors.selectTest && true}
+                  error={requiredErrors.selectTest ? true : false}
                   helperText={
                     requiredErrors.selectTest &&
                     t('The test performed during the visit must be selected')
@@ -1456,17 +1467,13 @@ const PatientDetailsBlock = ({
             </Tabs>
             {commitmentAndPaymentTabValue === 0 && (
               <React.Fragment>
-                <Controller
-                  name='commitmentAndPaymentHMO'
-                  as={
-                    <StyledTextField
-                      label={t('HMO')}
-                      id={'commitmentAndPaymentHMO'}
-                      disabled
-                    />
-                  }
-                  defaultValue={HMO.name || ''}
-                  control={control}
+                <StyledTextField
+                  name={'commitmentAndPaymentHMO'}
+                  inputRef={register()}
+                  value={HMO.name || ''}
+                  label={t('HMO')}
+                  id={'commitmentAndPaymentHMO'}
+                  disabled
                 />
                 <Controller
                   control={control}
@@ -1486,8 +1493,9 @@ const PatientDetailsBlock = ({
                       id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                       type='number'
                       error={
-                        requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment &&
-                        true
+                        requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
+                          ? true
+                          : false
                       }
                       helperText={
                         requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment &&
@@ -1496,7 +1504,6 @@ const PatientDetailsBlock = ({
                     />
                   }
                 />
-
                 <Controller
                   name='commitmentAndPaymentCommitmentDate'
                   rules={{
@@ -1604,7 +1611,9 @@ const PatientDetailsBlock = ({
                       label={`${t('Doctors name')} *`}
                       id={'commitmentAndPaymentDoctorsName'}
                       error={
-                        requiredErrors.commitmentAndPaymentDoctorsName && true
+                        requiredErrors.commitmentAndPaymentDoctorsName
+                          ? true
+                          : false
                       }
                       helperText={
                         requiredErrors.commitmentAndPaymentDoctorsName || ''
@@ -1630,8 +1639,9 @@ const PatientDetailsBlock = ({
                       id={'commitmentAndPaymentDoctorsLicense'}
                       type='number'
                       error={
-                        requiredErrors.commitmentAndPaymentDoctorsLicense &&
-                        true
+                        requiredErrors.commitmentAndPaymentDoctorsLicense
+                          ? true
+                          : false
                       }
                       helperText={
                         requiredErrors.commitmentAndPaymentDoctorsLicense || ''
