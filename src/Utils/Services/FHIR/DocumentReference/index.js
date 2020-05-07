@@ -7,8 +7,7 @@
 // console.log(base_64_data);
 
 import { CRUDOperations } from '../CRUDOperations';
-import denormalizerFhirDocumentReference
-    from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizerFhirDocumentReference';
+import denormalizerFhirDocumentReference from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizerFhirDocumentReference';
 
 const DocumentReferenceStates = {
   doWork: (parameters) => {
@@ -17,22 +16,33 @@ const DocumentReferenceStates = {
     return DocumentReferenceStates[parameters.functionName](parameters);
   },
   createDocumentReference: (params) => {
-    const denormalizedDocumentReference =  denormalizerFhirDocumentReference(params.documentReference);
+    const denormalizedDocumentReference = denormalizerFhirDocumentReference(
+      params.documentReference,
+    );
     return CRUDOperations('create', params.url, denormalizedDocumentReference);
   },
-    updateDocumentReference: (params) => {
-      const denormalizedDocumentReference = denormalizerFhirDocumentReference(params.documentReference);
-      return CRUDOperations('update', `${params.url}/${params.documentReferenceId}`, denormalizedDocumentReference)
-    },
-    deleteDocumentReference: (params) => {
-        return CRUDOperations('delete', `${params.url}/${params.documentReferenceId}`)
-    }
+  updateDocumentReference: (params) => {
+    const denormalizedDocumentReference = denormalizerFhirDocumentReference(
+      params.documentReference,
+    );
+    return CRUDOperations(
+      'update',
+      `${params.url}/${params.documentReferenceId}`,
+      denormalizedDocumentReference,
+    );
+  },
+  deleteDocumentReference: (params) => {
+    return CRUDOperations(
+      'delete',
+      `${params.url}/${params.documentReferenceId}`,
+    );
+  },
 };
 
 export default function DocumentReference(action = null, params = null) {
-    if (action) {
-        const transformer =
-            DocumentReferenceStates[action] ?? DocumentReferenceStates.__default__;
-        return transformer(params);
-    }
+  if (action) {
+    const transformer =
+      DocumentReferenceStates[action] ?? DocumentReferenceStates.__default__;
+    return transformer(params);
+  }
 }

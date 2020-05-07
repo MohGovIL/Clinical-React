@@ -1,29 +1,29 @@
 // Other
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import matchSorter from 'match-sorter';
-import {getCellPhoneRegexPattern} from 'Utils/Helpers/validation/patterns';
-import {Controller, useForm} from 'react-hook-form';
-import {connect} from 'react-redux';
+import { getCellPhoneRegexPattern } from 'Utils/Helpers/validation/patterns';
+import { Controller, useForm } from 'react-hook-form';
+import { connect } from 'react-redux';
 // Helpers
-import {normalizeFhirOrganization} from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirOrganization';
+import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirOrganization';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
-import {calculateFileSize} from 'Utils/Helpers/calculateFileSize';
-import normalizeFhirQuestionnaireResponse
-    from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
+import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
+import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
+import { splitBase_64 } from 'Utils/Helpers/splitBase_64';
 // Styles
 import {
-    StyledAutoComplete,
-    StyledButton,
-    StyledChip,
-    StyledDivider,
-    StyledForm,
-    StyledFormGroup,
-    StyledKeyboardDatePicker,
-    StyledPatientDetails,
-    StyledTextField,
+  StyledAutoComplete,
+  StyledButton,
+  StyledChip,
+  StyledDivider,
+  StyledForm,
+  StyledFormGroup,
+  StyledKeyboardDatePicker,
+  StyledPatientDetails,
+  StyledTextField,
 } from './Style';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 // Assets, Customized elements
 import Title from 'Assets/Elements/Title';
 import ListboxComponent from './ListboxComponent/index';
@@ -46,14 +46,13 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import {MuiPickersUtilsProvider} from '@material-ui/pickers';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 // APIs
-import {getCities, getStreets} from 'Utils/Services/API';
+import { getCities, getStreets } from 'Utils/Services/API';
 import moment from 'moment';
-import {getValueSet} from 'Utils/Services/FhirAPI';
-import {FHIR} from 'Utils/Services/FHIR';
-
+import { getValueSet } from 'Utils/Services/FhirAPI';
+import { FHIR } from 'Utils/Services/FHIR';
 
 const PatientDetailsBlock = ({
   patientData,
@@ -76,7 +75,7 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
-  const {dirty} = formState;
+  const { dirty } = formState;
   //Sending the form
   const onSubmit = async (data) => {
     try {
@@ -312,24 +311,20 @@ const PatientDetailsBlock = ({
         //   encounterId: encounter.id,
         //   encounter: encounter,
         // });
-        console.log(referralFile_64);
 
-
-            const base_64_metadata = referralFile_64.split(',')[0];
-            const base_64_data = referralFile_64.split(',')[1];
-            const base_64_type = base_64_metadata.split(';')[0].split(':')[1];
-          const documentReference = {
-              encounter: encounterData.id,
-              patient: patientData.id,
-              contentType: base_64_type,
-              data: base_64_data,
-              categoryCode: '2',
-              url: referralFile.name
-          };
-          await FHIR('DocumentReference', 'doWork', {
-              documentReference: documentReference,
-              functionName: 'createDocumentReference'
-          })
+        const { data, type } = splitBase_64(referralFile_64);
+        const documentReference = {
+          encounter: encounterData.id,
+          patient: patientData.id,
+          contentType: type,
+          data: data,
+          categoryCode: '2',
+          url: referralFile.name,
+        };
+        await FHIR('DocumentReference', 'doWork', {
+          documentReference: documentReference,
+          functionName: 'createDocumentReference',
+        });
       } else {
         triggerValidation();
       }
@@ -735,14 +730,14 @@ const PatientDetailsBlock = ({
     if (!BoolAnswer) {
       const fileObject = {};
       const reader = new FileReader();
-        reader.onload = (event) => {
-          if (fileName === 'Referral') {
-              setReferralFile_64(event.target.result);
-          } else if (fileName === 'Commitment') {
-              setCommitmentFile_64(event.target.result);
-          } else {
-              setAdditionalDocumentFile_64(event.target.result);
-          }
+      reader.onload = (event) => {
+        if (fileName === 'Referral') {
+          setReferralFile_64(event.target.result);
+        } else if (fileName === 'Commitment') {
+          setCommitmentFile_64(event.target.result);
+        } else {
+          setAdditionalDocumentFile_64(event.target.result);
+        }
       };
       reader.readAsDataURL(ref.current.files[0]);
       fileObject['name'] = `${fileName}_${moment().format(
@@ -781,18 +776,24 @@ const PatientDetailsBlock = ({
   useEffect(() => {
     if (patientData) {
       if (patientData.managingOrganization) {
-      (async () => {
-        try {
+        (async () => {
+          try {
             // const HMO_Data = await getHMO(patientData.managingOrganization);
-            const Organization = await FHIR('Organization', 'doWork', {functionName: "readOrganization", functionParams: {OrganizationId: patientData.managingOrganization}})
-            const normalizedOrganization = normalizeFhirOrganization(Organization.data);
+            const Organization = await FHIR('Organization', 'doWork', {
+              functionName: 'readOrganization',
+              functionParams: {
+                OrganizationId: patientData.managingOrganization,
+              },
+            });
+            const normalizedOrganization = normalizeFhirOrganization(
+              Organization.data,
+            );
             setHMO(normalizedOrganization);
+          } catch (error) {
+            console.log(error);
           }
-         catch (error) {
-          console.log(error);
-        }
-      })();
-    }
+        })();
+      }
       if (patientData.city) {
         const defaultAddressCityObj = {
           name: t(patientData.city),
@@ -832,7 +833,6 @@ const PatientDetailsBlock = ({
         setIsUrgent(true);
       }
       if (encounterData.relatedPerson) {
-
         (async () => {
           try {
             if (encounterData.relatedPerson) {
@@ -850,7 +850,7 @@ const PatientDetailsBlock = ({
           } catch (error) {
             console.log(error);
           }
-        })()
+        })();
       }
     }
     if (encounterData && patientData) {
@@ -1735,12 +1735,10 @@ const PatientDetailsBlock = ({
   );
 };
 
-
-
 const mapStateToProps = (state) => {
   return {
     languageDirection: state.settings.lang_dir,
-    };
+  };
 };
 
 export default connect(mapStateToProps)(PatientDetailsBlock);
