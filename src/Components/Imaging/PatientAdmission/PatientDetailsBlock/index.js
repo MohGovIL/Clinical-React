@@ -29,6 +29,8 @@ import Title from 'Assets/Elements/Title';
 import ListboxComponent from './ListboxComponent/index';
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import ChipWithImage from 'Assets/Elements/StyledChip';
+import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
+
 // Material-UI Icons
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -71,13 +73,22 @@ const PatientDetailsBlock = ({
     setError,
     triggerValidation,
     formState,
-    clearError,
   } = useForm({
     mode: 'onBlur',
     submitFocusError: true,
   });
   const { dirty } = formState;
   //Sending the form
+  const [requiredErrors, setRequiredErrors] = useState({
+    selectTest: '',
+    commitmentAndPaymentReferenceForPaymentCommitment: '',
+    commitmentAndPaymentCommitmentDate: '',
+    commitmentAndPaymentCommitmentValidity: '',
+    commitmentAndPaymentDoctorsName: '',
+    commitmentAndPaymentDoctorsLicense: '',
+    ReferralFile: '',
+    CommitmentFile: '',
+  });
   const onSubmit = async (data) => {
     try {
       // const clear = isRequiredValidation(data);
@@ -455,11 +466,18 @@ const PatientDetailsBlock = ({
     for (const fieldKey in requiredFields) {
       if (requiredFields.hasOwnProperty(fieldKey)) {
         if (!requiredFields[fieldKey].required(data)) {
-          setError(
-            requiredFields[fieldKey].name,
-            'required',
-            'This field is required',
-          );
+          setRequiredErrors((prevState) => {
+            const cloneState = { ...prevState };
+            cloneState[requiredFields[fieldKey].name] = t(
+              'This value is required',
+            );
+            return cloneState;
+          });
+          // setError(
+          //   requiredFields[fieldKey].name,
+          //   'required',
+          //   'This field is required',
+          // );
           clean = false;
         }
       }
@@ -755,7 +773,7 @@ const PatientDetailsBlock = ({
   // Files scan - vars - globals
   const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
   // Files scan - functions
-
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   async function onChangeFileHandler(ref, setState, fileName) {
     const files = ref.current.files;
     const [BoolAnswer, SizeInMB] = calculateFileSize(
@@ -787,9 +805,15 @@ const PatientDetailsBlock = ({
       ref.current.value = '';
     }
   }
-  const onClickFileHandler = (ref) => {
+  const onClickFileHandler = (event, ref) => {
+    event.stopPropagation();
     const objUrl = URL.createObjectURL(ref.current.files[0]);
     window.open(objUrl, ref.current.files[0].name);
+  };
+  const onDeletePopUp = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsPopUpOpen((prevState) => !prevState);
   };
   const onDeleteFileHandler = (ref, setState, fileName) => {
     if (fileName === 'Referral') {
@@ -801,7 +825,7 @@ const PatientDetailsBlock = ({
     }
     ref.current.value = '';
     const emptyObj = {};
-    clearError(`${fileName}File`);
+    setValue(`${fileName}File`, '');
     setState(emptyObj);
   };
   const onClickAdditionalDocumentHandler = () => {
@@ -947,835 +971,919 @@ const PatientDetailsBlock = ({
           console.log(error);
         }
       })();
+    //   if (encounterData.id || patientData.id) {
+    //     (async () => {
+    //       const df = await FHIR('DocumentReference', 'doWork', {
+    //         functionName: 'getDocumentReference',
+    //         searchParams: {
+    //           encounter: encounterData.id,
+    //           patient: patientData.id,
+    //         },
+    //       });
+    //       console.log(df);
+    //     })();
+    //   }
     }
   }, [encounterData, patientData]);
 
   return (
-    <StyledPatientDetails edit={edit_mode}>
-      <StyledForm onSubmit={handleSubmit(onSubmit)}>
-        {/* Patient Details */}
-        <Title
-          marginTop={'55px'}
-          fontSize={'28px'}
-          color={'#002398'}
-          label={'Patient Details'}
-        />
-        {/* Escorted */}
-        <StyledFormGroup>
+    <React.Fragment>
+      {/*<CustomizedPopup*/}
+      {/*  isOpen={isPopUpOpen}*/}
+      {/*  onClose={setIsPopUpOpen((prevState) => !prevState)}*/}
+      {/*  title={t('System notification')}*/}
+      {/*  bottomButtons={[*/}
+      {/*    {*/}
+      {/*      color: 'primary',*/}
+      {/*      label: 'Delete',*/}
+      {/*      variant: 'contained',*/}
+      {/*      onClick: '',*/}
+      {/*    },*/}
+      {/*    {*/}
+      {/*      color: 'primary',*/}
+      {/*      label: 'Do not delete',*/}
+      {/*      variant: 'outlined',*/}
+      {/*      onClick: '',*/}
+      {/*    },*/}
+      {/*  ]}></CustomizedPopup>*/}
+      <StyledPatientDetails edit={edit_mode}>
+        <StyledForm onSubmit={handleSubmit(onSubmit)}>
+          {/* Patient Details */}
           <Title
-            fontSize={'18px'}
-            color={'#000b40'}
-            label={t('Accompanying patient')}
-            bold
+            marginTop={'55px'}
+            fontSize={'28px'}
+            color={'#002398'}
+            label={'Patient Details'}
           />
-          <StyledDivider variant={'fullWidth'} />
-          <Grid
-            container
-            direction={'row'}
-            justify={'flex-start'}
-            alignItems={'center'}>
-            <span>{t('Patient arrived with an escort?')}</span>
-            {/* Escorted Information Switch */}
-            <Controller
-              name='isEscorted'
-              control={control}
-              defaultValue={isEscorted}
-              onChangeName={isEscortedSwitchOnChangeHandle}
-              as={
-                <StyledSwitch
-                  name='isEscorted'
-                  onChange={isEscortedSwitchOnChangeHandle}
-                  checked={isEscorted}
-                  label_1={'No'}
-                  label_2={'Yes'}
-                  marginLeft={'40px'}
-                  marginRight={'40px'}
-                />
-              }
-            />
-          </Grid>
-        </StyledFormGroup>
-        {/* Escorted Information */}
-        {isEscorted && (
+          {/* Escorted */}
           <StyledFormGroup>
             <Title
               fontSize={'18px'}
               color={'#000b40'}
-              label={t('Escort details')}
+              label={t('Accompanying patient')}
               bold
             />
             <StyledDivider variant={'fullWidth'} />
-            {/* Escorted Information name */}
-            <Controller
-              as={<StyledTextField label={t('Escort name')} />}
-              name={'escortName'}
-              control={control}
-              defaultValue={relatedPerson.name || ''}
-            />
-            {/* Escorted Information cell phone */}
-            <Controller
-              as={<StyledTextField label={t('Escort cell phone')} />}
-              name={'escortMobilePhone'}
-              control={control}
-              defaultValue={relatedPerson.mobilePhone || ''}
-              rules={{
-                pattern: getCellPhoneRegexPattern(),
-              }}
-              error={errors.escortMobilePhone && true}
-              helperText={
-                errors.escortMobilePhone && t('The number entered is incorrect')
-              }
-            />
-          </StyledFormGroup>
-        )}
-        {/* Contact Information */}
-        <StyledFormGroup>
-          <Title
-            fontSize={'18px'}
-            color={'#000b40'}
-            label={t('Contact Information')}
-            bold
-          />
-          <StyledDivider variant={'fullWidth'} />
-          {/* Contact Information tabs */}
-          <Tabs
-            value={contactInformationTabValue}
-            onChange={contactInformationTabValueChangeHandler}
-            indicatorColor='primary'
-            textColor='primary'
-            variant='standard'
-            aria-label='full width tabs example'>
-            <Tab label={t('Address')} />
-            <Tab label={t('PO box')} />
-          </Tabs>
-          {/* Contact Information tabs - address */}
-          {contactInformationTabValue === 0 ? (
-            <React.Fragment>
-              {/* Contact Information - address - city */}
-              <StyledAutoComplete
-                id='addressCity'
-                open={citiesOpen}
-                onOpen={() => {
-                  setCitiesOpen(true);
-                }}
-                onClose={() => {
-                  setCitiesOpen(false);
-                }}
-                loading={loadingCities}
-                options={cities}
-                value={addressCity}
-                onChange={(event, newValue) => {
-                  setAddressCity(newValue);
-                }}
-                getOptionLabel={(option) =>
-                  Object.keys(option).length === 0 &&
-                  option.constructor === Object
-                    ? ''
-                    : option.name
+            <Grid
+              container
+              direction={'row'}
+              justify={'flex-start'}
+              alignItems={'center'}>
+              <span>{t('Patient arrived with an escort?')}</span>
+              {/* Escorted Information Switch */}
+              <Controller
+                name='isEscorted'
+                control={control}
+                defaultValue={isEscorted}
+                onChangeName={isEscortedSwitchOnChangeHandle}
+                as={
+                  <StyledSwitch
+                    name='isEscorted'
+                    onChange={isEscortedSwitchOnChangeHandle}
+                    checked={isEscorted}
+                    label_1={'No'}
+                    label_2={'Yes'}
+                    marginLeft={'40px'}
+                    marginRight={'40px'}
+                  />
                 }
-                noOptionsText={t('No Results')}
-                loadingText={t('Loading')}
-                renderInput={(params) => (
-                  <StyledTextField
-                    name='addressCity'
-                    inputRef={register()}
-                    {...params}
-                    label={t('City')}
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <React.Fragment>
+              />
+            </Grid>
+          </StyledFormGroup>
+          {/* Escorted Information */}
+          {isEscorted && (
+            <StyledFormGroup>
+              <Title
+                fontSize={'18px'}
+                color={'#000b40'}
+                label={t('Escort details')}
+                bold
+              />
+              <StyledDivider variant={'fullWidth'} />
+              {/* Escorted Information name */}
+              <Controller
+                as={<StyledTextField label={t('Escort name')} />}
+                name={'escortName'}
+                control={control}
+                defaultValue={relatedPerson.name || ''}
+              />
+              {/* Escorted Information cell phone */}
+              <Controller
+                as={<StyledTextField label={t('Escort cell phone')} />}
+                name={'escortMobilePhone'}
+                control={control}
+                defaultValue={relatedPerson.mobilePhone || ''}
+                rules={{
+                  pattern: getCellPhoneRegexPattern(),
+                }}
+                error={errors.escortMobilePhone && true}
+                helperText={
+                  errors.escortMobilePhone &&
+                  t('The number entered is incorrect')
+                }
+              />
+            </StyledFormGroup>
+          )}
+          {/* Contact Information */}
+          <StyledFormGroup>
+            <Title
+              fontSize={'18px'}
+              color={'#000b40'}
+              label={t('Contact Information')}
+              bold
+            />
+            <StyledDivider variant={'fullWidth'} />
+            {/* Contact Information tabs */}
+            <Tabs
+              value={contactInformationTabValue}
+              onChange={contactInformationTabValueChangeHandler}
+              indicatorColor='primary'
+              textColor='primary'
+              variant='standard'
+              aria-label='full width tabs example'>
+              <Tab label={t('Address')} />
+              <Tab label={t('PO box')} />
+            </Tabs>
+            {/* Contact Information tabs - address */}
+            {contactInformationTabValue === 0 ? (
+              <React.Fragment>
+                {/* Contact Information - address - city */}
+                <StyledAutoComplete
+                  id='addressCity'
+                  open={citiesOpen}
+                  onOpen={() => {
+                    setCitiesOpen(true);
+                  }}
+                  onClose={() => {
+                    setCitiesOpen(false);
+                  }}
+                  loading={loadingCities}
+                  options={cities}
+                  value={addressCity}
+                  onChange={(event, newValue) => {
+                    setAddressCity(newValue);
+                  }}
+                  getOptionLabel={(option) =>
+                    Object.keys(option).length === 0 &&
+                    option.constructor === Object
+                      ? ''
+                      : option.name
+                  }
+                  noOptionsText={t('No Results')}
+                  loadingText={t('Loading')}
+                  renderInput={(params) => (
+                    <StyledTextField
+                      name='addressCity'
+                      inputRef={register()}
+                      {...params}
+                      label={t('City')}
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <React.Fragment>
+                            <InputAdornment position={'end'}>
+                              {loadingCities ? (
+                                <CircularProgress color={'inherit'} size={20} />
+                              ) : null}
+                              {citiesOpen ? <ExpandLess /> : <ExpandMore />}
+                            </InputAdornment>
+                          </React.Fragment>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+                {/* Contact Information - address - streets */}
+                <Autocomplete
+                  options={streets}
+                  loading={loadingStreets}
+                  open={streetsOpen}
+                  onOpen={() => addressCity.name && setStreetsOpen(true)}
+                  onClose={() => setStreetsOpen(false)}
+                  id='addressStreet'
+                  value={addressStreet}
+                  onChange={(event, newValue) => {
+                    setAddressStreet(newValue);
+                  }}
+                  getOptionLabel={(option) =>
+                    Object.keys(option).length === 0 &&
+                    option.constructor === Object
+                      ? ''
+                      : option.name
+                  }
+                  noOptionsText={t('No Results')}
+                  loadingText={t('Loading')}
+                  getOptionDisabled={(option) => option.code === 'no_result'}
+                  renderInput={(params) => (
+                    <StyledTextField
+                      {...params}
+                      name='addressStreet'
+                      inputRef={register()}
+                      InputProps={{
+                        ...params.InputProps,
+
+                        endAdornment: (
                           <InputAdornment position={'end'}>
-                            {loadingCities ? (
+                            {loadingStreets ? (
                               <CircularProgress color={'inherit'} size={20} />
                             ) : null}
-                            {citiesOpen ? <ExpandLess /> : <ExpandMore />}
+                            {streetsOpen ? <ExpandLess /> : <ExpandMore />}
                           </InputAdornment>
-                        </React.Fragment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-              {/* Contact Information - address - streets */}
-              <Autocomplete
-                options={streets}
-                loading={loadingStreets}
-                open={streetsOpen}
-                onOpen={() => addressCity.name && setStreetsOpen(true)}
-                onClose={() => setStreetsOpen(false)}
-                id='addressStreet'
-                value={addressStreet}
-                onChange={(event, newValue) => {
-                  setAddressStreet(newValue);
-                }}
-                getOptionLabel={(option) =>
-                  Object.keys(option).length === 0 &&
-                  option.constructor === Object
-                    ? ''
-                    : option.name
-                }
-                noOptionsText={t('No Results')}
-                loadingText={t('Loading')}
-                getOptionDisabled={(option) => option.code === 'no_result'}
-                renderInput={(params) => (
-                  <StyledTextField
-                    {...params}
-                    name='addressStreet'
-                    inputRef={register()}
-                    InputProps={{
-                      ...params.InputProps,
+                        ),
+                      }}
+                      label={t('Street')}
+                    />
+                  )}
+                />
+                {/* Contact Information - address - house number */}
+                <Controller
+                  name={'addressStreetNumber'}
+                  control={control}
+                  defaultValue={patientData.streetNumber}
+                  as={
+                    <StyledTextField
+                      id={'addressStreetNumber'}
+                      label={t('House number')}
+                    />
+                  }
+                />
+                {/* Contact Information - address - postal code */}
+                <Controller
+                  defaultValue={patientData.postalCode || ''}
+                  name={'addressPostalCode'}
+                  as={
+                    <StyledTextField
+                      id={'addressPostalCode'}
+                      label={t('Postal code')}
+                      type='number'
+                    />
+                  }
+                  rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
+                  control={control}
+                  error={errors.addressPostalCode && true}
+                  helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
+                />
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                {/* Contact Information - POBox - city */}
+                <StyledAutoComplete
+                  name='POBoxCity'
+                  id='POBoxCity'
+                  open={citiesOpen}
+                  onOpen={() => {
+                    setCitiesOpen(true);
+                  }}
+                  onClose={() => {
+                    setCitiesOpen(false);
+                  }}
+                  onChange={(event, newValue) => {
+                    setPOBoxCity(newValue);
+                  }}
+                  value={POBoxCity}
+                  loading={loadingCities}
+                  options={cities}
+                  getOptionLabel={(option) => option.name}
+                  noOptionsText={t('No Results')}
+                  loadingText={t('Loading')}
+                  renderInput={(params) => (
+                    <StyledTextField
+                      {...params}
+                      name='POBoxCity'
+                      inputRef={register()}
+                      label={t('City')}
+                      InputProps={{
+                        ...params.InputProps,
 
-                      endAdornment: (
+                        endAdornment: (
+                          <React.Fragment>
+                            <InputAdornment position={'end'}>
+                              {loadingCities ? (
+                                <CircularProgress color={'inherit'} size={20} />
+                              ) : null}
+                              {citiesOpen ? <ExpandLess /> : <ExpandMore />}
+                            </InputAdornment>
+                          </React.Fragment>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+                {/* Contact Information - POBox - POBox */}
+                <Controller
+                  name={'POBox'}
+                  control={control}
+                  defaultValue={patientData.POBox}
+                  as={<StyledTextField id={'POBox'} label={t('PO box')} />}
+                />
+                {/* Contact Information - POBox - postal code */}
+                <Controller
+                  defaultValue={patientData.postalCode}
+                  name={'POBoxPostalCode'}
+                  as={
+                    <StyledTextField
+                      id={'POBoxPostalCode'}
+                      label={t('Postal code')}
+                      InputLabelProps={{
+                        shrink: patientData.postalCode && true,
+                      }}
+                    />
+                  }
+                  rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
+                  control={control}
+                  error={errors.addressPostalCode && true}
+                  helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
+                />
+              </React.Fragment>
+            )}
+          </StyledFormGroup>
+          <span>
+            {t('To find a zip code on the Israel post site')}{' '}
+            <a
+              href={
+                'https://mypost.israelpost.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/%D7%90%D7%99%D7%AA%D7%95%D7%A8-%D7%9E%D7%99%D7%A7%D7%95%D7%93/'
+              }
+              target={'_blank'}
+              rel='noopener noreferrer'>
+              {t('Click here')}
+            </a>
+          </span>
+          {/* Visit Details */}
+          <Title
+            marginTop={'80px'}
+            fontSize={'28px'}
+            color={'#002398'}
+            label={'Visit Details'}
+          />
+          {/* Requested service */}
+          <StyledFormGroup>
+            <Title
+              fontSize={'18px'}
+              color={'#000b40'}
+              label={'Requested service'}
+              bold
+            />
+            <StyledDivider variant={'fullWidth'} />
+            <Grid
+              container
+              direction={'row'}
+              justify={'flex-start'}
+              alignItems={'center'}>
+              <span>{t('Is urgent?')}</span>
+              {/* Requested service - switch */}
+              <StyledSwitch
+                onChange={isUrgentSwitchOnChangeHandler}
+                checked={isUrgent}
+                label_1={'No'}
+                label_2={'Yes'}
+                marginLeft={'40px'}
+                marginRight={'40px'}
+              />
+            </Grid>
+            {/* Requested service - select test */}
+            <Autocomplete
+              filterOptions={filterOptions}
+              multiple
+              noOptionsText={t('No Results')}
+              loadingText={t('Loading')}
+              open={servicesTypeOpen}
+              loading={loadingServicesType}
+              onOpen={selectExaminationOnOpenHandler}
+              onClose={selectExaminationOnCloseHandler}
+              value={pendingValue}
+              onChange={selectExaminationOnChangeHandler}
+              disableCloseOnSelect
+              renderTags={() => null}
+              renderOption={(option, state) => (
+                <Grid container justify='flex-end' alignItems='center'>
+                  <Grid item xs={3}>
+                    <Checkbox
+                      color='primary'
+                      icon={<CheckBoxOutlineBlankOutlined />}
+                      checkedIcon={<CheckBox />}
+                      checked={state.selected}
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <ListItemText>{option.reasonCode.code}</ListItemText>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <ListItemText primary={t(option.serviceType.name)} />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <ListItemText primary={t(option.reasonCode.name)} />
+                  </Grid>
+                </Grid>
+              )}
+              ListboxComponent={ListboxComponent}
+              ListboxProps={{
+                pendingValue: pendingValue,
+                setSelectedServicesType: setSelectedServicesType,
+                setClose: setServicesTypeOpen,
+                setValue: setValue,
+                close: unFocusSelectTest,
+              }}
+              options={servicesType}
+              renderInput={(params) => (
+                <StyledTextField
+                  name='selectTest'
+                  inputRef={(e) => {
+                    selectTestRef.current = e;
+                    register(e);
+                  }}
+                  error={requiredErrors.selectTest && true}
+                  helperText={
+                    requiredErrors.selectTest &&
+                    t('The test performed during the visit must be selected')
+                  }
+                  {...params}
+                  label={`${t('Select test')} *`}
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <React.Fragment>
                         <InputAdornment position={'end'}>
-                          {loadingStreets ? (
+                          {loadingServicesType ? (
                             <CircularProgress color={'inherit'} size={20} />
                           ) : null}
-                          {streetsOpen ? <ExpandLess /> : <ExpandMore />}
+                          {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
                         </InputAdornment>
-                      ),
-                    }}
-                    label={t('Street')}
-                  />
-                )}
-              />
-              {/* Contact Information - address - house number */}
-              <Controller
-                name={'addressStreetNumber'}
-                control={control}
-                defaultValue={patientData.streetNumber}
-                as={
-                  <StyledTextField
-                    id={'addressStreetNumber'}
-                    label={t('House number')}
-                  />
-                }
-              />
-              {/* Contact Information - address - postal code */}
-              <Controller
-                defaultValue={patientData.postalCode || ''}
-                name={'addressPostalCode'}
-                as={
-                  <StyledTextField
-                    id={'addressPostalCode'}
-                    label={t('Postal code')}
-                    type='number'
-                  />
-                }
-                rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
-                control={control}
-                error={errors.addressPostalCode && true}
-                helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
-              />
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              {/* Contact Information - POBox - city */}
-              <StyledAutoComplete
-                name='POBoxCity'
-                id='POBoxCity'
-                open={citiesOpen}
-                onOpen={() => {
-                  setCitiesOpen(true);
-                }}
-                onClose={() => {
-                  setCitiesOpen(false);
-                }}
-                onChange={(event, newValue) => {
-                  setPOBoxCity(newValue);
-                }}
-                value={POBoxCity}
-                loading={loadingCities}
-                options={cities}
-                getOptionLabel={(option) => option.name}
-                noOptionsText={t('No Results')}
-                loadingText={t('Loading')}
-                renderInput={(params) => (
-                  <StyledTextField
-                    {...params}
-                    name='POBoxCity'
-                    inputRef={register()}
-                    label={t('City')}
-                    InputProps={{
-                      ...params.InputProps,
-
-                      endAdornment: (
-                        <React.Fragment>
-                          <InputAdornment position={'end'}>
-                            {loadingCities ? (
-                              <CircularProgress color={'inherit'} size={20} />
-                            ) : null}
-                            {citiesOpen ? <ExpandLess /> : <ExpandMore />}
-                          </InputAdornment>
-                        </React.Fragment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-              {/* Contact Information - POBox - POBox */}
-              <Controller
-                name={'POBox'}
-                control={control}
-                defaultValue={patientData.POBox}
-                as={<StyledTextField id={'POBox'} label={t('PO box')} />}
-              />
-              {/* Contact Information - POBox - postal code */}
-              <Controller
-                defaultValue={patientData.postalCode}
-                name={'POBoxPostalCode'}
-                as={
-                  <StyledTextField
-                    id={'POBoxPostalCode'}
-                    label={t('Postal code')}
-                    InputLabelProps={{ shrink: patientData.postalCode && true }}
-                  />
-                }
-                rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
-                control={control}
-                error={errors.addressPostalCode && true}
-                helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
-              />
-            </React.Fragment>
-          )}
-        </StyledFormGroup>
-        <span>
-          {t('To find a zip code on the Israel post site')}{' '}
-          <a
-            href={
-              'https://mypost.israelpost.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/%D7%90%D7%99%D7%AA%D7%95%D7%A8-%D7%9E%D7%99%D7%A7%D7%95%D7%93/'
-            }
-            target={'_blank'}
-            rel='noopener noreferrer'>
-            {t('Click here')}
-          </a>
-        </span>
-        {/* Visit Details */}
-        <Title
-          marginTop={'80px'}
-          fontSize={'28px'}
-          color={'#002398'}
-          label={'Visit Details'}
-        />
-        {/* Requested service */}
-        <StyledFormGroup>
-          <Title
-            fontSize={'18px'}
-            color={'#000b40'}
-            label={'Requested service'}
-            bold
-          />
-          <StyledDivider variant={'fullWidth'} />
-          <Grid
-            container
-            direction={'row'}
-            justify={'flex-start'}
-            alignItems={'center'}>
-            <span>{t('Is urgent?')}</span>
-            {/* Requested service - switch */}
-            <StyledSwitch
-              onChange={isUrgentSwitchOnChangeHandler}
-              checked={isUrgent}
-              label_1={'No'}
-              label_2={'Yes'}
-              marginLeft={'40px'}
-              marginRight={'40px'}
+                      </React.Fragment>
+                    ),
+                  }}
+                />
+              )}
             />
-          </Grid>
-          {/* Requested service - select test */}
-          <Autocomplete
-            filterOptions={filterOptions}
-            multiple
-            noOptionsText={t('No Results')}
-            loadingText={t('Loading')}
-            open={servicesTypeOpen}
-            loading={loadingServicesType}
-            onOpen={selectExaminationOnOpenHandler}
-            onClose={selectExaminationOnCloseHandler}
-            value={pendingValue}
-            onChange={selectExaminationOnChangeHandler}
-            disableCloseOnSelect
-            renderTags={() => null}
-            renderOption={(option, state) => (
-              <Grid container justify='flex-end' alignItems='center'>
-                <Grid item xs={3}>
-                  <Checkbox
-                    color='primary'
-                    icon={<CheckBoxOutlineBlankOutlined />}
-                    checkedIcon={<CheckBox />}
-                    checked={state.selected}
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText>{option.reasonCode.code}</ListItemText>
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.serviceType.name)} />
-                </Grid>
-                <Grid item xs={3}>
-                  <ListItemText primary={t(option.reasonCode.name)} />
-                </Grid>
-              </Grid>
-            )}
-            ListboxComponent={ListboxComponent}
-            ListboxProps={{
-              pendingValue: pendingValue,
-              setSelectedServicesType: setSelectedServicesType,
-              setClose: setServicesTypeOpen,
-              setValue: setValue,
-              close: unFocusSelectTest,
-            }}
-            options={servicesType}
-            renderInput={(params) => (
-              <StyledTextField
-                name='selectTest'
-                inputRef={(e) => {
-                  selectTestRef.current = e;
-                  register(e);
-                }}
-                error={errors.selectTest && true}
-                helperText={
-                  errors.selectTest &&
-                  t('The test performed during the visit must be selected')
-                }
-                {...params}
-                label={`${t('Select test')} *`}
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <React.Fragment>
-                      <InputAdornment position={'end'}>
-                        {loadingServicesType ? (
-                          <CircularProgress color={'inherit'} size={20} />
-                        ) : null}
-                        {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
-                      </InputAdornment>
-                    </React.Fragment>
-                  ),
-                }}
-              />
-            )}
-          />
-          {/* Requested service - selected test - chips */}
-          <Grid container direction='row' wrap='wrap'>
-            {selectedServicesType.map((selected, selectedIndex) => (
-              <StyledChip
-                deleteIcon={<Close fontSize='small' />}
-                onDelete={chipOnDeleteHandler(selectedIndex)}
-                key={selectedIndex}
-                label={`${selected.reasonCode.code} | ${t(
-                  selected.serviceType.name,
-                )} | ${t(selected.reasonCode.name)}`}
-              />
-            ))}
-          </Grid>
-        </StyledFormGroup>
-        {/* Commitment and payment */}
-        <StyledFormGroup>
-          <Title
-            fontSize={'18px'}
-            color={'#000b40'}
-            label={t('Commitment and payment')}
-            bold
-          />
-          <Title
-            fontSize={'14px'}
-            color={'#000b40'}
-            label={t('Please fill in the payer details for the current test')}
-          />
-          <StyledDivider variant='fullWidth' />
-          {/* Commitment and payment - tabs */}
-          <Tabs
-            value={commitmentAndPaymentTabValue}
-            onChange={setCommitmentAndPaymentTabValueChangeHandler}
-            indicatorColor='primary'
-            textColor='primary'
-            variant='standard'
-            aria-label='full width tabs example'>
-            <Tab label={t('HMO')} />
-            {/* <Tab label={t('insurance company')} /> */}
-            {/* <Tab label={t('Private')} /> */}
-          </Tabs>
-          {commitmentAndPaymentTabValue === 0 && (
-            <React.Fragment>
-              <Controller
-                name='commitmentAndPaymentHMO'
-                as={
-                  <StyledTextField
-                    label={t('HMO')}
-                    id={'commitmentAndPaymentHMO'}
-                    disabled
-                  />
-                }
-                defaultValue={HMO.name || ''}
-                control={control}
-              />
-              <Controller
-                control={control}
-                name='commitmentAndPaymentReferenceForPaymentCommitment'
-                defaultValue={
-                  questionnaireResponse.items
-                    ? questionnaireResponse.items.find(
-                        (item) => item.linkId === '1',
-                      ).answer[0].valueInteger || ''
-                    : ''
-                }
-                as={
-                  <StyledTextField
-                    name='commitmentAndPaymentReferenceForPaymentCommitment'
-                    inputRef={register()}
-                    label={`${t('Reference for payment commitment')} *`}
-                    id={'commitmentAndPaymentReferenceForPaymentCommitment'}
-                    type='number'
-                    error={
-                      errors.commitmentAndPaymentReferenceForPaymentCommitment &&
-                      true
-                    }
-                    helperText={
-                      errors.commitmentAndPaymentReferenceForPaymentCommitment &&
-                      t('Required field')
-                    }
-                  />
-                }
-              />
-
-              <Controller
-                name='commitmentAndPaymentCommitmentDate'
-                rules={{
-                  validate: {
-                    value: (value) => validateDate(value, 'before'),
-                  },
-                }}
-                defaultValue={commitmentAndPaymentCommitmentDate}
-                control={control}
-                as={
-                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
-                    <StyledKeyboardDatePicker
-                      disableToolbar
-                      autoOk
-                      variant='inline'
-                      format={formatDate}
-                      mask={formatDate}
-                      margin='normal'
-                      id='commitmentAndPaymentCommitmentDate'
-                      label={`${t('Commitment date')} *`}
-                      value={commitmentAndPaymentCommitmentDate}
-                      onChange={(date) =>
-                        dateOnChangeHandler(
-                          date,
-                          'commitmentAndPaymentCommitmentDate',
-                          setCommitmentAndPaymentCommitmentDate,
-                        )
-                      }
-                      KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                      }}
-                      error={errors.commitmentAndPaymentCommitmentDate && true}
-                      helperText={
-                        errors.commitmentAndPaymentCommitmentDate &&
-                        t('An equal date or less than today must be entered')
-                      }
-                    />
-                  </MuiPickersUtilsProvider>
-                }
-              />
-              <Controller
-                name='commitmentAndPaymentCommitmentValidity'
-                control={control}
-                rules={{
-                  validate: {
-                    value: (value) => validateDate(value, 'after'),
-                  },
-                }}
-                defaultValue={commitmentAndPaymentCommitmentValidity}
-                as={
-                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
-                    <StyledKeyboardDatePicker
-                      disableToolbar
-                      autoOk
-                      variant='inline'
-                      mask={formatDate}
-                      format={formatDate}
-                      margin='normal'
-                      id='commitmentAndPaymentCommitmentValidity'
-                      label={`${t('Commitment validity')} *`}
-                      value={commitmentAndPaymentCommitmentValidity}
-                      onChange={(date) =>
-                        dateOnChangeHandler(
-                          date,
-                          'commitmentAndPaymentCommitmentValidity',
-                          setCommitmentAndPaymentCommitmentValidity,
-                        )
-                      }
-                      KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                      }}
-                      error={
-                        errors.commitmentAndPaymentCommitmentValidity && true
-                      }
-                      helperText={
-                        errors.commitmentAndPaymentCommitmentValidity &&
-                        t('An equal or greater date must be entered than today')
-                      }
-                    />
-                  </MuiPickersUtilsProvider>
-                }
-              />
-              <Controller
-                control={control}
-                name='commitmentAndPaymentDoctorsName'
-                defaultValue={
-                  questionnaireResponse.items
-                    ? questionnaireResponse.items.find(
-                        (item) => item.linkId === '4',
-                      ).answer[0].valueString || ''
-                    : ''
-                }
-                as={
-                  <StyledTextField
-                    // name='commitmentAndPaymentDoctorsName'
-                    inputRef={register()}
-                    label={`${t('Doctors name')} *`}
-                    id={'commitmentAndPaymentDoctorsName'}
-                  />
-                }
-              />
-              <Controller
-                control={control}
-                name='commitmentAndPaymentDoctorsLicense'
-                defaultValue={
-                  questionnaireResponse.items
-                    ? questionnaireResponse.items.find(
-                        (item) => item.linkId === '5',
-                      ).answer[0].valueInteger || ''
-                    : ''
-                }
-                as={
-                  <StyledTextField
-                    // name='commitmentAndPaymentDoctorsLicense'
-                    inputRef={register()}
-                    label={`${t('Doctors license')} *`}
-                    id={'commitmentAndPaymentDoctorsLicense'}
-                    type='number'
-                  />
-                }
-              />
-            </React.Fragment>
-          )}
-        </StyledFormGroup>
-        <StyledFormGroup>
-          <Title
-            fontSize={'18px'}
-            color={'#000b40'}
-            label={t('Upload documents')}
-            bold
-          />
-          <Title
-            fontSize={'14px'}
-            color={'#000b40'}
-            label={`${t('Uploading documents with a maximum size of up to')} ${
-              FILES_OBJ.maxSize
-            }${FILES_OBJ.type}`}
-          />
-          <StyledDivider variant='fullWidth' />
-          {/* ReferralRef  */}
-          <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
-            <Grid item xs={3}>
-              <label style={{ color: '#000b40' }} htmlFor='referral'>
-                {`${t('Referral')} *`}
-              </label>
+            {/* Requested service - selected test - chips */}
+            <Grid container direction='row' wrap='wrap'>
+              {selectedServicesType.map((selected, selectedIndex) => (
+                <StyledChip
+                  deleteIcon={<Close fontSize='small' />}
+                  onDelete={chipOnDeleteHandler(selectedIndex)}
+                  key={selectedIndex}
+                  label={`${selected.reasonCode.code} | ${t(
+                    selected.serviceType.name,
+                  )} | ${t(selected.reasonCode.name)}`}
+                />
+              ))}
             </Grid>
-            <Grid item xs={9}>
-              <input
-                name='ReferralFile'
-                ref={(e) => {
-                  referralRef.current = e;
-                  register();
-                }}
-                id='referral'
-                type='file'
-                accept='.pdf,.gpf,.png,.gif,.jpg'
-                onChange={() =>
-                  onChangeFileHandler(referralRef, setReferralFile, 'Referral')
-                }
-              />
-              {Object.values(referralFile).length > 0 ? (
-                <ChipWithImage
-                  htmlFor='referral'
-                  label={referralFile.name}
-                  size={referralFile.size}
-                  onDelete={() =>
-                    onDeleteFileHandler(
+          </StyledFormGroup>
+          {/* Commitment and payment */}
+          <StyledFormGroup>
+            <Title
+              fontSize={'18px'}
+              color={'#000b40'}
+              label={t('Commitment and payment')}
+              bold
+            />
+            <Title
+              fontSize={'14px'}
+              color={'#000b40'}
+              label={t('Please fill in the payer details for the current test')}
+            />
+            <StyledDivider variant='fullWidth' />
+            {/* Commitment and payment - tabs */}
+            <Tabs
+              value={commitmentAndPaymentTabValue}
+              onChange={setCommitmentAndPaymentTabValueChangeHandler}
+              indicatorColor='primary'
+              textColor='primary'
+              variant='standard'
+              aria-label='full width tabs example'>
+              <Tab label={t('HMO')} />
+              {/* <Tab label={t('insurance company')} /> */}
+              {/* <Tab label={t('Private')} /> */}
+            </Tabs>
+            {commitmentAndPaymentTabValue === 0 && (
+              <React.Fragment>
+                <Controller
+                  name='commitmentAndPaymentHMO'
+                  as={
+                    <StyledTextField
+                      label={t('HMO')}
+                      id={'commitmentAndPaymentHMO'}
+                      disabled
+                    />
+                  }
+                  defaultValue={HMO.name || ''}
+                  control={control}
+                />
+                <Controller
+                  control={control}
+                  name='commitmentAndPaymentReferenceForPaymentCommitment'
+                  defaultValue={
+                    questionnaireResponse.items
+                      ? questionnaireResponse.items.find(
+                          (item) => item.linkId === '1',
+                        ).answer[0].valueInteger || ''
+                      : ''
+                  }
+                  as={
+                    <StyledTextField
+                      name='commitmentAndPaymentReferenceForPaymentCommitment'
+                      inputRef={register()}
+                      label={`${t('Reference for payment commitment')} *`}
+                      id={'commitmentAndPaymentReferenceForPaymentCommitment'}
+                      type='number'
+                      error={
+                        requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment &&
+                        true
+                      }
+                      helperText={
+                        requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment &&
+                        t('Required field')
+                      }
+                    />
+                  }
+                />
+
+                <Controller
+                  name='commitmentAndPaymentCommitmentDate'
+                  rules={{
+                    validate: {
+                      value: (value) => validateDate(value, 'before'),
+                    },
+                  }}
+                  defaultValue={commitmentAndPaymentCommitmentDate}
+                  control={control}
+                  as={
+                    <MuiPickersUtilsProvider
+                      utils={MomentUtils}
+                      moment={moment}>
+                      <StyledKeyboardDatePicker
+                        disableToolbar
+                        autoOk
+                        variant='inline'
+                        format={formatDate}
+                        mask={formatDate}
+                        margin='normal'
+                        id='commitmentAndPaymentCommitmentDate'
+                        label={`${t('Commitment date')} *`}
+                        value={commitmentAndPaymentCommitmentDate}
+                        onChange={(date) =>
+                          dateOnChangeHandler(
+                            date,
+                            'commitmentAndPaymentCommitmentDate',
+                            setCommitmentAndPaymentCommitmentDate,
+                          )
+                        }
+                        KeyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        error={
+                          errors.commitmentAndPaymentCommitmentDate && true
+                        }
+                        helperText={
+                          errors.commitmentAndPaymentCommitmentDate &&
+                          t('An equal date or less than today must be entered')
+                        }
+                      />
+                    </MuiPickersUtilsProvider>
+                  }
+                />
+                <Controller
+                  name='commitmentAndPaymentCommitmentValidity'
+                  control={control}
+                  rules={{
+                    validate: {
+                      value: (value) => validateDate(value, 'after'),
+                    },
+                  }}
+                  defaultValue={commitmentAndPaymentCommitmentValidity}
+                  as={
+                    <MuiPickersUtilsProvider
+                      utils={MomentUtils}
+                      moment={moment}>
+                      <StyledKeyboardDatePicker
+                        disableToolbar
+                        autoOk
+                        variant='inline'
+                        mask={formatDate}
+                        format={formatDate}
+                        margin='normal'
+                        id='commitmentAndPaymentCommitmentValidity'
+                        label={`${t('Commitment validity')} *`}
+                        value={commitmentAndPaymentCommitmentValidity}
+                        onChange={(date) =>
+                          dateOnChangeHandler(
+                            date,
+                            'commitmentAndPaymentCommitmentValidity',
+                            setCommitmentAndPaymentCommitmentValidity,
+                          )
+                        }
+                        KeyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        error={
+                          errors.commitmentAndPaymentCommitmentValidity && true
+                        }
+                        helperText={
+                          errors.commitmentAndPaymentCommitmentValidity &&
+                          t(
+                            'An equal or greater date must be entered than today',
+                          )
+                        }
+                      />
+                    </MuiPickersUtilsProvider>
+                  }
+                />
+                <Controller
+                  control={control}
+                  name='commitmentAndPaymentDoctorsName'
+                  defaultValue={
+                    questionnaireResponse.items
+                      ? questionnaireResponse.items.find(
+                          (item) => item.linkId === '4',
+                        ).answer[0].valueString || ''
+                      : ''
+                  }
+                  as={
+                    <StyledTextField
+                      // name='commitmentAndPaymentDoctorsName'
+                      inputRef={register()}
+                      label={`${t('Doctors name')} *`}
+                      id={'commitmentAndPaymentDoctorsName'}
+                      error={
+                        requiredErrors.commitmentAndPaymentDoctorsName && true
+                      }
+                      helperText={
+                        requiredErrors.commitmentAndPaymentDoctorsName || ''
+                      }
+                    />
+                  }
+                />
+                <Controller
+                  control={control}
+                  name='commitmentAndPaymentDoctorsLicense'
+                  defaultValue={
+                    questionnaireResponse.items
+                      ? questionnaireResponse.items.find(
+                          (item) => item.linkId === '5',
+                        ).answer[0].valueInteger || ''
+                      : ''
+                  }
+                  as={
+                    <StyledTextField
+                      // name='commitmentAndPaymentDoctorsLicense'
+                      inputRef={register()}
+                      label={`${t('Doctors license')} *`}
+                      id={'commitmentAndPaymentDoctorsLicense'}
+                      type='number'
+                      error={
+                        requiredErrors.commitmentAndPaymentDoctorsLicense &&
+                        true
+                      }
+                      helperText={
+                        requiredErrors.commitmentAndPaymentDoctorsLicense || ''
+                      }
+                    />
+                  }
+                />
+              </React.Fragment>
+            )}
+          </StyledFormGroup>
+          <StyledFormGroup>
+            <Title
+              fontSize={'18px'}
+              color={'#000b40'}
+              label={t('Upload documents')}
+              bold
+            />
+            <Title
+              fontSize={'14px'}
+              color={'#000b40'}
+              label={`${t(
+                'Uploading documents with a maximum size of up to',
+              )} ${FILES_OBJ.maxSize}${FILES_OBJ.type}`}
+            />
+            <StyledDivider variant='fullWidth' />
+            {/* ReferralRef  */}
+            <Grid
+              container
+              alignItems='center'
+              style={{ marginBottom: '41px' }}>
+              <Grid item xs={3}>
+                <label
+                  style={{
+                    color: `${
+                      requiredErrors.ReferralFile ? '#f44336' : '#000b40'
+                    }`,
+                  }}
+                  htmlFor='referral'>
+                  {`${t('Referral')} *`}
+                </label>
+              </Grid>
+              <Grid item xs={9}>
+                <input
+                  name='ReferralFile'
+                  ref={(e) => {
+                    referralRef.current = e;
+                    register();
+                  }}
+                  id='referral'
+                  type='file'
+                  accept='.pdf,.gpf,.png,.gif,.jpg'
+                  onChange={() =>
+                    onChangeFileHandler(
                       referralRef,
                       setReferralFile,
                       'Referral',
                     )
                   }
-                  onClick={() => onClickFileHandler(referralRef)}
                 />
-              ) : (
-                <label htmlFor='referral'>
-                  <StyledButton
-                    variant='outlined'
-                    color='primary'
-                    component='span'
-                    size={'large'}
-                    startIcon={<Scanner />}>
-                    {t('Upload document')}
-                  </StyledButton>
+                {Object.values(referralFile).length > 0 ? (
+                  <ChipWithImage
+                    htmlFor='referral'
+                    label={referralFile.name}
+                    size={referralFile.size}
+                    onDelete={(event) =>
+                      // onDeleteFileHandler(
+                      //   referralRef,
+                      //   setReferralFile,
+                      //   'Referral',
+                      // )
+                      onDeletePopUp(event)
+                    }
+                    onClick={() => onClickFileHandler(referralRef)}
+                  />
+                ) : (
+                  <label htmlFor='referral'>
+                    <StyledButton
+                      variant='outlined'
+                      color='primary'
+                      component='span'
+                      size={'large'}
+                      startIcon={<Scanner />}>
+                      {t('Upload document')}
+                    </StyledButton>
+                  </label>
+                )}
+              </Grid>
+            </Grid>
+            {/* CommitmentRef  */}
+            <Grid
+              container
+              alignItems='center'
+              style={{ marginBottom: '41px' }}>
+              <Grid item xs={3}>
+                <label
+                  style={{
+                    color: `${
+                      requiredErrors.CommitmentFile ? '#f44336' : '#000b40'
+                    }`,
+                  }}
+                  htmlFor='commitment'>
+                  {`${t('Commitment')} *`}
                 </label>
-              )}
-            </Grid>
-          </Grid>
-          {/* CommitmentRef  */}
-          <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
-            <Grid item xs={3}>
-              <label style={{ color: '#000b40' }} htmlFor='commitment'>
-                {`${t('Commitment')} *`}
-              </label>
-            </Grid>
-            <Grid item xs={9}>
-              <input
-                name='CommitmentFile'
-                ref={(e) => {
-                  commitmentRef.current = e;
-                  register();
-                }}
-                id='commitment'
-                type='file'
-                accept='.pdf,.gpf,.png,.gif,.jpg'
-                onChange={() =>
-                  onChangeFileHandler(
-                    commitmentRef,
-                    setCommitmentFile,
-                    'Commitment',
-                  )
-                }
-              />
-              {Object.values(commitmentFile).length > 0 ? (
-                <ChipWithImage
-                  htmlFor='commitment'
-                  label={commitmentFile.name}
-                  size={commitmentFile.size}
-                  onDelete={() =>
-                    onDeleteFileHandler(
+              </Grid>
+              <Grid item xs={9}>
+                <input
+                  name='CommitmentFile'
+                  ref={(e) => {
+                    commitmentRef.current = e;
+                    register();
+                  }}
+                  id='commitment'
+                  type='file'
+                  accept='.pdf,.gpf,.png,.gif,.jpg'
+                  onChange={() =>
+                    onChangeFileHandler(
                       commitmentRef,
                       setCommitmentFile,
                       'Commitment',
                     )
                   }
-                  onClick={() => onClickFileHandler(commitmentRef)}
                 />
-              ) : (
-                <label htmlFor='commitment'>
-                  <StyledButton
-                    variant='outlined'
-                    color='primary'
-                    component='span'
-                    size={'large'}
-                    startIcon={<Scanner />}>
-                    {t('Upload document')}
-                  </StyledButton>
-                </label>
-              )}
-            </Grid>
-          </Grid>
-          {/* AdditionalDocumentRef */}
-          {numOfAdditionalDocument.map((_, additionalDocumentIndex) => {
-            return (
-              <Grid container alignItems='center' key={additionalDocumentIndex}>
-                <Grid item xs={3}>
-                  <StyledTextField
-                    onChange={onChangeAdditionalDocumentHandler}
-                    label={`${t('Additional document')}`}
-                  />
-                </Grid>
-                <Grid item xs={9}>
-                  <input
-                    name={nameOfAdditionalDocumentFile || 'Document1'}
-                    ref={(e) => {
-                      additionalDocumentRef.current = e;
-                      register();
-                    }}
-                    id='additionalDocument'
-                    type='file'
-                    accept='.pdf,.gpf,.png,.gif,.jpg'
-                    onChange={() =>
-                      onChangeFileHandler(
-                        additionalDocumentRef,
-                        setAdditionalDocumentFile,
-                        nameOfAdditionalDocumentFile || 'Document1',
+                {Object.values(commitmentFile).length > 0 ? (
+                  <ChipWithImage
+                    htmlFor='commitment'
+                    label={commitmentFile.name}
+                    size={commitmentFile.size}
+                    onDelete={() =>
+                      onDeleteFileHandler(
+                        commitmentRef,
+                        setCommitmentFile,
+                        'Commitment',
                       )
                     }
+                    onClick={() => onClickFileHandler(commitmentRef)}
                   />
-                  {Object.values(additionalDocumentFile).length > 0 ? (
-                    <ChipWithImage
-                      htmlFor='additionalDocument'
-                      label={additionalDocumentFile.name}
-                      size={additionalDocumentFile.size}
-                      onDelete={() =>
-                        onDeleteFileHandler(
+                ) : (
+                  <label htmlFor='commitment'>
+                    <StyledButton
+                      variant='outlined'
+                      color='primary'
+                      component='span'
+                      size={'large'}
+                      startIcon={<Scanner />}>
+                      {t('Upload document')}
+                    </StyledButton>
+                  </label>
+                )}
+              </Grid>
+            </Grid>
+            {/* AdditionalDocumentRef */}
+            {numOfAdditionalDocument.map((_, additionalDocumentIndex) => {
+              return (
+                <Grid
+                  container
+                  alignItems='center'
+                  key={additionalDocumentIndex}>
+                  <Grid item xs={3}>
+                    <StyledTextField
+                      onChange={onChangeAdditionalDocumentHandler}
+                      label={`${t('Additional document')}`}
+                    />
+                  </Grid>
+                  <Grid item xs={9}>
+                    <input
+                      name={nameOfAdditionalDocumentFile || 'Document1'}
+                      ref={(e) => {
+                        additionalDocumentRef.current = e;
+                        register();
+                      }}
+                      id='additionalDocument'
+                      type='file'
+                      accept='.pdf,.gpf,.png,.gif,.jpg'
+                      onChange={() =>
+                        onChangeFileHandler(
                           additionalDocumentRef,
                           setAdditionalDocumentFile,
                           nameOfAdditionalDocumentFile || 'Document1',
                         )
                       }
-                      onClick={() => onClickFileHandler(additionalDocumentRef)}
                     />
-                  ) : (
-                    <label htmlFor='additionalDocument'>
-                      <StyledButton
-                        variant='outlined'
-                        color='primary'
-                        component='span'
-                        size={'large'}
-                        startIcon={<Scanner />}>
-                        {t('Upload document')}
-                      </StyledButton>
-                    </label>
-                  )}
+                    {Object.values(additionalDocumentFile).length > 0 ? (
+                      <ChipWithImage
+                        htmlFor='additionalDocument'
+                        label={additionalDocumentFile.name}
+                        size={additionalDocumentFile.size}
+                        onDelete={() =>
+                          onDeleteFileHandler(
+                            additionalDocumentRef,
+                            setAdditionalDocumentFile,
+                            nameOfAdditionalDocumentFile || 'Document1',
+                          )
+                        }
+                        onClick={() =>
+                          onClickFileHandler(additionalDocumentRef)
+                        }
+                      />
+                    ) : (
+                      <label htmlFor='additionalDocument'>
+                        <StyledButton
+                          variant='outlined'
+                          color='primary'
+                          component='span'
+                          size={'large'}
+                          startIcon={<Scanner />}>
+                          {t('Upload document')}
+                        </StyledButton>
+                      </label>
+                    )}
+                  </Grid>
                 </Grid>
+              );
+            })}
+            <Grid container alignItems='center'>
+              <AddCircle
+                style={{ color: '#002398', cursor: 'pointer' }}
+                onClick={onClickAdditionalDocumentHandler}
+              />
+              <Title
+                margin='0 8px 0 8px'
+                bold
+                color={'#002398'}
+                label={'Additional document'}
+              />
+            </Grid>
+          </StyledFormGroup>
+          <StyledFormGroup>
+            <Grid container direction='row' justify='flex-end'>
+              <Grid item xs={3}>
+                <StyledButton
+                  color='primary'
+                  variant='outlined'
+                  type='submit'
+                  letterSpacing={'0.1'}>
+                  {t('Save & Close')}
+                </StyledButton>
               </Grid>
-            );
-          })}
-          <Grid container alignItems='center'>
-            <AddCircle
-              style={{ color: '#002398', cursor: 'pointer' }}
-              onClick={onClickAdditionalDocumentHandler}
-            />
-            <Title
-              margin='0 8px 0 8px'
-              bold
-              color={'#002398'}
-              label={'Additional document'}
-            />
-          </Grid>
-        </StyledFormGroup>
-        <StyledFormGroup>
-          <Grid container direction='row' justify='flex-end'>
-            <Grid item xs={3}>
-              <StyledButton
-                color='primary'
-                variant='outlined'
-                type='submit'
-                letterSpacing={'0.1'}>
-                {t('Save & Close')}
-              </StyledButton>
+              <Grid item xs={3}>
+                <StyledButton
+                  color='primary'
+                  variant='contained'
+                  type='submit'
+                  fontWeight={'bold'}>
+                  {t('Medical questionnaire')}
+                </StyledButton>
+              </Grid>
             </Grid>
-            <Grid item xs={3}>
-              <StyledButton
-                color='primary'
-                variant='contained'
-                type='submit'
-                fontWeight={'bold'}>
-                {t('Medical questionnaire')}
-              </StyledButton>
-            </Grid>
-          </Grid>
-        </StyledFormGroup>
-      </StyledForm>
-      {/* <DevTool control={control} /> */}
-    </StyledPatientDetails>
+          </StyledFormGroup>
+        </StyledForm>
+        {/* <DevTool control={control} /> */}
+      </StyledPatientDetails>
+    </React.Fragment>
   );
 };
 

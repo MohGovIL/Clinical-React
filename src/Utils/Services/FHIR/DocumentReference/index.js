@@ -15,6 +15,32 @@ const DocumentReferenceStates = {
     parameters.url = componentFhirURL;
     return DocumentReferenceStates[parameters.functionName](parameters);
   },
+  getDocumentReference: (params) => {
+    let searchString = '';
+    let searchParamsIndex = 0;
+    if (
+      typeof params.searchParams === 'object' &&
+      Object.getOwnPropertyNames(params.searchParams).length
+    ) {
+      const searchParams = params.searchParams;
+      for (const searchParamsKey in searchParams) {
+        searchParamsIndex += 1;
+        if (searchParams.hasOwnProperty(searchParamsKey)) {
+          const element = searchParams[searchParamsKey];
+          if (element) {
+            searchString = `${searchString}${searchParamsKey}=${element}${
+              Object.getOwnPropertyNames(searchParams).length ===
+              searchParamsIndex
+                ? ''
+                : '&'
+            }`;
+          }
+        }
+      }
+    }
+
+    return CRUDOperations('search', `${params.url}${searchString}`);
+  },
   createDocumentReference: (params) => {
     const denormalizedDocumentReference = denormalizerFhirDocumentReference(
       params.documentReference,
