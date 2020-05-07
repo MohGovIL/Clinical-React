@@ -55,6 +55,7 @@ import { getCities, getStreets } from 'Utils/Services/API';
 import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirDocumentReference from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 
 const PatientDetailsBlock = ({
   patientData,
@@ -757,7 +758,7 @@ const PatientDetailsBlock = ({
   const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState(
     '',
   );
-
+  const [documents, setDocuments] = useState([]);
   const [referralFile, setReferralFile] = useState({});
   const [commitmentFile, setCommitmentFile] = useState({});
   const [additionalDocumentFile, setAdditionalDocumentFile] = useState({});
@@ -815,18 +816,40 @@ const PatientDetailsBlock = ({
     event.stopPropagation();
     setIsPopUpOpen(true);
   };
-  const onDeleteFileHandler = () => {
+  const onDeleteFileHandler = async () => {
     const emptyObj = {};
     if (popUpReferenceFile === 'Referral') {
       referralRef.current.value = '';
       setValue(`${popUpReferenceFile}File`, '');
       setReferralFile_64('');
       setReferralFile(emptyObj);
+      if (documents.length) {
+        const document = documents.find((document) =>
+          document.url.startsWith(popUpReferenceFile),
+        );
+        if (document.id) {
+          await FHIR('DocumentReference', 'doWork', {
+            functionName: 'deleteDocumentReference',
+            documentReferenceId: document.id,
+          });
+        }
+      }
     } else if (popUpReferenceFile === 'Commitment') {
       commitmentRef.current.value = '';
       setValue(`${popUpReferenceFile}File`, '');
       setCommitmentFile_64('');
       setCommitmentFile(emptyObj);
+      if (documents.length) {
+        const document = documents.find((document) =>
+          document.url.startsWith(popUpReferenceFile),
+        );
+        if (document.id) {
+          await FHIR('DocumentReference', 'doWork', {
+            functionName: 'deleteDocumentReference',
+            documentReferenceId: document.id,
+          });
+        }
+      }
     } else if (
       popUpReferenceFile === nameOfAdditionalDocumentFile ||
       popUpReferenceFile === 'Document1'
@@ -835,6 +858,17 @@ const PatientDetailsBlock = ({
       additionalDocumentRef.current.value = '';
       setAdditionalDocumentFile_64('');
       setAdditionalDocumentFile(emptyObj);
+      if (documents.length) {
+        const document = documents.find((document) =>
+          document.url.startsWith(popUpReferenceFile),
+        );
+        if (document.id) {
+          await FHIR('DocumentReference', 'doWork', {
+            functionName: 'deleteDocumentReference',
+            documentReferenceId: document.id,
+          });
+        }
+      }
     }
     handlePopUpClose();
   };
@@ -996,8 +1030,19 @@ const PatientDetailsBlock = ({
             },
           );
           if (documentReferenceData.data.total) {
-            // There is data inside
-            // No need to implement now since there is no way to get to this page with encounter
+            const documents = [];
+            for (
+              let documentIndex = 0;
+              documentReferenceData.data.entry.length > documentIndex;
+              documentIndex++
+            ) {
+              if (documentReferenceData.data.entry[documentIndex].resource) {
+                documents.push(
+                  normalizeFhirDocumentReference(documentReferenceData.data),
+                );
+              }
+            }
+            setDocuments(documents);
           }
         })();
       }

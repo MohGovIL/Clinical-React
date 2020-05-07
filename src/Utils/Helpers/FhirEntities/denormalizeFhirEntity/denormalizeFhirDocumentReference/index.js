@@ -3,7 +3,7 @@
  * @param {object} documentReference
  * @returns {object}
  */
-const denormalizerFhirDocumentReference = (documentReference) => {
+const denormalizeFhirDocumentReference = (documentReference) => {
   const denormalizedDocumentReference = {};
   let context = {};
   let attachment = {};
@@ -68,4 +68,4 @@ const denormalizerFhirDocumentReference = (documentReference) => {
   return denormalizedDocumentReference;
 };
 
-export default denormalizerFhirDocumentReference;
+export default denormalizeFhirDocumentReference;

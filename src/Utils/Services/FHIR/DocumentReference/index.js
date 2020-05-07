@@ -7,7 +7,7 @@
 // console.log(base_64_data);
 
 import { CRUDOperations } from '../CRUDOperations';
-import denormalizerFhirDocumentReference from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizerFhirDocumentReference';
+import denormalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirDocumentReference';
 
 const DocumentReferenceStates = {
   doWork: (parameters) => {
@@ -45,13 +45,13 @@ const DocumentReferenceStates = {
     );
   },
   createDocumentReference: (params) => {
-    const denormalizedDocumentReference = denormalizerFhirDocumentReference(
+    const denormalizedDocumentReference = denormalizeFhirDocumentReference(
       params.documentReference,
     );
     return CRUDOperations('create', params.url, denormalizedDocumentReference);
   },
   updateDocumentReference: (params) => {
-    const denormalizedDocumentReference = denormalizerFhirDocumentReference(
+    const denormalizedDocumentReference = denormalizeFhirDocumentReference(
       params.documentReference,
     );
     return CRUDOperations(
