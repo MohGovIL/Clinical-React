@@ -773,7 +773,6 @@ const PatientDetailsBlock = ({
   // Files scan - vars - globals
   const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
   // Files scan - functions
-  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   async function onChangeFileHandler(ref, setState, fileName) {
     const files = ref.current.files;
     const [BoolAnswer, SizeInMB] = calculateFileSize(
@@ -810,24 +809,36 @@ const PatientDetailsBlock = ({
     const objUrl = URL.createObjectURL(ref.current.files[0]);
     window.open(objUrl, ref.current.files[0].name);
   };
+
   const onDeletePopUp = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    setIsPopUpOpen((prevState) => !prevState);
+    setIsPopUpOpen(true);
   };
-  const onDeleteFileHandler = (ref, setState, fileName) => {
-    if (fileName === 'Referral') {
-      setReferralFile_64('');
-    } else if (fileName === 'Commitment') {
-      setCommitmentFile_64('');
-    } else {
-      setAdditionalDocumentFile_64('');
-    }
-    ref.current.value = '';
+  const onDeleteFileHandler = () => {
     const emptyObj = {};
-    setValue(`${fileName}File`, '');
-    setState(emptyObj);
+    if (popUpReferenceFile === 'Referral') {
+      referralRef.current.value = '';
+      setValue(`${popUpReferenceFile}File`, '');
+      setReferralFile_64('');
+      setReferralFile(emptyObj);
+    } else if (popUpReferenceFile === 'Commitment') {
+      commitmentRef.current.value = '';
+      setValue(`${popUpReferenceFile}File`, '');
+      setCommitmentFile_64('');
+      setCommitmentFile(emptyObj);
+    } else if (
+      popUpReferenceFile === nameOfAdditionalDocumentFile ||
+      popUpReferenceFile === 'Document1'
+    ) {
+      setValue(`${popUpReferenceFile}File`, '');
+      additionalDocumentRef.current.value = '';
+      setAdditionalDocumentFile_64('');
+      setAdditionalDocumentFile(emptyObj);
+    }
+    handlePopUpClose();
   };
+
   const onClickAdditionalDocumentHandler = () => {
     numOfAdditionalDocument.length !== 1 &&
       setNumOfAdditionalDocument((prevState) => {
@@ -992,6 +1003,9 @@ const PatientDetailsBlock = ({
       }
     }
   }, [encounterData, patientData]);
+  // PopUp
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+  const [popUpReferenceFile, setPopUpReferenceFile] = useState('');
   const handlePopUpClose = () => {
     setIsPopUpOpen(false);
   };
@@ -1005,17 +1019,19 @@ const PatientDetailsBlock = ({
             color: 'primary',
             label: 'Delete',
             variant: 'contained',
-            onClick: '',
+            onClickHandler: onDeleteFileHandler,
           },
           {
             color: 'primary',
             label: 'Do not delete',
             variant: 'outlined',
-            onClick: '',
+            onClickHandler: handlePopUpClose,
           },
         ]}
         title={t('System notification')}>
-        {` ${t('Do you want to continue?')}`}
+        {`${t('You choose to delete the document')} ${t(
+          popUpReferenceFile,
+        )} ${t('Do you want to continue?')}`}
       </CustomizedPopup>
       <StyledPatientDetails edit={edit_mode}>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
@@ -1706,13 +1722,16 @@ const PatientDetailsBlock = ({
                     htmlFor='referral'
                     label={referralFile.name}
                     size={referralFile.size}
-                    onDelete={(event) =>
+                    onDelete={
+                      (event) => {
+                        setPopUpReferenceFile('Referral');
+                        onDeletePopUp(event);
+                      }
                       // onDeleteFileHandler(
                       //   referralRef,
                       //   setReferralFile,
                       //   'Referral',
                       // )
-                      onDeletePopUp(event)
                     }
                     onClick={() => onClickFileHandler(referralRef)}
                   />
@@ -1769,12 +1788,16 @@ const PatientDetailsBlock = ({
                     htmlFor='commitment'
                     label={commitmentFile.name}
                     size={commitmentFile.size}
-                    onDelete={() =>
-                      onDeleteFileHandler(
-                        commitmentRef,
-                        setCommitmentFile,
-                        'Commitment',
-                      )
+                    onDelete={
+                      (event) => {
+                        setPopUpReferenceFile('Commitment');
+                        onDeletePopUp(event);
+                      }
+                      // onDeleteFileHandler(
+                      //   commitmentRef,
+                      //   setCommitmentFile,
+                      //   'Commitment',
+                      // )
                     }
                     onClick={() => onClickFileHandler(commitmentRef)}
                   />
@@ -1828,12 +1851,18 @@ const PatientDetailsBlock = ({
                         htmlFor='additionalDocument'
                         label={additionalDocumentFile.name}
                         size={additionalDocumentFile.size}
-                        onDelete={() =>
-                          onDeleteFileHandler(
-                            additionalDocumentRef,
-                            setAdditionalDocumentFile,
-                            nameOfAdditionalDocumentFile || 'Document1',
-                          )
+                        onDelete={
+                          (event) => {
+                            setPopUpReferenceFile(
+                              nameOfAdditionalDocumentFile || 'Document1',
+                            );
+                            onDeletePopUp(event);
+                          }
+                          // onDeleteFileHandler(
+                          //   additionalDocumentRef,
+                          //   setAdditionalDocumentFile,
+                          //   nameOfAdditionalDocumentFile || 'Document1',
+                          // )
                         }
                         onClick={() =>
                           onClickFileHandler(additionalDocumentRef)
