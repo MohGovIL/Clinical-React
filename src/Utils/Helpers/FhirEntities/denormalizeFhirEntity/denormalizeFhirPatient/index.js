@@ -67,7 +67,7 @@ const denormalizeFhirPatient = (patient) => {
         }
     }
     if (patient.identifierType || patient.identifier) {
-        denormalizedPatient['identifier'] = { ...identifierObj };
+        denormalizedPatient['identifier'] = [{ ...identifierObj }];
     }
 
     if (telecom.length > 0) {
@@ -75,7 +75,7 @@ const denormalizeFhirPatient = (patient) => {
     }
 
     if (patient.firstName || patient.lastName) {
-        denormalizedPatient['name'] = { ...name };
+        denormalizedPatient['name'] = [{ ...name }];
     }
     return denormalizedPatient;
 };

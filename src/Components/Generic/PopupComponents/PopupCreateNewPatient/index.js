@@ -71,6 +71,7 @@ const PopupCreateNewPatient = ({
 
   const [errorIdNumber, setErrorIdNumber] = useState(false);
   const [errorIdNumberText, setErrorIdNumberText] = useState('');
+  const [alertDuringSave, setAlertDuringSave] = useState({severity: "", message: "", show: false});
 
   const textFieldSelectNotEmptyRule = {
     validate: {
@@ -107,10 +108,6 @@ const PopupCreateNewPatient = ({
   });
 
   const onSubmit = (patient, e) => {
-    console.log('===============data of form==================');
-    console.log(formState.isValid);
-    console.log(errors.length);
-    // if (errors && errors.length > 0) {
     if (!formState.isValid) {
      setFormButtonSave('view');
     } else {
@@ -122,25 +119,27 @@ const PopupCreateNewPatient = ({
       } else {
           (() => {
               try {
+                  patient.birthDate = Moment(patient.birthDate, formatDate).format(
+                      'YYYY-MM-DD',
+                  );
                   FHIR('Patient', 'doWork', {
-                      // eslint-disable-next-line no-use-before-define
                       functionName: 'createPatient',
                       functionParams: {
                           patient,
                       },
                   }).then((saved_patient)=>{
-                      console.log("====saved data=====");
-                      console.log(saved_patient);
-                      console.log("===================");
+                      setFormButtonSave('view');
+                      setAlertDuringSave({...alertDuringSave, message: t("Saved successfully"), severity: "success", show: true});
+                      setTimeout(handlePopupCloseAndClear,500);
+                  }).catch(error => {
+                      setAlertDuringSave({...alertDuringSave, message: t("Error during create a new patient!"), severity: "error", show: true})
                   });
               } catch (e) {
 
               }
           })();
       }
-      console.log('we will save a new patient, hooray!!!!');
     }
-    console.log('===============data of form==================');
   };
 
   //Register TextField components in react-hook-forms
@@ -502,7 +501,8 @@ const PopupCreateNewPatient = ({
       title={t('Add New Patient')}
       content_dividers={false}
       bottomButtons={bottomButtonsData}
-      dialogMaxWidth={'md'}>
+      dialogMaxWidth={'md'}
+      AlertMessage={alertDuringSave}>
       <form onSubmit={handleSubmit(onSubmit)} id={'createNewPatient'}>
         <StyledForm languageDirection={languageDirection}>
           <StyledBox>
