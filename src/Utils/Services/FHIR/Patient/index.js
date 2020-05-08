@@ -338,9 +338,6 @@ const PatientStats = {
     const denormalizationFhirPatient = denormalizeFhirPatient(
       params.functionParams.patient,
     );
-    console.log("======================");
-    console.log(denormalizationFhirPatient);
-    console.log("======================");
     return CRUDOperations('create', `${params.url}`, denormalizationFhirPatient);
   },
 };

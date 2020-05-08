@@ -78,6 +78,14 @@ const PopupCreateNewPatient = ({
       value: (value) => (value !== undefined && value !== 0) || 'error',
     },
   };
+  const managingOrganizationSelectNotEmptyRule = {
+    validate: {
+        value: (value) => {
+            return (patientIdType !== patientIdTypeMain ? true : ((value !== undefined && value !== 0) ? true : 'error'));
+        }
+    }
+  };
+
   const history = useHistory();
 
   let patientInitialValues = {
@@ -89,7 +97,6 @@ const PopupCreateNewPatient = ({
     birthDate: null,
   };
 
-  //const methods = useForm({
   const {
     register,
     control,
@@ -130,7 +137,7 @@ const PopupCreateNewPatient = ({
                   }).then((saved_patient)=>{
                       setFormButtonSave('view');
                       setAlertDuringSave({...alertDuringSave, message: t("Saved successfully"), severity: "success", show: true});
-                      setTimeout(handlePopupCloseAndClear,500);
+                      setTimeout(handlePopupCloseAndClear,750);
                   }).catch(error => {
                       setAlertDuringSave({...alertDuringSave, message: t("Error during create a new patient!"), severity: "error", show: true})
                   });
@@ -146,7 +153,7 @@ const PopupCreateNewPatient = ({
   useEffect(() => {
     register({ name: 'identifierType' }, textFieldSelectNotEmptyRule);
     register({ name: 'gender' }, textFieldSelectNotEmptyRule);
-    register({ name: 'managingOrganization' }, textFieldSelectNotEmptyRule);
+    register({ name: 'managingOrganization' }, managingOrganizationSelectNotEmptyRule);
   }, []);
 
   //useEffect block
@@ -313,7 +320,7 @@ const PopupCreateNewPatient = ({
                 setErrorIdNumberText(t(errors?.identifier?.message));
                 setFormButtonSave('write');
               } else {
-                clearIdNumber();
+                clearIdNumberError();
                 setFormButtonSave('write');
               }
             }
@@ -323,7 +330,7 @@ const PopupCreateNewPatient = ({
         }
       }
     })();
-  }, [patientIdNumber, patientIdType, isFound]);
+  }, [patientIdNumber, patientIdType, errors]);
 
   const handleIdTypeChange = (event) => {
     try {
@@ -356,7 +363,7 @@ const PopupCreateNewPatient = ({
     return isFound;
   };
 
-  const clearIdNumber = () => {
+  const clearIdNumberError = () => {
     clearError('identifier');
     setErrorIdNumber(false);
     setErrorIdNumberText('');
@@ -434,7 +441,7 @@ const PopupCreateNewPatient = ({
     setPatientIdNumber('');
     setValue('identifier', '');
 
-    clearIdNumber();
+    clearIdNumberError();
     setFormButtonSave('write');
     setPatientIdType(0);
     setPatientGender(0);
@@ -445,6 +452,7 @@ const PopupCreateNewPatient = ({
     register({ name: 'gender' }, textFieldSelectNotEmptyRule);
     register({ name: 'managingOrganization' }, textFieldSelectNotEmptyRule);
 
+    setAlertDuringSave({...alertDuringSave, message: "", severity: "", show: false});
     handlePopupClose();
   };
   //End block of handle's function
@@ -608,7 +616,7 @@ const PopupCreateNewPatient = ({
                 name='managingOrganization'
                 value={patientManagingOrganizationValue}
                 label={t('Kupat Cholim')}
-                required={patientIdType === patientIdTypeMain}
+                required={patientIdType === patientIdTypeMain ? true : false}
                 select
                 onChange={handleChangeHealthManageOrg}
                 SelectProps={{
