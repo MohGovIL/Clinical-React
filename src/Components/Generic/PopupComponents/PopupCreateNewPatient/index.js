@@ -30,6 +30,7 @@ import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEn
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import { validateLuhnAlgorithm } from 'Utils/Helpers/validation/validateLuhnAlgorithm';
+import { getOnlyNumbersRegexPattern } from 'Utils/Helpers/validation/patterns';
 
 const PopupCreateNewPatient = ({
   popupOpen,
@@ -50,9 +51,7 @@ const PopupCreateNewPatient = ({
   const [patientGender, setPatientGender] = useState(0);
   const [patientIdType, setPatientIdType] = useState(0);
   const [patientBirthDate, setPatientBirthDate] = useState(null);
-  const [patientManagingOrganizationValue, setPatientKupatHolim] = useState(
-    0,
-  );
+  const [patientManagingOrganizationValue, setPatientKupatHolim] = useState(0);
 
   const patientIdTypeMain = 'teudat_zehut';
   const [formButtonSave, setFormButtonSave] = useState('write');
@@ -71,7 +70,11 @@ const PopupCreateNewPatient = ({
 
   const [errorIdNumber, setErrorIdNumber] = useState(false);
   const [errorIdNumberText, setErrorIdNumberText] = useState('');
-  const [alertDuringSave, setAlertDuringSave] = useState({severity: "", message: "", show: false});
+  const [alertDuringSave, setAlertDuringSave] = useState({
+    severity: '',
+    message: '',
+    show: false,
+  });
 
   const textFieldSelectNotEmptyRule = {
     validate: {
@@ -80,10 +83,14 @@ const PopupCreateNewPatient = ({
   };
   const managingOrganizationSelectNotEmptyRule = {
     validate: {
-        value: (value) => {
-            return (patientIdType !== patientIdTypeMain ? true : ((value !== undefined && value !== 0) ? true : 'error'));
-        }
-    }
+      value: (value) => {
+        return patientIdType !== patientIdTypeMain
+          ? true
+          : value !== undefined && value !== 0
+          ? true
+          : 'error';
+      },
+    },
   };
 
   const history = useHistory();
@@ -116,35 +123,48 @@ const PopupCreateNewPatient = ({
 
   const onSubmit = (patient, e) => {
     if (errors && errors.length !== undefined) {
-     setFormButtonSave('view');
+      setFormButtonSave('view');
     } else {
-      if (!validateLuhnAlgorithm(patient.identifier) && patient.identifierType === patientIdTypeMain) {
+      if (
+        !validateLuhnAlgorithm(patient.identifier) &&
+        patient.identifierType === patientIdTypeMain
+      ) {
         setError('identifier', 'notValid', 'The number entered is incorrect');
         setErrorIdNumber(true);
         setErrorIdNumberText(t(errors?.identifier?.message));
         setFormButtonSave('write');
       } else {
-          (() => {
-              try {
-                  patient.birthDate = Moment(patient.birthDate, formatDate).format(
-                      'YYYY-MM-DD',
-                  );
-                  FHIR('Patient', 'doWork', {
-                      functionName: 'createPatient',
-                      functionParams: {
-                          patient,
-                      },
-                  }).then((saved_patient)=>{
-                      setFormButtonSave('view');
-                      setAlertDuringSave({...alertDuringSave, message: t("Saved successfully"), severity: "success", show: true});
-                      setTimeout(handlePopupCloseAndClear,750);
-                  }).catch(error => {
-                      setAlertDuringSave({...alertDuringSave, message: t("Error during create a new patient!"), severity: "error", show: true})
-                  });
-              } catch (e) {
-
-              }
-          })();
+        (() => {
+          try {
+            patient.birthDate = Moment(patient.birthDate, formatDate).format(
+              'YYYY-MM-DD',
+            );
+            FHIR('Patient', 'doWork', {
+              functionName: 'createPatient',
+              functionParams: {
+                patient,
+              },
+            })
+              .then((saved_patient) => {
+                setFormButtonSave('view');
+                setAlertDuringSave({
+                  ...alertDuringSave,
+                  message: t('Saved successfully'),
+                  severity: 'success',
+                  show: true,
+                });
+                setTimeout(handlePopupCloseAndClear, 750);
+              })
+              .catch((error) => {
+                setAlertDuringSave({
+                  ...alertDuringSave,
+                  message: t('Error during create a new patient!'),
+                  severity: 'error',
+                  show: true,
+                });
+              });
+          } catch (e) {}
+        })();
       }
     }
   };
@@ -153,7 +173,10 @@ const PopupCreateNewPatient = ({
   useEffect(() => {
     register({ name: 'identifierType' }, textFieldSelectNotEmptyRule);
     register({ name: 'gender' }, textFieldSelectNotEmptyRule);
-    register({ name: 'managingOrganization' }, managingOrganizationSelectNotEmptyRule);
+    register(
+      { name: 'managingOrganization' },
+      managingOrganizationSelectNotEmptyRule,
+    );
   }, []);
 
   //useEffect block
@@ -274,10 +297,7 @@ const PopupCreateNewPatient = ({
               setValue('email', patients.email);
               setValue('identifierType', patients.identifierType);
               setValue('gender', patients.gender);
-              setValue(
-                'managingOrganization',
-                patients.managingOrganization,
-              );
+              setValue('managingOrganization', patients.managingOrganization);
 
               setPatientIdentifier(patients.id);
               setPatientBirthDate(patients.birthDate);
@@ -308,8 +328,9 @@ const PopupCreateNewPatient = ({
               setFormButtonPatientAdm('write');
             } else {
               if (
-                !validateLuhnAlgorithm(patientIdNumber) &&
-                patientIdType === patientIdTypeMain
+                (!validateLuhnAlgorithm(patientIdNumber) &&
+                  patientIdType === patientIdTypeMain) ||
+                !getOnlyNumbersRegexPattern().test(patientIdNumber)
               ) {
                 setError(
                   'identifier',
@@ -452,7 +473,12 @@ const PopupCreateNewPatient = ({
     register({ name: 'gender' }, textFieldSelectNotEmptyRule);
     register({ name: 'managingOrganization' }, textFieldSelectNotEmptyRule);
 
-    setAlertDuringSave({...alertDuringSave, message: "", severity: "", show: false});
+    setAlertDuringSave({
+      ...alertDuringSave,
+      message: '',
+      severity: '',
+      show: false,
+    });
     handlePopupClose();
   };
   //End block of handle's function
@@ -636,9 +662,7 @@ const PopupCreateNewPatient = ({
                 }}
                 error={errors.managingOrganization ? true : false}
                 helperText={
-                  errors.managingOrganization
-                    ? t('is a required field.')
-                    : null
+                  errors.managingOrganization ? t('is a required field.') : null
                 }
                 InputProps={{
                   endAdornment: errors.managingOrganization && (
@@ -823,9 +847,7 @@ const PopupCreateNewPatient = ({
               defaultValue={patientInitialValues.email}
               label={t('Mail address')}
               error={errors.email ? true : false}
-              helperText={
-                errors.email ? t('Invalid email address') : null
-              }
+              helperText={errors.email ? t('Invalid email address') : null}
               InputProps={{
                 endAdornment: errors.email && (
                   <InputAdornment position='end'>
@@ -844,12 +866,12 @@ const PopupCreateNewPatient = ({
     </CustomizedPopup>
   );
 };
-const mapStateToProps = state => {
-    return {
-        languageDirection: state.settings.lang_dir,
-        formatDate: state.settings.format_date,
-        facility: state.settings.facility,
-    }
+const mapStateToProps = (state) => {
+  return {
+    languageDirection: state.settings.lang_dir,
+    formatDate: state.settings.format_date,
+    facility: state.settings.facility,
+  };
 };
 
 export default connect(mapStateToProps, null)(PopupCreateNewPatient);
