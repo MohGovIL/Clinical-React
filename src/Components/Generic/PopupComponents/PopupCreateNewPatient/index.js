@@ -751,8 +751,14 @@ const PopupCreateNewPatient = ({
                 control={control}
                 rules={{
                   validate: {
-                    value: (value) =>
-                      Moment(value, formatDate, true).isValid() === true,
+                    value: (value) => {
+                         if (Moment(value, formatDate, true).isValid() === true) {
+                           if (Moment(value, formatDate, true).isAfter() !== false){
+                               return "Should be entered date less than today";
+                           }
+                         } else { return "Date is not in range"; }
+                         return null;
+                    }
                   },
                 }}
                 as={
@@ -767,7 +773,7 @@ const PopupCreateNewPatient = ({
                       disableToolbar: false,
                       label: t('birth day'),
                       value: patientBirthDate,
-                      mask: { formatDate },
+                      //mask: { formatDate },
                       InputProps: {
                         autoComplete: 'off',
                       },
@@ -784,8 +790,7 @@ const PopupCreateNewPatient = ({
                         ? false
                         : true,
                       //|| (!errorRequired.birthDate ? false : true)
-                      helperText: errors.birthDate
-                        ? t('Date must be in a date format')
+                      helperText: errors.birthDate ? t(errors.birthDate.message)
                         : errorRequired.birthDate
                         ? errorRequired.birthDate
                         : null,
