@@ -13,7 +13,6 @@ import {
 } from '../../SearchLogic';
 import { CRUDOperations } from '../CRUDOperations';
 import denormalizeFhirPatient from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirPatient';
-// import denormalizeFhirEncounter from "Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirEncounter";
 
 const PatientStats = {
   doWork: (parameters = null) => {
