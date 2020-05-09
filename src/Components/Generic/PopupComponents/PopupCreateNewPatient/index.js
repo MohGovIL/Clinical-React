@@ -115,7 +115,7 @@ const PopupCreateNewPatient = ({
   });
 
   const onSubmit = (patient, e) => {
-    if (!formState.isValid) {
+    if (errors && errors.length !== undefined) {
      setFormButtonSave('view');
     } else {
       if (!validateLuhnAlgorithm(patient.identifier) && patient.identifierType === patientIdTypeMain) {
@@ -330,7 +330,7 @@ const PopupCreateNewPatient = ({
         }
       }
     })();
-  }, [patientIdNumber, patientIdType, errors]);
+  }, [patientIdNumber, patientIdType]);
 
   const handleIdTypeChange = (event) => {
     try {
