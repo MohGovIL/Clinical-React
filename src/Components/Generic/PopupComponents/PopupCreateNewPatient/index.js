@@ -336,13 +336,6 @@ const PopupCreateNewPatient = ({
                   patientIdType === patientIdTypeMain) ||
                 !getOnlyNumbersRegexPattern().test(patientIdNumber)
               ) {
-                console.log(
-                  !validateLuhnAlgorithm(patientIdNumber) +
-                    ' / ' +
-                    (patientIdType === patientIdTypeMain) +
-                    ' / ' +
-                    !getOnlyNumbersRegexPattern().test(patientIdNumber),
-                );
                 setError(
                   'identifier',
                   'notValid',

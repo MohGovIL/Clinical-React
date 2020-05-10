@@ -14,7 +14,7 @@ const normalizeFhirEncounter = (encounter) => {
   let examination = null;
   let relatedPerson = '';
 
-  if (encounter.participant.length) {
+  if (encounter.participant && encounter.participant.length) {
     encounter.participant.forEach((participantObj) => {
       if (participantObj.individual) {
         if (participantObj.individual.reference) {
