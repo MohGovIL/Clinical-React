@@ -30,6 +30,12 @@ const CustomizedPopup = ({
   return (
     <div>
       <Dialog
+        disableBackdropClick={
+          props.disableBackdropClick !== undefined &&
+          props.disableBackdropClick !== null
+            ? props.disableBackdropClick
+            : true
+        }
         onClose={onClose}
         aria-labelledby='customized-dialog-title'
         open={isOpen}
