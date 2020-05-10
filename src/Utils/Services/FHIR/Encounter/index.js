@@ -125,7 +125,7 @@ const EncounterStates = {
     }
   },
   encountersWithPatientsBasePath: (summary) =>
-    `${summary ? '&_summary=count' : '&_include=Encounter:patient'}`,
+    `${summary ? '_summary=count' : '_include=Encounter:patient'}`,
 
   getEncountersWithPatients: (params) => {
     let summary = params.summary;
@@ -143,11 +143,11 @@ const EncounterStates = {
     //return fhirTokenInstance().get(`${fhirBasePath}${encountersWithPatientsBasePath(summary)}${statusesString ? statusesString : ''}${date ? `&date=eq${date}` : ''}${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${serviceType ? `&service-type=${serviceType}` : ''}${summary ? `&_summary=count` : ''}`);
     return CRUDOperations(
       'search',
-      `${params.url}?${summaryStat}&${statusesString ? statusesString : ''}${
+      `${params.url}?${summaryStat}${statusesString ? statusesString : ''}${
         date ? `&date=eq${date}` : ''
       }${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${
         serviceType ? `&service-type=${serviceType}` : ''
-      }${summary ? `&_summary=count` : ''}`,
+      }${summary ? `&_summary=count` : ''}${params.sortParams && summary === false ? `&_sort=${params.sortParams}`: ''}`,
     );
   },
   getCurrentEncounterPerPatient: (params) => {
