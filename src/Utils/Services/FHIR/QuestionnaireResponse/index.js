@@ -30,15 +30,19 @@ const QuestionnaireResponseStats = {
   patchQuestionnaireResponse: (params) => {
     const patchArr = [];
     for (const dataKey in params.functionParams.questionnaireResponseParams) {
-      if (params.functionParams.questionnaireResponseParams.hasOwnProperty(dataKey)) {
+      if (
+        params.functionParams.questionnaireResponseParams.hasOwnProperty(
+          dataKey,
+        )
+      ) {
         // params.functionParams.relatedPersonParams[dataKey];
         switch (dataKey) {
           case 'item':
-              patchArr.push({
-                op: 'replace',
-                path: '/item',
-                value: params.functionParams.questionnaireResponseParams[dataKey],
-              })
+            patchArr.push({
+              op: 'replace',
+              path: '/item',
+              value: params.functionParams.questionnaireResponseParams[dataKey],
+            });
             break;
 
           default:
@@ -46,8 +50,12 @@ const QuestionnaireResponseStats = {
         }
       }
     }
-    return CRUDOperations('patch', `${params.url}/${params.questionnaireResponseId}`, patchArr)
-  }
+    return CRUDOperations(
+      'patch',
+      `${params.url}/${params.questionnaireResponseId}`,
+      patchArr,
+    );
+  },
 };
 
 export default function QuestionnaireResponse(action = null, params = null) {

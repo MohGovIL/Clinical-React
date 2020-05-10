@@ -1,7 +1,7 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const RelativeWrapperForClickAwayListener = styled.div`
-  position:relative;
+  position: relative;
   height: 100%;
 `;
 

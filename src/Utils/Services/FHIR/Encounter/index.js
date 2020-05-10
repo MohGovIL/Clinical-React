@@ -14,7 +14,7 @@ import denormalizeFhirEncounter from 'Utils/Helpers/FhirEntities/denormalizeFhir
 const EncounterStates = {
   doWork: (parameters) => {
     let componentFhirURL = '/Encounter';
-    let paramsToCRUD = parameters.functionParams;//convertParamsToUrl(parameters.functionParams);
+    let paramsToCRUD = parameters.functionParams; //convertParamsToUrl(parameters.functionParams);
     paramsToCRUD.url = componentFhirURL;
     return EncounterStates[parameters.functionName](paramsToCRUD);
   },

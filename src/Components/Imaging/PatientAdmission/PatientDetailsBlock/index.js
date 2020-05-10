@@ -474,11 +474,6 @@ const PatientDetailsBlock = ({
             cloneState[requiredFields[fieldKey].name] = t('Value is required');
             return cloneState;
           });
-          // setError(
-          //   requiredFields[fieldKey].name,
-          //   'required',
-          //   'This field is required',
-          // );
           clean = false;
         } else {
           setRequiredErrors((prevState) => {
@@ -1962,6 +1957,8 @@ const PatientDetailsBlock = ({
     </React.Fragment>
   );
 };
+
+
 
 const mapStateToProps = (state) => {
   return {

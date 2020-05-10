@@ -1,21 +1,22 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const LoginStyleBox = styled.div`
-    width: 400px;
-    padding: 40px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    background: #000d37;
-    text-align: center;
-    border-radius: 15px;
-    & h1{
+  width: 400px;
+  padding: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #000d37;
+  text-align: center;
+  border-radius: 15px;
+  & h1 {
     color: white;
     text-transform: uppercase;
     font-weight: 500;
   }
-  & input[type = "text"], input[type = "password"]{
+  & input[type='text'],
+  input[type='password'] {
     background: none;
     display: block;
     margin: 20px auto;
@@ -28,11 +29,12 @@ const LoginStyleBox = styled.div`
     border-radius: 24px;
     transition: 0.25s;
   }
-  & input[type = "text"]:focus, input[type = "password"]:focus{
+  & input[type='text']:focus,
+  input[type='password']:focus {
     width: 280px;
     border-color: #28d957;
   }
-  & input[type = "submit"]{
+  & input[type='submit'] {
     background: none;
     display: block;
     margin: 20px auto;
@@ -45,8 +47,8 @@ const LoginStyleBox = styled.div`
     transition: 0.25s;
     cursor: pointer;
   }
-  & input[type = "submit"]:hover{
+  & input[type='submit']:hover {
     background: #2ecc71;
-}
+  }
 `;
 export default LoginStyleBox;

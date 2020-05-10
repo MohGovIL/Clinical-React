@@ -5,9 +5,13 @@
  */
 
 export const getEmailRegexPattern = () => {
-    return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 };
 
 export const getCellPhoneRegexPattern = () => {
-    return /^\(?([0-9]{2,3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+  return /^\(?([0-9]{2,3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
 };
+
+export const getOnlyNumbersRegexPattern = () => {
+ return /^[0-9]*$/;
+}

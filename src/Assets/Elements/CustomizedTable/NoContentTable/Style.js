@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import {devicesValue} from "../../../Themes/BreakPoints";
+import styled from 'styled-components';
+import { devicesValue } from '../../../Themes/BreakPoints';
 
 export const Styledh1 = styled.h1`
   font-size: 24px;
@@ -16,8 +16,9 @@ export default styled.div`
   flex-direction: column;
   flex-basis: 100%;
   background-color: #ffffff;
-  box-shadow: 0 0 10px 0 rgba(152, 151, 151, 0.3), 0 0 10px 0 rgba(152, 151, 151, 0.3);
-  @media(min-width: ${devicesValue.desktop}px){
+  box-shadow: 0 0 10px 0 rgba(152, 151, 151, 0.3),
+    0 0 10px 0 rgba(152, 151, 151, 0.3);
+  @media (min-width: ${devicesValue.desktop}px) {
     flex-basis: 85%;
   }
 `;
