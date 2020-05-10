@@ -132,7 +132,7 @@ const PatientDataBlock = ({
       //use format date of FHIR date - YYYY-MM-DD only
       setPatientAge(ageCalculator(patientData.birthDate));
       setPatientIdentifier(
-        { type: patientData.identifierType, value: patientData.identifier } ||
+        { type: patientData.identifierTypeText, value: patientData.identifier } ||
           {},
       );
       if (appointmentData !== undefined) {
