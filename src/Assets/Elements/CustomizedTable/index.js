@@ -28,7 +28,7 @@ const CustomizedTable = ({ tableHeaders, tableData }) => {
     <React.Fragment>
       {Array.isArray(tableData) && tableData.length ? (
         <CustomizedTableContainer>
-          <StyledCustomizedTable size={'small'} stickyHeader>
+          <StyledCustomizedTable stickyHeader>
             <TableHead>
               <CustomizedTableHeaderRow>
                 {tableHeaders.map((tableHeader, tableHeaderIndex) => (
