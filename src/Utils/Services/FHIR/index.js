@@ -30,7 +30,7 @@ const FHIRStates = {
   RelatedPerson: RelatedPerson,
   Questionnaire: Questionnaire,
   QuestionnaireResponse: QuestionnaireResponse,
-  DocumentReference:DocumentReference,
+  DocumentReference: DocumentReference,
   /* More transformers */
   __default__: null,
 };

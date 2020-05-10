@@ -13,5 +13,5 @@ export const getCellPhoneRegexPattern = () => {
 };
 
 export const getOnlyNumbersRegexPattern = () => {
- return /^[0-9]*$/;
-}
+  return /^[0-9]*$/;
+};

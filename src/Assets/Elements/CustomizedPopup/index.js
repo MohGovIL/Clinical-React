@@ -17,7 +17,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { StyledMuiDialogTitle, StyledDialogActions } from './Style';
 import { connect } from 'react-redux';
 import CustomizedTableButton from '../CustomizedTable/CustomizedTableButton';
-import Alert from "@material-ui/lab/Alert";
+import Alert from '@material-ui/lab/Alert';
 
 const CustomizedPopup = ({
   children,
@@ -49,9 +49,11 @@ const CustomizedPopup = ({
           dividers={props.content_dividers ? props.content_dividers : false}>
           {children}
         </DialogContent>
-          {props.AlertMessage && props.AlertMessage.show &&
-          <Alert severity={props.AlertMessage.severity}>{props.AlertMessage.message}</Alert>
-          }
+        {props.AlertMessage && props.AlertMessage.show && (
+          <Alert severity={props.AlertMessage.severity}>
+            {props.AlertMessage.message}
+          </Alert>
+        )}
         <StyledDialogActions>
           {props.bottomButtons &&
             props.bottomButtons.map((button, buttonIndex) => {

@@ -752,13 +752,17 @@ const PopupCreateNewPatient = ({
                 rules={{
                   validate: {
                     value: (value) => {
-                         if (Moment(value, formatDate, true).isValid() === true) {
-                           if (Moment(value, formatDate, true).isAfter() !== false){
-                               return "Should be entered date less than today";
-                           }
-                         } else { return "Date is not in range"; }
-                         return null;
-                    }
+                      if (Moment(value, formatDate, true).isValid() === true) {
+                        if (
+                          Moment(value, formatDate, true).isAfter() !== false
+                        ) {
+                          return 'Should be entered date less than today';
+                        }
+                      } else {
+                        return 'Date is not in range';
+                      }
+                      return null;
+                    },
                   },
                 }}
                 as={
@@ -790,7 +794,8 @@ const PopupCreateNewPatient = ({
                         ? false
                         : true,
                       //|| (!errorRequired.birthDate ? false : true)
-                      helperText: errors.birthDate ? t(errors.birthDate.message)
+                      helperText: errors.birthDate
+                        ? t(errors.birthDate.message)
                         : errorRequired.birthDate
                         ? errorRequired.birthDate
                         : null,

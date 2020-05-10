@@ -1958,8 +1958,6 @@ const PatientDetailsBlock = ({
   );
 };
 
-
-
 const mapStateToProps = (state) => {
   return {
     languageDirection: state.settings.lang_dir,

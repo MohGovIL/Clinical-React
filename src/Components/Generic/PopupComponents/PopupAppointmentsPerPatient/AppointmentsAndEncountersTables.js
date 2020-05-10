@@ -215,11 +215,11 @@ const AppointmentsAndEncountersTables = ({
                         </StyledTableTextCell>
                       </TableCell>
                       <TableCell align='right'>
-                          <StyledTableTextCell
-                              title={parseMultipleExaminations(
-                                  encounter.serviceType,
-                                  encounter.examination,
-                              )}>
+                        <StyledTableTextCell
+                          title={parseMultipleExaminations(
+                            encounter.serviceType,
+                            encounter.examination,
+                          )}>
                           {parseMultipleExaminations(
                             encounter.serviceType,
                             encounter.examination,
@@ -322,12 +322,11 @@ const AppointmentsAndEncountersTables = ({
                           </StyledTableTextCell>
                         </TableCell>
                         <TableCell align='right'>
-                            <StyledTableTextCell
-                                title={parseMultipleExaminations(
-                                    appointment.serviceType,
-                                    appointment.examination,
-                                )}>
-                          </StyledTableTextCell>
+                          <StyledTableTextCell
+                            title={parseMultipleExaminations(
+                              appointment.serviceType,
+                              appointment.examination,
+                            )}></StyledTableTextCell>
                         </TableCell>
                         <TableCell align='center'>
                           <StyledLabelStatusAppointment>
@@ -429,11 +428,11 @@ const AppointmentsAndEncountersTables = ({
                           </StyledTableTextCell>
                         </TableCell>
                         <TableCell align='right'>
-                            <StyledTableTextCell
-                                title={parseMultipleExaminations(
-                                    encounter.serviceType,
-                                    encounter.examination,
-                                )}>
+                          <StyledTableTextCell
+                            title={parseMultipleExaminations(
+                              encounter.serviceType,
+                              encounter.examination,
+                            )}>
                             {parseMultipleExaminations(
                               encounter.serviceType,
                               encounter.examination,
@@ -511,6 +510,5 @@ const AppointmentsAndEncountersTables = ({
     </React.Fragment>
   );
 };
-
 
 export default AppointmentsAndEncountersTables;
