@@ -4,6 +4,7 @@ import matchSorter from 'match-sorter';
 import { getCellPhoneRegexPattern } from 'Utils/Helpers/validation/patterns';
 import { Controller, useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 // Helpers
 import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirOrganization';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
@@ -56,6 +57,7 @@ import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirDocumentReference from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
+import { baseRoutePath } from '../../../../Utils/Helpers/baseRoutePath';
 
 const PatientDetailsBlock = ({
   patientData,
@@ -64,7 +66,7 @@ const PatientDetailsBlock = ({
   formatDate,
 }) => {
   const { t } = useTranslation();
-
+  let history = useHistory();
   const {
     control,
     handleSubmit,
@@ -380,6 +382,7 @@ const PatientDetailsBlock = ({
           );
         }
         await Promise.all(APIsFILE);
+        history.push(`${baseRoutePath()}/imaging/patientTracking`);
       }
     } catch (error) {
       console.log(error);
@@ -1933,7 +1936,7 @@ const PatientDetailsBlock = ({
           </StyledFormGroup>
           <StyledFormGroup>
             <Grid container direction='row' justify='flex-end'>
-              <Grid item xs={3}>
+              <Grid item lg={3} sm={4}>
                 <StyledButton
                   color='primary'
                   variant='outlined'
@@ -1942,7 +1945,7 @@ const PatientDetailsBlock = ({
                   {t('Save & Close')}
                 </StyledButton>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item lg={3} sm={4}>
                 <StyledButton
                   color='primary'
                   variant='contained'
