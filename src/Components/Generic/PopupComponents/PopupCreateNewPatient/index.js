@@ -29,6 +29,8 @@ import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
+import { validateLuhnAlgorithm } from 'Utils/Helpers/validation/validateLuhnAlgorithm';
+import { getOnlyNumbersRegexPattern } from 'Utils/Helpers/validation/patterns';
 
 const PopupCreateNewPatient = ({
   popupOpen,
@@ -49,27 +51,59 @@ const PopupCreateNewPatient = ({
   const [patientGender, setPatientGender] = useState(0);
   const [patientIdType, setPatientIdType] = useState(0);
   const [patientBirthDate, setPatientBirthDate] = useState(null);
-  const [patientHealthManageOrganizationValue, setPatientKupatHolim] = useState(
-    0,
-  );
+  const [patientManagingOrganizationValue, setPatientKupatHolim] = useState(0);
 
-  const [formViewMode, setFormMode] = useState('write');
+  const patientIdTypeMain = 'teudat_zehut';
+  const [formButtonSave, setFormButtonSave] = useState('write');
+  const [formButtonCreatApp, setFormButtonCreatApp] = useState('view');
+  const [formButtonPatientAdm, setFormButtonPatientAdm] = useState('view');
+
   const [isFound, setIsFound] = useState(false);
 
+  const [errorRequired, setErrorRequired] = useState({
+    identifier: false,
+    firstName: false,
+    lastName: false,
+    mobileCellPhone: false,
+    email: false,
+  });
+
+  const [errorIdNumber, setErrorIdNumber] = useState(false);
+  const [errorIdNumberText, setErrorIdNumberText] = useState('');
+  const [alertDuringSave, setAlertDuringSave] = useState({
+    severity: '',
+    message: '',
+    show: false,
+  });
+
   const textFieldSelectNotEmptyRule = {
-    validate: { value: (value) => parseInt(value) !== 0 },
+    validate: {
+      value: (value) => (value !== undefined && value !== 0) || 'error',
+    },
   };
+  const managingOrganizationSelectNotEmptyRule = {
+    validate: {
+      value: (value) => {
+        return patientIdType !== patientIdTypeMain
+          ? true
+          : value !== undefined && value !== 0
+          ? true
+          : 'error';
+      },
+    },
+  };
+
   const history = useHistory();
 
   let patientInitialValues = {
+    identifier: '',
     firstName: '',
     lastName: '',
-    mobilePhone: '',
-    patientEmail: '',
+    mobileCellPhone: '',
+    email: '',
     birthDate: null,
   };
 
-  //const methods = useForm({
   const {
     register,
     control,
@@ -81,17 +115,68 @@ const PopupCreateNewPatient = ({
     triggerValidation,
     setValue,
     getValues,
+    formState,
   } = useForm({
     mode: 'onChange',
+    validateCriteriaMode: 'all',
   });
 
-  const onSubmit = (data, e) => {};
+  const onSubmit = (patient, e) => {
+    if (errors && errors.length !== undefined) {
+      setFormButtonSave('view');
+    } else {
+      if (
+        !validateLuhnAlgorithm(patient.identifier) &&
+        patient.identifierType === patientIdTypeMain
+      ) {
+        setError('identifier', 'notValid', 'The number entered is incorrect');
+        setErrorIdNumber(true);
+        setErrorIdNumberText(t(errors?.identifier?.message));
+        setFormButtonSave('write');
+      } else {
+        (() => {
+          try {
+            patient.birthDate = Moment(patient.birthDate, formatDate).format(
+              'YYYY-MM-DD',
+            );
+            FHIR('Patient', 'doWork', {
+              functionName: 'createPatient',
+              functionParams: {
+                patient,
+              },
+            })
+              .then((saved_patient) => {
+                setFormButtonSave('view');
+                setAlertDuringSave({
+                  ...alertDuringSave,
+                  message: t('Saved successfully'),
+                  severity: 'success',
+                  show: true,
+                });
+                setTimeout(handlePopupCloseAndClear, 750);
+              })
+              .catch((error) => {
+                setAlertDuringSave({
+                  ...alertDuringSave,
+                  message: t('Error during create a new patient!'),
+                  severity: 'error',
+                  show: true,
+                });
+              });
+          } catch (e) {}
+        })();
+      }
+    }
+  };
 
   //Register TextField components in react-hook-forms
   useEffect(() => {
-    register({ name: 'idNumberType' }, textFieldSelectNotEmptyRule);
+    register({ name: 'identifierType' }, textFieldSelectNotEmptyRule);
     register({ name: 'gender' }, textFieldSelectNotEmptyRule);
-    register({ name: 'healthManageOrganization' }, textFieldSelectNotEmptyRule);
+    register(
+      { name: 'managingOrganization' },
+      managingOrganizationSelectNotEmptyRule,
+    );
   }, []);
 
   //useEffect block
@@ -173,25 +258,34 @@ const PopupCreateNewPatient = ({
   const handleChangeBirthDate = (date) => {
     try {
       let newBirthDate = date.format(formatDate).toString();
-      //methods.setValue("birthDate", newBirthDate, true);
       setValue('birthDate', newBirthDate, true);
-      setPatientBirthDate(newBirthDate);
+      setPatientBirthDate(date);
+      setErrorRequired({
+        ...errorRequired,
+        birthDate: false,
+      });
     } catch (e) {
       console.log('Error: ' + e);
     }
   };
 
+  //Searching patient by id,checking id number for correct value
   useEffect(() => {
     (async () => {
-      if (/*patientIdType !== 0 &&*/ patientIdNumber.length > 0) {
+      if (
+        /*patientIdType !== 0 &&*/ patientIdNumber &&
+        patientIdNumber.length > 0
+      ) {
         setIsFound(true);
-        const result = await triggerValidation('idNumber');
+        const result = await triggerValidation('identifier');
+        setFormButtonCreatApp('view');
+        setFormButtonPatientAdm('view');
         try {
           FHIR('Patient', 'doWork', {
             functionName: 'searchPatientById',
             functionParams: { identifierValue: patientIdNumber },
           }).then((patients) => {
-            if (patients && result) {
+            if (patients && result && patients.id > 0) {
               patients.birthDate = Moment(patients.birthDate, 'YYYY-MM-DD');
               setValue('firstName', patients.firstName);
               setValue('lastName', patients.lastName);
@@ -199,35 +293,57 @@ const PopupCreateNewPatient = ({
                 'birthDate',
                 Moment(patients.birthDate).format(formatDate),
               );
-              setValue('mobilePhone', patients.mobileCellPhone);
-              setValue('patientEmail', patients.email);
-              setValue('idNumberType', patients.identifierType);
+              setValue('mobileCellPhone', patients.mobileCellPhone);
+              setValue('email', patients.email);
+              setValue('identifierType', patients.identifierType);
               setValue('gender', patients.gender);
-              setValue(
-                'healthManageOrganization',
-                patients.managingOrganization,
-              );
+              setValue('managingOrganization', patients.managingOrganization);
+
               setPatientIdentifier(patients.id);
               setPatientBirthDate(patients.birthDate);
               setPatientData(patients);
               setPatientIdType(patients.identifierType);
               setPatientGender(patients.gender);
               setPatientKupatHolim(patients.managingOrganization);
+
               setError(
-                'idNumber',
+                'identifier',
                 'patientExist',
                 'The patient exists in the system',
               );
-              setFormMode('view');
+              setErrorIdNumber(true);
+              setErrorIdNumberText(t(errors?.identifier?.message));
+
+              //clear required error
+              setErrorRequired({
+                ...errorRequired,
+                birthDate: false,
+                identifier: false,
+                firstName: false,
+                lastName: false,
+                mobileCellPhone: false,
+              });
+              setFormButtonSave('view');
+              setFormButtonCreatApp('write');
+              setFormButtonPatientAdm('write');
             } else {
-              clearError('idNumber');
-              setFormMode('write');
-              reset(patientInitialValues);
-              setPatientIdentifier(0);
-              setPatientIdType(0);
-              setPatientGender(0);
-              setPatientKupatHolim(0);
-              setPatientBirthDate(null);
+              if (
+                (!validateLuhnAlgorithm(patientIdNumber) &&
+                  patientIdType === patientIdTypeMain) ||
+                !getOnlyNumbersRegexPattern().test(patientIdNumber)
+              ) {
+                setError(
+                  'identifier',
+                  'notValid',
+                  'The number entered is incorrect',
+                );
+                setErrorIdNumber(true);
+                setErrorIdNumberText(t(errors?.identifier?.message));
+                setFormButtonSave('write');
+              } else {
+                clearIdNumberError();
+                setFormButtonSave('write');
+              }
             }
           });
         } catch (err) {
@@ -235,11 +351,11 @@ const PopupCreateNewPatient = ({
         }
       }
     })();
-  }, [patientIdNumber, patientIdType, isFound]);
+  }, [patientIdNumber, patientIdType]);
 
   const handleIdTypeChange = (event) => {
     try {
-      setValue('idNumberType', event.target.value, true);
+      setValue('identifierType', event.target.value, true);
       setPatientIdType(event.target.value);
     } catch (e) {
       console.log('Error: ' + e);
@@ -257,7 +373,7 @@ const PopupCreateNewPatient = ({
 
   const handleChangeHealthManageOrg = (event) => {
     try {
-      setValue('healthManageOrganization', event.target.value, true);
+      setValue('managingOrganization', event.target.value, true);
       setPatientKupatHolim(event.target.value);
     } catch (e) {
       console.log('Error: ' + e);
@@ -266,6 +382,12 @@ const PopupCreateNewPatient = ({
 
   const getIsFound = () => {
     return isFound;
+  };
+
+  const clearIdNumberError = () => {
+    clearError('identifier');
+    setErrorIdNumber(false);
+    setErrorIdNumberText('');
   };
 
   const patientAdmissionAction = () => {
@@ -335,6 +457,30 @@ const PopupCreateNewPatient = ({
     })();
   };
 
+  const handlePopupCloseAndClear = () => {
+    reset(patientInitialValues);
+    setPatientIdNumber('');
+    setValue('identifier', '');
+
+    clearIdNumberError();
+    setFormButtonSave('write');
+    setPatientIdType(0);
+    setPatientGender(0);
+    setPatientKupatHolim(0);
+    setPatientBirthDate(null);
+
+    register({ name: 'identifierType' }, textFieldSelectNotEmptyRule);
+    register({ name: 'gender' }, textFieldSelectNotEmptyRule);
+    register({ name: 'managingOrganization' }, textFieldSelectNotEmptyRule);
+
+    setAlertDuringSave({
+      ...alertDuringSave,
+      message: '',
+      severity: '',
+      show: false,
+    });
+    handlePopupClose();
+  };
   //End block of handle's function
 
   const bottomButtonsData = [
@@ -342,19 +488,21 @@ const PopupCreateNewPatient = ({
       label: t('Save patient'),
       variant: 'text',
       color: 'primary',
-      mode: formViewMode,
+      mode: formButtonSave,
       other: { type: 'submit', form: 'createNewPatient' },
     },
     {
       label: t('Patient Admission'),
       variant: 'contained',
       color: 'primary',
+      mode: formButtonPatientAdm,
       onClickHandler: patientAdmissionAction, //user function
     },
     {
       label: t('Create appointment'),
       variant: 'contained',
       color: 'primary',
+      mode: formButtonCreatApp,
       onClickHandler: handlePopupClose, //user function
     },
   ];
@@ -362,18 +510,33 @@ const PopupCreateNewPatient = ({
   const PopupTextFieldOpts = {
     color: 'primary',
     variant: 'filled',
-    disabled: formViewMode === 'view',
+    disabled: formButtonSave === 'view',
+    autoComplete: 'off',
+  };
+
+  const handlerOnInvalidField = (event) => {
+    event.preventDefault();
+    event.target.setCustomValidity('');
+    let field = event.target.name;
+
+    if (field == 'identifier') {
+      setErrorIdNumberText(t('Value is required'));
+    }
+    setErrorRequired({
+      ...errorRequired,
+      [field]: !event.target.validity.valid ? t('Value is required') : false,
+    });
   };
 
   return (
     <CustomizedPopup
       isOpen={popupOpen}
-      onClose={handlePopupClose}
+      onClose={handlePopupCloseAndClear}
       title={t('Add New Patient')}
       content_dividers={false}
       bottomButtons={bottomButtonsData}
-      dialogMaxWidth={'md'}>
-      {/*<FormContext {...methods}>*/}
+      dialogMaxWidth={'md'}
+      AlertMessage={alertDuringSave}>
       <form onSubmit={handleSubmit(onSubmit)} id={'createNewPatient'}>
         <StyledForm languageDirection={languageDirection}>
           <StyledBox>
@@ -381,22 +544,36 @@ const PopupCreateNewPatient = ({
               <Controller
                 as={TextField}
                 control={control}
-                id='standard-idNumber'
-                name='idNumber'
+                id='standard-identifier'
+                name='identifier'
                 defaultValue={patientIdNumber}
                 label={t('id number')}
                 required
+                onInvalid={handlerOnInvalidField}
+                onInput={handlerOnInvalidField}
                 rules={{
                   validate: (value) => {
-                    const formValues = getValues('idNumberType');
-                    setPatientIdNumber(formValues.idNumber);
+                    const formValues = getValues('identifierType');
+                    if (formValues && formValues.identifier !== undefined) {
+                      setPatientIdNumber(formValues.identifier.trim());
+                    }
                     return getIsFound() === true;
                   },
                 }}
                 color={'primary'}
                 variant={'filled'}
-                error={errors.idNumber ? true : false}
-                helperText={errors.idNumber ? t(errors.idNumber.message) : null}
+                error={
+                  errorIdNumber || (!errorRequired.identifier ? false : true)
+                }
+                helperText={errorIdNumberText || errorRequired.identifier}
+                InputProps={{
+                  autoComplete: 'off',
+                  endAdornment: (!errorRequired.identifier ? false : true) && (
+                    <InputAdornment position='end'>
+                      <ErrorOutlineIcon htmlColor={'#ff0000'} />
+                    </InputAdornment>
+                  ),
+                }}
               />
               <Controller
                 as={TextField}
@@ -406,6 +583,18 @@ const PopupCreateNewPatient = ({
                 defaultValue={patientInitialValues.firstName}
                 label={t('First Name')}
                 required
+                onInvalid={handlerOnInvalidField}
+                onInput={handlerOnInvalidField}
+                error={!errorRequired.firstName ? false : true}
+                helperText={errorRequired.firstName}
+                InputProps={{
+                  autoComplete: 'off',
+                  endAdornment: (!errorRequired.firstName ? false : true) && (
+                    <InputAdornment position='end'>
+                      <ErrorOutlineIcon htmlColor={'#ff0000'} />
+                    </InputAdornment>
+                  ),
+                }}
                 {...PopupTextFieldOpts}
               />
               <TextField
@@ -416,6 +605,7 @@ const PopupCreateNewPatient = ({
                 required
                 select
                 onChange={handleGenderChange}
+                defaultValue={{}}
                 SelectProps={{
                   MenuProps: {
                     elevation: 0,
@@ -434,7 +624,6 @@ const PopupCreateNewPatient = ({
                 error={errors.gender ? true : false}
                 helperText={errors.gender ? t('is a required field.') : null}
                 InputProps={{
-                  // disableUnderline: edit_mode === 1 ? false : true,
                   endAdornment: errors.gender && (
                     <InputAdornment position='end'>
                       <ErrorOutlineIcon htmlColor={'#ff0000'} />
@@ -449,11 +638,11 @@ const PopupCreateNewPatient = ({
                 ))}
               </TextField>
               <TextField
-                id='standard-healthManageOrganization'
-                name='healthManageOrganization'
-                value={patientHealthManageOrganizationValue}
+                id='standard-managingOrganization'
+                name='managingOrganization'
+                value={patientManagingOrganizationValue}
                 label={t('Kupat Cholim')}
-                required
+                required={patientIdType === patientIdTypeMain ? true : false}
                 select
                 onChange={handleChangeHealthManageOrg}
                 SelectProps={{
@@ -471,15 +660,12 @@ const PopupCreateNewPatient = ({
                     },
                   },
                 }}
-                error={errors.healthManageOrganization ? true : false}
+                error={errors.managingOrganization ? true : false}
                 helperText={
-                  errors.healthManageOrganization
-                    ? t('is a required field.')
-                    : null
+                  errors.managingOrganization ? t('is a required field.') : null
                 }
                 InputProps={{
-                  // disableUnderline: edit_mode === 1 ? false : true,
-                  endAdornment: errors.healthManageOrganization && (
+                  endAdornment: errors.managingOrganization && (
                     <InputAdornment position='end'>
                       <ErrorOutlineIcon htmlColor={'#ff0000'} />
                     </InputAdornment>
@@ -495,8 +681,8 @@ const PopupCreateNewPatient = ({
             </StyledColumnFirst>
             <StyledColumnSecond>
               <TextField
-                id='standard-idNumberType'
-                name='idNumberType'
+                id='standard-identifierType'
+                name='identifierType'
                 value={patientIdType}
                 label={t('ID type')}
                 required
@@ -517,12 +703,12 @@ const PopupCreateNewPatient = ({
                     },
                   },
                 }}
-                error={errors.idNumberType ? true : false}
+                error={errors.identifierType ? true : false}
                 helperText={
-                  errors.idNumberType ? t('is a required field.') : null
+                  errors.identifierType ? t('is a required field.') : null
                 }
                 InputProps={{
-                  endAdornment: errors.idNumberType && (
+                  endAdornment: errors.identifierType && (
                     <InputAdornment position='end'>
                       <ErrorOutlineIcon htmlColor={'#ff0000'} />
                     </InputAdornment>
@@ -546,6 +732,18 @@ const PopupCreateNewPatient = ({
                 defaultValue={patientInitialValues.lastName}
                 label={t('Last Name')}
                 required
+                onInvalid={handlerOnInvalidField}
+                onInput={handlerOnInvalidField}
+                error={!errorRequired.lastName ? false : true}
+                helperText={errorRequired.lastName}
+                InputProps={{
+                  autoComplete: 'off',
+                  endAdornment: (!errorRequired.lastName ? false : true) && (
+                    <InputAdornment position='end'>
+                      <ErrorOutlineIcon htmlColor={'#ff0000'} />
+                    </InputAdornment>
+                  ),
+                }}
                 {...PopupTextFieldOpts}
               />
               <Controller
@@ -553,8 +751,14 @@ const PopupCreateNewPatient = ({
                 control={control}
                 rules={{
                   validate: {
-                    value: (value) =>
-                      Moment(value, formatDate, true).isValid() === true,
+                    value: (value) => {
+                         if (Moment(value, formatDate, true).isValid() === true) {
+                           if (Moment(value, formatDate, true).isAfter() !== false){
+                               return "Should be entered date less than today";
+                           }
+                         } else { return "Date is not in range"; }
+                         return null;
+                    }
                   },
                 }}
                 as={
@@ -564,12 +768,14 @@ const PopupCreateNewPatient = ({
                       format: 'DD/MM/YYYY',
                       name: 'birthDate',
                       required: true,
+                      onInvalid: handlerOnInvalidField,
+                      onInput: handlerOnInvalidField,
                       disableToolbar: false,
                       label: t('birth day'),
                       value: patientBirthDate,
-                      mask: { formatDate },
+                      //mask: { formatDate },
                       InputProps: {
-                        // disableUnderline: edit_mode === 1 ? false : true,
+                        autoComplete: 'off',
                       },
                       disableFuture: true,
                       color: 'primary',
@@ -577,10 +783,16 @@ const PopupCreateNewPatient = ({
                       inputVariant: 'filled',
                       onChange: handleChangeBirthDate,
                       autoOk: true,
-                      disabled: formViewMode === 'view',
-                      error: errors.birthDate ? true : false,
-                      helperText: errors.birthDate
-                        ? t('Date must be in a date format')
+                      disabled: formButtonSave === 'view',
+                      error: errors.birthDate
+                        ? true
+                        : !errorRequired.birthDate
+                        ? false
+                        : true,
+                      //|| (!errorRequired.birthDate ? false : true)
+                      helperText: errors.birthDate ? t(errors.birthDate.message)
+                        : errorRequired.birthDate
+                        ? errorRequired.birthDate
                         : null,
                     }}
                     CustomizedProps={{
@@ -594,28 +806,39 @@ const PopupCreateNewPatient = ({
               <Controller
                 as={TextField}
                 control={control}
-                id='standard-mobilePhone'
-                name='mobilePhone'
-                defaultValue={patientInitialValues.mobilePhone}
+                id='standard-mobileCellPhone'
+                name='mobileCellPhone'
+                defaultValue={patientInitialValues.mobileCellPhone}
                 label={t('Cell phone')}
                 rules={{
                   pattern: getCellPhoneRegexPattern(),
                 }}
-                error={errors.mobilePhone ? true : false}
+                error={
+                  errors.mobileCellPhone ||
+                  (!errorRequired.mobileCellPhone ? false : true)
+                    ? true
+                    : false
+                }
                 helperText={
-                  errors.mobilePhone
+                  errors.mobileCellPhone
                     ? t('The number entered is incorrect')
+                    : errorRequired.mobileCellPhone
+                    ? errorRequired.mobileCellPhone
                     : null
                 }
                 InputProps={{
-                  // disableUnderline: edit_mode === 1 ? false : true,
-                  endAdornment: errors.mobilePhone && (
+                  endAdornment: (errors.mobileCellPhone ||
+                  !errorRequired.mobileCellPhone
+                    ? false
+                    : true) && (
                     <InputAdornment position='end'>
                       <ErrorOutlineIcon htmlColor={'#ff0000'} />
                     </InputAdornment>
                   ),
                 }}
                 required
+                onInvalid={handlerOnInvalidField}
+                onInput={handlerOnInvalidField}
                 {...PopupTextFieldOpts}
               />
             </StyledColumnSecond>
@@ -624,17 +847,14 @@ const PopupCreateNewPatient = ({
             <Controller
               as={TextField}
               control={control}
-              id='standard-patientEmail'
-              name='patientEmail'
-              defaultValue={patientInitialValues.patientEmail}
+              id='standard-email'
+              name='email'
+              defaultValue={patientInitialValues.email}
               label={t('Mail address')}
-              error={errors.patientEmail ? true : false}
-              helperText={
-                errors.patientEmail ? t('Invalid email address') : null
-              }
+              error={errors.email ? true : false}
+              helperText={errors.email ? t('Invalid email address') : null}
               InputProps={{
-                // disableUnderline: edit_mode === 1 ? false : true,
-                endAdornment: errors.patientEmail && (
+                endAdornment: errors.email && (
                   <InputAdornment position='end'>
                     <ErrorOutlineIcon htmlColor={'#ff0000'} />
                   </InputAdornment>
@@ -648,7 +868,6 @@ const PopupCreateNewPatient = ({
           </StyledRowEmail>
         </StyledForm>
       </form>
-      {/*</FormContext>*/}
     </CustomizedPopup>
   );
 };
