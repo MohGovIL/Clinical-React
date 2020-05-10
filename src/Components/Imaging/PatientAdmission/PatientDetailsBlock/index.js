@@ -1,7 +1,7 @@
 // Other
 import React, { useEffect, useState } from 'react';
 import matchSorter from 'match-sorter';
-import { getCellPhoneRegexPattern } from 'Utils/Helpers/validation/patterns';
+import { israelPhoneNumberRegex } from 'Utils/Helpers/validation/patterns';
 import { Controller, useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -1133,7 +1133,7 @@ const PatientDetailsBlock = ({
                 control={control}
                 defaultValue={relatedPerson.mobilePhone || ''}
                 rules={{
-                  pattern: getCellPhoneRegexPattern(),
+                  pattern: israelPhoneNumberRegex(),
                 }}
                 error={errors.escortMobilePhone && true}
                 helperText={
