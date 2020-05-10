@@ -273,7 +273,8 @@ const PopupCreateNewPatient = ({
   useEffect(() => {
     (async () => {
       if (
-        /*patientIdType !== 0 &&*/ patientIdNumber &&
+        patientIdType !== 0 &&
+        patientIdNumber &&
         patientIdNumber.length > 0
       ) {
         setIsFound(true);
@@ -283,7 +284,10 @@ const PopupCreateNewPatient = ({
         try {
           FHIR('Patient', 'doWork', {
             functionName: 'searchPatientById',
-            functionParams: { identifierValue: patientIdNumber },
+            functionParams: {
+              identifierValue: patientIdNumber,
+              identifierType: patientIdType,
+            },
           }).then((patients) => {
             if (patients && result && patients.id > 0) {
               patients.birthDate = Moment(patients.birthDate, 'YYYY-MM-DD');
@@ -332,6 +336,13 @@ const PopupCreateNewPatient = ({
                   patientIdType === patientIdTypeMain) ||
                 !getOnlyNumbersRegexPattern().test(patientIdNumber)
               ) {
+                console.log(
+                  !validateLuhnAlgorithm(patientIdNumber) +
+                    ' / ' +
+                    (patientIdType === patientIdTypeMain) +
+                    ' / ' +
+                    !getOnlyNumbersRegexPattern().test(patientIdNumber),
+                );
                 setError(
                   'identifier',
                   'notValid',
@@ -510,7 +521,6 @@ const PopupCreateNewPatient = ({
   const PopupTextFieldOpts = {
     color: 'primary',
     variant: 'filled',
-    disabled: formButtonSave === 'view',
     autoComplete: 'off',
   };
 
@@ -595,6 +605,7 @@ const PopupCreateNewPatient = ({
                     </InputAdornment>
                   ),
                 }}
+                disabled={formButtonSave === 'view'}
                 {...PopupTextFieldOpts}
               />
               <TextField
@@ -630,6 +641,7 @@ const PopupCreateNewPatient = ({
                     </InputAdornment>
                   ),
                 }}
+                disabled={formButtonSave === 'view'}
                 {...PopupTextFieldOpts}>
                 {genderList.map((option, optionIndex) => (
                   <MenuItem key={optionIndex} value={option.code}>
@@ -671,6 +683,7 @@ const PopupCreateNewPatient = ({
                     </InputAdornment>
                   ),
                 }}
+                disabled={formButtonSave === 'view'}
                 {...PopupTextFieldOpts}>
                 {kupatHolimList.map((option, optionIndex) => (
                   <MenuItem key={optionIndex} value={option.code}>
@@ -744,6 +757,7 @@ const PopupCreateNewPatient = ({
                     </InputAdornment>
                   ),
                 }}
+                disabled={formButtonSave === 'view'}
                 {...PopupTextFieldOpts}
               />
               <Controller
@@ -844,6 +858,7 @@ const PopupCreateNewPatient = ({
                 required
                 onInvalid={handlerOnInvalidField}
                 onInput={handlerOnInvalidField}
+                disabled={formButtonSave === 'view'}
                 {...PopupTextFieldOpts}
               />
             </StyledColumnSecond>
@@ -868,6 +883,7 @@ const PopupCreateNewPatient = ({
               rules={{
                 pattern: getEmailRegexPattern(),
               }}
+              disabled={formButtonSave === 'view'}
               {...PopupTextFieldOpts}
             />
           </StyledRowEmail>
