@@ -71,7 +71,6 @@ const PatientDetailsBlock = ({
     errors,
     setValue,
     register,
-    triggerValidation,
     formState,
   } = useForm({
     mode: 'onBlur',
@@ -91,238 +90,246 @@ const PatientDetailsBlock = ({
   });
   const onSubmit = async (data) => {
     try {
-      // const clear = isRequiredValidation(data);
-      console.log(errors);
-      if (true) {
-        // const APIsArray = [];
-        //   //Updating patient
-        //   let patientPatchParams = {};
-        //   if (contactInformationTabValue === 0) {
-        //     if (data.addressCity) {
-        //       patientPatchParams['city'] = addressCity.code;
-        //     }
-        //     if (data.addressStreet) {
-        //       patientPatchParams['streetName'] = addressStreet.code;
-        //     }
-        //     if (data.addressStreetNumber) {
-        //       patientPatchParams['streetNumber'] = data.addressStreetNumber;
-        //     }
-        //     if (data.addressPostalCode) {
-        //       patientPatchParams['postalCode'] = data.addressPostalCode;
-        //     }
-        //   } else {
-        //     if (data.POBoxCity) {
-        //       patientPatchParams['city'] = POBoxCity.code;
-        //     }
-        //     if (data.POBox) {
-        //       patientPatchParams['POBox'] = data.POBox;
-        //     }
-        //     if (data.POBoxPostalCode) {
-        //       patientPatchParams['postalCode'] = data.POBoxPostalCode;
-        //     }
-        //   }
-        //   APIsArray.push(
-        //     FHIR('Patient', 'doWork', {
-        //       functionName: 'updatePatient',
-        //       functionParams: { patientPatchParams, patientId: patientData.id },
-        //     }),
-        //   );
-        //   //Updating/Creating relatedPerson
-        //   if (encounterData.appointment) {
-        //     APIsArray.push(
-        //       FHIR('Appointment', 'doWork', {
-        //         functionName: 'updateAppointment',
-        //         functionParams: {
-        //           functionParams: {
-        //             appointmentId: encounterData.appointment,
-        //             appointmentParams: {
-        //               status: 'arrived',
-        //             },
-        //           },
-        //         },
-        //       }),
-        //     );
-        //   }
-        //   if (data.isEscorted) {
-        //     let relatedPersonParams = {};
-        //     if (encounter.relatedPerson) {
-        //       if (
-        //         data.escortName !== relatedPerson.name &&
-        //         data.escortMobilePhone !== relatedPerson.mobilePhone
-        //       ) {
-        //         relatedPersonParams['name'] = data.escortName;
-        //         relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
-        //         APIsArray.push(
-        //           FHIR('RelatedPerson', 'doWork', {
-        //             // eslint-disable-next-line no-use-before-define
-        //             functionName: 'updateRelatedPerson',
-        //             functionParams: {
-        //               relatedPersonParams,
-        //               // eslint-disable-next-line no-use-before-define
-        //               relatedPersonId: relatedPerson.id,
-        //             },
-        //           }),
-        //         );
-        //       }
-        //     } else {
-        //       if (data.escortName) {
-        //         relatedPersonParams['name'] = data.escortName;
-        //       }
-        //       if (data.escortMobilePhone) {
-        //         relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
-        //       }
-        //       APIsArray.push(
-        //         FHIR('RelatedPerson', 'doWork', {
-        //           // eslint-disable-next-line no-use-before-define
-        //           functionName: 'createRelatedPerson',
-        //           functionParams: {
-        //             relatedPersonParams,
-        //           },
-        //         }),
-        //       );
-        //     }
-        //   }
-        // if (Object.values(questionnaireResponse).length) {
-        //   APIsArray.push(FHIR('QuestionnaireResponse', 'doWork', {
-        //     functionName: 'patchQuestionnaireResponse',
-        //     questionnaireResponseId: questionnaireResponse.id,
-        //     questionnaireResponseParams: {
-        //       item: [
-        //         {
-        //           linkId: '1',
-        //           text: 'Commitment number',
-        //           answer: [
-        //             {
-        //               valueInteger: data.commitmentAndPaymentReferenceForPaymentCommitment
-        //             }
-        //           ]
-        //         },
-        //         {
-        //           linkId: '2',
-        //           text: 'Commitment date',
-        //           answer: [
-        //             {
-        //               valueDate: data.commitmentAndPaymentCommitmentDate
-        //             }
-        //           ]
-        //         },
-        //         {
-        //           linkId: '3',
-        //           text: 'Commitment expiration date',
-        //           answer: [
-        //             {
-        //               valueDate: data.commitmentAndPaymentCommitmentValidity
-        //             }
-        //           ]
-        //         },
-        //         {
-        //           linkId: '4',
-        //           text: 'Signing doctor',
-        //           answer: [
-        //             {
-        //               valueString: data.commitmentAndPaymentDoctorsName
-        //             }
-        //           ]
-        //         },
-        //         {
-        //           linkId: '5',
-        //           text: 'doctor license number',
-        //           answer: [
-        //             {
-        //               valueInteger: data.commitmentAndPaymentDoctorsLicense
-        //             }
-        //           ]
-        //         },
-        //       ]
-        //     }
-        //   }))
-        // } else {
-        //   APIsArray.push(FHIR('QuestionnaireResponse', 'doWork', {
-        //     functionName: 'createQuestionnaireResponse',
-        //     functionParams: {
-        //       questionnaireResponse: {
-        //         questionnaire: questionnaireId,
-        //         status: 'completed',
-        //         patient: patientData.id,
-        //         encounter: encounterData.id,
-        //         authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-        //         source: patientData.id,
-        //         item: [
-        //           {
-        //             linkId: '1',
-        //             text: 'Commitment number',
-        //             answer: [
-        //               {
-        //                 valueInteger: data.commitmentAndPaymentReferenceForPaymentCommitment
-        //               }
-        //             ]
-        //           },
-        //           {
-        //             linkId: '2',
-        //             text: 'Commitment date',
-        //             answer: [
-        //               {
-        //                 valueDate: data.commitmentAndPaymentCommitmentDate
-        //               }
-        //             ]
-        //           },
-        //           {
-        //             linkId: '3',
-        //             text: 'Commitment expiration date',
-        //             answer: [
-        //               {
-        //                 valueDate: data.commitmentAndPaymentCommitmentValidity
-        //               }
-        //             ]
-        //           },
-        //           {
-        //             linkId: '4',
-        //             text: 'Signing doctor',
-        //             answer: [
-        //               {
-        //                 valueString: data.commitmentAndPaymentDoctorsName
-        //               }
-        //             ]
-        //           },
-        //           {
-        //             linkId: '5',
-        //             text: 'doctor license number',
-        //             answer: [
-        //               {
-        //                 valueInteger: data.commitmentAndPaymentDoctorsLicense
-        //               }
-        //             ]
-        //           },
-        //         ]
-        //       },
-        //     },
-        //   }));
-        // }
-        // const promises = await Promise.all(APIsArray);
-        // const encounter = { ...encounterData };
-        // if (data.isEscorted) {
-        //   if (!encounter.relatedPerson) {
-        //     const NewRelatedPerson = normalizeFhirRelatedPerson(promises[3]);
-        //     encounter['relatedPerson'] = NewRelatedPerson.id;
-        //   }
-        // }
-        // if (selectedServicesType.length) {
-        //   encounter.examinationCode = selectedServicesType.map((option) => {
-        //     return option.reasonCode.code;
-        //   });
-        //   encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
-        // } else {
-        //   encounter.serviceType = '';
-        //   encounter.examinationCode = '';
-        // }
-        // if (encounter.status === 'planned') {
-        //  encounter.status = 'arrived';
-        // }
-        // await FHIR('Encounter', 'doWork', {
-        //   functionName: 'updateEncounter',
-        //   encounterId: encounter.id,
-        //   encounter: encounter,
-        // });
+      const clear = isRequiredValidation(data);
+      if (clear) {
+        const APIsArray = [];
+        //Updating patient
+        let patientPatchParams = {};
+        if (contactInformationTabValue === 0) {
+          if (data.addressCity) {
+            patientPatchParams['city'] = addressCity.code;
+          }
+          if (data.addressStreet) {
+            patientPatchParams['streetName'] = addressStreet.code;
+          }
+          if (data.addressStreetNumber) {
+            patientPatchParams['streetNumber'] = data.addressStreetNumber;
+          }
+          if (data.addressPostalCode) {
+            patientPatchParams['postalCode'] = data.addressPostalCode;
+          }
+        } else {
+          if (data.POBoxCity) {
+            patientPatchParams['city'] = POBoxCity.code;
+          }
+          if (data.POBox) {
+            patientPatchParams['POBox'] = data.POBox;
+          }
+          if (data.POBoxPostalCode) {
+            patientPatchParams['postalCode'] = data.POBoxPostalCode;
+          }
+        }
+        APIsArray.push(
+          FHIR('Patient', 'doWork', {
+            functionName: 'updatePatient',
+            functionParams: { patientPatchParams, patientId: patientData.id },
+          }),
+        );
+        //Updating/Creating relatedPerson
+        if (encounterData.appointment) {
+          APIsArray.push(
+            FHIR('Appointment', 'doWork', {
+              functionName: 'updateAppointment',
+              functionParams: {
+                functionParams: {
+                  appointmentId: encounterData.appointment,
+                  appointmentParams: {
+                    status: 'arrived',
+                  },
+                },
+              },
+            }),
+          );
+        }
+        if (data.isEscorted) {
+          let relatedPersonParams = {};
+          if (encounter.relatedPerson) {
+            if (
+              data.escortName !== relatedPerson.name &&
+              data.escortMobilePhone !== relatedPerson.mobilePhone
+            ) {
+              relatedPersonParams['name'] = data.escortName;
+              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+              APIsArray.push(
+                FHIR('RelatedPerson', 'doWork', {
+                  // eslint-disable-next-line no-use-before-define
+                  functionName: 'updateRelatedPerson',
+                  functionParams: {
+                    relatedPersonParams,
+                    // eslint-disable-next-line no-use-before-define
+                    relatedPersonId: relatedPerson.id,
+                  },
+                }),
+              );
+            }
+          } else {
+            if (data.escortName) {
+              relatedPersonParams['name'] = data.escortName;
+            }
+            if (data.escortMobilePhone) {
+              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+            }
+            APIsArray.push(
+              FHIR('RelatedPerson', 'doWork', {
+                // eslint-disable-next-line no-use-before-define
+                functionName: 'createRelatedPerson',
+                functionParams: {
+                  relatedPersonParams,
+                },
+              }),
+            );
+          }
+        }
+        if (Object.values(questionnaireResponse).length) {
+          APIsArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'patchQuestionnaireResponse',
+              questionnaireResponseId: questionnaireResponse.id,
+              questionnaireResponseParams: {
+                item: [
+                  {
+                    linkId: '1',
+                    text: 'Commitment number',
+                    answer: [
+                      {
+                        valueInteger:
+                          data.commitmentAndPaymentReferenceForPaymentCommitment,
+                      },
+                    ],
+                  },
+                  {
+                    linkId: '2',
+                    text: 'Commitment date',
+                    answer: [
+                      {
+                        valueDate: data.commitmentAndPaymentCommitmentDate,
+                      },
+                    ],
+                  },
+                  {
+                    linkId: '3',
+                    text: 'Commitment expiration date',
+                    answer: [
+                      {
+                        valueDate: data.commitmentAndPaymentCommitmentValidity,
+                      },
+                    ],
+                  },
+                  {
+                    linkId: '4',
+                    text: 'Signing doctor',
+                    answer: [
+                      {
+                        valueString: data.commitmentAndPaymentDoctorsName,
+                      },
+                    ],
+                  },
+                  {
+                    linkId: '5',
+                    text: 'doctor license number',
+                    answer: [
+                      {
+                        valueInteger: data.commitmentAndPaymentDoctorsLicense,
+                      },
+                    ],
+                  },
+                ],
+              },
+            }),
+          );
+        } else {
+          APIsArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'createQuestionnaireResponse',
+              functionParams: {
+                questionnaireResponse: {
+                  questionnaire: questionnaireId,
+                  status: 'completed',
+                  patient: patientData.id,
+                  encounter: encounterData.id,
+                  authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                  source: patientData.id,
+                  item: [
+                    {
+                      linkId: '1',
+                      text: 'Commitment number',
+                      answer: [
+                        {
+                          valueInteger:
+                            data.commitmentAndPaymentReferenceForPaymentCommitment,
+                        },
+                      ],
+                    },
+                    {
+                      linkId: '2',
+                      text: 'Commitment date',
+                      answer: [
+                        {
+                          valueDate: data.commitmentAndPaymentCommitmentDate,
+                        },
+                      ],
+                    },
+                    {
+                      linkId: '3',
+                      text: 'Commitment expiration date',
+                      answer: [
+                        {
+                          valueDate:
+                            data.commitmentAndPaymentCommitmentValidity,
+                        },
+                      ],
+                    },
+                    {
+                      linkId: '4',
+                      text: 'Signing doctor',
+                      answer: [
+                        {
+                          valueString: data.commitmentAndPaymentDoctorsName,
+                        },
+                      ],
+                    },
+                    {
+                      linkId: '5',
+                      text: 'doctor license number',
+                      answer: [
+                        {
+                          valueInteger: data.commitmentAndPaymentDoctorsLicense,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            }),
+          );
+        }
+        const promises = await Promise.all(APIsArray);
+        const encounter = { ...encounterData };
+        if (data.isEscorted) {
+          if (!encounter.relatedPerson) {
+            const NewRelatedPerson = normalizeFhirRelatedPerson(promises[3]);
+            encounter['relatedPerson'] = NewRelatedPerson.id;
+          }
+        }
+        if (selectedServicesType.length) {
+          encounter.examinationCode = selectedServicesType.map((option) => {
+            return option.reasonCode.code;
+          });
+          encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
+        } else {
+          encounter.serviceType = '';
+          encounter.examinationCode = '';
+        }
+        if (encounter.status === 'planned') {
+          encounter.status = 'arrived';
+        }
+        await FHIR('Encounter', 'doWork', {
+          functionName: 'updateEncounter',
+          functionParams: {
+            encounterId: encounter.id,
+            encounter: encounter,
+          },
+        });
         const APIsFILE = [];
         const referral_64Obj = splitBase_64(referralFile_64);
         const documentReferenceReferral = {
@@ -373,10 +380,7 @@ const PatientDetailsBlock = ({
           );
         }
         await Promise.all(APIsFILE);
-      } else {
-        triggerValidation();
       }
-      return;
     } catch (error) {
       console.log(error);
     }
@@ -391,11 +395,7 @@ const PatientDetailsBlock = ({
     selectTest: {
       name: 'selectTest',
       required: function (data) {
-        return (
-          data[this.name] &&
-          data[this.name] === '' &&
-          selectedServicesType.length > 0
-        );
+        return selectedServicesType.length > 0;
       },
     },
     commitmentAndPaymentReferenceForPaymentCommitment: {
@@ -450,14 +450,14 @@ const PatientDetailsBlock = ({
       name: 'ReferralFile',
       linkId: '',
       required: function (data) {
-        return data[this.name] && Object.values(referralFile).length > 0;
+        return Object.values(referralFile).length > 0;
       },
     },
     CommitmentFile: {
       name: 'CommitmentFile',
       linkId: '',
       required: function (data) {
-        return data[this.name] && Object.values(commitmentFile).length > 0;
+        return Object.values(commitmentFile).length > 0;
       },
     },
   };
@@ -468,9 +468,7 @@ const PatientDetailsBlock = ({
         if (!requiredFields[fieldKey].required(data)) {
           setRequiredErrors((prevState) => {
             const cloneState = { ...prevState };
-            cloneState[requiredFields[fieldKey].name] = t(
-              'This value is required',
-            );
+            cloneState[requiredFields[fieldKey].name] = t('Value is required');
             return cloneState;
           });
           // setError(
@@ -479,6 +477,12 @@ const PatientDetailsBlock = ({
           //   'This field is required',
           // );
           clean = false;
+        } else {
+          setRequiredErrors((prevState) => {
+            const cloneState = { ...prevState };
+            cloneState[requiredFields[fieldKey].name] = '';
+            return cloneState;
+          });
         }
       }
     }
