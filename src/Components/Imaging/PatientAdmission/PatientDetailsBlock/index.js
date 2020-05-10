@@ -71,7 +71,6 @@ const PatientDetailsBlock = ({
     errors,
     setValue,
     register,
-    setError,
     triggerValidation,
     formState,
   } = useForm({
@@ -816,40 +815,36 @@ const PatientDetailsBlock = ({
     event.stopPropagation();
     setIsPopUpOpen(true);
   };
-  const onDeleteFileHandler = async () => {
+  const handleServerFileDelete = async () => {
+    if (documents.length) {
+      const documentIndex = documents.findIndex((document) =>
+        document.url.startsWith(popUpReferenceFile),
+      );
+      if (documentIndex !== -1 && documents[documentIndex].id) {
+        const res = await FHIR('DocumentReference', 'doWork', {
+          functionName: 'deleteDocumentReference',
+          documentReferenceId: documents[documentIndex].id,
+        });
+        if (res && res.status === 200) {
+          documents.splice(documentIndex, 1);
+        }
+      }
+    }
+  };
+  const onDeleteFileHandler = () => {
     const emptyObj = {};
     if (popUpReferenceFile === 'Referral') {
       referralRef.current.value = '';
       setValue(`${popUpReferenceFile}File`, '');
       setReferralFile_64('');
       setReferralFile(emptyObj);
-      if (documents.length) {
-        const document = documents.find((document) =>
-          document.url.startsWith(popUpReferenceFile),
-        );
-        if (document.id) {
-          await FHIR('DocumentReference', 'doWork', {
-            functionName: 'deleteDocumentReference',
-            documentReferenceId: document.id,
-          });
-        }
-      }
+      handleServerFileDelete();
     } else if (popUpReferenceFile === 'Commitment') {
       commitmentRef.current.value = '';
       setValue(`${popUpReferenceFile}File`, '');
       setCommitmentFile_64('');
       setCommitmentFile(emptyObj);
-      if (documents.length) {
-        const document = documents.find((document) =>
-          document.url.startsWith(popUpReferenceFile),
-        );
-        if (document.id) {
-          await FHIR('DocumentReference', 'doWork', {
-            functionName: 'deleteDocumentReference',
-            documentReferenceId: document.id,
-          });
-        }
-      }
+      handleServerFileDelete();
     } else if (
       popUpReferenceFile === nameOfAdditionalDocumentFile ||
       popUpReferenceFile === 'Document1'
@@ -858,17 +853,7 @@ const PatientDetailsBlock = ({
       additionalDocumentRef.current.value = '';
       setAdditionalDocumentFile_64('');
       setAdditionalDocumentFile(emptyObj);
-      if (documents.length) {
-        const document = documents.find((document) =>
-          document.url.startsWith(popUpReferenceFile),
-        );
-        if (document.id) {
-          await FHIR('DocumentReference', 'doWork', {
-            functionName: 'deleteDocumentReference',
-            documentReferenceId: document.id,
-          });
-        }
-      }
+      handleServerFileDelete();
     }
     handlePopUpClose();
   };
@@ -1030,19 +1015,19 @@ const PatientDetailsBlock = ({
             },
           );
           if (documentReferenceData.data.total) {
-            const documents = [];
+            const documentsArray = [];
             for (
               let documentIndex = 0;
               documentReferenceData.data.entry.length > documentIndex;
               documentIndex++
             ) {
               if (documentReferenceData.data.entry[documentIndex].resource) {
-                documents.push(
+                documentsArray.push(
                   normalizeFhirDocumentReference(documentReferenceData.data),
                 );
               }
             }
-            setDocuments(documents);
+            setDocuments(documentsArray);
           }
         })();
       }
