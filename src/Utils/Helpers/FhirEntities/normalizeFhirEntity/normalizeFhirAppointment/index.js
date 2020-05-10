@@ -1,6 +1,6 @@
 // noinspection JSClosureCompilerSyntax
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @param appointment - object
  * @returns {object}
  */

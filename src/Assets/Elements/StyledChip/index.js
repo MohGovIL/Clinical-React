@@ -31,7 +31,7 @@ const ChipWithImage = ({ label, onDelete, size, onClick, htmlFor }) => {
             margin: '0 24px 0 24px',
             cursor: 'pointer',
           }}
-          onClick={onDelete || console.log('noDelete')}
+          onClick={(event) => onDelete(event) || null}
         />
       </Grid>
     </label>

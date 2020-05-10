@@ -7,6 +7,7 @@
 // console.log(base_64_data);
 
 import { CRUDOperations } from '../CRUDOperations';
+import denormalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirDocumentReference';
 
 const DocumentReferenceStates = {
   doWork: (parameters) => {
@@ -14,9 +15,63 @@ const DocumentReferenceStates = {
     parameters.url = componentFhirURL;
     return DocumentReferenceStates[parameters.functionName](parameters);
   },
+  getDocumentReference: (params) => {
+    let searchString = '';
+    let searchParamsIndex = 0;
+    if (
+      typeof params.searchParams === 'object' &&
+      Object.getOwnPropertyNames(params.searchParams).length
+    ) {
+      const searchParams = params.searchParams;
+      for (const searchParamsKey in searchParams) {
+        searchParamsIndex += 1;
+        if (searchParams.hasOwnProperty(searchParamsKey)) {
+          const element = searchParams[searchParamsKey];
+          if (element) {
+            searchString = `${searchString}${searchParamsKey}=${element}${
+              Object.getOwnPropertyNames(searchParams).length ===
+              searchParamsIndex
+                ? ''
+                : '&'
+            }`;
+          }
+        }
+      }
+    }
+
+    return CRUDOperations(
+      'search',
+      `${params.url}${searchString.length ? '?' : ''}${searchString}`,
+    );
+  },
   createDocumentReference: (params) => {
-    return CRUDOperations('create', params.url);
+    const denormalizedDocumentReference = denormalizeFhirDocumentReference(
+      params.documentReference,
+    );
+    return CRUDOperations('create', params.url, denormalizedDocumentReference);
+  },
+  updateDocumentReference: (params) => {
+    const denormalizedDocumentReference = denormalizeFhirDocumentReference(
+      params.documentReference,
+    );
+    return CRUDOperations(
+      'update',
+      `${params.url}/${params.documentReferenceId}`,
+      denormalizedDocumentReference,
+    );
+  },
+  deleteDocumentReference: (params) => {
+    return CRUDOperations(
+      'delete',
+      `${params.url}/${params.documentReferenceId}`,
+    );
   },
 };
 
-export default DocumentReferenceStates;
+export default function DocumentReference(action = null, params = null) {
+  if (action) {
+    const transformer =
+      DocumentReferenceStates[action] ?? DocumentReferenceStates.__default__;
+    return transformer(params);
+  }
+}

@@ -2,7 +2,7 @@ import { tokenInstanceGenerator } from 'Utils/Services/AxiosWithTokenInstance';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
 
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @fileOverview Where all the apis that uses the normal api Token
  */
 

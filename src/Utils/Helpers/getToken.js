@@ -1,5 +1,5 @@
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @param cookieName - string of the cookie name
  * @returns {string} If found the given cookieName returns it otherwise return an empty string ""
  */

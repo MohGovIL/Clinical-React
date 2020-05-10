@@ -1,7 +1,7 @@
 /**
  * @author Dror Golan - drorgo@matrix.co.il
  * @fileOverview  - this is a contaxt strategy entry point which handles old fhirAPI code logic written by :
- *                   Idan Gigi - gigiidan@gmail.com
+ *                   Idan Gigi - idangi@matrix.co.il
  *                   Yuriy Gershem - yuriyge@matrix.co.il
  *                   Dror Golan - drorgo@matrix.co.il
  */
@@ -16,6 +16,7 @@ import ValueSet from './ValueSet';
 import RelatedPerson from './RelatedPerson';
 import Questionnaire from './Questionnaire';
 import QuestionnaireResponse from './QuestionnaireResponse/index';
+import DocumentReference from './DocumentReference';
 import { tokenInstanceGenerator } from '../AxiosWithTokenInstance';
 import { ApiTokens } from '../ApiTokens';
 
@@ -29,6 +30,7 @@ const FHIRStates = {
   RelatedPerson: RelatedPerson,
   Questionnaire: Questionnaire,
   QuestionnaireResponse: QuestionnaireResponse,
+  DocumentReference:DocumentReference,
   /* More transformers */
   __default__: null,
 };

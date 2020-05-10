@@ -1,6 +1,6 @@
 import { toFix } from './toFix';
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @param {number} size
  * @param {number} unitsInBytes
  * @param {number} fix

@@ -8,7 +8,7 @@ import { ApiTokens } from 'Utils/Services/ApiTokens';
 // the translations
 // (tip move them in a JSON file and import them)
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @param lang_id - the language you want to translate the data too
  */
 export const geti18n = (lang_id) => {

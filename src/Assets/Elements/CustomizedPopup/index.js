@@ -49,7 +49,7 @@ const CustomizedPopup = ({
           dividers={props.content_dividers ? props.content_dividers : false}>
           {children}
         </DialogContent>
-          {props.AlertMessage.show &&
+          {props.AlertMessage && props.AlertMessage.show &&
           <Alert severity={props.AlertMessage.severity}>{props.AlertMessage.message}</Alert>
           }
         <StyledDialogActions>

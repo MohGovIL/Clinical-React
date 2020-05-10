@@ -1,7 +1,7 @@
 import { stateLessOrNot } from 'Utils/Helpers/StatelessOrNot';
 
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @returns {string} return a baseRoutePath for react-router
  */
 export const baseRoutePath = () =>

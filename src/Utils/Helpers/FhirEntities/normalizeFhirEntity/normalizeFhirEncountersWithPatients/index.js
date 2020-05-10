@@ -2,7 +2,7 @@ import normalizeFhirPatient from 'Utils/Helpers/FhirEntities/normalizeFhirEntity
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 
 /**
- * @author Idan Gigi gigiidan@gmail.com
+ * @author Idan Gigi idangi@matrix.co.il
  * @param encountersData - An array of appointments data and patient if there are any {data.entry}
  * @returns [] Returns an array. array[0] stores the patientsObj, array[1] stores the appointmentsObj.
  * patientsObj stores all the patients each patient key is his ID.
