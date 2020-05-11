@@ -32,7 +32,8 @@ const PatientTracking = ({ location, vertical, history, selectFilter }) => {
     let tabs = getStaticTabsArray();
     for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
       const tab = tabs[tabIndex];
-      isAllowed(tab);
+      const mode = isAllowed(tab.id);
+      tab.mode = mode;
     }
     tabs = tabs.filter((tab) => tab.mode !== 'hide');
     setTabs(tabs);
