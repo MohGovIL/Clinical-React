@@ -7,7 +7,6 @@ import {
 } from 'Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
 import moment from 'moment';
 import 'moment/locale/he';
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { normalizeFhirEncountersWithPatients } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { store } from 'index';
@@ -190,7 +189,7 @@ const setPatientDataWaitingForResultsTableRows = (
         case 'Encounter sheet':
           row.push({
             label: 'Encounter Sheet',
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             color: 'primary',
             onClickHandler() {
@@ -201,7 +200,7 @@ const setPatientDataWaitingForResultsTableRows = (
           break;
         case 'Messages':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             badgeContent: 0,
           });
@@ -217,7 +216,7 @@ const setPatientDataWaitingForResultsTableRows = (
               // }
             },
             text_color: '#076ce9',
-            padding: 'none',
+            padding: 'default',
             defaultValue: encounter.status,
             options,
             align: 'center',
@@ -229,7 +228,7 @@ const setPatientDataWaitingForResultsTableRows = (
           break;
         case 'Cell phone':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             label: patient.mobileCellPhone || null,
             color: '#0027a5',
@@ -237,21 +236,21 @@ const setPatientDataWaitingForResultsTableRows = (
           break;
         case 'Healthcare service':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             label: encounter.serviceType ? encounter.serviceType : null,
           });
           break;
         case 'Test':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             label: encounter.examination ? encounter.examination : null,
           });
           break;
         case 'Date':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             label: moment
               .utc(encounter.startTime)

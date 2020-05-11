@@ -201,14 +201,14 @@ const setPatientDataInvitedTableRows = (
             gender: patient.gender,
             firstName: patient.firstName,
             lastName: patient.lastName,
-            padding: 'none', // TODO add this prop all the way down
+            padding: 'default',
             align: 'right',
           });
           break;
         case 'Patient admission':
           row.push({
             label: 'Patient Admission',
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             color: 'primary',
             async onClickHandler() {
@@ -247,7 +247,7 @@ const setPatientDataInvitedTableRows = (
           break;
         case 'Messages':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             badgeContent: 0,
           });
@@ -270,7 +270,7 @@ const setPatientDataInvitedTableRows = (
               }
             },
             text_color: '#076ce9',
-            padding: 'none',
+            padding: 'default',
             defaultValue: appointment.status,
             options,
             align: 'center',
@@ -282,7 +282,7 @@ const setPatientDataInvitedTableRows = (
           break;
         case 'Cell phone':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             label: patient.mobileCellPhone,
             color: '#0027a5',
@@ -290,21 +290,21 @@ const setPatientDataInvitedTableRows = (
           break;
         case 'Healthcare service':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             label: appointment.serviceType ? appointment.serviceType : null,
           });
           break;
         case 'Test':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             label: appointment.examination ? appointment.examination : null,
           });
           break;
         case 'Time':
           row.push({
-            padding: 'none',
+            padding: 'default',
             align: 'center',
             label: moment.utc(appointment.startTime).format('LT'),
           });
