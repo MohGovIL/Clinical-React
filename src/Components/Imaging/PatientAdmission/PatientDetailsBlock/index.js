@@ -64,7 +64,7 @@ const PatientDetailsBlock = ({
   edit_mode,
   encounterData,
   formatDate,
-  setIsDirty
+  setIsDirty,
 }) => {
   const { t } = useTranslation();
   let history = useHistory();
@@ -79,8 +79,12 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
+  // Giving the patientAdmission if the form is dirty
+  // meaning that there has been changes in the form
   const { dirty } = formState;
-  setIsDirty(dirty);
+  useEffect(() => {
+    setIsDirty(dirty);
+  }, [dirty, setIsDirty]);
   //Sending the form
   const [requiredErrors, setRequiredErrors] = useState({
     selectTest: '',
@@ -1751,12 +1755,10 @@ const PatientDetailsBlock = ({
                     htmlFor='referral'
                     label={referralFile.name}
                     size={referralFile.size}
-                    onDelete={
-                      (event) => {
-                        setPopUpReferenceFile('Referral');
-                        onDeletePopUp(event);
-                      }
-                    }
+                    onDelete={(event) => {
+                      setPopUpReferenceFile('Referral');
+                      onDeletePopUp(event);
+                    }}
                     onClick={() => onClickFileHandler(referralRef)}
                   />
                 ) : (
@@ -1812,12 +1814,10 @@ const PatientDetailsBlock = ({
                     htmlFor='commitment'
                     label={commitmentFile.name}
                     size={commitmentFile.size}
-                    onDelete={
-                      (event) => {
-                        setPopUpReferenceFile('Commitment');
-                        onDeletePopUp(event);
-                      }
-                    }
+                    onDelete={(event) => {
+                      setPopUpReferenceFile('Commitment');
+                      onDeletePopUp(event);
+                    }}
                     onClick={() => onClickFileHandler(commitmentRef)}
                   />
                 ) : (
@@ -1870,14 +1870,12 @@ const PatientDetailsBlock = ({
                         htmlFor='additionalDocument'
                         label={additionalDocumentFile.name}
                         size={additionalDocumentFile.size}
-                        onDelete={
-                          (event) => {
-                            setPopUpReferenceFile(
-                              nameOfAdditionalDocumentFile || 'Document1',
-                            );
-                            onDeletePopUp(event);
-                          }
-                        }
+                        onDelete={(event) => {
+                          setPopUpReferenceFile(
+                            nameOfAdditionalDocumentFile || 'Document1',
+                          );
+                          onDeletePopUp(event);
+                        }}
                         onClick={() =>
                           onClickFileHandler(additionalDocumentRef)
                         }

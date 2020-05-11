@@ -47,10 +47,18 @@ const PatientAdmission = ({
     },
   ];
 
-  const handleCloseClick = () => {
+  const handleCloseClick = async () => {
     if (isDirty) {
       setIsPopUpOpen(true);
     } else {
+      if (encounter.status === 'planned') {
+        await FHIR('Encounter', 'doWork', {
+          functionName: 'deleteEncounter',
+          functionParams: {
+            encounterId: encounter.id,
+          },
+        });
+      }
       history.push(`${baseRoutePath()}/imaging/patientTracking`);
     }
   };
@@ -71,10 +79,14 @@ const PatientAdmission = ({
     setIsPopUpOpen(false);
   };
 
-  const exitWithoutSavingHandler = () => {
-    // TODO check if the encounter.status is planning if true delete that encounter.
+  const exitWithoutSavingHandler = async () => {
     if (encounter.status === 'planned') {
-      // await FHIR
+      await FHIR('Encounter', 'doWork', {
+        functionName: 'deleteEncounter',
+        functionParams: {
+          encounterId: encounter.id,
+        },
+      });
     }
     history.push(`${baseRoutePath()}/imaging/patientTracking`);
   };
@@ -89,18 +101,18 @@ const PatientAdmission = ({
           {
             color: 'primary',
             label: 'Return',
-            variant: 'contained',
+            variant: 'outlined',
             onClickHandler: returnHandler,
           },
           {
             color: 'primary',
             label: 'Exit without saving',
-            variant: 'outlined',
+            variant: 'contained',
             onClickHandler: exitWithoutSavingHandler,
           },
         ]}>
         {t(
-          'You choose to exit without saving your changes. Would you like to continue?',
+          `You choose to exit without saving your changes. Would you like to continue?`,
         )}
       </CustomizedPopup>
       <HeaderPatient
