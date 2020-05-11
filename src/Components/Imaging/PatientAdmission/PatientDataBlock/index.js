@@ -43,7 +43,6 @@ import {
   getCellPhoneRegexPattern,
   getEmailRegexPattern,
 } from 'Utils/Helpers/validation/patterns';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { FHIR } from 'Utils/Services/FHIR';
 
 const PatientDataBlock = ({
@@ -62,7 +61,7 @@ const PatientDataBlock = ({
   const [patientIdentifier, setPatientIdentifier] = useState({});
   const [patientAge, setPatientAge] = useState(0);
   const [patientBirthDate, setPatientBirthDate] = useState(
-    Moment(patientData.birthDate).format(formatDate) || '',
+    Moment(new Date(patientData.birthDate)).toString() || '',
   );
 
   const [patientEncounter, setPatientEncounter] = useState(0);
@@ -72,7 +71,7 @@ const PatientDataBlock = ({
   const { register, control, errors, handleSubmit, reset, setValue } = useForm({
     mode: 'onBlur',
     defaultValues: {
-      birthDate: patientBirthDate,
+    //  birthDate: patientBirthDate,
     },
   });
 
@@ -219,9 +218,11 @@ const PatientDataBlock = ({
 
   const handleChangeBirthDate = (date) => {
     try {
-      let newBirthDate = date.format(formatDate).toString();
-      setValue('birthDate', newBirthDate, true);
-      setPatientBirthDate(newBirthDate);
+        if(date){
+            let newBirthDate = date.toString();
+            setValue('birthDate', date, true);
+            setPatientBirthDate(date);
+        }
     } catch (e) {
       console.log('Error: ' + e);
     }
@@ -300,10 +301,21 @@ const PatientDataBlock = ({
                 name='birthDate'
                 control={control}
                 rules={{
-                  validate: {
-                    value: (value) =>
-                      Moment(value, formatDate, true).isValid() === true,
-                  },
+                    validate: {
+                        value: (value) => {
+
+                            if (Moment(value, formatDate, true).isValid() === true) {
+                                if (
+                                    Moment(value, formatDate, true).isAfter() !== false
+                                ) {
+                                    return 'Should be entered date less than today';
+                                }
+                            } else {
+                                return 'Date is not in range';
+                            }
+                            return null;
+                        },
+                    },
                 }}
                 as={
                   <CustomizedDatePicker
@@ -314,8 +326,8 @@ const PatientDataBlock = ({
                       required: true,
                       disableToolbar: false,
                       label: t('birth day'),
-                      inputValue: patientBirthDate,
-                      mask: { formatDate },
+                      value: patientBirthDate,
+                      //mask: { formatDate },
                       InputProps: {
                         disableUnderline: edit_mode === 1 ? false : true,
                       },
@@ -328,7 +340,7 @@ const PatientDataBlock = ({
                       autoOk: true,
                       error: errors.birthDate ? true : false,
                       helperText: errors.birthDate
-                        ? t('Date must be in a date format')
+                        ? t(errors.birthDate.message)
                         : null,
                     }}
                     CustomizedProps={{
