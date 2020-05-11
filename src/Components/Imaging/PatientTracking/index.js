@@ -14,9 +14,12 @@ import FilterBox from './FilterBox';
 import Title from 'Assets/Elements/Title';
 import isAllowed from 'Utils/Helpers/isAllowed';
 import { getStaticTabsArray } from 'Utils/Helpers/patientTrackingTabs/staticTabsArray';
+import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 
-const PatientTracking = ({ location, vertical, history, selectFilter }) => {
+const PatientTracking = ({ vertical, history, selectFilter }) => {
   const { t } = useTranslation();
+  // Set the popUp
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
 
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
@@ -41,7 +44,7 @@ const PatientTracking = ({ location, vertical, history, selectFilter }) => {
     for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
       const tab = tabs[tabIndex];
       if (tab.tabValue === selectFilter.statusFilterBoxValue) {
-        tab.activeAction(setTable, setTabs, history, selectFilter);
+        tab.activeAction(setTable, setTabs, history, selectFilter, setIsPopUpOpen);
       } else {
         //TODO make this call in a different useEffect because when statusFiltterBoxValue changes
         // there is no need to call `tab.activeAction` only call `tab.notActiveAction`
@@ -70,8 +73,14 @@ const PatientTracking = ({ location, vertical, history, selectFilter }) => {
     })();
   }, []);
 
+  const onClosePopUpHandler = () => {
+      setIsPopUpOpen(false);
+  }
   return (
     <React.Fragment>
+        <CustomizedPopup isOpen={isPopUpOpen} onClose={onClosePopUpHandler} title={t('System notification')}>
+            {t('The patient admission process has been started by another user and is yet to be finished')}
+        </CustomizedPopup>
       <Header Items={menuItems} />
       <PatientTrackingStyle>
         <StyledTitle>
