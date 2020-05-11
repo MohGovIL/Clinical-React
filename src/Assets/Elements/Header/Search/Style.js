@@ -1,9 +1,6 @@
 import styled from 'styled-components';
+// eslint-disable-next-line
 import Paper from '@material-ui/core/Paper';
-import {
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
-} from '@material-ui/core';
 import IconValueComponent from './DrawThisTable/IconValueComponent';
 
 export default styled.div`
@@ -75,9 +72,8 @@ export const StyledContainer = styled.div`
 `;
 
 export const WrapperSearchPaper = styled.div`
-    position: relative;
-   position: absolute;
-    left: 30%;
-    top: 100%;
+  position: absolute;
+  left: 30%;
+  top: 100%;
 }
 `;

@@ -69,7 +69,7 @@ const PatientStats = {
 
         let byNameData = await CRUDOperations(
           'search',
-          params.url + '?' + 'name=' + params.functionParams.searchValue,
+          `${params.url}?name=${params.functionParams.searchValue}`,
         );
 
         //for future Lexicographic search in ID open this

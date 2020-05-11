@@ -6,7 +6,6 @@ import {
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import GenderIcon from 'Assets/Elements/CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon';
 import Icon from '@material-ui/core/Icon';
-import TitleValueComponent from './TitleValueComponent';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
@@ -31,15 +30,12 @@ export const StyledExpansionPanelDetails = styled(ExpansionPanelDetails)`
 
 export const StyledBox = styled(Box)`
   margin-top: 24px;
-  /* margin-left: 24px;
-    margin-right:28px;*/
+
   width: 692px;
   height: auto;
-  /*opacity: 0.2;*/
+
   border: solid 1px #000b4024;
   background-color: #f5f5f526;
-  /*  justify-content: space-evenly;*/
-  /* display: flex;*/
 `;
 export const StyledBottomLinks = styled(Box)`
   margin: 37px 0px 24px 61px;
@@ -94,9 +90,7 @@ export const StyledHrefButton = styled(Button)`
 
 export const StyledLabelAppointment = styled.label`
   display: inline-flex;
-  /* max-width: 30%;
-    min-width: 30%;
-    height: 22px;*/
+
   margin-top: 10px;
   label {
     margin-left: 10px;
@@ -133,9 +127,7 @@ export const StyledLabelAppointment = styled.label`
 
 export const StyledLabelStatusAppointment = styled.label`
   display: inline-flex;
-  /* max-width: 30%;
-    min-width: 30%;
-    height: 22px;*/
+
   margin-top: 10px;
   label {
     margin-left: 5px;
@@ -164,9 +156,7 @@ export const StyledLabelStatusAppointment = styled.label`
 
 export const StyledLabelServiceTypeAppointment = styled.label`
   display: inline-flex;
-  /* max-width: 30%;
-    min-width: 30%;
-    height: 22px;*/
+
   margin-top: 10px;
   label {
     margin-left: 5px;
@@ -309,9 +299,7 @@ export const StyledLabelAge = styled.label`
     color: #00094a;
   }
 `;
-
-export const StyledGenderIcon = styled(GenderIcon)``;
-
+styled(GenderIcon)``;
 export const StyledIcon = styled(Icon)`
   font-family: 'Material Icons' !important;
   margin-top: 2%;
@@ -373,11 +361,6 @@ export const StyledLinkWithIconComponent = styled.div`
     object-fit: contain;
   }
 `;
-
-export const StyledEmptyDiv = styled.div`
-  width: 55px !important;
-`;
-
 export const StyledTableTextCell = styled.div`
   width: 200px;
   height: 18px;

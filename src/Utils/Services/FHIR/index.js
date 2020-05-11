@@ -6,7 +6,6 @@
  *                   Dror Golan - drorgo@matrix.co.il
  */
 
-import React, { useState } from 'react';
 import Appointment from './Appointment';
 import Encounter from './Encounter';
 import HealthcareService from './HealthcareService';
@@ -17,8 +16,6 @@ import RelatedPerson from './RelatedPerson';
 import Questionnaire from './Questionnaire';
 import QuestionnaireResponse from './QuestionnaireResponse/index';
 import DocumentReference from './DocumentReference';
-import { tokenInstanceGenerator } from '../AxiosWithTokenInstance';
-import { ApiTokens } from '../ApiTokens';
 
 const FHIRStates = {
   Appointment: Appointment,

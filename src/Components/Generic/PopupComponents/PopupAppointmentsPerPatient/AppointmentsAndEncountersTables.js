@@ -1,19 +1,14 @@
 import React from 'react';
-import TitleValueComponent from '../../../../Assets/Elements/Header/Search/DrawThisTable/TitleValueComponent';
+import TitleValueComponent from 'Assets/Elements/Header/Search/DrawThisTable/TitleValueComponent';
 import { useTranslation } from 'react-i18next';
 import {
-  StyledBox,
   StyledHeaderTableAppointment,
   StyledHrefButton,
   StyledHrefTableButton,
-  StyledLabelAppointment,
-  StyledLabelName,
-  StyledLabelServiceTypeAppointment,
   StyledLabelStatusAppointment,
   StyledLabelTableButton,
-  StyledLinkWithIconComponent,
   StyledTableTextCell,
-} from '../../../../Assets/Elements/Header/Search/DrawThisTable/Style';
+} from 'Assets/Elements/Header/Search/DrawThisTable/Style';
 import moment from 'moment';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
@@ -24,10 +19,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import Paper from '@material-ui/core/Paper';
 import TableBody from '@material-ui/core/TableBody';
-import Button from '@material-ui/core/Button';
-import { normalizeFhirAppointmentsWithPatients } from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients';
 import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
-import Link from '@material-ui/core/Link';
 
 const AppointmentsAndEncountersTables = ({
   patient,
@@ -38,19 +30,23 @@ const AppointmentsAndEncountersTables = ({
   encounterStatuses,
 }) => {
   const { t } = useTranslation();
-
+  // eslint-disable-next-line
   const prevEncountersEntry =
     prevEncounters && prevEncounters.data && prevEncounters.data.total > 0
       ? prevEncounters.data.entry[1].resource
       : null;
+  // eslint-disable-next-line
   const nextAppointmentsElem =
     nextAppointments && nextAppointments.data && nextAppointments.data.total > 0
       ? nextAppointments.data.entry[1].resource
       : null;
+  // eslint-disable-next-line
   const curEncountersElem = curEncounters ? curEncounters : null;
+  // eslint-disable-next-line
   const nextAppointmentEntry = nextAppointmentsElem
     ? normalizeFhirAppointment(nextAppointmentsElem)
     : null;
+  // eslint-disable-next-line
   const normalizedPrevEncounter = prevEncountersEntry
     ? normalizeFhirEncounter(prevEncountersEntry)
     : null;
@@ -59,7 +55,7 @@ const AppointmentsAndEncountersTables = ({
   let normalizedCurEncounters = [];
   let normalizedNextAppointments = [];
   let normalizedPrevEncounters = [];
-
+  // eslint-disable-next-line
   const getAppointmentWithTimeOrNot = (nextAppointmentEntry) => {
     let isThisAppToday =
       moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY') ===
@@ -103,7 +99,7 @@ const AppointmentsAndEncountersTables = ({
   };
 
   const parseMultipleExaminations = (serviceType, examination) => {
-    if (!examination || !examination[0] || examination.lenghth == 0) {
+    if (!examination || !examination[0] || examination.lenghth === 0) {
       return t(serviceType);
     }
     let returnThisServiceTypesExaminations = '';
@@ -120,16 +116,17 @@ const AppointmentsAndEncountersTables = ({
 
     return returnThisServiceTypesExaminations;
   };
-  const handleChartClickOpen = () => {
+  /*const handleChartClickOpen = () => {
     //TODO:
   };
 
   const handleAdmissionClickOpen = () => {
     //TODO:
-  };
+  };*/
 
   if (curEncounters && curEncounters.data && curEncounters.data.total > 0) {
     let entry = curEncounters.data.entry;
+    // eslint-disable-next-line
     entry.map((response, resourceIndex) => {
       if (
         response &&
@@ -150,6 +147,7 @@ const AppointmentsAndEncountersTables = ({
     nextAppointments.data.total > 0
   ) {
     let entry = nextAppointments.data.entry;
+    // eslint-disable-next-line
     entry.map((response, resourceIndex) => {
       if (
         response &&
@@ -166,6 +164,7 @@ const AppointmentsAndEncountersTables = ({
 
   if (prevEncounters && prevEncounters.data && prevEncounters.data.total > 0) {
     let entry = prevEncounters.data.entry;
+    // eslint-disable-next-line
     entry.map((response, resourceIndex) => {
       if (
         response &&
@@ -302,6 +301,7 @@ const AppointmentsAndEncountersTables = ({
             </TableHead>
             <TableBody>
               {normalizedNextAppointments.length > 0 ? (
+                // eslint-disable-next-line
                 normalizedNextAppointments.map((appointment, appointmentID) => {
                   if (--futureAppointmentsCounter >= 0)
                     return (
@@ -415,6 +415,7 @@ const AppointmentsAndEncountersTables = ({
             <TableBody>
               {normalizedPrevEncounters !== null &&
               normalizedPrevEncounters.length > 0 ? (
+                // eslint-disable-next-line
                 normalizedPrevEncounters.map((encounter, encounterID) => {
                   if (--pastEncounterCounter >= 0) {
                     return (

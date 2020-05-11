@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import StyledSearch, {
-  StyledExpansionPanelDetails,
-  StyledExpansionPanelSummary,
   StyledIconValueComponent,
   StyledPaper,
   StyledPaperBottom,
@@ -12,21 +10,13 @@ import StyledSearch, {
 import SearchInput from './SearchInput';
 import Icon from './Icon/index';
 import search from 'Assets/Images/search.png';
+// eslint-disable-next-line
 import { searchPatients } from 'Utils/Services/FhirAPI';
-import DrawThisTable from './DrawThisTable';
-import { ClickAwayListener, Paper } from '@material-ui/core';
-import IconValueComponent from './DrawThisTable/IconValueComponent';
-import TitleValueComponent from './DrawThisTable/TitleValueComponent';
-import {
-  StyledExpansionPanel,
-  StyledLabelName,
-  StyledValueComponent,
-} from './DrawThisTable/Style';
+import { ClickAwayListener } from '@material-ui/core';
+import { StyledValueComponent } from './DrawThisTable/Style';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import PaperContainerComponent from './DrawThisTable/PaperContainerComponent';
-import CustomizedTableButtonCell from 'Assets/Elements/CustomizedTable/CustomizedTableButtonCell';
-import StyledButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton/Style';
 import { FHIR } from 'Utils/Services/FHIR';
 import PopupCreateNewPatient from 'Components/Generic/PopupComponents/PopupCreateNewPatient';
 
@@ -34,12 +24,13 @@ const Search = ({ languageDirection }) => {
   const isNumeric = (n) => {
     return !isNaN(parseFloat(n)) && isFinite(n);
   };
+  // eslint-disable-next-line
   String.prototype.trimRight = function (charlist) {
     if (charlist === undefined) charlist = 's';
 
     return this.replace(new RegExp('[' + charlist + ']+$'), '');
   };
-
+  // eslint-disable-next-line
   String.prototype.trimLeft = function (charlist) {
     if (charlist === undefined) charlist = 's';
 
@@ -57,7 +48,7 @@ const Search = ({ languageDirection }) => {
 
   //Create new patient
   const [popupNewPatient, setPopupNewPatient] = useState(false);
-
+  // eslint-disable-next-line
   const onFocusHandler = async (e) => {
     if (e.target.value.length > 2) {
       e.target.value += ' ';
@@ -74,7 +65,7 @@ const Search = ({ languageDirection }) => {
     let minSearchParam = 2;
 
     setResult(null);
-    //setShowResult(false);
+
     setInput(target.value);
 
     if (languageDirection === 'ltr') {
@@ -102,7 +93,6 @@ const Search = ({ languageDirection }) => {
               //for
               setResult(patients);
               setShowResult(true);
-              // setResult(patients);
             } else {
               setResult(null);
               setShowResult(true);

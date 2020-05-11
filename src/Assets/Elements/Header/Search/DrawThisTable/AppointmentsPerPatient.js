@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import {
   StyledBox,
   StyledLabelAppointment,
-  StyledLabelName,
-  StyledLabelServiceTypeAppointment,
   StyledLabelStatusAppointment,
   StyledLinkWithIconComponent,
 } from './Style';
@@ -52,6 +50,7 @@ const AppointmentsPerPatient = ({
   };
   if (curEncounter.data && curEncounter.data.total > 0) {
     let entry = curEncounter.data.entry;
+    // eslint-disable-next-line
     entry.map((response, resourceIndex) => {
       if (
         response &&
@@ -105,15 +104,7 @@ const AppointmentsPerPatient = ({
                   </ListItem>
                 );
               })
-            : /*<ListItem key={"normalizedCurEncounters_1"}>
-
-                                <StyledLabelAppointment>
-                                    <TitleValueComponent name={t("Current encounter")} value={t("Non existence")}
-                                                         seperator={true}/>
-                                </StyledLabelAppointment>
-
-                        </ListItem>*/
-              null}
+            : null}
           {nextAppointmentEntry ? (
             <ListItem key={nextAppointmentEntry.id + '_nextAppointmentEntry'}>
               <StyledLabelAppointment>
@@ -138,7 +129,7 @@ const AppointmentsPerPatient = ({
                     patientTrackingStatuses && nextAppointmentEntry
                       ? t(patientTrackingStatuses[nextAppointmentEntry.status])
                       : ''
-                  } /*t(normalizedPrevEncounter.status.charAt(0).toUpperCase() + normalizedPrevEncounter.status.slice(1))}*/
+                  }
                 />
               </StyledLabelStatusAppointment>
 

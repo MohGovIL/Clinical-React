@@ -1,9 +1,8 @@
 import normalizeFhirPatient from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient';
 
 export function _buildList(patient) {
-  let arr = [];
   let resource = patient.resource;
-  /*
+  /* //THIS IS WHAT THE PATIENT RESOURCE LOOK LIKE
        id: patient.id,
        identifier,
        firstName,
@@ -71,15 +70,15 @@ export function sortByName(items, field, searchParams, field2) {
 // sort by name
 
 export function sortLexicographicAlphanumeric(first, field, field2) {
-  let nameA = '';
-  let nameB = '';
   first.sort(function (a, b) {
+    var nameA = '';
+    var nameB = '';
     if (field2) {
-      var nameA = a[field][field2].toUpperCase(); // ignore upper and lowercase
-      var nameB = b[field][field2].toUpperCase(); // ignore upper and lowercase
+      nameA = a[field][field2].toUpperCase(); // ignore upper and lowercase
+      nameB = b[field][field2].toUpperCase(); // ignore upper and lowercase
     } else {
-      var nameA = a[field].toUpperCase(); // ignore upper and lowercase
-      var nameB = b[field].toUpperCase(); // ignore upper and lowercase
+      nameA = a[field].toUpperCase(); // ignore upper and lowercase
+      nameB = b[field].toUpperCase(); // ignore upper and lowercase
     }
 
     if (nameA < nameB) {
@@ -126,14 +125,14 @@ export function sortInputFirst(input, data, field, field2) {
       if (
         data[i][field] &&
         data[i][field][field2] &&
-        data[i][field][field2].indexOf(input) == 0
+        data[i][field][field2].indexOf(input) === 0
       ) {
         first.push(data[i]);
       } else {
         others.push(data[i]);
       }
     } else {
-      if (data[i][field] && data[i][field].indexOf(input) == 0) {
+      if (data[i][field] && data[i][field].indexOf(input) === 0) {
         first.push(data[i]);
       } else {
         others.push(data[i]);
@@ -159,9 +158,7 @@ export function sortPatientRulesByLexicogrphicsSort(items, value) {
        gender: patient.gender,
        birthDate: patient.birthDate,
 */
-  /* items = sortByContains(items, 'lastName',value);
-     items = sortByContains(items, 'firstName',value);
-     items = sortByName(items, 'lastName');*/
+
   window.leftover = null;
   window.dataFound = [];
 

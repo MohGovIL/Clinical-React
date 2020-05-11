@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import StyledSearch, {
+import React from 'react';
+import {
   StyledBottomLinks,
   StyledExpansionPanel,
   StyledExpansionPanelDetails,
@@ -7,7 +7,6 @@ import StyledSearch, {
   StyledHrefButton,
   StyledLabelAge,
   StyledLabelPhone,
-  StyledPaper,
 } from './Style';
 import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -17,15 +16,7 @@ import GenderIcon from 'Assets/Elements/CustomizedTable/CustomizedTablePersonalI
 import maleIcon from 'Assets/Images/maleIcon.png';
 import femaleIcon from 'Assets/Images/womanIcon.png';
 import AppointmentsPerPatient from './AppointmentsPerPatient';
-import {
-  getCurrentEncounterPerPatient,
-  getNextPrevAppointmentPerPatient,
-  getNextPrevAppointmentsPerPatient,
-  getNextPrevEncounterPerPatient,
-  getNextPrevEncountersPerPatient,
-  getValueSet,
-} from 'Utils/Services/FhirAPI';
-import moment, { now } from 'moment';
+import moment from 'moment';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import { FHIR } from 'Utils/Services/FHIR';
@@ -63,7 +54,6 @@ const DrawThisTable = ({
     popUpAppointmentsPerPatient,
     setPopUpAppointmentsPerPatient,
   ] = React.useState(false);
-  let curTotal = 0;
 
   //let patientTrackingStatuses =  null;
 
@@ -119,6 +109,8 @@ const DrawThisTable = ({
           console.log('admission with appointment');
         }
         break;
+      default:
+        break;
     }
   };
 
@@ -146,12 +138,12 @@ const DrawThisTable = ({
 
     if (!thereIsEncounterToday) {
       if (theAppointmentIsToday) {
-        if (admissionState != ADMISSIONWITHAPPOINTMENT) {
+        if (admissionState !== ADMISSIONWITHAPPOINTMENT) {
           setAdmissionState(ADMISSIONWITHAPPOINTMENT);
         }
         return t('Patient admission');
       } else {
-        if (admissionState != ADMISSIONWITHOUTAPPOINTMENT) {
+        if (admissionState !== ADMISSIONWITHOUTAPPOINTMENT) {
           setAdmissionState(ADMISSIONWITHOUTAPPOINTMENT);
         }
         return t('Admission without appointment');
@@ -159,8 +151,6 @@ const DrawThisTable = ({
     } else {
       return t('Patient admission');
     }
-
-    return false;
   };
 
   const requestValueSet = (valueSet) => {
@@ -317,7 +307,6 @@ const DrawThisTable = ({
             <StyledExpansionPanel
               key={'ExpansionPanel_' + patientIndex}
               expanded={expanded === 'panel' + patientIndex}
-              key={patientIndex}
               onChange={handleChange('panel' + patientIndex, patient)}>
               <StyledExpansionPanelSummary
                 key={'ExpansionPanel_' + patientIndex + '_summary'}
