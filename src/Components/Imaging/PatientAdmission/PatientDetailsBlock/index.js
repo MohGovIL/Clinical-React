@@ -1,7 +1,7 @@
 // Other
 import React, { useEffect, useState } from 'react';
 import matchSorter from 'match-sorter';
-import { getCellPhoneRegexPattern } from 'Utils/Helpers/validation/patterns';
+import { israelPhoneNumberRegex } from 'Utils/Helpers/validation/patterns';
 import { Controller, useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -1133,7 +1133,7 @@ const PatientDetailsBlock = ({
                 control={control}
                 defaultValue={relatedPerson.mobilePhone || ''}
                 rules={{
-                  pattern: getCellPhoneRegexPattern(),
+                  pattern: israelPhoneNumberRegex(),
                 }}
                 error={errors.escortMobilePhone && true}
                 helperText={
@@ -1564,13 +1564,15 @@ const PatientDetailsBlock = ({
                   as={
                     <MuiPickersUtilsProvider
                       utils={MomentUtils}
-                      moment={moment}>
+                      moment={moment}
+                      libInstance={moment}>
                       <StyledKeyboardDatePicker
                         disableToolbar
                         autoOk
                         variant='inline'
+                        allowKeyboardControl={true}
                         format={formatDate}
-                        mask={formatDate}
+                        // mask={'__/__/____'}
                         margin='normal'
                         id='commitmentAndPaymentCommitmentDate'
                         label={`${t('Commitment date')} *`}
@@ -1611,9 +1613,10 @@ const PatientDetailsBlock = ({
                       moment={moment}>
                       <StyledKeyboardDatePicker
                         disableToolbar
+                        allowKeyboardControl={true}
                         autoOk
                         variant='inline'
-                        mask={formatDate}
+                        // mask={formatDate}
                         format={formatDate}
                         margin='normal'
                         id='commitmentAndPaymentCommitmentValidity'

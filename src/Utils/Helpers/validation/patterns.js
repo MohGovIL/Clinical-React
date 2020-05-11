@@ -15,3 +15,7 @@ export const getCellPhoneRegexPattern = () => {
 export const getOnlyNumbersRegexPattern = () => {
   return /^[0-9]*$/;
 };
+
+export const israelPhoneNumberRegex = () => {
+    return /^05\d([-]{0,1})\d{7}$/;
+}
