@@ -146,11 +146,12 @@ const PatientStats = {
         'search',
         params.url +
           '?' +
-          'identifier=' +
-          params.functionParams.identifierValue +
+          'identifier:of-type=|' +
           (params.functionParams.identifierType
-            ? '&identifier.type=' + params.functionParams.identifierType
-            : ''),
+            ? params.functionParams.identifierType
+            : '') +
+          '|' +
+          params.functionParams.identifierValue,
       );
       data =
         identifierData.data.total === 1
