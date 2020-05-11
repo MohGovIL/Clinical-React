@@ -33,6 +33,7 @@ export const invitedTabActiveFunction = async function (
   setTabs,
   history,
   selectFilter,
+  setIsPopUpOpen,
 ) {
   try {
     //const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
@@ -88,6 +89,7 @@ export const invitedTabActiveFunction = async function (
         options,
         history,
         this.mode,
+        setIsPopUpOpen,
       );
       setTable(table);
     }
@@ -180,6 +182,7 @@ const setPatientDataInvitedTableRows = (
   options,
   history,
   mode,
+  setIsPopUpOpen,
 ) => {
   /* console.log("mode 1 = "+ mode);*/
   let result = [];
@@ -226,7 +229,7 @@ const setPatientDataInvitedTableRows = (
                   status: 'planned',
                 },
               });
-              if (plannedEncounter.data.total !== 0) {
+              if (plannedEncounter.data.total === 0) {
                 const encounterData = await FHIR('Encounter', 'doWork', {
                   functionName: 'createNewEncounter',
                   functionParams: {
@@ -243,6 +246,8 @@ const setPatientDataInvitedTableRows = (
                 history.push({
                   pathname: `${baseRoutePath()}/imaging/patientAdmission`,
                 });
+              }else {
+                  setIsPopUpOpen(true);
               }
             },
             mode: moment(appointment.startTime).isSame(

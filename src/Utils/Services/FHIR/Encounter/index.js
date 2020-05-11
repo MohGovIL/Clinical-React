@@ -232,7 +232,6 @@ const EncounterStates = {
     /**
      * To get all Encounters just don't send any functionParams
      */
-
     let functionParamsIndex = 0;
     let searchString = '';
     if (params.functionParams) {
@@ -249,7 +248,6 @@ const EncounterStates = {
         }
       }
     }
-
     return CRUDOperations('search', `${params.url}${searchString}`);
   },
 };
