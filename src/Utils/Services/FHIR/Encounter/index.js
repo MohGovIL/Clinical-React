@@ -229,20 +229,27 @@ const EncounterStates = {
     );
   },
   searchEncounter: (params) => {
+    /**
+     * To get all Encounters just don't send any functionParams
+     */
+
     let functionParamsIndex = 0;
     let searchString = '';
-    for (const functionParamsKey in params.functionParams) {
-      if (params.functionParams.hasOwnProperty(functionParamsKey)) {
-        functionParamsIndex += 1;
-        if (functionParamsIndex === 1) {
-          searchString += '?';
-        } else {
-          searchString += '&';
+    if (params.functionParams) {
+      for (const functionParamsKey in params.functionParams) {
+        if (params.functionParams.hasOwnProperty(functionParamsKey)) {
+          functionParamsIndex += 1;
+          if (functionParamsIndex === 1) {
+            searchString += '?';
+          } else {
+            searchString += '&';
+          }
+          const searchParam = `${functionParamsKey}=${params.functionParams[functionParamsKey]}`;
+          searchString += searchParam;
         }
-        const searchParam = `${functionParamsKey}=${params.functionParams[functionParamsKey]}`;
-        searchString += searchParam;
       }
     }
+
     return CRUDOperations('search', `${params.url}${searchString}`);
   },
 };

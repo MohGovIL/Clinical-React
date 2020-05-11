@@ -219,26 +219,31 @@ const setPatientDataInvitedTableRows = (
                 `#${appointment.patient}`
               ];
               // const encounterData = await createNewEncounter(appointment ,store.getState().settings.facility)
-              //   await FHIR('Encounter', 'doWork', {
-              //       functionName: ''
-              //   })
-              const encounterData = await FHIR('Encounter', 'doWork', {
-                functionName: 'createNewEncounter',
+              const plannedEncounter = await FHIR('Encounter', 'doWork', {
+                functionName: 'searchEncounter',
                 functionParams: {
-                  appointment: appointment,
-                  facility: store.getState().settings.facility,
+                  appointment: appointment.id,
+                  status: 'planned',
                 },
               });
-
-              store.dispatch(
-                setEncounterAndPatient(
-                  normalizeFhirEncounter(encounterData.data),
-                  patient,
-                ),
-              );
-              history.push({
-                pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-              });
+              if (plannedEncounter.data.total !== 0) {
+                const encounterData = await FHIR('Encounter', 'doWork', {
+                  functionName: 'createNewEncounter',
+                  functionParams: {
+                    appointment: appointment,
+                    facility: store.getState().settings.facility,
+                  },
+                });
+                store.dispatch(
+                  setEncounterAndPatient(
+                    normalizeFhirEncounter(encounterData.data),
+                    patient,
+                  ),
+                );
+                history.push({
+                  pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                });
+              }
             },
             mode: moment(appointment.startTime).isSame(
               moment(new Date()),

@@ -14,9 +14,12 @@ import FilterBox from './FilterBox';
 import Title from 'Assets/Elements/Title';
 import isAllowed from 'Utils/Helpers/isAllowed';
 import { getStaticTabsArray } from 'Utils/Helpers/patientTrackingTabs/staticTabsArray';
+import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 
-const PatientTracking = ({ location, vertical, history, selectFilter }) => {
+const PatientTracking = ({ vertical, history, selectFilter }) => {
   const { t } = useTranslation();
+  // Set the popUp
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
 
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
@@ -70,8 +73,14 @@ const PatientTracking = ({ location, vertical, history, selectFilter }) => {
     })();
   }, []);
 
+  const onClosePopUpHandler = () => {
+      setIsPopUpOpen(false);
+  }
   return (
     <React.Fragment>
+        <CustomizedPopup isOpen={isPopUpOpen} onClose={onClosePopUpHandler} >
+
+        </CustomizedPopup>
       <Header Items={menuItems} />
       <PatientTrackingStyle>
         <StyledTitle>
