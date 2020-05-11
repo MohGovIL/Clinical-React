@@ -1535,8 +1535,6 @@ const PatientDetailsBlock = ({
                   }
                   as={
                     <StyledTextField
-                      // name='commitmentAndPaymentReferenceForPaymentCommitment'
-                      // inputRef={register()}
                       label={`${t('Reference for payment commitment')} *`}
                       id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                       type='number'
@@ -1572,7 +1570,6 @@ const PatientDetailsBlock = ({
                         variant='inline'
                         allowKeyboardControl={true}
                         format={formatDate}
-                        // mask={'__/__/____'}
                         margin='normal'
                         id='commitmentAndPaymentCommitmentDate'
                         label={`${t('Commitment date')} *`}
@@ -1616,7 +1613,6 @@ const PatientDetailsBlock = ({
                         allowKeyboardControl={true}
                         autoOk
                         variant='inline'
-                        // mask={formatDate}
                         format={formatDate}
                         margin='normal'
                         id='commitmentAndPaymentCommitmentValidity'
@@ -1657,8 +1653,6 @@ const PatientDetailsBlock = ({
                   }
                   as={
                     <StyledTextField
-                      // name='commitmentAndPaymentDoctorsName'
-                      // inputRef={register()}
                       label={`${t('Doctors name')} *`}
                       id={'commitmentAndPaymentDoctorsName'}
                       error={
@@ -1684,8 +1678,6 @@ const PatientDetailsBlock = ({
                   }
                   as={
                     <StyledTextField
-                      // name='commitmentAndPaymentDoctorsLicense'
-                      // inputRef={register()}
                       label={`${t('Doctors license')} *`}
                       id={'commitmentAndPaymentDoctorsLicense'}
                       type='number'
@@ -1762,11 +1754,6 @@ const PatientDetailsBlock = ({
                         setPopUpReferenceFile('Referral');
                         onDeletePopUp(event);
                       }
-                      // onDeleteFileHandler(
-                      //   referralRef,
-                      //   setReferralFile,
-                      //   'Referral',
-                      // )
                     }
                     onClick={() => onClickFileHandler(referralRef)}
                   />
@@ -1828,11 +1815,6 @@ const PatientDetailsBlock = ({
                         setPopUpReferenceFile('Commitment');
                         onDeletePopUp(event);
                       }
-                      // onDeleteFileHandler(
-                      //   commitmentRef,
-                      //   setCommitmentFile,
-                      //   'Commitment',
-                      // )
                     }
                     onClick={() => onClickFileHandler(commitmentRef)}
                   />
@@ -1893,11 +1875,6 @@ const PatientDetailsBlock = ({
                             );
                             onDeletePopUp(event);
                           }
-                          // onDeleteFileHandler(
-                          //   additionalDocumentRef,
-                          //   setAdditionalDocumentFile,
-                          //   nameOfAdditionalDocumentFile || 'Document1',
-                          // )
                         }
                         onClick={() =>
                           onClickFileHandler(additionalDocumentRef)
