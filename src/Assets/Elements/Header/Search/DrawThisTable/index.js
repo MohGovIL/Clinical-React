@@ -33,10 +33,14 @@ import { store } from 'index';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
-import Index from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
+
 import PopAppointmentsPerPatient from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
 
-const DrawThisTable = ({ result, searchParam }) => {
+const DrawThisTable = ({
+  result,
+  searchParam,
+  setPopupApppointmentsAndEncounters,
+}) => {
   const { t } = useTranslation();
   const ADMISSIONWITHOUTAPPOINTMENT = 0;
   const ADMISSIONWITHAPPOINTMENT = 1;
@@ -278,6 +282,7 @@ const DrawThisTable = ({ result, searchParam }) => {
     patientTrackingStatuses,
   ) => {
     if (!patient) return;
+
     setAppointmentPopUpData({
       patient: patient,
       prevEncounter: prevEncounters,
@@ -286,11 +291,14 @@ const DrawThisTable = ({ result, searchParam }) => {
       encounterStatuses: encounterStatuses,
       patientTrackingStatuses: patientTrackingStatuses,
     });
+
     setPopUpAppointmentsPerPatient(true);
+    setPopupApppointmentsAndEncounters(true);
   };
 
   const handlePopupClose = () => {
     setPopUpAppointmentsPerPatient(false);
+    setPopupApppointmentsAndEncounters(false);
     if (!popUpAppointmentsPerPatient) {
       setAppointmentPopUpData(null);
     }
@@ -312,30 +320,34 @@ const DrawThisTable = ({ result, searchParam }) => {
               key={patientIndex}
               onChange={handleChange('panel' + patientIndex, patient)}>
               <StyledExpansionPanelSummary
+                key={'ExpansionPanel_' + patientIndex + '_summary'}
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls='panel1a-content'
                 id='panel1a-header'>
                 <GenderIcon
+                  key={'gender_' + patientIndex}
                   alt={'gender icon'}
                   src={patient.gender === 'male' ? maleIcon : femaleIcon}
                 />
-                <StyledLabelName>
+                <StyledLabelName key={'name_' + patientIndex}>
                   <TitleValueComponent
                     searchParam={searchParam}
                     name={patient.firstName + ' ' + patient.lastName}
                   />
                 </StyledLabelName>
-                <StyledLabelTZ>
+                <StyledLabelTZ key={'StyledLabelTZ_' + patientIndex}>
                   <TitleValueComponent
+                    key={'identifier_' + patientIndex}
                     searchParam={searchParam}
                     name={t(patient.identifierTypeText)}
                     value={patient.identifier}
                   />
                 </StyledLabelTZ>
-                <StyledLabelPhone>
+                <StyledLabelPhone key={'phone_' + patientIndex}>
                   {
                     patient.mobileCellPhone ? (
                       <TitleValueComponent
+                        key={'mobile_phone_' + patientIndex}
                         searchParam={searchParam}
                         name={t('Mobile Phone')}
                         value={patient.mobileCellPhone}
@@ -346,23 +358,26 @@ const DrawThisTable = ({ result, searchParam }) => {
                     /*patient.homePhone ? < TitleValueComponent name = {t('Phone number')}   value = {patient.homePhone} /> : ''*/
                   }
                 </StyledLabelPhone>
-                <StyledLabelAge>
+                <StyledLabelAge key={'age_' + patientIndex}>
                   <TitleValueComponent
+                    key={'calculate_age_' + patientIndex}
                     name={t(patient.ageGenderType)}
                     value={_calculateAge(patient.birthDate)}
                   />
                 </StyledLabelAge>
               </StyledExpansionPanelSummary>
-              <StyledExpansionPanelDetails>
+              <StyledExpansionPanelDetails key={'details_' + patientIndex}>
                 <AppointmentsPerPatient
+                  key={'appointment_' + patientIndex}
                   nextAppointment={nextAppointment}
                   prevEncounter={prevEncounter}
                   curEncounter={curEncounter}
                   encounterStatuses={encounterStatuses}
                   patientTrackingStatuses={patientTrackingStatuses}
                 />
-                <StyledBottomLinks>
+                <StyledBottomLinks key={'bottom_links_' + patientIndex}>
                   <StyledHrefButton
+                    key={'bottom_links_first_' + patientIndex}
                     size={'small'}
                     variant='outlined'
                     color='primary'
@@ -393,6 +408,7 @@ const DrawThisTable = ({ result, searchParam }) => {
                     {t('Encounters and appointments')}
                   </StyledHrefButton>
                   <StyledHrefButton
+                    key={'bottom_links_second_' + patientIndex}
                     size={'small'}
                     variant='contained'
                     color='primary'
@@ -402,6 +418,7 @@ const DrawThisTable = ({ result, searchParam }) => {
                   </StyledHrefButton>
 
                   <StyledHrefButton
+                    key={'bottom_links_third_' + patientIndex}
                     size={'small'}
                     variant='contained'
                     color='primary'

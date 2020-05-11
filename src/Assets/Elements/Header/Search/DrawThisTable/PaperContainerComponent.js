@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StyledPaperContainer } from '../Style';
 import DrawThisTable from './index';
 
-const PaperContainerComponent = ({ result, searchParam }) => {
+const PaperContainerComponent = ({
+  result,
+  searchParam,
+  setPopupApppointmentsAndEncounters,
+}) => {
   const [height, setHeight] = useState(0);
   const [maxHeight, setMaxHeight] = useState(0);
   useEffect(() => {
@@ -28,6 +32,7 @@ const PaperContainerComponent = ({ result, searchParam }) => {
         key={searchParam + '_DrawThisTable'}
         result={result}
         searchParam={searchParam}
+        setPopupApppointmentsAndEncounters={setPopupApppointmentsAndEncounters}
       />
     </StyledPaperContainer>
   );
