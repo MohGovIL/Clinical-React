@@ -228,6 +228,9 @@ const EncounterStates = {
       denormalizedEncounter,
     );
   },
+  deleteEncounter: (params) => {
+    return CRUDOperations('delete', `${params.url}/${params.encounterId}`)
+  }
 };
 
 export default function Encounter(action = null, params = null) {

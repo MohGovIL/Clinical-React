@@ -10,6 +10,8 @@ import { StyledPatientRow, StyledDummyBlock, StyledBackdrop } from './Style';
 
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
+import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
+import { FHIR } from 'Utils/Services/FHIR';
 
 const PatientAdmission = ({
   patient,
@@ -46,15 +48,61 @@ const PatientAdmission = ({
   ];
 
   const handleCloseClick = () => {
-    history.push(`${baseRoutePath()}/imaging/patientTracking`);
+    if (isDirty) {
+      setIsPopUpOpen(true);
+    } else {
+      history.push(`${baseRoutePath()}/imaging/patientTracking`);
+    }
   };
 
   const handleEditButtonClick = (isEdit) => {
     setEdit(isEdit);
   };
 
+  const onPopUpCloseHandler = () => {
+    setIsPopUpOpen(false);
+  };
+
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+
+  const [isDirty, setIsDirty] = useState(false);
+
+  const returnHandler = () => {
+    setIsPopUpOpen(false);
+  };
+
+  const exitWithoutSavingHandler = () => {
+    // TODO check if the encounter.status is planning if true delete that encounter.
+    if (encounter.status === 'planned') {
+      // await FHIR
+    }
+    history.push(`${baseRoutePath()}/imaging/patientTracking`);
+  };
+
   return (
     <React.Fragment>
+      <CustomizedPopup
+        title={t('Exit without saving')}
+        isOpen={isPopUpOpen}
+        onClose={onPopUpCloseHandler}
+        bottomButtons={[
+          {
+            color: 'primary',
+            label: 'Return',
+            variant: 'contained',
+            onClickHandler: returnHandler,
+          },
+          {
+            color: 'primary',
+            label: 'Exit without saving',
+            variant: 'outlined',
+            onClickHandler: exitWithoutSavingHandler,
+          },
+        ]}>
+        {t(
+          'You choose to exit without saving your changes. Would you like to continue?',
+        )}
+      </CustomizedPopup>
       <HeaderPatient
         breadcrumbs={allBreadcrumbs}
         languageDirection={languageDirection}
@@ -83,6 +131,7 @@ const PatientAdmission = ({
               patientData={patient}
               edit_mode={edit}
               formatDate={formatDate}
+              setIsDirty={setIsDirty}
             />
           )}
       </StyledPatientRow>

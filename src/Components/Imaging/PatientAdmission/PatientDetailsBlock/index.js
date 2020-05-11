@@ -64,6 +64,7 @@ const PatientDetailsBlock = ({
   edit_mode,
   encounterData,
   formatDate,
+  setIsDirty
 }) => {
   const { t } = useTranslation();
   let history = useHistory();
@@ -79,6 +80,7 @@ const PatientDetailsBlock = ({
     submitFocusError: true,
   });
   const { dirty } = formState;
+  setIsDirty(dirty);
   //Sending the form
   const [requiredErrors, setRequiredErrors] = useState({
     selectTest: '',
