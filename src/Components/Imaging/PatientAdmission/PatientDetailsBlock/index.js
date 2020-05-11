@@ -1535,8 +1535,8 @@ const PatientDetailsBlock = ({
                   }
                   as={
                     <StyledTextField
-                      name='commitmentAndPaymentReferenceForPaymentCommitment'
-                      inputRef={register()}
+                      // name='commitmentAndPaymentReferenceForPaymentCommitment'
+                      // inputRef={register()}
                       label={`${t('Reference for payment commitment')} *`}
                       id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                       type='number'
@@ -1658,7 +1658,7 @@ const PatientDetailsBlock = ({
                   as={
                     <StyledTextField
                       // name='commitmentAndPaymentDoctorsName'
-                      inputRef={register()}
+                      // inputRef={register()}
                       label={`${t('Doctors name')} *`}
                       id={'commitmentAndPaymentDoctorsName'}
                       error={
@@ -1685,7 +1685,7 @@ const PatientDetailsBlock = ({
                   as={
                     <StyledTextField
                       // name='commitmentAndPaymentDoctorsLicense'
-                      inputRef={register()}
+                      // inputRef={register()}
                       label={`${t('Doctors license')} *`}
                       id={'commitmentAndPaymentDoctorsLicense'}
                       type='number'
