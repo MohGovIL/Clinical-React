@@ -228,6 +228,23 @@ const EncounterStates = {
       denormalizedEncounter,
     );
   },
+  searchEncounter: (params) => {
+    let functionParamsIndex = 0;
+    let searchString = '';
+    for (const functionParamsKey in params.functionParams) {
+      if (params.functionParams.hasOwnProperty(functionParamsKey)) {
+        functionParamsIndex += 1;
+        if (functionParamsIndex === 1) {
+          searchString += '?';
+        } else {
+          searchString += '&';
+        }
+        const searchParam = `${functionParamsKey}=${params.functionParams[functionParamsKey]}`;
+        searchString += searchParam;
+      }
+    }
+    return CRUDOperations('search', `${params.url}${searchString}`);
+  },
 };
 
 export default function Encounter(action = null, params = null) {

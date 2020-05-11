@@ -219,6 +219,9 @@ const setPatientDataInvitedTableRows = (
                 `#${appointment.patient}`
               ];
               // const encounterData = await createNewEncounter(appointment ,store.getState().settings.facility)
+              //   await FHIR('Encounter', 'doWork', {
+              //       functionName: ''
+              //   })
               const encounterData = await FHIR('Encounter', 'doWork', {
                 functionName: 'createNewEncounter',
                 functionParams: {
