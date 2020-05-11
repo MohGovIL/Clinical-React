@@ -151,7 +151,7 @@ const PatientDetailsBlock = ({
         }
         if (data.isEscorted) {
           let relatedPersonParams = {};
-          if (encounter.relatedPerson) {
+          if (encounterData.relatedPerson) {
             if (
               data.escortName !== relatedPerson.name &&
               data.escortMobilePhone !== relatedPerson.mobilePhone
