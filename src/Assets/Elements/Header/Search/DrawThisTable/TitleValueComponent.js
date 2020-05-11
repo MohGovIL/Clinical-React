@@ -1,9 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
 const TitleValueComponent = ({ name, value, searchParam, seperator }) => {
-  const handleChange = (event) => {
-    highlight(event);
-  };
   const isNumeric = (n) => {
     return !isNaN(parseFloat(n)) && isFinite(n);
   };
