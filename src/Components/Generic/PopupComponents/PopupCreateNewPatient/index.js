@@ -54,6 +54,7 @@ const PopupCreateNewPatient = ({
   const [patientManagingOrganizationValue, setPatientKupatHolim] = useState(0);
 
   const patientIdTypeMain = 'teudat_zehut';
+  const [selectedIdType, setSelectedIdType] = useState(0);
   const [formButtonSave, setFormButtonSave] = useState('write');
   const [formButtonCreatApp, setFormButtonCreatApp] = useState('view');
   const [formButtonPatientAdm, setFormButtonPatientAdm] = useState('view');
@@ -198,6 +199,10 @@ const PopupCreateNewPatient = ({
             options.push(normalizeFhirValueSet(status));
           }
           setIdTypesList(options);
+          let selectedIdType = options.find((obj) => {
+            return obj.code === patientIdTypeMain;
+          });
+          setPatientIdType(selectedIdType.code);
         });
       } catch (e) {
         console.log(e);
@@ -334,7 +339,8 @@ const PopupCreateNewPatient = ({
               if (
                 (!validateLuhnAlgorithm(patientIdNumber) &&
                   patientIdType === patientIdTypeMain) ||
-                !getOnlyNumbersRegexPattern().test(patientIdNumber)
+                !getOnlyNumbersRegexPattern().test(patientIdNumber) ||
+                  parseInt(patientIdNumber) === 0
               ) {
                 setError(
                   'identifier',
@@ -468,7 +474,6 @@ const PopupCreateNewPatient = ({
 
     clearIdNumberError();
     setFormButtonSave('write');
-    setPatientIdType(0);
     setPatientGender(0);
     setPatientKupatHolim(0);
     setPatientBirthDate(null);
@@ -784,7 +789,6 @@ const PopupCreateNewPatient = ({
                       disableToolbar: false,
                       label: t('birth day'),
                       value: patientBirthDate,
-                      //mask: { formatDate },
                       InputProps: {
                         autoComplete: 'off',
                       },
