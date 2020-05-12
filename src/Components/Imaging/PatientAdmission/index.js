@@ -20,11 +20,9 @@ const PatientAdmission = ({
   history,
 }) => {
   const reloadingWindow = (event) => {
-    event.returnValue = false;
-    return 'Leaving';
-    // var confirmationMessage = "\o/";
-    // event.returnValue = confirmationMessage;
-    // return confirmationMessage;
+    // event.returnValue = false;
+    event.persist();
+    deletingEncounter();
   };
 
   const deletingEncounter = async () => {
@@ -37,16 +35,6 @@ const PatientAdmission = ({
       });
     }
   };
-
-  useEffect(() => {
-    window.addEventListener('beforeunload', reloadingWindow);
-    window.addEventListener('unload', deletingEncounter);
-
-    return () => {
-      window.removeEventListener('beforeunload', reloadingWindow);
-      window.removeEventListener('unload', deletingEncounter);
-    };
-  });
 
   const { t } = useTranslation();
 
@@ -79,7 +67,7 @@ const PatientAdmission = ({
     if (isDirty) {
       setIsPopUpOpen(true);
     } else {
-      deletingEncounter()
+      deletingEncounter();
       history.push(`${baseRoutePath()}/imaging/patientTracking`);
     }
   };
@@ -101,7 +89,7 @@ const PatientAdmission = ({
   };
 
   const exitWithoutSavingHandler = () => {
-    deletingEncounter()
+    deletingEncounter();
     history.push(`${baseRoutePath()}/imaging/patientTracking`);
   };
 
