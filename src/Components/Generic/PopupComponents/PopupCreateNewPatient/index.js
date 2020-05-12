@@ -340,7 +340,7 @@ const PopupCreateNewPatient = ({
                 (!validateLuhnAlgorithm(patientIdNumber) &&
                   patientIdType === patientIdTypeMain) ||
                 !getOnlyNumbersRegexPattern().test(patientIdNumber) ||
-                  parseInt(patientIdNumber) === 0
+                parseInt(patientIdNumber) === 0
               ) {
                 setError(
                   'identifier',
@@ -768,10 +768,19 @@ const PopupCreateNewPatient = ({
                         if (
                           Moment(value, formatDate, true).isAfter() !== false
                         ) {
-                          return 'Should be entered date less than today';
+                          return t('Should be entered date less than today');
+                        }
+                        if (
+                          Moment(value, formatDate, true).isBefore(
+                            '1900-01-01',
+                          ) === true
+                        ) {
+                          return (
+                            t('Should be entered date more than') + '1900-01-01'
+                          );
                         }
                       } else {
-                        return 'Date is not in range';
+                        return t('Date is not in range');
                       }
                       return null;
                     },
@@ -782,6 +791,7 @@ const PopupCreateNewPatient = ({
                     PickerProps={{
                       id: 'standard-birthDate',
                       format: 'DD/MM/YYYY',
+                      minDate: new Date('1900-01-01'),
                       name: 'birthDate',
                       required: true,
                       onInvalid: handlerOnInvalidField,
@@ -804,9 +814,8 @@ const PopupCreateNewPatient = ({
                         : !errorRequired.birthDate
                         ? false
                         : true,
-                      //|| (!errorRequired.birthDate ? false : true)
                       helperText: errors.birthDate
-                        ? t(errors.birthDate.message)
+                        ? errors.birthDate.message
                         : errorRequired.birthDate
                         ? errorRequired.birthDate
                         : null,
