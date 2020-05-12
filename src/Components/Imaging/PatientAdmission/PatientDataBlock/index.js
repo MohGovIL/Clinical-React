@@ -29,9 +29,7 @@ import {
 import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-// import { updatePatientData } from 'Utils/Services/FhirAPI';
 import { StyledFormGroup } from 'Components/Imaging/PatientAdmission/PatientDetailsBlock/Style';
-// import { getOrganizationTypeKupatHolim } from 'Utils/Services/FhirAPI';
 import { normalizeValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
 import { connect } from 'react-redux';
 import { setPatientDataAfterSave } from 'Store/Actions/FhirActions/fhirActions';
@@ -79,7 +77,6 @@ const PatientDataBlock = ({
         data.birthDate = Moment(data.birthDate, formatDate).format(
           'YYYY-MM-DD',
         );
-        //const answer = await updatePatientData(patientData.id, data);
         const answer = await FHIR('Patient', 'doWork', {
           functionName: 'updatePatientData',
           functionParams: { patientData: patientData.id, data: data },
@@ -119,13 +116,6 @@ const PatientDataBlock = ({
 
   useEffect(() => {
     try {
-      // if (patientData.birthDate !== undefined) {
-      //   setPatientBirthDate(Moment(patientData.birthDate, 'YYYY-MM-DD'));
-      // } else {
-      //   setPatientBirthDate(null);
-      // }
-      // setValue("birthDate", patientBirthDate);
-
       setAvatarIcon(
         patientData.gender === 'male'
           ? maleIcon
@@ -146,7 +136,6 @@ const PatientDataBlock = ({
       let array = emptyArrayAll();
       (async () => {
         try {
-          //const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
           const {
             data: { entry: dataServiceType },
           } = await FHIR('Organization', 'doWork', {
@@ -167,7 +156,7 @@ const PatientDataBlock = ({
     } catch (e) {
       console.log(e);
     }
-  }, [patientData.id, patientData.birthDate]);
+  }, [patientData]);
 
   useEffect(() => {
     register({ name: 'healthManageOrganization' }, textFieldSelectNotEmptyRule);
@@ -193,6 +182,7 @@ const PatientDataBlock = ({
     );
   });
 
+  console.log(patientData);
   let patientInitialValues = {
     firstName: patientData.firstName || '',
     lastName: patientData.lastName || '',
