@@ -114,7 +114,7 @@ export const NormalCustomizedPopup = () => {
   );
 };
 
-export const PopUpOnExitStory = () => {
+export const PopupOnExit = () => {
   const lang_dir = select(
     'state.settings.lang_dir',
     { rtl: 'rtl', ltr: 'ltr' },
