@@ -39,6 +39,11 @@ import {
   getEmailRegexPattern,
 } from 'Utils/Helpers/validation/patterns';
 import { FHIR } from 'Utils/Services/FHIR';
+import {
+  setEncounterAndPatient,
+  setPatientAction,
+} from 'Store/Actions/ActiveActions';
+import { store } from '../../../../index';
 
 const PatientDataBlock = ({
   appointmentData,
@@ -81,10 +86,7 @@ const PatientDataBlock = ({
           functionName: 'updatePatientData',
           functionParams: { patientData: patientData.id, data: data },
         });
-        const patient = {
-          [patientData.id]: normalizeFhirPatient(answer.data),
-        };
-        setPatientDataAfterSave(patient);
+        store.dispatch(setPatientAction(normalizeFhirPatient(answer.data)));
       } catch (err) {
         console.log(err);
       }
@@ -156,7 +158,7 @@ const PatientDataBlock = ({
     } catch (e) {
       console.log(e);
     }
-  }, [patientData]);
+  }, [patientData.id, patientData.birthDate]);
 
   useEffect(() => {
     register({ name: 'healthManageOrganization' }, textFieldSelectNotEmptyRule);
@@ -182,7 +184,6 @@ const PatientDataBlock = ({
     );
   });
 
-  console.log(patientData);
   let patientInitialValues = {
     firstName: patientData.firstName || '',
     lastName: patientData.lastName || '',
