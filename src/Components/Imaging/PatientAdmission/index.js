@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import HeaderPatient from 'Assets/Elements/HeaderPatient';
 import { useTranslation } from 'react-i18next';
@@ -7,11 +7,10 @@ import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import PatientDataBlock from './PatientDataBlock';
 import PatientDetailsBlock from './PatientDetailsBlock';
 import { StyledPatientRow, StyledDummyBlock, StyledBackdrop } from './Style';
-
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
-import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 import { FHIR } from 'Utils/Services/FHIR';
+import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
 
 const PatientAdmission = ({
   patient,
@@ -20,6 +19,16 @@ const PatientAdmission = ({
   formatDate,
   history,
 }) => {
+  // const reloadingWindow = (event) => {
+  //   event.returnValue = false
+  //   return 'LOL';
+  //   // var confirmationMessage = "\o/";
+  //   // event.returnValue = confirmationMessage;
+  //   // return confirmationMessage;
+  // };
+
+  // window.addEventListener('beforeunload', reloadingWindow);
+
   const { t } = useTranslation();
 
   const [edit, setEdit] = useState(0);
@@ -93,28 +102,12 @@ const PatientAdmission = ({
 
   return (
     <React.Fragment>
-      <CustomizedPopup
-        title={t('Exit without saving')}
+      <PopUpOnExit
         isOpen={isPopUpOpen}
         onClose={onPopUpCloseHandler}
-        bottomButtons={[
-          {
-            color: 'primary',
-            label: 'Return',
-            variant: 'outlined',
-            onClickHandler: returnHandler,
-          },
-          {
-            color: 'primary',
-            label: 'Exit without saving',
-            variant: 'contained',
-            onClickHandler: exitWithoutSavingHandler,
-          },
-        ]}>
-        {t(
-          `You choose to exit without saving your changes. Would you like to continue?`,
-        )}
-      </CustomizedPopup>
+        returnFunction={returnHandler}
+        exitWithOutSavingFunction={exitWithoutSavingHandler}
+      />
       <HeaderPatient
         breadcrumbs={allBreadcrumbs}
         languageDirection={languageDirection}
