@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
-import PropTypes from 'prop-types';
 const PopUpOnExit = ({
   returnFunction,
   exitWithOutSavingFunction,
@@ -34,13 +33,6 @@ const PopUpOnExit = ({
       )}
     </CustomizedPopup>
   );
-};
-
-PopUpOnExit.propTypes = {
-  returnFunction: PropTypes.func,
-  exitWithOutSavingFunction: PropTypes.func,
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
 };
 
 export default PopUpOnExit;

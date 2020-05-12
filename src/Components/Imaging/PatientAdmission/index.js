@@ -19,15 +19,34 @@ const PatientAdmission = ({
   formatDate,
   history,
 }) => {
-  // const reloadingWindow = (event) => {
-  //   event.returnValue = false
-  //   return 'LOL';
-  //   // var confirmationMessage = "\o/";
-  //   // event.returnValue = confirmationMessage;
-  //   // return confirmationMessage;
-  // };
+  const reloadingWindow = (event) => {
+    event.returnValue = false;
+    return 'Leaving';
+    // var confirmationMessage = "\o/";
+    // event.returnValue = confirmationMessage;
+    // return confirmationMessage;
+  };
 
-  // window.addEventListener('beforeunload', reloadingWindow);
+  const deletingEncounter = async () => {
+    if (encounter.status === 'planned') {
+      await FHIR('Encounter', 'doWork', {
+        functionName: 'deleteEncounter',
+        functionParams: {
+          encounterId: encounter.id,
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', reloadingWindow);
+    window.addEventListener('unload', deletingEncounter);
+
+    return () => {
+      window.removeEventListener('beforeunload', reloadingWindow);
+      window.removeEventListener('unload', deletingEncounter);
+    };
+  });
 
   const { t } = useTranslation();
 
@@ -56,18 +75,11 @@ const PatientAdmission = ({
     },
   ];
 
-  const handleCloseClick = async () => {
+  const handleCloseClick = () => {
     if (isDirty) {
       setIsPopUpOpen(true);
     } else {
-      if (encounter.status === 'planned') {
-        await FHIR('Encounter', 'doWork', {
-          functionName: 'deleteEncounter',
-          functionParams: {
-            encounterId: encounter.id,
-          },
-        });
-      }
+      deletingEncounter()
       history.push(`${baseRoutePath()}/imaging/patientTracking`);
     }
   };
@@ -88,15 +100,8 @@ const PatientAdmission = ({
     setIsPopUpOpen(false);
   };
 
-  const exitWithoutSavingHandler = async () => {
-    if (encounter.status === 'planned') {
-      await FHIR('Encounter', 'doWork', {
-        functionName: 'deleteEncounter',
-        functionParams: {
-          encounterId: encounter.id,
-        },
-      });
-    }
+  const exitWithoutSavingHandler = () => {
+    deletingEncounter()
     history.push(`${baseRoutePath()}/imaging/patientTracking`);
   };
 
