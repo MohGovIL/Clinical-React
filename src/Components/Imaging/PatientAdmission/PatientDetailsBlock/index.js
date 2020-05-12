@@ -1454,7 +1454,6 @@ const PatientDetailsBlock = ({
                   name='selectTest'
                   inputRef={(e) => {
                     selectTestRef.current = e;
-                    register(e);
                   }}
                   error={requiredErrors.selectTest ? true : false}
                   helperText={
