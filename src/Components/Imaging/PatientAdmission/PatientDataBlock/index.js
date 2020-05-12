@@ -196,13 +196,17 @@ const PatientDataBlock = ({
 
   const handleUndoEdittingClick = () => {
     onEditButtonClick(0);
+    setHealthManageOrgId('');
     reset(patientInitialValues);
-    setPatientBirthDate(Moment(patientData.birthDate).format(formatDate));
+    setPatientBirthDate(Moment(patientData.birthDate, 'YYYY-MM-DD'));
     register({ name: 'healthManageOrganization' }, textFieldSelectNotEmptyRule);
-    register({ name: 'birthDate' });
+    register({
+      name: 'birthDate',
+      value: Moment(patientData.birthDate, 'YYYY-MM-DD'),
+    });
   };
 
-  const handleChangeKupatHolim = (event) => {
+  const handleHealthManageOrganization = (event) => {
     try {
       setValue('healthManageOrganization', event.target.value, true);
       setHealthManageOrgId(event.target.value);
@@ -320,7 +324,6 @@ const PatientDataBlock = ({
                       disableToolbar: false,
                       label: t('birth day'),
                       value: patientBirthDate,
-                      //mask: { formatDate },
                       InputProps: {
                         disableUnderline: edit_mode === 1 ? false : true,
                       },
@@ -351,9 +354,8 @@ const PatientDataBlock = ({
                 label={t('Kupat Cholim')}
                 required
                 select={edit_mode === 1 ? true : false}
-                onChange={handleChangeKupatHolim}
+                onChange={handleHealthManageOrganization}
                 SelectProps={{
-                  // onOpen: handleLoadListKupatHolim,
                   MenuProps: {
                     elevation: 0,
                     keepMounted: true,
