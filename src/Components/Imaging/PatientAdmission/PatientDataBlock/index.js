@@ -29,12 +29,9 @@ import {
 import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import { updatePatientData } from 'Utils/Services/FhirAPI';
-import {
-  StyledFormGroup,
-  StyledPatientDetails,
-} from 'Components/Imaging/PatientAdmission/PatientDetailsBlock/Style';
-import { getOrganizationTypeKupatHolim } from 'Utils/Services/FhirAPI';
+// import { updatePatientData } from 'Utils/Services/FhirAPI';
+import { StyledFormGroup } from 'Components/Imaging/PatientAdmission/PatientDetailsBlock/Style';
+// import { getOrganizationTypeKupatHolim } from 'Utils/Services/FhirAPI';
 import { normalizeValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
 import { connect } from 'react-redux';
 import { setPatientDataAfterSave } from 'Store/Actions/FhirActions/fhirActions';
@@ -61,17 +58,18 @@ const PatientDataBlock = ({
   const [patientIdentifier, setPatientIdentifier] = useState({});
   const [patientAge, setPatientAge] = useState(0);
   const [patientBirthDate, setPatientBirthDate] = useState(
-    Moment(new Date(patientData.birthDate)).toString() || '',
+    patientData.birthDate !== undefined
+      ? Moment(patientData.birthDate, 'YYYY-MM-DD')
+      : null,
   );
 
-  const [patientEncounter, setPatientEncounter] = useState(0);
   const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
   const [healthManageOrgId, setHealthManageOrgId] = useState('');
 
   const { register, control, errors, handleSubmit, reset, setValue } = useForm({
     mode: 'onBlur',
     defaultValues: {
-    //  birthDate: patientBirthDate,
+      birthDate: patientBirthDate,
     },
   });
 
@@ -121,6 +119,13 @@ const PatientDataBlock = ({
 
   useEffect(() => {
     try {
+      // if (patientData.birthDate !== undefined) {
+      //   setPatientBirthDate(Moment(patientData.birthDate, 'YYYY-MM-DD'));
+      // } else {
+      //   setPatientBirthDate(null);
+      // }
+      // setValue("birthDate", patientBirthDate);
+
       setAvatarIcon(
         patientData.gender === 'male'
           ? maleIcon
@@ -136,10 +141,6 @@ const PatientDataBlock = ({
           value: patientData.identifier,
         } || {},
       );
-      if (appointmentData !== undefined) {
-        //TO DO - in future use you need to change to encounterData
-        setPatientEncounter(appointmentData || 0);
-      }
 
       //It is necessary to get data from the server and fill the array.
       let array = emptyArrayAll();
@@ -173,7 +174,10 @@ const PatientDataBlock = ({
     register({ name: 'birthDate' });
   }, []);
 
-  if (patientKupatHolimList.length == 0 || patientData.birthDate.length == 0) {
+  if (
+    patientKupatHolimList.length === 0 ||
+    (patientData.birthDate && patientData.birthDate.length === 0)
+  ) {
     return null;
   }
 
@@ -218,11 +222,10 @@ const PatientDataBlock = ({
 
   const handleChangeBirthDate = (date) => {
     try {
-        if(date){
-            let newBirthDate = date.toString();
-            setValue('birthDate', date, true);
-            setPatientBirthDate(date);
-        }
+      if (date) {
+        setValue('birthDate', date, true);
+        setPatientBirthDate(date);
+      }
     } catch (e) {
       console.log('Error: ' + e);
     }
@@ -301,21 +304,20 @@ const PatientDataBlock = ({
                 name='birthDate'
                 control={control}
                 rules={{
-                    validate: {
-                        value: (value) => {
-
-                            if (Moment(value, formatDate, true).isValid() === true) {
-                                if (
-                                    Moment(value, formatDate, true).isAfter() !== false
-                                ) {
-                                    return 'Should be entered date less than today';
-                                }
-                            } else {
-                                return 'Date is not in range';
-                            }
-                            return null;
-                        },
+                  validate: {
+                    value: (value) => {
+                      if (Moment(value, formatDate, true).isValid() === true) {
+                        if (
+                          Moment(value, formatDate, true).isAfter() !== false
+                        ) {
+                          return 'Should be entered date less than today';
+                        }
+                      } else {
+                        return 'Date is not in range';
+                      }
+                      return null;
                     },
+                  },
                 }}
                 as={
                   <CustomizedDatePicker
