@@ -29,12 +29,7 @@ import {
 import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
 import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import { updatePatientData } from 'Utils/Services/FhirAPI';
-import {
-  StyledFormGroup,
-  StyledPatientDetails,
-} from 'Components/Imaging/PatientAdmission/PatientDetailsBlock/Style';
-import { getOrganizationTypeKupatHolim } from 'Utils/Services/FhirAPI';
+import { StyledFormGroup } from 'Components/Imaging/PatientAdmission/PatientDetailsBlock/Style';
 import { normalizeValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
 import { connect } from 'react-redux';
 import { setPatientDataAfterSave } from 'Store/Actions/FhirActions/fhirActions';
@@ -43,8 +38,12 @@ import {
   getCellPhoneRegexPattern,
   getEmailRegexPattern,
 } from 'Utils/Helpers/validation/patterns';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { FHIR } from 'Utils/Services/FHIR';
+import {
+  setEncounterAndPatient,
+  setPatientAction,
+} from 'Store/Actions/ActiveActions';
+import { store } from '../../../../index';
 
 const PatientDataBlock = ({
   appointmentData,
@@ -62,10 +61,11 @@ const PatientDataBlock = ({
   const [patientIdentifier, setPatientIdentifier] = useState({});
   const [patientAge, setPatientAge] = useState(0);
   const [patientBirthDate, setPatientBirthDate] = useState(
-    Moment(patientData.birthDate).format(formatDate) || '',
+    patientData.birthDate !== undefined
+      ? Moment(patientData.birthDate, 'YYYY-MM-DD')
+      : null,
   );
 
-  const [patientEncounter, setPatientEncounter] = useState(0);
   const [patientKupatHolimList, setPatientKupatHolimList] = useState([]);
   const [healthManageOrgId, setHealthManageOrgId] = useState('');
 
@@ -82,15 +82,11 @@ const PatientDataBlock = ({
         data.birthDate = Moment(data.birthDate, formatDate).format(
           'YYYY-MM-DD',
         );
-        //const answer = await updatePatientData(patientData.id, data);
         const answer = await FHIR('Patient', 'doWork', {
           functionName: 'updatePatientData',
           functionParams: { patientData: patientData.id, data: data },
         });
-        const patient = {
-          [patientData.id]: normalizeFhirPatient(answer.data),
-        };
-        setPatientDataAfterSave(patient);
+        store.dispatch(setPatientAction(normalizeFhirPatient(answer.data)));
       } catch (err) {
         console.log(err);
       }
@@ -137,16 +133,11 @@ const PatientDataBlock = ({
           value: patientData.identifier,
         } || {},
       );
-      if (appointmentData !== undefined) {
-        //TO DO - in future use you need to change to encounterData
-        setPatientEncounter(appointmentData || 0);
-      }
 
       //It is necessary to get data from the server and fill the array.
       let array = emptyArrayAll();
       (async () => {
         try {
-          //const {data: {entry: dataServiceType}} = await getOrganizationTypeKupatHolim();
           const {
             data: { entry: dataServiceType },
           } = await FHIR('Organization', 'doWork', {
@@ -174,7 +165,10 @@ const PatientDataBlock = ({
     register({ name: 'birthDate' });
   }, []);
 
-  if (patientKupatHolimList.length == 0 || patientData.birthDate.length == 0) {
+  if (
+    patientKupatHolimList.length === 0 ||
+    (patientData.birthDate && patientData.birthDate.length === 0)
+  ) {
     return null;
   }
 
@@ -202,13 +196,17 @@ const PatientDataBlock = ({
 
   const handleUndoEdittingClick = () => {
     onEditButtonClick(0);
+    setHealthManageOrgId('');
     reset(patientInitialValues);
-    setPatientBirthDate(Moment(patientData.birthDate).format(formatDate));
+    setPatientBirthDate(Moment(patientData.birthDate, 'YYYY-MM-DD'));
     register({ name: 'healthManageOrganization' }, textFieldSelectNotEmptyRule);
-    register({ name: 'birthDate' });
+    register({
+      name: 'birthDate',
+      value: Moment(patientData.birthDate, 'YYYY-MM-DD'),
+    });
   };
 
-  const handleChangeKupatHolim = (event) => {
+  const handleHealthManageOrganization = (event) => {
     try {
       setValue('healthManageOrganization', event.target.value, true);
       setHealthManageOrgId(event.target.value);
@@ -219,9 +217,10 @@ const PatientDataBlock = ({
 
   const handleChangeBirthDate = (date) => {
     try {
-      let newBirthDate = date.format(formatDate).toString();
-      setValue('birthDate', newBirthDate, true);
-      setPatientBirthDate(newBirthDate);
+      if (date) {
+        setValue('birthDate', date, true);
+        setPatientBirthDate(date);
+      }
     } catch (e) {
       console.log('Error: ' + e);
     }
@@ -301,8 +300,18 @@ const PatientDataBlock = ({
                 control={control}
                 rules={{
                   validate: {
-                    value: (value) =>
-                      Moment(value, formatDate, true).isValid() === true,
+                    value: (value) => {
+                      if (Moment(value, formatDate, true).isValid() === true) {
+                        if (
+                          Moment(value, formatDate, true).isAfter() !== false
+                        ) {
+                          return 'Should be entered date less than today';
+                        }
+                      } else {
+                        return 'Date is not in range';
+                      }
+                      return null;
+                    },
                   },
                 }}
                 as={
@@ -314,8 +323,7 @@ const PatientDataBlock = ({
                       required: true,
                       disableToolbar: false,
                       label: t('birth day'),
-                      inputValue: patientBirthDate,
-                      mask: { formatDate },
+                      value: patientBirthDate,
                       InputProps: {
                         disableUnderline: edit_mode === 1 ? false : true,
                       },
@@ -328,7 +336,7 @@ const PatientDataBlock = ({
                       autoOk: true,
                       error: errors.birthDate ? true : false,
                       helperText: errors.birthDate
-                        ? t('Date must be in a date format')
+                        ? t(errors.birthDate.message)
                         : null,
                     }}
                     CustomizedProps={{
@@ -346,9 +354,8 @@ const PatientDataBlock = ({
                 label={t('Kupat Cholim')}
                 required
                 select={edit_mode === 1 ? true : false}
-                onChange={handleChangeKupatHolim}
+                onChange={handleHealthManageOrganization}
                 SelectProps={{
-                  // onOpen: handleLoadListKupatHolim,
                   MenuProps: {
                     elevation: 0,
                     keepMounted: true,

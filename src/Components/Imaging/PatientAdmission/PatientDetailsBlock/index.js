@@ -1758,7 +1758,7 @@ const PatientDetailsBlock = ({
                       setPopUpReferenceFile('Referral');
                       onDeletePopUp(event);
                     }}
-                    onClick={() => onClickFileHandler(referralRef)}
+                    onClick={(event) => onClickFileHandler(event, referralRef)}
                   />
                 ) : (
                   <label htmlFor='referral'>
@@ -1817,7 +1817,7 @@ const PatientDetailsBlock = ({
                       setPopUpReferenceFile('Commitment');
                       onDeletePopUp(event);
                     }}
-                    onClick={() => onClickFileHandler(commitmentRef)}
+                    onClick={(event) => onClickFileHandler(event, commitmentRef)}
                   />
                 ) : (
                   <label htmlFor='commitment'>
@@ -1875,8 +1875,8 @@ const PatientDetailsBlock = ({
                           );
                           onDeletePopUp(event);
                         }}
-                        onClick={() =>
-                          onClickFileHandler(additionalDocumentRef)
+                        onClick={(event) =>
+                          onClickFileHandler(event, additionalDocumentRef)
                         }
                       />
                     ) : (

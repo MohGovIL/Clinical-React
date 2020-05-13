@@ -104,7 +104,7 @@ const PatientAdmission = ({
       />
       <StyledPatientRow>
         <StyledBackdrop open={true} edit_mode={edit}>
-          {Object.values(patient).length &&
+          {Object.values(patient).length > 0 &&
             Object.values(encounter).length > 0 && (
               <PatientDataBlock
                 patientData={patient}
