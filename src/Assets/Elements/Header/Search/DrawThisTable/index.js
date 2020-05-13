@@ -307,7 +307,9 @@ const DrawThisTable = ({
               key={'PopUp' + patientIndex}
               popupOpen={popUpAppointmentsPerPatient}
               content={appointmentPopUpData}
-              handlePopupClose={handlePopupClose}></PopAppointmentsPerPatient>
+              handlePopupClose={handlePopupClose}
+              authorization={authorization}
+            ></PopAppointmentsPerPatient>
             <StyledExpansionPanel
               key={'ExpansionPanel_' + patientIndex}
               expanded={expanded === 'panel' + patientIndex}

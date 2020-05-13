@@ -28,6 +28,7 @@ const AppointmentsAndEncountersTables = ({
   prevEncounters,
   patientTrackingStatuses,
   encounterStatuses,
+  authorization,
 }) => {
   const { t } = useTranslation();
   // eslint-disable-next-line
@@ -238,6 +239,7 @@ const AppointmentsAndEncountersTables = ({
                       </TableCell>
                       <TableCell align='right'>
                         <StyledHrefTableButton
+                         disabled = {authorization.encounterSheet !== "view" && authorization.encounterSheet !== "write" }
                           size={'small'}
                           variant='outlined'
                           color='primary'
@@ -247,6 +249,7 @@ const AppointmentsAndEncountersTables = ({
                       </TableCell>
                       <TableCell align='right'>
                         <StyledHrefTableButton
+                         disabled = {authorization.patientAdmission !== "view" && authorization.patientAdmission !== "write" }
                           size={'large'}
                           variant='outlined'
                           color='primary'
@@ -277,6 +280,7 @@ const AppointmentsAndEncountersTables = ({
         <StyledHeaderTableAppointment>
           {t('Future appointments')}
           <StyledHrefButton
+            /*disable = {authorization.createNewAppointment !== "view" && authorization.createNewAppointment !== "write" }*/
             size={'small'}
             variant='contained'
             color='primary'
@@ -345,6 +349,7 @@ const AppointmentsAndEncountersTables = ({
                         </TableCell>
                         <TableCell align='right'>
                           <StyledHrefTableButton
+                           disabled = {authorization.appointmentDetails !== "view" && authorization.appointmentDetails !== "write" }
                             size={'small'}
                             variant='outlined'
                             color='primary'
@@ -354,6 +359,7 @@ const AppointmentsAndEncountersTables = ({
                         </TableCell>
                         <TableCell align='right'>
                           <StyledHrefTableButton
+                            /*disable = {authorization.cancelAppointment !== "view" && authorization.cancelAppointment !== "write" }*/
                             size={'large'}
                             variant='outlined'
                             color='primary'
@@ -453,6 +459,7 @@ const AppointmentsAndEncountersTables = ({
                         </TableCell>
                         <TableCell align='right'>
                           <StyledHrefTableButton
+                           disabled = {authorization.encounterSheet !== "view" && authorization.encounterSheet !== "write" }
                             size={'small'}
                             variant='outlined'
                             color='primary'
@@ -463,6 +470,7 @@ const AppointmentsAndEncountersTables = ({
                         <TableCell align='right'>
                           {encounter.status === 'finished' ? (
                             <StyledHrefTableButton
+                              /*disable = {authorization.sendResult !== "view" && authorization.sendResult !== "write" }*/
                               size={'large'}
                               variant='outlined'
                               color='primary'
