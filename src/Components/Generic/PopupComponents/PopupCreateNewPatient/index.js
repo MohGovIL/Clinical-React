@@ -44,16 +44,16 @@ const PopupCreateNewPatient = ({
   const [idTypesList, setIdTypesList] = useState([]);
   const [genderList, setGenderList] = useState([]);
   const [kupatHolimList, setKupatHolimList] = useState([]);
+  const patientIdTypeMain = 'teudat_zehut';
 
   const [patientData, setPatientData] = useState([]);
   const [patientIdentifier, setPatientIdentifier] = useState(0);
   const [patientIdNumber, setPatientIdNumber] = useState('');
   const [patientGender, setPatientGender] = useState(0);
-  const [patientIdType, setPatientIdType] = useState(0);
+  const [patientIdType, setPatientIdType] = useState(patientIdTypeMain);
   const [patientBirthDate, setPatientBirthDate] = useState(null);
   const [patientManagingOrganizationValue, setPatientKupatHolim] = useState(0);
 
-  const patientIdTypeMain = 'teudat_zehut';
   const [selectedIdType, setSelectedIdType] = useState(0);
   const [formButtonSave, setFormButtonSave] = useState('write');
   const [formButtonCreatApp, setFormButtonCreatApp] = useState('view');
@@ -67,6 +67,8 @@ const PopupCreateNewPatient = ({
     lastName: false,
     mobileCellPhone: false,
     email: false,
+    gender: false,
+    managingOrganization: false,
   });
 
   const [errorIdNumber, setErrorIdNumber] = useState(false);
@@ -116,10 +118,12 @@ const PopupCreateNewPatient = ({
     triggerValidation,
     setValue,
     getValues,
-    formState,
   } = useForm({
     mode: 'onChange',
     validateCriteriaMode: 'all',
+    defaultValues: {
+      identifierType: patientIdTypeMain,
+    },
   });
 
   const onSubmit = (patient, e) => {
@@ -202,7 +206,9 @@ const PopupCreateNewPatient = ({
           let selectedIdType = options.find((obj) => {
             return obj.code === patientIdTypeMain;
           });
-          setPatientIdType(selectedIdType.code);
+          if (selectedIdType.code !== 0) {
+            setValue('identifierType', selectedIdType.code);
+          }
         });
       } catch (e) {
         console.log(e);
@@ -331,6 +337,8 @@ const PopupCreateNewPatient = ({
                 firstName: false,
                 lastName: false,
                 mobileCellPhone: false,
+                gender: false,
+                managingOrganization: false,
               });
               setFormButtonSave('view');
               setFormButtonCreatApp('write');
@@ -376,6 +384,10 @@ const PopupCreateNewPatient = ({
     try {
       setValue('gender', event.target.value, true);
       setPatientGender(event.target.value);
+      setErrorRequired({
+        ...errorRequired,
+        gender: false,
+      });
     } catch (e) {
       console.log('Error: ' + e);
     }
@@ -385,6 +397,10 @@ const PopupCreateNewPatient = ({
     try {
       setValue('managingOrganization', event.target.value, true);
       setPatientKupatHolim(event.target.value);
+      setErrorRequired({
+        ...errorRequired,
+        managingOrganization: false,
+      });
     } catch (e) {
       console.log('Error: ' + e);
     }
@@ -398,6 +414,16 @@ const PopupCreateNewPatient = ({
     clearError('identifier');
     setErrorIdNumber(false);
     setErrorIdNumberText('');
+    setErrorRequired({
+      ...errorRequired,
+      birthDate: false,
+      identifier: false,
+      firstName: false,
+      lastName: false,
+      mobileCellPhone: false,
+      gender: false,
+      managingOrganization: false,
+    });
   };
 
   const patientAdmissionAction = () => {
@@ -478,9 +504,15 @@ const PopupCreateNewPatient = ({
     setPatientKupatHolim(0);
     setPatientBirthDate(null);
 
-    register({ name: 'identifierType' }, textFieldSelectNotEmptyRule);
+    register(
+      { name: 'identifierType', value: patientIdType },
+      textFieldSelectNotEmptyRule,
+    );
     register({ name: 'gender' }, textFieldSelectNotEmptyRule);
-    register({ name: 'managingOrganization' }, textFieldSelectNotEmptyRule);
+    register(
+      { name: 'managingOrganization' },
+      managingOrganizationSelectNotEmptyRule,
+    );
 
     setAlertDuringSave({
       ...alertDuringSave,
@@ -526,13 +558,23 @@ const PopupCreateNewPatient = ({
     event.preventDefault();
     event.target.setCustomValidity('');
     let field = event.target.name;
-
+    let fieldIsRequired = t('Value is required');
+    let fieldWithError = false;
     if (field == 'identifier') {
-      setErrorIdNumberText(t('Value is required'));
+      setErrorIdNumberText(fieldIsRequired);
+    }
+    //manual checking for select type fields: identifierType, gender, managingOrganization.
+    for (let [key, value] of Object.entries(errorRequired)) {
+      if (value !== false) fieldWithError = true;
     }
     setErrorRequired({
       ...errorRequired,
-      [field]: !event.target.validity.valid ? t('Value is required') : false,
+      [field]: !event.target.validity.valid ? fieldIsRequired : false,
+      gender: patientGender === 0 && fieldWithError ? fieldIsRequired : false,
+      managingOrganization:
+        patientManagingOrganizationValue === 0 && fieldWithError
+          ? fieldIsRequired
+          : false,
     });
   };
 
@@ -630,8 +672,16 @@ const PopupCreateNewPatient = ({
                     },
                   },
                 }}
-                error={errors.gender ? true : false}
-                helperText={errors.gender ? t('is a required field.') : null}
+                error={
+                  errors.gender ? true : !errorRequired.gender ? false : true
+                }
+                helperText={
+                  errors.gender
+                    ? t('Value is required')
+                    : !errorRequired.gender
+                    ? null
+                    : errorRequired.gender
+                }
                 InputProps={{
                   endAdornment: errors.gender && (
                     <InputAdornment position='end'>
@@ -670,9 +720,19 @@ const PopupCreateNewPatient = ({
                     },
                   },
                 }}
-                error={errors.managingOrganization ? true : false}
+                error={
+                  errors.managingOrganization
+                    ? true
+                    : !errorRequired.managingOrganization
+                    ? false
+                    : true
+                }
                 helperText={
-                  errors.managingOrganization ? t('is a required field.') : null
+                  errors.managingOrganization
+                    ? t('Value is required')
+                    : !errorRequired.managingOrganization
+                    ? null
+                    : errorRequired.managingOrganization
                 }
                 InputProps={{
                   endAdornment: errors.managingOrganization && (
@@ -716,7 +776,7 @@ const PopupCreateNewPatient = ({
                 }}
                 error={errors.identifierType ? true : false}
                 helperText={
-                  errors.identifierType ? t('is a required field.') : null
+                  errors.identifierType ? t('Value is required') : null
                 }
                 InputProps={{
                   endAdornment: errors.identifierType && (
