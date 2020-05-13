@@ -19,7 +19,7 @@ const Routes = ({ isAuth }) => {
         />
         <PrivateRoute
           exact
-          path={`${baseRoutePath()}/:clinikal_vertical/:page`}
+          path={`${baseRoutePath()}/:subRoute/:page`}
           component={InitApp}
           isAuth={isAuth}
         />
