@@ -6,6 +6,10 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
 import { useTranslation } from 'react-i18next';
 import firstRouteMapper from 'Utils/Helpers/firstRouteMapper';
+import StyledEncounterSheet from './Style';
+import PatientDataBlock from './PatientDataBlock';
+import PatientBackground from './PatientBackground';
+import PatientFiles from './PatientFiles';
 
 const EncounterSheet = ({
   patient,
@@ -38,13 +42,20 @@ const EncounterSheet = ({
   const handleCloseClick = () => {
     history.push(`${firstRouteMapper(verticalName)}`);
   };
-  
+
   return (
-    <HeaderPatient
-      breadcrumbs={allBreadcrumbs}
-      languageDirection={languageDirection}
-      onCloseClick={handleCloseClick}
-    />
+    <React.Fragment>
+      <HeaderPatient
+        breadcrumbs={allBreadcrumbs}
+        languageDirection={languageDirection}
+        onCloseClick={handleCloseClick}
+      />
+      <StyledEncounterSheet>
+        <PatientDataBlock />
+        <PatientBackground />
+        <PatientFiles />
+      </StyledEncounterSheet>
+    </React.Fragment>
   );
 };
 
