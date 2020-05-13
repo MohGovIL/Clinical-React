@@ -64,6 +64,7 @@ const PatientDetailsBlock = ({
   edit_mode,
   encounterData,
   formatDate,
+  setIsDirty,
 }) => {
   const { t } = useTranslation();
   let history = useHistory();
@@ -78,7 +79,12 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
+  // Giving the patientAdmission if the form is dirty
+  // meaning that there has been changes in the form
   const { dirty } = formState;
+  useEffect(() => {
+    setIsDirty(dirty);
+  }, [dirty, setIsDirty]);
   //Sending the form
   const [requiredErrors, setRequiredErrors] = useState({
     selectTest: '',
@@ -145,7 +151,7 @@ const PatientDetailsBlock = ({
         }
         if (data.isEscorted) {
           let relatedPersonParams = {};
-          if (encounter.relatedPerson) {
+          if (encounterData.relatedPerson) {
             if (
               data.escortName !== relatedPerson.name &&
               data.escortMobilePhone !== relatedPerson.mobilePhone
@@ -1448,7 +1454,6 @@ const PatientDetailsBlock = ({
                   name='selectTest'
                   inputRef={(e) => {
                     selectTestRef.current = e;
-                    register(e);
                   }}
                   error={requiredErrors.selectTest ? true : false}
                   helperText={
@@ -1535,8 +1540,6 @@ const PatientDetailsBlock = ({
                   }
                   as={
                     <StyledTextField
-                      name='commitmentAndPaymentReferenceForPaymentCommitment'
-                      inputRef={register()}
                       label={`${t('Reference for payment commitment')} *`}
                       id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                       type='number'
@@ -1572,7 +1575,6 @@ const PatientDetailsBlock = ({
                         variant='inline'
                         allowKeyboardControl={true}
                         format={formatDate}
-                        // mask={'__/__/____'}
                         margin='normal'
                         id='commitmentAndPaymentCommitmentDate'
                         label={`${t('Commitment date')} *`}
@@ -1616,7 +1618,6 @@ const PatientDetailsBlock = ({
                         allowKeyboardControl={true}
                         autoOk
                         variant='inline'
-                        // mask={formatDate}
                         format={formatDate}
                         margin='normal'
                         id='commitmentAndPaymentCommitmentValidity'
@@ -1657,8 +1658,6 @@ const PatientDetailsBlock = ({
                   }
                   as={
                     <StyledTextField
-                      // name='commitmentAndPaymentDoctorsName'
-                      inputRef={register()}
                       label={`${t('Doctors name')} *`}
                       id={'commitmentAndPaymentDoctorsName'}
                       error={
@@ -1684,8 +1683,6 @@ const PatientDetailsBlock = ({
                   }
                   as={
                     <StyledTextField
-                      // name='commitmentAndPaymentDoctorsLicense'
-                      inputRef={register()}
                       label={`${t('Doctors license')} *`}
                       id={'commitmentAndPaymentDoctorsLicense'}
                       type='number'
@@ -1757,17 +1754,10 @@ const PatientDetailsBlock = ({
                     htmlFor='referral'
                     label={referralFile.name}
                     size={referralFile.size}
-                    onDelete={
-                      (event) => {
-                        setPopUpReferenceFile('Referral');
-                        onDeletePopUp(event);
-                      }
-                      // onDeleteFileHandler(
-                      //   referralRef,
-                      //   setReferralFile,
-                      //   'Referral',
-                      // )
-                    }
+                    onDelete={(event) => {
+                      setPopUpReferenceFile('Referral');
+                      onDeletePopUp(event);
+                    }}
                     onClick={(event) => onClickFileHandler(event, referralRef)}
                   />
                 ) : (
@@ -1823,20 +1813,11 @@ const PatientDetailsBlock = ({
                     htmlFor='commitment'
                     label={commitmentFile.name}
                     size={commitmentFile.size}
-                    onDelete={
-                      (event) => {
-                        setPopUpReferenceFile('Commitment');
-                        onDeletePopUp(event);
-                      }
-                      // onDeleteFileHandler(
-                      //   commitmentRef,
-                      //   setCommitmentFile,
-                      //   'Commitment',
-                      // )
-                    }
-                    onClick={(event) =>
-                      onClickFileHandler(event, commitmentRef)
-                    }
+                    onDelete={(event) => {
+                      setPopUpReferenceFile('Commitment');
+                      onDeletePopUp(event);
+                    }}
+                    onClick={(event) => onClickFileHandler(event, commitmentRef)}
                   />
                 ) : (
                   <label htmlFor='commitment'>
@@ -1888,19 +1869,12 @@ const PatientDetailsBlock = ({
                         htmlFor='additionalDocument'
                         label={additionalDocumentFile.name}
                         size={additionalDocumentFile.size}
-                        onDelete={
-                          (event) => {
-                            setPopUpReferenceFile(
-                              nameOfAdditionalDocumentFile || 'Document1',
-                            );
-                            onDeletePopUp(event);
-                          }
-                          // onDeleteFileHandler(
-                          //   additionalDocumentRef,
-                          //   setAdditionalDocumentFile,
-                          //   nameOfAdditionalDocumentFile || 'Document1',
-                          // )
-                        }
+                        onDelete={(event) => {
+                          setPopUpReferenceFile(
+                            nameOfAdditionalDocumentFile || 'Document1',
+                          );
+                          onDeletePopUp(event);
+                        }}
                         onClick={(event) =>
                           onClickFileHandler(event, additionalDocumentRef)
                         }
