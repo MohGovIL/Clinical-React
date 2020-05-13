@@ -652,7 +652,7 @@ const PopupCreateNewPatient = ({
                 id='standard-gender'
                 name='gender'
                 value={patientGender}
-                label={t('Sex')}
+                label={t('Gender')}
                 required
                 select
                 onChange={handleGenderChange}
