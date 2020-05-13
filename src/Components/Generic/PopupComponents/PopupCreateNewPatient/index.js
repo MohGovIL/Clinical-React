@@ -44,7 +44,7 @@ const PopupCreateNewPatient = ({
   const [idTypesList, setIdTypesList] = useState([]);
   const [genderList, setGenderList] = useState([]);
   const [kupatHolimList, setKupatHolimList] = useState([]);
-  const patientIdTypeMain = 'teudat_zehut';
+  const [patientIdTypeMain, setPatientIdTypeMain] = useState('teudat_zehut');
 
   const [patientData, setPatientData] = useState([]);
   const [patientIdentifier, setPatientIdentifier] = useState(0);
@@ -54,7 +54,9 @@ const PopupCreateNewPatient = ({
   const [patientBirthDate, setPatientBirthDate] = useState(null);
   const [patientManagingOrganizationValue, setPatientKupatHolim] = useState(0);
 
-  const [selectedIdType, setSelectedIdType] = useState(0);
+  const [patientWasFound, setPatientWasFound] = useState(false);
+
+  //const [selectedIdType, setSelectedIdType] = useState(0);
   const [formButtonSave, setFormButtonSave] = useState('write');
   const [formButtonCreatApp, setFormButtonCreatApp] = useState('view');
   const [formButtonPatientAdm, setFormButtonPatientAdm] = useState('view');
@@ -329,6 +331,8 @@ const PopupCreateNewPatient = ({
               setErrorIdNumber(true);
               setErrorIdNumberText(t(errors?.identifier?.message));
 
+              setPatientWasFound(true);
+
               //clear required error
               setErrorRequired({
                 ...errorRequired,
@@ -359,6 +363,24 @@ const PopupCreateNewPatient = ({
                 setErrorIdNumberText(t(errors?.identifier?.message));
                 setFormButtonSave('write');
               } else {
+                if (patientWasFound) {
+                  //we will need to make this after reset of react-hook-form
+                  let nullValues = [
+                    { identifier: patientIdNumber },
+                    { gender: 0 },
+                    { managingOrganization: 0 },
+                    { birthDate: null },
+                    { lastName: '' },
+                    { firstName: '' },
+                    { mobileCellPhone: '' },
+                    { email: '' },
+                  ];
+                  setValue(nullValues);
+                  setPatientGender(0);
+                  setPatientKupatHolim(0);
+                  setPatientBirthDate(null);
+                  setPatientWasFound(false);
+                }
                 clearIdNumberError();
                 setFormButtonSave('write');
               }
@@ -505,9 +527,11 @@ const PopupCreateNewPatient = ({
     setPatientBirthDate(null);
 
     register(
-      { name: 'identifierType', value: patientIdType },
+      { name: 'identifierType', value: patientIdTypeMain},
       textFieldSelectNotEmptyRule,
     );
+    setPatientIdType(patientIdTypeMain);
+
     register({ name: 'gender' }, textFieldSelectNotEmptyRule);
     register(
       { name: 'managingOrganization' },
