@@ -33,6 +33,7 @@ export const invitedTabActiveFunction = async function (
   setTabs,
   history,
   selectFilter,
+  setIsPopUpOpen,
 ) {
   try {
     //const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
@@ -88,6 +89,7 @@ export const invitedTabActiveFunction = async function (
         options,
         history,
         this.mode,
+        setIsPopUpOpen,
       );
       setTable(table);
     }
@@ -180,6 +182,7 @@ const setPatientDataInvitedTableRows = (
   options,
   history,
   mode,
+  setIsPopUpOpen,
 ) => {
   /* console.log("mode 1 = "+ mode);*/
   let result = [];
@@ -219,23 +222,33 @@ const setPatientDataInvitedTableRows = (
                 `#${appointment.patient}`
               ];
               // const encounterData = await createNewEncounter(appointment ,store.getState().settings.facility)
-              const encounterData = await FHIR('Encounter', 'doWork', {
-                functionName: 'createNewEncounter',
+              const plannedEncounter = await FHIR('Encounter', 'doWork', {
+                functionName: 'searchEncounter',
                 functionParams: {
-                  appointment: appointment,
-                  facility: store.getState().settings.facility,
+                  appointment: appointment.id,
+                  status: 'planned',
                 },
               });
-
-              store.dispatch(
-                setEncounterAndPatient(
-                  normalizeFhirEncounter(encounterData.data),
-                  patient,
-                ),
-              );
-              history.push({
-                pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-              });
+              if (plannedEncounter.data.total === 0) {
+                const encounterData = await FHIR('Encounter', 'doWork', {
+                  functionName: 'createNewEncounter',
+                  functionParams: {
+                    appointment: appointment,
+                    facility: store.getState().settings.facility,
+                  },
+                });
+                store.dispatch(
+                  setEncounterAndPatient(
+                    normalizeFhirEncounter(encounterData.data),
+                    patient,
+                  ),
+                );
+                history.push({
+                  pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                });
+              }else {
+                  setIsPopUpOpen(true);
+              }
             },
             mode: moment(appointment.startTime).isSame(
               moment(new Date()),

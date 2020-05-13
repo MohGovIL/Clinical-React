@@ -41,12 +41,12 @@ const AppointmentsPerPatient = ({
   const getAppointmentWithTimeOrNot = (nextAppointmentEntry) => {
     let isThisAppToday =
       moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY') ===
-      moment().format('DD/MM/YYYY')
+      moment().utc().format('DD/MM/YYYY')
         ? true
         : false;
     return isThisAppToday
-      ? moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY HH:mm')
-      : moment().format('DD/MM/YYYY');
+      ? `${t('Today')} ${moment.utc(nextAppointmentEntry.startTime).format('HH:mm')}`
+      : moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY');
   };
   if (curEncounter.data && curEncounter.data.total > 0) {
     let entry = curEncounter.data.entry;

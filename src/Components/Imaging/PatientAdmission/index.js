@@ -19,11 +19,6 @@ const PatientAdmission = ({
   formatDate,
   history,
 }) => {
-  const reloadingWindow = (event) => {
-    // event.returnValue = false;
-    event.persist();
-    deletingEncounter();
-  };
 
   const deletingEncounter = async () => {
     if (encounter.status === 'planned') {
