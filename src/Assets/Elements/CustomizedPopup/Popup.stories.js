@@ -12,6 +12,7 @@ import {
 import { store } from '../../../index';
 import ProviderWrapper from '../../../../.storybook/Provider';
 import { Button, Typography } from '@material-ui/core';
+import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
 
 export default {
   title: 'Popup',
@@ -110,5 +111,36 @@ export const NormalCustomizedPopup = () => {
         )}
       </CustomizedPopup>
     </>
+  );
+};
+
+export const PopupOnExit = () => {
+  const lang_dir = select(
+    'state.settings.lang_dir',
+    { rtl: 'rtl', ltr: 'ltr' },
+    'rtl',
+  );
+  const [popupOpen, setPopupOpen] = React.useState(false);
+
+  const handlePopupOpen = () => {
+    setPopupOpen(true);
+  };
+  const handlePopupClose = () => {
+    setPopupOpen(false);
+  };
+  store.getState().settings.lang_dir = lang_dir
+  return (
+    <React.Fragment>
+      <GlobalStyle language_direction={lang_dir} />
+      <Button variant='outlined' color='primary' onClick={handlePopupOpen}>
+        Open dialog
+      </Button>
+      <PopUpOnExit
+        isOpen={popupOpen}
+        isClose={handlePopupClose}
+        returnFunction={handlePopupClose}
+        exitWithOutSavingFunction={handlePopupClose}
+      />
+    </React.Fragment>
   );
 };
