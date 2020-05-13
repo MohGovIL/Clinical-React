@@ -34,9 +34,11 @@ const EncounterSheet = ({
       url: '#',
     },
   ];
+
   const handleCloseClick = () => {
     history.push(`${firstRouteMapper(verticalName)}`);
   };
+  
   return (
     <HeaderPatient
       breadcrumbs={allBreadcrumbs}
