@@ -139,10 +139,6 @@ const Search = ({ languageDirection }) => {
     );
   }
   const handleOnClickAway = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-
     if (popupNewPatient || popupApppointmentsAndEncounters) {
       //if popupNePatientisOpen - there is an issue with material ui when clicking on TextField
       //it is clicking on the Body - https://stackoverflow.com/questions/58686204/cant-get-event-target-value-using-select-item-from-material-ui-autocomplete-with
