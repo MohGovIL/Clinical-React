@@ -1768,7 +1768,7 @@ const PatientDetailsBlock = ({
                       //   'Referral',
                       // )
                     }
-                    onClick={() => onClickFileHandler(referralRef)}
+                    onClick={(event) => onClickFileHandler(event, referralRef)}
                   />
                 ) : (
                   <label htmlFor='referral'>
@@ -1834,7 +1834,9 @@ const PatientDetailsBlock = ({
                       //   'Commitment',
                       // )
                     }
-                    onClick={() => onClickFileHandler(commitmentRef)}
+                    onClick={(event) =>
+                      onClickFileHandler(event, commitmentRef)
+                    }
                   />
                 ) : (
                   <label htmlFor='commitment'>
@@ -1899,8 +1901,8 @@ const PatientDetailsBlock = ({
                           //   nameOfAdditionalDocumentFile || 'Document1',
                           // )
                         }
-                        onClick={() =>
-                          onClickFileHandler(additionalDocumentRef)
+                        onClick={(event) =>
+                          onClickFileHandler(event, additionalDocumentRef)
                         }
                       />
                     ) : (
