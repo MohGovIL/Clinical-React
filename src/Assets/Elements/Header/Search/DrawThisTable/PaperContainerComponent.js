@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyledPaperContainer } from '../Style';
+import { StyledPaper, StyledPaperContainer } from '../Style';
 import DrawThisTable from './index';
 
 const PaperContainerComponent = ({
   result,
   searchParam,
   setPopupApppointmentsAndEncounters,
+  authorization,
 }) => {
   const [height, setHeight] = useState(0);
   const [maxHeight, setMaxHeight] = useState(0);
@@ -29,6 +30,7 @@ const PaperContainerComponent = ({
       height={height}
       maxHeight={maxHeight}>
       <DrawThisTable
+        authorization={authorization}
         key={searchParam + '_DrawThisTable'}
         result={result}
         searchParam={searchParam}

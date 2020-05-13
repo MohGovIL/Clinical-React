@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import PaperContainerComponent from './DrawThisTable/PaperContainerComponent';
 import { FHIR } from 'Utils/Services/FHIR';
 import PopupCreateNewPatient from 'Components/Generic/PopupComponents/PopupCreateNewPatient';
+import isAllowed from '../../../../Utils/Helpers/isAllowed';
 
 const Search = ({ languageDirection }) => {
   const isNumeric = (n) => {
@@ -177,10 +178,19 @@ const Search = ({ languageDirection }) => {
       setIsClickedAway(true);
     }
   };
-
+    const authorization = {
+        appointmentsAndEncounters :  isAllowed("appointments_and_encounters"),
+        addNewPatient :  isAllowed("add_patient"),
+        appointmentDetails :  isAllowed("appointment_details"),
+        calendar:isAllowed("calendar"),
+        encounterSheet:isAllowed('encounter_sheet'),
+        patientAdmission:isAllowed('patient_admission'),
+        searchPatient:isAllowed('search_patient'),
+    }
+    //Appointments And Encounters - PC-262
   return (
     <React.Fragment>
-      {showResult === true && !isClickedAway ? (
+      {showResult === true && !isClickedAway  && (authorization.searchPatient==='view' || authorization.searchPatient==='write')? (
         <ClickAwayListener
           key={'ClickAwayListener_' + input}
           onClickAway={handleOnClickAway}>
@@ -195,6 +205,7 @@ const Search = ({ languageDirection }) => {
               {result ? (
                 <StyledPaperContainer key={'StyledPaperContainer' + input}>
                   <PaperContainerComponent
+                    authorization={authorization}
                     key={'paper_container_component_' + input}
                     result={result}
                     searchParam={input}
@@ -214,6 +225,7 @@ const Search = ({ languageDirection }) => {
                   </StyledValueComponent>
                 </StyledPaperBottom>
               )}
+                { (authorization.addNewPatient==='view' || authorization.addNewPatient==='write') ?
               <StyledPaperBottom
                 key={'styled_paper_bottom_' + input}
                 elevation={1}
@@ -227,11 +239,16 @@ const Search = ({ languageDirection }) => {
                   onClickHandler={onNewPatientButtonClick}
                 />
                 <PopupCreateNewPatient
+                  authorization={authorization}
                   key={'popup_new_' + input}
                   popupOpen={popupNewPatient}
                   handlePopupClose={onCloseNewPatientClick}
                 />
+
               </StyledPaperBottom>
+                    :
+                    null
+                }
             </StyledPaper>
           </WrapperSearchPaper>
         </ClickAwayListener>

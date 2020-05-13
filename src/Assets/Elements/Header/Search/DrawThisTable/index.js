@@ -26,11 +26,13 @@ import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 
 import PopAppointmentsPerPatient from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
+import isAllowed from '../../../../../Utils/Helpers/isAllowed';
 
 const DrawThisTable = ({
   result,
   searchParam,
   setPopupApppointmentsAndEncounters,
+  authorization,
 }) => {
   const { t } = useTranslation();
   const ADMISSIONWITHOUTAPPOINTMENT = 0;
@@ -294,6 +296,8 @@ const DrawThisTable = ({
     }
   };
 
+
+
   if (result) {
     return result.map((patient, patientIndex) => {
       if (patient) {
@@ -363,6 +367,7 @@ const DrawThisTable = ({
                   curEncounter={curEncounter}
                   encounterStatuses={encounterStatuses}
                   patientTrackingStatuses={patientTrackingStatuses}
+                  authorization ={authorization}
                 />
                 <StyledBottomLinks key={'bottom_links_' + patientIndex}>
                   <StyledHrefButton
@@ -372,6 +377,7 @@ const DrawThisTable = ({
                     color='primary'
                     href='#contained-buttons'
                     disabled={
+                        (authorization.appointmentsAndEncounters==="view" || authorization.appointmentsAndEncounters==="write" )  && (
                       (nextAppointments &&
                         nextAppointments.data &&
                         nextAppointments.data.total > 0) ||
@@ -381,6 +387,7 @@ const DrawThisTable = ({
                       (curEncounter &&
                         curEncounter.data &&
                         curEncounter.data.total > 0)
+                        )
                         ? false
                         : true
                     }
@@ -413,9 +420,10 @@ const DrawThisTable = ({
                     color='primary'
                     href='#contained-buttons'
                     disabled={
-                      curEncounter &&
-                      curEncounter.data &&
-                      curEncounter.data.total > 0
+                        authorization.patientAdmission !== "view" || authorization.patientAdmission !== "write" ||(
+                        curEncounter &&
+                        curEncounter.data &&
+                        curEncounter.data.total > 0)
                         ? true
                         : false
                     }

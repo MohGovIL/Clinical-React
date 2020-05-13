@@ -20,6 +20,7 @@ const AppointmentsPerPatient = ({
   prevEncounter,
   patientTrackingStatuses,
   encounterStatuses,
+  authorization,
 }) => {
   const { t } = useTranslation();
 
@@ -97,6 +98,7 @@ const AppointmentsPerPatient = ({
 
                     <StyledLinkWithIconComponent>
                       <LinkComponentWithIcon
+                        mode = {authorization.encounterSheet}
                         linkHeader={t('navigate to encounter sheet')}
                         linkUrl={'#'}
                       />
@@ -135,6 +137,7 @@ const AppointmentsPerPatient = ({
 
               <StyledLinkWithIconComponent>
                 <LinkComponentWithIcon
+                  mode={authorization.appointmentDetails}
                   linkHeader={t('Navigate to appointment details')}
                   linkUrl={'#'}
                 />
@@ -182,6 +185,7 @@ const AppointmentsPerPatient = ({
 
               <StyledLinkWithIconComponent>
                 <LinkComponentWithIcon
+                  mode={authorization.encounterSheet}
                   linkHeader={t('navigate to encounter sheet')}
                   linkUrl={'#'}
                 />
