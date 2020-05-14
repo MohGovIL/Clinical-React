@@ -28,6 +28,7 @@ const AppointmentsAndEncountersTables = ({
   prevEncounters,
   patientTrackingStatuses,
   encounterStatuses,
+  authorizationACO,
 }) => {
   const { t } = useTranslation();
   // eslint-disable-next-line
@@ -238,6 +239,10 @@ const AppointmentsAndEncountersTables = ({
                       </TableCell>
                       <TableCell align='right'>
                         <StyledHrefTableButton
+                          disabled={
+                            authorizationACO.encounterSheet !== 'view' &&
+                            authorizationACO.encounterSheet !== 'write'
+                          }
                           size={'small'}
                           variant='outlined'
                           color='primary'
@@ -247,6 +252,10 @@ const AppointmentsAndEncountersTables = ({
                       </TableCell>
                       <TableCell align='right'>
                         <StyledHrefTableButton
+                          disabled={
+                            authorizationACO.patientAdmission !== 'view' &&
+                            authorizationACO.patientAdmission !== 'write'
+                          }
                           size={'large'}
                           variant='outlined'
                           color='primary'
@@ -277,11 +286,14 @@ const AppointmentsAndEncountersTables = ({
         <StyledHeaderTableAppointment>
           {t('Future appointments')}
           <StyledHrefButton
+            disabled={
+              authorizationACO.createNewAppointment !== 'view' &&
+              authorizationACO.createNewAppointment !== 'write'
+            }
             size={'small'}
             variant='contained'
             color='primary'
             href='#contained-buttons'
-            disabled={false}
             onClick={() => handleCreateAppointment(patientData)}>
             {t('Create new appointment')}
           </StyledHrefButton>
@@ -345,6 +357,10 @@ const AppointmentsAndEncountersTables = ({
                         </TableCell>
                         <TableCell align='right'>
                           <StyledHrefTableButton
+                            disabled={
+                              authorizationACO.appointmentDetails !== 'view' &&
+                              authorizationACO.appointmentDetails !== 'write'
+                            }
                             size={'small'}
                             variant='outlined'
                             color='primary'
@@ -354,6 +370,10 @@ const AppointmentsAndEncountersTables = ({
                         </TableCell>
                         <TableCell align='right'>
                           <StyledHrefTableButton
+                            disabled={
+                              authorizationACO.cancelAppointment !== 'view' &&
+                              authorizationACO.cancelAppointment !== 'write'
+                            }
                             size={'large'}
                             variant='outlined'
                             color='primary'
@@ -453,6 +473,10 @@ const AppointmentsAndEncountersTables = ({
                         </TableCell>
                         <TableCell align='right'>
                           <StyledHrefTableButton
+                            disabled={
+                              authorizationACO.encounterSheet !== 'view' &&
+                              authorizationACO.encounterSheet !== 'write'
+                            }
                             size={'small'}
                             variant='outlined'
                             color='primary'
@@ -463,6 +487,10 @@ const AppointmentsAndEncountersTables = ({
                         <TableCell align='right'>
                           {encounter.status === 'finished' ? (
                             <StyledHrefTableButton
+                              disabled={
+                                authorizationACO.summaryLetter !== 'view' &&
+                                authorizationACO.summaryLetter !== 'write'
+                              }
                               size={'large'}
                               variant='outlined'
                               color='primary'

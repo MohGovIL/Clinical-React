@@ -24,13 +24,13 @@ import { store } from 'index';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
-
 import PopAppointmentsPerPatient from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
 
 const DrawThisTable = ({
   result,
   searchParam,
   setPopupApppointmentsAndEncounters,
+  authorizationACO,
 }) => {
   const { t } = useTranslation();
   const ADMISSIONWITHOUTAPPOINTMENT = 0;
@@ -303,7 +303,8 @@ const DrawThisTable = ({
               key={'PopUp' + patientIndex}
               popupOpen={popUpAppointmentsPerPatient}
               content={appointmentPopUpData}
-              handlePopupClose={handlePopupClose}></PopAppointmentsPerPatient>
+              handlePopupClose={handlePopupClose}
+              authorizationACO={authorizationACO}></PopAppointmentsPerPatient>
             <StyledExpansionPanel
               key={'ExpansionPanel_' + patientIndex}
               expanded={expanded === 'panel' + patientIndex}
@@ -363,6 +364,7 @@ const DrawThisTable = ({
                   curEncounter={curEncounter}
                   encounterStatuses={encounterStatuses}
                   patientTrackingStatuses={patientTrackingStatuses}
+                  authorizationACO={authorizationACO}
                 />
                 <StyledBottomLinks key={'bottom_links_' + patientIndex}>
                   <StyledHrefButton
@@ -372,15 +374,18 @@ const DrawThisTable = ({
                     color='primary'
                     href='#contained-buttons'
                     disabled={
-                      (nextAppointments &&
+                      (authorizationACO.appointmentsAndEncounters === 'view' ||
+                        authorizationACO.appointmentsAndEncounters ===
+                          'write') &&
+                      ((nextAppointments &&
                         nextAppointments.data &&
                         nextAppointments.data.total > 0) ||
-                      (prevEncounters &&
-                        prevEncounters.data &&
-                        prevEncounters.data.total > 0) ||
-                      (curEncounter &&
-                        curEncounter.data &&
-                        curEncounter.data.total > 0)
+                        (prevEncounters &&
+                          prevEncounters.data &&
+                          prevEncounters.data.total > 0) ||
+                        (curEncounter &&
+                          curEncounter.data &&
+                          curEncounter.data.total > 0))
                         ? false
                         : true
                     }
@@ -402,7 +407,12 @@ const DrawThisTable = ({
                     variant='contained'
                     color='primary'
                     href='#contained-buttons'
-                    disabled={false}>
+                    disabled={
+                      authorizationACO.createNewAppointment !== 'view' &&
+                      authorizationACO.createNewAppointment !== 'write'
+                        ? true
+                        : false
+                    }>
                     {t('New appointment')}
                   </StyledHrefButton>
 
@@ -413,9 +423,11 @@ const DrawThisTable = ({
                     color='primary'
                     href='#contained-buttons'
                     disabled={
-                      curEncounter &&
-                      curEncounter.data &&
-                      curEncounter.data.total > 0
+                      (authorizationACO.patientAdmission !== 'view' &&
+                        authorizationACO.patientAdmission !== 'write') ||
+                      (curEncounter &&
+                        curEncounter.data &&
+                        curEncounter.data.total > 0)
                         ? true
                         : false
                     }
