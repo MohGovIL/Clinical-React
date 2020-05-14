@@ -32,6 +32,7 @@ import { useHistory } from 'react-router-dom';
 import { validateLuhnAlgorithm } from 'Utils/Helpers/validation/validateLuhnAlgorithm';
 import { getOnlyNumbersRegexPattern } from 'Utils/Helpers/validation/patterns';
 import PopUpOnExit from '../../../../Assets/Elements/PopUpOnExit';
+import normalizeFhirPatient from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient';
 
 const PopupCreateNewPatient = ({
   popupOpen,
@@ -64,6 +65,8 @@ const PopupCreateNewPatient = ({
   const [formButtonCreatApp, setFormButtonCreatApp] = useState('view');
   const [formButtonPatientAdm, setFormButtonPatientAdm] = useState('write');
   const [mainSubmitSave, setMainSubmitSave] = useState(true);
+
+  const [garbage, setGarbage] = useState('');
 
   const [isFound, setIsFound] = useState(false);
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
@@ -143,6 +146,12 @@ const PopupCreateNewPatient = ({
   }, [dirty, setIsDirty]);
 
   const onSubmit = (patient, e) => {
+    //
+    if (garbage === 'newEncounterForNewPatient' && patientWasFound) {
+      createNewEncounterForCurrentPatient(patientIdentifier, patientData);
+    }
+
+    //Save action
     if (errors && errors.length !== undefined) {
       setFormButtonSave('view');
     } else {
@@ -175,10 +184,20 @@ const PopupCreateNewPatient = ({
                   show: true,
                 });
 
-                if (mainSubmitSave) {
+                if (garbage === 'normalSave') {
                   setTimeout(clearPopupCreateNewPatient, 750);
-                } else {
-                  setPatientIdentifier(saved_patient.data.id);
+                  // console.log('a');
+                } else if (garbage === 'newEncounterForNewPatient') {
+                  // console.log('b');
+                  let new_patient = normalizeFhirPatient(saved_patient.data);
+                  console.log("->>>>>>>>>>>>>");
+                  console.log(new_patient);
+                  console.log(new_patient.id);
+                  console.log("<<<<<<<<<<<<<-");
+                  setPatientIdentifier(new_patient.id);
+                  setPatientData(new_patient);
+                  //next step - useEffect for patientIdentifier, patientData
+                  //createNewEncounterForCurrentPatient();
                 }
               })
               .catch((error) => {
@@ -338,6 +357,9 @@ const PopupCreateNewPatient = ({
               setPatientIdentifier(patients.id);
               setPatientBirthDate(patients.birthDate);
               setPatientData(patients);
+              console.log('patient - first');
+              console.log(patients);
+              console.log('=======');
               setPatientIdType(patients.identifierType);
               setPatientGender(patients.gender);
               setPatientKupatHolim(patients.managingOrganization);
@@ -417,20 +439,27 @@ const PopupCreateNewPatient = ({
     if (!patientWasFound) {
       //type for patient admission
       setTypeSubmitForButton({ type: 'submit', form: 'createNewPatient' });
-      setMainSubmitSave(false);
+      // setMainSubmitSave(false);
     } else {
       //clear type submit for patient admission
       setTypeSubmitForButton({});
-      setMainSubmitSave(true);
+      // setMainSubmitSave(true);
     }
   }, [patientWasFound]);
 
-  //create encounter for new patient after create a itself
-  useEffect(() => {
-    patientAdmissionAction();
-    //setMainSubmitSave(false);
-    // createNewEncounterForCurrentPatient();
-  }, [patientIdentifier]);
+  // useEffect(() => {
+  //   console.log('patient - second');
+  //
+  //   if(patientIdentifier > 0) {
+  //       console.log(patientIdentifier);
+  //       console.log(patientData);
+  //       //createNewEncounterForCurrentPatient();
+  //       //355058629
+  //   }
+  //   // console.log(new_patient);
+  //   console.log('=======');
+  //  //
+  // }, [patientData, garbage]);
 
   const handleIdTypeChange = (event) => {
     try {
@@ -489,25 +518,31 @@ const PopupCreateNewPatient = ({
   };
 
   const patientAdmissionAction = () => {
-    if (!mainSubmitSave) {
+    if (!patientWasFound) {
+      setGarbage('newEncounterForNewPatient');
       return true;
-    }
-    //355058629
-    if (parseInt(patientIdentifier) !== 0) {
+    } else {
       createNewEncounterForCurrentPatient();
     }
   };
+  const savePatientAction = () => {
+    setGarbage('normalSave');
+  };
 
-  const createNewEncounterForCurrentPatient = () => {
+  const createNewEncounterForCurrentPatient = (patient_id, patient_data) => {
     let currentDate = moment().format('YYYY-MM-DD');
     (async () => {
       try {
+          console.log("======data of encounter=====");
+          console.log(patient_id);
+          console.log(patient_data);
+          console.log("======data of encounter=====");
         FHIR('Appointment', 'doWork', {
           functionName: 'getAppointmentPerPatient',
           functionParams: {
             dayPosition: 'current',
             date: currentDate,
-            patient: patientIdentifier,
+            patient: patient_id,
           },
         }).then((appointments) => {
           //If appointment exists, will check for encounter
@@ -543,7 +578,7 @@ const PopupCreateNewPatient = ({
                 functionParams: {
                   facility: facility,
                   practitioner: 'practitioner',
-                  patient: patientData,
+                  patient: patient_data,
                   status: 'planned',
                 },
               });
@@ -581,6 +616,7 @@ const PopupCreateNewPatient = ({
       color: 'primary',
       mode: formButtonSave,
       other: { type: 'submit', form: 'createNewPatient' },
+      onClickHandler: savePatientAction,
     },
     {
       label: t('Patient Admission'),

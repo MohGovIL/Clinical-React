@@ -176,6 +176,10 @@ const Search = ({ languageDirection }) => {
 
   return (
     <React.Fragment>
+      <PopupCreateNewPatient
+        popupOpen={popupNewPatient}
+        handlePopupClose={onCloseNewPatientClick}
+      />
       {showResult === true && !isClickedAway ? (
         <ClickAwayListener
           key={'ClickAwayListener_' + input}
@@ -221,11 +225,6 @@ const Search = ({ languageDirection }) => {
                   iconType='add_circle'
                   value='Add New Patient'
                   onClickHandler={onNewPatientButtonClick}
-                />
-                <PopupCreateNewPatient
-                  key={'popup_new_' + input}
-                  popupOpen={popupNewPatient}
-                  handlePopupClose={onCloseNewPatientClick}
                 />
               </StyledPaperBottom>
             </StyledPaper>
