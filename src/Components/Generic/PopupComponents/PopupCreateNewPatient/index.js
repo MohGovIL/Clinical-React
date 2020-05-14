@@ -89,7 +89,8 @@ const PopupCreateNewPatient = ({
   const managingOrganizationSelectNotEmptyRule = {
     validate: {
       value: (value) => {
-        return patientIdType !== patientIdTypeMain
+        const formValues = getValues();
+        return formValues.identifierType && formValues.identifierType !== patientIdTypeMain
           ? true
           : value !== undefined && value !== 0
           ? true
