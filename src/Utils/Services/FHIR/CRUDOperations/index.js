@@ -37,6 +37,10 @@ const CRUDOperationsCalls = {
     const resolved = fhirTokenInstance().post(params, data);
     return resolved;
   },
+  delete: function (params, fhirTokenInstance) {
+    const resolved = fhirTokenInstance().delete(params);
+    return resolved;
+  },
   __default__: null,
 };
 

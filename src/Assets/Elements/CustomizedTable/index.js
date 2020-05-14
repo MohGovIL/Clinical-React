@@ -12,6 +12,7 @@ import CustomizedTableLabelCell from './CustomizedTableLabelCell';
 import CustomizedTableButtonCell from './CustomizedTableButtonCell';
 import CustomizedTableBadgeCell from './CustomizedTableBadgeCell';
 import CustomizedTableSelectCell from './CustomizedTableSelectCell';
+import CustomizedTableRow from './CustomizedTableRow'
 import NoContentTable from './NoContentTable';
 import {
   SELECT_CELL,
@@ -43,7 +44,7 @@ const CustomizedTable = ({ tableHeaders, tableData }) => {
             <TableBody>
               {tableData.map((tableRow, tableRowIndex) => {
                 return (
-                  <TableRow key={tableRowIndex}>
+                  <CustomizedTableRow key={tableRowIndex}>
                     {tableHeaders.map((tableCellItem, tableCellItemIndex) => {
                       let rowData = tableRow[tableCellItemIndex];
                       switch (tableCellItem.component) {
@@ -116,7 +117,7 @@ const CustomizedTable = ({ tableHeaders, tableData }) => {
                           return null;
                       }
                     })}
-                  </TableRow>
+                  </CustomizedTableRow>
                 );
               })}
             </TableBody>

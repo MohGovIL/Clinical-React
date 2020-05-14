@@ -228,6 +228,9 @@ const EncounterStates = {
       denormalizedEncounter,
     );
   },
+  deleteEncounter: (params) => {
+    return CRUDOperations('delete', `${params.url}/${params.encounterId}`)
+  },
   searchEncounter: (params) => {
     /**
      * To get all Encounters just don't send any functionParams
