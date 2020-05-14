@@ -487,7 +487,10 @@ const AppointmentsAndEncountersTables = ({
                         <TableCell align='right'>
                           {encounter.status === 'finished' ? (
                             <StyledHrefTableButton
-                              /*disable = {authorizationACO.sendResult !== "view" && authorizationACO.sendResult !== "write" }*/
+                              disabled={
+                                authorizationACO.summaryLetter !== 'view' &&
+                                authorizationACO.summaryLetter !== 'write'
+                              }
                               size={'large'}
                               variant='outlined'
                               color='primary'

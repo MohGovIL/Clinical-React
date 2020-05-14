@@ -188,6 +188,7 @@ const Search = ({ languageDirection }) => {
     searchPatient: isAllowed('search_patient'),
     cancelAppointment: isAllowed('appointment_details'),
     createNewAppointment: isAllowed('appointment_details'),
+    summaryLetter: isAllowed('summary_letter'),
   };
   //Appointments And Encounters - PC-262
   return (
