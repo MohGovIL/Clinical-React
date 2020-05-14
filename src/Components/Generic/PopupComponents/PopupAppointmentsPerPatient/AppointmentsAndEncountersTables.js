@@ -22,12 +22,13 @@ import TableBody from '@material-ui/core/TableBody';
 import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
 
 const AppointmentsAndEncountersTables = ({
-  patient,
   nextAppointments,
   curEncounters,
   prevEncounters,
   patientTrackingStatuses,
   encounterStatuses,
+  gotToPatientAdmission,
+  patient,
 }) => {
   const { t } = useTranslation();
   // eslint-disable-next-line
@@ -116,14 +117,14 @@ const AppointmentsAndEncountersTables = ({
 
     return returnThisServiceTypesExaminations;
   };
-  /*const handleChartClickOpen = () => {
+  /*const handleChartClick = () => {
     //TODO:
   };
 
-  const handleAdmissionClickOpen = () => {
-    //TODO:
-  };*/
-
+ ;*/
+  const handleAdmissionClick = (encounter) => {
+    gotToPatientAdmission(encounter, patient);
+  };
   if (curEncounters && curEncounters.data && curEncounters.data.total > 0) {
     let entry = curEncounters.data.entry;
     // eslint-disable-next-line
@@ -250,7 +251,8 @@ const AppointmentsAndEncountersTables = ({
                           size={'large'}
                           variant='outlined'
                           color='primary'
-                          href='#contained-buttons'>
+                          href='#contained-buttons'
+                          onClick={(event) => handleAdmissionClick(encounter)}>
                           {t('Admission form')}
                         </StyledHrefTableButton>
                       </TableCell>

@@ -20,6 +20,7 @@ const AppointmentsPerPatient = ({
   prevEncounter,
   patientTrackingStatuses,
   encounterStatuses,
+  gotToPatientAdmission,
 }) => {
   const { t } = useTranslation();
 
@@ -45,7 +46,9 @@ const AppointmentsPerPatient = ({
         ? true
         : false;
     return isThisAppToday
-      ? `${t('Today')} ${moment.utc(nextAppointmentEntry.startTime).format('HH:mm')}`
+      ? `${t('Today')} ${moment
+          .utc(nextAppointmentEntry.startTime)
+          .format('HH:mm')}`
       : moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY');
   };
   if (curEncounter.data && curEncounter.data.total > 0) {
