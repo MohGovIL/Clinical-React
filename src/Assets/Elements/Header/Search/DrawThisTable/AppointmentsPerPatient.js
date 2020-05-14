@@ -20,7 +20,7 @@ const AppointmentsPerPatient = ({
   prevEncounter,
   patientTrackingStatuses,
   encounterStatuses,
-  authorization,
+  authorizationACO,
 }) => {
   const { t } = useTranslation();
 
@@ -46,7 +46,9 @@ const AppointmentsPerPatient = ({
         ? true
         : false;
     return isThisAppToday
-      ? `${t('Today')} ${moment.utc(nextAppointmentEntry.startTime).format('HH:mm')}`
+      ? `${t('Today')} ${moment
+          .utc(nextAppointmentEntry.startTime)
+          .format('HH:mm')}`
       : moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY');
   };
   if (curEncounter.data && curEncounter.data.total > 0) {
@@ -98,7 +100,7 @@ const AppointmentsPerPatient = ({
 
                     <StyledLinkWithIconComponent>
                       <LinkComponentWithIcon
-                        mode = {authorization.encounterSheet}
+                        mode={authorizationACO.encounterSheet}
                         linkHeader={t('navigate to encounter sheet')}
                         linkUrl={'#'}
                       />
@@ -137,7 +139,7 @@ const AppointmentsPerPatient = ({
 
               <StyledLinkWithIconComponent>
                 <LinkComponentWithIcon
-                  mode={authorization.appointmentDetails}
+                  mode={authorizationACO.appointmentDetails}
                   linkHeader={t('Navigate to appointment details')}
                   linkUrl={'#'}
                 />
@@ -185,7 +187,7 @@ const AppointmentsPerPatient = ({
 
               <StyledLinkWithIconComponent>
                 <LinkComponentWithIcon
-                  mode={authorization.encounterSheet}
+                  mode={authorizationACO.encounterSheet}
                   linkHeader={t('navigate to encounter sheet')}
                   linkUrl={'#'}
                 />

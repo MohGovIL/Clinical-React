@@ -6,7 +6,7 @@ const PaperContainerComponent = ({
   result,
   searchParam,
   setPopupApppointmentsAndEncounters,
-  authorization,
+  authorizationACO,
 }) => {
   const [height, setHeight] = useState(0);
   const [maxHeight, setMaxHeight] = useState(0);
@@ -30,7 +30,7 @@ const PaperContainerComponent = ({
       height={height}
       maxHeight={maxHeight}>
       <DrawThisTable
-        authorization={authorization}
+        authorizationACO={authorizationACO}
         key={searchParam + '_DrawThisTable'}
         result={result}
         searchParam={searchParam}

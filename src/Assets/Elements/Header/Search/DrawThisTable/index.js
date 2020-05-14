@@ -24,15 +24,13 @@ import { store } from 'index';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
-
 import PopAppointmentsPerPatient from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
-import isAllowed from '../../../../../Utils/Helpers/isAllowed';
 
 const DrawThisTable = ({
   result,
   searchParam,
   setPopupApppointmentsAndEncounters,
-  authorization,
+  authorizationACO,
 }) => {
   const { t } = useTranslation();
   const ADMISSIONWITHOUTAPPOINTMENT = 0;
@@ -296,8 +294,6 @@ const DrawThisTable = ({
     }
   };
 
-
-
   if (result) {
     return result.map((patient, patientIndex) => {
       if (patient) {
@@ -308,8 +304,7 @@ const DrawThisTable = ({
               popupOpen={popUpAppointmentsPerPatient}
               content={appointmentPopUpData}
               handlePopupClose={handlePopupClose}
-              authorization={authorization}
-            ></PopAppointmentsPerPatient>
+              authorizationACO={authorizationACO}></PopAppointmentsPerPatient>
             <StyledExpansionPanel
               key={'ExpansionPanel_' + patientIndex}
               expanded={expanded === 'panel' + patientIndex}
@@ -369,7 +364,7 @@ const DrawThisTable = ({
                   curEncounter={curEncounter}
                   encounterStatuses={encounterStatuses}
                   patientTrackingStatuses={patientTrackingStatuses}
-                  authorization ={authorization}
+                  authorizationACO={authorizationACO}
                 />
                 <StyledBottomLinks key={'bottom_links_' + patientIndex}>
                   <StyledHrefButton
@@ -379,17 +374,18 @@ const DrawThisTable = ({
                     color='primary'
                     href='#contained-buttons'
                     disabled={
-                        (authorization.appointmentsAndEncounters==="view" || authorization.appointmentsAndEncounters==="write" )  && (
-                      (nextAppointments &&
+                      (authorizationACO.appointmentsAndEncounters === 'view' ||
+                        authorizationACO.appointmentsAndEncounters ===
+                          'write') &&
+                      ((nextAppointments &&
                         nextAppointments.data &&
                         nextAppointments.data.total > 0) ||
-                      (prevEncounters &&
-                        prevEncounters.data &&
-                        prevEncounters.data.total > 0) ||
-                      (curEncounter &&
-                        curEncounter.data &&
-                        curEncounter.data.total > 0)
-                        )
+                        (prevEncounters &&
+                          prevEncounters.data &&
+                          prevEncounters.data.total > 0) ||
+                        (curEncounter &&
+                          curEncounter.data &&
+                          curEncounter.data.total > 0))
                         ? false
                         : true
                     }
@@ -411,7 +407,12 @@ const DrawThisTable = ({
                     variant='contained'
                     color='primary'
                     href='#contained-buttons'
-                    disabled={false}>
+                    disabled={
+                      authorizationACO.createNewAppointment !== 'view' &&
+                      authorizationACO.createNewAppointment !== 'write'
+                        ? true
+                        : false
+                    }>
                     {t('New appointment')}
                   </StyledHrefButton>
 
@@ -422,8 +423,9 @@ const DrawThisTable = ({
                     color='primary'
                     href='#contained-buttons'
                     disabled={
-                        authorization.patientAdmission !== "view" || authorization.patientAdmission !== "write" ||(
-                        curEncounter &&
+                      (authorizationACO.patientAdmission !== 'view' &&
+                        authorizationACO.patientAdmission !== 'write') ||
+                      (curEncounter &&
                         curEncounter.data &&
                         curEncounter.data.total > 0)
                         ? true

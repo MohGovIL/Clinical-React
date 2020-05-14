@@ -178,19 +178,24 @@ const Search = ({ languageDirection }) => {
       setIsClickedAway(true);
     }
   };
-    const authorization = {
-        appointmentsAndEncounters :  isAllowed("appointments_and_encounters"),
-        addNewPatient :  isAllowed("add_patient"),
-        appointmentDetails :  isAllowed("appointment_details"),
-        calendar:isAllowed("calendar"),
-        encounterSheet:isAllowed('encounter_sheet'),
-        patientAdmission:isAllowed('patient_admission'),
-        searchPatient:isAllowed('search_patient'),
-    }
-    //Appointments And Encounters - PC-262
+  const authorizationACO = {
+    appointmentsAndEncounters: isAllowed('appointments_and_encounters'),
+    addNewPatient: isAllowed('add_patient'),
+    appointmentDetails: isAllowed('appointment_details'),
+    calendar: isAllowed('calendar'),
+    encounterSheet: isAllowed('encounter_sheet'),
+    patientAdmission: isAllowed('patient_admission'),
+    searchPatient: isAllowed('search_patient'),
+    cancelAppointment: isAllowed('appointment_details'),
+    createNewAppointment: isAllowed('appointment_details'),
+  };
+  //Appointments And Encounters - PC-262
   return (
     <React.Fragment>
-      {showResult === true && !isClickedAway  && (authorization.searchPatient==='view' || authorization.searchPatient==='write')? (
+      {showResult === true &&
+      !isClickedAway &&
+      (authorizationACO.searchPatient === 'view' ||
+        authorizationACO.searchPatient === 'write') ? (
         <ClickAwayListener
           key={'ClickAwayListener_' + input}
           onClickAway={handleOnClickAway}>
@@ -205,7 +210,7 @@ const Search = ({ languageDirection }) => {
               {result ? (
                 <StyledPaperContainer key={'StyledPaperContainer' + input}>
                   <PaperContainerComponent
-                    authorization={authorization}
+                    authorizationACO={authorizationACO}
                     key={'paper_container_component_' + input}
                     result={result}
                     searchParam={input}
@@ -225,30 +230,28 @@ const Search = ({ languageDirection }) => {
                   </StyledValueComponent>
                 </StyledPaperBottom>
               )}
-                { (authorization.addNewPatient==='view' || authorization.addNewPatient==='write') ?
-              <StyledPaperBottom
-                key={'styled_paper_bottom_' + input}
-                elevation={1}
-                id='results'
-                variant='outlined'
-                square>
-                <StyledIconValueComponent
-                  key={'add_circle_' + input}
-                  iconType='add_circle'
-                  value='Add New Patient'
-                  onClickHandler={onNewPatientButtonClick}
-                />
-                <PopupCreateNewPatient
-                  authorization={authorization}
-                  key={'popup_new_' + input}
-                  popupOpen={popupNewPatient}
-                  handlePopupClose={onCloseNewPatientClick}
-                />
-
-              </StyledPaperBottom>
-                    :
-                    null
-                }
+              {authorizationACO.addNewPatient === 'view' ||
+              authorizationACO.addNewPatient === 'write' ? (
+                <StyledPaperBottom
+                  key={'styled_paper_bottom_' + input}
+                  elevation={1}
+                  id='results'
+                  variant='outlined'
+                  square>
+                  <StyledIconValueComponent
+                    key={'add_circle_' + input}
+                    iconType='add_circle'
+                    value='Add New Patient'
+                    onClickHandler={onNewPatientButtonClick}
+                  />
+                  <PopupCreateNewPatient
+                    authorizationACO={authorizationACO}
+                    key={'popup_new_' + input}
+                    popupOpen={popupNewPatient}
+                    handlePopupClose={onCloseNewPatientClick}
+                  />
+                </StyledPaperBottom>
+              ) : null}
             </StyledPaper>
           </WrapperSearchPaper>
         </ClickAwayListener>
