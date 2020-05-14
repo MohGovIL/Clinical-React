@@ -40,7 +40,13 @@ const PatientTracking = ({ vertical, history, selectFilter }) => {
       const mode = isAllowed(tab.id);
       tab.mode = mode;
     }
+    const MAX_TABS = tabs.length;
     tabs = tabs.filter((tab) => tab.mode !== 'hide');
+    if (MAX_TABS !== tabs.length) {
+      tabs.forEach((tab, tabIndex) => {
+        tab.tabValue = tabIndex;
+      });
+    }
     setTabs(tabs);
 
     //Filter box mechanism for activeTabs
@@ -59,7 +65,7 @@ const PatientTracking = ({ vertical, history, selectFilter }) => {
         // there is no need to call `tab.activeAction` only call `tab.notActiveAction`
         if (selectFilter.statusFilterBoxValue === prevFilterBoxValue.current) {
           tab.notActiveAction(setTabs, selectFilter);
-        } 
+        }
       }
     }
     prevFilterBoxValue.current = selectFilter.statusFilterBoxValue;

@@ -69,26 +69,38 @@ export const loginSuccessAction = (userID) => {
   };
 };
 
+const loginPromise = (username, password) => {
+  if (stateLessOrNot()) {
+    const userObj = {
+      grant_type: 'password',
+      username,
+      password,
+      scope: 'default',
+    };
+    const authPromise = [
+      loginInstance.post('apis/api/auth', userObj),
+      loginInstance.post('apis/fhir/auth', userObj),
+    ];
+    return Promise.all(authPromise);
+  } else {
+    return loginInstance.get(
+      'interface/modules/zend_modules/public/clinikal-api/get-csrf-token',
+    );
+  }
+};
+
 export const loginAction = (username, password, history) => {
   return async (dispatch) => {
     dispatch(loginStartAction());
     try {
       let tokenData;
       if (stateLessOrNot()) {
-        const userObj = {
-          grant_type: 'password',
-          username,
-          password,
-          scope: 'default',
-        };
-        tokenData = await loginInstance.post('apis/api/auth', userObj);
-        document.cookie = `${ApiTokens.API.tokenName}=${tokenData.data.access_token};`;
-        const fhirToken = await loginInstance.post('apis/fhir/auth', userObj);
-        document.cookie = `${ApiTokens.FHIR.tokenName}=${fhirToken.data.access_token}`;
-      } else {
-        tokenData = await loginInstance.get(
-          'interface/modules/zend_modules/public/clinikal-api/get-csrf-token',
-        );
+        const [api, fhir] = await loginPromise(username, password);
+        tokenData = api
+        document.cookie = `${ApiTokens.API.tokenName}=${api.data.access_token};`;
+        document.cookie = `${ApiTokens.FHIR.tokenName}=${fhir.data.access_token}`;
+      }else {
+        tokenData = await loginPromise(username, password);
         document.cookie = `${ApiTokens.CSRF.tokenName}=${tokenData.data.csrf_token}`;
       }
       dispatch(loginSuccessAction(tokenData.data?.user_data?.user_id));
