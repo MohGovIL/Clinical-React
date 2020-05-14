@@ -45,6 +45,8 @@ const PopupCreateNewPatient = ({
   const [idTypesList, setIdTypesList] = useState([]);
   const [genderList, setGenderList] = useState([]);
   const [kupatHolimList, setKupatHolimList] = useState([]);
+  const [typeSubmitForButton, setTypeSubmitForButton] = useState({});
+
   const [patientIdTypeMain, setPatientIdTypeMain] = useState('teudat_zehut');
 
   const [patientData, setPatientData] = useState([]);
@@ -60,7 +62,8 @@ const PopupCreateNewPatient = ({
   //const [selectedIdType, setSelectedIdType] = useState(0);
   const [formButtonSave, setFormButtonSave] = useState('write');
   const [formButtonCreatApp, setFormButtonCreatApp] = useState('view');
-  const [formButtonPatientAdm, setFormButtonPatientAdm] = useState('view');
+  const [formButtonPatientAdm, setFormButtonPatientAdm] = useState('write');
+  const [mainSubmitSave, setMainSubmitSave] = useState(true);
 
   const [isFound, setIsFound] = useState(false);
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
@@ -133,6 +136,7 @@ const PopupCreateNewPatient = ({
       identifierType: patientIdTypeMain,
     },
   });
+  //Check if form was changed
   const { dirty } = formState;
   useEffect(() => {
     setIsDirty(dirty);
@@ -170,7 +174,12 @@ const PopupCreateNewPatient = ({
                   severity: 'success',
                   show: true,
                 });
-                setTimeout(clearPopupCreateNewPatient, 750);
+
+                if (mainSubmitSave) {
+                  setTimeout(clearPopupCreateNewPatient, 750);
+                } else {
+                  setPatientIdentifier(saved_patient.data.id);
+                }
               })
               .catch((error) => {
                 setAlertDuringSave({
@@ -303,7 +312,7 @@ const PopupCreateNewPatient = ({
         setIsFound(true);
         const result = await triggerValidation('identifier');
         setFormButtonCreatApp('view');
-        setFormButtonPatientAdm('view');
+        // setFormButtonPatientAdm('view');
         try {
           FHIR('Patient', 'doWork', {
             functionName: 'searchPatientById',
@@ -403,6 +412,26 @@ const PopupCreateNewPatient = ({
     })();
   }, [patientIdNumber, patientIdType]);
 
+  //Change button type for patientAdmission
+  useEffect(() => {
+    if (!patientWasFound) {
+      //type for patient admission
+      setTypeSubmitForButton({ type: 'submit', form: 'createNewPatient' });
+      setMainSubmitSave(false);
+    } else {
+      //clear type submit for patient admission
+      setTypeSubmitForButton({});
+      setMainSubmitSave(true);
+    }
+  }, [patientWasFound]);
+
+  //create encounter for new patient after create a itself
+  useEffect(() => {
+    patientAdmissionAction();
+    //setMainSubmitSave(false);
+    // createNewEncounterForCurrentPatient();
+  }, [patientIdentifier]);
+
   const handleIdTypeChange = (event) => {
     try {
       setValue('identifierType', event.target.value, true);
@@ -444,6 +473,7 @@ const PopupCreateNewPatient = ({
 
   const clearIdNumberError = () => {
     clearError('identifier');
+    setPatientIdentifier(0);
     setErrorIdNumber(false);
     setErrorIdNumberText('');
     setErrorRequired({
@@ -459,6 +489,16 @@ const PopupCreateNewPatient = ({
   };
 
   const patientAdmissionAction = () => {
+    if (!mainSubmitSave) {
+      return true;
+    }
+    //355058629
+    if (parseInt(patientIdentifier) !== 0) {
+      createNewEncounterForCurrentPatient();
+    }
+  };
+
+  const createNewEncounterForCurrentPatient = () => {
     let currentDate = moment().format('YYYY-MM-DD');
     (async () => {
       try {
@@ -548,6 +588,7 @@ const PopupCreateNewPatient = ({
       color: 'primary',
       mode: formButtonPatientAdm,
       onClickHandler: patientAdmissionAction, //user function
+      other: typeSubmitForButton,
     },
     {
       label: t('Create appointment'),
