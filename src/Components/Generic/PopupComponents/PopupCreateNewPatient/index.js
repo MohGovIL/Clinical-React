@@ -186,18 +186,12 @@ const PopupCreateNewPatient = ({
 
                 if (garbage === 'normalSave') {
                   setTimeout(clearPopupCreateNewPatient, 750);
-                  // console.log('a');
                 } else if (garbage === 'newEncounterForNewPatient') {
-                  // console.log('b');
                   let new_patient = normalizeFhirPatient(saved_patient.data);
-                  console.log("->>>>>>>>>>>>>");
-                  console.log(new_patient);
-                  console.log(new_patient.id);
-                  console.log("<<<<<<<<<<<<<-");
                   setPatientIdentifier(new_patient.id);
                   setPatientData(new_patient);
                   //next step - useEffect for patientIdentifier, patientData
-                  //createNewEncounterForCurrentPatient();
+                  createNewEncounterForCurrentPatient(new_patient.id, new_patient);
                 }
               })
               .catch((error) => {
@@ -357,9 +351,6 @@ const PopupCreateNewPatient = ({
               setPatientIdentifier(patients.id);
               setPatientBirthDate(patients.birthDate);
               setPatientData(patients);
-              console.log('patient - first');
-              console.log(patients);
-              console.log('=======');
               setPatientIdType(patients.identifierType);
               setPatientGender(patients.gender);
               setPatientKupatHolim(patients.managingOrganization);
@@ -439,27 +430,11 @@ const PopupCreateNewPatient = ({
     if (!patientWasFound) {
       //type for patient admission
       setTypeSubmitForButton({ type: 'submit', form: 'createNewPatient' });
-      // setMainSubmitSave(false);
     } else {
       //clear type submit for patient admission
       setTypeSubmitForButton({});
-      // setMainSubmitSave(true);
     }
   }, [patientWasFound]);
-
-  // useEffect(() => {
-  //   console.log('patient - second');
-  //
-  //   if(patientIdentifier > 0) {
-  //       console.log(patientIdentifier);
-  //       console.log(patientData);
-  //       //createNewEncounterForCurrentPatient();
-  //       //355058629
-  //   }
-  //   // console.log(new_patient);
-  //   console.log('=======');
-  //  //
-  // }, [patientData, garbage]);
 
   const handleIdTypeChange = (event) => {
     try {
@@ -533,16 +508,15 @@ const PopupCreateNewPatient = ({
     let currentDate = moment().format('YYYY-MM-DD');
     (async () => {
       try {
-          console.log("======data of encounter=====");
-          console.log(patient_id);
-          console.log(patient_data);
-          console.log("======data of encounter=====");
+          let patient_identifier = (patient_id === undefined ? patientIdentifier : patient_id);
+          let patient_current_data = (patient_data === undefined ? patientData :patient_data);
+
         FHIR('Appointment', 'doWork', {
           functionName: 'getAppointmentPerPatient',
           functionParams: {
             dayPosition: 'current',
             date: currentDate,
-            patient: patient_id,
+            patient: patient_identifier,
           },
         }).then((appointments) => {
           //If appointment exists, will check for encounter
@@ -565,7 +539,7 @@ const PopupCreateNewPatient = ({
             store.dispatch(
               setEncounterAndPatient(
                 normalizeFhirEncounter(encounterData),
-                patientData,
+                  patient_current_data,
               ),
             );
             history.push({
@@ -578,14 +552,14 @@ const PopupCreateNewPatient = ({
                 functionParams: {
                   facility: facility,
                   practitioner: 'practitioner',
-                  patient: patient_data,
+                  patient: patient_current_data,
                   status: 'planned',
                 },
               });
               store.dispatch(
                 setEncounterAndPatient(
                   normalizeFhirEncounter(encounterData),
-                  patientData,
+                    patient_current_data,
                 ),
               );
               history.push({
