@@ -66,7 +66,7 @@ const PopupCreateNewPatient = ({
   const [formButtonPatientAdm, setFormButtonPatientAdm] = useState('write');
   const [mainSubmitSave, setMainSubmitSave] = useState(true);
 
-  const [garbage, setGarbage] = useState('');
+  const [afterSaveAction, setAfterSaveAction] = useState('');
 
   const [isFound, setIsFound] = useState(false);
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
@@ -147,7 +147,7 @@ const PopupCreateNewPatient = ({
 
   const onSubmit = (patient, e) => {
     //
-    if (garbage === 'newEncounterForNewPatient' && patientWasFound) {
+    if (afterSaveAction === 'newEncounterForNewPatient' && patientWasFound) {
       createNewEncounterForCurrentPatient(patientIdentifier, patientData);
     }
 
@@ -184,13 +184,10 @@ const PopupCreateNewPatient = ({
                   show: true,
                 });
 
-                if (garbage === 'normalSave') {
+                if (afterSaveAction === 'normalSave') {
                   setTimeout(clearPopupCreateNewPatient, 750);
-                } else if (garbage === 'newEncounterForNewPatient') {
+                } else if (afterSaveAction === 'newEncounterForNewPatient') {
                   let new_patient = normalizeFhirPatient(saved_patient.data);
-                  setPatientIdentifier(new_patient.id);
-                  setPatientData(new_patient);
-                  //next step - useEffect for patientIdentifier, patientData
                   createNewEncounterForCurrentPatient(new_patient.id, new_patient);
                 }
               })
@@ -494,14 +491,14 @@ const PopupCreateNewPatient = ({
 
   const patientAdmissionAction = () => {
     if (!patientWasFound) {
-      setGarbage('newEncounterForNewPatient');
+      setAfterSaveAction('newEncounterForNewPatient');
       return true;
     } else {
       createNewEncounterForCurrentPatient();
     }
   };
   const savePatientAction = () => {
-    setGarbage('normalSave');
+    setAfterSaveAction('normalSave');
   };
 
   const createNewEncounterForCurrentPatient = (patient_id, patient_data) => {
