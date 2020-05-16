@@ -16,6 +16,7 @@ const getUIACOMapping = {
   patient_admission: 'PatientAdmission',
   search_patient: 'SearchPatient',
   appointments_and_encounters: 'AppointmentsAndEncounters',
+  summary_letter: `SummaryLetter`,
 };
 
 export default getUIACOMapping;

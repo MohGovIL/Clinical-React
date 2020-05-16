@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import PaperContainerComponent from './DrawThisTable/PaperContainerComponent';
 import { FHIR } from 'Utils/Services/FHIR';
 import PopupCreateNewPatient from 'Components/Generic/PopupComponents/PopupCreateNewPatient';
+import isAllowed from '../../../../Utils/Helpers/isAllowed';
 
 const Search = ({ languageDirection }) => {
   const isNumeric = (n) => {
@@ -173,14 +174,25 @@ const Search = ({ languageDirection }) => {
       setIsClickedAway(true);
     }
   };
-
+  const authorizationACO = {
+    appointmentsAndEncounters: isAllowed('appointments_and_encounters'),
+    addNewPatient: isAllowed('add_patient'),
+    appointmentDetails: isAllowed('appointment_details'),
+    calendar: isAllowed('calendar'),
+    encounterSheet: isAllowed('encounter_sheet'),
+    patientAdmission: isAllowed('patient_admission'),
+    searchPatient: isAllowed('search_patient'),
+    cancelAppointment: isAllowed('appointment_details'),
+    createNewAppointment: isAllowed('appointment_details'),
+    summaryLetter: isAllowed('summary_letter'),
+  };
+  //Appointments And Encounters - PC-262
   return (
     <React.Fragment>
-      <PopupCreateNewPatient
-        popupOpen={popupNewPatient}
-        handlePopupClose={onCloseNewPatientClick}
-      />
-      {showResult === true && !isClickedAway ? (
+      {showResult === true &&
+      !isClickedAway &&
+      (authorizationACO.searchPatient === 'view' ||
+        authorizationACO.searchPatient === 'write') ? (
         <ClickAwayListener
           key={'ClickAwayListener_' + input}
           onClickAway={handleOnClickAway}>
@@ -195,6 +207,7 @@ const Search = ({ languageDirection }) => {
               {result ? (
                 <StyledPaperContainer key={'StyledPaperContainer' + input}>
                   <PaperContainerComponent
+                    authorizationACO={authorizationACO}
                     key={'paper_container_component_' + input}
                     result={result}
                     searchParam={input}
@@ -214,19 +227,28 @@ const Search = ({ languageDirection }) => {
                   </StyledValueComponent>
                 </StyledPaperBottom>
               )}
-              <StyledPaperBottom
-                key={'styled_paper_bottom_' + input}
-                elevation={1}
-                id='results'
-                variant='outlined'
-                square>
-                <StyledIconValueComponent
-                  key={'add_circle_' + input}
-                  iconType='add_circle'
-                  value='Add New Patient'
-                  onClickHandler={onNewPatientButtonClick}
-                />
-              </StyledPaperBottom>
+              {authorizationACO.addNewPatient === 'view' ||
+              authorizationACO.addNewPatient === 'write' ? (
+                <StyledPaperBottom
+                  key={'styled_paper_bottom_' + input}
+                  elevation={1}
+                  id='results'
+                  variant='outlined'
+                  square>
+                  <StyledIconValueComponent
+                    key={'add_circle_' + input}
+                    iconType='add_circle'
+                    value='Add New Patient'
+                    onClickHandler={onNewPatientButtonClick}
+                  />
+                  <PopupCreateNewPatient
+                    authorizationACO={authorizationACO}
+                    key={'popup_new_' + input}
+                    popupOpen={popupNewPatient}
+                    handlePopupClose={onCloseNewPatientClick}
+                  />
+                </StyledPaperBottom>
+              ) : null}
             </StyledPaper>
           </WrapperSearchPaper>
         </ClickAwayListener>
