@@ -31,8 +31,8 @@ import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import { validateLuhnAlgorithm } from 'Utils/Helpers/validation/validateLuhnAlgorithm';
 import { getOnlyNumbersRegexPattern } from 'Utils/Helpers/validation/patterns';
-import PopUpOnExit from '../../../../Assets/Elements/PopUpOnExit';
-import normalizeFhirPatient from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient';
+import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
+import normalizeFhirPatient from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient';
 
 const PopupCreateNewPatient = ({
   popupOpen,
@@ -322,7 +322,6 @@ const PopupCreateNewPatient = ({
         setIsFound(true);
         const result = await triggerValidation('identifier');
         setFormButtonCreatApp('view');
-        // setFormButtonPatientAdm('view');
         try {
           FHIR('Patient', 'doWork', {
             functionName: 'searchPatientById',
