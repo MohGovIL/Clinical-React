@@ -994,6 +994,20 @@ const PatientDetailsBlock = ({
             const normalizedQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
               questionnaireResponseData.data.entry[1].resource,
             );
+            reset({
+              commitmentAndPaymentReferenceForPaymentCommitment:
+                normalizedQuestionnaireResponse.items.find(
+                  (item) => item.linkId === '1',
+                ).answer[0].valueInteger || '',
+              commitmentAndPaymentDoctorsName:
+                normalizedQuestionnaireResponse.items.find(
+                  (item) => item.linkId === '4',
+                ).answer[0].valueString || '',
+              commitmentAndPaymentDoctorsLicense:
+                normalizedQuestionnaireResponse.items.find(
+                  (item) => item.linkId === '5',
+                ).answer[0].valueInteger || '',
+            });
             setQuestionnaireResponse(normalizedQuestionnaireResponse);
             if (normalizedQuestionnaireResponse.items.length) {
               const commitmentDate = normalizedQuestionnaireResponse.items.find(
@@ -1532,18 +1546,12 @@ const PatientDetailsBlock = ({
                 <Controller
                   control={control}
                   name='commitmentAndPaymentReferenceForPaymentCommitment'
-                  defaultValue={
-                    questionnaireResponse.items
-                      ? questionnaireResponse.items.find(
-                          (item) => item.linkId === '1',
-                        ).answer[0].valueInteger || ''
-                      : ''
-                  }
                   as={
                     <StyledTextField
                       label={`${t('Reference for payment commitment')} *`}
                       id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                       type='number'
+                      InputLabelProps={{ shrink: true }}
                       error={
                         requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
                           ? true
@@ -1650,17 +1658,11 @@ const PatientDetailsBlock = ({
                 <Controller
                   control={control}
                   name='commitmentAndPaymentDoctorsName'
-                  defaultValue={
-                    questionnaireResponse.items
-                      ? questionnaireResponse.items.find(
-                          (item) => item.linkId === '4',
-                        ).answer[0].valueString || ''
-                      : ''
-                  }
                   as={
                     <StyledTextField
                       label={`${t('Doctors name')} *`}
                       id={'commitmentAndPaymentDoctorsName'}
+                      InputLabelProps={{ shrink: true }}
                       error={
                         requiredErrors.commitmentAndPaymentDoctorsName
                           ? true
@@ -1675,13 +1677,7 @@ const PatientDetailsBlock = ({
                 <Controller
                   control={control}
                   name='commitmentAndPaymentDoctorsLicense'
-                  defaultValue={
-                    questionnaireResponse.items
-                      ? questionnaireResponse.items.find(
-                          (item) => item.linkId === '5',
-                        ).answer[0].valueInteger || ''
-                      : ''
-                  }
+                  InputLabelProps={{ shrink: true }}
                   as={
                     <StyledTextField
                       label={`${t('Doctors license')} *`}
