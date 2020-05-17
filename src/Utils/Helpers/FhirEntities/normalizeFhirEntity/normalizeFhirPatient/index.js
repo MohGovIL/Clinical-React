@@ -21,7 +21,7 @@ const normalizeFhirPatient = (patient) => {
   let streetNumber = '';
   let POBox = '';
 
-  if (patient.address.length) {
+  if (patient.address && patient.address.length) {
     city = patient.address[0].city;
     postalCode = patient.address[0].postalCode;
     country = patient.address[0].country;

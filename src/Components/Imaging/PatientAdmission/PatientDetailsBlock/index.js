@@ -75,6 +75,7 @@ const PatientDetailsBlock = ({
     setValue,
     register,
     formState,
+    reset,
   } = useForm({
     mode: 'onBlur',
     submitFocusError: true,
@@ -110,7 +111,7 @@ const PatientDetailsBlock = ({
           if (data.addressStreet) {
             patientPatchParams['streetName'] = addressStreet.code;
           }
-          if (data.addressStreetNumber) {
+          if (data.addressStreetNumber.trim()) {
             patientPatchParams['streetNumber'] = data.addressStreetNumber;
           }
           if (data.addressPostalCode) {
@@ -149,7 +150,7 @@ const PatientDetailsBlock = ({
             }),
           );
         }
-        if (data.isEscorted) {
+        if (isEscorted) {
           let relatedPersonParams = {};
           if (encounterData.relatedPerson) {
             if (
@@ -176,6 +177,9 @@ const PatientDetailsBlock = ({
             }
             if (data.escortMobilePhone) {
               relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+            }
+            if (patientData && patientData.id) {
+              relatedPersonParams['patient'] = patientData.id;
             }
             APIsArray.push(
               FHIR('RelatedPerson', 'doWork', {
@@ -313,9 +317,11 @@ const PatientDetailsBlock = ({
         }
         const promises = await Promise.all(APIsArray);
         const encounter = { ...encounterData };
-        if (data.isEscorted) {
+        if (isEscorted) {
           if (!encounter.relatedPerson) {
-            const NewRelatedPerson = normalizeFhirRelatedPerson(promises[3]);
+            const NewRelatedPerson = normalizeFhirRelatedPerson(
+              promises[1].data,
+            );
             encounter['relatedPerson'] = NewRelatedPerson.id;
           }
         }
@@ -500,7 +506,6 @@ const PatientDetailsBlock = ({
   // Escorted Information - functions
   const isEscortedSwitchOnChangeHandle = () => {
     setIsEscorted((prevState) => {
-      setValue('isEscorted', !prevState);
       return !prevState;
     });
   };
@@ -909,7 +914,7 @@ const PatientDetailsBlock = ({
         setPOBoxCity(defaultAddressCityObj);
       }
       // If there is a streetName there might be streetNumber but that is not required streetName is required according to FHIR.
-      if (patientData.streetName) {
+      if (patientData.streetName.trim()) {
         const defaultAddressStreetObj = {
           name: t(patientData.streetName),
           code: patientData.streetName,
@@ -941,18 +946,22 @@ const PatientDetailsBlock = ({
       if (encounterData.relatedPerson) {
         (async () => {
           try {
-            if (encounterData.relatedPerson) {
-              const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
-                functionName: 'getRelatedPerson',
-                functionParams: {
-                  RelatedPersonId: encounterData.relatedPerson,
-                },
-              });
-              const normalizedRelatedPerson = normalizeFhirRelatedPerson(
-                relatedPerson.data,
-              );
-              setRelatedPerson({ ...normalizedRelatedPerson });
-            }
+            const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
+              functionName: 'getRelatedPerson',
+              functionParams: {
+                RelatedPersonId: encounterData.relatedPerson,
+              },
+            });
+            const normalizedRelatedPerson = normalizeFhirRelatedPerson(
+              relatedPerson.data,
+            );
+
+            setIsEscorted(true);
+            setRelatedPerson(normalizedRelatedPerson);
+            reset({
+              escortMobilePhone: normalizedRelatedPerson.mobilePhone || '',
+              escortName: normalizedRelatedPerson.name || '',
+            });
           } catch (error) {
             console.log(error);
           }
@@ -1009,7 +1018,7 @@ const PatientDetailsBlock = ({
           console.log(error);
         }
       })();
-      if (encounterData.id || patientData.id) {
+      if (encounterData.id && patientData.id) {
         (async () => {
           const documentReferenceData = await FHIR(
             'DocumentReference',
@@ -1096,22 +1105,14 @@ const PatientDetailsBlock = ({
               alignItems={'center'}>
               <span>{t('Patient arrived with an escort?')}</span>
               {/* Escorted Information Switch */}
-              <Controller
+              <StyledSwitch
                 name='isEscorted'
-                control={control}
-                defaultValue={isEscorted}
-                onChangeName={isEscortedSwitchOnChangeHandle}
-                as={
-                  <StyledSwitch
-                    name='isEscorted'
-                    onChange={isEscortedSwitchOnChangeHandle}
-                    checked={isEscorted}
-                    label_1={'No'}
-                    label_2={'Yes'}
-                    marginLeft={'40px'}
-                    marginRight={'40px'}
-                  />
-                }
+                onChange={isEscortedSwitchOnChangeHandle}
+                checked={isEscorted}
+                label_1={'No'}
+                label_2={'Yes'}
+                marginLeft={'40px'}
+                marginRight={'40px'}
               />
             </Grid>
           </StyledFormGroup>
@@ -1134,10 +1135,10 @@ const PatientDetailsBlock = ({
               />
               {/* Escorted Information cell phone */}
               <Controller
-                as={<StyledTextField label={t('Escort cell phone')} />}
                 name={'escortMobilePhone'}
                 control={control}
                 defaultValue={relatedPerson.mobilePhone || ''}
+                as={<StyledTextField label={t('Escort cell phone')} />}
                 rules={{
                   pattern: israelPhoneNumberRegex(),
                 }}
@@ -1817,7 +1818,9 @@ const PatientDetailsBlock = ({
                       setPopUpReferenceFile('Commitment');
                       onDeletePopUp(event);
                     }}
-                    onClick={(event) => onClickFileHandler(event, commitmentRef)}
+                    onClick={(event) =>
+                      onClickFileHandler(event, commitmentRef)
+                    }
                   />
                 ) : (
                   <label htmlFor='commitment'>

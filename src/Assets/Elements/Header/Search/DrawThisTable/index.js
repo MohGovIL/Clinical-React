@@ -78,7 +78,6 @@ const DrawThisTable = ({
     let encounterData = null;
     switch (admissionState) {
       case ADMISSIONWITHOUTAPPOINTMENT:
-        console.log('admission without appointment');
         encounterData = await FHIR('Encounter', 'doWork', {
           functionName: 'createNewEncounter',
           functionParams: {

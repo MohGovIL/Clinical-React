@@ -15,10 +15,14 @@ const normalizeFhirRelatedPerson = (relatedPerson) => {
   let id = '';
   let gender = '';
 
-  if (relatedPerson.patient && relatedPerson.patient.reference) {
+  if (
+    relatedPerson.patient &&
+    relatedPerson.patient.reference &&
+    relatedPerson.patient.reference.split('/')[1].length
+  ) {
     patient = relatedPerson.patient.reference.split('/')[1];
   }
-  if (relatedPerson.telecom.length) {
+  if (relatedPerson.telecom && relatedPerson.telecom.length) {
     relatedPerson.telecom.forEach((telecomObj) => {
       if (telecomObj.system) {
         if (telecomObj.system === 'phone') {
@@ -35,17 +39,23 @@ const normalizeFhirRelatedPerson = (relatedPerson) => {
       }
     });
   }
-  if (relatedPerson.relationship.length) {
-    if (relatedPerson.relationship[0].coding.length) {
+  if (relatedPerson.relationship && relatedPerson.relationship.length) {
+    if (
+      relatedPerson.relationship[0].coding &&
+      relatedPerson.relationship[0].coding.length
+    ) {
       relationship = relatedPerson.relationship[0].coding[0].code;
     }
   }
-  if (relatedPerson.identifier.length) {
+  if (relatedPerson.identifier && relatedPerson.identifier.length) {
     if (relatedPerson.identifier[0].value) {
       identifier = relatedPerson.identifier[0].value;
     }
     if (relatedPerson.identifier[0].type) {
-      if (relatedPerson.identifier[0].type.coding.length) {
+      if (
+        relatedPerson.identifier[0].type.coding &&
+        relatedPerson.identifier[0].type.coding.length
+      ) {
         if (relatedPerson.identifier[0].type.coding[0].code) {
           identifierType = relatedPerson.identifier[0].type.coding[0].code;
         }
