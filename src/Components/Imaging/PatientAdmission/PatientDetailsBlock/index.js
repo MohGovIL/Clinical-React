@@ -12,6 +12,7 @@ import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhir
 import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 import { splitBase_64 } from 'Utils/Helpers/splitBase_64';
+import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
 // Styles
 import {
   StyledAutoComplete,
@@ -805,6 +806,7 @@ const PatientDetailsBlock = ({
         } else {
           setAdditionalDocumentFile_64(event.target.result);
         }
+        console.log(event.target.result);
       };
       reader.readAsDataURL(ref.current.files[0]);
       fileObject['name'] = `${fileName}_${moment().format(
@@ -819,8 +821,10 @@ const PatientDetailsBlock = ({
   }
   const onClickFileHandler = (event, ref) => {
     event.stopPropagation();
-    const objUrl = URL.createObjectURL(ref.current.files[0]);
-    window.open(objUrl, ref.current.files[0].name);
+    if (documents.length) {
+      const objUrl = URL.createObjectURL(ref.current.files[0]);
+      window.open(objUrl, ref.current.files[0].name);
+    }
   };
 
   const onDeletePopUp = (event) => {
@@ -1053,9 +1057,28 @@ const PatientDetailsBlock = ({
               documentIndex++
             ) {
               if (documentReferenceData.data.entry[documentIndex].resource) {
-                documentsArray.push(
-                  normalizeFhirDocumentReference(documentReferenceData.data),
+                const normalizedFhirDocumentReference = normalizeFhirDocumentReference(
+                  documentReferenceData.data.entry[documentIndex].resource,
                 );
+                documentsArray.push(normalizedFhirDocumentReference);
+                const base_64 = combineBase_64(
+                  normalizedFhirDocumentReference.data,
+                  normalizedFhirDocumentReference.contentType,
+                );
+                if (
+                  normalizedFhirDocumentReference.url.startsWith('Referral')
+                ) {
+                  setReferralFile_64(base_64);
+                  setReferralFile()
+                } else if (
+                  normalizedFhirDocumentReference.url.startsWith('Commitment')
+                ) {
+                  setCommitmentFile_64(base_64);
+                  setCommitmentFile()
+                } else {
+                  setAdditionalDocumentFile_64(base_64);
+                  setAdditionalDocumentFile()
+                }
               }
             }
             setDocuments(documentsArray);
