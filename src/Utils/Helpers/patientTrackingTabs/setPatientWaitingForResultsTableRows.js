@@ -11,7 +11,10 @@ import { normalizeFhirEncountersWithPatients } from 'Utils/Helpers/FhirEntities/
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { store } from 'index';
 import { setEncounterWithPatientsAction } from 'Store/Actions/FhirActions/fhirActions';
+import { setEncounterAndPatient } from 'Store/Actions/ActiveActions/';
 import { FHIR } from 'Utils/Services/FHIR';
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+
 //   ממתינים לפענוח
 export const waitingForResultsTabActiveFunction = async function (
   setTable,
@@ -193,7 +196,8 @@ const setPatientDataWaitingForResultsTableRows = (
             align: 'center',
             color: 'primary',
             onClickHandler() {
-              console.log();
+              store.dispatch(setEncounterAndPatient(encounter, patient));
+              history.push(`${baseRoutePath()}/generic/encounterSheet`);
             },
             mode,
           });
