@@ -188,7 +188,10 @@ const PopupCreateNewPatient = ({
                   setTimeout(clearPopupCreateNewPatient, 750);
                 } else if (afterSaveAction === 'newEncounterForNewPatient') {
                   let new_patient = normalizeFhirPatient(saved_patient.data);
-                  createNewEncounterForCurrentPatient(new_patient.id, new_patient);
+                  createNewEncounterForCurrentPatient(
+                    new_patient.id,
+                    new_patient,
+                  );
                 }
               })
               .catch((error) => {
@@ -504,8 +507,10 @@ const PopupCreateNewPatient = ({
     let currentDate = moment().format('YYYY-MM-DD');
     (async () => {
       try {
-          let patient_identifier = (patient_id === undefined ? patientIdentifier : patient_id);
-          let patient_current_data = (patient_data === undefined ? patientData :patient_data);
+        let patient_identifier =
+          patient_id === undefined ? patientIdentifier : patient_id;
+        let patient_current_data =
+          patient_data === undefined ? patientData : patient_data;
 
         FHIR('Appointment', 'doWork', {
           functionName: 'getAppointmentPerPatient',
@@ -535,7 +540,7 @@ const PopupCreateNewPatient = ({
             store.dispatch(
               setEncounterAndPatient(
                 normalizeFhirEncounter(encounterData),
-                  patient_current_data,
+                patient_current_data,
               ),
             );
             history.push({
@@ -555,7 +560,7 @@ const PopupCreateNewPatient = ({
               store.dispatch(
                 setEncounterAndPatient(
                   normalizeFhirEncounter(encounterData),
-                    patient_current_data,
+                  patient_current_data,
                 ),
               );
               history.push({
