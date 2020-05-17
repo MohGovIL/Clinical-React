@@ -9,7 +9,7 @@ import firstRouteMapper from 'Utils/Helpers/firstRouteMapper';
 import StyledEncounterSheet from './Style';
 import PatientDataBlock from './PatientDataBlock';
 import PatientBackground from './PatientBackground';
-import EncounterForm from './EncounterForm';
+import EncounterForms from './EncounterForms';
 
 const EncounterSheet = ({
   patient,
@@ -51,9 +51,24 @@ const EncounterSheet = ({
         onCloseClick={handleCloseClick}
       />
       <StyledEncounterSheet>
-        <PatientDataBlock encounter={encounter} patient={patient} />
-        <PatientBackground encounter={encounter} patient={patient} />
-        <EncounterForm encounter={encounter} patient={patient} />
+        <PatientDataBlock
+          encounter={encounter}
+          patient={patient}
+          formatDate={formatDate}
+          languageDirection={languageDirection}
+        />
+        <PatientBackground
+          encounter={encounter}
+          patient={patient}
+          formatDate={formatDate}
+          languageDirection={languageDirection}
+        />
+        <EncounterForms
+          encounter={encounter}
+          patient={patient}
+          formatDate={formatDate}
+          languageDirection={languageDirection}
+        />
       </StyledEncounterSheet>
     </React.Fragment>
   );
