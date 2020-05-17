@@ -40,6 +40,7 @@ const PopupCreateNewPatient = ({
   languageDirection,
   formatDate,
   facility,
+  authorizationACO
 }) => {
   const { t } = useTranslation();
 
@@ -63,7 +64,7 @@ const PopupCreateNewPatient = ({
   //const [selectedIdType, setSelectedIdType] = useState(0);
   const [formButtonSave, setFormButtonSave] = useState('write');
   const [formButtonCreatApp, setFormButtonCreatApp] = useState('view');
-  const [formButtonPatientAdm, setFormButtonPatientAdm] = useState('write');
+  const [formButtonPatientAdm, setFormButtonPatientAdm] = useState(authorizationACO?.patientAdmission);
   const [mainSubmitSave, setMainSubmitSave] = useState(true);
 
   const [afterSaveAction, setAfterSaveAction] = useState('');
@@ -377,7 +378,7 @@ const PopupCreateNewPatient = ({
               });
               setFormButtonSave('view');
               setFormButtonCreatApp('write');
-              setFormButtonPatientAdm('write');
+              setFormButtonPatientAdm(authorizationACO?.patientAdmission);
             } else {
               if (
                 (!validateLuhnAlgorithm(patientIdNumber) &&
