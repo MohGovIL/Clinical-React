@@ -1,8 +1,8 @@
 import React from 'react';
 import StyledPatientFiles from './Style';
 
-const PatientFiles = () => {
+const EncounterForm = () => {
   return <StyledPatientFiles></StyledPatientFiles>;
 };
 
-export default PatientFiles;
+export default EncounterForm;

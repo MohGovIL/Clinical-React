@@ -9,7 +9,7 @@ import firstRouteMapper from 'Utils/Helpers/firstRouteMapper';
 import StyledEncounterSheet from './Style';
 import PatientDataBlock from './PatientDataBlock';
 import PatientBackground from './PatientBackground';
-import PatientFiles from './PatientFiles';
+import EncounterForm from './EncounterForm';
 
 const EncounterSheet = ({
   patient,
@@ -51,9 +51,9 @@ const EncounterSheet = ({
         onCloseClick={handleCloseClick}
       />
       <StyledEncounterSheet>
-        <PatientDataBlock />
-        <PatientBackground />
-        <PatientFiles />
+        <PatientDataBlock encounter={encounter} patient={patient} />
+        <PatientBackground encounter={encounter} patient={patient} />
+        <EncounterForm encounter={encounter} patient={patient} />
       </StyledEncounterSheet>
     </React.Fragment>
   );
