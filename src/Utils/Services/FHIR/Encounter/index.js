@@ -147,7 +147,11 @@ const EncounterStates = {
         date ? `&date=eq${date}` : ''
       }${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${
         serviceType ? `&service-type=${serviceType}` : ''
-      }${summary ? `&_summary=count` : ''}${params.sortParams && summary === false ? `&_sort=${params.sortParams}`: ''}`,
+      }${summary ? `&_summary=count` : ''}${
+        params.sortParams && summary === false
+          ? `&_sort=${params.sortParams}`
+          : ''
+      }`,
     );
   },
   getCurrentEncounterPerPatient: (params) => {
@@ -228,22 +232,25 @@ const EncounterStates = {
       denormalizedEncounter,
     );
   },
+  deleteEncounter: (params) => {
+    return CRUDOperations('delete', `${params.url}/${params.encounterId}`);
+  },
   searchEncounter: (params) => {
     /**
-     * To get all Encounters just don't send any functionParams
+     * To get all Encounters just don't send any searchParams
      */
-    let functionParamsIndex = 0;
+    let searchParamsIndex = 0;
     let searchString = '';
-    if (params.functionParams) {
-      for (const functionParamsKey in params.functionParams) {
-        if (params.functionParams.hasOwnProperty(functionParamsKey)) {
-          functionParamsIndex += 1;
-          if (functionParamsIndex === 1) {
+    if (params.searchParams) {
+      for (const searchParamsKey in params.searchParams) {
+        if (params.searchParams.hasOwnProperty(searchParamsKey)) {
+          searchParamsIndex += 1;
+          if (searchParamsIndex === 1) {
             searchString += '?';
           } else {
             searchString += '&';
           }
-          const searchParam = `${functionParamsKey}=${params.functionParams[functionParamsKey]}`;
+          const searchParam = `${searchParamsKey}=${params.searchParams[searchParamsKey]}`;
           searchString += searchParam;
         }
       }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import HeaderPatient from 'Assets/Elements/HeaderPatient';
 import { useTranslation } from 'react-i18next';
@@ -7,9 +7,10 @@ import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import PatientDataBlock from './PatientDataBlock';
 import PatientDetailsBlock from './PatientDetailsBlock';
 import { StyledPatientRow, StyledDummyBlock, StyledBackdrop } from './Style';
-
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
+import { FHIR } from 'Utils/Services/FHIR';
+import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
 
 const PatientAdmission = ({
   patient,
@@ -18,6 +19,18 @@ const PatientAdmission = ({
   formatDate,
   history,
 }) => {
+
+  const deletingEncounter = async () => {
+    if (encounter.status === 'planned') {
+      await FHIR('Encounter', 'doWork', {
+        functionName: 'deleteEncounter',
+        functionParams: {
+          encounterId: encounter.id,
+        },
+      });
+    }
+  };
+
   const { t } = useTranslation();
 
   const [edit, setEdit] = useState(0);
@@ -46,15 +59,43 @@ const PatientAdmission = ({
   ];
 
   const handleCloseClick = () => {
-    history.push(`${baseRoutePath()}/imaging/patientTracking`);
+    if (isDirty) {
+      setIsPopUpOpen(true);
+    } else {
+      deletingEncounter();
+      history.push(`${baseRoutePath()}/imaging/patientTracking`);
+    }
   };
 
   const handleEditButtonClick = (isEdit) => {
     setEdit(isEdit);
   };
 
+  const onPopUpCloseHandler = () => {
+    setIsPopUpOpen(false);
+  };
+
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+
+  const [isDirty, setIsDirty] = useState(false);
+
+  const returnHandler = () => {
+    setIsPopUpOpen(false);
+  };
+
+  const exitWithoutSavingHandler = () => {
+    deletingEncounter();
+    history.push(`${baseRoutePath()}/imaging/patientTracking`);
+  };
+
   return (
     <React.Fragment>
+      <PopUpOnExit
+        isOpen={isPopUpOpen}
+        onClose={onPopUpCloseHandler}
+        returnFunction={returnHandler}
+        exitWithOutSavingFunction={exitWithoutSavingHandler}
+      />
       <HeaderPatient
         breadcrumbs={allBreadcrumbs}
         languageDirection={languageDirection}
@@ -63,7 +104,7 @@ const PatientAdmission = ({
       />
       <StyledPatientRow>
         <StyledBackdrop open={true} edit_mode={edit}>
-          {Object.values(patient).length &&
+          {Object.values(patient).length > 0 &&
             Object.values(encounter).length > 0 && (
               <PatientDataBlock
                 patientData={patient}
@@ -83,6 +124,7 @@ const PatientAdmission = ({
               patientData={patient}
               edit_mode={edit}
               formatDate={formatDate}
+              setIsDirty={setIsDirty}
             />
           )}
       </StyledPatientRow>

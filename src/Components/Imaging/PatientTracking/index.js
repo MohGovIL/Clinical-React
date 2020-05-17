@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PatientTrackingStyle, {
   StyledFilterBox,
   TableRowStyle,
@@ -30,6 +30,8 @@ const PatientTracking = ({ vertical, history, selectFilter }) => {
   //The headers menu items
   const [menuItems, setMenuItems] = useState([]);
 
+  const prevFilterBoxValue = useRef(0);
+
   useEffect(() => {
     //Create an array of permitted tabs according to the user role.
     let tabs = getStaticTabsArray();
@@ -38,20 +40,35 @@ const PatientTracking = ({ vertical, history, selectFilter }) => {
       const mode = isAllowed(tab.id);
       tab.mode = mode;
     }
+    const MAX_TABS = tabs.length;
     tabs = tabs.filter((tab) => tab.mode !== 'hide');
+    if (MAX_TABS !== tabs.length) {
+      tabs.forEach((tab, tabIndex) => {
+        tab.tabValue = tabIndex;
+      });
+    }
     setTabs(tabs);
 
     //Filter box mechanism for activeTabs
     for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
       const tab = tabs[tabIndex];
       if (tab.tabValue === selectFilter.statusFilterBoxValue) {
-        tab.activeAction(setTable, setTabs, history, selectFilter, setIsPopUpOpen);
+        tab.activeAction(
+          setTable,
+          setTabs,
+          history,
+          selectFilter,
+          setIsPopUpOpen,
+        );
       } else {
         //TODO make this call in a different useEffect because when statusFiltterBoxValue changes
         // there is no need to call `tab.activeAction` only call `tab.notActiveAction`
-        tab.notActiveAction(setTabs, selectFilter);
+        if (selectFilter.statusFilterBoxValue === prevFilterBoxValue.current) {
+          tab.notActiveAction(setTabs, selectFilter);
+        }
       }
     }
+    prevFilterBoxValue.current = selectFilter.statusFilterBoxValue;
   }, [
     selectFilter.filter_date,
     selectFilter.statusFilterBoxValue,
@@ -75,13 +92,18 @@ const PatientTracking = ({ vertical, history, selectFilter }) => {
   }, []);
 
   const onClosePopUpHandler = () => {
-      setIsPopUpOpen(false);
-  }
+    setIsPopUpOpen(false);
+  };
   return (
     <React.Fragment>
-        <CustomizedPopup isOpen={isPopUpOpen} onClose={onClosePopUpHandler} title={t('System notification')}>
-            {t('The patient admission process has been started by another user and is yet to be finished')}
-        </CustomizedPopup>
+      <CustomizedPopup
+        isOpen={isPopUpOpen}
+        onClose={onClosePopUpHandler}
+        title={t('System notification')}>
+        {t(
+          'The patient admission process has been started by another user and is yet to be finished',
+        )}
+      </CustomizedPopup>
       <Header Items={menuItems} />
       <PatientTrackingStyle>
         <StyledTitle>

@@ -225,8 +225,10 @@ const setPatientDataInvitedTableRows = (
               const plannedEncounter = await FHIR('Encounter', 'doWork', {
                 functionName: 'searchEncounter',
                 functionParams: {
-                  appointment: appointment.id,
-                  status: 'planned',
+                  searchParams: {
+                    appointment: appointment.id,
+                    status: 'planned',
+                  },
                 },
               });
               if (plannedEncounter.data.total === 0) {
@@ -246,8 +248,8 @@ const setPatientDataInvitedTableRows = (
                 history.push({
                   pathname: `${baseRoutePath()}/imaging/patientAdmission`,
                 });
-              }else {
-                  setIsPopUpOpen(true);
+              } else {
+                setIsPopUpOpen(true);
               }
             },
             mode: moment(appointment.startTime).isSame(
