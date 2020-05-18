@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import HeaderPatient from 'Assets/Elements/HeaderPatient';
 import { useTranslation } from 'react-i18next';

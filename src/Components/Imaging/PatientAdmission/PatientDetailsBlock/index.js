@@ -1069,39 +1069,32 @@ const PatientDetailsBlock = ({
                   normalizedFhirDocumentReference.data,
                   normalizedFhirDocumentReference.contentType,
                 );
-                setReferralFile_64(base_64);
                 const [BoolAnswer, SizeInMB] = calculateFileSize(
                   atob(normalizedFhirDocumentReference.data).length,
                   FILES_OBJ.valueInBytes,
                   FILES_OBJ.fix,
                   FILES_OBJ.maxSize,
                 );
+                let obj = {
+                  name: normalizedFhirDocumentReference.url,
+                  size: SizeInMB,
+                };
                 if (
                   normalizedFhirDocumentReference.url.startsWith('Referral')
                 ) {
                   setReferralFile_64(base_64);
-                  console.log(normalizedFhirDocumentReference.url);
-                  setReferralFile(
-                    normalizedFhirDocumentReference.url,
-                    SizeInMB,
-                  );
+                  setReferralFile(obj);
                   referralRef.current = base_64;
                 } else if (
                   normalizedFhirDocumentReference.url.startsWith('Commitment')
                 ) {
                   commitmentRef.current = base_64;
                   setCommitmentFile_64(base_64);
-                  setCommitmentFile(
-                    normalizedFhirDocumentReference.url,
-                    SizeInMB,
-                  );
+                  setCommitmentFile(obj);
                 } else {
                   additionalDocumentRef.current = base_64;
                   setAdditionalDocumentFile_64(base_64);
-                  setAdditionalDocumentFile(
-                    normalizedFhirDocumentReference.url,
-                    SizeInMB,
-                  );
+                  setAdditionalDocumentFile(obj);
                 }
               }
             }
