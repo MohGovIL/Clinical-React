@@ -15,11 +15,33 @@ import Title from 'Assets/Elements/Title';
 import isAllowed from 'Utils/Helpers/isAllowed';
 import { getStaticTabsArray } from 'Utils/Helpers/patientTrackingTabs/staticTabsArray';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
+import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
 
-const PatientTracking = ({ vertical, history, selectFilter }) => {
+const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   const { t } = useTranslation();
   // Set the popUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+
+  useEffect(() => {
+    const EventSource = NativeEventSource || EventSourcePolyfill;
+    let eventSourceHeaders = {
+      headers: {
+        Authorization: '',
+      },
+    };
+
+    const source = new EventSource(
+      `/api/sse/patients-tracking/check-refresh/${facilityId}`,
+      eventSourceHeaders,
+    );
+    source.onmessage = (event) => {};
+
+    source.onopen = (event) => {
+      console.log('On open')
+    }
+  }, [facilityId]);
+
+ 
 
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
@@ -133,6 +155,7 @@ const mapStateToProps = (state) => {
     vertical: state.settings.clinikal_vertical,
     // userRole: state.settings.user_role,
     selectFilter: state.filters,
+    facilityId: state.settings.facility,
   };
 };
 
