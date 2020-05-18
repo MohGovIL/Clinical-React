@@ -16,6 +16,9 @@ import isAllowed from 'Utils/Helpers/isAllowed';
 import { getStaticTabsArray } from 'Utils/Helpers/patientTrackingTabs/staticTabsArray';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
+import { basePath } from 'Utils/Helpers/basePath';
+import { ApiTokens } from 'Utils/Services/ApiTokens';
+import { getToken } from 'Utils/Helpers/getToken';
 
 const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   const { t } = useTranslation();
@@ -31,17 +34,15 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     };
 
     const source = new EventSource(
-      `/api/sse/patients-tracking/check-refresh/${facilityId}`,
+      `${basePath()}api/sse/patients-tracking/check-refresh/${facilityId}`,
       eventSourceHeaders,
     );
     source.onmessage = (event) => {};
 
     source.onopen = (event) => {
-      console.log('On open')
-    }
+      console.log('On open');
+    };
   }, [facilityId]);
-
- 
 
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
