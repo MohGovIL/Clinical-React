@@ -150,7 +150,7 @@ const tableHeaders = [
     component: LABEL_CELL,
   },
   {
-    tableHeader: 'Test',
+    tableHeader: 'Reason for refferal',
     hideTableHeader: false,
     component: LABEL_CELL,
   },
@@ -310,7 +310,7 @@ const setPatientDataInvitedTableRows = (
             label: appointment.serviceType ? appointment.serviceType : null,
           });
           break;
-        case 'Test':
+        case 'Reason for refferal':
           row.push({
             padding: 'default',
             align: 'center',

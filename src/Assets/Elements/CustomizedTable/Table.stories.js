@@ -30,7 +30,7 @@ export const tableHeadersData = [
     tableHeader: 'Healthcare service',
   },
   {
-    tableHeader: 'Test',
+    tableHeader: 'Reason for refferal',
   },
   {
     tableHeader: 'Time',
