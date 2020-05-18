@@ -13,6 +13,8 @@ import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 import { splitBase_64 } from 'Utils/Helpers/splitBase_64';
 import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
+import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
+
 // Styles
 import {
   StyledAutoComplete,
@@ -345,7 +347,6 @@ const PatientDetailsBlock = ({
             encounter: encounter,
           },
         });
-        const APIsFILE = [];
         const referral_64Obj = splitBase_64(referralFile_64);
         const documentReferenceReferral = {
           encounter: encounterData.id,
@@ -355,12 +356,11 @@ const PatientDetailsBlock = ({
           categoryCode: '2',
           url: referralFile.name,
         };
-        APIsFILE.push(
-          FHIR('DocumentReference', 'doWork', {
-            documentReference: documentReferenceReferral,
-            functionName: 'createDocumentReference',
-          }),
-        );
+
+        await FHIR('DocumentReference', 'doWork', {
+          documentReference: documentReferenceReferral,
+          functionName: 'createDocumentReference',
+        });
 
         const commitment_64Obj = splitBase_64(commitmentFile_64);
         const documentReferenceCommitment = {
@@ -371,12 +371,12 @@ const PatientDetailsBlock = ({
           categoryCode: '2',
           url: commitmentFile.name,
         };
-        APIsFILE.push(
-          FHIR('DocumentReference', 'doWork', {
-            documentReference: documentReferenceCommitment,
-            functionName: 'createDocumentReference',
-          }),
-        );
+
+        await FHIR('DocumentReference', 'doWork', {
+          documentReference: documentReferenceCommitment,
+          functionName: 'createDocumentReference',
+        });
+
         if (additionalDocumentFile_64.length) {
           const additional_64Obj = splitBase_64(additionalDocumentFile_64);
           const documentReferenceAdditionalDocument = {
@@ -387,14 +387,12 @@ const PatientDetailsBlock = ({
             categoryCode: '2',
             url: additionalDocumentFile.name,
           };
-          APIsFILE.push(
-            FHIR('DocumentReference', 'doWork', {
-              documentReference: documentReferenceAdditionalDocument,
-              functionName: 'createDocumentReference',
-            }),
-          );
+
+          await FHIR('DocumentReference', 'doWork', {
+            documentReference: documentReferenceAdditionalDocument,
+            functionName: 'createDocumentReference',
+          });
         }
-        await Promise.all(APIsFILE);
         history.push(`${baseRoutePath()}/imaging/patientTracking`);
       }
     } catch (error) {
@@ -784,6 +782,10 @@ const PatientDetailsBlock = ({
   const referralRef = React.useRef();
   const commitmentRef = React.useRef();
   const additionalDocumentRef = React.useRef();
+  const [referralBlob, setReferralBlob] = useState('');
+  const [commitmentBlob, setCommitmentBlob] = useState('');
+  const [additionalDocumentBlob, setAdditionalDocumentBlob] = useState('');
+
   // Files scan - vars - globals
   const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
   // Files scan - functions
@@ -821,13 +823,30 @@ const PatientDetailsBlock = ({
   const onClickFileHandler = (event, ref) => {
     event.stopPropagation();
     event.preventDefault();
-    if (!documents.length) {
-      const objUrl = URL.createObjectURL(ref.current.files[0]);
-      window.open(objUrl, ref.current.files[0].name);
+    let refId = ref.current.id;
+    if (documents.length) {
+      if (documents.find((doc) => doc.url.startsWith(refId))) {
+        if (refId.startsWith('Referral')) {
+          window.open(URL.createObjectURL(referralBlob), referralFile.name);
+        } else if (refId.startsWith('Commitment')) {
+          window.open(URL.createObjectURL(commitmentBlob), commitmentFile.name);
+        } else {
+          window.open(
+            URL.createObjectURL(additionalDocumentBlob),
+            additionalDocumentFile.name,
+          );
+        }
+      } else {
+        window.open(
+          URL.createObjectURL(ref.current.files[0]),
+          ref.current.files[0].name,
+        );
+      }
     } else {
-      // TODO get the base_64 string and put as the url.
-      console.log(referralFile_64);
-      window.open(referralFile_64, 'PDF_FILE');
+      window.open(
+        URL.createObjectURL(ref.current.files[0]),
+        ref.current.files[0].name,
+      );
     }
   };
 
@@ -1069,7 +1088,7 @@ const PatientDetailsBlock = ({
                   normalizedFhirDocumentReference.data,
                   normalizedFhirDocumentReference.contentType,
                 );
-                const [BoolAnswer, SizeInMB] = calculateFileSize(
+                const [, SizeInMB] = calculateFileSize(
                   atob(normalizedFhirDocumentReference.data).length,
                   FILES_OBJ.valueInBytes,
                   FILES_OBJ.fix,
@@ -1079,19 +1098,26 @@ const PatientDetailsBlock = ({
                   name: normalizedFhirDocumentReference.url,
                   size: SizeInMB,
                 };
+                const blob = decodeBase_64IntoBlob(
+                  normalizedFhirDocumentReference.data,
+                  normalizedFhirDocumentReference.contentType,
+                );
                 if (
                   normalizedFhirDocumentReference.url.startsWith('Referral')
                 ) {
+                  setReferralBlob(blob);
                   setReferralFile_64(base_64);
                   setReferralFile(obj);
                   referralRef.current = base_64;
                 } else if (
                   normalizedFhirDocumentReference.url.startsWith('Commitment')
                 ) {
+                  setCommitmentBlob(blob);
                   commitmentRef.current = base_64;
                   setCommitmentFile_64(base_64);
                   setCommitmentFile(obj);
                 } else {
+                  setAdditionalDocumentBlob(blob);
                   additionalDocumentRef.current = base_64;
                   setAdditionalDocumentFile_64(base_64);
                   setAdditionalDocumentFile(obj);
@@ -1764,7 +1790,7 @@ const PatientDetailsBlock = ({
                       requiredErrors.ReferralFile ? '#f44336' : '#000b40'
                     }`,
                   }}
-                  htmlFor='referral'>
+                  htmlFor='Referral'>
                   {`${t('Referral')} *`}
                 </label>
               </Grid>
@@ -1775,7 +1801,7 @@ const PatientDetailsBlock = ({
                     referralRef.current = e;
                     register();
                   }}
-                  id='referral'
+                  id='Referral'
                   type='file'
                   accept='.pdf,.gpf,.png,.gif,.jpg'
                   onChange={() =>
@@ -1788,7 +1814,7 @@ const PatientDetailsBlock = ({
                 />
                 {Object.values(referralFile).length > 0 ? (
                   <ChipWithImage
-                    htmlFor='referral'
+                    htmlFor='Referral'
                     label={referralFile.name}
                     size={referralFile.size}
                     onDelete={(event) => {
@@ -1798,7 +1824,7 @@ const PatientDetailsBlock = ({
                     onClick={(event) => onClickFileHandler(event, referralRef)}
                   />
                 ) : (
-                  <label htmlFor='referral'>
+                  <label htmlFor='Referral'>
                     <StyledButton
                       variant='outlined'
                       color='primary'
@@ -1823,7 +1849,7 @@ const PatientDetailsBlock = ({
                       requiredErrors.CommitmentFile ? '#f44336' : '#000b40'
                     }`,
                   }}
-                  htmlFor='commitment'>
+                  htmlFor='Commitment'>
                   {`${t('Commitment')} *`}
                 </label>
               </Grid>
@@ -1834,7 +1860,7 @@ const PatientDetailsBlock = ({
                     commitmentRef.current = e;
                     register();
                   }}
-                  id='commitment'
+                  id='Commitment'
                   type='file'
                   accept='.pdf,.gpf,.png,.gif,.jpg'
                   onChange={() =>
@@ -1847,7 +1873,7 @@ const PatientDetailsBlock = ({
                 />
                 {Object.values(commitmentFile).length > 0 ? (
                   <ChipWithImage
-                    htmlFor='commitment'
+                    htmlFor='Commitment'
                     label={commitmentFile.name}
                     size={commitmentFile.size}
                     onDelete={(event) => {
@@ -1859,7 +1885,7 @@ const PatientDetailsBlock = ({
                     }
                   />
                 ) : (
-                  <label htmlFor='commitment'>
+                  <label htmlFor='Commitment'>
                     <StyledButton
                       variant='outlined'
                       color='primary'
@@ -1892,7 +1918,7 @@ const PatientDetailsBlock = ({
                         additionalDocumentRef.current = e;
                         register();
                       }}
-                      id='additionalDocument'
+                      id='AdditionalDocument'
                       type='file'
                       accept='.pdf,.gpf,.png,.gif,.jpg'
                       onChange={() =>
@@ -1905,7 +1931,7 @@ const PatientDetailsBlock = ({
                     />
                     {Object.values(additionalDocumentFile).length > 0 ? (
                       <ChipWithImage
-                        htmlFor='additionalDocument'
+                        htmlFor='AdditionalDocument'
                         label={additionalDocumentFile.name}
                         size={additionalDocumentFile.size}
                         onDelete={(event) => {
@@ -1919,7 +1945,7 @@ const PatientDetailsBlock = ({
                         }
                       />
                     ) : (
-                      <label htmlFor='additionalDocument'>
+                      <label htmlFor='AdditionalDocument'>
                         <StyledButton
                           variant='outlined'
                           color='primary'

@@ -15,5 +15,5 @@ export const decodeBase_64IntoBlob = (base_64, contentType) => {
     byteNumbers[byteNumberIndex] = byteChars.charCodeAt(byteNumberIndex);
   }
   const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: contentType });
+  return new Blob([byteArray], { type: contentType });
 };
