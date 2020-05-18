@@ -189,7 +189,7 @@ const PatientDataBlock = ({
     lastName: patientData.lastName || '',
     healthManageOrganization: patientData.managingOrganization || 0,
     healthManageOrganizationValue:
-      edit_mode === 1 ? organizationData.code : organizationData.name,
+      edit_mode === 1 ? organizationData?.code : organizationData?.name,
     mobilePhone: patientData.mobileCellPhone || '',
     patientEmail: patientData.email || '',
   };
