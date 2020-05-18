@@ -826,7 +826,8 @@ const PatientDetailsBlock = ({
       window.open(objUrl, ref.current.files[0].name);
     } else {
       // TODO get the base_64 string and put as the url.
-      window.open();
+      console.log(referralFile_64);
+      window.open(referralFile_64, 'PDF_FILE');
     }
   };
 
@@ -1079,6 +1080,7 @@ const PatientDetailsBlock = ({
                   normalizedFhirDocumentReference.url.startsWith('Referral')
                 ) {
                   setReferralFile_64(base_64);
+                  console.log(normalizedFhirDocumentReference.url);
                   setReferralFile(
                     normalizedFhirDocumentReference.url,
                     SizeInMB,

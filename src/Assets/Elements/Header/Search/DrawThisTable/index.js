@@ -297,7 +297,7 @@ const DrawThisTable = ({
     return result.map((patient, patientIndex) => {
       if (patient) {
         return (
-          <React.Fragment>
+          <React.Fragment key={patientIndex}>
             <PopAppointmentsPerPatient
               key={'PopUp' + patientIndex}
               popupOpen={popUpAppointmentsPerPatient}
