@@ -40,7 +40,7 @@ const PopupCreateNewPatient = ({
   languageDirection,
   formatDate,
   facility,
-  authorizationACO
+  authorizationACO,
 }) => {
   const { t } = useTranslation();
 
@@ -64,7 +64,9 @@ const PopupCreateNewPatient = ({
   //const [selectedIdType, setSelectedIdType] = useState(0);
   const [formButtonSave, setFormButtonSave] = useState('write');
   const [formButtonCreatApp, setFormButtonCreatApp] = useState('view');
-  const [formButtonPatientAdm, setFormButtonPatientAdm] = useState(authorizationACO?.patientAdmission);
+  const [formButtonPatientAdm, setFormButtonPatientAdm] = useState(
+    authorizationACO?.patientAdmission,
+  );
   const [mainSubmitSave, setMainSubmitSave] = useState(true);
 
   const [afterSaveAction, setAfterSaveAction] = useState('');
@@ -134,7 +136,7 @@ const PopupCreateNewPatient = ({
     getValues,
     formState,
   } = useForm({
-    mode: 'onChange',
+    mode: 'onBlur',
     validateCriteriaMode: 'all',
     defaultValues: {
       identifierType: patientIdTypeMain,
@@ -730,10 +732,9 @@ const PopupCreateNewPatient = ({
                     errorIdNumber || (!errorRequired.identifier ? false : true)
                   }
                   helperText={errorIdNumberText || errorRequired.identifier}
-                  tabIndex={1}
                   title={''}
+                  inputProps={{ tabIndex: 1 }}
                   InputProps={{
-                      tabIndex: 1,
                     autoComplete: 'off',
                     endAdornment: (!errorRequired.identifier
                       ? false
@@ -756,10 +757,9 @@ const PopupCreateNewPatient = ({
                   onInput={handlerOnInvalidField}
                   error={!errorRequired.firstName ? false : true}
                   helperText={errorRequired.firstName}
-                  tabIndex={3}
                   title={''}
+                  inputProps={{ tabIndex: 3 }}
                   InputProps={{
-                      tabIndex: 3,
                     autoComplete: 'off',
                     endAdornment: (!errorRequired.firstName ? false : true) && (
                       <InputAdornment position='end'>
@@ -779,9 +779,7 @@ const PopupCreateNewPatient = ({
                   select
                   onChange={handleGenderChange}
                   defaultValue={{}}
-                  tabIndex={5}
                   SelectProps={{
-                      tabIndex: 5,
                     MenuProps: {
                       elevation: 0,
                       keepMounted: true,
@@ -806,6 +804,7 @@ const PopupCreateNewPatient = ({
                       ? null
                       : errorRequired.gender
                   }
+                  inputProps={{ tabIndex: 5 }}
                   InputProps={{
                     endAdornment: errors.gender && (
                       <InputAdornment position='end'>
@@ -829,9 +828,7 @@ const PopupCreateNewPatient = ({
                   required={patientIdType === patientIdTypeMain ? true : false}
                   select
                   onChange={handleChangeHealthManageOrg}
-                  tabIndex={7}
                   SelectProps={{
-                    tabIndex: 7,
                     MenuProps: {
                       elevation: 0,
                       keepMounted: true,
@@ -860,6 +857,7 @@ const PopupCreateNewPatient = ({
                       ? null
                       : errorRequired.managingOrganization
                   }
+                  inputProps={{ tabIndex: 7 }}
                   InputProps={{
                     endAdornment: errors.managingOrganization && (
                       <InputAdornment position='end'>
@@ -886,7 +884,7 @@ const PopupCreateNewPatient = ({
                   select
                   onChange={handleIdTypeChange}
                   SelectProps={{
-                    tabIndex:2,
+                    tabIndex: 2,
                     MenuProps: {
                       elevation: 0,
                       keepMounted: true,
@@ -905,9 +903,8 @@ const PopupCreateNewPatient = ({
                   helperText={
                     errors.identifierType ? t('Value is required') : null
                   }
-                  tabIndex={2}
+                  inputProps={{ tabIndex: 2 }}
                   InputProps={{
-                      tabIndex:2,
                     endAdornment: errors.identifierType && (
                       <InputAdornment position='end'>
                         <ErrorOutlineIcon htmlColor={'#ff0000'} />
@@ -936,10 +933,9 @@ const PopupCreateNewPatient = ({
                   onInput={handlerOnInvalidField}
                   error={!errorRequired.lastName ? false : true}
                   helperText={errorRequired.lastName}
-                  tabIndex={4}
                   title={''}
+                  inputProps={{ tabIndex: 4 }}
                   InputProps={{
-                      tabIndex: 4,
                     autoComplete: 'off',
                     endAdornment: (!errorRequired.lastName ? false : true) && (
                       <InputAdornment position='end'>
@@ -994,9 +990,8 @@ const PopupCreateNewPatient = ({
                         disableToolbar: false,
                         label: t('birth day'),
                         value: patientBirthDate,
-                        tabIndex: 6,
+                        inputProps: { tabIndex: 6 },
                         InputProps: {
-                          tabIndex: 6,
                           autoComplete: 'off',
                         },
                         disableFuture: true,
@@ -1048,10 +1043,9 @@ const PopupCreateNewPatient = ({
                       ? errorRequired.mobileCellPhone
                       : null
                   }
-                  tabIndex={8}
                   title={''}
+                  inputProps={{ tabIndex: 8 }}
                   InputProps={{
-                      tabIndex: 8,
                     endAdornment: (errors.mobileCellPhone ||
                     !errorRequired.mobileCellPhone
                       ? false
@@ -1079,10 +1073,9 @@ const PopupCreateNewPatient = ({
                 label={t('Mail address')}
                 error={errors.email ? true : false}
                 helperText={errors.email ? t('Invalid email address') : null}
-                tabIndex={9}
                 title={''}
+                inputProps={{ tabIndex: 9 }}
                 InputProps={{
-                    tabIndex: 9,
                   endAdornment: errors.email && (
                     <InputAdornment position='end'>
                       <ErrorOutlineIcon htmlColor={'#ff0000'} />
