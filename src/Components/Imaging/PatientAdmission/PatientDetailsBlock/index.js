@@ -5,6 +5,8 @@ import { israelPhoneNumberRegex } from 'Utils/Helpers/validation/patterns';
 import { Controller, useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
+
 // Helpers
 import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirOrganization';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
@@ -59,14 +61,14 @@ import { getCities, getStreets } from 'Utils/Services/API';
 import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
-import normalizeFhirDocumentReference from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
-import { baseRoutePath } from '../../../../Utils/Helpers/baseRoutePath';
-
+import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 const PatientDetailsBlock = ({
   patientData,
   edit_mode,
   encounterData,
   formatDate,
+  setEncounterAndPatient,
   setIsDirty,
 }) => {
   const { t } = useTranslation();
@@ -1988,8 +1990,11 @@ const PatientDetailsBlock = ({
                 <StyledButton
                   color='primary'
                   variant='contained'
-                  type='submit'
-                  fontWeight={'bold'}>
+                  fontWeight={'bold'}
+                  onClick={() => {
+                    setEncounterAndPatient(encounterData, patientData);
+                    history.push(`${baseRoutePath()}/generic/encounterSheet`);
+                  }}>
                   {t('Medical questionnaire')}
                 </StyledButton>
               </Grid>
@@ -2008,4 +2013,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(PatientDetailsBlock);
+export default connect(mapStateToProps, { setEncounterAndPatient })(
+  PatientDetailsBlock,
+);

@@ -14,6 +14,7 @@ const PopAppointmentsPerPatient = ({
   content,
   popupOpen,
   handlePopupClose,
+  authorizationACO,
   gotToPatientAdmission,
   patient,
 }) => {
@@ -64,6 +65,7 @@ const PopAppointmentsPerPatient = ({
           prevEncounters={prevEncounters}
           patientTrackingStatuses={patientTrackingStatuses}
           encounterStatuses={encounterStatuses}
+          authorizationACO={authorizationACO}
           patient={patient}
           gotToPatientAdmission={
             gotToPatientAdmission
