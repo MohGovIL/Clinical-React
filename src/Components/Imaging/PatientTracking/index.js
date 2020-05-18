@@ -15,7 +15,7 @@ import Title from 'Assets/Elements/Title';
 import isAllowed from 'Utils/Helpers/isAllowed';
 import { getStaticTabsArray } from 'Utils/Helpers/patientTrackingTabs/staticTabsArray';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
-import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 import { basePath } from 'Utils/Helpers/basePath';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
 import { getToken } from 'Utils/Helpers/getToken';
@@ -27,13 +27,23 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
   let source = React.useRef(undefined);
 
+  const onError = (event) => {
+    console.log('error');
+    // source.current.close();
+  };
+
+  const onMessage = (event) => {
+    console.log('msg');
+  };
+
+  const onOpen = (event) => {
+    console.log('open');
+  };
+
   useEffect(() => {
     try {
-      const EventSource = NativeEventSource || EventSourcePolyfill;
+      const EventSource = EventSourcePolyfill;
       if (typeof EventSource !== undefined) {
-        if (typeof source.current !== undefined) {
-          source.current.close();
-        }
         let eventSourceHeaders = {
           headers: {
             Authorization: `${ApiTokens.API.tokenType} ${getToken(
@@ -47,16 +57,9 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
           eventSourceHeaders,
         );
 
-        source.current.onopen = (event) => {
-          console.log('On open');
-        };
-        source.current.onmessage = (event) => {
-          console.log('onmessage');
-        };
-
-        source.current.onerror = (event) => {
-          source.current.close();
-        };
+        source.current.onopen = onOpen;
+        source.current.onmessage = onMessage;
+        source.current.onerror = onError;
       } else {
         alert('Error: Server-Sent Events are not supported in your browser');
       }
