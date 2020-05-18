@@ -25,24 +25,52 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   // Set the popUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
 
+  let source = React.useRef(undefined);
+
   useEffect(() => {
-    const EventSource = NativeEventSource || EventSourcePolyfill;
-    let eventSourceHeaders = {
-      headers: {
-        Authorization: '',
-      },
-    };
+    try {
+      const EventSource = NativeEventSource || EventSourcePolyfill;
+      if (typeof EventSource !== undefined) {
+        if (typeof source.current !== undefined) {
+          source.current.close();
+        }
+        let eventSourceHeaders = {
+          headers: {
+            Authorization: `${ApiTokens.API.tokenType} ${getToken(
+              ApiTokens.API.tokenName,
+            )}`,
+          },
+        };
 
-    const source = new EventSource(
-      `${basePath()}api/sse/patients-tracking/check-refresh/${facilityId}`,
-      eventSourceHeaders,
-    );
-    source.onmessage = (event) => {};
+        source.current = new EventSource(
+          `${basePath()}apis/api/sse/patients-tracking/check-refresh/${facilityId}`,
+          eventSourceHeaders,
+        );
 
-    source.onopen = (event) => {
-      console.log('On open');
+        source.current.onopen = (event) => {
+          console.log('On open');
+        };
+        source.current.onmessage = (event) => {
+          console.log('onmessage');
+        };
+
+        source.current.onerror = (event) => {
+          source.current.close();
+        };
+      } else {
+        alert('Error: Server-Sent Events are not supported in your browser');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return () => {
+      try {
+        source.current.close();
+      } catch (error) {
+        console.log(error);
+      }
     };
-  }, [facilityId]);
+  }, [facilityId, source]);
 
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
