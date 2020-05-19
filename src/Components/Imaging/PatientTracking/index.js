@@ -34,6 +34,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
   const onMessage = (event) => {
     console.log('msg');
+    console.log(event);
   };
 
   const onOpen = (event) => {
@@ -52,8 +53,14 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
           },
         };
 
+        // source.current = new EventSource(
+        //   `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
+        //     selectFilter.filter_organization || facilityId
+        //   }`,
+        //   eventSourceHeaders,
+        // );
         source.current = new EventSource(
-          `${basePath()}apis/api/sse/patients-tracking/check-refresh/${facilityId}`,
+          `${basePath()}apis/api/sse/patients-tracking/check-refresh/${'ALL'}`,
           eventSourceHeaders,
         );
 
@@ -68,12 +75,13 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     }
     return () => {
       try {
+        console.log('closing source');
         source.current.close();
       } catch (error) {
         console.log(error);
       }
     };
-  }, [facilityId, source]);
+  }, [facilityId, source, selectFilter.filter_organization]);
 
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
