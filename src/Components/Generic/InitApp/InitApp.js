@@ -5,6 +5,7 @@ import GlobalStyle from 'Assets/Themes/GlobalStyle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import GenericRoute from 'Components/Routes/GenericRoute';
 import { Switch, Route } from 'react-router-dom';
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 // import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 
 const InitApp = ({ lang_id, languageDirection }) => {
@@ -15,8 +16,16 @@ const InitApp = ({ lang_id, languageDirection }) => {
         <Switch>
           {/* TODO not sure if this needs to be a PrivateRoute or not */}
           {/* Since the components that gets rendered are PrivateComponents */}
-          <Route exact component={GenericRoute} path={'/generic/:page'} />
-          <Route exact component={VerticalRoute} path={'/:subRoute/:page'} />
+          <Route
+            exact
+            component={GenericRoute}
+            path={`${baseRoutePath()}/generic/:page`}
+          />
+          <Route
+            exact
+            component={VerticalRoute}
+            path={`${baseRoutePath()}/:subRoute/:page`}
+          />
         </Switch>
       </Suspense>
     </React.Fragment>
