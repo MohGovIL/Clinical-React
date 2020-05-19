@@ -13,7 +13,8 @@ import { logoutAction } from 'Store/Actions/LoginActions/LoginActions';
 import { useTranslation } from 'react-i18next';
 import { ClickAwayListener } from '@material-ui/core';
 import RelativeWrapperForClickAwayListener from './RelativeWrapperForClickAwayListener';
-
+import normalizeFhirUser from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
+import { store } from '../../../index';
 const Header = ({ Items, logoutAction }) => {
   const { t } = useTranslation();
 
@@ -27,6 +28,8 @@ const Header = ({ Items, logoutAction }) => {
   const clickAwayHandler = () => {
     setIsArrowOpen(false);
   };
+
+  const userDetails = normalizeFhirUser(store.getState().active.activeUser);
 
   const arrowDropDownItems = [
     {
@@ -46,7 +49,7 @@ const Header = ({ Items, logoutAction }) => {
       <Search />
       <HeaderIcon alt='notifications icon' img={notifications} />
       <VerticalLine />
-      <span>חני החנייה</span>
+      <span>{userDetails.name[0]}</span>
       <ClickAwayListener onClickAway={clickAwayHandler}>
         <RelativeWrapperForClickAwayListener>
           <HeaderIcon

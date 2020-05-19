@@ -12,6 +12,7 @@ import { getSettingsAction } from '../SettingsActions/SettingsActions';
 import { basePath } from 'Utils/Helpers/basePath';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
 
+
 export const logoutStartAction = () => {
   return {
     type: LOGOUT_START,
