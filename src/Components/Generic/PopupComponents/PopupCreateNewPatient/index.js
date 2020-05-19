@@ -67,7 +67,6 @@ const PopupCreateNewPatient = ({
   const [formButtonPatientAdm, setFormButtonPatientAdm] = useState(
     authorizationACO?.patientAdmission,
   );
-  const [mainSubmitSave, setMainSubmitSave] = useState(true);
 
   const [afterSaveAction, setAfterSaveAction] = useState('');
 
@@ -673,12 +672,12 @@ const PopupCreateNewPatient = ({
     let field = event.target.name;
     let fieldIsRequired = t('Value is required');
     let fieldWithError = false;
-    if (field == 'identifier') {
+    if (field === 'identifier') {
       setErrorIdNumberText(fieldIsRequired);
     }
     //manual checking for select type fields: identifierType, gender, managingOrganization.
     for (let [key, value] of Object.entries(errorRequired)) {
-      if (value !== false) fieldWithError = true;
+      if (key && value !== false) fieldWithError = true;
     }
     setErrorRequired({
       ...errorRequired,
