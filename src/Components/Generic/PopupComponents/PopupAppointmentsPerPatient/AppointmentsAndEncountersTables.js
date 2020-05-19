@@ -198,7 +198,7 @@ const AppointmentsAndEncountersTables = ({
             <TableHead>
               <TableRow>
                 <TableCell align='right'>{t("Encounter's hour")}</TableCell>
-                <TableCell align='right'>{t('Lab test type')}</TableCell>
+                <TableCell align='right'>{t('Reason for refferal')}</TableCell>
                 <TableCell align='center'>{t('Status')}</TableCell>
                 <TableCell align='right'></TableCell>
                 <TableCell align='right'></TableCell>
@@ -306,7 +306,7 @@ const AppointmentsAndEncountersTables = ({
             <TableHead>
               <TableRow>
                 <TableCell align='right'>{t('Appointment time')}</TableCell>
-                <TableCell align='right'>{t('Lab test type')}</TableCell>
+                <TableCell align='right'>{t('Reason for refferal')}</TableCell>
                 <TableCell align='center'>{t('Status')}</TableCell>
                 <TableCell align='right'></TableCell>
                 <TableCell align='right'></TableCell>
@@ -428,7 +428,7 @@ const AppointmentsAndEncountersTables = ({
             <TableHead>
               <TableRow>
                 <TableCell align='right'>{t('Date')}</TableCell>
-                <TableCell align='right'>{t('Lab test type')}</TableCell>
+                <TableCell align='right'>{t('Reason for refferal')}</TableCell>
                 <TableCell align='center'>{t('Status')}</TableCell>
                 <TableCell align='right'></TableCell>
                 <TableCell align='right'></TableCell>

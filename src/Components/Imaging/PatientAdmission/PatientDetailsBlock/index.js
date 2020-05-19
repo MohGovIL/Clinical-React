@@ -1544,7 +1544,7 @@ const PatientDetailsBlock = ({
                     t('The test performed during the visit must be selected')
                   }
                   {...params}
-                  label={`${t('Select test')} *`}
+                  label={`${t('Reason for refferal')} *`}
                   InputProps={{
                     ...params.InputProps,
                     endAdornment: (
