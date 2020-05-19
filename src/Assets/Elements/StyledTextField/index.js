@@ -24,7 +24,7 @@ const StyledTextField = styled(TextField)`
     color: #1e2132;
   }
   .MuiSvgIcon-root {
-    color: #076ce9;
+    color: ${(props) => props.iconColor};
   }
   .MuiInputBase-root {
     color: #000b40;
