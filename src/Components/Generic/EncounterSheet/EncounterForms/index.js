@@ -1,7 +1,12 @@
 import React from 'react';
 import StyledPatientFiles from './Style';
 
-const EncounterForms = () => {
+const EncounterForms = ({
+  encounter,
+  patient,
+  languageDirection,
+  formatDate,
+}) => {
   return <StyledPatientFiles></StyledPatientFiles>;
 };
 
