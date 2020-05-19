@@ -15,7 +15,7 @@ import StyledLogin, {
 import Typography from '@material-ui/core/Typography';
 import { useForm } from 'react-hook-form';
 import LoginBG from './LoginBG';
-const Login = ({ loginAction }) => {
+const Login = ({ loginAction, history }) => {
   const { register, handleSubmit, errors } = useForm({
     mode: 'onSubmit',
     defaultValues: {
@@ -27,7 +27,7 @@ const Login = ({ loginAction }) => {
   const { t } = useTranslation();
 
   const onSubmit = (data) => {
-    alert(JSON.stringify(data));
+    loginAction(data.userName, data.password, history);
   };
 
   return (
@@ -80,11 +80,4 @@ const Login = ({ loginAction }) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    isAuth: state.login.isAuth,
-    status: state.login.STATUS,
-  };
-};
-
-export default connect(mapStateToProps, { loginAction })(Login);
+export default connect(null, { loginAction })(Login);
