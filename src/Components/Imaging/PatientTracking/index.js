@@ -34,20 +34,22 @@ const PatientTracking = ({ vertical, history, selectFilter }) => {
 
   useEffect(() => {
     //Create an array of permitted tabs according to the user role.
-    let tabs = getStaticTabsArray();
-    for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
-      const tab = tabs[tabIndex];
-      const mode = isAllowed(tab.id);
-      tab.mode = mode;
+    if (tabs.length === 0) {
+      let tabs = getStaticTabsArray();
+      for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
+        const tab = tabs[tabIndex];
+        const mode = isAllowed(tab.id);
+        tab.mode = mode;
+      }
+      const MAX_TABS = tabs.length;
+      tabs = tabs.filter((tab) => tab.mode !== 'hide');
+      if (MAX_TABS !== tabs.length) {
+        tabs.forEach((tab, tabIndex) => {
+          tab.tabValue = tabIndex;
+        });
+      }
+      setTabs(tabs);
     }
-    const MAX_TABS = tabs.length;
-    tabs = tabs.filter((tab) => tab.mode !== 'hide');
-    if (MAX_TABS !== tabs.length) {
-      tabs.forEach((tab, tabIndex) => {
-        tab.tabValue = tabIndex;
-      });
-    }
-    setTabs(tabs);
 
     //Filter box mechanism for activeTabs
     for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
