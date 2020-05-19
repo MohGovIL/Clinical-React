@@ -21,6 +21,7 @@ const AppointmentsPerPatient = ({
   patientTrackingStatuses,
   encounterStatuses,
   authorizationACO,
+  gotToPatientAdmission,
 }) => {
   const { t } = useTranslation();
 

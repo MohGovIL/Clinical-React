@@ -57,11 +57,27 @@ const DrawThisTable = ({
 
   //let patientTrackingStatuses =  null;
 
+  const gotToPatientAdmission = (encounter, patient) => {
+    let encounterData =
+      encounter && encounter.data
+        ? normalizeFhirEncounter(encounter.data)
+        : encounter;
+
+    if (!encounterData) {
+      console.log('error no encounter was used in the request found');
+      return;
+    }
+
+    store.dispatch(setEncounterAndPatient(encounterData, patient));
+    history.push({
+      pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+    });
+  };
+
   const handleCreateAppointment = async (patient, nextAppointment) => {
     let encounterData = null;
     switch (admissionState) {
       case ADMISSIONWITHOUTAPPOINTMENT:
-        console.log('admission without appointment');
         encounterData = await FHIR('Encounter', 'doWork', {
           functionName: 'createNewEncounter',
           functionParams: {
@@ -71,15 +87,7 @@ const DrawThisTable = ({
             status: 'planned',
           },
         });
-        store.dispatch(
-          setEncounterAndPatient(
-            normalizeFhirEncounter(encounterData.data),
-            patient,
-          ),
-        );
-        history.push({
-          pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-        });
+        gotToPatientAdmission(encounterData, patient);
         break;
       case ADMISSIONWITHAPPOINTMENT:
         if (nextAppointment) {
@@ -96,16 +104,7 @@ const DrawThisTable = ({
               appointment: fhirappointment,
             },
           });
-          store.dispatch(
-            setEncounterAndPatient(
-              normalizeFhirEncounter(encounterData.data),
-              patient,
-            ),
-          );
-          history.push({
-            pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-          });
-
+          gotToPatientAdmission(encounterData, patient);
           console.log('admission with appointment');
         }
         break;
@@ -298,13 +297,17 @@ const DrawThisTable = ({
     return result.map((patient, patientIndex) => {
       if (patient) {
         return (
-          <React.Fragment>
+          <React.Fragment key={patientIndex}>
             <PopAppointmentsPerPatient
               key={'PopUp' + patientIndex}
               popupOpen={popUpAppointmentsPerPatient}
               content={appointmentPopUpData}
               handlePopupClose={handlePopupClose}
-              authorizationACO={authorizationACO}></PopAppointmentsPerPatient>
+              authorizationACO={authorizationACO}
+              patient={patient}
+              gotToPatientAdmission={
+                gotToPatientAdmission
+              }></PopAppointmentsPerPatient>
             <StyledExpansionPanel
               key={'ExpansionPanel_' + patientIndex}
               expanded={expanded === 'panel' + patientIndex}
@@ -364,6 +367,7 @@ const DrawThisTable = ({
                   curEncounter={curEncounter}
                   encounterStatuses={encounterStatuses}
                   patientTrackingStatuses={patientTrackingStatuses}
+                  gotToPatientAdmission={gotToPatientAdmission}
                   authorizationACO={authorizationACO}
                 />
                 <StyledBottomLinks key={'bottom_links_' + patientIndex}>

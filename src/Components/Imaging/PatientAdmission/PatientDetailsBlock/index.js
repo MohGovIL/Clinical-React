@@ -14,6 +14,9 @@ import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhir
 import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 import { splitBase_64 } from 'Utils/Helpers/splitBase_64';
+import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
+import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
+
 // Styles
 import {
   StyledAutoComplete,
@@ -77,6 +80,7 @@ const PatientDetailsBlock = ({
     setValue,
     register,
     formState,
+    reset,
   } = useForm({
     mode: 'onBlur',
     submitFocusError: true,
@@ -112,7 +116,7 @@ const PatientDetailsBlock = ({
           if (data.addressStreet) {
             patientPatchParams['streetName'] = addressStreet.code;
           }
-          if (data.addressStreetNumber) {
+          if (data.addressStreetNumber.trim()) {
             patientPatchParams['streetNumber'] = data.addressStreetNumber;
           }
           if (data.addressPostalCode) {
@@ -151,7 +155,7 @@ const PatientDetailsBlock = ({
             }),
           );
         }
-        if (data.isEscorted) {
+        if (isEscorted) {
           let relatedPersonParams = {};
           if (encounterData.relatedPerson) {
             if (
@@ -178,6 +182,9 @@ const PatientDetailsBlock = ({
             }
             if (data.escortMobilePhone) {
               relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+            }
+            if (patientData && patientData.id) {
+              relatedPersonParams['patient'] = patientData.id;
             }
             APIsArray.push(
               FHIR('RelatedPerson', 'doWork', {
@@ -315,9 +322,11 @@ const PatientDetailsBlock = ({
         }
         const promises = await Promise.all(APIsArray);
         const encounter = { ...encounterData };
-        if (data.isEscorted) {
+        if (isEscorted) {
           if (!encounter.relatedPerson) {
-            const NewRelatedPerson = normalizeFhirRelatedPerson(promises[3]);
+            const NewRelatedPerson = normalizeFhirRelatedPerson(
+              promises[1].data,
+            );
             encounter['relatedPerson'] = NewRelatedPerson.id;
           }
         }
@@ -340,7 +349,6 @@ const PatientDetailsBlock = ({
             encounter: encounter,
           },
         });
-        const APIsFILE = [];
         const referral_64Obj = splitBase_64(referralFile_64);
         const documentReferenceReferral = {
           encounter: encounterData.id,
@@ -350,12 +358,11 @@ const PatientDetailsBlock = ({
           categoryCode: '2',
           url: referralFile.name,
         };
-        APIsFILE.push(
-          FHIR('DocumentReference', 'doWork', {
-            documentReference: documentReferenceReferral,
-            functionName: 'createDocumentReference',
-          }),
-        );
+
+        await FHIR('DocumentReference', 'doWork', {
+          documentReference: documentReferenceReferral,
+          functionName: 'createDocumentReference',
+        });
 
         const commitment_64Obj = splitBase_64(commitmentFile_64);
         const documentReferenceCommitment = {
@@ -366,12 +373,12 @@ const PatientDetailsBlock = ({
           categoryCode: '2',
           url: commitmentFile.name,
         };
-        APIsFILE.push(
-          FHIR('DocumentReference', 'doWork', {
-            documentReference: documentReferenceCommitment,
-            functionName: 'createDocumentReference',
-          }),
-        );
+
+        await FHIR('DocumentReference', 'doWork', {
+          documentReference: documentReferenceCommitment,
+          functionName: 'createDocumentReference',
+        });
+
         if (additionalDocumentFile_64.length) {
           const additional_64Obj = splitBase_64(additionalDocumentFile_64);
           const documentReferenceAdditionalDocument = {
@@ -382,14 +389,12 @@ const PatientDetailsBlock = ({
             categoryCode: '2',
             url: additionalDocumentFile.name,
           };
-          APIsFILE.push(
-            FHIR('DocumentReference', 'doWork', {
-              documentReference: documentReferenceAdditionalDocument,
-              functionName: 'createDocumentReference',
-            }),
-          );
+
+          await FHIR('DocumentReference', 'doWork', {
+            documentReference: documentReferenceAdditionalDocument,
+            functionName: 'createDocumentReference',
+          });
         }
-        await Promise.all(APIsFILE);
         history.push(`${baseRoutePath()}/imaging/patientTracking`);
       }
     } catch (error) {
@@ -502,7 +507,6 @@ const PatientDetailsBlock = ({
   // Escorted Information - functions
   const isEscortedSwitchOnChangeHandle = () => {
     setIsEscorted((prevState) => {
-      setValue('isEscorted', !prevState);
       return !prevState;
     });
   };
@@ -780,6 +784,10 @@ const PatientDetailsBlock = ({
   const referralRef = React.useRef();
   const commitmentRef = React.useRef();
   const additionalDocumentRef = React.useRef();
+  const [referralBlob, setReferralBlob] = useState('');
+  const [commitmentBlob, setCommitmentBlob] = useState('');
+  const [additionalDocumentBlob, setAdditionalDocumentBlob] = useState('');
+
   // Files scan - vars - globals
   const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
   // Files scan - functions
@@ -816,8 +824,32 @@ const PatientDetailsBlock = ({
   }
   const onClickFileHandler = (event, ref) => {
     event.stopPropagation();
-    const objUrl = URL.createObjectURL(ref.current.files[0]);
-    window.open(objUrl, ref.current.files[0].name);
+    event.preventDefault();
+    let refId = ref.current.id;
+    if (documents.length) {
+      if (documents.find((doc) => doc.url.startsWith(refId))) {
+        if (refId.startsWith('Referral')) {
+          window.open(URL.createObjectURL(referralBlob), referralFile.name);
+        } else if (refId.startsWith('Commitment')) {
+          window.open(URL.createObjectURL(commitmentBlob), commitmentFile.name);
+        } else {
+          window.open(
+            URL.createObjectURL(additionalDocumentBlob),
+            additionalDocumentFile.name,
+          );
+        }
+      } else {
+        window.open(
+          URL.createObjectURL(ref.current.files[0]),
+          ref.current.files[0].name,
+        );
+      }
+    } else {
+      window.open(
+        URL.createObjectURL(ref.current.files[0]),
+        ref.current.files[0].name,
+      );
+    }
   };
 
   const onDeletePopUp = (event) => {
@@ -911,7 +943,7 @@ const PatientDetailsBlock = ({
         setPOBoxCity(defaultAddressCityObj);
       }
       // If there is a streetName there might be streetNumber but that is not required streetName is required according to FHIR.
-      if (patientData.streetName) {
+      if (patientData.streetName.trim()) {
         const defaultAddressStreetObj = {
           name: t(patientData.streetName),
           code: patientData.streetName,
@@ -943,18 +975,22 @@ const PatientDetailsBlock = ({
       if (encounterData.relatedPerson) {
         (async () => {
           try {
-            if (encounterData.relatedPerson) {
-              const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
-                functionName: 'getRelatedPerson',
-                functionParams: {
-                  RelatedPersonId: encounterData.relatedPerson,
-                },
-              });
-              const normalizedRelatedPerson = normalizeFhirRelatedPerson(
-                relatedPerson.data,
-              );
-              setRelatedPerson({ ...normalizedRelatedPerson });
-            }
+            const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
+              functionName: 'getRelatedPerson',
+              functionParams: {
+                RelatedPersonId: encounterData.relatedPerson,
+              },
+            });
+            const normalizedRelatedPerson = normalizeFhirRelatedPerson(
+              relatedPerson.data,
+            );
+
+            setIsEscorted(true);
+            setRelatedPerson(normalizedRelatedPerson);
+            reset({
+              escortMobilePhone: normalizedRelatedPerson.mobilePhone || '',
+              escortName: normalizedRelatedPerson.name || '',
+            });
           } catch (error) {
             console.log(error);
           }
@@ -987,6 +1023,20 @@ const PatientDetailsBlock = ({
             const normalizedQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
               questionnaireResponseData.data.entry[1].resource,
             );
+            reset({
+              commitmentAndPaymentReferenceForPaymentCommitment:
+                normalizedQuestionnaireResponse.items.find(
+                  (item) => item.linkId === '1',
+                ).answer[0].valueInteger || '',
+              commitmentAndPaymentDoctorsName:
+                normalizedQuestionnaireResponse.items.find(
+                  (item) => item.linkId === '4',
+                ).answer[0].valueString || '',
+              commitmentAndPaymentDoctorsLicense:
+                normalizedQuestionnaireResponse.items.find(
+                  (item) => item.linkId === '5',
+                ).answer[0].valueInteger || '',
+            });
             setQuestionnaireResponse(normalizedQuestionnaireResponse);
             if (normalizedQuestionnaireResponse.items.length) {
               const commitmentDate = normalizedQuestionnaireResponse.items.find(
@@ -1011,7 +1061,7 @@ const PatientDetailsBlock = ({
           console.log(error);
         }
       })();
-      if (encounterData.id || patientData.id) {
+      if (encounterData.id && patientData.id) {
         (async () => {
           const documentReferenceData = await FHIR(
             'DocumentReference',
@@ -1032,9 +1082,48 @@ const PatientDetailsBlock = ({
               documentIndex++
             ) {
               if (documentReferenceData.data.entry[documentIndex].resource) {
-                documentsArray.push(
-                  normalizeFhirDocumentReference(documentReferenceData.data),
+                const normalizedFhirDocumentReference = normalizeFhirDocumentReference(
+                  documentReferenceData.data.entry[documentIndex].resource,
                 );
+                documentsArray.push(normalizedFhirDocumentReference);
+                const base_64 = combineBase_64(
+                  normalizedFhirDocumentReference.data,
+                  normalizedFhirDocumentReference.contentType,
+                );
+                const [, SizeInMB] = calculateFileSize(
+                  atob(normalizedFhirDocumentReference.data).length,
+                  FILES_OBJ.valueInBytes,
+                  FILES_OBJ.fix,
+                  FILES_OBJ.maxSize,
+                );
+                let obj = {
+                  name: normalizedFhirDocumentReference.url,
+                  size: SizeInMB,
+                };
+                const blob = decodeBase_64IntoBlob(
+                  normalizedFhirDocumentReference.data,
+                  normalizedFhirDocumentReference.contentType,
+                );
+                if (
+                  normalizedFhirDocumentReference.url.startsWith('Referral')
+                ) {
+                  setReferralBlob(blob);
+                  setReferralFile_64(base_64);
+                  setReferralFile(obj);
+                  referralRef.current = base_64;
+                } else if (
+                  normalizedFhirDocumentReference.url.startsWith('Commitment')
+                ) {
+                  setCommitmentBlob(blob);
+                  commitmentRef.current = base_64;
+                  setCommitmentFile_64(base_64);
+                  setCommitmentFile(obj);
+                } else {
+                  setAdditionalDocumentBlob(blob);
+                  additionalDocumentRef.current = base_64;
+                  setAdditionalDocumentFile_64(base_64);
+                  setAdditionalDocumentFile(obj);
+                }
               }
             }
             setDocuments(documentsArray);
@@ -1098,22 +1187,14 @@ const PatientDetailsBlock = ({
               alignItems={'center'}>
               <span>{t('Patient arrived with an escort?')}</span>
               {/* Escorted Information Switch */}
-              <Controller
+              <StyledSwitch
                 name='isEscorted'
-                control={control}
-                defaultValue={isEscorted}
-                onChangeName={isEscortedSwitchOnChangeHandle}
-                as={
-                  <StyledSwitch
-                    name='isEscorted'
-                    onChange={isEscortedSwitchOnChangeHandle}
-                    checked={isEscorted}
-                    label_1={'No'}
-                    label_2={'Yes'}
-                    marginLeft={'40px'}
-                    marginRight={'40px'}
-                  />
-                }
+                onChange={isEscortedSwitchOnChangeHandle}
+                checked={isEscorted}
+                label_1={'No'}
+                label_2={'Yes'}
+                marginLeft={'40px'}
+                marginRight={'40px'}
               />
             </Grid>
           </StyledFormGroup>
@@ -1136,10 +1217,10 @@ const PatientDetailsBlock = ({
               />
               {/* Escorted Information cell phone */}
               <Controller
-                as={<StyledTextField label={t('Escort cell phone')} />}
                 name={'escortMobilePhone'}
                 control={control}
                 defaultValue={relatedPerson.mobilePhone || ''}
+                as={<StyledTextField label={t('Escort cell phone')} />}
                 rules={{
                   pattern: israelPhoneNumberRegex(),
                 }}
@@ -1533,18 +1614,12 @@ const PatientDetailsBlock = ({
                 <Controller
                   control={control}
                   name='commitmentAndPaymentReferenceForPaymentCommitment'
-                  defaultValue={
-                    questionnaireResponse.items
-                      ? questionnaireResponse.items.find(
-                          (item) => item.linkId === '1',
-                        ).answer[0].valueInteger || ''
-                      : ''
-                  }
                   as={
                     <StyledTextField
                       label={`${t('Reference for payment commitment')} *`}
                       id={'commitmentAndPaymentReferenceForPaymentCommitment'}
                       type='number'
+                      InputLabelProps={{ shrink: true }}
                       error={
                         requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
                           ? true
@@ -1651,17 +1726,11 @@ const PatientDetailsBlock = ({
                 <Controller
                   control={control}
                   name='commitmentAndPaymentDoctorsName'
-                  defaultValue={
-                    questionnaireResponse.items
-                      ? questionnaireResponse.items.find(
-                          (item) => item.linkId === '4',
-                        ).answer[0].valueString || ''
-                      : ''
-                  }
                   as={
                     <StyledTextField
                       label={`${t('Doctors name')} *`}
                       id={'commitmentAndPaymentDoctorsName'}
+                      InputLabelProps={{ shrink: true }}
                       error={
                         requiredErrors.commitmentAndPaymentDoctorsName
                           ? true
@@ -1676,13 +1745,7 @@ const PatientDetailsBlock = ({
                 <Controller
                   control={control}
                   name='commitmentAndPaymentDoctorsLicense'
-                  defaultValue={
-                    questionnaireResponse.items
-                      ? questionnaireResponse.items.find(
-                          (item) => item.linkId === '5',
-                        ).answer[0].valueInteger || ''
-                      : ''
-                  }
+                  InputLabelProps={{ shrink: true }}
                   as={
                     <StyledTextField
                       label={`${t('Doctors license')} *`}
@@ -1729,7 +1792,7 @@ const PatientDetailsBlock = ({
                       requiredErrors.ReferralFile ? '#f44336' : '#000b40'
                     }`,
                   }}
-                  htmlFor='referral'>
+                  htmlFor='Referral'>
                   {`${t('Referral')} *`}
                 </label>
               </Grid>
@@ -1740,7 +1803,7 @@ const PatientDetailsBlock = ({
                     referralRef.current = e;
                     register();
                   }}
-                  id='referral'
+                  id='Referral'
                   type='file'
                   accept='.pdf,.gpf,.png,.gif,.jpg'
                   onChange={() =>
@@ -1753,7 +1816,7 @@ const PatientDetailsBlock = ({
                 />
                 {Object.values(referralFile).length > 0 ? (
                   <ChipWithImage
-                    htmlFor='referral'
+                    htmlFor='Referral'
                     label={referralFile.name}
                     size={referralFile.size}
                     onDelete={(event) => {
@@ -1763,7 +1826,7 @@ const PatientDetailsBlock = ({
                     onClick={(event) => onClickFileHandler(event, referralRef)}
                   />
                 ) : (
-                  <label htmlFor='referral'>
+                  <label htmlFor='Referral'>
                     <StyledButton
                       variant='outlined'
                       color='primary'
@@ -1788,7 +1851,7 @@ const PatientDetailsBlock = ({
                       requiredErrors.CommitmentFile ? '#f44336' : '#000b40'
                     }`,
                   }}
-                  htmlFor='commitment'>
+                  htmlFor='Commitment'>
                   {`${t('Commitment')} *`}
                 </label>
               </Grid>
@@ -1799,7 +1862,7 @@ const PatientDetailsBlock = ({
                     commitmentRef.current = e;
                     register();
                   }}
-                  id='commitment'
+                  id='Commitment'
                   type='file'
                   accept='.pdf,.gpf,.png,.gif,.jpg'
                   onChange={() =>
@@ -1812,17 +1875,19 @@ const PatientDetailsBlock = ({
                 />
                 {Object.values(commitmentFile).length > 0 ? (
                   <ChipWithImage
-                    htmlFor='commitment'
+                    htmlFor='Commitment'
                     label={commitmentFile.name}
                     size={commitmentFile.size}
                     onDelete={(event) => {
                       setPopUpReferenceFile('Commitment');
                       onDeletePopUp(event);
                     }}
-                    onClick={(event) => onClickFileHandler(event, commitmentRef)}
+                    onClick={(event) =>
+                      onClickFileHandler(event, commitmentRef)
+                    }
                   />
                 ) : (
-                  <label htmlFor='commitment'>
+                  <label htmlFor='Commitment'>
                     <StyledButton
                       variant='outlined'
                       color='primary'
@@ -1855,7 +1920,7 @@ const PatientDetailsBlock = ({
                         additionalDocumentRef.current = e;
                         register();
                       }}
-                      id='additionalDocument'
+                      id='AdditionalDocument'
                       type='file'
                       accept='.pdf,.gpf,.png,.gif,.jpg'
                       onChange={() =>
@@ -1868,7 +1933,7 @@ const PatientDetailsBlock = ({
                     />
                     {Object.values(additionalDocumentFile).length > 0 ? (
                       <ChipWithImage
-                        htmlFor='additionalDocument'
+                        htmlFor='AdditionalDocument'
                         label={additionalDocumentFile.name}
                         size={additionalDocumentFile.size}
                         onDelete={(event) => {
@@ -1882,7 +1947,7 @@ const PatientDetailsBlock = ({
                         }
                       />
                     ) : (
-                      <label htmlFor='additionalDocument'>
+                      <label htmlFor='AdditionalDocument'>
                         <StyledButton
                           variant='outlined'
                           color='primary'

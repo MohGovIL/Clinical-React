@@ -15,6 +15,8 @@ const PopAppointmentsPerPatient = ({
   popupOpen,
   handlePopupClose,
   authorizationACO,
+  gotToPatientAdmission,
+  patient,
 }) => {
   const { t } = useTranslation();
 
@@ -63,7 +65,11 @@ const PopAppointmentsPerPatient = ({
           prevEncounters={prevEncounters}
           patientTrackingStatuses={patientTrackingStatuses}
           encounterStatuses={encounterStatuses}
-          authorizationACO={authorizationACO}></AppointmentsAndEncountersTables>
+          authorizationACO={authorizationACO}
+          patient={patient}
+          gotToPatientAdmission={
+            gotToPatientAdmission
+          }></AppointmentsAndEncountersTables>
       </CustomizedPopup>
     </React.Fragment>
   ) : null;

@@ -7,10 +7,7 @@ import {
   SELECT_CELL,
 } from 'Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
 import {
-  getAppointmentsWithPatients,
-  getValueSet,
   updateAppointmentStatus,
-  createNewEncounter,
 } from 'Utils/Services/FhirAPI';
 import moment from 'moment';
 import 'moment/locale/he';
@@ -25,7 +22,6 @@ import {
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
 import { FHIR } from 'Utils/Services/FHIR';
-import Appointment from 'Utils/Services/FHIR/Appointment';
 
 //מוזמנים
 export const invitedTabActiveFunction = async function (
