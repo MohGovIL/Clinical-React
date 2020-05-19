@@ -434,7 +434,7 @@ const PopupCreateNewPatient = ({
       setTypeSubmitForButton({
         type: 'submit',
         form: 'createNewPatient',
-        tabindex: 11,
+        tabIndex: 11,
       });
     } else {
       //clear type submit for patient admission
@@ -597,7 +597,7 @@ const PopupCreateNewPatient = ({
       variant: 'text',
       color: 'primary',
       mode: formButtonSave,
-      other: { type: 'submit', form: 'createNewPatient', tabindex: 10 },
+      other: { type: 'submit', form: 'createNewPatient', tabIndex: 10 },
       onClickHandler: savePatientAction,
     },
     {
@@ -614,7 +614,7 @@ const PopupCreateNewPatient = ({
       color: 'primary',
       mode: formButtonCreatApp,
       onClickHandler: handlePopupClose, //user function
-      other: { tabindex: 12 },
+      other: { tabIndex: 12 },
     },
   ];
 
