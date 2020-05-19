@@ -40,6 +40,7 @@ const PopupCreateNewPatient = ({
   languageDirection,
   formatDate,
   facility,
+  authorizationACO,
 }) => {
   const { t } = useTranslation();
 
@@ -63,7 +64,9 @@ const PopupCreateNewPatient = ({
   //const [selectedIdType, setSelectedIdType] = useState(0);
   const [formButtonSave, setFormButtonSave] = useState('write');
   const [formButtonCreatApp, setFormButtonCreatApp] = useState('view');
-  const [formButtonPatientAdm, setFormButtonPatientAdm] = useState('write');
+  const [formButtonPatientAdm, setFormButtonPatientAdm] = useState(
+    authorizationACO?.patientAdmission,
+  );
   const [mainSubmitSave, setMainSubmitSave] = useState(true);
 
   const [afterSaveAction, setAfterSaveAction] = useState('');
@@ -133,7 +136,7 @@ const PopupCreateNewPatient = ({
     getValues,
     formState,
   } = useForm({
-    mode: 'onChange',
+    mode: 'onBlur',
     validateCriteriaMode: 'all',
     defaultValues: {
       identifierType: patientIdTypeMain,
@@ -377,7 +380,7 @@ const PopupCreateNewPatient = ({
               });
               setFormButtonSave('view');
               setFormButtonCreatApp('write');
-              setFormButtonPatientAdm('write');
+              setFormButtonPatientAdm(authorizationACO?.patientAdmission);
             } else {
               if (
                 (!validateLuhnAlgorithm(patientIdNumber) &&
@@ -428,7 +431,11 @@ const PopupCreateNewPatient = ({
   useEffect(() => {
     if (!patientWasFound) {
       //type for patient admission
-      setTypeSubmitForButton({ type: 'submit', form: 'createNewPatient' });
+      setTypeSubmitForButton({
+        type: 'submit',
+        form: 'createNewPatient',
+        tabIndex: 11,
+      });
     } else {
       //clear type submit for patient admission
       setTypeSubmitForButton({});
@@ -590,7 +597,7 @@ const PopupCreateNewPatient = ({
       variant: 'text',
       color: 'primary',
       mode: formButtonSave,
-      other: { type: 'submit', form: 'createNewPatient' },
+      other: { type: 'submit', form: 'createNewPatient', tabIndex: 10 },
       onClickHandler: savePatientAction,
     },
     {
@@ -607,6 +614,7 @@ const PopupCreateNewPatient = ({
       color: 'primary',
       mode: formButtonCreatApp,
       onClickHandler: handlePopupClose, //user function
+      other: { tabIndex: 12 },
     },
   ];
 
@@ -729,6 +737,8 @@ const PopupCreateNewPatient = ({
                     errorIdNumber || (!errorRequired.identifier ? false : true)
                   }
                   helperText={errorIdNumberText || errorRequired.identifier}
+                  title={''}
+                  inputProps={{ tabIndex: 1 }}
                   InputProps={{
                     autoComplete: 'off',
                     endAdornment: (!errorRequired.identifier
@@ -752,6 +762,8 @@ const PopupCreateNewPatient = ({
                   onInput={handlerOnInvalidField}
                   error={!errorRequired.firstName ? false : true}
                   helperText={errorRequired.firstName}
+                  title={''}
+                  inputProps={{ tabIndex: 3 }}
                   InputProps={{
                     autoComplete: 'off',
                     endAdornment: (!errorRequired.firstName ? false : true) && (
@@ -797,6 +809,7 @@ const PopupCreateNewPatient = ({
                       ? null
                       : errorRequired.gender
                   }
+                  inputProps={{ tabIndex: 5 }}
                   InputProps={{
                     endAdornment: errors.gender && (
                       <InputAdornment position='end'>
@@ -849,6 +862,7 @@ const PopupCreateNewPatient = ({
                       ? null
                       : errorRequired.managingOrganization
                   }
+                  inputProps={{ tabIndex: 7 }}
                   InputProps={{
                     endAdornment: errors.managingOrganization && (
                       <InputAdornment position='end'>
@@ -893,6 +907,7 @@ const PopupCreateNewPatient = ({
                   helperText={
                     errors.identifierType ? t('Value is required') : null
                   }
+                  inputProps={{ tabIndex: 2 }}
                   InputProps={{
                     endAdornment: errors.identifierType && (
                       <InputAdornment position='end'>
@@ -922,6 +937,8 @@ const PopupCreateNewPatient = ({
                   onInput={handlerOnInvalidField}
                   error={!errorRequired.lastName ? false : true}
                   helperText={errorRequired.lastName}
+                  title={''}
+                  inputProps={{ tabIndex: 4 }}
                   InputProps={{
                     autoComplete: 'off',
                     endAdornment: (!errorRequired.lastName ? false : true) && (
@@ -977,6 +994,7 @@ const PopupCreateNewPatient = ({
                         disableToolbar: false,
                         label: t('birth day'),
                         value: patientBirthDate,
+                        inputProps: { tabIndex: 6 },
                         InputProps: {
                           autoComplete: 'off',
                         },
@@ -1029,6 +1047,8 @@ const PopupCreateNewPatient = ({
                       ? errorRequired.mobileCellPhone
                       : null
                   }
+                  title={''}
+                  inputProps={{ tabIndex: 8 }}
                   InputProps={{
                     endAdornment: (errors.mobileCellPhone ||
                     !errorRequired.mobileCellPhone
@@ -1057,6 +1077,8 @@ const PopupCreateNewPatient = ({
                 label={t('Mail address')}
                 error={errors.email ? true : false}
                 helperText={errors.email ? t('Invalid email address') : null}
+                title={''}
+                inputProps={{ tabIndex: 9 }}
                 InputProps={{
                   endAdornment: errors.email && (
                     <InputAdornment position='end'>
