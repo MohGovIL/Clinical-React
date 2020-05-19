@@ -1,56 +1,82 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { loginAction } from 'Store/Actions/LoginActions/LoginActions';
-// import LoginBox from './LoginBox/LoginBox';
-
+import bg from 'Assets/Images/bg.svg';
+import loginLogo from 'Assets/Images/symbol-logo.svg';
 import StyledTextField from 'Assets/Elements/StyledTextField';
 import { useTranslation } from 'react-i18next';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
-
-const Login = (props) => {
+import StyledLogin, {
+  LoginForm,
+  LoginTitle,
+  LoginLogo,
+  StyledDivider,
+} from './Style';
+import Typography from '@material-ui/core/Typography';
+import { useForm } from 'react-hook-form';
+import LoginBG from './LoginBG';
+const Login = ({ loginAction }) => {
+  const { register, handleSubmit, errors } = useForm({
+    mode: 'onSubmit',
+    defaultValues: {
+      userName: '',
+      password: '',
+    },
+    submitFocusError: true,
+  });
   const { t } = useTranslation();
 
-  const [userState, userSetState] = useState({ userName: '', password: '' });
-
-  const userNameHandler = (e) => {
-    userSetState({ ...userState, userName: e.target.value });
-  };
-
-  const passwordHandler = (e) => {
-    userSetState({ ...userState, password: e.target.value });
-  };
-
-  const loginHandler = () => {
-    props.loginAction(userState.userName, userState.password, props.history);
+  const onSubmit = (data) => {
+    alert(JSON.stringify(data));
   };
 
   return (
-    <React.Fragment>
-      {/* <LoginBox
-        userName={userState.userName}
-        password={userState.password}
-        userNameHandler={userNameHandler}
-        passwordHandler={passwordHandler}
-        login={loginHandler}
-        status={props.status}
-      /> */}
-      <StyledTextField
-        label={t('User name')}
-        error={false}
-        helperText={false}
-      />
-      <StyledTextField
-        label={t('Password')}
-        type={'password'}
-        error={false}
-        helperText={false}
-      />
-      <CustomizedTableButton
-        label={t('Login')}
-        variant={'contained'}
-        color={'Primary'}
-      />
-    </React.Fragment>
+    <StyledLogin>
+      <LoginBG src={bg} />
+      <LoginForm onSubmit={handleSubmit(onSubmit)}>
+        <LoginTitle>
+          <LoginLogo src={loginLogo} />
+          <Typography variant={'h5'} align={'center'}>
+            קליניקל
+          </Typography>
+        </LoginTitle>
+        <Typography variant={'h4'} align={'center'}>
+          כניסה למערכת
+        </Typography>
+        <StyledDivider />
+        <StyledTextField
+          name='userName'
+          label={t('* שם המשתמש')}
+          error={errors.userName ? true : false}
+          helperText={errors.userName && 'יש להזין ערך בשדה'}
+          fullWidth
+          // inputProps={{ pattern: '[A-Za-z]' }}
+          inputRef={register({
+            required: true,
+          })}
+        />
+        <StyledTextField
+          name='password'
+          label={t('* סיסמה')}
+          type={'password'}
+          error={errors.password ? true : false}
+          helperText={errors.password && 'יש להזין ערך בשדה'}
+          fullWidth
+          inputRef={register({
+            required: true,
+          })}
+        />
+        <CustomizedTableButton
+          label={t('כניסה למערכת')}
+          variant={'contained'}
+          color={'primary'}
+          other={{
+            fullWidth: true,
+            type: 'submit',
+          }}
+        />
+      </LoginForm>
+    </StyledLogin>
   );
 };
 

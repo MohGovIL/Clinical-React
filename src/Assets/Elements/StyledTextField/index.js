@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import TextField from '@material-ui/core/TextField';
 
 const StyledTextField = styled(TextField)`
-  width: 70%;
+  width: ${(props) => (props.fullWidth ? null : '70%')};
   background-color: #f8faff;
   border-radius: 10px;
   margin: 24px 0 24px 0;
