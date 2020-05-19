@@ -49,7 +49,7 @@ const PopupCreateNewPatient = ({
   const [kupatHolimList, setKupatHolimList] = useState([]);
   const [typeSubmitForButton, setTypeSubmitForButton] = useState({});
 
-  const [patientIdTypeMain, setPatientIdTypeMain] = useState('teudat_zehut');
+  const patientIdTypeMain = 'teudat_zehut';
 
   const [patientData, setPatientData] = useState([]);
   const [patientIdentifier, setPatientIdentifier] = useState(0);

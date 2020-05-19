@@ -39,10 +39,7 @@ import {
   getEmailRegexPattern,
 } from 'Utils/Helpers/validation/patterns';
 import { FHIR } from 'Utils/Services/FHIR';
-import {
-  setEncounterAndPatient,
-  setPatientAction,
-} from 'Store/Actions/ActiveActions';
+import { setPatientAction } from 'Store/Actions/ActiveActions';
 import { store } from '../../../../index';
 
 const PatientDataBlock = ({
@@ -174,11 +171,12 @@ const PatientDataBlock = ({
 
   const organizationData = patientKupatHolimList.find((obj) => {
     return (
+        //eslint-disable-next-line
       obj.code ==
       (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) >= 0
         ? healthManageOrgId
         : patientData.managingOrganization === null ||
-          patientData.managingOrganization == undefined
+          patientData.managingOrganization === undefined
         ? 0
         : patientData.managingOrganization)
     );
