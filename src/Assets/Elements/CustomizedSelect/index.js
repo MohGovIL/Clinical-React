@@ -77,6 +77,7 @@ const CustomizedSelect = ({
   let buttonLabel = ' ';
   if (options !== undefined) {
     const res = options.find((obj) => {
+      /* eslint eqeqeq: 0 */
       return obj.code == value;
     });
 

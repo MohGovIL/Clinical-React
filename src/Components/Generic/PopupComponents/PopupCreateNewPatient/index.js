@@ -218,7 +218,11 @@ const PopupCreateNewPatient = ({
       { name: 'managingOrganization' },
       managingOrganizationSelectNotEmptyRule,
     );
-  }, []);
+  }, [
+    textFieldSelectNotEmptyRule,
+    managingOrganizationSelectNotEmptyRule,
+    register,
+  ]);
 
   //useEffect block
   useEffect(() => {
@@ -298,7 +302,7 @@ const PopupCreateNewPatient = ({
         console.log(e);
       }
     })();
-  }, []);
+  }, [setValue, t]);
   //end of useEffect block
 
   //Block of handle's function
@@ -424,6 +428,7 @@ const PopupCreateNewPatient = ({
         }
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientIdNumber, patientIdType]);
 
   //Change button type for patientAdmission
