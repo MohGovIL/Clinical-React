@@ -113,7 +113,7 @@ const PatientDetailsBlock = ({
           if (data.addressCity) {
             patientPatchParams['city'] = addressCity.code;
           }
-          if (data.addressStreet) {
+          if (data.addressStreet.trim()) {
             patientPatchParams['streetName'] = addressStreet.code;
           }
           if (data.addressStreetNumber.trim()) {
@@ -329,6 +329,11 @@ const PatientDetailsBlock = ({
             );
             encounter['relatedPerson'] = NewRelatedPerson.id;
           }
+        }
+        if (isUrgent) {
+          encounter['priority'] = 2;
+        } else {
+          encounter['priority'] = 1;
         }
         if (selectedServicesType.length) {
           encounter.examinationCode = selectedServicesType.map((option) => {
