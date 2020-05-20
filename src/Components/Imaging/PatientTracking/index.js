@@ -25,8 +25,6 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   // Set the popUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
 
-  let source = React.useRef(undefined);
-
   const onError = (event) => {
     console.log('error');
     console.log(event);
@@ -39,36 +37,40 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
   const onOpen = (event) => {
     console.log('open');
-    alert(JSON.stringify(event.data));
     console.log(event);
   };
+
+  const source = useRef(null);
 
   useEffect(() => {
     try {
       const EventSource = EventSourcePolyfill;
       if (typeof EventSource !== undefined) {
-        let eventSourceHeaders = {
-          headers: {
-            Authorization: `${ApiTokens.API.tokenType} ${getToken(
-              ApiTokens.API.tokenName,
-            )}`,
-          },
-        };
+        if (!source.current) {
+          console.log('Open');
+          let eventSourceHeaders = {
+            headers: {
+              Authorization: `${ApiTokens.API.tokenType} ${getToken(
+                ApiTokens.API.tokenName,
+              )}`,
+            },
+          };
 
-        // source.current = new EventSource(
-        //   `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
-        //     selectFilter.filter_organization || facilityId
-        //   }`,
-        //   eventSourceHeaders,
-        // );
-        source.current = new EventSource(
-          `${basePath()}apis/api/sse/patients-tracking/check-refresh/${'ALL'}`,
-          eventSourceHeaders,
-        );
+          // source.current = new EventSource(
+          //   `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
+          //     selectFilter.filter_organization || facilityId
+          //   }`,
+          //   eventSourceHeaders,
+          // );
+          source.current = new EventSourcePolyfill(
+            `${basePath()}apis/api/sse/patients-tracking/check-refresh/${'ALL'}`,
+            eventSourceHeaders,
+          );
 
-        source.current.onopen = onOpen;
-        source.current.onmessage = onMessage;
-        source.current.onerror = onError;
+          source.current.onopen = onOpen;
+          source.current.onmessage = onMessage;
+          source.current.onerror = onError;
+        }
       } else {
         alert('Error: Server-Sent Events are not supported in your browser');
       }
@@ -77,13 +79,16 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     }
     return () => {
       try {
-        console.log('closing source');
-        source.current.close();
+        if (!source.current) {
+          console.log('closing source');
+          source.current.close();
+          source.current = null;
+        }
       } catch (error) {
         console.log(error);
       }
     };
-  }, [facilityId, source, selectFilter.filter_organization]);
+  }, [selectFilter.filter_organization]);
 
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
