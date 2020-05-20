@@ -1626,8 +1626,7 @@ const PatientDetailsBlock = ({
                           : false
                       }
                       helperText={
-                        requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment &&
-                        t('Required field')
+                        requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
                       }
                     />
                   }
