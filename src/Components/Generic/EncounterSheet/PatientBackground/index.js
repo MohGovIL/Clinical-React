@@ -1,7 +1,12 @@
 import React from 'react';
 import StyledPatientBackground from './Style';
 
-const PatientBackground = () => {
+const PatientBackground = ({
+  encounter,
+  patient,
+  languageDirection,
+  formatDate,
+}) => {
   return <StyledPatientBackground></StyledPatientBackground>;
 };
 

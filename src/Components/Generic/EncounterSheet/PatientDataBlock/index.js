@@ -1,10 +1,13 @@
 import React from 'react';
 import StyledPatientDataBlock from './Style';
 
-const PatientDataBlock = () => {
-  return <StyledPatientDataBlock>
-
-  </StyledPatientDataBlock>;
+const PatientDataBlock = ({
+  encounter,
+  patient,
+  languageDirection,
+  formatDate,
+}) => {
+  return <StyledPatientDataBlock></StyledPatientDataBlock>;
 };
 
 export default PatientDataBlock;
