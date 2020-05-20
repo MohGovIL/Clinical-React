@@ -3,7 +3,6 @@
  */
 
 import { CRUDOperations } from '../CRUDOperations';
-import { convertParamsToUrl } from '../CommonFunctions';
 
 const PractitionerStates = {
   doWork: (parameters = null) => {

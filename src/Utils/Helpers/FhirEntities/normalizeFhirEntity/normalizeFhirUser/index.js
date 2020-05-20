@@ -1,6 +1,6 @@
 /**
  * @author Dror Golan drorgo@matrix.co.il
- * @param patient {object}
+ * @param user {object}
  * @returns {object}
  */
 const normalizeFhirUser = (user) => {
