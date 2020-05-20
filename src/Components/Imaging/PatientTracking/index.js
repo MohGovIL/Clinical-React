@@ -29,7 +29,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
   const onError = (event) => {
     console.log('error');
-    // source.current.close();
+    console.log(event);
   };
 
   const onMessage = (event) => {
@@ -39,6 +39,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
   const onOpen = (event) => {
     console.log('open');
+    console.log(event);
   };
 
   useEffect(() => {
@@ -136,6 +137,8 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     selectFilter.statusFilterBoxValue,
     selectFilter.filter_service_type,
     selectFilter.filter_organization,
+    history,
+    selectFilter,
   ]);
   //Gets the menu items
   useEffect(() => {
