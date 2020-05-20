@@ -39,6 +39,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
   const onOpen = (event) => {
     console.log('open');
+    alert(JSON.stringify(event.data));
     console.log(event);
   };
 
