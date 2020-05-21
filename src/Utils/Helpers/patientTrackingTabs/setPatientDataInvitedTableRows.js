@@ -1,4 +1,4 @@
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+// import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import {
   BADGE_CELL,
   BUTTON_CELL,
@@ -19,7 +19,7 @@ import {
   setAppointmentsWithPatientsAction,
   updateAppointmentAction,
 } from 'Store/Actions/FhirActions/fhirActions';
-import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
+// import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
 import { FHIR } from 'Utils/Services/FHIR';
 import { gotToPatientAdmission } from '../gotoPatientAdmission';
