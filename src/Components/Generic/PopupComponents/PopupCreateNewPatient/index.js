@@ -24,15 +24,13 @@ import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntit
 import { FHIR } from 'Utils/Services/FHIR';
 import moment from 'moment';
 import { store } from '../../../../index';
-import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
-import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import { validateLuhnAlgorithm } from 'Utils/Helpers/validation/validateLuhnAlgorithm';
 import { getOnlyNumbersRegexPattern } from 'Utils/Helpers/validation/patterns';
 import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
 import normalizeFhirPatient from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient';
+import { gotToPatientAdmission } from 'Utils/Helpers/gotoPatientAdmission';
 
 const PopupCreateNewPatient = ({
   popupOpen,
@@ -549,36 +547,30 @@ const PopupCreateNewPatient = ({
                   appointment: appointment,
                 },
               });
-              store.dispatch(
-                setEncounterAndPatient(
-                  normalizeFhirEncounter(encounterData.data),
-                  patient_current_data,
-                ),
+              gotToPatientAdmission(
+                encounterData,
+                patient_current_data,
+                history,
               );
-              history.push({
-                pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-              });
             })();
           } else {
             if (patientData !== null) {
-              let encounterData = FHIR('Encounter', 'doWork', {
-                functionName: 'createNewEncounter',
-                functionParams: {
-                  facility: facility,
-                  practitioner: 'practitioner',
-                  patient: patient_current_data,
-                  status: 'planned',
-                },
-              });
-              store.dispatch(
-                setEncounterAndPatient(
-                  normalizeFhirEncounter(encounterData),
+              (async () => {
+                let encounterData = await FHIR('Encounter', 'doWork', {
+                  functionName: 'createNewEncounter',
+                  functionParams: {
+                    facility: store.getState().settings.facility,
+                    practitioner: 'practitioner',
+                    patient: patient_current_data,
+                    status: 'planned',
+                  },
+                });
+                gotToPatientAdmission(
+                  encounterData,
                   patient_current_data,
-                ),
-              );
-              history.push({
-                pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-              });
+                  history,
+                );
+              })();
             }
           }
         });
