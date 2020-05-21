@@ -2,9 +2,8 @@ import normalizeFhirEncounter from './FhirEntities/normalizeFhirEntity/normalize
 import { store } from '../../index';
 import { setEncounterAndPatient } from '../../Store/Actions/ActiveActions';
 import { baseRoutePath } from './baseRoutePath';
-import { useHistory } from 'react-router-dom';
-const history = useHistory();
-export const gotToPatientAdmission = (encounter, patient) => {
+
+export const gotToPatientAdmission = (encounter, patient, history) => {
   let encounterData =
     encounter && encounter.data
       ? normalizeFhirEncounter(encounter.data)

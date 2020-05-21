@@ -71,7 +71,7 @@ const DrawThisTable = ({
             status: 'planned',
           },
         });
-        gotToPatientAdmission(encounterData, patient);
+        gotToPatientAdmission(encounterData, patient, history);
         break;
       case ADMISSIONWITHAPPOINTMENT:
         if (nextAppointment) {
@@ -88,7 +88,7 @@ const DrawThisTable = ({
               appointment: fhirappointment,
             },
           });
-          gotToPatientAdmission(encounterData, patient);
+          gotToPatientAdmission(encounterData, patient, history);
           console.log('admission with appointment');
         }
         break;
