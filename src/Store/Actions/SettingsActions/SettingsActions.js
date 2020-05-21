@@ -9,8 +9,8 @@ import {
   SET_SETTINGS_SUCCESS,
 } from './SettingsActionTypes';
 import { geti18n } from 'Utils/Services/i18n';
-import { FHIR } from '../../../Utils/Services/FHIR';
-import { setUserAction } from '../ActiveActions';
+import { FHIR } from 'Utils/Services/FHIR';
+import { setUserAction } from 'Store/Actions/ActiveActions';
 
 export const getSettingsStartAction = () => {
   return {

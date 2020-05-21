@@ -13,8 +13,8 @@ import { logoutAction } from 'Store/Actions/LoginActions/LoginActions';
 import { useTranslation } from 'react-i18next';
 import { ClickAwayListener } from '@material-ui/core';
 import RelativeWrapperForClickAwayListener from './RelativeWrapperForClickAwayListener';
-import normalizeFhirUser from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
-import { store } from '../../../index';
+import normalizeFhirUser from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
+import { store } from 'index';
 const Header = ({ Items, logoutAction }) => {
   const { t } = useTranslation();
 

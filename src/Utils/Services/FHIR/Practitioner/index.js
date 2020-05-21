@@ -39,7 +39,7 @@ const PractitionerStates = {
   },
 };
 
-export default function Appointment(action = null, params = null) {
+export default function Practitioner(action = null, params = null) {
   if (action) {
     const transformer =
       PractitionerStates[action] ?? PractitionerStates.__default__;
