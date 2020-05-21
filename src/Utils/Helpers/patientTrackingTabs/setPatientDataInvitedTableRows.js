@@ -22,6 +22,7 @@ import {
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
 import { FHIR } from 'Utils/Services/FHIR';
+import { gotToPatientAdmission } from '../gotoPatientAdmission';
 
 //מוזמנים
 export const invitedTabActiveFunction = async function (
@@ -235,15 +236,16 @@ const setPatientDataInvitedTableRows = (
                     facility: store.getState().settings.facility,
                   },
                 });
-                store.dispatch(
-                  setEncounterAndPatient(
-                    normalizeFhirEncounter(encounterData.data),
-                    patient,
-                  ),
-                );
-                history.push({
-                  pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-                });
+                gotToPatientAdmission(normalizeFhirEncounter(encounterData.data), patient, history)
+                // store.dispatch(
+                //   setEncounterAndPatient(
+                //     normalizeFhirEncounter(encounterData.data),
+                //     patient,
+                //   ),
+                // );
+                // history.push({
+                //   pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+                // });
               } else {
                 setIsPopUpOpen(true);
               }
