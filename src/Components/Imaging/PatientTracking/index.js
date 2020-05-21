@@ -28,14 +28,14 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   const onError = (event) => {};
 
   const onMessage = (event) => {
-    console.log(event);
+    setEventId(event.lastEventId);
   };
 
   const onOpen = (event) => {};
 
   const source = useRef(null);
 
-  const [eventId, setEventId] = useState();
+  const [eventId, setEventId] = useState('');
 
   useEffect(() => {
     try {
@@ -116,7 +116,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
       });
     }
     setTabs(tabs);
-    console.log('render');
+
     //Filter box mechanism for activeTabs
     for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
       const tab = tabs[tabIndex];
