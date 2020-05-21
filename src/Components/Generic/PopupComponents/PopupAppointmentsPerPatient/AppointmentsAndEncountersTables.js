@@ -20,7 +20,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import Paper from '@material-ui/core/Paper';
 import TableBody from '@material-ui/core/TableBody';
 import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
-
+import { useHistory } from 'react-router-dom';
 const AppointmentsAndEncountersTables = ({
   nextAppointments,
   curEncounters,
@@ -29,8 +29,9 @@ const AppointmentsAndEncountersTables = ({
   encounterStatuses,
   gotToPatientAdmission,
   authorizationACO,
-  patient
+  patient,
 }) => {
+  const history = useHistory();
   const { t } = useTranslation();
   // eslint-disable-next-line
   const prevEncountersEntry =
@@ -124,7 +125,7 @@ const AppointmentsAndEncountersTables = ({
 
  ;*/
   const handleAdmissionClick = (encounter) => {
-    gotToPatientAdmission(encounter, patient);
+    gotToPatientAdmission(encounter, patient, history);
   };
   if (curEncounters && curEncounters.data && curEncounters.data.total > 0) {
     let entry = curEncounters.data.entry;
