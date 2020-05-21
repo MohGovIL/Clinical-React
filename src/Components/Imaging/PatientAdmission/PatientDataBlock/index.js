@@ -39,11 +39,9 @@ import {
   getEmailRegexPattern,
 } from 'Utils/Helpers/validation/patterns';
 import { FHIR } from 'Utils/Services/FHIR';
-import {
-  setEncounterAndPatient,
-  setPatientAction,
-} from 'Store/Actions/ActiveActions';
+import { setPatientAction } from 'Store/Actions/ActiveActions';
 import { store } from '../../../../index';
+import { emptyArrayAll } from 'Utils/Helpers/emptyArray';
 
 const PatientDataBlock = ({
   appointmentData,
@@ -94,15 +92,6 @@ const PatientDataBlock = ({
     onEditButtonClick(0);
   };
 
-  const emptyArrayAll = () => {
-    return [
-      {
-        code: 0,
-        name: t('Choose'),
-      },
-    ];
-  };
-
   const textFieldSelectNotEmptyRule = {
     validate: { value: (value) => parseInt(value) !== 0 },
   };
@@ -135,7 +124,7 @@ const PatientDataBlock = ({
       );
 
       //It is necessary to get data from the server and fill the array.
-      let array = emptyArrayAll();
+      let array = emptyArrayAll(t('Choose'));
       (async () => {
         try {
           const {
@@ -158,12 +147,13 @@ const PatientDataBlock = ({
     } catch (e) {
       console.log(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientData.id, patientData.birthDate]);
 
   useEffect(() => {
     register({ name: 'healthManageOrganization' }, textFieldSelectNotEmptyRule);
     register({ name: 'birthDate' });
-  }, []);
+  }, [textFieldSelectNotEmptyRule, register]);
 
   if (
     patientKupatHolimList.length === 0 ||
@@ -174,11 +164,12 @@ const PatientDataBlock = ({
 
   const organizationData = patientKupatHolimList.find((obj) => {
     return (
+      //eslint-disable-next-line
       obj.code ==
       (!isNaN(healthManageOrgId) && parseInt(healthManageOrgId) >= 0
         ? healthManageOrgId
         : patientData.managingOrganization === null ||
-          patientData.managingOrganization == undefined
+          patientData.managingOrganization === undefined
         ? 0
         : patientData.managingOrganization)
     );

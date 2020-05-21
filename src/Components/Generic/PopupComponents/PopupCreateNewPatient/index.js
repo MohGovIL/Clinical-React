@@ -49,7 +49,7 @@ const PopupCreateNewPatient = ({
   const [kupatHolimList, setKupatHolimList] = useState([]);
   const [typeSubmitForButton, setTypeSubmitForButton] = useState({});
 
-  const [patientIdTypeMain, setPatientIdTypeMain] = useState('teudat_zehut');
+  const patientIdTypeMain = 'teudat_zehut';
 
   const [patientData, setPatientData] = useState([]);
   const [patientIdentifier, setPatientIdentifier] = useState(0);
@@ -67,7 +67,6 @@ const PopupCreateNewPatient = ({
   const [formButtonPatientAdm, setFormButtonPatientAdm] = useState(
     authorizationACO?.patientAdmission,
   );
-  const [mainSubmitSave, setMainSubmitSave] = useState(true);
 
   const [afterSaveAction, setAfterSaveAction] = useState('');
 
@@ -219,7 +218,11 @@ const PopupCreateNewPatient = ({
       { name: 'managingOrganization' },
       managingOrganizationSelectNotEmptyRule,
     );
-  }, []);
+  }, [
+    textFieldSelectNotEmptyRule,
+    managingOrganizationSelectNotEmptyRule,
+    register,
+  ]);
 
   //useEffect block
   useEffect(() => {
@@ -299,7 +302,7 @@ const PopupCreateNewPatient = ({
         console.log(e);
       }
     })();
-  }, []);
+  }, [setValue, t]);
   //end of useEffect block
 
   //Block of handle's function
@@ -425,6 +428,7 @@ const PopupCreateNewPatient = ({
         }
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientIdNumber, patientIdType]);
 
   //Change button type for patientAdmission
@@ -673,12 +677,12 @@ const PopupCreateNewPatient = ({
     let field = event.target.name;
     let fieldIsRequired = t('Value is required');
     let fieldWithError = false;
-    if (field == 'identifier') {
+    if (field === 'identifier') {
       setErrorIdNumberText(fieldIsRequired);
     }
     //manual checking for select type fields: identifierType, gender, managingOrganization.
     for (let [key, value] of Object.entries(errorRequired)) {
-      if (value !== false) fieldWithError = true;
+      if (key && value !== false) fieldWithError = true;
     }
     setErrorRequired({
       ...errorRequired,
