@@ -541,22 +541,24 @@ const PopupCreateNewPatient = ({
               appointments.data.entry[1].resource,
             );
             //set data to reducers appointment and change route tp patientAdmission
-            let encounterData = FHIR('Encounter', 'doWork', {
-              functionName: 'createNewEncounter',
-              functionParams: {
-                facility: facility,
-                appointment: appointment,
-              },
-            });
-            store.dispatch(
-              setEncounterAndPatient(
-                normalizeFhirEncounter(encounterData),
-                patient_current_data,
-              ),
-            );
-            history.push({
-              pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-            });
+            (async () => {
+              let encounterData = await FHIR('Encounter', 'doWork', {
+                functionName: 'createNewEncounter',
+                functionParams: {
+                  facility: store.getState().settings.facility,
+                  appointment: appointment,
+                },
+              });
+              store.dispatch(
+                setEncounterAndPatient(
+                  normalizeFhirEncounter(encounterData.data),
+                  patient_current_data,
+                ),
+              );
+              history.push({
+                pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+              });
+            })();
           } else {
             if (patientData !== null) {
               let encounterData = FHIR('Encounter', 'doWork', {
