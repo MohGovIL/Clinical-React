@@ -15,7 +15,7 @@ import Title from 'Assets/Elements/Title';
 import isAllowed from 'Utils/Helpers/isAllowed';
 import { getStaticTabsArray } from 'Utils/Helpers/patientTrackingTabs/staticTabsArray';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
-import { EventSourcePolyfill } from 'event-source-polyfill';
+import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
 import { basePath } from 'Utils/Helpers/basePath';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
 import { getToken } from 'Utils/Helpers/getToken';
@@ -25,29 +25,21 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   // Set the popUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
 
-  const onError = (event) => {
-    console.log('error');
-    console.log(event);
-  };
+  const onError = (event) => {};
 
   const onMessage = (event) => {
-    console.log('msg');
     console.log(event);
   };
 
-  const onOpen = (event) => {
-    console.log('open');
-    console.log(event);
-  };
+  const onOpen = (event) => {};
 
   const source = useRef(null);
 
   useEffect(() => {
     try {
-      const EventSource = EventSourcePolyfill;
+      const EventSource = NativeEventSource || EventSourcePolyfill;
       if (typeof EventSource !== undefined) {
         if (!source.current) {
-          console.log('Open');
           let eventSourceHeaders = {
             headers: {
               Authorization: `${ApiTokens.API.tokenType} ${getToken(
@@ -56,7 +48,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
             },
           };
 
-          // source.current = new EventSource(
+          // source.current = new EventSourcePolyfill(
           //   `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
           //     selectFilter.filter_organization || facilityId
           //   }`,
@@ -80,15 +72,14 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     return () => {
       try {
         if (!source.current) {
-          console.log('closing source');
           source.current.close();
-          source.current = null;
+          console.log(source.current);
         }
       } catch (error) {
         console.log(error);
       }
     };
-  }, [selectFilter.filter_organization]);
+  }, [selectFilter.filter_organization, facilityId]);
 
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
@@ -130,8 +121,6 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
           setIsPopUpOpen,
         );
       } else {
-        //TODO make this call in a different useEffect because when statusFiltterBoxValue changes
-        // there is no need to call `tab.activeAction` only call `tab.notActiveAction`
         if (selectFilter.statusFilterBoxValue === prevFilterBoxValue.current) {
           tab.notActiveAction(setTabs, selectFilter);
         }
