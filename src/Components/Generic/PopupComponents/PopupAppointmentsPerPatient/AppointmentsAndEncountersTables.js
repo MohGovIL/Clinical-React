@@ -20,6 +20,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import Paper from '@material-ui/core/Paper';
 import TableBody from '@material-ui/core/TableBody';
 import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
+import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
 
 const AppointmentsAndEncountersTables = ({
   nextAppointments,
@@ -29,7 +30,7 @@ const AppointmentsAndEncountersTables = ({
   encounterStatuses,
   gotToPatientAdmission,
   authorizationACO,
-  patient
+  patient,
 }) => {
   const { t } = useTranslation();
   // eslint-disable-next-line
@@ -100,7 +101,7 @@ const AppointmentsAndEncountersTables = ({
     }
   };
 
-  const parseMultipleExaminations = (serviceType, examination) => {
+  /*const parseMultipleExaminations = (serviceType, examination) => {
     if (!examination || !examination[0] || examination.lenghth === 0) {
       return t(serviceType);
     }
@@ -117,7 +118,7 @@ const AppointmentsAndEncountersTables = ({
     }
 
     return returnThisServiceTypesExaminations;
-  };
+  };*/
   /*const handleChartClick = () => {
     //TODO:
   };
@@ -220,10 +221,12 @@ const AppointmentsAndEncountersTables = ({
                           title={parseMultipleExaminations(
                             encounter.serviceType,
                             encounter.examination,
+                            t,
                           )}>
                           {parseMultipleExaminations(
                             encounter.serviceType,
                             encounter.examination,
+                            t,
                           )}
                         </StyledTableTextCell>
                       </TableCell>
@@ -340,6 +343,7 @@ const AppointmentsAndEncountersTables = ({
                             title={parseMultipleExaminations(
                               appointment.serviceType,
                               appointment.examination,
+                              t,
                             )}></StyledTableTextCell>
                         </TableCell>
                         <TableCell align='center'>
@@ -455,10 +459,12 @@ const AppointmentsAndEncountersTables = ({
                             title={parseMultipleExaminations(
                               encounter.serviceType,
                               encounter.examination,
+                              t,
                             )}>
                             {parseMultipleExaminations(
                               encounter.serviceType,
                               encounter.examination,
+                              t,
                             )}
                           </StyledTableTextCell>
                         </TableCell>
