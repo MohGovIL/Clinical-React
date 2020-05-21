@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Paper from '@material-ui/core/Paper';
 
 const StyledPatientBackground = styled.div`
   display: flex;
@@ -8,8 +9,43 @@ const StyledPatientBackground = styled.div`
   height: calc(100vh - 88px - 32px - 32px);
   max-height: calc(100vh - 88px - 32px - 32px);
   flex-direction: column;
-  background-color: #ffffff;
   box-shadow: 0 0 10px 0 rgba(152, 151, 151, 0.3);
+  background-color: #fafbff;
 `;
 
 export default StyledPatientBackground;
+
+export const StyledPrevEncountersPapers = styled(Paper)`
+  width: 430px;
+  height: 100px;
+  border-radius: 10px;
+  box-shadow: 0 -4px 25px 6px rgba(151, 151, 152, 0.09);
+  background-color: #ffffff;
+  margin: 6% 2.5%;
+`;
+
+export const StyledCurrentExaminationHeader = styled.div`
+  margin: 9px 22px;
+  div {
+    width: 20%;
+    height: 22px;
+    font-family: OpenSansHebrew;
+    font-size: 16px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    -webkit-letter-spacing: normal;
+    -moz-letter-spacing: normal;
+    -ms-letter-spacing: normal;
+    letter-spacing: normal;
+    text-align: right;
+    color: #000b40;
+    display: inline;
+  }
+  span {
+    width: 80%;
+    margin-left: 10%;
+    display: inline;
+  }
+`;
