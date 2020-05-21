@@ -25,6 +25,7 @@ import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import PopAppointmentsPerPatient from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
+import { gotToPatientAdmission } from 'Utils/Helpers/gotoPatientAdmission';
 
 const DrawThisTable = ({
   result,
@@ -56,23 +57,6 @@ const DrawThisTable = ({
   ] = React.useState(false);
 
   //let patientTrackingStatuses =  null;
-
-  const gotToPatientAdmission = (encounter, patient) => {
-    let encounterData =
-      encounter && encounter.data
-        ? normalizeFhirEncounter(encounter.data)
-        : encounter;
-
-    if (!encounterData) {
-      console.log('error no encounter was used in the request found');
-      return;
-    }
-
-    store.dispatch(setEncounterAndPatient(encounterData, patient));
-    history.push({
-      pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-    });
-  };
 
   const handleCreateAppointment = async (patient, nextAppointment) => {
     let encounterData = null;
