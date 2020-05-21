@@ -35,11 +35,16 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
   const source = useRef(null);
 
+  const [eventId, setEventId] = useState();
+
   useEffect(() => {
     try {
       const EventSource = NativeEventSource || EventSourcePolyfill;
       if (typeof EventSource !== undefined) {
-        if (!source.current) {
+        if (
+          !source.current ||
+          source.current.readyState === source.current.CLOSED
+        ) {
           let eventSourceHeaders = {
             headers: {
               Authorization: `${ApiTokens.API.tokenType} ${getToken(
@@ -48,16 +53,16 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
             },
           };
 
-          // source.current = new EventSourcePolyfill(
-          //   `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
-          //     selectFilter.filter_organization || facilityId
-          //   }`,
-          //   eventSourceHeaders,
-          // );
           source.current = new EventSourcePolyfill(
-            `${basePath()}apis/api/sse/patients-tracking/check-refresh/${'ALL'}`,
+            `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
+              selectFilter.filter_organization || facilityId
+            }`,
             eventSourceHeaders,
           );
+          // source.current = new EventSourcePolyfill(
+          //   `${basePath()}apis/api/sse/patients-tracking/check-refresh/${'ALL'}`,
+          //   eventSourceHeaders,
+          // );
 
           source.current.onopen = onOpen;
           source.current.onmessage = onMessage;
@@ -71,7 +76,10 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     }
     return () => {
       try {
-        if (!source.current) {
+        if (
+          !source.current ||
+          source.current.readyState === source.current.OPEN
+        ) {
           source.current.close();
           console.log(source.current);
         }
@@ -108,7 +116,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
       });
     }
     setTabs(tabs);
-
+    console.log('render');
     //Filter box mechanism for activeTabs
     for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
       const tab = tabs[tabIndex];
@@ -134,6 +142,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     selectFilter.filter_organization,
     history,
     selectFilter,
+    eventId,
   ]);
   //Gets the menu items
   useEffect(() => {
