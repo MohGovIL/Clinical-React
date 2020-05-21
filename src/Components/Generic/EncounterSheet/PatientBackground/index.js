@@ -18,7 +18,8 @@ const PatientBackground = ({
 }) => {
   const { t } = useTranslation();
 
-  const showPrevEncounters = () => {
+  const showEncounters = (encounter, prevEncounters) => {
+    debugger;
     return (
       <React.Fragment>
         {encounter ? (
@@ -42,7 +43,7 @@ const PatientBackground = ({
           </StyledPrevEncountersPapers>
         ) : null}
         {prevEncounters.map((prevEncounter, prevEncounterIndex) => {
-          return encounter && encounter.id !== prevEncounter.id ? (
+          return prevEncounter && prevEncounter.id !== prevEncounter.id ? (
             <StyledPrevEncountersPapers
               key={prevEncounterIndex}
               dir={languageDirection}>
@@ -100,7 +101,6 @@ const PatientBackground = ({
   const currentDate = moment().utc().format('YYYY-MM-DD');
 
   const handleCreateData = async () => {
-    debugger;
     //setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
     const FHIRPrevEncounters = await FHIR('Encounter', 'doWork', {
       functionName: 'getNextPrevEncountersPerPatient',
@@ -135,9 +135,7 @@ const PatientBackground = ({
   });
   return (
     <StyledPatientBackground>
-      {prevEncounters && prevEncounters.length > 0
-        ? showPrevEncounters()
-        : null}
+      {showEncounters(encounter, prevEncounters)}
     </StyledPatientBackground>
   );
 };
