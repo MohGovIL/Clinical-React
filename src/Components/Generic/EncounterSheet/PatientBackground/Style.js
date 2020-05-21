@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import Paper from '@material-ui/core/Paper';
 
+import { IconButton } from '@material-ui/core';
+
 const StyledPatientBackground = styled.div`
   display: flex;
   flex-basis: 25%;
@@ -25,9 +27,11 @@ export const StyledPrevEncountersPapers = styled(Paper)`
 `;
 
 export const StyledCurrentExaminationHeader = styled.div`
-  margin: 9px 22px;
+  display: flex;
+  margin: 20px 23px;
+  width: 100%;
   div {
-    width: 20%;
+    width: 30%;
     height: 22px;
     font-family: OpenSansHebrew;
     font-size: 16px;
@@ -41,11 +45,31 @@ export const StyledCurrentExaminationHeader = styled.div`
     letter-spacing: normal;
     text-align: right;
     color: #000b40;
-    display: inline;
+    margin-left: 10%;
   }
   span {
-    width: 80%;
+    width: 60%;
+    font-family: OpenSansHebrew;
+    font-size: 16px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    -webkit-letter-spacing: normal;
+    -moz-letter-spacing: normal;
+    -ms-letter-spacing: normal;
+    letter-spacing: normal;
+    text-align: right;
+    color: #000b40;
     margin-left: 10%;
-    display: inline;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+`;
+
+export const StyledIcon = styled(IconButton)`
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
 `;

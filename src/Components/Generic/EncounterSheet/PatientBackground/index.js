@@ -3,10 +3,12 @@ import StyledPatientBackground, {
   StyledCurrentExaminationHeader,
   StyledPrevEncountersPapers,
 } from './Style';
-import { FHIR } from '../../../../Utils/Services/FHIR';
+import { FHIR } from 'Utils/Services/FHIR';
 import moment from 'moment';
-import normalizeFhirEncounter from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
+import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import { useTranslation } from 'react-i18next';
+import StyledExaminationStatusesWithIcons from './StyledExaminationStatusesWithIcons';
+import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
 
 const PatientBackground = ({
   encounter,
@@ -15,26 +17,35 @@ const PatientBackground = ({
   formatDate,
 }) => {
   const { t } = useTranslation();
+
   const showPrevEncounters = () => {
     return (
-      <React.Fragment dir={languageDirection === 'he' ? 'rtl' : 'ltr'}>
+      <React.Fragment>
         {encounter ? (
-          <StyledPrevEncountersPapers>
+          <StyledPrevEncountersPapers dir={languageDirection}>
             <StyledCurrentExaminationHeader>
-              <div>
-                {t('Current test')} -
-                <span>
-                  {encounter.serviceType ? t(encounter.serviceType) : ''} -
-                  {t(encounter.examination)}
-                </span>
-              </div>
+              <div>{t('Current test')}</div>
+              <span
+                title={parseMultipleExaminations(
+                  encounter.serviceType,
+                  encounter.examination,
+                  t,
+                )}>
+                {parseMultipleExaminations(
+                  encounter.serviceType,
+                  encounter.examination,
+                  t,
+                )}
+              </span>
             </StyledCurrentExaminationHeader>
+            <StyledExaminationStatusesWithIcons></StyledExaminationStatusesWithIcons>
           </StyledPrevEncountersPapers>
         ) : null}
         {prevEncounters.map((prevEncounter, prevEncounterIndex) => {
-          debugger;
           return encounter && encounter.id !== prevEncounter.id ? (
-            <StyledPrevEncountersPapers key={prevEncounterIndex}>
+            <StyledPrevEncountersPapers
+              key={prevEncounterIndex}
+              dir={languageDirection}>
               {/*<div>{encounter.id ? encounter.id : ''}</div>
           <div>{encounter.priority ? encounter.priority : ''}</div>
           <div>{encounter.status ? encounter.status : ''}</div>
@@ -54,12 +65,14 @@ const PatientBackground = ({
               <StyledCurrentExaminationHeader>
                 <div>
                   {prevEncounter.period && prevEncounter.period.start
-                    ? prevEncounter.period.start
+                    ? moment
+                        .utc(prevEncounter.period.start.startTime)
+                        .format(formatDate)
                     : null}
                   <span>
                     {prevEncounter.serviceType
                       ? t(prevEncounter.serviceType)
-                      : ''}{' '}
+                      : ''}
                     -
                     {prevEncounter.examination
                       ? t(prevEncounter.examination)
