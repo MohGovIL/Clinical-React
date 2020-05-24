@@ -32,7 +32,12 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   useEffect(() => {
     try {
       const EventSource = NativeEventSource || EventSourcePolyfill;
+      // Checking if the EventSource is available on the user's machine
       if (typeof EventSource !== undefined) {
+        // Checking if this is the first render or if the SSE stream is closed.
+        // Reason for doing that is to not create a new instance every time and use the open one
+        // Because SSE knows how to reconnect automatically when there is an error
+        // So I make sure to 
         if (
           !source.current ||
           source.current.readyState === source.current.CLOSED
