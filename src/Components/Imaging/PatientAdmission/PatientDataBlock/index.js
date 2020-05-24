@@ -42,6 +42,7 @@ import { FHIR } from 'Utils/Services/FHIR';
 import { setPatientAction } from 'Store/Actions/ActiveActions';
 import { store } from '../../../../index';
 import { emptyArrayAll } from 'Utils/Helpers/emptyArray';
+import AvatarIdBlock from 'Assets/Elements/AvatarIdBlock';
 
 const PatientDataBlock = ({
   appointmentData,
@@ -223,39 +224,48 @@ const PatientDataBlock = ({
         disable_vertical_scroll={edit_mode === 0 ? false : true}
       />
       <StyledDiv edit_mode={edit_mode}>
-        <StyledAvatarIdBlock>
-          {edit_mode === 0 ? (
-            <IconButton
-              onClick={() => {
-                window.scrollTo(0, 0);
-                onEditButtonClick(1);
-              }}>
-              <EditIcon />
-            </IconButton>
-          ) : (
-            <StyledEmptyIconEdit />
-          )}
-          {/*patientEncounter.priority == 2 - the high priority*/}
-          <StyledRoundAvatar
-            show_red_circle={edit_mode === 0 && priority > 1 ? true : false}>
-            <Avatar alt={''} src={avatarIcon} />
-          </StyledRoundAvatar>
+        <AvatarIdBlock
+          edit_mode={edit_mode}
+          priority={priority}
+          avatarIcon={avatarIcon}
+          patientData={patientData}
+          patientIdentifier={patientIdentifier}
+          patientAge={patientAge}
+          onEditButtonClick={onEditButtonClick}
+        />
+        {/*<StyledAvatarIdBlock>*/}
+        {/*  {edit_mode === 0 ? (*/}
+        {/*    <IconButton*/}
+        {/*      onClick={() => {*/}
+        {/*        window.scrollTo(0, 0);*/}
+        {/*        onEditButtonClick(1);*/}
+        {/*      }}>*/}
+        {/*      <EditIcon />*/}
+        {/*    </IconButton>*/}
+        {/*  ) : (*/}
+        {/*    <StyledEmptyIconEdit />*/}
+        {/*  )}*/}
+        {/*  /!*patientEncounter.priority == 2 - the high priority*!/*/}
+        {/*  <StyledRoundAvatar*/}
+        {/*    show_red_circle={edit_mode === 0 && priority > 1 ? true : false}>*/}
+        {/*    <Avatar alt={''} src={avatarIcon} />*/}
+        {/*  </StyledRoundAvatar>*/}
 
-          <Typography variant='h5' noWrap={true}>
-            {edit_mode === 0
-              ? patientData.firstName + ' ' + patientData.lastName
-              : ''}
-          </Typography>
+        {/*  <Typography variant='h5' noWrap={true}>*/}
+        {/*    {edit_mode === 0*/}
+        {/*      ? patientData.firstName + ' ' + patientData.lastName*/}
+        {/*      : ''}*/}
+        {/*  </Typography>*/}
 
-          <StyledAgeIdBlock>
-            <span>
-              {t(patientIdentifier.type)} {patientIdentifier.value}
-            </span>
-            <span>
-              {t(patientData.ageGenderType)} {patientAge}
-            </span>
-          </StyledAgeIdBlock>
-        </StyledAvatarIdBlock>
+        {/*  <StyledAgeIdBlock>*/}
+        {/*    <span>*/}
+        {/*      {t(patientIdentifier.type)} {patientIdentifier.value}*/}
+        {/*    </span>*/}
+        {/*    <span>*/}
+        {/*      {t(patientData.ageGenderType)} {patientAge}*/}
+        {/*    </span>*/}
+        {/*  </StyledAgeIdBlock>*/}
+        {/*</StyledAvatarIdBlock>*/}
         <Divider />
         <StyledTextInput
           edit_mode={edit_mode}
