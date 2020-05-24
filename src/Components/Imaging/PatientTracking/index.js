@@ -25,14 +25,6 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   // Set the popUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
 
-  const onError = (event) => {};
-
-  const onMessage = (event) => {
-    setEventId(event.lastEventId);
-  };
-
-  const onOpen = (event) => {};
-
   const source = useRef(null);
 
   const [eventId, setEventId] = useState('');
@@ -69,12 +61,16 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
           source.current.onerror = onError;
         }
       } else {
-        alert('Error: Server-Sent Events are not supported in your browser');
+        console.log(
+          'Error: Server-Sent Events are not supported in your browser',
+        );
       }
     } catch (error) {
       console.log(error);
     }
     return () => {
+      // Clean up function happens when re-render is happening by the dependencies array
+      // or when the component gets unmounted
       try {
         if (
           !source.current ||
@@ -89,6 +85,13 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     };
   }, [selectFilter.filter_organization, facilityId]);
 
+  const onError = (event) => {};
+
+  const onMessage = (event) => {
+    setEventId(event.lastEventId);
+  };
+
+  const onOpen = (event) => {};
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
 
