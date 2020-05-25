@@ -9,6 +9,8 @@ import {
   SET_SETTINGS_SUCCESS,
 } from './SettingsActionTypes';
 import { geti18n } from 'Utils/Services/i18n';
+import { FHIR } from 'Utils/Services/FHIR';
+import { setUserAction } from 'Store/Actions/ActiveActions';
 
 export const getSettingsStartAction = () => {
   return {
@@ -36,6 +38,17 @@ export const getSettingsAction = (history, userID) => {
       const settings = await getGlobalSettings(userID);
       await geti18n(settings.data.lang_id);
       dispatch(getSettingsSuccessAction(settings.data));
+
+      const PractitionerData = await FHIR('Practitioner', 'doWork', {
+        functionName: 'getPractitioner',
+        functionParams: {
+          user: userID,
+        },
+      });
+      if (PractitionerData) {
+        dispatch(setUserAction(PractitionerData.data));
+      }
+
       history.push(`${firstRouteMapper(settings.data.clinikal_vertical)}`);
     } catch (err) {
       dispatch(getSettingsFailedAction());

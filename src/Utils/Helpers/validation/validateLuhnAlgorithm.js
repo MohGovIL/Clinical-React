@@ -19,5 +19,5 @@ export const validateLuhnAlgorithm = (value) => {
     nCheck += nDigit;
     bEven = !bEven;
   }
-  return nCheck % 10 == 0;
+  return nCheck % 10 === 0;
 };

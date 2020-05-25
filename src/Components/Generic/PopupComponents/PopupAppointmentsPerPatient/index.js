@@ -4,9 +4,13 @@ import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 import Slide from '@material-ui/core/Slide';
 import AppointmentsAndEncountersTables from './AppointmentsAndEncountersTables';
 
-const Transition = React.forwardRef(function Transition(props, ref, direction) {
+const Transition = React.forwardRef(function Transition(props, ref) {
   return (
-    <Slide direction={direction ? direction : 'up'} ref={ref} {...props} />
+    <Slide
+      direction={props.direction ? props.direction : 'up'}
+      ref={ref}
+      {...props}
+    />
   );
 });
 

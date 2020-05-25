@@ -4,12 +4,10 @@
  * @constructor
  */
 
-import React, { useState, useEffect, useContext } from 'react';
+import React from 'react';
 import {
-  Button,
   Dialog,
   Typography,
-  DialogActions,
   DialogContent,
   IconButton,
 } from '@material-ui/core';

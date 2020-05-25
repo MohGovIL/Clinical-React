@@ -17,6 +17,7 @@ import {
 } from 'Store/Actions/FilterActions/FilterActions';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { FHIR } from 'Utils/Services/FHIR';
+import { emptyArrayAll } from 'Utils/Helpers/emptyArray';
 
 /**
  * @author Yuriy Gershem yuriyge@matrix.co.il
@@ -38,15 +39,6 @@ const FilterBox = ({
 }) => {
   const { t } = useTranslation();
 
-  const emptyArrayAll = () => {
-    return [
-      {
-        code: 0,
-        name: t('All'),
-      },
-    ];
-  };
-
   const [optionsOrganization, setLabelOrganization] = useState([]);
   const [optionsServiceType, setLabelServiceType] = useState([]);
   const [defaultServiceType, setDefaultServiceType] = useState([]);
@@ -56,7 +48,7 @@ const FilterBox = ({
     (async () => {
       try {
         //Array for list options with default element (All).
-        let array = emptyArrayAll();
+        let array = emptyArrayAll(t('All'));
         //Nested destructuring from Promise. ES6 new syntax.
         //const {data: {entry: dataOrganization}} = await getOrganization();
         const {
@@ -76,7 +68,7 @@ const FilterBox = ({
         console.log(err);
       }
     })();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     (async () => {
@@ -86,7 +78,7 @@ const FilterBox = ({
             expansion: { contains },
           },
         } = await getValueSet('service_types');
-        let options = emptyArrayAll();
+        let options = emptyArrayAll(t('All'));
         for (let status of contains) {
           options.push(normalizeFhirValueSet(status));
         }
@@ -96,7 +88,7 @@ const FilterBox = ({
         console.log(err);
       }
     })();
-  }, []);
+  }, [t]);
   //Auto set current facility
   useEffect(() => {
     organizationOnChangeHandler(
@@ -104,13 +96,14 @@ const FilterBox = ({
         ? facility
         : selectFilterOrganization,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const organizationOnChangeHandler = (code) => {
     setFilterOrganizationAction(code);
     if (code > 0) {
       //Array for list options with default element (All).
-      let array = emptyArrayAll();
+      let array = emptyArrayAll(t('All'));
 
       (async () => {
         try {
@@ -136,7 +129,9 @@ const FilterBox = ({
     } else {
       setFilterServiceTypeAction(0);
       setLabelServiceType(
-        defaultServiceType.length > 0 ? defaultServiceType : emptyArrayAll(),
+        defaultServiceType.length > 0
+          ? defaultServiceType
+          : emptyArrayAll(t('All')),
       );
     }
     return true;
