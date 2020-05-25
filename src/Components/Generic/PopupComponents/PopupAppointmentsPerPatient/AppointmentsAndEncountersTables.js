@@ -21,6 +21,7 @@ import Paper from '@material-ui/core/Paper';
 import TableBody from '@material-ui/core/TableBody';
 import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
 import { useHistory } from 'react-router-dom';
+import { goToEncounterSheet } from 'Utils/Helpers/goToEncounterSheet';
 const AppointmentsAndEncountersTables = ({
   nextAppointments,
   curEncounters,
@@ -128,7 +129,7 @@ const AppointmentsAndEncountersTables = ({
     gotToPatientAdmission(encounter, patient, history);
   };
 
-  const handleEncounterSheetClick = () => {
+  const handleEncounterSheetClick = (encounter) => {
     goToEncounterSheet(encounter, patient, history);
   };
   if (curEncounters && curEncounters.data && curEncounters.data.total > 0) {
@@ -252,9 +253,9 @@ const AppointmentsAndEncountersTables = ({
                           size={'small'}
                           variant='outlined'
                           color='primary'
-                          href='#contained-buttons'>
+                          href='#contained-buttons'
+                          onClick={(event) => handleEncounterSheetClick(encounter)}>
                           {t('navigate to encounter sheet')}
-                          onClick={handleEncounterSheetClick}
                         </StyledHrefTableButton>
                       </TableCell>
                       <TableCell align='right'>
