@@ -13,11 +13,7 @@ import maleIcon from 'Assets/Images/maleIcon.png';
 import femaleIcon from 'Assets/Images/womanIcon.png';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from 'Utils/Helpers/ageCalculator';
-import {
-  TextField,
-  MenuItem,
-  InputAdornment,
-} from '@material-ui/core';
+import { TextField, MenuItem, InputAdornment } from '@material-ui/core';
 import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { StyledFormGroup } from 'Components/Imaging/PatientAdmission/PatientDetailsBlock/Style';
@@ -47,9 +43,6 @@ const PatientDataBlock = ({
 }) => {
   const { t } = useTranslation();
 
-  const [avatarIcon, setAvatarIcon] = useState(null);
-  const [patientIdentifier, setPatientIdentifier] = useState({});
-  const [patientAge, setPatientAge] = useState(0);
   const [patientBirthDate, setPatientBirthDate] = useState(
     patientData.birthDate !== undefined
       ? Moment(patientData.birthDate, 'YYYY-MM-DD')
@@ -99,22 +92,6 @@ const PatientDataBlock = ({
 
   useEffect(() => {
     try {
-      setAvatarIcon(
-        patientData.gender === 'male'
-          ? maleIcon
-          : patientData.gender === 'female'
-          ? femaleIcon
-          : '',
-      );
-      //use format date of FHIR date - YYYY-MM-DD only
-      setPatientAge(ageCalculator(patientData.birthDate));
-      setPatientIdentifier(
-        {
-          type: patientData.identifierTypeText,
-          value: patientData.identifier,
-        } || {},
-      );
-
       //It is necessary to get data from the server and fill the array.
       let array = emptyArrayAll(t('Choose'));
       (async () => {
@@ -219,10 +196,7 @@ const PatientDataBlock = ({
           edit_mode={edit_mode}
           showEditButton
           priority={priority}
-          avatarIcon={avatarIcon}
           patientData={patientData}
-          patientIdentifier={patientIdentifier}
-          patientAge={patientAge}
           onEditButtonClick={onEditButtonClick}
           showDivider
         />

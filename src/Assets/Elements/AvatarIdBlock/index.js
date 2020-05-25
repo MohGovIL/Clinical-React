@@ -3,7 +3,7 @@
  * @returns {*}
  * @constructor
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, IconButton, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import {
@@ -14,19 +14,46 @@ import {
   StyledDivider,
 } from './Style';
 import { useTranslation } from 'react-i18next';
+import maleIcon from 'Assets/Images/maleIcon.png';
+import femaleIcon from 'Assets/Images/womanIcon.png';
+import ageCalculator from 'Utils/Helpers/ageCalculator';
 
 const AvatarIdBlock = ({
   edit_mode,
   showEditButton,
   priority,
-  avatarIcon,
   patientData,
-  patientIdentifier,
-  patientAge,
   onEditButtonClick,
   showDivider,
 }) => {
   const { t } = useTranslation();
+  const [patientAvatarIcon, setPatientAvatarIcon] = useState(null);
+  const [patientAge, setPatientAge] = useState(0);
+  const [patientIdentifier, setPatientIdentifier] = useState({});
+
+  useEffect(() => {
+    try {
+      setPatientAvatarIcon(
+        patientData.gender === 'male'
+          ? maleIcon
+          : patientData.gender === 'female'
+          ? femaleIcon
+          : '',
+      );
+
+      //use format date of FHIR date - YYYY-MM-DD only
+      setPatientAge(ageCalculator(patientData.birthDate));
+      setPatientIdentifier(
+        {
+          type: patientData.identifierTypeText,
+          value: patientData.identifier,
+        } || {},
+      );
+    } catch (e) {
+      console.log('AvatarIdBlock[Error]: ' + e);
+    }
+  }, [patientData.id, patientData.birthDate]);
+
   return (
     <React.Fragment>
       <StyledAvatarIdBlock>
@@ -44,7 +71,7 @@ const AvatarIdBlock = ({
         {/*patientEncounter.priority == 2 - the high priority*/}
         <StyledRoundAvatar
           show_red_circle={edit_mode === 0 && priority > 1 ? true : false}>
-          <Avatar alt={''} src={avatarIcon} />
+          <Avatar alt={''} src={patientAvatarIcon} />
         </StyledRoundAvatar>
 
         <Typography variant='h5' noWrap={true}>
