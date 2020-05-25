@@ -37,7 +37,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
         // Checking if this is the first render or if the SSE stream is closed.
         // Reason for doing that is to not create a new instance every time and use the open one
         // Because SSE knows how to reconnect automatically when there is an error
-        // So I make sure to 
+        // So I make sure to
         if (
           !source.current ||
           source.current.readyState === source.current.CLOSED
@@ -93,6 +93,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   const onError = (event) => {};
 
   const onMessage = (event) => {
+    console.log('msg');
     setEventId(event.lastEventId);
   };
 
@@ -109,6 +110,11 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   const prevFilterBoxValue = useRef(0);
 
   useEffect(() => {
+    // Checking if this is the first render since this dependencies array
+    // in this useEffect is getting set in a child component
+    if (!selectFilter.STATUS && !selectFilter.filter_organization) {
+      return;
+    }
     //Create an array of permitted tabs according to the user role.
     let tabs = getStaticTabsArray();
     for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
@@ -127,6 +133,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
     //Filter box mechanism for activeTabs
     for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
+      console.log('render');
       const tab = tabs[tabIndex];
       if (tab.tabValue === selectFilter.statusFilterBoxValue) {
         tab.activeAction(
@@ -143,13 +150,12 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
       }
     }
     prevFilterBoxValue.current = selectFilter.statusFilterBoxValue;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectFilter.filter_date,
     selectFilter.statusFilterBoxValue,
     selectFilter.filter_service_type,
     selectFilter.filter_organization,
-    history,
-    selectFilter,
     eventId,
   ]);
   //Gets the menu items
