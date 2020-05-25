@@ -1541,7 +1541,9 @@ const PatientDetailsBlock = ({
                   error={requiredErrors.selectTest ? true : false}
                   helperText={
                     requiredErrors.selectTest &&
-                    t('The test performed during the visit must be selected')
+                    t(
+                      'The visit reason performed during the visit must be selected',
+                    )
                   }
                   {...params}
                   label={`${t('Reason for refferal')} *`}

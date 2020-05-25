@@ -3,7 +3,6 @@
  */
 
 const parseMultipleExaminations = (serviceType, examination, t) => {
-  debugger;
   if (!examination || !examination[0] || examination.lenghth === 0) {
     return t(serviceType);
   }
