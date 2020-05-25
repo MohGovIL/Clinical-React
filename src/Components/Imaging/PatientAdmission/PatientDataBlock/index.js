@@ -5,12 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import {
   StyledDiv,
-  StyledRoundAvatar,
-  StyledAgeIdBlock,
   StyledTextInput,
-  StyledAvatarIdBlock,
   StyledButtonBlock,
-  StyledEmptyIconEdit,
   StyledGlobalStyle,
 } from './Style';
 import maleIcon from 'Assets/Images/maleIcon.png';
@@ -18,16 +14,11 @@ import femaleIcon from 'Assets/Images/womanIcon.png';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import ageCalculator from 'Utils/Helpers/ageCalculator';
 import {
-  Avatar,
-  IconButton,
-  Divider,
-  Typography,
   TextField,
   MenuItem,
   InputAdornment,
 } from '@material-ui/core';
 import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
-import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { StyledFormGroup } from 'Components/Imaging/PatientAdmission/PatientDetailsBlock/Style';
 import { normalizeValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
@@ -226,47 +217,15 @@ const PatientDataBlock = ({
       <StyledDiv edit_mode={edit_mode}>
         <AvatarIdBlock
           edit_mode={edit_mode}
+          showEditButton
           priority={priority}
           avatarIcon={avatarIcon}
           patientData={patientData}
           patientIdentifier={patientIdentifier}
           patientAge={patientAge}
           onEditButtonClick={onEditButtonClick}
+          showDivider
         />
-        {/*<StyledAvatarIdBlock>*/}
-        {/*  {edit_mode === 0 ? (*/}
-        {/*    <IconButton*/}
-        {/*      onClick={() => {*/}
-        {/*        window.scrollTo(0, 0);*/}
-        {/*        onEditButtonClick(1);*/}
-        {/*      }}>*/}
-        {/*      <EditIcon />*/}
-        {/*    </IconButton>*/}
-        {/*  ) : (*/}
-        {/*    <StyledEmptyIconEdit />*/}
-        {/*  )}*/}
-        {/*  /!*patientEncounter.priority == 2 - the high priority*!/*/}
-        {/*  <StyledRoundAvatar*/}
-        {/*    show_red_circle={edit_mode === 0 && priority > 1 ? true : false}>*/}
-        {/*    <Avatar alt={''} src={avatarIcon} />*/}
-        {/*  </StyledRoundAvatar>*/}
-
-        {/*  <Typography variant='h5' noWrap={true}>*/}
-        {/*    {edit_mode === 0*/}
-        {/*      ? patientData.firstName + ' ' + patientData.lastName*/}
-        {/*      : ''}*/}
-        {/*  </Typography>*/}
-
-        {/*  <StyledAgeIdBlock>*/}
-        {/*    <span>*/}
-        {/*      {t(patientIdentifier.type)} {patientIdentifier.value}*/}
-        {/*    </span>*/}
-        {/*    <span>*/}
-        {/*      {t(patientData.ageGenderType)} {patientAge}*/}
-        {/*    </span>*/}
-        {/*  </StyledAgeIdBlock>*/}
-        {/*</StyledAvatarIdBlock>*/}
-        <Divider />
         <StyledTextInput
           edit_mode={edit_mode}
           languageDirection={languageDirection}>

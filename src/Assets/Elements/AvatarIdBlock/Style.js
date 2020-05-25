@@ -1,4 +1,10 @@
 import styled from 'styled-components';
+import { Divider } from '@material-ui/core';
+
+export const StyledDivider = styled(Divider)`
+    height: 2px;
+    width: 100%;
+`;
 
 export const StyledAvatarIdBlock = styled.div`
   display: flex;
