@@ -39,8 +39,9 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
         // Because SSE knows how to reconnect automatically when there is an error
         // So I make sure to
         if (
-          !source.current ||
-          source.current.readyState === source.current.CLOSED
+          (!source.current ||
+            source.current.readyState === source.current.CLOSED) &&
+          selectFilter.STATUS
         ) {
           let eventSourceHeaders = {
             headers: {
@@ -52,15 +53,12 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
           source.current = new EventSourcePolyfill(
             `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
-              selectFilter.filter_organization || facilityId
+              selectFilter.filter_organization
+                ? selectFilter.filter_organization
+                : 'ALL'
             }`,
             eventSourceHeaders,
           );
-          // source.current = new EventSourcePolyfill(
-          //   `${basePath()}apis/api/sse/patients-tracking/check-refresh/${'ALL'}`,
-          //   eventSourceHeaders,
-          // );
-
           source.current.onopen = onOpen;
           source.current.onmessage = onMessage;
           source.current.onerror = onError;
@@ -78,22 +76,21 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
       // or when the component gets unmounted
       try {
         if (
-          !source.current ||
+          source.current &&
           source.current.readyState === source.current.OPEN
         ) {
           source.current.close();
-          console.log(source.current);
         }
       } catch (error) {
         console.log(error);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectFilter.filter_organization, facilityId]);
 
   const onError = (event) => {};
 
   const onMessage = (event) => {
-    console.log('msg');
     setEventId(event.lastEventId);
   };
 
@@ -133,7 +130,6 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
 
     //Filter box mechanism for activeTabs
     for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
-      console.log('render');
       const tab = tabs[tabIndex];
       if (tab.tabValue === selectFilter.statusFilterBoxValue) {
         tab.activeAction(
