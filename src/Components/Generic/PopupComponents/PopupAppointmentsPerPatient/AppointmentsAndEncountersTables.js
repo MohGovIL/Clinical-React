@@ -127,6 +127,10 @@ const AppointmentsAndEncountersTables = ({
   const handleAdmissionClick = (encounter) => {
     gotToPatientAdmission(encounter, patient, history);
   };
+
+  const handleEncounterSheetClick = () => {
+    goToEncounterSheet(encounter, patient, history);
+  };
   if (curEncounters && curEncounters.data && curEncounters.data.total > 0) {
     let entry = curEncounters.data.entry;
     // eslint-disable-next-line
@@ -250,6 +254,7 @@ const AppointmentsAndEncountersTables = ({
                           color='primary'
                           href='#contained-buttons'>
                           {t('navigate to encounter sheet')}
+                          onClick={handleEncounterSheetClick}
                         </StyledHrefTableButton>
                       </TableCell>
                       <TableCell align='right'>
