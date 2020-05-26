@@ -30,7 +30,7 @@ import { validateLuhnAlgorithm } from 'Utils/Helpers/validation/validateLuhnAlgo
 import { getOnlyNumbersRegexPattern } from 'Utils/Helpers/validation/patterns';
 import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
 import normalizeFhirPatient from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient';
-import { gotToPatientAdmission } from 'Utils/Helpers/gotoPatientAdmission';
+import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 
 const PopupCreateNewPatient = ({
   popupOpen,

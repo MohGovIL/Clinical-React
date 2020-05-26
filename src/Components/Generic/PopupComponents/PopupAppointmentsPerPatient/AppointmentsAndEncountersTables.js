@@ -21,7 +21,7 @@ import Paper from '@material-ui/core/Paper';
 import TableBody from '@material-ui/core/TableBody';
 import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
 import { useHistory } from 'react-router-dom';
-import { goToEncounterSheet } from 'Utils/Helpers/goToEncounterSheet';
+import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 const AppointmentsAndEncountersTables = ({
   nextAppointments,
   curEncounters,

@@ -1,4 +1,4 @@
-import { goTo } from 'Utils/Helpers/goTo';
+import { goTo } from 'Utils/Helpers/goTo/goTo';
 
 /**
  * @author Idan Gigi idangi@matrix.co.il

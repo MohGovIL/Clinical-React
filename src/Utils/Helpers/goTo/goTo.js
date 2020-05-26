@@ -1,6 +1,6 @@
-import { store } from '../../index';
-import { setEncounterAndPatient } from '../../Store/Actions/ActiveActions';
-import { baseRoutePath } from './baseRoutePath';
+import { store } from 'index';
+import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 
 /**
  * @author Idan Gigi idangi@matrix.co.il
