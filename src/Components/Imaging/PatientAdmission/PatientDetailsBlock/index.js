@@ -81,6 +81,7 @@ const PatientDetailsBlock = ({
     register,
     formState,
     reset,
+    triggerValidation,
   } = useForm({
     mode: 'onBlur',
     submitFocusError: true,
@@ -531,6 +532,7 @@ const PatientDetailsBlock = ({
   );
   // Contact Information - tabs function
   const contactInformationTabValueChangeHandler = (event, newValue) => {
+    triggerValidation(['addressPostalCode', 'POBoxPostalCode']);
     setContactInformationTabValue(newValue);
   };
   // Contact Information - address city - var
@@ -538,6 +540,19 @@ const PatientDetailsBlock = ({
   const [addressStreet, setAddressStreet] = useState({});
   // Contact Information - PObox city - var
   const [POBoxCity, setPOBoxCity] = useState({});
+  // Contact Information - address - vars
+  const [addressStreetNumber, setAddressStreetNumber] = useState('');
+
+  const [addressPostalCode, setAddressPostalCode] = useState('');
+
+  const [POBox, setPOBox] = useState('');
+
+  const [POBoxPostalCode, setPOBoxPostalCode] = useState('');
+
+  const onTextBlur = (value, setState) => {
+    // setValue(name, value, true);
+    setState(value);
+  };
   // Contact Information - functions / useEffect
   // Contact Information - functions / useEffect - reset cities and streets
   useEffect(() => {
@@ -1352,7 +1367,11 @@ const PatientDetailsBlock = ({
                 <Controller
                   name={'addressStreetNumber'}
                   control={control}
-                  defaultValue={patientData.streetNumber}
+                  defaultValue={addressStreetNumber || patientData.streetNumber}
+                  onBlur={([event]) => {
+                    onTextBlur(event.target.value, setAddressStreetNumber);
+                    return event.target.value;
+                  }}
                   as={
                     <StyledTextField
                       id={'addressStreetNumber'}
@@ -1362,8 +1381,12 @@ const PatientDetailsBlock = ({
                 />
                 {/* Contact Information - address - postal code */}
                 <Controller
-                  defaultValue={patientData.postalCode || ''}
+                  defaultValue={addressPostalCode || patientData.postalCode}
                   name={'addressPostalCode'}
+                  onBlur={([event]) => {
+                    onTextBlur(event.target.value, setAddressPostalCode);
+                    return event.target.value;
+                  }}
                   as={
                     <StyledTextField
                       id={'addressPostalCode'}
@@ -1426,13 +1449,21 @@ const PatientDetailsBlock = ({
                 <Controller
                   name={'POBox'}
                   control={control}
-                  defaultValue={patientData.POBox}
+                  defaultValue={POBox || patientData.POBox}
+                  onBlur={([event]) => {
+                    onTextBlur(event.target.value, setPOBox);
+                    return event.target.value;
+                  }}
                   as={<StyledTextField id={'POBox'} label={t('PO box')} />}
                 />
                 {/* Contact Information - POBox - postal code */}
                 <Controller
-                  defaultValue={patientData.postalCode}
+                  defaultValue={POBoxPostalCode || patientData.postalCode}
                   name={'POBoxPostalCode'}
+                  onBlur={([event]) => {
+                    onTextBlur(event.target.value, setPOBoxPostalCode);
+                    return event.target.value;
+                  }}
                   as={
                     <StyledTextField
                       id={'POBoxPostalCode'}
@@ -1444,8 +1475,8 @@ const PatientDetailsBlock = ({
                   }
                   rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
                   control={control}
-                  error={errors.addressPostalCode && true}
-                  helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
+                  error={errors.POBoxPostalCode && true}
+                  helperText={errors.POBoxPostalCode && 'יש להזין 7 ספרות'}
                 />
               </React.Fragment>
             )}
@@ -1616,24 +1647,20 @@ const PatientDetailsBlock = ({
                   id={'commitmentAndPaymentHMO'}
                   disabled
                 />
-                <Controller
-                  control={control}
+                <StyledTextField
                   name='commitmentAndPaymentReferenceForPaymentCommitment'
-                  as={
-                    <StyledTextField
-                      label={`${t('Reference for payment commitment')} *`}
-                      id={'commitmentAndPaymentReferenceForPaymentCommitment'}
-                      type='number'
-                      InputLabelProps={{ shrink: true }}
-                      error={
-                        requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
-                          ? true
-                          : false
-                      }
-                      helperText={
-                        requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
-                      }
-                    />
+                  label={`${t('Reference for payment commitment')} *`}
+                  inputRef={register}
+                  id={'commitmentAndPaymentReferenceForPaymentCommitment'}
+                  type='number'
+                  InputLabelProps={{ shrink: true }}
+                  error={
+                    requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
                   }
                 />
                 <Controller
@@ -1727,43 +1754,35 @@ const PatientDetailsBlock = ({
                     </MuiPickersUtilsProvider>
                   }
                 />
-                <Controller
-                  control={control}
+                <StyledTextField
                   name='commitmentAndPaymentDoctorsName'
-                  as={
-                    <StyledTextField
-                      label={`${t('Doctors name')} *`}
-                      id={'commitmentAndPaymentDoctorsName'}
-                      InputLabelProps={{ shrink: true }}
-                      error={
-                        requiredErrors.commitmentAndPaymentDoctorsName
-                          ? true
-                          : false
-                      }
-                      helperText={
-                        requiredErrors.commitmentAndPaymentDoctorsName || ''
-                      }
-                    />
+                  label={`${t('Doctors name')} *`}
+                  inputRef={register}
+                  id={'commitmentAndPaymentDoctorsName'}
+                  InputLabelProps={{ shrink: true }}
+                  error={
+                    requiredErrors.commitmentAndPaymentDoctorsName
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    requiredErrors.commitmentAndPaymentDoctorsName || ''
                   }
                 />
-                <Controller
-                  control={control}
+                <StyledTextField
+                  label={`${t('Doctors license')} *`}
                   name='commitmentAndPaymentDoctorsLicense'
+                  inputRef={register}
+                  id={'commitmentAndPaymentDoctorsLicense'}
+                  type='number'
                   InputLabelProps={{ shrink: true }}
-                  as={
-                    <StyledTextField
-                      label={`${t('Doctors license')} *`}
-                      id={'commitmentAndPaymentDoctorsLicense'}
-                      type='number'
-                      error={
-                        requiredErrors.commitmentAndPaymentDoctorsLicense
-                          ? true
-                          : false
-                      }
-                      helperText={
-                        requiredErrors.commitmentAndPaymentDoctorsLicense || ''
-                      }
-                    />
+                  error={
+                    requiredErrors.commitmentAndPaymentDoctorsLicense
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    requiredErrors.commitmentAndPaymentDoctorsLicense || ''
                   }
                 />
               </React.Fragment>
