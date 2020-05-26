@@ -9,10 +9,7 @@ import {
   StyledButtonBlock,
   StyledGlobalStyle,
 } from './Style';
-import maleIcon from 'Assets/Images/maleIcon.png';
-import femaleIcon from 'Assets/Images/womanIcon.png';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
-import ageCalculator from 'Utils/Helpers/ageCalculator';
 import { TextField, MenuItem, InputAdornment } from '@material-ui/core';
 import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';

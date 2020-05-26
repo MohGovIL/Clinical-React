@@ -52,6 +52,7 @@ const AvatarIdBlock = ({
     } catch (e) {
       console.log('AvatarIdBlock[Error]: ' + e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientData.id, patientData.birthDate]);
 
   return (
