@@ -19,6 +19,7 @@ import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
 import { basePath } from 'Utils/Helpers/basePath';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
 import { getToken } from 'Utils/Helpers/getToken';
+import { stateLessOrNot } from 'Utils/Helpers/StatelessOrNot';
 
 const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   const { t } = useTranslation();
@@ -43,13 +44,22 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
             source.current.readyState === source.current.CLOSED) &&
           selectFilter.STATUS
         ) {
-          let eventSourceHeaders = {
-            headers: {
-              Authorization: `${ApiTokens.API.tokenType} ${getToken(
-                ApiTokens.API.tokenName,
-              )}`,
-            },
-          };
+          let eventSourceHeaders;
+          if (stateLessOrNot()) {
+            eventSourceHeaders = {
+              headers: {
+                Authorization: `${ApiTokens.API.tokenType} ${getToken(
+                  ApiTokens.API.tokenName,
+                )}`,
+              },
+            };
+          } else {
+            eventSourceHeaders = {
+              headers: {
+                apicsrftoken: `${getToken(ApiTokens.CSRF.tokenName)}`,
+              },
+            };
+          }
 
           source.current = new EventSourcePolyfill(
             `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
