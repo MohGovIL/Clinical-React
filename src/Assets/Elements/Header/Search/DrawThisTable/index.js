@@ -25,7 +25,7 @@ import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import PopAppointmentsPerPatient from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
-import { gotToPatientAdmission } from 'Utils/Helpers/gotoPatientAdmission';
+import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 
 const DrawThisTable = ({
   result,
@@ -353,6 +353,7 @@ const DrawThisTable = ({
                   patientTrackingStatuses={patientTrackingStatuses}
                   gotToPatientAdmission={gotToPatientAdmission}
                   authorizationACO={authorizationACO}
+                  patient={patient}
                 />
                 <StyledBottomLinks key={'bottom_links_' + patientIndex}>
                   <StyledHrefButton

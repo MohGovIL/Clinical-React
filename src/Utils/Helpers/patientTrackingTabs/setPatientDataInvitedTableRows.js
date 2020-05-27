@@ -18,7 +18,7 @@ import {
 } from 'Store/Actions/FhirActions/fhirActions';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
 import { FHIR } from 'Utils/Services/FHIR';
-import { gotToPatientAdmission } from '../gotoPatientAdmission';
+import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 
 //מוזמנים
 export const invitedTabActiveFunction = async function (
