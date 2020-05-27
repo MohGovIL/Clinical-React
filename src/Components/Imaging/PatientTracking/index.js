@@ -15,12 +15,86 @@ import Title from 'Assets/Elements/Title';
 import isAllowed from 'Utils/Helpers/isAllowed';
 import { getStaticTabsArray } from 'Utils/Helpers/patientTrackingTabs/staticTabsArray';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
+import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
+import { basePath } from 'Utils/Helpers/basePath';
+import { ApiTokens } from 'Utils/Services/ApiTokens';
+import { getToken } from 'Utils/Helpers/getToken';
 
-const PatientTracking = ({ vertical, history, selectFilter }) => {
+const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
   const { t } = useTranslation();
   // Set the popUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
 
+  const source = useRef(null);
+
+  const [eventId, setEventId] = useState('');
+
+  useEffect(() => {
+    try {
+      const EventSource = NativeEventSource || EventSourcePolyfill;
+      // Checking if the EventSource is available on the user's machine
+      if (typeof EventSource !== undefined) {
+        // Checking if this is the first render or if the SSE stream is closed.
+        // Reason for doing that is to not create a new instance every time and use the open one
+        // Because SSE knows how to reconnect automatically when there is an error
+        // So I make sure to
+        if (
+          (!source.current ||
+            source.current.readyState === source.current.CLOSED) &&
+          selectFilter.STATUS
+        ) {
+          let eventSourceHeaders = {
+            headers: {
+              Authorization: `${ApiTokens.API.tokenType} ${getToken(
+                ApiTokens.API.tokenName,
+              )}`,
+            },
+          };
+
+          source.current = new EventSourcePolyfill(
+            `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
+              selectFilter.filter_organization
+                ? selectFilter.filter_organization
+                : 'ALL'
+            }`,
+            eventSourceHeaders,
+          );
+          source.current.onopen = onOpen;
+          source.current.onmessage = onMessage;
+          source.current.onerror = onError;
+        }
+      } else {
+        console.log(
+          'Error: Server-Sent Events are not supported in your browser',
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return () => {
+      // Clean up function happens when re-render is happening by the dependencies array
+      // or when the component gets unmounted
+      try {
+        if (
+          source.current &&
+          source.current.readyState === source.current.OPEN
+        ) {
+          source.current.close();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectFilter.filter_organization, facilityId]);
+
+  const onError = (event) => {};
+
+  const onMessage = (event) => {
+    setEventId(event.lastEventId);
+  };
+
+  const onOpen = (event) => {};
   //The tabs of the Status filter box component.
   const [tabs, setTabs] = useState([]);
 
@@ -33,6 +107,11 @@ const PatientTracking = ({ vertical, history, selectFilter }) => {
   const prevFilterBoxValue = useRef(0);
 
   useEffect(() => {
+    // Checking if this is the first render since this dependencies array
+    // in this useEffect is getting set in a child component
+    if (!selectFilter.STATUS && !selectFilter.filter_organization) {
+      return;
+    }
     //Create an array of permitted tabs according to the user role.
     if (tabs.length === 0) {
       let tabs = getStaticTabsArray();
@@ -63,19 +142,19 @@ const PatientTracking = ({ vertical, history, selectFilter }) => {
           setIsPopUpOpen,
         );
       } else {
-        //TODO make this call in a different useEffect because when statusFiltterBoxValue changes
-        // there is no need to call `tab.activeAction` only call `tab.notActiveAction`
         if (selectFilter.statusFilterBoxValue === prevFilterBoxValue.current) {
           tab.notActiveAction(setTabs, selectFilter);
         }
       }
     }
     prevFilterBoxValue.current = selectFilter.statusFilterBoxValue;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectFilter.filter_date,
     selectFilter.statusFilterBoxValue,
     selectFilter.filter_service_type,
     selectFilter.filter_organization,
+    eventId,
   ]);
   //Gets the menu items
   useEffect(() => {
@@ -135,6 +214,7 @@ const mapStateToProps = (state) => {
     vertical: state.settings.clinikal_vertical,
     // userRole: state.settings.user_role,
     selectFilter: state.filters,
+    facilityId: state.settings.facility,
   };
 };
 
