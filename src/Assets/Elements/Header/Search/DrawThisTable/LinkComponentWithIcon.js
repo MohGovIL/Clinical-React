@@ -2,16 +2,17 @@ import React from 'react';
 import Link from '@material-ui/core/Link';
 import { StyledIconValueComponent } from '../Style';
 import { useTranslation } from 'react-i18next';
-import { Link as LinkRouter } from 'react-router-dom';
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 
-const LinkComponentWithIcon = ({ linkUrl, linkHeader, iconType, mode }) => {
+const LinkComponentWithIcon = ({
+  linkUrl,
+  linkHeader,
+  iconType,
+  mode,
+  onClick,
+}) => {
   const { t } = useTranslation();
   return mode === 'view' || mode === 'write' ? (
-    <Link
-      //   href='linkUrl'
-      component={LinkRouter}
-      to={`${baseRoutePath()}/generic/EncounterSheet`}>
+    <Link onClick={onClick} component='button'>
       <label>
         {t(linkHeader)}
         <StyledIconValueComponent

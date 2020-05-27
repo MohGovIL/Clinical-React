@@ -13,6 +13,8 @@ import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 import LinkComponentWithIcon from './LinkComponentWithIcon';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
+import { useHistory } from 'react-router-dom';
 
 const AppointmentsPerPatient = ({
   nextAppointment,
@@ -22,8 +24,11 @@ const AppointmentsPerPatient = ({
   encounterStatuses,
   authorizationACO,
   gotToPatientAdmission,
+  patient,
 }) => {
   const { t } = useTranslation();
+
+  const history = useHistory();
 
   const prevEncounterEntry =
     prevEncounter && prevEncounter.data && prevEncounter.data.total > 0
@@ -67,6 +72,10 @@ const AppointmentsPerPatient = ({
     });
   }
 
+  const onClickEncounterSheetHandler = (encounter) => {
+    goToEncounterSheet(encounter, patient, history);
+  };
+
   return (
     <React.Fragment>
       <StyledBox>
@@ -103,7 +112,10 @@ const AppointmentsPerPatient = ({
                       <LinkComponentWithIcon
                         mode={authorizationACO.encounterSheet}
                         linkHeader={t('navigate to encounter sheet')}
-                        linkUrl={'#'}
+                        // linkUrl={'#'}
+                        onClick={() =>
+                          onClickEncounterSheetHandler(encounter)
+                        }
                       />
                     </StyledLinkWithIconComponent>
                   </ListItem>
@@ -191,6 +203,9 @@ const AppointmentsPerPatient = ({
                   mode={authorizationACO.encounterSheet}
                   linkHeader={t('navigate to encounter sheet')}
                   linkUrl={'#'}
+                  onClick={() =>
+                    onClickEncounterSheetHandler(normalizedPrevEncounter)
+                  }
                 />
               </StyledLinkWithIconComponent>
             </ListItem>

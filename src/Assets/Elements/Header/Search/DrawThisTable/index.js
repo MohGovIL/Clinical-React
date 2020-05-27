@@ -353,6 +353,7 @@ const DrawThisTable = ({
                   patientTrackingStatuses={patientTrackingStatuses}
                   gotToPatientAdmission={gotToPatientAdmission}
                   authorizationACO={authorizationACO}
+                  patient={patient}
                 />
                 <StyledBottomLinks key={'bottom_links_' + patientIndex}>
                   <StyledHrefButton
