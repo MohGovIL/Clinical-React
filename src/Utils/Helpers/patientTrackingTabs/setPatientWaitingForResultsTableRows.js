@@ -14,6 +14,7 @@ import { setEncounterWithPatientsAction } from 'Store/Actions/FhirActions/fhirAc
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions/';
 import { FHIR } from 'Utils/Services/FHIR';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+import { goToEncounterSheet } from '../goTo/goToEncounterSheet';
 
 //   ממתינים לפענוח
 export const waitingForResultsTabActiveFunction = async function (
@@ -196,8 +197,7 @@ const setPatientDataWaitingForResultsTableRows = (
             align: 'center',
             color: 'primary',
             onClickHandler() {
-              store.dispatch(setEncounterAndPatient(encounter, patient));
-              history.push(`${baseRoutePath()}/generic/encounterSheet`);
+              goToEncounterSheet(encounter, patient, history)
             },
             mode,
           });
