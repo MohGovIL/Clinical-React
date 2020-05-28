@@ -6,11 +6,8 @@ import { StyledAllButton } from 'Components/Generic/EncounterSheet/PatientBackgr
 
 const Encounters = ({
   prevEncounters,
-  patient,
   encounter,
   languageDirection,
-  formatDate,
-  verticalName,
   handleCreateData,
 }) => {
   const { t } = useTranslation();
@@ -77,11 +74,8 @@ const Encounters = ({
 
 const mapStateToProps = (state) => {
   return {
-    patient: state.active.activePatient,
     encounter: state.active.activeEncounter,
     languageDirection: state.settings.lang_dir,
-    formatDate: state.settings.format_date,
-    verticalName: state.settings.clinikal_vertical,
   };
 };
 export default connect(mapStateToProps, null)(Encounters);
