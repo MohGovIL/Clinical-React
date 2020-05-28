@@ -1,7 +1,7 @@
-import normalizeFhirEncounter from './FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
-import { store } from '../../index';
-import { setEncounterAndPatient } from '../../Store/Actions/ActiveActions';
-import { baseRoutePath } from './baseRoutePath';
+import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
+import { store } from 'index';
+import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 
 export const gotToPatientAdmission = (encounter, patient, history) => {
   let encounterData =
