@@ -2,7 +2,7 @@
  * @author Dror Golan - drorgo@matrix.co.il
  */
 
-import { CRUDOperations } from '../CRUDOperations';
+import { CRUDOperations } from 'Utils/Services/FHIR/CRUDOperations';
 
 const PractitionerStates = {
   doWork: (parameters = null) => {
@@ -26,8 +26,7 @@ const PractitionerStates = {
             GET /apis/fhir/v4/Practitioner?name=yosi&active=1
       */
 
-    let id = params.id,
-      given = params.given ? params.given : '',
+    let given = params.given ? params.given : '',
       family = params.family ? params.family : '',
       active = params.active ? params.active : 1,
       url = params.url;
