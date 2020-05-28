@@ -4,10 +4,10 @@ import {
   StyledEncountersTicketsOther,
   StyledEncounterTicket,
   StyledFadeElement,
-} from './Style';
+} from 'Components/Generic/EncounterSheet/PatientBackground/Style';
 import moment from 'moment';
-import parseMultipleExaminations from '../../../../Utils/Helpers/parseMultipleExaminations';
-import StyledExaminationStatusesWithIcons from './StyledExaminationStatusesWithIcons';
+import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
+import StyledExaminationStatusesWithIcons from 'Components/Generic/EncounterSheet/PatientBackground/StyledExaminationStatusesWithIcons';
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -61,7 +61,12 @@ const EncounterTicket = ({
               handleCreateData={handleCreateData}
               encounterData={encounterToParse}
               patientData={patient}
-              summaryLetter={true}
+              summaryLetter={
+                encounterToParse.documents &&
+                encounterToParse.documents.length > 0
+                  ? true
+                  : false
+              }
               encounterSheet={true}></StyledExaminationStatusesWithIcons>
           </StyledEncountersTicketsCurrent>
         </StyledEncounterTicket>
@@ -99,7 +104,12 @@ const EncounterTicket = ({
               handleCreateData={handleCreateData}
               encounterData={encounterToParse}
               patientData={patient}
-              summaryLetter={true}
+              summaryLetter={
+                encounterToParse.documents &&
+                encounterToParse.documents.length > 0
+                  ? true
+                  : false
+              }
               encounterSheet={false}></StyledExaminationStatusesWithIcons>
           </StyledEncountersTicketsOther>
         </StyledEncounterTicket>

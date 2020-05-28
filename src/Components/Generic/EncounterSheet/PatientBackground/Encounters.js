@@ -1,11 +1,8 @@
-import React, { useEffect } from 'react';
-import moment from 'moment';
-import EncounterTicket from './EncounterTicket';
-
+import React from 'react';
+import EncounterTicket from 'Components/Generic/EncounterSheet/PatientBackground/EncounterTicket';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import Button from '@material-ui/core/Button';
-import { StyledAllButton } from './Style';
+import { StyledAllButton } from 'Components/Generic/EncounterSheet/PatientBackground/Style';
 
 const Encounters = ({
   prevEncounters,
@@ -16,7 +13,6 @@ const Encounters = ({
   verticalName,
   handleCreateData,
 }) => {
-  const currentDate = moment().utc().format('YYYY-MM-DD');
   const { t } = useTranslation();
   let elementsIntContainer = 0;
   const [

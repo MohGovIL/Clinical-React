@@ -4,32 +4,30 @@ import Camera from 'Assets/Images/camera@2x.png';
 import {
   StyledCameraIcon,
   StyledIconContainer,
+  StyledListItem,
   StyledMedicalFileIcon,
-} from './Style';
+} from 'Components/Generic/EncounterSheet/PatientBackground/Style';
 import { useTranslation } from 'react-i18next';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
-import { useHistory } from 'react-router-dom';
-import { store } from '../../../../index';
-import firstRouteMapper from '../../../../Utils/Helpers/firstRouteMapper';
+import { store } from 'index';
 import { connect } from 'react-redux';
+import List from '@material-ui/core/List';
+import openDocumentInANewWindow from 'Utils/Helpers/openDocumentInANewWindow';
 
 const StyledExaminationStatusesWithIcons = ({
   encounterData,
-  summaryLetter,
   encounterSheet,
   patient,
-  verticalName,
   handleCreateData,
 }) => {
-  const history = useHistory();
   const { t } = useTranslation();
-  const MedicalFileClick = () => {};
+  const MedicalFileClick = (doc) => {
+    openDocumentInANewWindow(doc);
+  };
   const CameraClick = () => {
-    handleCreateData(true);
+    //If we wish to reload all the info again - multiple users ? then run
+    // handleCreateData(true);
     store.dispatch(setEncounterAndPatient(encounterData, patient));
-    /* history.push(`${baseRoutePath()}/generic/encounterSheet`);
-    history.goBack();*/
   };
 
   return (
@@ -41,12 +39,33 @@ const StyledExaminationStatusesWithIcons = ({
           <img alt={'Camera'} src={Camera} />
           <span>{t('Encounter sheet')}</span>
         </StyledCameraIcon>
-        <StyledMedicalFileIcon
-          canClickMedical={summaryLetter ? true : false}
-          onClick={summaryLetter ? MedicalFileClick : null}>
-          <img alt={'MedicalFile'} src={MedicalFile} />
-          <span>{t('Summary letter')}</span>
-        </StyledMedicalFileIcon>
+        {encounterData.documents && encounterData.documents.length > 0 ? (
+          <List>
+            {encounterData.documents.map((doc, docIndex) => {
+              return (
+                <StyledListItem key={docIndex}>
+                  <StyledMedicalFileIcon
+                    canClickMedical={true}
+                    onClick={() => MedicalFileClick(doc)}>
+                    <img alt={'MedicalFile'} src={MedicalFile} />
+                    <span>{t('Summary letter')}</span>
+                  </StyledMedicalFileIcon>
+
+                  <br />
+                </StyledListItem>
+              );
+            })}
+          </List>
+        ) : (
+          <List>
+            <StyledListItem>
+              <StyledMedicalFileIcon canClickMedical={false}>
+                <img alt={'MedicalFile'} src={MedicalFile} />
+                <span>{t('Summary letter')}</span>
+              </StyledMedicalFileIcon>
+            </StyledListItem>
+          </List>
+        )}
       </StyledIconContainer>
     </React.Fragment>
   );
