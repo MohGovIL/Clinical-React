@@ -23,7 +23,7 @@ const StatusFilterBoxTab = ({
       icon={badge}
       selected={selected}
       onClick={() => tabHandler(tabValue)}
-      wrapped={true}></StyledStatusFilterBoxTab>
+      wrapped={true}/>
   );
 };
 
