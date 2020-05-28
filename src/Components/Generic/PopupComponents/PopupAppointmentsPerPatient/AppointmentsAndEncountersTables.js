@@ -21,6 +21,7 @@ import Paper from '@material-ui/core/Paper';
 import TableBody from '@material-ui/core/TableBody';
 import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
 import { useHistory } from 'react-router-dom';
+import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
 
 const AppointmentsAndEncountersTables = ({
@@ -103,24 +104,6 @@ const AppointmentsAndEncountersTables = ({
     }
   };
 
-  /*const parseMultipleExaminations = (serviceType, examination) => {
-    if (!examination || !examination[0] || examination.lenghth === 0) {
-      return t(serviceType);
-    }
-    let returnThisServiceTypesExaminations = '';
-    returnThisServiceTypesExaminations += t(serviceType);
-    if (examination.length > 1) {
-      returnThisServiceTypesExaminations += '-';
-      for (let id = 0; id < examination.length; id++) {
-        returnThisServiceTypesExaminations +=
-          t(examination[id]) + (id + 1 < examination.length ? ',' : '');
-      }
-    } else {
-      returnThisServiceTypesExaminations += '-' + t(examination[0]);
-    }
-
-    return returnThisServiceTypesExaminations;
-  };*/
   /*const handleChartClick = () => {
     //TODO:
   };
@@ -128,6 +111,10 @@ const AppointmentsAndEncountersTables = ({
  ;*/
   const handleAdmissionClick = (encounter) => {
     gotToPatientAdmission(encounter, patient, history);
+  };
+
+  const handleEncounterSheetClick = (encounter) => {
+    goToEncounterSheet(encounter, patient, history);
   };
   if (curEncounters && curEncounters.data && curEncounters.data.total > 0) {
     let entry = curEncounters.data.entry;
@@ -252,7 +239,8 @@ const AppointmentsAndEncountersTables = ({
                           size={'small'}
                           variant='outlined'
                           color='primary'
-                          href='#contained-buttons'>
+                          href='#contained-buttons'
+                          onClick={(event) => handleEncounterSheetClick(encounter)}>
                           {t('navigate to encounter sheet')}
                         </StyledHrefTableButton>
                       </TableCell>

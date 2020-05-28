@@ -8,6 +8,7 @@ const CustomizedTableButton = ({
   label,
   onClickHandler,
   mode,
+  fontWeight,
   other,
 }) => {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ const CustomizedTableButton = ({
     console.log("--------------------");*/
   return (
     <StyledButton
+      fontWeight={fontWeight}
       variant={variant}
       color={color}
       onClick={onClickHandler}

@@ -3,10 +3,16 @@ import Link from '@material-ui/core/Link';
 import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
 import { useTranslation } from 'react-i18next';
 
-const LinkComponentWithIcon = ({ linkUrl, linkHeader, iconType, mode }) => {
+const LinkComponentWithIcon = ({
+  linkUrl,
+  linkHeader,
+  iconType,
+  mode,
+  onClick,
+}) => {
   const { t } = useTranslation();
   return mode === 'view' || mode === 'write' ? (
-    <Link href='linkUrl'>
+    <Link onClick={onClick} component='button'>
       <label>
         {t(linkHeader)}
         <StyledIconValueComponent
