@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyledPatientDataBlock, StyledTextInput } from './Style';
+import {
+  StyledChipWithImage,
+  StyledPatientDataBlock,
+  StyledTextInput,
+} from './Style';
 import AvatarIdBlock from 'Assets/Elements/AvatarIdBlock';
 import { useTranslation } from 'react-i18next';
 import Typography from '@material-ui/core/Typography';
@@ -12,6 +16,7 @@ import { calculateFileSize } from '../../../../Utils/Helpers/calculateFileSize';
 import { decodeBase_64IntoBlob } from '../../../../Utils/Helpers/decodeBase_64IntoBlob';
 import Grid from '@material-ui/core/Grid';
 import { StyledFormGroup } from '../../../Imaging/PatientAdmission/PatientDetailsBlock/Style';
+import { splitBase_64 } from '../../../../Utils/Helpers/splitBase_64';
 
 const PatientDataBlock = ({
   encounter,
@@ -86,9 +91,9 @@ const PatientDataBlock = ({
                 documentReferenceData.data.entry[documentIndex].resource,
               );
 
-              console.log('======normalizedFhirDocumentReference========');
-              console.log(normalizedFhirDocumentReference);
-              console.log('======normalizedFhirDocumentReference========');
+              // console.log('======normalizedFhirDocumentReference========');
+              // console.log(normalizedFhirDocumentReference);
+              // console.log('======normalizedFhirDocumentReference========');
               documentsArray.push(normalizedFhirDocumentReference);
               const base_64 = combineBase_64(
                 normalizedFhirDocumentReference.data,
@@ -128,9 +133,6 @@ const PatientDataBlock = ({
               }
             }
           }
-          console.log('==============');
-          console.log(documentsArray);
-          console.log('==============');
           setDocuments(documentsArray);
         }
       })();
@@ -143,6 +145,9 @@ const PatientDataBlock = ({
     event.preventDefault();
     let refId = ref.current.id;
     if (documents.length) {
+        console.log("=====ref=====");
+        console.log(refId);
+        console.log("=====ref=====");
       if (documents.find((doc) => doc.url.startsWith(refId))) {
         if (refId.startsWith('Referral')) {
           window.open(URL.createObjectURL(referralBlob), referralFile.name);
@@ -155,15 +160,20 @@ const PatientDataBlock = ({
           );
         }
       } else {
+          // var binaryData = [];
+          // binaryData.push(ref.current);
+          let binaryData = splitBase_64(ref.current);
+console.log(binaryData);
         window.open(
-          URL.createObjectURL(ref.current.files[0]),
-          ref.current.files[0].name,
+          // window.URL.createObjectURL(ref.current),
+            window.URL.createObjectURL(new Blob(binaryData.data, {type: binaryData.type})),
+          'name',
         );
       }
     } else {
       window.open(
-        URL.createObjectURL(ref.current.files[0]),
-        ref.current.files[0].name,
+        URL.createObjectURL(ref.current),
+        'name 2',
       );
     }
   };
@@ -205,12 +215,14 @@ const PatientDataBlock = ({
           </Grid>
           <Grid item xs={4}>
             {Object.values(referralFile).length > 0 && (
-              <ChipWithImage
-                htmlFor='AdditionalDocument'
-                label={referralFile.name}
-                size={referralFile.size}
-                onClick={(event) => onClickFileHandler(event, referralRef)}
-              />
+              <StyledChipWithImage>
+                <ChipWithImage
+                  htmlFor='AdditionalDocument'
+                  label={referralFile.name}
+                  size={referralFile.size}
+                  onClick={(event) => onClickFileHandler(event, referralRef)}
+                />
+              </StyledChipWithImage>
             )}
           </Grid>
         </Grid>
@@ -226,12 +238,14 @@ const PatientDataBlock = ({
           </Grid>
           <Grid item xs={4}>
             {Object.values(commitmentFile).length > 0 && (
-              <ChipWithImage
-                htmlFor='Commitment'
-                label={commitmentFile.name}
-                size={commitmentFile.size}
-                onClick={(event) => onClickFileHandler(event, commitmentRef)}
-              />
+              <StyledChipWithImage>
+                <ChipWithImage
+                  htmlFor='Commitment'
+                  label={commitmentFile.name}
+                  size={commitmentFile.size}
+                  onClick={(event) => onClickFileHandler(event, commitmentRef)}
+                />
+              </StyledChipWithImage>
             )}
           </Grid>
         </Grid>
@@ -248,12 +262,14 @@ const PatientDataBlock = ({
           </Grid>
           <Grid item xs={4}>
             {Object.values(additionalDocumentFile).length > 0 && (
-              <ChipWithImage
-                htmlFor='AdditionalDocument'
-                label={additionalDocumentFile.name}
-                size={additionalDocumentFile.size}
-                onClick={(event) => onClickFileHandler(event, commitmentRef)}
-              />
+              <StyledChipWithImage>
+                <ChipWithImage
+                  htmlFor='AdditionalDocument'
+                  label={additionalDocumentFile.name}
+                  size={additionalDocumentFile.size}
+                  onClick={(event) => onClickFileHandler(event, additionalDocumentRef)}
+                />
+              </StyledChipWithImage>
             )}
           </Grid>
         </Grid>

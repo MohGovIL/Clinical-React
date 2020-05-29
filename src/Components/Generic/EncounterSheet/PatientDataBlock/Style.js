@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import ChipWithImage from 'Assets/Elements/StyledChip';
 
 export const StyledPatientDataBlock = styled.div`
   display: flex;
@@ -41,4 +42,24 @@ export const StyledTextInput = styled.div`
     color: #000b40;
     font-size: 16px;
   }
+`;
+
+export const StyledChipWithImage = styled.div`
+ div.MuiGrid-container > div:first-child {
+ width: 120px;
+  height: 36px;
+ max-width: 120px;
+ max-height: 36px;
+  font-size: 14px;
+ }
+ div.MuiGrid-container > div:first-child img {
+  margin-right: 0px;
+ }
+  div.MuiGrid-direction-xs-column {
+  flex-direction: unset;
+  }
+ div.MuiGrid-direction-xs-column p.MuiTypography-body1{
+  font-size: 14px;
+   max-width: 120px !important;
+ }
 `;
