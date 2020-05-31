@@ -35,11 +35,6 @@ const QuestionnaireResponseStats = {
         const element = params.questionnaireResponseParams[dataKey];
         switch (dataKey) {
           case 'item':
-            // patchArr.push({
-            //   op: 'replace',
-            //   path: '/item',
-            //   value: element,
-            // });
             element.forEach((item) => {
               const itemObj = {
                 op: 'replace',

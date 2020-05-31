@@ -330,6 +330,8 @@ const PatientDetailsBlock = ({
             );
             encounter['relatedPerson'] = NewRelatedPerson.id;
           }
+        } else {
+          delete encounter['relatedPerson'];
         }
         if (isUrgent) {
           encounter['priority'] = 2;
