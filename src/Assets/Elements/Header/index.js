@@ -72,7 +72,7 @@ const Header = ({ Items, logoutAction, activeUser }) => {
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'left',
+          horizontal: 'center',
         }}>
         <List aria-label='list drop down'>
           {arrowDropDownItems.map((item, itemIndex) => {
