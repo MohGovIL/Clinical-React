@@ -91,9 +91,6 @@ const PatientDataBlock = ({
                 documentReferenceData.data.entry[documentIndex].resource,
               );
 
-              // console.log('======normalizedFhirDocumentReference========');
-              // console.log(normalizedFhirDocumentReference);
-              // console.log('======normalizedFhirDocumentReference========');
               documentsArray.push(normalizedFhirDocumentReference);
               const base_64 = combineBase_64(
                 normalizedFhirDocumentReference.data,
@@ -117,19 +114,19 @@ const PatientDataBlock = ({
                 setReferralBlob(blob);
                 setReferralFile_64(base_64);
                 setReferralFile(obj);
-                referralRef.current = base_64;
+                referralRef.current = 'Referral';
               } else if (
                 normalizedFhirDocumentReference.url.startsWith('Commitment')
               ) {
                 setCommitmentBlob(blob);
-                commitmentRef.current = base_64;
                 setCommitmentFile_64(base_64);
                 setCommitmentFile(obj);
+                commitmentRef.current = 'Commitment';
               } else {
                 setAdditionalDocumentBlob(blob);
-                additionalDocumentRef.current = base_64;
                 setAdditionalDocumentFile_64(base_64);
                 setAdditionalDocumentFile(obj);
+                additionalDocumentRef.current = 'Document';
               }
             }
           }
@@ -143,38 +140,20 @@ const PatientDataBlock = ({
   const onClickFileHandler = (event, ref) => {
     event.stopPropagation();
     event.preventDefault();
-    let refId = ref.current.id;
+    let refId = ref.current;
     if (documents.length) {
-        console.log("=====ref=====");
-        console.log(refId);
-        console.log("=====ref=====");
       if (documents.find((doc) => doc.url.startsWith(refId))) {
         if (refId.startsWith('Referral')) {
           window.open(URL.createObjectURL(referralBlob), referralFile.name);
         } else if (refId.startsWith('Commitment')) {
           window.open(URL.createObjectURL(commitmentBlob), commitmentFile.name);
-        } else {
+        } else if (refId.startsWith('Document')) {
           window.open(
             URL.createObjectURL(additionalDocumentBlob),
             additionalDocumentFile.name,
           );
         }
-      } else {
-          // var binaryData = [];
-          // binaryData.push(ref.current);
-          let binaryData = splitBase_64(ref.current);
-console.log(binaryData);
-        window.open(
-          // window.URL.createObjectURL(ref.current),
-            window.URL.createObjectURL(new Blob(binaryData.data, {type: binaryData.type})),
-          'name',
-        );
       }
-    } else {
-      window.open(
-        URL.createObjectURL(ref.current),
-        'name 2',
-      );
     }
   };
 
@@ -217,7 +196,7 @@ console.log(binaryData);
             {Object.values(referralFile).length > 0 && (
               <StyledChipWithImage>
                 <ChipWithImage
-                  htmlFor='AdditionalDocument'
+                  htmlFor='Referral'
                   label={referralFile.name}
                   size={referralFile.size}
                   onClick={(event) => onClickFileHandler(event, referralRef)}
@@ -267,7 +246,9 @@ console.log(binaryData);
                   htmlFor='AdditionalDocument'
                   label={additionalDocumentFile.name}
                   size={additionalDocumentFile.size}
-                  onClick={(event) => onClickFileHandler(event, additionalDocumentRef)}
+                  onClick={(event) =>
+                    onClickFileHandler(event, additionalDocumentRef)
+                  }
                 />
               </StyledChipWithImage>
             )}
