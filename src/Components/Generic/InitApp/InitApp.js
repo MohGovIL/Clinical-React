@@ -1,26 +1,41 @@
-import React, {Suspense} from 'react';
-import {connect} from 'react-redux';
-import VerticalRoute from "Components/Routes/VerticalRoute";
-import GlobalStyle from "Assets/Themes/GlobalStyle";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import React, { Suspense } from 'react';
+import { connect } from 'react-redux';
+import VerticalRoute from 'Components/Routes/VerticalRoute';
+import GlobalStyle from 'Assets/Themes/GlobalStyle';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import GenericRoute from 'Components/Routes/GenericRoute';
+import { Switch, Route } from 'react-router-dom';
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+// import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 
-const InitApp = ({lang_id,languageDirection}) => {
-
-
-    return (
-        <React.Fragment>
-            <Suspense fallback={<CircularProgress />}>
-                <GlobalStyle lang_id={lang_id} language_direction={languageDirection}/>
-                <VerticalRoute/>
-            </Suspense>
-        </React.Fragment>
-    );
+const InitApp = ({ lang_id, languageDirection }) => {
+  return (
+    <React.Fragment>
+      <Suspense fallback={<CircularProgress />}>
+        <GlobalStyle lang_id={lang_id} language_direction={languageDirection} />
+        <Switch>
+          {/* TODO not sure if this needs to be a PrivateRoute or not */}
+          {/* Since the components that gets rendered are PrivateComponents */}
+          <Route
+            exact
+            component={GenericRoute}
+            path={`${baseRoutePath()}/generic/:page`}
+          />
+          <Route
+            exact
+            component={VerticalRoute}
+            path={`${baseRoutePath()}/:subRoute/:page`}
+          />
+        </Switch>
+      </Suspense>
+    </React.Fragment>
+  );
 };
 
-const mapStateToProps = state => {
-    return {
-        lang_id: state.settings.lang_id,
-        languageDirection: state.settings.lang_dir
-    }
+const mapStateToProps = (state) => {
+  return {
+    lang_id: state.settings.lang_id,
+    languageDirection: state.settings.lang_dir,
+  };
 };
 export default connect(mapStateToProps, null)(InitApp);

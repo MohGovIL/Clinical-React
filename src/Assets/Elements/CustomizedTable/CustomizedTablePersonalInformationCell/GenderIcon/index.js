@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const GenderIcon = styled.img`
   object-fit: contain;
@@ -6,7 +6,7 @@ const GenderIcon = styled.img`
   height: 35px;
   margin-left: 16px;
   margin-right: 16px;
-  border: ${props => props.priority > 1 ? 'solid 1.5px #ff3232': null};
+  border: ${(props) => (props.priority > 1 ? 'solid 1.5px #ff3232' : null)};
   border-radius: 50%;
 `;
 

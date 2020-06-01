@@ -4,8 +4,10 @@
  */
 
 export const emptyArrayAll = (name) => {
-    return [{
-        code: 0,
-        name: name
-    }]
+  return [
+    {
+      code: 0,
+      name: name,
+    },
+  ];
 };

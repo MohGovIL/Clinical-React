@@ -2,12 +2,14 @@ import {
   SET_ACTIVE_ENCOUNTER,
   SET_ACTIVE_PATIENT,
   SET_ACTIVE_ENCOUNTER_AND_PATIENT,
+  SET_ACTIVE_USER,
 } from 'Store/Actions/ActiveActions/ActiveActionsTypes';
 
 const INITIAL_STATE = {
   STATUS: '',
   activePatient: {},
   activeEncounter: {},
+  activeUser: {},
 };
 
 const ActiveDataReducer = (state = INITIAL_STATE, action) => {
@@ -30,6 +32,8 @@ const ActiveDataReducer = (state = INITIAL_STATE, action) => {
         STATUS: action.type,
       };
 
+    case SET_ACTIVE_USER:
+      return { ...state, activeUser: action.user, STATUS: action.type };
     default:
       return state;
   }

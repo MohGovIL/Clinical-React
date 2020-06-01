@@ -1,6 +1,6 @@
 import React from 'react';
-import StyledSearchIcon, { IconWrapper } from './Style';
-
+import StyledSearchIcon from './Style';
+import IconWrapper from 'Assets/Elements/Header/IconWrapper'
 const HeaderIcon = ({ onClick, alt, img }) => {
   const onClickHandler = () => {
     if (onClick) {

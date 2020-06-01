@@ -5,9 +5,18 @@
  */
 
 export const getEmailRegexPattern = () => {
-    return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  //eslint-disable-next-line
+  return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 };
 
 export const getCellPhoneRegexPattern = () => {
-    return /^\(?([0-9]{2,3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+  return /^\(?0([1-9]|[1-9][0-9])\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+};
+
+export const getOnlyNumbersRegexPattern = () => {
+  return /^[0-9]*$/;
+};
+
+export const israelPhoneNumberRegex = () => {
+  return /^05\d([-]{0,1})\d{7}$/;
 };

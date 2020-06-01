@@ -1,43 +1,47 @@
 /**
- * @author Idan Gigi gigiidan@gmail.com
- * @param patient
- * @returns {}
+ * @author Idan Gigi idangi@matrix.co.il
+ * @param patient {object}
+ * @returns {object}
  */
 const normalizeFhirPatient = (patient) => {
-  let middleName = null;
-  let mobileCellPhone = null;
-  let homePhone = null;
-  let email = null;
-  let firstName = null;
-  let lastName = null;
+  let middleName = '';
+  let mobileCellPhone = '';
+  let homePhone = '';
+  let email = '';
+  let firstName = '';
+  let lastName = '';
   let identifier = '';
   let identifierType = '';
-  let city = null;
-  let postalCode = null;
-  let country = null;
-  let managingOrganization = null;
+  let city = '';
+  let postalCode = '';
+  let country = '';
+  let managingOrganization = '';
+  let identifierTypeText = '';
   let streetName = '';
   let streetNumber = '';
   let POBox = '';
 
-  if (patient.address.length) {
+  if (patient.address && patient.address.length) {
     city = patient.address[0].city;
     postalCode = patient.address[0].postalCode;
     country = patient.address[0].country;
     if (patient.address[0].type) {
-      streetName = patient.address[0].line[0];
       switch (patient.address[0].type) {
         case 'both':
+          streetName = patient.address[0].line[0];
           if (patient.address[0].line.length > 2) {
             streetNumber = patient.address[0].line[1];
             POBox = patient.address[0].line[2];
+          } else {
+            POBox = patient.address[0].line[1];
           }
           break;
         case 'postal':
-            POBox = patient.address[0].line[1];
+          POBox = patient.address[0].line[0];
           break;
         case 'physical':
-            streetNumber = patient.address[0].line[1];
+          streetName = patient.address[0].line[0];
+          streetNumber = patient.address[0].line[1];
           break;
         default:
           break;
@@ -47,10 +51,17 @@ const normalizeFhirPatient = (patient) => {
   let ageGenderType = '';
 
   if (patient.identifier.length) {
-    identifier = patient.identifier[0].value;
-    identifierType =
-      patient.identifier[0].type.coding.length &&
-      patient.identifier[0].type.coding[0].code;
+    if (patient.identifier[0].type) {
+      identifierTypeText = patient.identifier[0].type.text;
+      if (patient.identifier[0].type.coding) {
+        identifierType =
+          patient.identifier[0].type.coding.length &&
+          patient.identifier[0].type.coding[0].code;
+      }
+    }
+    if (patient.identifier[0].value) {
+      identifier = patient.identifier[0].value;
+    }
   }
   if (
     patient.managingOrganization &&
@@ -74,7 +85,6 @@ const normalizeFhirPatient = (patient) => {
     }
   }
   if (patient.telecom) {
-    //for temporary use system === 'mobile', instead 'phone'
     const thereIsMobilePhone = patient.telecom.filter(
       (telecomObj) =>
         telecomObj.system === 'phone' && telecomObj.use === 'mobile',
@@ -117,6 +127,7 @@ const normalizeFhirPatient = (patient) => {
     streetName,
     streetNumber,
     POBox,
+    identifierTypeText,
   };
 };
 

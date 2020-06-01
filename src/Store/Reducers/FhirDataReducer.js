@@ -8,15 +8,15 @@ import {
   UPDATE_APPOINTMENT,
   UPDATE_APPOINTMENT_FAILED,
   UPDATE_APPOINTMENT_SUCCESS,
-  SET_PATIENT_DATA,
-  SET_PATIENT_DATA_SUCCESS
+  // SET_PATIENT_DATA,
+  SET_PATIENT_DATA_SUCCESS,
 } from 'Store/Actions/FhirActions/fhirActionTypes';
 
 const INITIAL_STATE = {
-    STATUS: '',
-    appointments: {},
-    patients: {},
-    encounters: {}
+  STATUS: '',
+  appointments: {},
+  patients: {},
+  encounters: {},
 };
 
 const FhirDataReducer = (state = INITIAL_STATE, action) => {
@@ -65,20 +65,20 @@ const FhirDataReducer = (state = INITIAL_STATE, action) => {
         ...state,
         STATUS: action.type,
       };
-      case UPDATE_APPOINTMENT_SUCCESS:
-        const appointmentsClone =  {...state.appointments};
-        appointmentsClone[action.appointment.id] = action.appointment;
-        return {
-            ...state,
-            STATUS: action.type,
-            appointments: appointmentsClone
-        };
-      case SET_PATIENT_DATA_SUCCESS:
-          return {
-              ...state,
-              STATUS: action.type,
-              patients: action.patient
-          };
+    case UPDATE_APPOINTMENT_SUCCESS:
+      const appointmentsClone = { ...state.appointments };
+      appointmentsClone[action.appointment.id] = action.appointment;
+      return {
+        ...state,
+        STATUS: action.type,
+        appointments: appointmentsClone,
+      };
+    case SET_PATIENT_DATA_SUCCESS:
+      return {
+        ...state,
+        STATUS: action.type,
+        patients: action.patient,
+      };
     default:
       return state;
   }

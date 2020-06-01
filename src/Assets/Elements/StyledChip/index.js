@@ -25,14 +25,16 @@ const ChipWithImage = ({ label, onDelete, size, onClick, htmlFor }) => {
             <Typography>{size}MB</Typography>
           </Grid>
         </ChipWithImageStyle>
-        <Delete
-          style={{
-            color: '#076ce9',
-            margin: '0 24px 0 24px',
-            cursor: 'pointer',
-          }}
-          onClick={onDelete || console.log('noDelete')}
-        />
+        {onDelete && (
+          <Delete
+            style={{
+              color: '#076ce9',
+              margin: '0 24px 0 24px',
+              cursor: 'pointer',
+            }}
+            onClick={(event) => onDelete(event) || null}
+          />
+        )}
       </Grid>
     </label>
   );

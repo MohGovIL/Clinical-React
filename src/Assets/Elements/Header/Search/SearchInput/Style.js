@@ -1,6 +1,5 @@
-import styled from "styled-components";
-import InputBase from "@material-ui/core/InputBase";
-import Paper from "@material-ui/core/Paper";
+import styled from 'styled-components';
+import InputBase from '@material-ui/core/InputBase';
 
 export default styled(InputBase)`
   font-weight: bold;

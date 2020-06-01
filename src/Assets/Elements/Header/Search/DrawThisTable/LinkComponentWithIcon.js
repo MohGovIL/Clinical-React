@@ -1,16 +1,26 @@
-import React from "react";
-import Link from "@material-ui/core/Link";
-import {StyledIconValueComponent} from "../Style";
-import {useTranslation} from "react-i18next";
+import React from 'react';
+import Link from '@material-ui/core/Link';
+import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
+import { useTranslation } from 'react-i18next';
 
-const LinkComponentWithIcon = ({linkUrl, linkHeader}) => {
-    const {t} = useTranslation();
-    return (<Link href="linkUrl">
-        <label>{t(linkHeader)}
-            <StyledIconValueComponent iconType='arrow_back_ios'/>
-        </label>
-    </Link>)
-}
-
+const LinkComponentWithIcon = ({
+  linkUrl,
+  linkHeader,
+  iconType,
+  mode,
+  onClick,
+}) => {
+  const { t } = useTranslation();
+  return mode === 'view' || mode === 'write' ? (
+    <Link onClick={onClick} component='button'>
+      <label>
+        {t(linkHeader)}
+        <StyledIconValueComponent
+          iconType={iconType ? iconType : 'arrow_back_ios'}
+        />
+      </label>
+    </Link>
+  ) : null;
+};
 
 export default LinkComponentWithIcon;
