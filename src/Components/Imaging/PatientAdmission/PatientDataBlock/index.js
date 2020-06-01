@@ -5,29 +5,13 @@ import { useTranslation } from 'react-i18next';
 
 import {
   StyledDiv,
-  StyledRoundAvatar,
-  StyledAgeIdBlock,
   StyledTextInput,
-  StyledAvatarIdBlock,
   StyledButtonBlock,
-  StyledEmptyIconEdit,
   StyledGlobalStyle,
 } from './Style';
-import maleIcon from 'Assets/Images/maleIcon.png';
-import femaleIcon from 'Assets/Images/womanIcon.png';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
-import ageCalculator from 'Utils/Helpers/ageCalculator';
-import {
-  Avatar,
-  IconButton,
-  Divider,
-  Typography,
-  TextField,
-  MenuItem,
-  InputAdornment,
-} from '@material-ui/core';
+import { TextField, MenuItem, InputAdornment } from '@material-ui/core';
 import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
-import EditIcon from '@material-ui/icons/Edit';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { StyledFormGroup } from 'Components/Imaging/PatientAdmission/PatientDetailsBlock/Style';
 import { normalizeValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
@@ -42,6 +26,7 @@ import { FHIR } from 'Utils/Services/FHIR';
 import { setPatientAction } from 'Store/Actions/ActiveActions';
 import { store } from '../../../../index';
 import { emptyArrayAll } from 'Utils/Helpers/emptyArray';
+import AvatarIdBlock from 'Assets/Elements/AvatarIdBlock';
 
 const PatientDataBlock = ({
   appointmentData,
@@ -55,9 +40,6 @@ const PatientDataBlock = ({
 }) => {
   const { t } = useTranslation();
 
-  const [avatarIcon, setAvatarIcon] = useState(null);
-  const [patientIdentifier, setPatientIdentifier] = useState({});
-  const [patientAge, setPatientAge] = useState(0);
   const [patientBirthDate, setPatientBirthDate] = useState(
     patientData.birthDate !== undefined
       ? Moment(patientData.birthDate, 'YYYY-MM-DD')
@@ -107,22 +89,6 @@ const PatientDataBlock = ({
 
   useEffect(() => {
     try {
-      setAvatarIcon(
-        patientData.gender === 'male'
-          ? maleIcon
-          : patientData.gender === 'female'
-          ? femaleIcon
-          : '',
-      );
-      //use format date of FHIR date - YYYY-MM-DD only
-      setPatientAge(ageCalculator(patientData.birthDate));
-      setPatientIdentifier(
-        {
-          type: patientData.identifierTypeText,
-          value: patientData.identifier,
-        } || {},
-      );
-
       //It is necessary to get data from the server and fill the array.
       let array = emptyArrayAll(t('Choose'));
       (async () => {
@@ -223,40 +189,14 @@ const PatientDataBlock = ({
         disable_vertical_scroll={edit_mode === 0 ? false : true}
       />
       <StyledDiv edit_mode={edit_mode}>
-        <StyledAvatarIdBlock>
-          {edit_mode === 0 ? (
-            <IconButton
-              onClick={() => {
-                window.scrollTo(0, 0);
-                onEditButtonClick(1);
-              }}>
-              <EditIcon />
-            </IconButton>
-          ) : (
-            <StyledEmptyIconEdit />
-          )}
-          {/*patientEncounter.priority == 2 - the high priority*/}
-          <StyledRoundAvatar
-            show_red_circle={edit_mode === 0 && priority > 1 ? true : false}>
-            <Avatar alt={''} src={avatarIcon} />
-          </StyledRoundAvatar>
-
-          <Typography variant='h5' noWrap={true}>
-            {edit_mode === 0
-              ? patientData.firstName + ' ' + patientData.lastName
-              : ''}
-          </Typography>
-
-          <StyledAgeIdBlock>
-            <span>
-              {t(patientIdentifier.type)} {patientIdentifier.value}
-            </span>
-            <span>
-              {t(patientData.ageGenderType)} {patientAge}
-            </span>
-          </StyledAgeIdBlock>
-        </StyledAvatarIdBlock>
-        <Divider />
+        <AvatarIdBlock
+          edit_mode={edit_mode}
+          showEditButton
+          priority={priority}
+          patientData={patientData}
+          onEditButtonClick={onEditButtonClick}
+          showDivider
+        />
         <StyledTextInput
           edit_mode={edit_mode}
           languageDirection={languageDirection}>
