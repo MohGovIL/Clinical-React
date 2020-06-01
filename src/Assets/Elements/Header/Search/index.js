@@ -19,7 +19,7 @@ import { connect } from 'react-redux';
 import PaperContainerComponent from './DrawThisTable/PaperContainerComponent';
 import { FHIR } from 'Utils/Services/FHIR';
 import PopupCreateNewPatient from 'Components/Generic/PopupComponents/PopupCreateNewPatient';
-import isAllowed from '../../../../Utils/Helpers/isAllowed';
+import isAllowed from 'Utils/Helpers/isAllowed';
 
 const Search = ({ languageDirection }) => {
   const isNumeric = (n) => {

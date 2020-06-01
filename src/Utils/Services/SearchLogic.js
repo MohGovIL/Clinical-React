@@ -31,7 +31,7 @@ export function FHIRPersontoDataArray(pushthisData, data) {
   let currentDataToFill = data;
   if (pushthisData && pushthisData.data && pushthisData.data.total > 0) {
     let entry = pushthisData.data.entry;
-
+    // eslint-disable-next-line
     entry.map((patient, patientIndex) => {
       let pushThisPerson = _buildList(patient);
       if (pushThisPerson) {
@@ -194,6 +194,4 @@ export function sortPatientRulesByNumberSort(items, value) {
 
   let obj = [...window.dataFound, ...window.leftover];
   return obj;
-
-  return items;
 }

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="909" height="1080" viewBox="0 0 909 1080">
+    <defs>
+        <linearGradient id="prefix__c" x1="1.502%" x2="101.029%" y1="80.75%" y2="42.887%">
+            <stop offset="0%" stop-color="#002398"/>
+            <stop offset="100%" stop-color="#076CE9"/>
+        </linearGradient>
+        <linearGradient id="prefix__d" x1="1.502%" x2="101.029%" y1="88.735%" y2="41.04%">
+            <stop offset="0%" stop-color="#002398"/>
+            <stop offset="100%" stop-color="#076CE9"/>
+        </linearGradient>
+        <linearGradient id="prefix__g" x1="1.502%" x2="101.029%" y1="86.203%" y2="41.626%">
+            <stop offset="0%" stop-color="#002398"/>
+            <stop offset="100%" stop-color="#076CE9"/>
+        </linearGradient>
+        <linearGradient id="prefix__h" x1="9.266%" x2="92.29%" y1="87.532%" y2="34.263%">
+            <stop offset="0%" stop-color="#002398"/>
+            <stop offset="100%" stop-color="#076CE9"/>
+        </linearGradient>
+        <path id="prefix__a" d="M0 0H1139V1152H0z"/>
+        <path id="prefix__f" d="M122.2 101.527C3.311 362.322-28.313 551.553 27.327 669.219c83.46 176.499 232.402 442.693 162.633 552-46.513 72.872 435.898 77.768 1447.23 14.688V66L122.2 101.527z"/>
+        <filter id="prefix__e" width="100.9%" height="101.2%" x="-.4%" y="-.4%" filterUnits="objectBoundingBox">
+            <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="2"/>
+            <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0.353685462 0 0 0 0 0.353685462 0 0 0 0 0.353685462 0 0 0 0.5 0"/>
+        </filter>
+    </defs>
+    <g fill="none" fill-rule="evenodd" transform="translate(-170)">
+        <mask id="prefix__b" fill="#fff">
+            <use xlink:href="#prefix__a"/>
+        </mask>
+        <g mask="url(#prefix__b)">
+            <g>
+                <path fill="url(#prefix__c)" fill-opacity=".2" d="M42.54 1191.642C-29.548 971.343-9.772 787.16 101.866 639.095 180.148 535.271 73.328 396.4 22.81 266 4.215 218.003 10.792 151.336 42.54 66l1604.27 30v1094.56l-1604.27 1.082z" transform="translate(173 -104) matrix(1 0 0 -1 0 1257.642)"/>
+                <path fill="url(#prefix__d)" fill-opacity=".5" d="M118.398 1191.642C19.193 1027.87-14.572 859.903 17.108 687.739c47.517-258.247 84.634-599.61 128.36-658.362 29.149-39.17 500.261-39.17 1413.336 0v1095.327l-1440.406 66.938z" transform="translate(173 -104)"/>
+                <g opacity=".712" transform="translate(173 -104)">
+                    <use fill="#000" filter="url(#prefix__e)" xlink:href="#prefix__f"/>
+                    <use fill="url(#prefix__g)" xlink:href="#prefix__f"/>
+                </g>
+                <path fill="url(#prefix__h)" fill-opacity=".6" d="M120.69 102.983c-48.658 172.006-48.658 327.648 0 466.925 72.988 208.916-95.222 432.41 0 578.344 63.483 97.29 517.187 97.29 1361.114 0V66L120.691 102.983z" transform="translate(173 -104)"/>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -30,10 +30,8 @@ export const StyledExpansionPanelDetails = styled(ExpansionPanelDetails)`
 
 export const StyledBox = styled(Box)`
   margin-top: 24px;
-
   width: 692px;
   height: auto;
-
   border: solid 1px #000b4024;
   background-color: #f5f5f526;
 `;
@@ -57,8 +55,6 @@ export const StyledHrefTableButton = styled(Button)`
   width: auto;
   height: 32px;
   border-radius: 25px;
-
-  font-family: OpenSansHebrew;
   font-size: 15px;
   font-weight: normal;
   font-stretch: normal;
@@ -69,23 +65,20 @@ export const StyledHrefTableButton = styled(Button)`
   color: #002398;
 `;
 export const StyledHrefButton = styled(Button)`
-    border-radius: 25px;
-    font-family: OpenSansHebrew;
-    font-size: 15px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    -webkit-letter-spacing: normal;
-    -moz-letter-spacing: normal;
-    -ms-letter-spacing: normal;
-    letter-spacing: normal;
-    text-align: center;
-    height: 32px;
-    width: 177px;
-    margin: 3px 3px;
-    }
-
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  -webkit-letter-spacing: normal;
+  -moz-letter-spacing: normal;
+  -ms-letter-spacing: normal;
+  letter-spacing: normal;
+  text-align: center;
+  height: 32px;
+  width: 177px;
+  margin: 3px 3px;
 `;
 
 export const StyledLabelAppointment = styled.label`
@@ -99,7 +92,7 @@ export const StyledLabelAppointment = styled.label`
   span {
     width: 86px;
     height: 19px;
-    font-family: OpenSansHebrew;
+
     font-size: 14px;
     font-weight: bold;
     font-stretch: normal;
@@ -113,7 +106,6 @@ export const StyledLabelAppointment = styled.label`
   div {
     width: 103px;
     height: 19px;
-    font-family: OpenSansHebrew;
     font-size: 14px;
     font-weight: bold;
     font-stretch: normal;
@@ -136,7 +128,6 @@ export const StyledLabelStatusAppointment = styled.label`
   span {
     width: 80px;
     height: 18px;
-    font-family: OpenSansHebrew;
     font-size: 14px;
     font-weight: normal;
     font-stretch: normal;
@@ -144,7 +135,6 @@ export const StyledLabelStatusAppointment = styled.label`
     line-height: 1.29;
     letter-spacing: normal;
     text-align: right;
-
     text-align: -webkit-center;
     border-radius: 15px;
     background: #eaf7ff;
@@ -165,7 +155,6 @@ export const StyledLabelServiceTypeAppointment = styled.label`
   span {
     width: 80px;
     height: 18px;
-    font-family: OpenSansHebrew;
     font-size: 14px;
     font-weight: normal;
     font-stretch: normal;
@@ -184,7 +173,6 @@ export const StyledLabelName = styled.label`
   height: 22px;
   margin-top: 10px;
   span {
-    font-family: OpenSansHebrew;
     font-size: 14px;
     font-weight: normal;
     font-stretch: normal;
@@ -196,7 +184,6 @@ export const StyledLabelName = styled.label`
     margin: auto;
   }
   div {
-    font-family: OpenSansHebrew;
     font-size: 14px;
     font-weight: normal;
     font-stretch: normal;
@@ -215,7 +202,6 @@ export const StyledLabelTZ = styled.label`
   height: 22px;
   margin-top: 10px;
   span {
-    font-family: OpenSansHebrew;
     font-size: 16px;
     font-weight: normal;
     font-stretch: normal;
@@ -226,7 +212,6 @@ export const StyledLabelTZ = styled.label`
     color: #000b40;
   }
   div {
-    font-family: OpenSansHebrew;
     font-size: 16px;
     font-weight: normal;
     font-stretch: normal;
@@ -246,7 +231,6 @@ export const StyledLabelPhone = styled.label`
   margin-top: 10px;
   span {
     opacity: 0.6;
-    font-family: OpenSansHebrew;
     font-size: 13px;
     font-weight: normal;
     font-stretch: normal;
@@ -257,7 +241,6 @@ export const StyledLabelPhone = styled.label`
     color: #1e2132;
   }
   div {
-    font-family: OpenSansHebrew;
     font-size: 16px;
     font-weight: normal;
     font-stretch: normal;
@@ -277,7 +260,6 @@ export const StyledLabelAge = styled.label`
   margin-top: 10px;
   span {
     opacity: 0.6;
-    font-family: OpenSansHebrew;
     font-size: 13px;
     font-weight: normal;
     font-stretch: normal;
@@ -288,7 +270,6 @@ export const StyledLabelAge = styled.label`
     color: #1e2132;
   }
   div {
-    font-family: OpenSansHebrew;
     font-size: 16px;
     font-weight: normal;
     font-stretch: normal;
@@ -313,7 +294,6 @@ export const StyledIconText = styled.div`
   user-select: none;
   width: 132px;
   height: 22px;
-  font-family: OpenSansHebrew;
   font-size: 16px;
   font-weight: bold;
   font-stretch: normal;
@@ -329,7 +309,6 @@ export const StyledValueComponent = styled.label`
   margin-top: 20px;
   margin-left: 25px;
   opacity: 0.6;
-  font-family: OpenSansHebrew;
   font-size: 16px;
   font-weight: normal;
   font-stretch: normal;
@@ -345,7 +324,6 @@ export const StyledLinkWithIconComponent = styled.div`
   a {
     width: 73px;
     height: 18px;
-    font-family: OpenSansHebrew;
     font-size: 14px;
     font-weight: normal;
     font-stretch: normal;
@@ -364,7 +342,6 @@ export const StyledLinkWithIconComponent = styled.div`
 export const StyledTableTextCell = styled.div`
   width: 200px;
   height: 18px;
-  font-family: OpenSansHebrew;
   font-size: 14px;
   font-weight: normal;
   font-stretch: normal;
@@ -381,7 +358,6 @@ export const StyledTableTextCell = styled.div`
 export const StyledHeaderTableAppointment = styled.div`
   width: auto;
   height: 24px;
-  font-family: OpenSansHebrew;
   font-size: 18px;
   font-weight: bold;
   font-stretch: normal;

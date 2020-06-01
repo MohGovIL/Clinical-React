@@ -1,4 +1,3 @@
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import {
   BADGE_CELL,
   BUTTON_CELL,
@@ -6,9 +5,7 @@ import {
   PERSONAL_INFORMATION_CELL,
   SELECT_CELL,
 } from 'Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
-import {
-  updateAppointmentStatus,
-} from 'Utils/Services/FhirAPI';
+import { updateAppointmentStatus } from 'Utils/Services/FhirAPI';
 import moment from 'moment';
 import 'moment/locale/he';
 import { normalizeFhirAppointmentsWithPatients } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients';
@@ -19,9 +16,9 @@ import {
   setAppointmentsWithPatientsAction,
   updateAppointmentAction,
 } from 'Store/Actions/FhirActions/fhirActions';
-import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
 import { FHIR } from 'Utils/Services/FHIR';
+import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 
 //מוזמנים
 export const invitedTabActiveFunction = async function (
@@ -235,15 +232,11 @@ const setPatientDataInvitedTableRows = (
                     facility: store.getState().settings.facility,
                   },
                 });
-                store.dispatch(
-                  setEncounterAndPatient(
-                    normalizeFhirEncounter(encounterData.data),
-                    patient,
-                  ),
+                gotToPatientAdmission(
+                  normalizeFhirEncounter(encounterData.data),
+                  patient,
+                  history,
                 );
-                history.push({
-                  pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-                });
               } else {
                 setIsPopUpOpen(true);
               }

@@ -10,21 +10,22 @@ import {
 } from './Style';
 import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { StyledLabelName, StyledLabelTZ } from './Style';
-import TitleValueComponent from './TitleValueComponent';
+import {
+  StyledLabelName,
+  StyledLabelTZ,
+} from 'Assets/Elements/Header/Search/DrawThisTable/Style';
+import TitleValueComponent from 'Assets/Elements/Header/Search/DrawThisTable/TitleValueComponent';
 import GenderIcon from 'Assets/Elements/CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon';
 import maleIcon from 'Assets/Images/maleIcon.png';
 import femaleIcon from 'Assets/Images/womanIcon.png';
-import AppointmentsPerPatient from './AppointmentsPerPatient';
+import AppointmentsPerPatient from 'Assets/Elements/Header/Search/DrawThisTable/AppointmentsPerPatient';
 import moment from 'moment';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
-import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
-import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import PopAppointmentsPerPatient from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
+import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 
 const DrawThisTable = ({
   result,
@@ -57,23 +58,6 @@ const DrawThisTable = ({
 
   //let patientTrackingStatuses =  null;
 
-  const gotToPatientAdmission = (encounter, patient) => {
-    let encounterData =
-      encounter && encounter.data
-        ? normalizeFhirEncounter(encounter.data)
-        : encounter;
-
-    if (!encounterData) {
-      console.log('error no encounter was used in the request found');
-      return;
-    }
-
-    store.dispatch(setEncounterAndPatient(encounterData, patient));
-    history.push({
-      pathname: `${baseRoutePath()}/imaging/patientAdmission`,
-    });
-  };
-
   const handleCreateAppointment = async (patient, nextAppointment) => {
     let encounterData = null;
     switch (admissionState) {
@@ -87,7 +71,7 @@ const DrawThisTable = ({
             status: 'planned',
           },
         });
-        gotToPatientAdmission(encounterData, patient);
+        gotToPatientAdmission(encounterData, patient, history);
         break;
       case ADMISSIONWITHAPPOINTMENT:
         if (nextAppointment) {
@@ -104,7 +88,7 @@ const DrawThisTable = ({
               appointment: fhirappointment,
             },
           });
-          gotToPatientAdmission(encounterData, patient);
+          gotToPatientAdmission(encounterData, patient, history);
           console.log('admission with appointment');
         }
         break;
@@ -369,6 +353,7 @@ const DrawThisTable = ({
                   patientTrackingStatuses={patientTrackingStatuses}
                   gotToPatientAdmission={gotToPatientAdmission}
                   authorizationACO={authorizationACO}
+                  patient={patient}
                 />
                 <StyledBottomLinks key={'bottom_links_' + patientIndex}>
                   <StyledHrefButton
