@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from '@material-ui/core/Link';
-import { StyledIconValueComponent } from '../Style';
+import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
 import { useTranslation } from 'react-i18next';
 
 const LinkComponentWithIcon = ({

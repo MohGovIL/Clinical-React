@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyledPaper, StyledPaperContainer } from '../Style';
+import { StyledPaperContainer } from 'Assets/Elements/Header/Search/Style';
 import DrawThisTable from './index';
 
 const PaperContainerComponent = ({

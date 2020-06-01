@@ -1,5 +1,8 @@
 import React from 'react';
-import { StyledIcon, StyledIconText } from './Style';
+import {
+  StyledIcon,
+  StyledIconText,
+} from 'Assets/Elements/Header/Search/DrawThisTable/Style';
 import { useTranslation } from 'react-i18next';
 
 const IconValueComponent = ({ iconType, value, onClickHandler }) => {
