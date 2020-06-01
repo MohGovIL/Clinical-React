@@ -37,18 +37,18 @@ const denormalizeFhirEncounter = (encounter) => {
           };
           break;
         case 'relatedPerson':
-          participant.push({
+          participant[1] = {
             individual: {
               reference: `RelatedPerson/${encounter[encounterKey]}`,
             },
-          });
+          };
           break;
         case 'practitioner':
-          participant.push({
+          participant[0] = {
             individual: {
               reference: `Practitioner/${encounter[encounterKey]}`,
             },
-          });
+          };
           break;
         case 'appointment':
           denormalizedEncounter['appointment'] = [

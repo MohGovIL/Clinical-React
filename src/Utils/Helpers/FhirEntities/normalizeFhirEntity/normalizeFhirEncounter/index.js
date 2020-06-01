@@ -13,6 +13,7 @@ const normalizeFhirEncounter = (encounter) => {
   let examinationCode = null;
   let examination = null;
   let relatedPerson = '';
+  let practitioner = '';
 
   if (encounter.participant && encounter.participant.length) {
     encounter.participant.forEach((participantObj) => {
@@ -20,6 +21,9 @@ const normalizeFhirEncounter = (encounter) => {
         if (participantObj.individual.reference) {
           if (participantObj.individual.reference.includes('RelatedPerson')) {
             relatedPerson = participantObj.individual.reference.split('/')[1];
+          }
+          if (participantObj.individual.reference.includes('Practitioner')) {
+            practitioner = participantObj.individual.reference.split('/')[1];
           }
         }
       }
@@ -75,6 +79,7 @@ const normalizeFhirEncounter = (encounter) => {
     examination,
     serviceTypeCode,
     relatedPerson,
+    practitioner,
   };
 };
 
