@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import AppBar from '@material-ui/core/AppBar';
+import ListItem from '@material-ui/core/ListItem';
 
 export default styled(AppBar)`
   flex-direction: row;
@@ -14,5 +15,14 @@ export default styled(AppBar)`
   & span {
     margin-right: 8px;
     margin-left: 8px;
+  }
+`;
+
+export const StyledListItem = styled(ListItem)`
+  color: #0027a5;
+  :hover {
+    /* backgroundColor and color */
+    background-color: #0027a5;
+    color: #ffffff;
   }
 `;
