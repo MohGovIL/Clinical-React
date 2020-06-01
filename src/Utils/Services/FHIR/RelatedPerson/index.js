@@ -109,7 +109,7 @@ const RelatedPersonStats = {
     }
     return CRUDOperations(
       'patch',
-      `${params.url}/${params.relatedPersonId}`,
+      `${params.url}/${params.functionParams.relatedPersonId}`,
       patchArr,
     );
   },

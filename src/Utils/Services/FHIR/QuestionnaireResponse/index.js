@@ -28,20 +28,20 @@ const QuestionnaireResponseStats = {
     );
   },
   patchQuestionnaireResponse: (params) => {
+    //[{ "op":"replace","path":"/item/0/answer/0","value": {"valueInteger": "345345345345"} } ]
     const patchArr = [];
     for (const dataKey in params.questionnaireResponseParams) {
-      if (
-        params.questionnaireResponseParams.hasOwnProperty(
-          dataKey,
-        )
-      ) {
-        // params.functionParams.relatedPersonParams[dataKey];
+      if (params.questionnaireResponseParams.hasOwnProperty(dataKey)) {
+        const element = params.questionnaireResponseParams[dataKey];
         switch (dataKey) {
           case 'item':
-            patchArr.push({
-              op: 'replace',
-              path: '/item',
-              value: params.questionnaireResponseParams[dataKey],
+            element.forEach((item) => {
+              const itemObj = {
+                op: 'replace',
+                path: `/item/${item.linkId - 1}/answer/0`,
+                value: item.answer[0],
+              };
+              patchArr.push(itemObj);
             });
             break;
 
