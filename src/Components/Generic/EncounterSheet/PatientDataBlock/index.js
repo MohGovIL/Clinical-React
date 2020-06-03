@@ -3,20 +3,19 @@ import {
   StyledChipWithImage,
   StyledPatientDataBlock,
   StyledTextInput,
+  StyledFormLabel,
 } from './Style';
 import AvatarIdBlock from 'Assets/Elements/AvatarIdBlock';
 import { useTranslation } from 'react-i18next';
 import Typography from '@material-ui/core/Typography';
 import FormLabel from '@material-ui/core/FormLabel';
-import ChipWithImage from '../../../../Assets/Elements/StyledChip';
-import { FHIR } from '../../../../Utils/Services/FHIR';
-import normalizeFhirDocumentReference from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
-import { combineBase_64 } from '../../../../Utils/Helpers/combineBase_64';
-import { calculateFileSize } from '../../../../Utils/Helpers/calculateFileSize';
-import { decodeBase_64IntoBlob } from '../../../../Utils/Helpers/decodeBase_64IntoBlob';
+import ChipWithImage from 'Assets/Elements/StyledChip';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
+import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
+import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
+import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
 import Grid from '@material-ui/core/Grid';
-import { StyledFormGroup } from '../../../Imaging/PatientAdmission/PatientDetailsBlock/Style';
-import { splitBase_64 } from '../../../../Utils/Helpers/splitBase_64';
 
 const PatientDataBlock = ({
   encounter,
@@ -181,7 +180,7 @@ const PatientDataBlock = ({
       </StyledTextInput>
 
       <StyledTextInput>
-        <FormLabel>{t('Encounter documents')}</FormLabel>
+        <StyledFormLabel>{t('Encounter documents')}</StyledFormLabel>
         <Grid container={true} style={{ marginBottom: '34px' }}>
           <Grid item xs={3}>
             <label

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import ChipWithImage from 'Assets/Elements/StyledChip';
+import { FormLabel } from '@material-ui/core';
 
 export const StyledPatientDataBlock = styled.div`
   display: flex;
@@ -21,7 +22,7 @@ export const StyledPatientDataBlock = styled.div`
     color: #1e2132;
     opacity: 60%;
     direction: ${(props) =>
-    props.languageDirection === 'rtl' ? 'ltr' : 'rtl'};
+      props.languageDirection === 'rtl' ? 'ltr' : 'rtl'};
   }
 `;
 
@@ -45,21 +46,25 @@ export const StyledTextInput = styled.div`
 `;
 
 export const StyledChipWithImage = styled.div`
- div.MuiGrid-container > div:first-child {
- width: 120px;
-  height: 36px;
- max-width: 120px;
- max-height: 36px;
-  font-size: 14px;
- }
- div.MuiGrid-container > div:first-child img {
-  margin-right: 0px;
- }
-  div.MuiGrid-direction-xs-column {
-  flex-direction: unset;
+  div.MuiGrid-container > div:first-child {
+    width: 120px;
+    height: 36px;
+    max-width: 120px;
+    max-height: 36px;
+    font-size: 14px;
   }
- div.MuiGrid-direction-xs-column p.MuiTypography-body1{
-  font-size: 14px;
-   max-width: 120px !important;
- }
+  div.MuiGrid-container > div:first-child img {
+    margin-right: 0px;
+  }
+  div.MuiGrid-direction-xs-column {
+    flex-direction: unset;
+  }
+  div.MuiGrid-direction-xs-column p.MuiTypography-body1 {
+    font-size: 14px;
+    max-width: 120px !important;
+  }
+`;
+
+export const StyledFormLabel = styled(FormLabel)`
+  margin-bottom: 41px;
 `;
