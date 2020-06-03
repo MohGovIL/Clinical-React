@@ -13,7 +13,22 @@ import OpenSansHebrewBoldTtf from 'Assets/Themes/GlobalStyle/fonts/OpenSansHebre
 import OpenSansHebrewBoldWoff from 'Assets/Themes/GlobalStyle/fonts/OpenSansHebrew-Bold.woff';
 import OpenSansHebrewBoldWoff2 from 'Assets/Themes/GlobalStyle/fonts/OpenSansHebrew-Bold.woff2';
 
-const baseRoutePathUrl = baseRoutePath().length > 0 ? baseRoutePath() + '/' : baseRoutePath();
+// Import Regular OpenSans font
+import OpenSansRegularTtf from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-regular.ttf';
+import OpenSansRegularWoff from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-regular.woff';
+import OpenSansRegularWoff2 from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-regular.woff2';
+import OpenSansRegularEot from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-regular.eot';
+import OpenSansRegularSvg from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-regular.svg';
+
+// Import Bold OpenSans font
+import OpenSansBoldTtf from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-700.ttf';
+import OpenSansBoldWoff from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-700.woff';
+import OpenSansBoldWoff2 from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-700.woff2';
+import OpenSansBoldEot from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-700.eot';
+import OpenSansBoldSvg from 'Assets/Themes/GlobalStyle/fonts/open-sans-v17-latin-700.svg';
+
+const baseRoutePathUrl =
+  baseRoutePath().length > 0 ? baseRoutePath() + '/' : baseRoutePath();
 
 const GlobalStyle = createGlobalStyle`
 
@@ -43,8 +58,38 @@ const GlobalStyle = createGlobalStyle`
     url(${baseRoutePathUrl}${OpenSansHebrewBoldTtf}) format('truetype');
   }
 
+  /* open-sans-regular - latin */
+  @font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url(${baseRoutePathUrl}${OpenSansRegularEot}); /* IE9 Compat Modes */
+  src: local('Open Sans'), local('Open Sans'),
+       url(${baseRoutePathUrl}${OpenSansRegularEot}?#iefix) format('embedded-opentype'), /* IE6-IE8 */
+       url(${baseRoutePathUrl}${OpenSansRegularWoff2}) format('woff2'), /* Super Modern Browsers */
+       url(${baseRoutePathUrl}${OpenSansRegularWoff}) format('woff'), /* Modern Browsers */
+       url(${baseRoutePathUrl}${OpenSansRegularTtf}) format('truetype'), /* Safari, Android, iOS */
+       url(${baseRoutePathUrl}${OpenSansRegularSvg}#OpenSans) format('svg'); /* Legacy iOS */
+}
+/* open-sans-700 - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url(${baseRoutePathUrl}${OpenSansBoldEot}); /* IE9 Compat Modes */
+  src: local('Open Sans'), local('Open Sans'),
+       url(${baseRoutePathUrl}${OpenSansBoldEot}?#iefix) format('embedded-opentype'), /* IE6-IE8 */
+       url(${baseRoutePathUrl}${OpenSansBoldWoff2}) format('woff2'), /* Super Modern Browsers */
+       url(${baseRoutePathUrl}${OpenSansBoldWoff}) format('woff'), /* Modern Browsers */
+       url(${baseRoutePathUrl}${OpenSansBoldTtf}) format('truetype'), /* Safari, Android, iOS */
+       url(${baseRoutePathUrl}${OpenSansBoldSvg}#OpenSans) format('svg'); /* Legacy iOS */
+}
+
   *{
-    font-family: 'Open Sans Hebrew' !important;
+    font-family: ${(props) =>
+      props.lang_code === 'he'
+        ? 'Open Sans Hebrew !important'
+        : 'Open Sans !important'};
     font-style: normal;
   }
 
