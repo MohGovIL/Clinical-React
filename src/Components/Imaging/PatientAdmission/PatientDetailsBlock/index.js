@@ -1385,6 +1385,8 @@ const PatientDetailsBlock = ({
                 <Controller
                   defaultValue={addressPostalCode || patientData.postalCode}
                   name={'addressPostalCode'}
+                  key='addressPostalCode'
+                  control={control}
                   onBlur={([event]) => {
                     onTextBlur(event.target.value, setAddressPostalCode);
                     return event.target.value;
@@ -1397,7 +1399,6 @@ const PatientDetailsBlock = ({
                     />
                   }
                   rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
-                  control={control}
                   error={errors.addressPostalCode && true}
                   helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
                 />
@@ -1462,6 +1463,8 @@ const PatientDetailsBlock = ({
                 <Controller
                   defaultValue={POBoxPostalCode || patientData.postalCode}
                   name={'POBoxPostalCode'}
+                  key='POBoxPostalCode'
+                  control={control}
                   onBlur={([event]) => {
                     onTextBlur(event.target.value, setPOBoxPostalCode);
                     return event.target.value;
@@ -1476,7 +1479,6 @@ const PatientDetailsBlock = ({
                     />
                   }
                   rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
-                  control={control}
                   error={errors.POBoxPostalCode && true}
                   helperText={errors.POBoxPostalCode && 'יש להזין 7 ספרות'}
                 />
