@@ -11,7 +11,8 @@ const StyledFilterBoxBadge = styled(Badge)`
   & .MuiBadge-anchorOriginTopRightRectangle {
     position: relative;
     display: flex;
-    transform: translate(-25%, 0);
+    transform: ${(props) =>
+      props.direction === 'rtl' ? 'translate(-25%, 0)' : 'translate(25%, 0)'};
   }
 `;
 
