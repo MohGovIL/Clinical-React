@@ -27,7 +27,6 @@ import {
   StyledFormGroup,
   StyledKeyboardDatePicker,
   StyledPatientDetails,
-  StyledTextField,
 } from './Style';
 import { useTranslation } from 'react-i18next';
 // Assets, Customized elements
@@ -54,7 +53,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 // APIs
@@ -1310,7 +1308,8 @@ const PatientDetailsBlock = ({
                   noOptionsText={t('No Results')}
                   loadingText={t('Loading')}
                   renderInput={(params) => (
-                    <StyledTextField
+                    <CustomizedTextField
+                      width={'70%'}
                       name='addressCity'
                       inputRef={register()}
                       {...params}
@@ -1332,7 +1331,7 @@ const PatientDetailsBlock = ({
                   )}
                 />
                 {/* Contact Information - address - streets */}
-                <Autocomplete
+                <StyledAutoComplete
                   options={streets}
                   loading={loadingStreets}
                   open={streetsOpen}
@@ -1353,7 +1352,8 @@ const PatientDetailsBlock = ({
                   loadingText={t('Loading')}
                   getOptionDisabled={(option) => option.code === 'no_result'}
                   renderInput={(params) => (
-                    <StyledTextField
+                    <CustomizedTextField
+                      width={'70%'}
                       {...params}
                       name='addressStreet'
                       inputRef={register()}
@@ -1383,7 +1383,8 @@ const PatientDetailsBlock = ({
                     return event.target.value;
                   }}
                   as={
-                    <StyledTextField
+                    <CustomizedTextField
+                      width={'70%'}
                       id={'addressStreetNumber'}
                       label={t('House number')}
                     />
@@ -1400,7 +1401,8 @@ const PatientDetailsBlock = ({
                     return event.target.value;
                   }}
                   as={
-                    <StyledTextField
+                    <CustomizedTextField
+                      width={'70%'}
                       id={'addressPostalCode'}
                       label={t('Postal code')}
                       type='number'
@@ -1434,7 +1436,8 @@ const PatientDetailsBlock = ({
                   noOptionsText={t('No Results')}
                   loadingText={t('Loading')}
                   renderInput={(params) => (
-                    <StyledTextField
+                    <CustomizedTextField
+                      width={'70%'}
                       {...params}
                       name='POBoxCity'
                       inputRef={register()}
@@ -1465,7 +1468,13 @@ const PatientDetailsBlock = ({
                     onTextBlur(event.target.value, setPOBox);
                     return event.target.value;
                   }}
-                  as={<StyledTextField id={'POBox'} label={t('PO box')} />}
+                  as={
+                    <CustomizedTextField
+                      width={'70%'}
+                      id={'POBox'}
+                      label={t('PO box')}
+                    />
+                  }
                 />
                 {/* Contact Information - POBox - postal code */}
                 <Controller
@@ -1478,7 +1487,8 @@ const PatientDetailsBlock = ({
                     return event.target.value;
                   }}
                   as={
-                    <StyledTextField
+                    <CustomizedTextField
+                      width={'70%'}
                       id={'POBoxPostalCode'}
                       label={t('Postal code')}
                       InputLabelProps={{
@@ -1537,7 +1547,7 @@ const PatientDetailsBlock = ({
               />
             </Grid>
             {/* Requested service - select test */}
-            <Autocomplete
+            <StyledAutoComplete
               filterOptions={filterOptions}
               multiple
               noOptionsText={t('No Results')}
@@ -1581,7 +1591,8 @@ const PatientDetailsBlock = ({
               }}
               options={servicesType}
               renderInput={(params) => (
-                <StyledTextField
+                <CustomizedTextField
+                  width={'70%'}
                   name='selectTest'
                   inputRef={(e) => {
                     selectTestRef.current = e;
@@ -1653,7 +1664,8 @@ const PatientDetailsBlock = ({
             </Tabs>
             {commitmentAndPaymentTabValue === 0 && (
               <React.Fragment>
-                <StyledTextField
+                <CustomizedTextField
+                  width={'70%'}
                   name={'commitmentAndPaymentHMO'}
                   inputRef={register()}
                   value={HMO.name || ''}
@@ -1661,7 +1673,8 @@ const PatientDetailsBlock = ({
                   id={'commitmentAndPaymentHMO'}
                   disabled
                 />
-                <StyledTextField
+                <CustomizedTextField
+                  width={'70%'}
                   name='commitmentAndPaymentReferenceForPaymentCommitment'
                   label={`${t('Reference for payment commitment')} *`}
                   inputRef={register}
@@ -1768,7 +1781,8 @@ const PatientDetailsBlock = ({
                     </MuiPickersUtilsProvider>
                   }
                 />
-                <StyledTextField
+                <CustomizedTextField
+                  width={'70%'}
                   name='commitmentAndPaymentDoctorsName'
                   label={`${t('Doctors name')} *`}
                   inputRef={register}
@@ -1783,7 +1797,8 @@ const PatientDetailsBlock = ({
                     requiredErrors.commitmentAndPaymentDoctorsName || ''
                   }
                 />
-                <StyledTextField
+                <CustomizedTextField
+                  width={'70%'}
                   label={`${t('Doctors license')} *`}
                   name='commitmentAndPaymentDoctorsLicense'
                   inputRef={register}
@@ -1945,7 +1960,8 @@ const PatientDetailsBlock = ({
                   alignItems='center'
                   key={additionalDocumentIndex}>
                   <Grid item xs={3}>
-                    <StyledTextField
+                    <CustomizedTextField
+                      width={'70%'}
                       onChange={onChangeAdditionalDocumentHandler}
                       label={`${t('Additional document')}`}
                     />
