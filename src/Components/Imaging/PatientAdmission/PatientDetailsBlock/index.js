@@ -31,6 +31,7 @@ import {
 } from './Style';
 import { useTranslation } from 'react-i18next';
 // Assets, Customized elements
+import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import Title from 'Assets/Elements/Title';
 import ListboxComponent from './ListboxComponent/index';
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
@@ -1232,7 +1233,9 @@ const PatientDetailsBlock = ({
               <StyledDivider variant={'fullWidth'} />
               {/* Escorted Information name */}
               <Controller
-                as={<StyledTextField label={t('Escort name')} />}
+                as={
+                  <CustomizedTextField width={'70%'} label={t('Escort name')} />
+                }
                 name={'escortName'}
                 control={control}
                 defaultValue={relatedPerson.name || ''}
@@ -1242,7 +1245,12 @@ const PatientDetailsBlock = ({
                 name={'escortMobilePhone'}
                 control={control}
                 defaultValue={relatedPerson.mobilePhone || ''}
-                as={<StyledTextField label={t('Escort cell phone')} />}
+                as={
+                  <CustomizedTextField
+                    width={'70%'}
+                    label={t('Escort cell phone')}
+                  />
+                }
                 rules={{
                   pattern: israelPhoneNumberRegex(),
                 }}
