@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import ChipWithImage from 'Assets/Elements/StyledChip';
 import { FormLabel } from '@material-ui/core';
 
 export const StyledPatientDataBlock = styled.div`
@@ -33,12 +32,7 @@ export const StyledTextInput = styled.div`
   justify-content: space-between;
   padding: 0 16px;
   background-color: #ffffff;
-
-  .MuiFormLabel-root {
-    color: #1e2132;
-    font-size: 13px;
-    opacity: 60%;
-  }
+  
   .MuiTypography-subtitle1 {
     color: #000b40;
     font-size: 16px;
@@ -65,6 +59,15 @@ export const StyledChipWithImage = styled.div`
   }
 `;
 
-export const StyledFormLabel = styled(FormLabel)`
+export const StyledReasonLabel = styled.label`
+  color: #1e2132;
+  font-size: 13px;
+  opacity: 60%;
+`;
+
+export const StyledEncounterDocLabel = styled(FormLabel)`
   margin-bottom: 41px;
+  font-size: 16px;
+  color: #000b40;
+  opacity: 60%;
 `;

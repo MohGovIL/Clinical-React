@@ -3,12 +3,12 @@ import {
   StyledChipWithImage,
   StyledPatientDataBlock,
   StyledTextInput,
-  StyledFormLabel,
+  StyledEncounterDocLabel,
+  StyledReasonLabel
 } from './Style';
 import AvatarIdBlock from 'Assets/Elements/AvatarIdBlock';
 import { useTranslation } from 'react-i18next';
 import Typography from '@material-ui/core/Typography';
-import FormLabel from '@material-ui/core/FormLabel';
 import ChipWithImage from 'Assets/Elements/StyledChip';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
@@ -73,6 +73,7 @@ const PatientDataBlock = ({
           {
             functionName: 'getDocumentReference',
             searchParams: {
+              _summary: true,
               encounter: encounter.id,
               patient: patient.id,
             },
@@ -166,7 +167,7 @@ const PatientDataBlock = ({
         showDivider
       />
       <StyledTextInput>
-        <FormLabel>{t('Reason for referral')}</FormLabel>
+        <StyledReasonLabel>{t('Reason for referral')}</StyledReasonLabel>
         <Typography variant='subtitle1' gutterBottom>
           {selectedServicesType.map((selected, selectedIndex) => (
             <span key={selectedIndex}>
@@ -180,19 +181,19 @@ const PatientDataBlock = ({
       </StyledTextInput>
 
       <StyledTextInput>
-        <StyledFormLabel>{t('Encounter documents')}</StyledFormLabel>
-        <Grid container={true} style={{ marginBottom: '34px' }}>
-          <Grid item xs={3}>
-            <label
-              style={{
-                color: `${'#000b40'}`,
-              }}
-              htmlFor='Referral'>
-              {`${t('Referral')}`}
-            </label>
-          </Grid>
-          <Grid item xs={4}>
-            {Object.values(referralFile).length > 0 && (
+        <StyledEncounterDocLabel>{t('Encounter documents')}</StyledEncounterDocLabel>
+        {Object.values(referralFile).length > 0 && (
+          <Grid container={true} style={{ marginBottom: '34px' }}>
+            <Grid item xs={3}>
+              <label
+                style={{
+                  color: `${'#000b40'}`,
+                }}
+                htmlFor='Referral'>
+                {`${t('Referral')}`}
+              </label>
+            </Grid>
+            <Grid item xs={4}>
               <StyledChipWithImage>
                 <ChipWithImage
                   htmlFor='Referral'
@@ -201,21 +202,21 @@ const PatientDataBlock = ({
                   onClick={(event) => onClickFileHandler(event, referralRef)}
                 />
               </StyledChipWithImage>
-            )}
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid container={true} style={{ marginBottom: '34px' }}>
-          <Grid item xs={3}>
-            <label
-              style={{
-                color: `${'#000b40'}`,
-              }}
-              htmlFor='Commitment'>
-              {`${t('Commitment')}`}
-            </label>
-          </Grid>
-          <Grid item xs={4}>
-            {Object.values(commitmentFile).length > 0 && (
+        )}
+        {Object.values(commitmentFile).length > 0 && (
+          <Grid container={true} style={{ marginBottom: '34px' }}>
+            <Grid item xs={3}>
+              <label
+                style={{
+                  color: `${'#000b40'}`,
+                }}
+                htmlFor='Commitment'>
+                {`${t('Commitment')}`}
+              </label>
+            </Grid>
+            <Grid item xs={4}>
               <StyledChipWithImage>
                 <ChipWithImage
                   htmlFor='Commitment'
@@ -224,22 +225,21 @@ const PatientDataBlock = ({
                   onClick={(event) => onClickFileHandler(event, commitmentRef)}
                 />
               </StyledChipWithImage>
-            )}
+            </Grid>
           </Grid>
-        </Grid>
-
-        <Grid container={true} style={{ marginBottom: '34px' }}>
-          <Grid item xs={3}>
-            <label
-              style={{
-                color: `${'#000b40'}`,
-              }}
-              htmlFor='AdditionalDocument'>
-              {`${t('Additional document')}`}
-            </label>
-          </Grid>
-          <Grid item xs={4}>
-            {Object.values(additionalDocumentFile).length > 0 && (
+        )}
+        {Object.values(additionalDocumentFile).length > 0 && (
+          <Grid container={true} style={{ marginBottom: '34px' }}>
+            <Grid item xs={3}>
+              <label
+                style={{
+                  color: `${'#000b40'}`,
+                }}
+                htmlFor='AdditionalDocument'>
+                {`${t('Additional document')}`}
+              </label>
+            </Grid>
+            <Grid item xs={4}>
               <StyledChipWithImage>
                 <ChipWithImage
                   htmlFor='AdditionalDocument'
@@ -250,9 +250,9 @@ const PatientDataBlock = ({
                   }
                 />
               </StyledChipWithImage>
-            )}
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </StyledTextInput>
     </StyledPatientDataBlock>
   );
