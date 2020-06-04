@@ -1,4 +1,3 @@
-import { KeyboardDatePicker } from '@material-ui/pickers';
 import styled from 'styled-components';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
 import { Divider, Chip, Button } from '@material-ui/core';
@@ -17,33 +16,6 @@ export const StyledButton = styled(Button)`
 
 export const StyledDivider = styled(Divider)`
   margin: 10px 0 40px 0;
-`;
-
-export const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
-  width: 70%;
-  background-color: #f8faff;
-  border-radius: 10px;
-  margin: 24px 0 24px 0;
-  transform-origin: top right;
-  .MuiInputLabel-formControl {
-    right: 0;
-    left: unset;
-  }
-
-  .MuiInputLabel-shrink {
-    transform-origin: top right;
-    opacity: 0.6;
-    color: #1e2132;
-  }
-  .MuiSvgIcon-root {
-    color: #076ce9;
-  }
-  .MuiInputBase-root {
-    color: #000b40;
-  }
-  .MuiFormHelperText-root {
-    text-align: right;
-  }
 `;
 
 export const StyledAutoComplete = styled(Autocomplete)`

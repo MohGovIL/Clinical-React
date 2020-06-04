@@ -25,11 +25,11 @@ import {
   StyledDivider,
   StyledForm,
   StyledFormGroup,
-  StyledKeyboardDatePicker,
   StyledPatientDetails,
 } from './Style';
 import { useTranslation } from 'react-i18next';
 // Assets, Customized elements
+import CustomizedKeyboardDatePicker from 'Assets/Elements/CustomizedKeyboardDatePicker';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import Title from 'Assets/Elements/Title';
 import ListboxComponent from './ListboxComponent/index';
@@ -1704,7 +1704,7 @@ const PatientDetailsBlock = ({
                       utils={MomentUtils}
                       moment={moment}
                       libInstance={moment}>
-                      <StyledKeyboardDatePicker
+                      <CustomizedKeyboardDatePicker
                         disableToolbar
                         autoOk
                         variant='inline'
@@ -1748,7 +1748,7 @@ const PatientDetailsBlock = ({
                     <MuiPickersUtilsProvider
                       utils={MomentUtils}
                       moment={moment}>
-                      <StyledKeyboardDatePicker
+                      <CustomizedKeyboardDatePicker
                         disableToolbar
                         allowKeyboardControl={true}
                         autoOk
