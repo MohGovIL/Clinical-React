@@ -22,7 +22,7 @@ const CustomizedTextField = ({
       direction={direction || lang_dir}
       {...MuiTextFieldProps}
       width={width}
-      iconColor={iconColor}
+      iconcolor={iconColor}
     />
   );
 };

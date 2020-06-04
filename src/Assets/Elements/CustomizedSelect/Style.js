@@ -35,8 +35,10 @@ export const StyledButton = styled(Button)`
   height: 30px;
 
   .MuiButton-label {
+    display: flex;
+    flex-direction: ${(props) =>
+      props.language_direction === 'ltr' && 'row-reverse'};
     padding: 0 5px 0 5px;
-    justify-content: space-between;
     min-width: 130px;
   }
 
@@ -46,10 +48,6 @@ export const StyledButton = styled(Button)`
   }
   .MuiButton-startIcon {
     margin-left: auto;
-    padding-right: ${(props) =>
-      props.languageDirection === 'ltr' ? '0px' : null};
-    padding-left: ${(props) =>
-      props.languageDirection === 'ltr' ? '0px' : null};
   }
 `;
 

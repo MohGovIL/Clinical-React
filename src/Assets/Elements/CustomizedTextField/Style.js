@@ -20,14 +20,13 @@ const StyledTextField = styled(TextField)`
     left: ${(props) => (props.direction === 'rtl' ? 'unset' : '0')};
   }
   .MuiInputLabel-shrink {
-    ${(props) => console.log(props.direction)}
     transform-origin: ${(props) =>
       props.direction === 'rtl' ? 'top right' : 'top left'};
     opacity: 0.6;
     color: #1e2132;
   }
   .MuiSvgIcon-root {
-    color: ${(props) => props.iconColor};
+    color: ${(props) => props.iconcolor};
   }
   .MuiInputBase-root {
     color: #000b40;
