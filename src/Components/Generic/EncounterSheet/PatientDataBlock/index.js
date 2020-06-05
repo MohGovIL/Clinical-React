@@ -4,9 +4,12 @@ import {
   StyledPatientDataBlock,
   StyledTextInput,
   StyledEncounterDocLabel,
-  StyledReasonLabel
+  StyledReasonLabel,
+  StyledAdmissionFormButton,
+  StyledAvatarIdBlock
 } from './Style';
 import AvatarIdBlock from 'Assets/Elements/AvatarIdBlock';
+import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useTranslation } from 'react-i18next';
 import Typography from '@material-ui/core/Typography';
 import ChipWithImage from 'Assets/Elements/StyledChip';
@@ -28,6 +31,7 @@ const PatientDataBlock = ({
 
   // Files scan - vars - globals
   const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
+  const labelFileButtonSpace = 7;
   const referralRef = React.useRef();
   const commitmentRef = React.useRef();
   const additionalDocumentRef = React.useRef();
@@ -43,6 +47,8 @@ const PatientDataBlock = ({
   const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState(
     '',
   );
+  const [admissionFormButton, setAdminissionForm] = useState({})
+
   useEffect(() => {
     if (encounter) {
       if (encounter.examination && encounter.examination.length) {
@@ -134,6 +140,13 @@ const PatientDataBlock = ({
         }
       })();
     }
+    setAdminissionForm(    {
+      label: t('To admission form'),
+      variant: 'text',
+      color: 'primary',
+      //onClickHandler: patientAdmissionAction, //user function
+    });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encounter, patient]);
 
@@ -159,13 +172,15 @@ const PatientDataBlock = ({
 
   return (
     <StyledPatientDataBlock>
+      <StyledAvatarIdBlock>
       <AvatarIdBlock
         edit_mode={0}
         showEditButton={false}
         priority={encounter.priority}
         patientData={patient}
         showDivider
-      />
+      /></StyledAvatarIdBlock>
+      {/*</StyledPatientDataBlock>*/}
       <StyledTextInput>
         <StyledReasonLabel>{t('Reason for referral')}</StyledReasonLabel>
         <Typography variant='subtitle1' gutterBottom>
@@ -183,7 +198,7 @@ const PatientDataBlock = ({
       <StyledTextInput>
         <StyledEncounterDocLabel>{t('Encounter documents')}</StyledEncounterDocLabel>
         {Object.values(referralFile).length > 0 && (
-          <Grid container={true} style={{ marginBottom: '34px' }}>
+          <Grid container={true} spacing={labelFileButtonSpace} style={{ marginBottom: '34px' }}>
             <Grid item xs={3}>
               <label
                 style={{
@@ -206,7 +221,7 @@ const PatientDataBlock = ({
           </Grid>
         )}
         {Object.values(commitmentFile).length > 0 && (
-          <Grid container={true} style={{ marginBottom: '34px' }}>
+          <Grid container={true} spacing={labelFileButtonSpace} style={{ marginBottom: '34px' }}>
             <Grid item xs={3}>
               <label
                 style={{
@@ -229,11 +244,12 @@ const PatientDataBlock = ({
           </Grid>
         )}
         {Object.values(additionalDocumentFile).length > 0 && (
-          <Grid container={true} style={{ marginBottom: '34px' }}>
+          <Grid container={true} spacing={labelFileButtonSpace} style={{ marginBottom: '34px' }}>
             <Grid item xs={3}>
               <label
                 style={{
                   color: `${'#000b40'}`,
+                  whiteSpace: `${'nowrap'}`,
                 }}
                 htmlFor='AdditionalDocument'>
                 {`${t('Additional document')}`}
@@ -254,6 +270,10 @@ const PatientDataBlock = ({
           </Grid>
         )}
       </StyledTextInput>
+
+      <StyledAdmissionFormButton>
+        <CustomizedTableButton {...admissionFormButton} />
+      </StyledAdmissionFormButton>
     </StyledPatientDataBlock>
   );
 };

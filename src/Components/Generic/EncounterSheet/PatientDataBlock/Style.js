@@ -12,6 +12,9 @@ export const StyledPatientDataBlock = styled.div`
   background-color: #ffffff;
   box-shadow: 0 0 10px 0 rgba(152, 151, 151, 0.3);
 
+  overflow-y: scroll;
+  overflow-x: hidden;
+  
   .MuiInputLabel-formControl {
     right: ${(props) => (props.languageDirection === 'rtl' ? '0' : 'unset')};
     left: unset;
@@ -32,10 +35,15 @@ export const StyledTextInput = styled.div`
   justify-content: space-between;
   padding: 0 16px;
   background-color: #ffffff;
-  
+
   .MuiTypography-subtitle1 {
     color: #000b40;
     font-size: 16px;
+  }
+
+  div.MuiGrid-container > div.MuiGrid-item {
+    padding-top: 13px;
+    padding-bottom: 13px;
   }
 `;
 
@@ -46,16 +54,24 @@ export const StyledChipWithImage = styled.div`
     max-width: 120px;
     max-height: 36px;
     font-size: 14px;
+    padding: 0 17px 0 17px;
   }
   div.MuiGrid-container > div:first-child img {
     margin-right: 0px;
+    width: 13px;
+    height: 18px;
   }
   div.MuiGrid-direction-xs-column {
     flex-direction: unset;
   }
   div.MuiGrid-direction-xs-column p.MuiTypography-body1 {
     font-size: 14px;
-    max-width: 120px !important;
+    max-width: 100px !important;
+    direction: ltr;
+  }
+  div.MuiGrid-direction-xs-column > p:last-child {
+    font-size: 11.7px;
+    color: #7f869b;
   }
 `;
 
@@ -70,4 +86,22 @@ export const StyledEncounterDocLabel = styled(FormLabel)`
   font-size: 16px;
   color: #000b40;
   opacity: 60%;
+`;
+
+export const StyledAdmissionFormButton = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+
+  button.MuiButtonBase-root {
+    width: 104px !important;
+    height: 32px;
+  }
+`;
+
+export const StyledAvatarIdBlock = styled.div`
+  div:first-child > div:last-child {
+   margin: 31px;
+   width: auto;
+  }
 `;
