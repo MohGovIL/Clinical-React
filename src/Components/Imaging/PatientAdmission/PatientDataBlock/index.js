@@ -53,7 +53,7 @@ const PatientDataBlock = ({
     mode: 'onBlur',
     defaultValues: {
       birthDate: patientBirthDate,
-      healthManageOrganization: patientData.managingOrganization ?? null,
+      healthManageOrganization: patientData.managingOrganization || null,
     },
   });
 
