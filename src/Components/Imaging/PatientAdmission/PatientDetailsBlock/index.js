@@ -160,7 +160,7 @@ const PatientDetailsBlock = ({
           let relatedPersonParams = {};
           if (encounterData.relatedPerson) {
             if (
-              data.escortName !== relatedPerson.name &&
+              data.escortName !== relatedPerson.name ||
               data.escortMobilePhone !== relatedPerson.mobilePhone
             ) {
               relatedPersonParams['name'] = data.escortName;
@@ -1160,6 +1160,14 @@ const PatientDetailsBlock = ({
   const handlePopUpClose = () => {
     setIsPopUpOpen(false);
   };
+  const getSelectedOption = (option, item) => {
+    if (
+      option.reasonCode.code === item.reasonCode.code &&
+      option.serviceType.code === item.serviceType.code
+    ) {
+      return true;
+    }
+  };
   return (
     <React.Fragment>
       <CustomizedPopup
@@ -1542,6 +1550,7 @@ const PatientDetailsBlock = ({
               onChange={selectExaminationOnChangeHandler}
               disableCloseOnSelect
               renderTags={() => null}
+              getOptionSelected={getSelectedOption}
               renderOption={(option, state) => (
                 <Grid container justify='flex-end' alignItems='center'>
                   <Grid item xs={3}>

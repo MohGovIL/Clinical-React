@@ -28,6 +28,15 @@ const RelatedPersonStats = {
     for (const dataKey in params.functionParams.relatedPersonParams) {
       if (params.functionParams.relatedPersonParams.hasOwnProperty(dataKey)) {
         switch (dataKey) {
+          case 'name':
+            patchArr.push({
+              op: 'replace',
+              path: '/name/0',
+              value: {
+                text: params.functionParams.relatedPersonParams[dataKey],
+              },
+            });
+            break;
           case 'active':
             patchArr.push({
               op: 'replace',
