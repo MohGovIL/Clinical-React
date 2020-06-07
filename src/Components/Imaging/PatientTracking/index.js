@@ -123,26 +123,28 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
       return;
     }
     //Create an array of permitted tabs according to the user role.
+    let staticTabs;
     if (tabs.length === 0) {
-      let tabs = getStaticTabsArray();
-      for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
-        const tab = tabs[tabIndex];
+      staticTabs = getStaticTabsArray();
+      for (let tabIndex = 0; tabIndex < staticTabs.length; tabIndex++) {
+        const tab = staticTabs[tabIndex];
         const mode = isAllowed(tab.id);
         tab.mode = mode;
       }
-      const MAX_TABS = tabs.length;
-      tabs = tabs.filter((tab) => tab.mode !== 'hide');
-      if (MAX_TABS !== tabs.length) {
-        tabs.forEach((tab, tabIndex) => {
+      const MAX_TABS = staticTabs.length;
+      staticTabs = staticTabs.filter((tab) => tab.mode !== 'hide');
+      if (MAX_TABS !== staticTabs.length) {
+        staticTabs.forEach((tab, tabIndex) => {
           tab.tabValue = tabIndex;
         });
       }
-      setTabs(tabs);
+    } else {
+      staticTabs = tabs;
     }
 
     //Filter box mechanism for activeTabs
-    for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
-      const tab = tabs[tabIndex];
+    for (let tabIndex = 0; tabIndex < staticTabs.length; tabIndex++) {
+      const tab = staticTabs[tabIndex];
       if (tab.tabValue === selectFilter.statusFilterBoxValue) {
         tab.activeAction(
           setTable,
@@ -158,6 +160,9 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
       }
     }
     prevFilterBoxValue.current = selectFilter.statusFilterBoxValue;
+    if (tabs.length === 0) {
+      setTabs(staticTabs);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectFilter.filter_date,

@@ -33,7 +33,7 @@ const denormalizeFhirEncounter = (encounter) => {
           break;
         case 'patient':
           denormalizedEncounter['subject'] = {
-            reference: encounter[encounterKey],
+            reference: `Patient/${encounter[encounterKey]}`,
           };
           break;
         case 'relatedPerson':
