@@ -21,11 +21,15 @@ import X from 'Assets/Images/x.png';
 
 const PopUpContantList = ({templates,languageDirection})=>{
   useEffect(() => {
+    if(searchThis === "")
     if (templates && templates.length >0) setSearchInsideTemplates(templates);
   });
 
   function intersection(a, b) {
-    return a.filter((value) => b.indexOf(value) !== -1);
+    return a.filter(function (value) {
+     return value.title.indexOf(b) > -1
+
+    });
   }
   const handleToggle = (e) => {
     let target = e.target;
@@ -34,8 +38,15 @@ const PopUpContantList = ({templates,languageDirection})=>{
 
   const onChangeHandler = (e) => {
     let target = e.target;
-    setSeachThis(target.value);
-    setSearchInsideTemplates(intersection(checked,searchThis));
+    if(target.value.length > 2) {
+      let intersectionWithTemplates = intersection(templates, target.value)
+      setSeachThis(target.value);
+      setSearchInsideTemplates(intersectionWithTemplates);
+    }
+    else{
+      setSeachThis("");
+      setSearchInsideTemplates(templates);
+    }
   }
 
   const onClearHandler = () => {
@@ -57,10 +68,10 @@ const PopUpContantList = ({templates,languageDirection})=>{
       </SearchTemplates>
       {templates ?
     <StyledList dense component="div" role="list">
-      {searchInsideTemplates.map((value) => {
-        const labelId = `transfer-list-all-item-${value}-label`;
+      {searchInsideTemplates.map((value,index) => {
+        const labelId = `transfer-list-all-item-${index}-label`;
         return (
-          <StyledListItem key={value} role="listitem" button onClick={handleToggle}>
+          <StyledListItem alignItems="flex-start" key={index} role="listitem" button onClick={handleToggle}>
             <ListItemIcon>
               <Checkbox
                 checked={checked.indexOf(value) !== -1}
@@ -70,7 +81,7 @@ const PopUpContantList = ({templates,languageDirection})=>{
 
               />
             </ListItemIcon>
-            <StyledListItemText languageDirection={languageDirection} id={labelId} primary={`${t(value.title)}`} />
+            <StyledListItemText  id={labelId} primary={`${t(value.title)}`} />
           </StyledListItem>
         );
       })}

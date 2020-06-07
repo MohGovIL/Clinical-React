@@ -34,7 +34,8 @@ export const CustomizedPaperHeader =styled.div`
   color: #00094a;
 `;
 export const StyledListItemText =styled(ListItemText)`
-  width: 186px;
+  min-width: 186px;
+  max-width:233px
   height: 22px;
   font-size: 16px;
   font-weight: normal;
@@ -71,6 +72,9 @@ export const SearchTemplates = styled.div`
     border: none;
     outline: none;
   }
+  .MuiListItemIcon-alignItemsFlexStart {
+    margin-top: -5px;
+   }
 `;
 export const StyledListItem = styled(ListItem)`
   width: 366px;
