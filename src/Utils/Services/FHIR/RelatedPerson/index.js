@@ -31,10 +31,8 @@ const RelatedPersonStats = {
           case 'name':
             patchArr.push({
               op: 'replace',
-              path: '/name/0',
-              value: {
-                text: params.functionParams.relatedPersonParams[dataKey],
-              },
+              path: '/name/0/text',
+              value: params.functionParams.relatedPersonParams[dataKey],
             });
             break;
           case 'active':
@@ -68,7 +66,6 @@ const RelatedPersonStats = {
               value: {
                 system: 'phone',
                 value: params.functionParams.relatedPersonParams[dataKey],
-                use: 'mobile',
               },
             });
             break;

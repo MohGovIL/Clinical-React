@@ -580,15 +580,24 @@ const PatientDetailsBlock = ({
       try {
         const cities = await getCities();
         if (active) {
-          setCities(
-            Object.keys(cities.data).map((cityKey) => {
-              let cityObj = {};
-              cityObj.code = cities.data[cityKey];
-              cityObj.name = t(cities.data[cityKey]);
+          if (Object.keys(cities.data).length) {
+            setCities(
+              Object.keys(cities.data).map((cityKey) => {
+                let cityObj = {};
+                cityObj.code = cities.data[cityKey];
+                cityObj.name = t(cities.data[cityKey]);
 
-              return cityObj;
-            }),
-          );
+                return cityObj;
+              }),
+            );
+          } else {
+            const emptyResultsObj = {
+              code: 'no_result',
+              name: t('No Results'),
+            };
+            const emptyResults = [emptyResultsObj];
+            setCities(emptyResults);
+          }
         }
       } catch (err) {
         console.log(err);
@@ -1297,6 +1306,7 @@ const PatientDetailsBlock = ({
                   }}
                   loading={loadingCities}
                   options={cities}
+                  getOptionDisabled={(option) => option.code === 'no_result'}
                   value={addressCity}
                   onChange={(event, newValue) => {
                     setAddressCity(newValue);
