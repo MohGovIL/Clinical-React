@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
 
 import { getFormTemplates } from 'Utils/Services/API';
+import MainPopUpFormTemplate from 'Components/Generic/PopupComponents/PopUpFormTemplates/MainPopUpFormTemplate';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return (
@@ -52,7 +53,6 @@ const PopUpFormTemplates = ({
     encounter.examinationCode < 1;
 
   const handleCreateData = async () => {
-    debugger;
     const templatesServerData = [];
     let response = await getFormTemplates(
       encounter.serviceTypeCode,
@@ -64,7 +64,7 @@ const PopUpFormTemplates = ({
     if (response.data && response.data.length > 0) {
       for (let i = 0; i < response.data.length; i++) {
         // templatesServerData.push(stripHtml(response.data));
-        templatesServerData.push(response.data[i]);
+        templatesServerData.push({'title' : response.data[i]});
       }
     }
 
@@ -74,7 +74,6 @@ const PopUpFormTemplates = ({
   };
 
   useEffect(() => {
-    debugger;
     if (errorInFields) return null;
 
     if (templates.length === 0) handleCreateData();
@@ -96,8 +95,9 @@ const PopUpFormTemplates = ({
         onClose={handlePopupClose}
         dialog_props={dialog_props}
         content_dividers={false}>
-        {t(templates)}
+        <MainPopUpFormTemplate templates={templates}></MainPopUpFormTemplate>
       </CustomizedPopup>
+
     </React.Fragment>
   ) : null;
 };
