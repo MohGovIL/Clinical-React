@@ -333,6 +333,14 @@ const PatientStats = {
       patchArr,
     );
   },
+  updatePatient: (params) => {
+    const denormalizationFhirPatient = denormalizeFhirPatient(params.patient);
+    return CRUDOperations(
+      'update',
+      `${params.url}/${params.patientId}`,
+      denormalizationFhirPatient,
+    );
+  },
   createPatient: (params) => {
     const denormalizationFhirPatient = denormalizeFhirPatient(
       params.functionParams.patient,

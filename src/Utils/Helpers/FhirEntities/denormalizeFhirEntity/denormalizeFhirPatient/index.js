@@ -6,8 +6,22 @@
 const denormalizeFhirPatient = (patient) => {
   const telecom = [];
   const identifierObj = {};
+  const identifierObjType = {};
   const name = {};
   const denormalizedPatient = {};
+  const addressObj = {};
+  const addressLine = [];
+  let addressType = '';
+
+  if (patient['POBox']) {
+    if (patient['streetName']) {
+      addressType = 'both';
+    } else {
+      addressType = 'postal';
+    }
+  } else {
+    addressType = 'physical';
+  }
 
   for (const patientKey in patient) {
     if (patient.hasOwnProperty(patientKey)) {
@@ -47,13 +61,14 @@ const denormalizeFhirPatient = (patient) => {
           name['family'] = patient[patientKey];
           break;
         case 'identifierType':
-          identifierObj['type'] = {
-            coding: [
-              {
-                code: patient[patientKey],
-              },
-            ],
-          };
+          identifierObjType['coding'] = [
+            {
+              code: patient[patientKey],
+            },
+          ];
+          break;
+        case 'identifierTypeText':
+          identifierObjType['text'] = patient[patientKey];
           break;
         case 'identifier':
           identifierObj['value'] = patient[patientKey];
@@ -61,11 +76,52 @@ const denormalizeFhirPatient = (patient) => {
         case 'gender':
           denormalizedPatient['gender'] = patient[patientKey];
           break;
+        case 'city':
+          addressObj['city'] = patient[patientKey];
+          break;
+        case 'postalCode':
+          addressObj['postalCode'] = patient[patientKey];
+          break;
+        case 'country':
+          addressObj['country'] = patient[patientKey];
+          break;
+        case 'streetName':
+          if (addressType) {
+            if (addressType === 'both' || addressType === 'physical') {
+              addressLine[0] = patient[patientKey];
+            }
+          }
+          break;
+        case 'streetNumber':
+          if (addressType) {
+            if (addressType === 'both' || addressType === 'physical') {
+              addressLine[1] = patient[patientKey];
+            }
+          }
+          break;
+        case 'POBox':
+          if (addressType) {
+            if (addressType === 'both') {
+              if (patient['streetNumber']) {
+                addressLine[2] = patient[patientKey];
+              } else {
+                addressLine[1] = patient[patientKey];
+              }
+            } else if (addressType === 'postal') {
+              addressLine[0] = patient[patientKey];
+            }
+          }
+          break;
         default:
           break;
       }
     }
   }
+
+  if (Object.keys(identifierObjType).length) {
+    identifierObj['type'] = identifierObjType;
+  }
+
   if (patient.identifierType || patient.identifier) {
     denormalizedPatient['identifier'] = [{ ...identifierObj }];
   }
@@ -76,6 +132,12 @@ const denormalizeFhirPatient = (patient) => {
 
   if (patient.firstName || patient.lastName) {
     denormalizedPatient['name'] = [{ ...name }];
+  }
+  if (addressLine.length) {
+    addressObj['line'] = addressLine;
+  }
+  if (Object.keys(addressObj).length) {
+    denormalizedPatient['address'] = [addressObj];
   }
   return denormalizedPatient;
 };

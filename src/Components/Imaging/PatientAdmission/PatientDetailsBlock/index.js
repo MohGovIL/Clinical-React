@@ -109,35 +109,36 @@ const PatientDetailsBlock = ({
       if (clear) {
         const APIsArray = [];
         //Updating patient
-        let patientPatchParams = {};
+        const patient = { ...patientData };
         if (contactInformationTabValue === 0) {
           if (data.addressCity) {
-            patientPatchParams['city'] = addressCity.code;
+            patient['city'] = addressCity.code;
           }
           if (data.addressStreet.trim()) {
-            patientPatchParams['streetName'] = addressStreet.code;
+            patient['streetName'] = addressStreet.code;
           }
           if (data.addressStreetNumber.trim()) {
-            patientPatchParams['streetNumber'] = data.addressStreetNumber;
+            patient['streetNumber'] = data.addressStreetNumber;
           }
           if (data.addressPostalCode) {
-            patientPatchParams['postalCode'] = data.addressPostalCode;
+            patient['postalCode'] = data.addressPostalCode;
           }
         } else {
           if (data.POBoxCity) {
-            patientPatchParams['city'] = POBoxCity.code;
+            patient['city'] = POBoxCity.code;
           }
           if (data.POBox) {
-            patientPatchParams['POBox'] = data.POBox;
+            patient['POBox'] = data.POBox;
           }
           if (data.POBoxPostalCode) {
-            patientPatchParams['postalCode'] = data.POBoxPostalCode;
+            patient['postalCode'] = data.POBoxPostalCode;
           }
         }
         APIsArray.push(
           FHIR('Patient', 'doWork', {
-            functionName: 'patchPatient',
-            functionParams: { patientPatchParams, patientId: patientData.id },
+            functionName: 'updatePatient',
+            patient: patient,
+            patientId: patient.id,
           }),
         );
         //Updating/Creating relatedPerson
