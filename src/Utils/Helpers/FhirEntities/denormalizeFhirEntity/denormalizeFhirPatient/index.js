@@ -85,6 +85,11 @@ const denormalizeFhirPatient = (patient) => {
         case 'country':
           addressObj['country'] = patient[patientKey];
           break;
+        case 'addressType':
+          if (addressType) {
+            addressObj['type'] = addressType;
+          }
+          break;
         case 'streetName':
           if (addressType) {
             if (addressType === 'both' || addressType === 'physical') {
