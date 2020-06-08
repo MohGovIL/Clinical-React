@@ -12,6 +12,7 @@ const INITIAL_STATE = {
   filter_date: Moment().format('YYYY-MM-DD'),
   filter_organization: 0,
   filter_service_type: 0,
+  filter_is_set: 0,
 };
 
 const FiltersReducer = (state = INITIAL_STATE, action) => {
@@ -27,18 +28,21 @@ const FiltersReducer = (state = INITIAL_STATE, action) => {
         ...state,
         STATUS: action.type,
         filter_date: Moment(action.filter_date).format('YYYY-MM-DD'),
+        filter_is_set: 1
       };
     case SET_ORGANIZATION_FILTER_VALUE:
       return {
         ...state,
         STATUS: action.type,
         filter_organization: action.filter_organization,
+        filter_is_set: 1
       };
     case SET_SERVICE_TYPE_FILTER_VALUE:
       return {
         ...state,
         STATUS: action.type,
         filter_service_type: action.filter_service_type,
+        filter_is_set: 1,
       };
     default:
       return state;

@@ -35,6 +35,7 @@ const FilterBox = ({
   selectFilterServiceType,
   setFilterOrganizationAction,
   setFilterServiceTypeAction,
+  selectFilterIsSet,
   tabValue,
 }) => {
   const { t } = useTranslation();
@@ -92,7 +93,7 @@ const FilterBox = ({
   //Auto set current facility
   useEffect(() => {
     organizationOnChangeHandler(
-      facility !== 0 && selectFilterOrganization === 0
+      facility !== 0 && selectFilterOrganization === 0 && selectFilterIsSet === 0
         ? facility
         : selectFilterOrganization,
     );
@@ -185,6 +186,7 @@ const mapStateToProps = (state) => {
     facility: parseInt(state.settings.facility),
     selectFilterOrganization: state.filters.filter_organization,
     selectFilterServiceType: state.filters.filter_service_type,
+    selectFilterIsSet: state.filters.filter_is_set,
     tabValue: state.filters.statusFilterBoxValue,
   };
 };
