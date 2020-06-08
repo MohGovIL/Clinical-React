@@ -92,11 +92,13 @@ const FilterBox = ({
   }, [t]);
   //Auto set current facility
   useEffect(() => {
-    organizationOnChangeHandler(
-      facility !== 0 && selectFilterOrganization === 0 && selectFilterIsSet === 0
-        ? facility
-        : selectFilterOrganization,
-    );
+    if (selectFilterIsSet === 0) {
+      organizationOnChangeHandler(
+        facility !== 0 && selectFilterOrganization === 0
+          ? facility
+          : selectFilterOrganization,
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
