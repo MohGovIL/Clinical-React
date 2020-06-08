@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { loginAction } from 'Store/Actions/LoginActions/LoginActions';
 import bg from 'Assets/Images/bg.svg';
 import loginLogo from 'Assets/Images/symbol-logo.svg';
-import StyledTextField from 'Assets/Elements/StyledTextField';
+import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { useTranslation } from 'react-i18next';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import StyledLogin, {
@@ -65,12 +65,13 @@ const Login = ({ loginAction, history, status }) => {
             onDelete={handleOnDelete}
           />
         )}
-        <StyledTextField
+        <CustomizedTextField
           name='userName'
           label={t('* שם המשתמש')}
           error={errors.userName ? true : false}
           helperText={errors.userName && errors.userName.message}
           fullWidth
+          lang_dir={'rtl'}
           InputProps={{
             autoComplete: 'off',
             endAdornment: (errors.userName ? true : false) && (
@@ -87,13 +88,14 @@ const Login = ({ loginAction, history, status }) => {
             },
           })}
         />
-        <StyledTextField
+        <CustomizedTextField
           name='password'
           label={t('* סיסמה')}
           type={'password'}
           error={errors.password ? true : false}
           helperText={errors.password && errors.password.message}
           fullWidth
+          lang_dir={'rtl'}
           inputRef={register({
             required: 'יש להזין ערך בשדה',
           })}

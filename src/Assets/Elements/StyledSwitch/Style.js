@@ -17,7 +17,7 @@ const Label = styled.label`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 14px 0 12px;
+    padding: 0 8px 0 12px;
     position: absolute;
     border-radius: 20.4px;
     cursor: pointer;

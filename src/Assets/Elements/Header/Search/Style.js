@@ -14,7 +14,8 @@ export default styled.div`
   background-color: #ffffff;
   border-radius: 23px;
   @media (min-width: 1025px) {
-    margin-left: 10%;
+    margin-left: ${(props) => props.languageDirection === 'rtl' && '10%'};
+    margin-right: ${(props) => props.languageDirection === 'ltr' && '10%'};
   }
 `;
 
