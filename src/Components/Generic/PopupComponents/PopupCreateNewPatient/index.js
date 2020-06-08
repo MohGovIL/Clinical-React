@@ -683,7 +683,7 @@ const PopupCreateNewPatient = ({
       [field]: !event.target.validity.valid ? fieldIsRequired : false,
       gender: patientGender === 0 && fieldWithError ? fieldIsRequired : false,
       managingOrganization:
-        patientManagingOrganizationValue === 0 && fieldWithError
+        patientManagingOrganizationValue === 0 && fieldWithError && patientIdType === patientIdTypeMain
           ? fieldIsRequired
           : false,
     });
