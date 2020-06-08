@@ -165,7 +165,7 @@ const PatientStats = {
   timeout: (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   },
-  updatePatient: (params) => {
+  patchPatient: (params) => {
     const patchArr = [];
     const address = { op: 'replace', path: '/address/0', value: {} };
     const addressLine = { op: 'replace', path: '/address/0/line', value: [] };
@@ -323,16 +323,15 @@ const PatientStats = {
             break;
         }
       }
-
-      given.value.length && patchArr.push(given);
-      Object.values(address.value).length && patchArr.push(address);
-      Object.values(addressLine.value).length && patchArr.push(addressLine);
-      return CRUDOperations(
-        'patch',
-        `${params.url}/${params.functionParams.patientId}`,
-        patchArr,
-      );
     }
+    given.value.length && patchArr.push(given);
+    Object.values(address.value).length && patchArr.push(address);
+    addressLine.value.length && patchArr.push(addressLine);
+    return CRUDOperations(
+      'patch',
+      `${params.url}/${params.functionParams.patientId}`,
+      patchArr,
+    );
   },
   createPatient: (params) => {
     const denormalizationFhirPatient = denormalizeFhirPatient(

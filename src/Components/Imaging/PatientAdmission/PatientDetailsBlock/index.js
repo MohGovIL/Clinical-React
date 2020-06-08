@@ -136,7 +136,7 @@ const PatientDetailsBlock = ({
         }
         APIsArray.push(
           FHIR('Patient', 'doWork', {
-            functionName: 'updatePatient',
+            functionName: 'patchPatient',
             functionParams: { patientPatchParams, patientId: patientData.id },
           }),
         );
