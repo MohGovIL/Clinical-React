@@ -14,7 +14,6 @@ const StyledKeyboardDatePicker = styled(KeyboardDatePicker)`
   }
 
   .MuiInputLabel-shrink {
-    ${(props) => console.log(props.direction)}
     transform-origin: ${(props) =>
       props.direction === 'rtl' ? 'top right' : 'top left'};
     opacity: 0.6;

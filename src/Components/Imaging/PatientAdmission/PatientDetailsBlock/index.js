@@ -29,6 +29,8 @@ import {
 } from './Style';
 import { useTranslation } from 'react-i18next';
 // Assets, Customized elements
+import StyledToggleButton from 'Assets/Elements/StyledToggleButton';
+import StyledToggleButtonGroup from 'Assets/Elements/StyledToggleButtonGroup';
 import CustomizedKeyboardDatePicker from 'Assets/Elements/CustomizedKeyboardDatePicker';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import Title from 'Assets/Elements/Title';
@@ -55,6 +57,8 @@ import Tabs from '@material-ui/core/Tabs';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+
 // APIs
 import { getCities, getStreets } from 'Utils/Services/API';
 import moment from 'moment';
@@ -69,6 +73,7 @@ const PatientDetailsBlock = ({
   formatDate,
   setEncounterAndPatient,
   setIsDirty,
+  configuration,
 }) => {
   const { t } = useTranslation();
   let history = useHistory();
@@ -511,6 +516,11 @@ const PatientDetailsBlock = ({
   // Escorted Information - vars
   const [isEscorted, setIsEscorted] = useState(false);
   const [relatedPerson, setRelatedPerson] = useState({});
+  const [arrivalWay, setArrivalWay] = useState('');
+  // ArrivalWay -functions
+  const arrivalWayHandler = (event, way) => {
+    setArrivalWay(way);
+  };
   // Escorted Information - functions
   const isEscortedSwitchOnChangeHandle = () => {
     setIsEscorted((prevState) => {
@@ -1206,7 +1216,38 @@ const PatientDetailsBlock = ({
               direction={'row'}
               justify={'flex-start'}
               alignItems={'center'}>
-              <span>{t('Patient arrived with an escort?')}</span>
+              {parseInt(configuration.clinikal_pa_arrival_way) && (
+                <React.Fragment>
+                  <span>{t('Arrival way?')}</span>
+                  <StyledToggleButtonGroup
+                    value={arrivalWay}
+                    onChange={arrivalWayHandler}
+                    exclusive
+                    aria-label='Arrival way'>
+                    <StyledToggleButton
+                      value='Ambulance'
+                      aria-label='ambulance'>
+                      {t('Ambulance')}
+                    </StyledToggleButton>
+                    <StyledToggleButton
+                      value='Independently'
+                      aria-label='Independently'>
+                      {t('Independently')}
+                    </StyledToggleButton>
+                  </StyledToggleButtonGroup>
+                </React.Fragment>
+              )}
+            </Grid>
+            <Grid
+              container
+              direction={'row'}
+              justify={'flex-start'}
+              alignItems={'center'}>
+              <span>
+                {parseInt(configuration.clinikal_pa_arrival_way)
+                  ? t('Arrival with escort?')
+                  : t('Patient arrived with an escort?')}
+              </span>
               {/* Escorted Information Switch */}
               <StyledSwitch
                 name='isEscorted'

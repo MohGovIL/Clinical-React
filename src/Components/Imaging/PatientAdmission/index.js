@@ -18,8 +18,8 @@ const PatientAdmission = ({
   languageDirection,
   formatDate,
   history,
+  PatientAdmissionSettings,
 }) => {
-
   const deletingEncounter = async () => {
     if (encounter.status === 'planned') {
       await FHIR('Encounter', 'doWork', {
@@ -87,7 +87,7 @@ const PatientAdmission = ({
     deletingEncounter();
     history.push(`${baseRoutePath()}/imaging/patientTracking`);
   };
-
+  console.log(PatientAdmissionSettings);
   return (
     <React.Fragment>
       <PopUpOnExit
@@ -120,6 +120,7 @@ const PatientAdmission = ({
         {Object.values(patient).length > 0 &&
           Object.values(encounter).length > 0 && (
             <PatientDetailsBlock
+              configuration={PatientAdmissionSettings}
               encounterData={encounter}
               patientData={patient}
               edit_mode={edit}
@@ -138,6 +139,7 @@ const mapStateToProps = (state) => {
     encounter: state.active.activeEncounter,
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
+    PatientAdmissionSettings: state.settings.clinikal['patient admission'],
   };
 };
 
