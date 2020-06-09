@@ -1215,7 +1215,8 @@ const PatientDetailsBlock = ({
               container
               direction={'row'}
               justify={'flex-start'}
-              alignItems={'center'}>
+              alignItems={'center'}
+              style={{ marginBottom: '50px' }}>
               {parseInt(configuration.clinikal_pa_arrival_way) && (
                 <React.Fragment>
                   <span>{t('Arrival way?')}</span>
