@@ -9,6 +9,7 @@ import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 import { useTranslation } from 'react-i18next';
 import Encounters from 'Components/Generic/EncounterSheet/PatientBackground/Encounters';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
+import MedicalIssues from 'Assets/Elements/MedicalIssues';
 
 const PatientBackground = ({
   encounter,
@@ -130,6 +131,14 @@ const PatientBackground = ({
         prevEncounters={prevEncounters}
         handleCreateData={handleCreateData}
       />
+      <br/>
+      <br/>
+      <MedicalIssues title={t("Sensitivities")}/>
+      <br/>
+      <br/>
+      <MedicalIssues title={t("Background diseases")} />
+      <br/>
+      <br/>
     </StyledPatientBackground>
   );
 };
