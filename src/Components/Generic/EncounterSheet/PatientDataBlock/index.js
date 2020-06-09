@@ -15,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import ChipWithImage from 'Assets/Elements/StyledChip';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
-import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
+//import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
 import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
 import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
@@ -43,13 +43,11 @@ const PatientDataBlock = ({
   const [referralFile, setReferralFile] = useState({});
   const [referralBlob, setReferralBlob] = useState('');
   const [commitmentBlob, setCommitmentBlob] = useState('');
-  const [referralFile_64, setReferralFile_64] = useState('');
-  const [commitmentFile_64, setCommitmentFile_64] = useState('');
+  //const [referralFile_64, setReferralFile_64] = useState('');
+  //const [commitmentFile_64, setCommitmentFile_64] = useState('');
   const [commitmentFile, setCommitmentFile] = useState({});
   const [additionalDocumentBlob, setAdditionalDocumentBlob] = useState('');
-  const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState(
-    '',
-  );
+  //const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState('');
   const [admissionFormButton, setAdmissionForm] = useState({})
 
   useEffect(() => {
@@ -101,10 +99,10 @@ const PatientDataBlock = ({
               );
 
               documentsArray.push(normalizedFhirDocumentReference);
-              const base_64 = combineBase_64(
-                normalizedFhirDocumentReference.data,
-                normalizedFhirDocumentReference.contentType,
-              );
+              // const base_64 = combineBase_64(
+              //   normalizedFhirDocumentReference.data,
+              //   normalizedFhirDocumentReference.contentType,
+              // );
               const [, SizeInMB] = calculateFileSize(
                 atob(normalizedFhirDocumentReference.data).length,
                 FILES_OBJ.valueInBytes,
@@ -121,19 +119,19 @@ const PatientDataBlock = ({
               );
               if (normalizedFhirDocumentReference.url.startsWith('Referral')) {
                 setReferralBlob(blob);
-                setReferralFile_64(base_64);
+                //setReferralFile_64(base_64);
                 setReferralFile(obj);
                 referralRef.current = 'Referral';
               } else if (
                 normalizedFhirDocumentReference.url.startsWith('Commitment')
               ) {
                 setCommitmentBlob(blob);
-                setCommitmentFile_64(base_64);
+                //setCommitmentFile_64(base_64);
                 setCommitmentFile(obj);
                 commitmentRef.current = 'Commitment';
               } else {
                 setAdditionalDocumentBlob(blob);
-                setAdditionalDocumentFile_64(base_64);
+                //setAdditionalDocumentFile_64(base_64);
                 setAdditionalDocumentFile(obj);
                 additionalDocumentRef.current = 'Document';
               }
