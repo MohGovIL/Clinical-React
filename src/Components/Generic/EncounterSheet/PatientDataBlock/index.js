@@ -18,7 +18,9 @@ import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalize
 import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
 import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
 import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
+import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 import Grid from '@material-ui/core/Grid';
+import { useHistory } from 'react-router-dom';
 
 const PatientDataBlock = ({
   encounter,
@@ -27,6 +29,7 @@ const PatientDataBlock = ({
   formatDate,
 }) => {
   const { t } = useTranslation();
+  const history = useHistory();
   const [selectedServicesType, setSelectedServicesType] = useState([]);
 
   // Files scan - vars - globals
@@ -47,7 +50,7 @@ const PatientDataBlock = ({
   const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState(
     '',
   );
-  const [admissionFormButton, setAdminissionForm] = useState({})
+  const [admissionFormButton, setAdmissionForm] = useState({})
 
   useEffect(() => {
     if (encounter) {
@@ -140,11 +143,11 @@ const PatientDataBlock = ({
         }
       })();
     }
-    setAdminissionForm(    {
+    setAdmissionForm(    {
       label: t('To admission form'),
       variant: 'text',
       color: 'primary',
-      //onClickHandler: patientAdmissionAction, //user function
+      onClickHandler: () => gotToPatientAdmission(encounter, patient, history), //user function
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
