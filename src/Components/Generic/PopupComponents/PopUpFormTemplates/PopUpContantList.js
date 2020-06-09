@@ -36,7 +36,15 @@ import Grid from '@material-ui/core/Grid';
 
 
 
-const PopUpContantList = ({templates,languageDirection,setContent,checkAll, setCheckAll})=>{
+const PopUpContantList = ({templates,
+                            languageDirection,
+                            setContent,
+                            handleTransferOfContentList,
+                            checkAll,
+                            setCheckAll,
+                            checked,
+                            setChecked,
+                            cleanSelection})=>{
   useEffect(() => {
     if(searchThis === "")
     if (templates && templates.length >0) setSearchInsideTemplates(templates);
@@ -52,13 +60,10 @@ const PopUpContantList = ({templates,languageDirection,setContent,checkAll, setC
     });
   }
   const handleSelectAllToggle = (e)=> {
-
-
     setCheckAll(e.target.checked)
     let context="";
     if(!e.target.checked){
       setChecked([]);
-      setContent("");
       return;
     }
 
@@ -122,30 +127,30 @@ const PopUpContantList = ({templates,languageDirection,setContent,checkAll, setC
 
   const onChangeHandler = (e) => {
     let target = e.target;
+    setSeachThis(target.value);
     setCheckAll(false);
     if(target.value.length > 2) {
-      let intersectionWithTemplates = intersection(templates, target.value.trim())
-      setChecked([]);
-      setSeachThis(target.value);
+      let intersectionWithTemplates = intersection(templates, target.value.trim());
+      let newChecked = [...checked];
+      let checkedIntersaction = intersection(newChecked, target.value.trim());
+      setChecked(checkedIntersaction);
       setSearchInsideTemplates(intersectionWithTemplates);
-
     }
     else{
-      setSeachThis("");
-      setSearchInsideTemplates(templates);
 
+      setSearchInsideTemplates(templates);
     }
   }
 
   const onClearHandler = () => {
     setSeachThis("");
-    setSearchInsideTemplates(intersection(checked,""));
+    setChecked([]);
+    setSearchInsideTemplates([]);
   }
   const { t } = useTranslation();
-  const [checked, setChecked] = React.useState([]);
+
   const [searchInsideTemplates, setSearchInsideTemplates] = React.useState(templates);
   const [searchThis, setSeachThis] = React.useState("");
-
 
 
   return(
@@ -153,13 +158,12 @@ const PopUpContantList = ({templates,languageDirection,setContent,checkAll, setC
       <CustomizedPaperHeader  languageDirection={languageDirection}>{t("Add template")}</CustomizedPaperHeader>
     <CustomizedPaper>
       <SearchTemplates>
-        <input onChange={onChangeHandler} placeholder={t('Search template')}/>
-        <Icon  onClick={onClearHandler} alt='search icon' img={X}/>
+        <input onChange={onChangeHandler} value={searchThis} placeholder={t('Search template')}/>
+        <img  onClick={onClearHandler} alt='search icon' src={X}/>
       </SearchTemplates>
       {templates?
-        <StyledCheckAll dir={languageDirection}   >
+        <StyledCheckAll dir={languageDirection}  onClick={handleSelectAllToggle}>
           <Checkbox
-            onChange={handleSelectAllToggle}
             checked={checkAll}
             tabIndex={-1}
             disableRipple
@@ -195,7 +199,7 @@ const PopUpContantList = ({templates,languageDirection,setContent,checkAll, setC
 
     </CustomizedPaper>
       <CustomizedPaperFooter>
-        <Grid container spacing={6}>
+        <Grid container spacing={6} onClick={cleanSelection}>
           <StyledGridChoosen item xs={6}>{`${checked.length} ${t("Selected")}`}</StyledGridChoosen>
           <StyledGridClean item xs={6}><Icon img={trash}/>{t("Clean selection")}</StyledGridClean>
         </Grid>

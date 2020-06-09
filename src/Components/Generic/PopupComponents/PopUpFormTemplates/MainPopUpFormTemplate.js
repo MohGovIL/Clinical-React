@@ -13,17 +13,27 @@ import Icon from 'Assets/Elements/Header/Search/Icon';
 
 const MainPopUpFormTemplate = ({ templates,languageDirection }) => {
   const { t } = useTranslation();
-  const handleTransferOfContent = () =>{
+  const handleTransferOfContent = ()=>{
     setContext(context+content);
+    setContent("");
+    cleanSelection();
+  };
+
+  const cleanSelection = ()=>{
+    setChecked([]);
     setCheckAll(false);
+
   }
+
   const [content, setContent] = React.useState("");
   const [context, setContext] = React.useState("");
   const [checkAll, setCheckAll] = React.useState(false);
+  const [checked, setChecked] = React.useState([]);
+
   return (
-    <Grid container spacing={3}>
+    <Grid dir={languageDirection} container spacing={3}>
       <Grid item xs={6}>
-         <PopUpContantList checkAll={checkAll} setCheckAll={setCheckAll} setContent={setContent} templates={templates}/>
+         <PopUpContantList cleanSelection={cleanSelection} checkAll={checkAll} setCheckAll={setCheckAll} checked={checked} setChecked={setChecked} setContent={setContent} templates={templates}/>
       </Grid>
       <StyledRoundButton  variant={'contained'}
                           color={'primary'}
