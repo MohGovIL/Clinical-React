@@ -12,3 +12,9 @@ export const convertParamsToUrl = (obj) => {
   }
   return str;
 };
+
+export const arrayRemove = (arr, value) => {
+  return arr.filter(function(ele){
+    return ele != value;
+  });
+}

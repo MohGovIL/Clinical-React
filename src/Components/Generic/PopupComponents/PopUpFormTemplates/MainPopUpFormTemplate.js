@@ -1,27 +1,38 @@
 import Grid from '@material-ui/core/Grid';
 
-import React, { useEffect } from 'react';
+import React  from 'react';
 import { connect } from 'react-redux';
-import { CustomizedPaper, CustomizedPaperFooter, CustomizedPaperHeader } from 'Components/Generic/PopupComponents/PopUpFormTemplates/Style';
+import { StyledRoundButton, CustomizedPaperHeader } from 'Components/Generic/PopupComponents/PopUpFormTemplates/Style';
 import { useTranslation } from 'react-i18next';
 import PopUpContantList from './PopUpContantList';
+import PopUpContext from './PopUpContext';
+import l from 'Assets/Images/l.png';
+import Icon from 'Assets/Elements/Header/Search/Icon';
+
+
 
 const MainPopUpFormTemplate = ({ templates,languageDirection }) => {
   const { t } = useTranslation();
+  const handleTransferOfContent = () =>{
+    setContext(context+content);
+    setCheckAll(false);
+  }
+  const [content, setContent] = React.useState("");
+  const [context, setContext] = React.useState("");
+  const [checkAll, setCheckAll] = React.useState(false);
   return (
     <Grid container spacing={3}>
       <Grid item xs={6}>
-        <CustomizedPaperHeader languageDirection={languageDirection}>{t("Add template")}</CustomizedPaperHeader>
-        <PopUpContantList templates={templates}/>
+         <PopUpContantList checkAll={checkAll} setCheckAll={setCheckAll} setContent={setContent} templates={templates}/>
       </Grid>
+      <StyledRoundButton  variant={'contained'}
+                          color={'primary'}
+                          fontWeight={'bold'}
+                          onClick={handleTransferOfContent}>
+        <Icon alt='transfer content icon' img={l}/>
+      </StyledRoundButton>
       <Grid item xs={6}>
-        <CustomizedPaperHeader>{t("Create context for examination details")}</CustomizedPaperHeader>
-        <CustomizedPaper>xs=6
-
-        </CustomizedPaper>
-        <CustomizedPaperFooter>
-
-        </CustomizedPaperFooter>
+         <PopUpContext context={context} setContext={setContext}></PopUpContext>
       </Grid>
     </Grid>
   );
