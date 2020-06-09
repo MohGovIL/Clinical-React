@@ -327,6 +327,9 @@ const PatientDetailsBlock = ({
         }
         const promises = await Promise.all(APIsArray);
         const encounter = { ...encounterData };
+        if (configuration.clinikal_pa_arrival_way) {
+          encounter['extensionArrivalWay'] = arrivalWay;
+        }
         if (isEscorted) {
           if (!encounter.relatedPerson) {
             const NewRelatedPerson = normalizeFhirRelatedPerson(
@@ -516,7 +519,9 @@ const PatientDetailsBlock = ({
   // Escorted Information - vars
   const [isEscorted, setIsEscorted] = useState(false);
   const [relatedPerson, setRelatedPerson] = useState({});
-  const [arrivalWay, setArrivalWay] = useState('');
+  const [arrivalWay, setArrivalWay] = useState(
+    encounterData.extensionArrivalWay || 'Independently',
+  );
   // ArrivalWay -functions
   const arrivalWayHandler = (event, way) => {
     setArrivalWay(way);
