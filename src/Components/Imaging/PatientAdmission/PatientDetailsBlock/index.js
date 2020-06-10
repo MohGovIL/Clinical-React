@@ -205,137 +205,254 @@ const PatientDetailsBlock = ({
             );
           }
         }
-        if (configuration.clinikal_pa_commitment_form) {
-          if (Object.values(questionnaireResponse).length) {
-            APIsArray.push(
-              FHIR('QuestionnaireResponse', 'doWork', {
-                functionName: 'patchQuestionnaireResponse',
-                questionnaireResponseId: questionnaireResponse.id,
-                questionnaireResponseParams: {
-                  item: [
-                    {
-                      linkId: '1',
-                      text: 'Commitment number',
-                      answer: [
-                        {
-                          valueInteger:
-                            data.commitmentAndPaymentReferenceForPaymentCommitment,
-                        },
-                      ],
-                    },
-                    {
-                      linkId: '2',
-                      text: 'Commitment date',
-                      answer: [
-                        {
-                          valueDate: data.commitmentAndPaymentCommitmentDate,
-                        },
-                      ],
-                    },
-                    {
-                      linkId: '3',
-                      text: 'Commitment expiration date',
-                      answer: [
-                        {
-                          valueDate:
-                            data.commitmentAndPaymentCommitmentValidity,
-                        },
-                      ],
-                    },
-                    {
-                      linkId: '4',
-                      text: 'Signing doctor',
-                      answer: [
-                        {
-                          valueString: data.commitmentAndPaymentDoctorsName,
-                        },
-                      ],
-                    },
-                    {
-                      linkId: '5',
-                      text: 'doctor license number',
-                      answer: [
-                        {
-                          valueInteger: data.commitmentAndPaymentDoctorsLicense,
-                        },
-                      ],
-                    },
-                  ],
+        let item = [];
+        if (configuration.clinikal_pa_commitment_form === '1') {
+          item = [
+            {
+              linkId: '1',
+              text: 'Commitment number',
+              answer: [
+                {
+                  valueInteger:
+                    data.commitmentAndPaymentReferenceForPaymentCommitment,
                 },
-              }),
-            );
-          } else {
-            APIsArray.push(
-              FHIR('QuestionnaireResponse', 'doWork', {
-                functionName: 'createQuestionnaireResponse',
-                functionParams: {
-                  questionnaireResponse: {
-                    questionnaire: questionnaireId,
-                    status: 'completed',
-                    patient: patientData.id,
-                    encounter: encounterData.id,
-                    authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-                    source: patientData.id,
-                    item: [
-                      {
-                        linkId: '1',
-                        text: 'Commitment number',
-                        answer: [
-                          {
-                            valueInteger:
-                              data.commitmentAndPaymentReferenceForPaymentCommitment,
-                          },
-                        ],
-                      },
-                      {
-                        linkId: '2',
-                        text: 'Commitment date',
-                        answer: [
-                          {
-                            valueDate: data.commitmentAndPaymentCommitmentDate,
-                          },
-                        ],
-                      },
-                      {
-                        linkId: '3',
-                        text: 'Commitment expiration date',
-                        answer: [
-                          {
-                            valueDate:
-                              data.commitmentAndPaymentCommitmentValidity,
-                          },
-                        ],
-                      },
-                      {
-                        linkId: '4',
-                        text: 'Signing doctor',
-                        answer: [
-                          {
-                            valueString: data.commitmentAndPaymentDoctorsName,
-                          },
-                        ],
-                      },
-                      {
-                        linkId: '5',
-                        text: 'doctor license number',
-                        answer: [
-                          {
-                            valueInteger:
-                              data.commitmentAndPaymentDoctorsLicense,
-                          },
-                        ],
-                      },
-                    ],
-                  },
+              ],
+            },
+            {
+              linkId: '2',
+              text: 'Commitment date',
+              answer: [
+                {
+                  valueDate: data.commitmentAndPaymentCommitmentDate,
                 },
-              }),
-            );
-          }
+              ],
+            },
+            {
+              linkId: '3',
+              text: 'Commitment expiration date',
+              answer: [
+                {
+                  valueDate: data.commitmentAndPaymentCommitmentValidity,
+                },
+              ],
+            },
+            {
+              linkId: '4',
+              text: 'Signing doctor',
+              answer: [
+                {
+                  valueString: data.commitmentAndPaymentDoctorsName,
+                },
+              ],
+            },
+            {
+              linkId: '5',
+              text: 'doctor license number',
+              answer: [
+                {
+                  valueInteger: data.commitmentAndPaymentDoctorsLicense,
+                },
+              ],
+            },
+          ];
+        } else {
+          item = [
+            {
+              linkId: '6',
+              text: 'Payment amount',
+              answer: [
+                {
+                  valueString: paymentAmount,
+                },
+              ],
+            },
+            {
+              linkId: '7',
+              text: 'Payment method',
+              answer: [
+                {
+                  valueString: paymentMethod,
+                },
+              ],
+            },
+            {
+              linkId: '8',
+              text: 'Receipt number',
+              answer: [
+                {
+                  valueString: data.receiptNumber,
+                },
+              ],
+            },
+          ];
+        }
+        if (Object.values(questionnaireResponse).length) {
+          APIsArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'patchQuestionnaireResponse',
+              questionnaireResponseId: questionnaireResponse.id,
+              questionnaireResponseParams: {
+                item,
+                // item: [
+                //   {
+                //     linkId: '1',
+                //     text: 'Commitment number',
+                //     answer: [
+                //       {
+                //         valueInteger:
+                //           data.commitmentAndPaymentReferenceForPaymentCommitment,
+                //       },
+                //     ],
+                //   },
+                //   {
+                //     linkId: '2',
+                //     text: 'Commitment date',
+                //     answer: [
+                //       {
+                //         valueDate: data.commitmentAndPaymentCommitmentDate,
+                //       },
+                //     ],
+                //   },
+                //   {
+                //     linkId: '3',
+                //     text: 'Commitment expiration date',
+                //     answer: [
+                //       {
+                //         valueDate: data.commitmentAndPaymentCommitmentValidity,
+                //       },
+                //     ],
+                //   },
+                //   {
+                //     linkId: '4',
+                //     text: 'Signing doctor',
+                //     answer: [
+                //       {
+                //         valueString: data.commitmentAndPaymentDoctorsName,
+                //       },
+                //     ],
+                //   },
+                //   {
+                //     linkId: '5',
+                //     text: 'doctor license number',
+                //     answer: [
+                //       {
+                //         valueInteger: data.commitmentAndPaymentDoctorsLicense,
+                //       },
+                //     ],
+                //   },
+                //   {
+                //     linkId: '6',
+                //     text: 'Payment amount',
+                //     answer: [
+                //       {
+                //         valueString: paymentAmount,
+                //       },
+                //     ],
+                //   },
+                //   {
+                //     linkId: '7',
+                //     text: 'Payment method',
+                //     answer: [
+                //       {
+                //         valueString: paymentMethod,
+                //       },
+                //     ],
+                //   },
+                //   {
+                //     linkId: '8',
+                //     text: 'Receipt number',
+                //     answer: [
+                //       {
+                //         valueString: data.receiptNumber,
+                //       },
+                //     ],
+                //   },
+                // ],
+              },
+            }),
+          );
+        } else {
+          APIsArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'createQuestionnaireResponse',
+              functionParams: {
+                questionnaireResponse: {
+                  questionnaire: questionnaireId,
+                  status: 'completed',
+                  patient: patientData.id,
+                  encounter: encounterData.id,
+                  authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                  source: patientData.id,
+                  item,
+                  // item: [
+                  //   {
+                  //     linkId: '1',
+                  //     text: 'Commitment number',
+                  //     answer: [
+                  //       {
+                  //         valueInteger:
+                  //           data.commitmentAndPaymentReferenceForPaymentCommitment,
+                  //       },
+                  //     ],
+                  //   },
+                  //   {
+                  //     linkId: '2',
+                  //     text: 'Commitment date',
+                  //     answer: [
+                  //       {
+                  //         valueDate: data.commitmentAndPaymentCommitmentDate,
+                  //       },
+                  //     ],
+                  //   },
+                  //   {
+                  //     linkId: '3',
+                  //     text: 'Commitment expiration date',
+                  //     answer: [
+                  //       {
+                  //         valueDate:
+                  //           data.commitmentAndPaymentCommitmentValidity,
+                  //       },
+                  //     ],
+                  //   },
+                  //   {
+                  //     linkId: '4',
+                  //     text: 'Signing doctor',
+                  //     answer: [
+                  //       {
+                  //         valueString: data.commitmentAndPaymentDoctorsName,
+                  //       },
+                  //     ],
+                  //   },
+                  //   {
+                  //     linkId: '5',
+                  //     text: 'doctor license number',
+                  //     answer: [
+                  //       {
+                  //         valueInteger: data.commitmentAndPaymentDoctorsLicense,
+                  //       },
+                  //     ],
+                  //   },
+                  //   {},
+                  //   {},
+                  //   {},
+                  // ],
+                },
+              },
+            }),
+          );
         }
         const promises = await Promise.all(APIsArray);
         const encounter = { ...encounterData };
+        encounter.examinationCode = selectedServicesType.map((option) => {
+          return option.reasonCode.code;
+        });
+        encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
         if (configuration.clinikal_pa_arrival_way) {
           encounter['extensionArrivalWay'] = arrivalWay;
+        }
+        if (data.reasonForReferralDetails) {
+          encounter['extensionReasonCodeDetails'] =
+            data.reasonForReferralDetails;
         }
         if (isEscorted) {
           if (!encounter.relatedPerson) {
@@ -351,15 +468,6 @@ const PatientDetailsBlock = ({
           encounter['priority'] = 2;
         } else {
           encounter['priority'] = 1;
-        }
-        if (selectedServicesType.length) {
-          encounter.examinationCode = selectedServicesType.map((option) => {
-            return option.reasonCode.code;
-          });
-          encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
-        } else {
-          encounter.serviceType = '';
-          encounter.examinationCode = '';
         }
         if (encounter.status === 'planned') {
           encounter.status = configuration.clinikal_pa_next_enc_status;
@@ -422,13 +530,8 @@ const PatientDetailsBlock = ({
     } catch (error) {
       console.log(error);
     }
-
-    // 0. Run isRequired validation - done but didn't check
-    // 1. Check if the encounter has ref to any appointment if there is any ref change their status to 'arrived'
-    // 2. Change the encounter status to arrived ONLY if the current status of the encounter is 'planned'
-    // 3. Save the commitment data
-    // 4. Go back to PatientTracking route
   };
+
   const requiredFields = {
     selectTest: {
       name: 'selectTest',
@@ -499,11 +602,24 @@ const PatientDetailsBlock = ({
       },
     },
   };
+
   const isRequiredValidation = (data) => {
     let clean = true;
     for (const fieldKey in requiredFields) {
       if (requiredFields.hasOwnProperty(fieldKey)) {
-        if (!requiredFields[fieldKey].required(data)) {
+        let answer;
+        if (configuration.clinikal_pa_commitment_form === '1') {
+          answer = !requiredFields[fieldKey].required(data);
+        } else {
+          if (
+            !requiredFields[fieldKey].name
+              .toLowerCase()
+              .startsWith('commitment')
+          ) {
+            answer = !requiredFields[fieldKey].required(data);
+          }
+        }
+        if (answer) {
           setRequiredErrors((prevState) => {
             const cloneState = { ...prevState };
             cloneState[requiredFields[fieldKey].name] = t('Value is required');
@@ -785,7 +901,9 @@ const PatientDetailsBlock = ({
   const [
     commitmentAndPaymentTabValue,
     setCommitmentAndPaymentTabValue,
-  ] = useState(configuration.clinikal_pa_commitment_form ? 'HMO' : 'Private');
+  ] = useState(
+    configuration.clinikal_pa_commitment_form === '1' ? 'HMO' : 'Private',
+  );
 
   const [paymentAmount, setPaymentAmount] = useState('0');
 
@@ -1708,11 +1826,16 @@ const PatientDetailsBlock = ({
                 />
               ))}
             </Grid>
-            <CustomizedTextField
-              width={'70%'}
+            <Controller
               name='reasonForReferralDetails'
-              inputRef={register}
-              label={t('Reason for referral details')}
+              control={control}
+              as={
+                <CustomizedTextField
+                  width={'70%'}
+                  // inputRef={register}
+                  label={t('Reason for referral details')}
+                />
+              }
             />
           </StyledFormGroup>
           {/* Commitment and payment */}
@@ -1728,7 +1851,9 @@ const PatientDetailsBlock = ({
               color={'#000b40'}
               label={t(
                 `Please fill in the payer details for the current ${
-                  configuration.clinikal_pa_commitment_form ? 'test' : 'visit'
+                  configuration.clinikal_pa_commitment_form === '1'
+                    ? 'test'
+                    : 'visit'
                 }`,
               )}
             />
@@ -1741,7 +1866,7 @@ const PatientDetailsBlock = ({
               textColor='primary'
               variant='standard'
               aria-label='full width tabs example'>
-              {configuration.clinikal_pa_commitment_form ? (
+              {configuration.clinikal_pa_commitment_form === '1' ? (
                 <Tab label={t('HMO')} value={'HMO'} />
               ) : (
                 <Tab label={t('Private')} value={'Private'} />
@@ -1781,11 +1906,16 @@ const PatientDetailsBlock = ({
                   </StyledToggleButton>
                 </StyledToggleButtonGroup>
               </Grid>
-              <CustomizedTextField
-                width={'70%'}
-                inputRef={register}
-                name='Receipt number'
-                label={t('Receipt number')}
+              <Controller
+                control={control}
+                name='receiptNumber'
+                as={
+                  <CustomizedTextField
+                    width={'70%'}
+                    // inputRef={register}
+                    label={t('Receipt number')}
+                  />
+                }
               />
             </TabPanel>
             <TabPanel value='HMO' selectedValue={commitmentAndPaymentTabValue}>
