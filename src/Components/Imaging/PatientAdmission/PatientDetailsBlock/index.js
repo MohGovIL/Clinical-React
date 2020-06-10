@@ -362,7 +362,7 @@ const PatientDetailsBlock = ({
           encounter.examinationCode = '';
         }
         if (encounter.status === 'planned') {
-          encounter.status = 'arrived';
+          encounter.status = configuration.clinikal_pa_next_enc_status;
         }
         await FHIR('Encounter', 'doWork', {
           functionName: 'updateEncounter',
