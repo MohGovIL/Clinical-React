@@ -254,7 +254,7 @@ const Search = ({ languageDirection }) => {
         </ClickAwayListener>
       ) : null}
 
-      <StyledSearch>
+      <StyledSearch languageDirection={languageDirection}>
         <SearchInput onChange={onChangeHandler} searchInput={input} />
         <Icon alt='search icon' img={search} />
       </StyledSearch>

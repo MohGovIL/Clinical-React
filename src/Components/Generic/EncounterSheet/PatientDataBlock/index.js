@@ -3,20 +3,22 @@ import {
   StyledChipWithImage,
   StyledPatientDataBlock,
   StyledTextInput,
+  StyledEncounterDocLabel,
+  StyledReasonLabel,
+  StyledAdmissionFormButton,
+  StyledAvatarIdBlock
 } from './Style';
 import AvatarIdBlock from 'Assets/Elements/AvatarIdBlock';
+import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useTranslation } from 'react-i18next';
 import Typography from '@material-ui/core/Typography';
-import FormLabel from '@material-ui/core/FormLabel';
-import ChipWithImage from '../../../../Assets/Elements/StyledChip';
-import { FHIR } from '../../../../Utils/Services/FHIR';
-import normalizeFhirDocumentReference from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
-import { combineBase_64 } from '../../../../Utils/Helpers/combineBase_64';
-import { calculateFileSize } from '../../../../Utils/Helpers/calculateFileSize';
-import { decodeBase_64IntoBlob } from '../../../../Utils/Helpers/decodeBase_64IntoBlob';
+import ChipWithImage from 'Assets/Elements/StyledChip';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
+import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
+import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
+import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
 import Grid from '@material-ui/core/Grid';
-import { StyledFormGroup } from '../../../Imaging/PatientAdmission/PatientDetailsBlock/Style';
-import { splitBase_64 } from '../../../../Utils/Helpers/splitBase_64';
 
 const PatientDataBlock = ({
   encounter,
@@ -29,6 +31,7 @@ const PatientDataBlock = ({
 
   // Files scan - vars - globals
   const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
+  const labelFileButtonSpace = 7;
   const referralRef = React.useRef();
   const commitmentRef = React.useRef();
   const additionalDocumentRef = React.useRef();
@@ -44,6 +47,8 @@ const PatientDataBlock = ({
   const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState(
     '',
   );
+  const [admissionFormButton, setAdminissionForm] = useState({})
+
   useEffect(() => {
     if (encounter) {
       if (encounter.examination && encounter.examination.length) {
@@ -74,6 +79,7 @@ const PatientDataBlock = ({
           {
             functionName: 'getDocumentReference',
             searchParams: {
+              _summary: true,
               encounter: encounter.id,
               patient: patient.id,
             },
@@ -134,6 +140,13 @@ const PatientDataBlock = ({
         }
       })();
     }
+    setAdminissionForm(    {
+      label: t('To admission form'),
+      variant: 'text',
+      color: 'primary',
+      //onClickHandler: patientAdmissionAction, //user function
+    });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encounter, patient]);
 
@@ -159,15 +172,17 @@ const PatientDataBlock = ({
 
   return (
     <StyledPatientDataBlock>
+      <StyledAvatarIdBlock>
       <AvatarIdBlock
         edit_mode={0}
         showEditButton={false}
         priority={encounter.priority}
         patientData={patient}
         showDivider
-      />
+      /></StyledAvatarIdBlock>
+      {/*</StyledPatientDataBlock>*/}
       <StyledTextInput>
-        <FormLabel>{t('Reason for referral')}</FormLabel>
+        <StyledReasonLabel>{t('Reason for referral')}</StyledReasonLabel>
         <Typography variant='subtitle1' gutterBottom>
           {selectedServicesType.map((selected, selectedIndex) => (
             <span key={selectedIndex}>
@@ -181,19 +196,19 @@ const PatientDataBlock = ({
       </StyledTextInput>
 
       <StyledTextInput>
-        <FormLabel>{t('Encounter documents')}</FormLabel>
-        <Grid container={true} style={{ marginBottom: '34px' }}>
-          <Grid item xs={3}>
-            <label
-              style={{
-                color: `${'#000b40'}`,
-              }}
-              htmlFor='Referral'>
-              {`${t('Referral')}`}
-            </label>
-          </Grid>
-          <Grid item xs={4}>
-            {Object.values(referralFile).length > 0 && (
+        <StyledEncounterDocLabel>{t('Encounter documents')}</StyledEncounterDocLabel>
+        {Object.values(referralFile).length > 0 && (
+          <Grid container={true} spacing={labelFileButtonSpace} style={{ marginBottom: '34px' }}>
+            <Grid item xs={3}>
+              <label
+                style={{
+                  color: `${'#000b40'}`,
+                }}
+                htmlFor='Referral'>
+                {`${t('Referral')}`}
+              </label>
+            </Grid>
+            <Grid item xs={4}>
               <StyledChipWithImage>
                 <ChipWithImage
                   htmlFor='Referral'
@@ -202,21 +217,21 @@ const PatientDataBlock = ({
                   onClick={(event) => onClickFileHandler(event, referralRef)}
                 />
               </StyledChipWithImage>
-            )}
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid container={true} style={{ marginBottom: '34px' }}>
-          <Grid item xs={3}>
-            <label
-              style={{
-                color: `${'#000b40'}`,
-              }}
-              htmlFor='Commitment'>
-              {`${t('Commitment')}`}
-            </label>
-          </Grid>
-          <Grid item xs={4}>
-            {Object.values(commitmentFile).length > 0 && (
+        )}
+        {Object.values(commitmentFile).length > 0 && (
+          <Grid container={true} spacing={labelFileButtonSpace} style={{ marginBottom: '34px' }}>
+            <Grid item xs={3}>
+              <label
+                style={{
+                  color: `${'#000b40'}`,
+                }}
+                htmlFor='Commitment'>
+                {`${t('Commitment')}`}
+              </label>
+            </Grid>
+            <Grid item xs={4}>
               <StyledChipWithImage>
                 <ChipWithImage
                   htmlFor='Commitment'
@@ -225,22 +240,22 @@ const PatientDataBlock = ({
                   onClick={(event) => onClickFileHandler(event, commitmentRef)}
                 />
               </StyledChipWithImage>
-            )}
+            </Grid>
           </Grid>
-        </Grid>
-
-        <Grid container={true} style={{ marginBottom: '34px' }}>
-          <Grid item xs={3}>
-            <label
-              style={{
-                color: `${'#000b40'}`,
-              }}
-              htmlFor='AdditionalDocument'>
-              {`${t('Additional document')}`}
-            </label>
-          </Grid>
-          <Grid item xs={4}>
-            {Object.values(additionalDocumentFile).length > 0 && (
+        )}
+        {Object.values(additionalDocumentFile).length > 0 && (
+          <Grid container={true} spacing={labelFileButtonSpace} style={{ marginBottom: '34px' }}>
+            <Grid item xs={3}>
+              <label
+                style={{
+                  color: `${'#000b40'}`,
+                  whiteSpace: `${'nowrap'}`,
+                }}
+                htmlFor='AdditionalDocument'>
+                {`${t('Additional document')}`}
+              </label>
+            </Grid>
+            <Grid item xs={4}>
               <StyledChipWithImage>
                 <ChipWithImage
                   htmlFor='AdditionalDocument'
@@ -251,10 +266,14 @@ const PatientDataBlock = ({
                   }
                 />
               </StyledChipWithImage>
-            )}
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </StyledTextInput>
+
+      <StyledAdmissionFormButton>
+        <CustomizedTableButton {...admissionFormButton} />
+      </StyledAdmissionFormButton>
     </StyledPatientDataBlock>
   );
 };
