@@ -2155,7 +2155,7 @@ const PatientDetailsBlock = ({
                   {t('Save & Close')}
                 </StyledButton>
               </Grid>
-              <Grid item lg={3} sm={4}>
+              {/* <Grid item lg={3} sm={4}>
                 <StyledButton
                   color='primary'
                   variant='contained'
@@ -2166,7 +2166,7 @@ const PatientDetailsBlock = ({
                   }}>
                   {t('Medical questionnaire')}
                 </StyledButton>
-              </Grid>
+              </Grid> */}
             </Grid>
           </StyledFormGroup>
         </StyledForm>
