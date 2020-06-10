@@ -4,6 +4,7 @@
  * @returns {object}
  */
 const normalizeFhirRelatedPerson = (relatedPerson) => {
+  let name = '';
   let active = '';
   let patient = '';
   let email = '';
@@ -14,6 +15,12 @@ const normalizeFhirRelatedPerson = (relatedPerson) => {
   let identifier = '';
   let id = '';
   let gender = '';
+
+  if (relatedPerson.name && relatedPerson.name.length) {
+    if (relatedPerson.name[0].text) {
+      name = relatedPerson.name[0].text;
+    }
+  }
 
   if (
     relatedPerson.patient &&
@@ -66,6 +73,7 @@ const normalizeFhirRelatedPerson = (relatedPerson) => {
     id: relatedPerson.id || id,
     active: relatedPerson.active || active,
     gender: relatedPerson.gender || gender,
+    name,
     patient,
     email,
     mobilePhone,

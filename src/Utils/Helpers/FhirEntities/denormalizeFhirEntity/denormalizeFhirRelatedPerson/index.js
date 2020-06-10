@@ -10,6 +10,13 @@ const denormalizeRelatedPerson = (relatedPerson) => {
   for (const relatedPersonKey in relatedPerson) {
     if (relatedPerson.hasOwnProperty(relatedPersonKey)) {
       switch (relatedPersonKey) {
+        case 'name':
+          denormalizedRelatedPerson['name'] = [
+            {
+              text: relatedPerson[relatedPersonKey],
+            },
+          ];
+          break;
         case 'active':
           denormalizedRelatedPerson['active'] = relatedPerson[relatedPersonKey];
           break;

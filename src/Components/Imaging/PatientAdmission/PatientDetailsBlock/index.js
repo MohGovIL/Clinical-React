@@ -108,35 +108,36 @@ const PatientDetailsBlock = ({
       if (clear) {
         const APIsArray = [];
         //Updating patient
-        let patientPatchParams = {};
+        const patient = { ...patientData };
         if (contactInformationTabValue === 0) {
           if (data.addressCity) {
-            patientPatchParams['city'] = addressCity.code;
+            patient['city'] = addressCity.code;
           }
           if (data.addressStreet.trim()) {
-            patientPatchParams['streetName'] = addressStreet.code;
+            patient['streetName'] = addressStreet.code;
           }
           if (data.addressStreetNumber.trim()) {
-            patientPatchParams['streetNumber'] = data.addressStreetNumber;
+            patient['streetNumber'] = data.addressStreetNumber;
           }
           if (data.addressPostalCode) {
-            patientPatchParams['postalCode'] = data.addressPostalCode;
+            patient['postalCode'] = data.addressPostalCode;
           }
         } else {
           if (data.POBoxCity) {
-            patientPatchParams['city'] = POBoxCity.code;
+            patient['city'] = POBoxCity.code;
           }
           if (data.POBox) {
-            patientPatchParams['POBox'] = data.POBox;
+            patient['POBox'] = data.POBox;
           }
           if (data.POBoxPostalCode) {
-            patientPatchParams['postalCode'] = data.POBoxPostalCode;
+            patient['postalCode'] = data.POBoxPostalCode;
           }
         }
         APIsArray.push(
           FHIR('Patient', 'doWork', {
             functionName: 'updatePatient',
-            functionParams: { patientPatchParams, patientId: patientData.id },
+            patient: patient,
+            patientId: patient.id,
           }),
         );
         //Updating/Creating relatedPerson
@@ -159,7 +160,7 @@ const PatientDetailsBlock = ({
           let relatedPersonParams = {};
           if (encounterData.relatedPerson) {
             if (
-              data.escortName !== relatedPerson.name &&
+              data.escortName !== relatedPerson.name ||
               data.escortMobilePhone !== relatedPerson.mobilePhone
             ) {
               relatedPersonParams['name'] = data.escortName;
@@ -579,15 +580,24 @@ const PatientDetailsBlock = ({
       try {
         const cities = await getCities();
         if (active) {
-          setCities(
-            Object.keys(cities.data).map((cityKey) => {
-              let cityObj = {};
-              cityObj.code = cities.data[cityKey];
-              cityObj.name = t(cities.data[cityKey]);
+          if (Object.keys(cities.data).length) {
+            setCities(
+              Object.keys(cities.data).map((cityKey) => {
+                let cityObj = {};
+                cityObj.code = cities.data[cityKey];
+                cityObj.name = t(cities.data[cityKey]);
 
-              return cityObj;
-            }),
-          );
+                return cityObj;
+              }),
+            );
+          } else {
+            const emptyResultsObj = {
+              code: 'no_result',
+              name: t('No Results'),
+            };
+            const emptyResults = [emptyResultsObj];
+            setCities(emptyResults);
+          }
         }
       } catch (err) {
         console.log(err);
@@ -1159,6 +1169,14 @@ const PatientDetailsBlock = ({
   const handlePopUpClose = () => {
     setIsPopUpOpen(false);
   };
+  const getSelectedOption = (option, item) => {
+    if (
+      option.reasonCode.code === item.reasonCode.code &&
+      option.serviceType.code === item.serviceType.code
+    ) {
+      return true;
+    }
+  };
   return (
     <React.Fragment>
       <CustomizedPopup
@@ -1295,6 +1313,7 @@ const PatientDetailsBlock = ({
                   }}
                   loading={loadingCities}
                   options={cities}
+                  getOptionDisabled={(option) => option.code === 'no_result'}
                   value={addressCity}
                   onChange={(event, newValue) => {
                     setAddressCity(newValue);
@@ -1560,6 +1579,7 @@ const PatientDetailsBlock = ({
               onChange={selectExaminationOnChangeHandler}
               disableCloseOnSelect
               renderTags={() => null}
+              getOptionSelected={getSelectedOption}
               renderOption={(option, state) => (
                 <Grid container justify='flex-end' alignItems='center'>
                   <Grid item xs={3}>
