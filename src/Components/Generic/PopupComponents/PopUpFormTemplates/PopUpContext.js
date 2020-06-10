@@ -1,33 +1,61 @@
-import { CustomizedPaper, CustomizedPaperFooter, CustomizedPaperHeader, StyledContextTextArea } from './Style';
+import {
+  StyledSaveButton,
+  CustomizedPaper,
+  CustomizedPaperFooter,
+  CustomizedPaperHeader,
+  StyledContextTextArea,
+  StyledRoundButton,
+} from './Style';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
-import Grid from '@material-ui/core/Grid';
 
-const PopUpContext = ({setContext,context})=>{
+const PopUpContext = ({
+  setContext,
+  context,
+  setTemplatesTextReturned,
+  handleCloseOperation,
+}) => {
   const { t } = useTranslation();
   const textAreaRef = useRef(null);
-  useEffect(()=>{
+  useEffect(() => {
     setContext(textAreaRef.current.value);
   });
-  const handleChange = ()=>{
+  const handleChange = () => {
     setContext(textAreaRef.current.value);
-  }
+  };
+  const handleSaveAndClose = () => {
+    setTemplatesTextReturned(context).then(() => {
+      handleCloseOperation();
+    });
+  };
   return (
     <React.Fragment>
-      <CustomizedPaperHeader>{t("Create context for examination details")}</CustomizedPaperHeader>
-         <CustomizedPaper>
+      <CustomizedPaperHeader>
+        {t('Create context for examination details')}
+      </CustomizedPaperHeader>
+      <CustomizedPaper>
+        <StyledContextTextArea
+          rowsMax={40}
+          value={context}
+          onChange={handleChange}
+          ref={textAreaRef}
+        />
+      </CustomizedPaper>
 
-            <StyledContextTextArea  rowsMax={40}
-                                   value={context} onChange={handleChange} ref={textAreaRef}/>
-
-          </CustomizedPaper>
-
-      <CustomizedPaperFooter> </CustomizedPaperFooter>
+      <CustomizedPaperFooter>
+        <StyledSaveButton
+          variant={'contained'}
+          color={'primary'}
+          fontWeight={'bold'}
+          onClick={handleSaveAndClose}>
+          {t('Save and Close')}
+        </StyledSaveButton>
+      </CustomizedPaperFooter>
     </React.Fragment>
-  )
-}
+  );
+};
 const mapStateToProps = (state) => {
   return {
     languageDirection: state.settings.lang_dir,

@@ -24,18 +24,31 @@ const stripHtml = (html) => {
 };
 
 const PopUpFormTemplates = ({
+  setTemplatesTextReturned,
+  templatesTextReturned,
   formID,
   formFields,
   formFieldsTitle,
   popupOpen,
   handlePopupClose,
-  patient,
   encounter,
   languageDirection,
   formatDate,
   verticalName,
+  defaultContext,
 }) => {
   const { t } = useTranslation();
+  const [context, setContext] = React.useState('');
+  const handleCloseOperation = (e) => {
+    if (
+      (context === '' && templatesTextReturned === '') ||
+      templatesTextReturned !== ''
+    ) {
+      handlePopupClose();
+    } else {
+      alert('ToDo: close without save PC-761');
+    }
+  };
   const dialog_props = {
     fullWidth: true,
     maxWidth: 'md',
@@ -56,7 +69,7 @@ const PopUpFormTemplates = ({
     const templatesServerData = [];
     let response = await getFormTemplates(
       encounter.serviceTypeCode,
-      encounter.examinationCode,
+      encounter.examinationCode.toString(),
       formID,
       formFields,
     );
@@ -64,7 +77,7 @@ const PopUpFormTemplates = ({
     if (response.data && response.data.length > 0) {
       for (let i = 0; i < response.data.length; i++) {
         // templatesServerData.push(stripHtml(response.data));
-        templatesServerData.push({'title' : response.data[i]});
+        templatesServerData.push({ title: response.data[i] });
       }
     }
 
@@ -87,25 +100,28 @@ const PopUpFormTemplates = ({
           ' > ' +
           parseMultipleExaminations(
             encounter.serviceType,
-            encounter.reasonCode,
+            encounter.examination,
             t,
           )
         }
         isOpen={popupOpen}
-        onClose={handlePopupClose}
+        onClose={handleCloseOperation}
         dialog_props={dialog_props}
         content_dividers={false}>
-        <MainPopUpFormTemplate templates={templates}></MainPopUpFormTemplate>
+        <MainPopUpFormTemplate
+          handleCloseOperation={handleCloseOperation}
+          context={context}
+          setContext={setContext}
+          defaultContext={defaultContext}
+          setTemplatesTextReturned={setTemplatesTextReturned}
+          templates={templates}></MainPopUpFormTemplate>
       </CustomizedPopup>
-
     </React.Fragment>
   ) : null;
 };
 
 const mapStateToProps = (state) => {
   return {
-    patient: state.active.activePatient,
-    encounter: state.active.activeEncounter,
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
