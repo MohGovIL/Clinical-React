@@ -1250,7 +1250,7 @@ const PatientDetailsBlock = ({
               style={{ marginBottom: '50px' }}>
               {parseInt(configuration.clinikal_pa_arrival_way) && (
                 <React.Fragment>
-                  <span>{t('Arrival way?')}</span>
+                  <span>{`${t('Arrival way')}?`}</span>
                   <StyledToggleButtonGroup
                     value={arrivalWay}
                     onChange={arrivalWayHandler}
@@ -1277,8 +1277,8 @@ const PatientDetailsBlock = ({
               alignItems={'center'}>
               <span>
                 {parseInt(configuration.clinikal_pa_arrival_way)
-                  ? t('Arrival with escort?')
-                  : t('Patient arrived with an escort?')}
+                  ? `${t('Arrival with escort')}?`
+                  : `${t('Patient arrived with an escort')}?`}
               </span>
               {/* Escorted Information Switch */}
               <StyledSwitch
@@ -1777,7 +1777,7 @@ const PatientDetailsBlock = ({
                   <StyledToggleButton
                     value='Credit card'
                     aria-label='Credit card'>
-                    {t('Credit card')}
+                    {t('Credit Card')}
                   </StyledToggleButton>
                 </StyledToggleButtonGroup>
               </Grid>
