@@ -26,9 +26,8 @@ const PopUpContext = ({
     setContext(textAreaRef.current.value);
   };
   const handleSaveAndClose = () => {
-    setTemplatesTextReturned(context).then(() => {
-      handleCloseOperation();
-    });
+    //ToDo : PC-761
+    handleCloseOperation();
   };
   return (
     <React.Fragment>

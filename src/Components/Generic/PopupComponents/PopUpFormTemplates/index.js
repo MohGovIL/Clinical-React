@@ -7,6 +7,7 @@ import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
 
 import { getFormTemplates } from 'Utils/Services/API';
 import MainPopUpFormTemplate from 'Components/Generic/PopupComponents/PopUpFormTemplates/MainPopUpFormTemplate';
+import PopUpOnExit from '../../../../Assets/Elements/PopUpOnExit';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return (
@@ -29,16 +30,22 @@ const PopUpFormTemplates = ({
   formID,
   formFields,
   formFieldsTitle,
-  popupOpen,
   handlePopupClose,
   encounter,
   languageDirection,
-  formatDate,
   verticalName,
   defaultContext,
+  popupOpen,
 }) => {
   const { t } = useTranslation();
   const [context, setContext] = React.useState('');
+
+  const [popupCloseOpen, setPopupCloseOpen] = React.useState(false);
+  const handleSavePopupClose = (e) => {
+    //ToDo  : PC-761 - meanwhile :
+    setPopupCloseOpen(false);
+    handlePopupClose();
+  };
   const handleCloseOperation = (e) => {
     if (
       (context === '' && templatesTextReturned === '') ||
@@ -46,7 +53,7 @@ const PopUpFormTemplates = ({
     ) {
       handlePopupClose();
     } else {
-      alert('ToDo: close without save PC-761');
+      setPopupCloseOpen(true);
     }
   };
   const dialog_props = {
@@ -116,6 +123,12 @@ const PopUpFormTemplates = ({
           setTemplatesTextReturned={setTemplatesTextReturned}
           templates={templates}></MainPopUpFormTemplate>
       </CustomizedPopup>
+      <PopUpOnExit
+        isOpen={popupCloseOpen}
+        isClose={handleSavePopupClose}
+        returnFunction={handleSavePopupClose}
+        exitWithOutSavingFunction={handleSavePopupClose}
+      />
     </React.Fragment>
   ) : null;
 };
@@ -123,7 +136,6 @@ const PopUpFormTemplates = ({
 const mapStateToProps = (state) => {
   return {
     languageDirection: state.settings.lang_dir,
-    formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
   };
 };
