@@ -16,6 +16,9 @@ import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/norma
 import { splitBase_64 } from 'Utils/Helpers/splitBase_64';
 import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
 import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+import { checkCurrencyFormat } from 'Utils/Helpers/checkCurrencyFormat';
+import { formatToCurrency } from 'Utils/Helpers/formatToCurrency';
 
 // Styles
 import {
@@ -38,6 +41,7 @@ import ListboxComponent from './ListboxComponent/index';
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import ChipWithImage from 'Assets/Elements/StyledChip';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
+import TabPanel from './TabPanel';
 
 // Material-UI Icons
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -57,7 +61,6 @@ import Tabs from '@material-ui/core/Tabs';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import ToggleButton from '@material-ui/lab/ToggleButton';
 
 // APIs
 import { getCities, getStreets } from 'Utils/Services/API';
@@ -65,7 +68,7 @@ import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+
 const PatientDetailsBlock = ({
   patientData,
   edit_mode,
@@ -532,6 +535,11 @@ const PatientDetailsBlock = ({
       return !prevState;
     });
   };
+  // paymentMethods
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const paymentMethodHandler = (event, method) => {
+    setPaymentMethod(method);
+  };
 
   // Contact Information
   // Contact Information - cities var
@@ -773,7 +781,21 @@ const PatientDetailsBlock = ({
   const [
     commitmentAndPaymentTabValue,
     setCommitmentAndPaymentTabValue,
-  ] = useState(0);
+  ] = useState(configuration.clinikal_pa_commitment_form ? 'HMO' : 'Private');
+
+  const [paymentAmount, setPaymentAmount] = useState('0');
+
+  const onChangePaymentAmountHandler = (event) => {
+    if (checkCurrencyFormat(event.target.value))
+      setPaymentAmount(event.target.value);
+  };
+
+  const onBlurPaymentAmountHandler = (event) => {
+    const format = formatToCurrency(event.target.value);
+    setValue('privateAmountPayment', format);
+    setPaymentAmount(formatToCurrency(format));
+  };
+
   // Commitment And Payment - functions
   const validateDate = (date, type) => {
     switch (type) {
@@ -1694,7 +1716,11 @@ const PatientDetailsBlock = ({
             <Title
               fontSize={'14px'}
               color={'#000b40'}
-              label={t('Please fill in the payer details for the current test')}
+              label={t(
+                `Please fill in the payer details for the current ${
+                  configuration.clinikal_pa_commitment_form ? 'test' : 'visit'
+                }`,
+              )}
             />
             <StyledDivider variant='fullWidth' />
             {/* Commitment and payment - tabs */}
@@ -1705,164 +1731,197 @@ const PatientDetailsBlock = ({
               textColor='primary'
               variant='standard'
               aria-label='full width tabs example'>
-              <Tab label={t('HMO')} />
+              {configuration.clinikal_pa_commitment_form ? (
+                <Tab label={t('HMO')} value={'HMO'} />
+              ) : (
+                <Tab label={t('Private')} value={'Private'} />
+              )}
               {/* <Tab label={t('insurance company')} /> */}
-              {/* <Tab label={t('Private')} /> */}
             </Tabs>
-            {commitmentAndPaymentTabValue === 0 && (
-              <React.Fragment>
-                <CustomizedTextField
-                  width={'70%'}
-                  name={'commitmentAndPaymentHMO'}
-                  inputRef={register()}
-                  value={HMO.name || ''}
-                  label={t('HMO')}
-                  id={'commitmentAndPaymentHMO'}
-                  disabled
-                />
-                <CustomizedTextField
-                  width={'70%'}
-                  name='commitmentAndPaymentReferenceForPaymentCommitment'
-                  label={`${t('Reference for payment commitment')} *`}
-                  inputRef={register}
-                  id={'commitmentAndPaymentReferenceForPaymentCommitment'}
-                  type='number'
-                  InputLabelProps={{ shrink: true }}
-                  error={
-                    requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
-                      ? true
-                      : false
-                  }
-                  helperText={
-                    requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
-                  }
-                />
-                <Controller
-                  name='commitmentAndPaymentCommitmentDate'
-                  rules={{
-                    validate: {
-                      value: (value) => validateDate(value, 'before'),
-                    },
-                  }}
-                  defaultValue={commitmentAndPaymentCommitmentDate}
-                  control={control}
-                  as={
-                    <MuiPickersUtilsProvider
-                      utils={MomentUtils}
-                      moment={moment}
-                      libInstance={moment}>
-                      <CustomizedKeyboardDatePicker
-                        disableToolbar
-                        autoOk
-                        variant='inline'
-                        allowKeyboardControl={true}
-                        format={formatDate}
-                        margin='normal'
-                        id='commitmentAndPaymentCommitmentDate'
-                        label={`${t('Commitment date')} *`}
-                        value={commitmentAndPaymentCommitmentDate}
-                        onChange={(date) =>
-                          dateOnChangeHandler(
-                            date,
-                            'commitmentAndPaymentCommitmentDate',
-                            setCommitmentAndPaymentCommitmentDate,
-                          )
-                        }
-                        KeyboardButtonProps={{
-                          'aria-label': 'change date',
-                        }}
-                        error={
-                          errors.commitmentAndPaymentCommitmentDate && true
-                        }
-                        helperText={
-                          errors.commitmentAndPaymentCommitmentDate &&
-                          t('An equal date or less than today must be entered')
-                        }
-                      />
-                    </MuiPickersUtilsProvider>
-                  }
-                />
-                <Controller
-                  name='commitmentAndPaymentCommitmentValidity'
-                  control={control}
-                  rules={{
-                    validate: {
-                      value: (value) => validateDate(value, 'after'),
-                    },
-                  }}
-                  defaultValue={commitmentAndPaymentCommitmentValidity}
-                  as={
-                    <MuiPickersUtilsProvider
-                      utils={MomentUtils}
-                      moment={moment}>
-                      <CustomizedKeyboardDatePicker
-                        disableToolbar
-                        allowKeyboardControl={true}
-                        autoOk
-                        variant='inline'
-                        format={formatDate}
-                        margin='normal'
-                        id='commitmentAndPaymentCommitmentValidity'
-                        label={`${t('Commitment validity')} *`}
-                        value={commitmentAndPaymentCommitmentValidity}
-                        onChange={(date) =>
-                          dateOnChangeHandler(
-                            date,
-                            'commitmentAndPaymentCommitmentValidity',
-                            setCommitmentAndPaymentCommitmentValidity,
-                          )
-                        }
-                        KeyboardButtonProps={{
-                          'aria-label': 'change date',
-                        }}
-                        error={
-                          errors.commitmentAndPaymentCommitmentValidity && true
-                        }
-                        helperText={
-                          errors.commitmentAndPaymentCommitmentValidity &&
-                          t(
-                            'An equal or greater date must be entered than today',
-                          )
-                        }
-                      />
-                    </MuiPickersUtilsProvider>
-                  }
-                />
-                <CustomizedTextField
-                  width={'70%'}
-                  name='commitmentAndPaymentDoctorsName'
-                  label={`${t('Doctors name')} *`}
-                  inputRef={register}
-                  id={'commitmentAndPaymentDoctorsName'}
-                  InputLabelProps={{ shrink: true }}
-                  error={
-                    requiredErrors.commitmentAndPaymentDoctorsName
-                      ? true
-                      : false
-                  }
-                  helperText={
-                    requiredErrors.commitmentAndPaymentDoctorsName || ''
-                  }
-                />
-                <CustomizedTextField
-                  width={'70%'}
-                  label={`${t('Doctors license')} *`}
-                  name='commitmentAndPaymentDoctorsLicense'
-                  inputRef={register}
-                  id={'commitmentAndPaymentDoctorsLicense'}
-                  type='number'
-                  InputLabelProps={{ shrink: true }}
-                  error={
-                    requiredErrors.commitmentAndPaymentDoctorsLicense
-                      ? true
-                      : false
-                  }
-                  helperText={
-                    requiredErrors.commitmentAndPaymentDoctorsLicense || ''
-                  }
-                />
-              </React.Fragment>
-            )}
+            <TabPanel
+              value='Private'
+              selectedValue={commitmentAndPaymentTabValue}>
+              <CustomizedTextField
+                width={'70%'}
+                onChange={onChangePaymentAmountHandler}
+                onBlur={onBlurPaymentAmountHandler}
+                value={paymentAmount}
+                name='privatePaymentAmount'
+                label={t('Payment amount')}
+              />
+              <Grid
+                container
+                direction='row'
+                justify={'flex-start'}
+                alignItems={'center'}
+                style={{ margin: '24px 0 24px 0' }}>
+                <span>{t('Payment method')}</span>
+                <StyledToggleButtonGroup
+                  value={paymentMethod}
+                  onChange={paymentMethodHandler}
+                  exclusive
+                  aria-label='Payment method'>
+                  <StyledToggleButton value='Cash' aria-label='Cash'>
+                    {t('Cash')}
+                  </StyledToggleButton>
+                  <StyledToggleButton
+                    value='Credit card'
+                    aria-label='Credit card'>
+                    {t('Credit card')}
+                  </StyledToggleButton>
+                </StyledToggleButtonGroup>
+              </Grid>
+              <CustomizedTextField
+                width={'70%'}
+                inputRef={register}
+                name='Receipt number'
+                label={t('Receipt number')}
+              />
+            </TabPanel>
+            <TabPanel value='HMO' selectedValue={commitmentAndPaymentTabValue}>
+              <CustomizedTextField
+                width={'70%'}
+                name={'commitmentAndPaymentHMO'}
+                inputRef={register()}
+                value={HMO.name || ''}
+                label={t('HMO')}
+                id={'commitmentAndPaymentHMO'}
+                disabled
+              />
+              <CustomizedTextField
+                width={'70%'}
+                name='commitmentAndPaymentReferenceForPaymentCommitment'
+                label={`${t('Reference for payment commitment')} *`}
+                inputRef={register}
+                id={'commitmentAndPaymentReferenceForPaymentCommitment'}
+                type='number'
+                InputLabelProps={{ shrink: true }}
+                error={
+                  requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
+                    ? true
+                    : false
+                }
+                helperText={
+                  requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
+                }
+              />
+              <Controller
+                name='commitmentAndPaymentCommitmentDate'
+                rules={{
+                  validate: {
+                    value: (value) => validateDate(value, 'before'),
+                  },
+                }}
+                defaultValue={commitmentAndPaymentCommitmentDate}
+                control={control}
+                as={
+                  <MuiPickersUtilsProvider
+                    utils={MomentUtils}
+                    moment={moment}
+                    libInstance={moment}>
+                    <CustomizedKeyboardDatePicker
+                      disableToolbar
+                      autoOk
+                      variant='inline'
+                      allowKeyboardControl={true}
+                      format={formatDate}
+                      margin='normal'
+                      id='commitmentAndPaymentCommitmentDate'
+                      label={`${t('Commitment date')} *`}
+                      value={commitmentAndPaymentCommitmentDate}
+                      onChange={(date) =>
+                        dateOnChangeHandler(
+                          date,
+                          'commitmentAndPaymentCommitmentDate',
+                          setCommitmentAndPaymentCommitmentDate,
+                        )
+                      }
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      error={errors.commitmentAndPaymentCommitmentDate && true}
+                      helperText={
+                        errors.commitmentAndPaymentCommitmentDate &&
+                        t('An equal date or less than today must be entered')
+                      }
+                    />
+                  </MuiPickersUtilsProvider>
+                }
+              />
+              <Controller
+                name='commitmentAndPaymentCommitmentValidity'
+                control={control}
+                rules={{
+                  validate: {
+                    value: (value) => validateDate(value, 'after'),
+                  },
+                }}
+                defaultValue={commitmentAndPaymentCommitmentValidity}
+                as={
+                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
+                    <CustomizedKeyboardDatePicker
+                      disableToolbar
+                      allowKeyboardControl={true}
+                      autoOk
+                      variant='inline'
+                      format={formatDate}
+                      margin='normal'
+                      id='commitmentAndPaymentCommitmentValidity'
+                      label={`${t('Commitment validity')} *`}
+                      value={commitmentAndPaymentCommitmentValidity}
+                      onChange={(date) =>
+                        dateOnChangeHandler(
+                          date,
+                          'commitmentAndPaymentCommitmentValidity',
+                          setCommitmentAndPaymentCommitmentValidity,
+                        )
+                      }
+                      KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      error={
+                        errors.commitmentAndPaymentCommitmentValidity && true
+                      }
+                      helperText={
+                        errors.commitmentAndPaymentCommitmentValidity &&
+                        t('An equal or greater date must be entered than today')
+                      }
+                    />
+                  </MuiPickersUtilsProvider>
+                }
+              />
+              <CustomizedTextField
+                width={'70%'}
+                name='commitmentAndPaymentDoctorsName'
+                label={`${t('Doctors name')} *`}
+                inputRef={register}
+                id={'commitmentAndPaymentDoctorsName'}
+                InputLabelProps={{ shrink: true }}
+                error={
+                  requiredErrors.commitmentAndPaymentDoctorsName ? true : false
+                }
+                helperText={
+                  requiredErrors.commitmentAndPaymentDoctorsName || ''
+                }
+              />
+              <CustomizedTextField
+                width={'70%'}
+                label={`${t('Doctors license')} *`}
+                name='commitmentAndPaymentDoctorsLicense'
+                inputRef={register}
+                id={'commitmentAndPaymentDoctorsLicense'}
+                type='number'
+                InputLabelProps={{ shrink: true }}
+                error={
+                  requiredErrors.commitmentAndPaymentDoctorsLicense
+                    ? true
+                    : false
+                }
+                helperText={
+                  requiredErrors.commitmentAndPaymentDoctorsLicense || ''
+                }
+              />
+            </TabPanel>
           </StyledFormGroup>
           <StyledFormGroup>
             <Title
