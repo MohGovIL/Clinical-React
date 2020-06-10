@@ -35,6 +35,7 @@ const FilterBox = ({
   selectFilterServiceType,
   setFilterOrganizationAction,
   setFilterServiceTypeAction,
+  selectFilterIsSet,
   tabValue,
 }) => {
   const { t } = useTranslation();
@@ -91,11 +92,13 @@ const FilterBox = ({
   }, [t]);
   //Auto set current facility
   useEffect(() => {
-    organizationOnChangeHandler(
-      facility !== 0 && selectFilterOrganization === 0
-        ? facility
-        : selectFilterOrganization,
-    );
+    if (selectFilterIsSet === 0) {
+      organizationOnChangeHandler(
+        facility !== 0 && selectFilterOrganization === 0
+          ? facility
+          : selectFilterOrganization,
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -185,6 +188,7 @@ const mapStateToProps = (state) => {
     facility: parseInt(state.settings.facility),
     selectFilterOrganization: state.filters.filter_organization,
     selectFilterServiceType: state.filters.filter_service_type,
+    selectFilterIsSet: state.filters.filter_is_set,
     tabValue: state.filters.statusFilterBoxValue,
   };
 };
