@@ -1708,6 +1708,12 @@ const PatientDetailsBlock = ({
                 />
               ))}
             </Grid>
+            <CustomizedTextField
+              width={'70%'}
+              name='reasonForReferralDetails'
+              inputRef={register}
+              label={t('Reason for referral details')}
+            />
           </StyledFormGroup>
           {/* Commitment and payment */}
           <StyledFormGroup>
