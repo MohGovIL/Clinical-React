@@ -527,7 +527,7 @@ const PatientDetailsBlock = ({
   const [isEscorted, setIsEscorted] = useState(false);
   const [relatedPerson, setRelatedPerson] = useState({});
   const [arrivalWay, setArrivalWay] = useState(
-    encounterData.extensionArrivalWay || 'Independently',
+    encounterData.extensionArrivalWay || 'Independent',
   );
   // ArrivalWay -functions
   const arrivalWayHandler = (event, way) => {
@@ -1262,9 +1262,9 @@ const PatientDetailsBlock = ({
                       {t('Ambulance')}
                     </StyledToggleButton>
                     <StyledToggleButton
-                      value='Independently'
-                      aria-label='Independently'>
-                      {t('Independently')}
+                      value='Independent'
+                      aria-label='Independent'>
+                      {t('Independent')}
                     </StyledToggleButton>
                   </StyledToggleButtonGroup>
                 </React.Fragment>
