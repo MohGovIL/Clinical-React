@@ -2149,7 +2149,7 @@ const PatientDetailsBlock = ({
               <Grid item lg={3} sm={4}>
                 <StyledButton
                   color='primary'
-                  variant='outlined'
+                  variant='contained'
                   type='submit'
                   letterSpacing={'0.1'}>
                   {t('Save & Close')}
