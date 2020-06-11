@@ -20,30 +20,6 @@ import { FHIR } from '../../../Utils/Services/FHIR';
 const MedicalIssues = ({ title }) => {
   const { t } = useTranslation();
 
-  useEffect(() => {
-    (() => {
-      try {
-        FHIR('Condition', 'doWork', {
-          functionName: 'getConditionSensitivesList',
-          functionParams: { id: 'identifier_type_list' },
-        }).then((someList) => {});
-      } catch (e) {
-        console.log('Error: ' + e);
-      }
-    })();
-
-    (() => {
-      try {
-        FHIR('Condition', 'doWork', {
-          functionName: 'getConditionMedicalProblemList',
-          functionParams: { id: 'identifier_type_list' },
-        }).then((someList) => {});
-      } catch (e) {
-        console.log('Error: ' + e);
-      }
-    })();
-  });
-
   return (
     <React.Fragment>
       <StyledTitleTypography variant='h6' gutterBottom>

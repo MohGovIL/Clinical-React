@@ -111,6 +111,51 @@ const PatientBackground = ({
   useEffect(() => {
     if (prevEncounters.length === 0) handleCreateData();
   });
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const listAllergy = await FHIR('Condition', 'doWork', {
+          functionName: 'getConditionListByParams',
+          functionParams: {
+            category: 'allergy',
+            subject: patient.id,
+            status: 'active',
+          },
+        });
+        if (listAllergy.data && listAllergy.data.total > 0) {
+          console.log('==========allergy list================');
+          //normalizeCondition
+          console.log(listAllergy);
+          console.log('==========allergy list================');
+        }
+      } catch (e) {
+        console.log('Error: ' + e);
+      }
+    })();
+
+    (async () => {
+      try {
+        const listMedicalProblem = await FHIR('Condition', 'doWork', {
+          functionName: 'getConditionListByParams',
+          functionParams: {
+            category: 'medical_problem',
+            subject: patient.id,
+            status: 'active',
+          },
+        });
+        if (listMedicalProblem.data && listMedicalProblem.data.total > 0) {
+          console.log('==========listMedicalProblem list================');
+          //normalizeCondition
+          console.log(listMedicalProblem);
+          console.log('==========listMedicalProblem list================');
+        }
+      } catch (e) {
+        console.log('Error: ' + e);
+      }
+    })();
+  });
+
   return (
     <StyledPatientBackground dir={languageDirection}>
       <StyledHeader>
@@ -131,14 +176,14 @@ const PatientBackground = ({
         prevEncounters={prevEncounters}
         handleCreateData={handleCreateData}
       />
-      <br/>
-      <br/>
-      <MedicalIssues title={t("Sensitivities")}/>
-      <br/>
-      <br/>
-      <MedicalIssues title={t("Background diseases")} />
-      <br/>
-      <br/>
+      <br />
+      <br />
+      <MedicalIssues title={t('Sensitivities')} />
+      <br />
+      <br />
+      <MedicalIssues title={t('Background diseases')} />
+      <br />
+      <br />
     </StyledPatientBackground>
   );
 };

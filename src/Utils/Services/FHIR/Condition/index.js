@@ -12,18 +12,26 @@ const ConditionStates = {
     paramsToCRUD.url = componentFhirURL;
     return ConditionStates[parameters.functionName](paramsToCRUD);
   },
-  getConditionSensitivesList: (params) => {
-    return CRUDOperations('search', `${params.url}?paitent=1&&category=http://clinikal/condition/category/allergy&clinical-status=active`);
+
+  getConditionListByParams: (params) => {
+    if (
+      params.subject > 0 &&
+      params.category.length > 0 &&
+      params.status.length > 0
+    ) {
+      return CRUDOperations(
+        'search',
+        `${params.url}?subject=${params.subject}&category=clinikal/condition/category/${params.category}&clinical-status=${params.status}`,
+      );
+    } else {
+      return false;
+    }
   },
-  getConditionMedicalProblemList: (params) => {
-    return CRUDOperations('search', `${params.url}?paitent=1&&category=http://clinikal/condition/category/medical_problem&clinical-status=active`);
-  }
-}
+};
 
 export default function Condition(action = null, params = null) {
   if (action) {
-    const transformer =
-      ConditionStates[action] ?? ConditionStates.__default__;
+    const transformer = ConditionStates[action] ?? ConditionStates.__default__;
     return transformer(params);
   }
 }
