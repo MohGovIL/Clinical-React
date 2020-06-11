@@ -11,17 +11,12 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { israelPhoneNumberRegex } from 'Utils/Helpers/validation/patterns';
 import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
 import { FHIR } from 'Utils/Services/FHIR';
-const PatientDetailsForm = () => {
-  const {
-    errors,
-    isArrivalWay,
-    relatedPersonId,
-    reset,
-    setValue,
-    encounterArrivalWay,
-    register,
-    watch,
-  } = useFormContext();
+const PatientDetailsForm = ({
+  isArrivalWay,
+  relatedPersonId,
+  encounterArrivalWay,
+}) => {
+  const { errors, reset, setValue, register, watch } = useFormContext();
   const { t } = useTranslation();
 
   const [arrivalWay, setArrivalWay] = useState(

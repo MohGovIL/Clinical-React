@@ -1200,14 +1200,14 @@ const PatientDetailsBlock = ({
         )} ${t('Do you want to continue?')}`}
       </CustomizedPopup>
       <StyledPatientDetails edit={edit_mode}>
-        <FormContext
-          {...methods}
-          relatedPersonId={encounterData.relatedPerson}
-          isArrivalWay={configuration.clinikal_pa_arrival_way}
-          encounterArrivalWay={encounterData.extensionArrivalWay}>
+        <FormContext {...methods}>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             {/* Patient Details */}
-            <PatientDetailsForm />
+            <PatientDetailsForm
+              relatedPersonId={encounterData.relatedPerson}
+              isArrivalWay={configuration.clinikal_pa_arrival_way}
+              encounterArrivalWay={encounterData.extensionArrivalWay}
+            />
             {/* Contact Information */}
             <StyledFormGroup>
               <Title
