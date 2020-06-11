@@ -130,7 +130,6 @@ export const StyledRoundButton = styled(Button)`
 export const StyledSaveButton = styled(Button)`
   width: 127px;
   height: 32px;
-  opacity: 0.4;
   border-radius: 25px;
   background-color: #002398;
   font-size: 15px;

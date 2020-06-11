@@ -5,7 +5,7 @@ import {
   CustomizedPaperHeader,
   StyledContextTextArea,
   StyledRoundButton,
-} from './Style';
+} from 'Components/Generic/PopupComponents/PopUpFormTemplates/Style';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +27,9 @@ const PopUpContext = ({
   };
   const handleSaveAndClose = () => {
     //ToDo : PC-761
+    //SAVE :
+    setTemplatesTextReturned(context);
+    //Close :
     handleCloseOperation();
   };
   return (

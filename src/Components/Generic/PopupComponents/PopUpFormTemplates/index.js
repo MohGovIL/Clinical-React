@@ -7,7 +7,7 @@ import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
 
 import { getFormTemplates } from 'Utils/Services/API';
 import MainPopUpFormTemplate from 'Components/Generic/PopupComponents/PopUpFormTemplates/MainPopUpFormTemplate';
-import PopUpOnExit from '../../../../Assets/Elements/PopUpOnExit';
+import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return (
@@ -18,11 +18,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     />
   );
 });
-const stripHtml = (html) => {
-  var tmp = document.createElement('DIV');
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
-};
 
 const PopUpFormTemplates = ({
   setTemplatesTextReturned,
@@ -44,17 +39,21 @@ const PopUpFormTemplates = ({
   const handleSavePopupClose = (e) => {
     //ToDo  : PC-761 - meanwhile :
     setPopupCloseOpen(false);
+    //check if to close or not and do :
     handlePopupClose();
   };
   const handleCloseOperation = (e) => {
-    if (
+    //TODO : PC-761 - meanwhile :
+    /* if (
       (context === '' && templatesTextReturned === '') ||
       templatesTextReturned !== ''
     ) {
       handlePopupClose();
     } else {
       setPopupCloseOpen(true);
-    }
+    }*/
+
+    handlePopupClose();
   };
   const dialog_props = {
     fullWidth: true,
@@ -83,7 +82,6 @@ const PopUpFormTemplates = ({
 
     if (response.data && response.data.length > 0) {
       for (let i = 0; i < response.data.length; i++) {
-        // templatesServerData.push(stripHtml(response.data));
         templatesServerData.push({ title: response.data[i] });
       }
     }
@@ -104,7 +102,7 @@ const PopUpFormTemplates = ({
       <CustomizedPopup
         title={
           t(formFieldsTitle) +
-          ' > ' +
+          (languageDirection === 'rtl' ? ' > ' : ' < ') +
           parseMultipleExaminations(
             encounter.serviceType,
             encounter.examination,

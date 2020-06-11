@@ -7,8 +7,8 @@ import {
   CustomizedPaperHeader,
 } from 'Components/Generic/PopupComponents/PopUpFormTemplates/Style';
 import { useTranslation } from 'react-i18next';
-import PopUpContantList from './PopUpContantList';
-import PopUpContext from './PopUpContext';
+import PopUpContantList from 'Components/Generic/PopupComponents/PopUpFormTemplates/PopUpContantList';
+import PopUpContext from 'Components/Generic/PopupComponents/PopUpFormTemplates/PopUpContext';
 import l from 'Assets/Images/l.png';
 import Icon from 'Assets/Elements/Header/Search/Icon';
 
@@ -38,6 +38,7 @@ const MainPopUpFormTemplate = ({
   const [checkAll, setCheckAll] = React.useState(false);
   const [checked, setChecked] = React.useState([]);
   const handleFirstTimeContext = () => {
+    //For future development if we want to show default values
     if (context !== '') defaultContext = '';
     return defaultContext !== '' ? defaultContext : context;
   };

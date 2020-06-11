@@ -21,9 +21,7 @@ import {
 } from 'Components/Generic/PopupComponents/PopUpFormTemplates/Style';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
 import Icon from 'Assets/Elements/Header/Search/Icon';
-
 import X from 'Assets/Images/x.png';
 import trash from 'Assets/Images/trash.png';
 import { arrayRemove } from 'Utils/Services/FHIR/CommonFunctions';
@@ -125,16 +123,7 @@ const PopUpContantList = ({
         templates,
         target.value.trim(),
       );
-      /*let newChecked = [...checked];
-      for(let i=0;i<newChecked.length;i++)
-      {
-        let text = document.getElementById(newChecked[i].title).innerText;
-        if(!text.includes(target.value))
-        {
-          newChecked = arrayRemove(newChecked,newChecked[i]);
-        }
-      }
-      setChecked(newChecked);*/
+
       setContent('');
 
       setSearchInsideTemplates(intersectionWithTemplates);
