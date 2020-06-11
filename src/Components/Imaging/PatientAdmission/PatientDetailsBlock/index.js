@@ -320,7 +320,7 @@ const PatientDetailsBlock = ({
           return option.reasonCode.code;
         });
         encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
-        if (configuration.clinikal_pa_arrival_way) {
+        if (configuration.clinikal_pa_arrival_way === '1') {
           encounter['extensionArrivalWay'] = arrivalWay;
         }
         if (data.reasonForReferralDetails) {
@@ -366,22 +366,22 @@ const PatientDetailsBlock = ({
           documentReference: documentReferenceReferral,
           functionName: 'createDocumentReference',
         });
+        if (configuration.clinikal_pa_commitment_form === '1') {
+          const commitment_64Obj = splitBase_64(commitmentFile_64);
+          const documentReferenceCommitment = {
+            encounter: encounterData.id,
+            patient: patientData.id,
+            contentType: commitment_64Obj.type,
+            data: commitment_64Obj.data,
+            categoryCode: '2',
+            url: commitmentFile.name,
+          };
 
-        const commitment_64Obj = splitBase_64(commitmentFile_64);
-        const documentReferenceCommitment = {
-          encounter: encounterData.id,
-          patient: patientData.id,
-          contentType: commitment_64Obj.type,
-          data: commitment_64Obj.data,
-          categoryCode: '2',
-          url: commitmentFile.name,
-        };
-
-        await FHIR('DocumentReference', 'doWork', {
-          documentReference: documentReferenceCommitment,
-          functionName: 'createDocumentReference',
-        });
-
+          await FHIR('DocumentReference', 'doWork', {
+            documentReference: documentReferenceCommitment,
+            functionName: 'createDocumentReference',
+          });
+        }
         if (additionalDocumentFile_64.length) {
           const additional_64Obj = splitBase_64(additionalDocumentFile_64);
           const documentReferenceAdditionalDocument = {
@@ -1183,7 +1183,10 @@ const PatientDetailsBlock = ({
                   setReferralFile(obj);
                   referralRef.current = base_64;
                 } else if (
-                  normalizedFhirDocumentReference.url.startsWith('Commitment')
+                  normalizedFhirDocumentReference.url.startsWith(
+                    'Commitment',
+                  ) &&
+                  configuration.clinikal_pa_commitment_form === '1'
                 ) {
                   setCommitmentBlob(blob);
                   commitmentRef.current = base_64;
@@ -1257,7 +1260,7 @@ const PatientDetailsBlock = ({
               justify={'flex-start'}
               alignItems={'center'}
               style={{ marginBottom: '50px' }}>
-              {parseInt(configuration.clinikal_pa_arrival_way) && (
+              {configuration.clinikal_pa_arrival_way === '1' && (
                 <React.Fragment>
                   <span>{`${t('Arrival way')}?`}</span>
                   <StyledToggleButtonGroup
@@ -1285,7 +1288,7 @@ const PatientDetailsBlock = ({
               justify={'flex-start'}
               alignItems={'center'}>
               <span>
-                {parseInt(configuration.clinikal_pa_arrival_way)
+                {configuration.clinikal_pa_arrival_way === '1'
                   ? `${t('Arrival with escort')}?`
                   : `${t('Patient arrived with an escort')}?`}
               </span>
@@ -1723,9 +1726,7 @@ const PatientDetailsBlock = ({
               defaultValue={encounterData.extensionReasonCodeDetails || ''}
               as={
                 <CustomizedTextField
-                  // name='reasonForReferralDetails'
                   width={'70%'}
-                  // inputRef={register}
                   label={t('Reason for referral details')}
                 />
               }
@@ -2027,66 +2028,68 @@ const PatientDetailsBlock = ({
               </Grid>
             </Grid>
             {/* CommitmentRef  */}
-            <Grid
-              container
-              alignItems='center'
-              style={{ marginBottom: '41px' }}>
-              <Grid item xs={3}>
-                <label
-                  style={{
-                    color: `${
-                      requiredErrors.CommitmentFile ? '#f44336' : '#000b40'
-                    }`,
-                  }}
-                  htmlFor='Commitment'>
-                  {`${t('Commitment')} *`}
-                </label>
-              </Grid>
-              <Grid item xs={9}>
-                <input
-                  name='CommitmentFile'
-                  ref={(e) => {
-                    commitmentRef.current = e;
-                    register();
-                  }}
-                  id='Commitment'
-                  type='file'
-                  accept='.pdf,.gpf,.png,.gif,.jpg'
-                  onChange={() =>
-                    onChangeFileHandler(
-                      commitmentRef,
-                      setCommitmentFile,
-                      'Commitment',
-                    )
-                  }
-                />
-                {Object.values(commitmentFile).length > 0 ? (
-                  <ChipWithImage
-                    htmlFor='Commitment'
-                    label={commitmentFile.name}
-                    size={commitmentFile.size}
-                    onDelete={(event) => {
-                      setPopUpReferenceFile('Commitment');
-                      onDeletePopUp(event);
+            {configuration.clinikal_pa_commitment_form === '1' && (
+              <Grid
+                container
+                alignItems='center'
+                style={{ marginBottom: '41px' }}>
+                <Grid item xs={3}>
+                  <label
+                    style={{
+                      color: `${
+                        requiredErrors.CommitmentFile ? '#f44336' : '#000b40'
+                      }`,
                     }}
-                    onClick={(event) =>
-                      onClickFileHandler(event, commitmentRef)
+                    htmlFor='Commitment'>
+                    {`${t('Commitment')} *`}
+                  </label>
+                </Grid>
+                <Grid item xs={9}>
+                  <input
+                    name='CommitmentFile'
+                    ref={(e) => {
+                      commitmentRef.current = e;
+                      register();
+                    }}
+                    id='Commitment'
+                    type='file'
+                    accept='.pdf,.gpf,.png,.gif,.jpg'
+                    onChange={() =>
+                      onChangeFileHandler(
+                        commitmentRef,
+                        setCommitmentFile,
+                        'Commitment',
+                      )
                     }
                   />
-                ) : (
-                  <label htmlFor='Commitment'>
-                    <StyledButton
-                      variant='outlined'
-                      color='primary'
-                      component='span'
-                      size={'large'}
-                      startIcon={<Scanner />}>
-                      {t('Upload document')}
-                    </StyledButton>
-                  </label>
-                )}
+                  {Object.values(commitmentFile).length > 0 ? (
+                    <ChipWithImage
+                      htmlFor='Commitment'
+                      label={commitmentFile.name}
+                      size={commitmentFile.size}
+                      onDelete={(event) => {
+                        setPopUpReferenceFile('Commitment');
+                        onDeletePopUp(event);
+                      }}
+                      onClick={(event) =>
+                        onClickFileHandler(event, commitmentRef)
+                      }
+                    />
+                  ) : (
+                    <label htmlFor='Commitment'>
+                      <StyledButton
+                        variant='outlined'
+                        color='primary'
+                        component='span'
+                        size={'large'}
+                        startIcon={<Scanner />}>
+                        {t('Upload document')}
+                      </StyledButton>
+                    </label>
+                  )}
+                </Grid>
               </Grid>
-            </Grid>
+            )}
             {/* AdditionalDocumentRef */}
             {numOfAdditionalDocument.map((_, additionalDocumentIndex) => {
               return (
