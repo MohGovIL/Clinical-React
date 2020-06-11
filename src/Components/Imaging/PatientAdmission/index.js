@@ -87,7 +87,6 @@ const PatientAdmission = ({
     deletingEncounter();
     history.push(`${baseRoutePath()}/imaging/patientTracking`);
   };
-  console.log(PatientAdmissionSettings);
   return (
     <React.Fragment>
       <PopUpOnExit

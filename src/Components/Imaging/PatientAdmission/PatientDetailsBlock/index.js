@@ -293,81 +293,6 @@ const PatientDetailsBlock = ({
               questionnaireResponseId: questionnaireResponse.id,
               questionnaireResponseParams: {
                 item,
-                // item: [
-                //   {
-                //     linkId: '1',
-                //     text: 'Commitment number',
-                //     answer: [
-                //       {
-                //         valueInteger:
-                //           data.commitmentAndPaymentReferenceForPaymentCommitment,
-                //       },
-                //     ],
-                //   },
-                //   {
-                //     linkId: '2',
-                //     text: 'Commitment date',
-                //     answer: [
-                //       {
-                //         valueDate: data.commitmentAndPaymentCommitmentDate,
-                //       },
-                //     ],
-                //   },
-                //   {
-                //     linkId: '3',
-                //     text: 'Commitment expiration date',
-                //     answer: [
-                //       {
-                //         valueDate: data.commitmentAndPaymentCommitmentValidity,
-                //       },
-                //     ],
-                //   },
-                //   {
-                //     linkId: '4',
-                //     text: 'Signing doctor',
-                //     answer: [
-                //       {
-                //         valueString: data.commitmentAndPaymentDoctorsName,
-                //       },
-                //     ],
-                //   },
-                //   {
-                //     linkId: '5',
-                //     text: 'doctor license number',
-                //     answer: [
-                //       {
-                //         valueInteger: data.commitmentAndPaymentDoctorsLicense,
-                //       },
-                //     ],
-                //   },
-                //   {
-                //     linkId: '6',
-                //     text: 'Payment amount',
-                //     answer: [
-                //       {
-                //         valueString: paymentAmount,
-                //       },
-                //     ],
-                //   },
-                //   {
-                //     linkId: '7',
-                //     text: 'Payment method',
-                //     answer: [
-                //       {
-                //         valueString: paymentMethod,
-                //       },
-                //     ],
-                //   },
-                //   {
-                //     linkId: '8',
-                //     text: 'Receipt number',
-                //     answer: [
-                //       {
-                //         valueString: data.receiptNumber,
-                //       },
-                //     ],
-                //   },
-                // ],
               },
             }),
           );
@@ -384,58 +309,6 @@ const PatientDetailsBlock = ({
                   authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
                   source: patientData.id,
                   item,
-                  // item: [
-                  //   {
-                  //     linkId: '1',
-                  //     text: 'Commitment number',
-                  //     answer: [
-                  //       {
-                  //         valueInteger:
-                  //           data.commitmentAndPaymentReferenceForPaymentCommitment,
-                  //       },
-                  //     ],
-                  //   },
-                  //   {
-                  //     linkId: '2',
-                  //     text: 'Commitment date',
-                  //     answer: [
-                  //       {
-                  //         valueDate: data.commitmentAndPaymentCommitmentDate,
-                  //       },
-                  //     ],
-                  //   },
-                  //   {
-                  //     linkId: '3',
-                  //     text: 'Commitment expiration date',
-                  //     answer: [
-                  //       {
-                  //         valueDate:
-                  //           data.commitmentAndPaymentCommitmentValidity,
-                  //       },
-                  //     ],
-                  //   },
-                  //   {
-                  //     linkId: '4',
-                  //     text: 'Signing doctor',
-                  //     answer: [
-                  //       {
-                  //         valueString: data.commitmentAndPaymentDoctorsName,
-                  //       },
-                  //     ],
-                  //   },
-                  //   {
-                  //     linkId: '5',
-                  //     text: 'doctor license number',
-                  //     answer: [
-                  //       {
-                  //         valueInteger: data.commitmentAndPaymentDoctorsLicense,
-                  //       },
-                  //     ],
-                  //   },
-                  //   {},
-                  //   {},
-                  //   {},
-                  // ],
                 },
               },
             }),
@@ -1203,38 +1076,56 @@ const PatientDetailsBlock = ({
             const normalizedQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
               questionnaireResponseData.data.entry[1].resource,
             );
-            reset({
-              commitmentAndPaymentReferenceForPaymentCommitment:
-                normalizedQuestionnaireResponse.items.find(
-                  (item) => item.linkId === '1',
-                ).answer[0].valueInteger || '',
-              commitmentAndPaymentDoctorsName:
-                normalizedQuestionnaireResponse.items.find(
-                  (item) => item.linkId === '4',
-                ).answer[0].valueString || '',
-              commitmentAndPaymentDoctorsLicense:
-                normalizedQuestionnaireResponse.items.find(
-                  (item) => item.linkId === '5',
-                ).answer[0].valueInteger || '',
-            });
-            setQuestionnaireResponse(normalizedQuestionnaireResponse);
             if (normalizedQuestionnaireResponse.items.length) {
-              const commitmentDate = normalizedQuestionnaireResponse.items.find(
-                (item) => item.text === 'Commitment date',
-              );
-              const commitmentValidity = normalizedQuestionnaireResponse.items.find(
-                (item) => item.text === 'Commitment expiration date',
-              );
-              if (commitmentDate) {
-                setCommitmentAndPaymentCommitmentDate(
-                  moment(commitmentDate.answer[0].valueDate),
+              if (configuration.clinikal_pa_commitment_form === '1') {
+                reset({
+                  commitmentAndPaymentReferenceForPaymentCommitment:
+                    normalizedQuestionnaireResponse.items.find(
+                      (item) => item.linkId === '1',
+                    ).answer[0].valueInteger || '',
+                  commitmentAndPaymentDoctorsName:
+                    normalizedQuestionnaireResponse.items.find(
+                      (item) => item.linkId === '4',
+                    ).answer[0].valueString || '',
+                  commitmentAndPaymentDoctorsLicense:
+                    normalizedQuestionnaireResponse.items.find(
+                      (item) => item.linkId === '5',
+                    ).answer[0].valueInteger || '',
+                });
+                const commitmentDate = normalizedQuestionnaireResponse.items.find(
+                  (item) => item.text === 'Commitment date',
                 );
-              }
-              if (commitmentValidity) {
-                setCommitmentAndPaymentCommitmentValidity(
-                  moment(commitmentValidity.answer[0].valueDate),
+                const commitmentValidity = normalizedQuestionnaireResponse.items.find(
+                  (item) => item.text === 'Commitment expiration date',
                 );
+                if (commitmentDate) {
+                  setCommitmentAndPaymentCommitmentDate(
+                    moment(commitmentDate.answer[0].valueDate),
+                  );
+                }
+                if (commitmentValidity) {
+                  setCommitmentAndPaymentCommitmentValidity(
+                    moment(commitmentValidity.answer[0].valueDate),
+                  );
+                }
+              } else {
+                const paymentAmount = normalizedQuestionnaireResponse.items.find(
+                  (item) => item.linkId === '6',
+                ).answer[0].valueString;
+                const paymentMethod = normalizedQuestionnaireResponse.items.find(
+                  (item) => item.linkId === '7',
+                ).answer[0].valueString;
+                const receiptNumber = normalizedQuestionnaireResponse.items.find(
+                  (item) => item.linkId === '8',
+                ).answer[0].valueString;
+                if (receiptNumber)
+                  reset({
+                    receiptNumber: receiptNumber || '',
+                  });
+                if (paymentAmount) setPaymentAmount(paymentAmount);
+                if (paymentMethod) setPaymentMethod(paymentMethod);
               }
+              setQuestionnaireResponse(normalizedQuestionnaireResponse);
             }
           }
         } catch (error) {
@@ -1827,10 +1718,12 @@ const PatientDetailsBlock = ({
               ))}
             </Grid>
             <Controller
-              name='reasonForReferralDetails'
               control={control}
+              name='reasonForReferralDetails'
+              defaultValue={encounterData.extensionReasonCodeDetails || ''}
               as={
                 <CustomizedTextField
+                  // name='reasonForReferralDetails'
                   width={'70%'}
                   // inputRef={register}
                   label={t('Reason for referral details')}
@@ -1906,16 +1799,12 @@ const PatientDetailsBlock = ({
                   </StyledToggleButton>
                 </StyledToggleButtonGroup>
               </Grid>
-              <Controller
-                control={control}
+              <CustomizedTextField
                 name='receiptNumber'
-                as={
-                  <CustomizedTextField
-                    width={'70%'}
-                    // inputRef={register}
-                    label={t('Receipt number')}
-                  />
-                }
+                width={'70%'}
+                inputRef={register}
+                label={t('Receipt number')}
+                InputLabelProps={{ shrink: true }}
               />
             </TabPanel>
             <TabPanel value='HMO' selectedValue={commitmentAndPaymentTabValue}>
