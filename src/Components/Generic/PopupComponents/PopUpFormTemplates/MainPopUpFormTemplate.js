@@ -1,11 +1,7 @@
 import Grid from '@material-ui/core/Grid';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  StyledRoundButton,
-  CustomizedPaperHeader,
-} from 'Components/Generic/PopupComponents/PopUpFormTemplates/Style';
+import { StyledRoundButton } from 'Components/Generic/PopupComponents/PopUpFormTemplates/Style';
 import { useTranslation } from 'react-i18next';
 import PopUpContantList from 'Components/Generic/PopupComponents/PopUpFormTemplates/PopUpContantList';
 import PopUpContext from 'Components/Generic/PopupComponents/PopUpFormTemplates/PopUpContext';
