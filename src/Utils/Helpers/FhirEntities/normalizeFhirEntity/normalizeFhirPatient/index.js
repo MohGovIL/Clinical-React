@@ -20,12 +20,16 @@ const normalizeFhirPatient = (patient) => {
   let streetName = '';
   let streetNumber = '';
   let POBox = '';
-
+  let addressType = '';
+  let gender = '';
+  let ageGenderType = '';
+  
   if (patient.address && patient.address.length) {
     city = patient.address[0].city;
     postalCode = patient.address[0].postalCode;
     country = patient.address[0].country;
     if (patient.address[0].type) {
+      addressType = patient.address[0].type;
       switch (patient.address[0].type) {
         case 'both':
           streetName = patient.address[0].line[0];
@@ -48,9 +52,8 @@ const normalizeFhirPatient = (patient) => {
       }
     }
   }
-  let ageGenderType = '';
 
-  if (patient.identifier.length) {
+  if (patient.identifier && patient.identifier.length) {
     if (patient.identifier[0].type) {
       identifierTypeText = patient.identifier[0].type.text;
       if (patient.identifier[0].type.coding) {
@@ -110,6 +113,7 @@ const normalizeFhirPatient = (patient) => {
   return {
     id: patient.id,
     city,
+    addressType,
     postalCode,
     country,
     identifier,
@@ -120,7 +124,7 @@ const normalizeFhirPatient = (patient) => {
     mobileCellPhone,
     homePhone,
     email,
-    gender: patient.gender,
+    gender: patient.gender || gender,
     birthDate: patient.birthDate,
     managingOrganization,
     ageGenderType,

@@ -80,9 +80,9 @@ export const StyledCurrentExaminationHeader = styled.div`
     text-align: right;
     color: #000b40;
     margin-left: 10%;
-    white-space: nowrap;
+    /*white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis;*/
   }
 `;
 export const StyledIconContainer = styled.div`
