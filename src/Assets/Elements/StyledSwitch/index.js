@@ -9,22 +9,23 @@ export default function Switches({
   label_2,
   marginRight,
   marginLeft,
+  register,
+  name,
 }) {
   const { t } = useTranslation();
 
   const onChangeHandler = (event) => {
-    if (onChange) {
-      onChange(event);
-    }
+    onChange(event);
   };
 
   return (
     <Label marginRight={marginRight} marginLeft={marginLeft}>
       <input
-        value={checked}
+        name={name || null}
+        ref={register || null}
         type='checkbox'
-        checked={checked}
-        onChange={onChangeHandler}
+        checked={checked || null}
+        onChange={onChange && onChangeHandler}
       />
       <span>
         <div>{label_1 ? t(label_1) : 'Yes'}</div>

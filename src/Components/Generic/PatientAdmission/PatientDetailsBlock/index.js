@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import matchSorter from 'match-sorter';
 import { israelPhoneNumberRegex } from 'Utils/Helpers/validation/patterns';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, FormContext } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
@@ -42,6 +42,7 @@ import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import ChipWithImage from 'Assets/Elements/StyledChip';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 import TabPanel from './TabPanel';
+import PatientDetailsForm from './PatientDetailsForm';
 
 // Material-UI Icons
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -80,6 +81,10 @@ const PatientDetailsBlock = ({
 }) => {
   const { t } = useTranslation();
   let history = useHistory();
+  const methods = useForm({
+    mode: 'onBlur',
+    submitFocusError: true,
+  });
   const {
     control,
     handleSubmit,
@@ -89,10 +94,7 @@ const PatientDetailsBlock = ({
     formState,
     reset,
     triggerValidation,
-  } = useForm({
-    mode: 'onBlur',
-    submitFocusError: true,
-  });
+  } = methods;
   // Giving the patientAdmission if the form is dirty
   // meaning that there has been changes in the form
   const { dirty } = formState;
@@ -113,293 +115,293 @@ const PatientDetailsBlock = ({
   const onSubmit = async (data) => {
     try {
       const clear = isRequiredValidation(data);
-      if (clear) {
-        const APIsArray = [];
-        //Updating patient
-        let patientPatchParams = {};
-        if (contactInformationTabValue === 0) {
-          if (data.addressCity) {
-            patientPatchParams['city'] = addressCity.code;
-          }
-          if (data.addressStreet.trim()) {
-            patientPatchParams['streetName'] = addressStreet.code;
-          }
-          if (data.addressStreetNumber.trim()) {
-            patientPatchParams['streetNumber'] = data.addressStreetNumber;
-          }
-          if (data.addressPostalCode) {
-            patientPatchParams['postalCode'] = data.addressPostalCode;
-          }
-        } else {
-          if (data.POBoxCity) {
-            patientPatchParams['city'] = POBoxCity.code;
-          }
-          if (data.POBox) {
-            patientPatchParams['POBox'] = data.POBox;
-          }
-          if (data.POBoxPostalCode) {
-            patientPatchParams['postalCode'] = data.POBoxPostalCode;
-          }
-        }
-        APIsArray.push(
-          FHIR('Patient', 'doWork', {
-            functionName: 'updatePatient',
-            functionParams: { patientPatchParams, patientId: patientData.id },
-          }),
-        );
-        //Updating/Creating relatedPerson
-        if (encounterData.appointment) {
-          APIsArray.push(
-            FHIR('Appointment', 'doWork', {
-              functionName: 'updateAppointment',
-              functionParams: {
-                functionParams: {
-                  appointmentId: encounterData.appointment,
-                  appointmentParams: {
-                    status: 'arrived',
-                  },
-                },
-              },
-            }),
-          );
-        }
-        if (isEscorted) {
-          let relatedPersonParams = {};
-          if (encounterData.relatedPerson) {
-            if (
-              data.escortName !== relatedPerson.name &&
-              data.escortMobilePhone !== relatedPerson.mobilePhone
-            ) {
-              relatedPersonParams['name'] = data.escortName;
-              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
-              APIsArray.push(
-                FHIR('RelatedPerson', 'doWork', {
-                  // eslint-disable-next-line no-use-before-define
-                  functionName: 'updateRelatedPerson',
-                  functionParams: {
-                    relatedPersonParams,
-                    // eslint-disable-next-line no-use-before-define
-                    relatedPersonId: relatedPerson.id,
-                  },
-                }),
-              );
-            }
-          } else {
-            if (data.escortName) {
-              relatedPersonParams['name'] = data.escortName;
-            }
-            if (data.escortMobilePhone) {
-              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
-            }
-            if (patientData && patientData.id) {
-              relatedPersonParams['patient'] = patientData.id;
-            }
-            APIsArray.push(
-              FHIR('RelatedPerson', 'doWork', {
-                // eslint-disable-next-line no-use-before-define
-                functionName: 'createRelatedPerson',
-                functionParams: {
-                  relatedPersonParams,
-                },
-              }),
-            );
-          }
-        }
-        let item = [];
-        if (configuration.clinikal_pa_commitment_form === '1') {
-          item = [
-            {
-              linkId: '1',
-              text: 'Commitment number',
-              answer: [
-                {
-                  valueInteger:
-                    data.commitmentAndPaymentReferenceForPaymentCommitment,
-                },
-              ],
-            },
-            {
-              linkId: '2',
-              text: 'Commitment date',
-              answer: [
-                {
-                  valueDate: data.commitmentAndPaymentCommitmentDate,
-                },
-              ],
-            },
-            {
-              linkId: '3',
-              text: 'Commitment expiration date',
-              answer: [
-                {
-                  valueDate: data.commitmentAndPaymentCommitmentValidity,
-                },
-              ],
-            },
-            {
-              linkId: '4',
-              text: 'Signing doctor',
-              answer: [
-                {
-                  valueString: data.commitmentAndPaymentDoctorsName,
-                },
-              ],
-            },
-            {
-              linkId: '5',
-              text: 'doctor license number',
-              answer: [
-                {
-                  valueInteger: data.commitmentAndPaymentDoctorsLicense,
-                },
-              ],
-            },
-          ];
-        } else {
-          item = [
-            {
-              linkId: '6',
-              text: 'Payment amount',
-              answer: [
-                {
-                  valueString: paymentAmount,
-                },
-              ],
-            },
-            {
-              linkId: '7',
-              text: 'Payment method',
-              answer: [
-                {
-                  valueString: paymentMethod,
-                },
-              ],
-            },
-            {
-              linkId: '8',
-              text: 'Receipt number',
-              answer: [
-                {
-                  valueString: data.receiptNumber,
-                },
-              ],
-            },
-          ];
-        }
-        if (Object.values(questionnaireResponse).length) {
-          APIsArray.push(
-            FHIR('QuestionnaireResponse', 'doWork', {
-              functionName: 'patchQuestionnaireResponse',
-              questionnaireResponseId: questionnaireResponse.id,
-              questionnaireResponseParams: {
-                item,
-              },
-            }),
-          );
-        } else {
-          APIsArray.push(
-            FHIR('QuestionnaireResponse', 'doWork', {
-              functionName: 'createQuestionnaireResponse',
-              functionParams: {
-                questionnaireResponse: {
-                  questionnaire: questionnaireId,
-                  status: 'completed',
-                  patient: patientData.id,
-                  encounter: encounterData.id,
-                  authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-                  source: patientData.id,
-                  item,
-                },
-              },
-            }),
-          );
-        }
-        const promises = await Promise.all(APIsArray);
-        const encounter = { ...encounterData };
-        encounter.examinationCode = selectedServicesType.map((option) => {
-          return option.reasonCode.code;
-        });
-        encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
-        if (configuration.clinikal_pa_arrival_way === '1') {
-          encounter['extensionArrivalWay'] = arrivalWay;
-        }
-        if (data.reasonForReferralDetails) {
-          encounter['extensionReasonCodeDetails'] =
-            data.reasonForReferralDetails;
-        }
-        if (isEscorted) {
-          if (!encounter.relatedPerson) {
-            const NewRelatedPerson = normalizeFhirRelatedPerson(
-              promises[1].data,
-            );
-            encounter['relatedPerson'] = NewRelatedPerson.id;
-          }
-        } else {
-          delete encounter['relatedPerson'];
-        }
-        if (isUrgent) {
-          encounter['priority'] = 2;
-        } else {
-          encounter['priority'] = 1;
-        }
-        if (encounter.status === 'planned') {
-          encounter.status = configuration.clinikal_pa_next_enc_status;
-        }
-        await FHIR('Encounter', 'doWork', {
-          functionName: 'updateEncounter',
-          functionParams: {
-            encounterId: encounter.id,
-            encounter: encounter,
-          },
-        });
-        const referral_64Obj = splitBase_64(referralFile_64);
-        const documentReferenceReferral = {
-          encounter: encounterData.id,
-          patient: patientData.id,
-          contentType: referral_64Obj.type,
-          data: referral_64Obj.data,
-          categoryCode: '2',
-          url: referralFile.name,
-        };
+      //     if (clear) {
+      //       const APIsArray = [];
+      //       //Updating patient
+      //       let patientPatchParams = {};
+      //       if (contactInformationTabValue === 0) {
+      //         if (data.addressCity) {
+      //           patientPatchParams['city'] = addressCity.code;
+      //         }
+      //         if (data.addressStreet.trim()) {
+      //           patientPatchParams['streetName'] = addressStreet.code;
+      //         }
+      //         if (data.addressStreetNumber.trim()) {
+      //           patientPatchParams['streetNumber'] = data.addressStreetNumber;
+      //         }
+      //         if (data.addressPostalCode) {
+      //           patientPatchParams['postalCode'] = data.addressPostalCode;
+      //         }
+      //       } else {
+      //         if (data.POBoxCity) {
+      //           patientPatchParams['city'] = POBoxCity.code;
+      //         }
+      //         if (data.POBox) {
+      //           patientPatchParams['POBox'] = data.POBox;
+      //         }
+      //         if (data.POBoxPostalCode) {
+      //           patientPatchParams['postalCode'] = data.POBoxPostalCode;
+      //         }
+      //       }
+      //       APIsArray.push(
+      //         FHIR('Patient', 'doWork', {
+      //           functionName: 'updatePatient',
+      //           functionParams: { patientPatchParams, patientId: patientData.id },
+      //         }),
+      //       );
+      //       //Updating/Creating relatedPerson
+      //       if (encounterData.appointment) {
+      //         APIsArray.push(
+      //           FHIR('Appointment', 'doWork', {
+      //             functionName: 'updateAppointment',
+      //             functionParams: {
+      //               functionParams: {
+      //                 appointmentId: encounterData.appointment,
+      //                 appointmentParams: {
+      //                   status: 'arrived',
+      //                 },
+      //               },
+      //             },
+      //           }),
+      //         );
+      //       }
+      //       if (isEscorted) {
+      //         let relatedPersonParams = {};
+      //         if (encounterData.relatedPerson) {
+      //           if (
+      //             data.escortName !== relatedPerson.name &&
+      //             data.escortMobilePhone !== relatedPerson.mobilePhone
+      //           ) {
+      //             relatedPersonParams['name'] = data.escortName;
+      //             relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+      //             APIsArray.push(
+      //               FHIR('RelatedPerson', 'doWork', {
+      //                 // eslint-disable-next-line no-use-before-define
+      //                 functionName: 'updateRelatedPerson',
+      //                 functionParams: {
+      //                   relatedPersonParams,
+      //                   // eslint-disable-next-line no-use-before-define
+      //                   relatedPersonId: relatedPerson.id,
+      //                 },
+      //               }),
+      //             );
+      //           }
+      //         } else {
+      //           if (data.escortName) {
+      //             relatedPersonParams['name'] = data.escortName;
+      //           }
+      //           if (data.escortMobilePhone) {
+      //             relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+      //           }
+      //           if (patientData && patientData.id) {
+      //             relatedPersonParams['patient'] = patientData.id;
+      //           }
+      //           APIsArray.push(
+      //             FHIR('RelatedPerson', 'doWork', {
+      //               // eslint-disable-next-line no-use-before-define
+      //               functionName: 'createRelatedPerson',
+      //               functionParams: {
+      //                 relatedPersonParams,
+      //               },
+      //             }),
+      //           );
+      //         }
+      //       }
+      //       let item = [];
+      //       if (configuration.clinikal_pa_commitment_form === '1') {
+      //         item = [
+      //           {
+      //             linkId: '1',
+      //             text: 'Commitment number',
+      //             answer: [
+      //               {
+      //                 valueInteger:
+      //                   data.commitmentAndPaymentReferenceForPaymentCommitment,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             linkId: '2',
+      //             text: 'Commitment date',
+      //             answer: [
+      //               {
+      //                 valueDate: data.commitmentAndPaymentCommitmentDate,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             linkId: '3',
+      //             text: 'Commitment expiration date',
+      //             answer: [
+      //               {
+      //                 valueDate: data.commitmentAndPaymentCommitmentValidity,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             linkId: '4',
+      //             text: 'Signing doctor',
+      //             answer: [
+      //               {
+      //                 valueString: data.commitmentAndPaymentDoctorsName,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             linkId: '5',
+      //             text: 'doctor license number',
+      //             answer: [
+      //               {
+      //                 valueInteger: data.commitmentAndPaymentDoctorsLicense,
+      //               },
+      //             ],
+      //           },
+      //         ];
+      //       } else {
+      //         item = [
+      //           {
+      //             linkId: '6',
+      //             text: 'Payment amount',
+      //             answer: [
+      //               {
+      //                 valueString: paymentAmount,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             linkId: '7',
+      //             text: 'Payment method',
+      //             answer: [
+      //               {
+      //                 valueString: paymentMethod,
+      //               },
+      //             ],
+      //           },
+      //           {
+      //             linkId: '8',
+      //             text: 'Receipt number',
+      //             answer: [
+      //               {
+      //                 valueString: data.receiptNumber,
+      //               },
+      //             ],
+      //           },
+      //         ];
+      //       }
+      //       if (Object.values(questionnaireResponse).length) {
+      //         APIsArray.push(
+      //           FHIR('QuestionnaireResponse', 'doWork', {
+      //             functionName: 'patchQuestionnaireResponse',
+      //             questionnaireResponseId: questionnaireResponse.id,
+      //             questionnaireResponseParams: {
+      //               item,
+      //             },
+      //           }),
+      //         );
+      //       } else {
+      //         APIsArray.push(
+      //           FHIR('QuestionnaireResponse', 'doWork', {
+      //             functionName: 'createQuestionnaireResponse',
+      //             functionParams: {
+      //               questionnaireResponse: {
+      //                 questionnaire: questionnaireId,
+      //                 status: 'completed',
+      //                 patient: patientData.id,
+      //                 encounter: encounterData.id,
+      //                 authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+      //                 source: patientData.id,
+      //                 item,
+      //               },
+      //             },
+      //           }),
+      //         );
+      //       }
+      //       const promises = await Promise.all(APIsArray);
+      //       const encounter = { ...encounterData };
+      //       encounter.examinationCode = selectedServicesType.map((option) => {
+      //         return option.reasonCode.code;
+      //       });
+      //       encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
+      //       if (configuration.clinikal_pa_arrival_way === '1') {
+      //         encounter['extensionArrivalWay'] = arrivalWay;
+      //       }
+      //       if (data.reasonForReferralDetails) {
+      //         encounter['extensionReasonCodeDetails'] =
+      //           data.reasonForReferralDetails;
+      //       }
+      //       if (isEscorted) {
+      //         if (!encounter.relatedPerson) {
+      //           const NewRelatedPerson = normalizeFhirRelatedPerson(
+      //             promises[1].data,
+      //           );
+      //           encounter['relatedPerson'] = NewRelatedPerson.id;
+      //         }
+      //       } else {
+      //         delete encounter['relatedPerson'];
+      //       }
+      //       if (isUrgent) {
+      //         encounter['priority'] = 2;
+      //       } else {
+      //         encounter['priority'] = 1;
+      //       }
+      //       if (encounter.status === 'planned') {
+      //         encounter.status = configuration.clinikal_pa_next_enc_status;
+      //       }
+      //       await FHIR('Encounter', 'doWork', {
+      //         functionName: 'updateEncounter',
+      //         functionParams: {
+      //           encounterId: encounter.id,
+      //           encounter: encounter,
+      //         },
+      //       });
+      //       const referral_64Obj = splitBase_64(referralFile_64);
+      //       const documentReferenceReferral = {
+      //         encounter: encounterData.id,
+      //         patient: patientData.id,
+      //         contentType: referral_64Obj.type,
+      //         data: referral_64Obj.data,
+      //         categoryCode: '2',
+      //         url: referralFile.name,
+      //       };
 
-        await FHIR('DocumentReference', 'doWork', {
-          documentReference: documentReferenceReferral,
-          functionName: 'createDocumentReference',
-        });
-        if (configuration.clinikal_pa_commitment_form === '1') {
-          const commitment_64Obj = splitBase_64(commitmentFile_64);
-          const documentReferenceCommitment = {
-            encounter: encounterData.id,
-            patient: patientData.id,
-            contentType: commitment_64Obj.type,
-            data: commitment_64Obj.data,
-            categoryCode: '2',
-            url: commitmentFile.name,
-          };
+      //       await FHIR('DocumentReference', 'doWork', {
+      //         documentReference: documentReferenceReferral,
+      //         functionName: 'createDocumentReference',
+      //       });
+      //       if (configuration.clinikal_pa_commitment_form === '1') {
+      //         const commitment_64Obj = splitBase_64(commitmentFile_64);
+      //         const documentReferenceCommitment = {
+      //           encounter: encounterData.id,
+      //           patient: patientData.id,
+      //           contentType: commitment_64Obj.type,
+      //           data: commitment_64Obj.data,
+      //           categoryCode: '2',
+      //           url: commitmentFile.name,
+      //         };
 
-          await FHIR('DocumentReference', 'doWork', {
-            documentReference: documentReferenceCommitment,
-            functionName: 'createDocumentReference',
-          });
-        }
-        if (additionalDocumentFile_64.length) {
-          const additional_64Obj = splitBase_64(additionalDocumentFile_64);
-          const documentReferenceAdditionalDocument = {
-            encounter: encounterData.id,
-            patient: patientData.id,
-            contentType: additional_64Obj.type,
-            data: additional_64Obj.data,
-            categoryCode: '2',
-            url: additionalDocumentFile.name,
-          };
+      //         await FHIR('DocumentReference', 'doWork', {
+      //           documentReference: documentReferenceCommitment,
+      //           functionName: 'createDocumentReference',
+      //         });
+      //       }
+      //       if (additionalDocumentFile_64.length) {
+      //         const additional_64Obj = splitBase_64(additionalDocumentFile_64);
+      //         const documentReferenceAdditionalDocument = {
+      //           encounter: encounterData.id,
+      //           patient: patientData.id,
+      //           contentType: additional_64Obj.type,
+      //           data: additional_64Obj.data,
+      //           categoryCode: '2',
+      //           url: additionalDocumentFile.name,
+      //         };
 
-          await FHIR('DocumentReference', 'doWork', {
-            documentReference: documentReferenceAdditionalDocument,
-            functionName: 'createDocumentReference',
-          });
-        }
-        history.push(`${baseRoutePath()}/imaging/patientTracking`);
-      }
+      //         await FHIR('DocumentReference', 'doWork', {
+      //           documentReference: documentReferenceAdditionalDocument,
+      //           functionName: 'createDocumentReference',
+      //         });
+      //       }
+      //       history.push(`${baseRoutePath()}/imaging/patientTracking`);
+      //     }
     } catch (error) {
       console.log(error);
     }
@@ -513,21 +515,6 @@ const PatientDetailsBlock = ({
 
   // Escorted Information
   // Escorted Information - vars
-  const [isEscorted, setIsEscorted] = useState(false);
-  const [relatedPerson, setRelatedPerson] = useState({});
-  const [arrivalWay, setArrivalWay] = useState(
-    encounterData.extensionArrivalWay || 'Independent',
-  );
-  // ArrivalWay -functions
-  const arrivalWayHandler = (event, way) => {
-    setArrivalWay(way);
-  };
-  // Escorted Information - functions
-  const isEscortedSwitchOnChangeHandle = () => {
-    setIsEscorted((prevState) => {
-      return !prevState;
-    });
-  };
   // paymentMethods
   const [paymentMethod, setPaymentMethod] = useState('');
   const paymentMethodHandler = (event, method) => {
@@ -1025,30 +1012,6 @@ const PatientDetailsBlock = ({
       if (encounterData.priority > 1) {
         setIsUrgent(true);
       }
-      if (encounterData.relatedPerson) {
-        (async () => {
-          try {
-            const relatedPerson = await FHIR('RelatedPerson', 'doWork', {
-              functionName: 'getRelatedPerson',
-              functionParams: {
-                RelatedPersonId: encounterData.relatedPerson,
-              },
-            });
-            const normalizedRelatedPerson = normalizeFhirRelatedPerson(
-              relatedPerson.data,
-            );
-
-            setIsEscorted(true);
-            setRelatedPerson(normalizedRelatedPerson);
-            reset({
-              escortMobilePhone: normalizedRelatedPerson.mobilePhone || '',
-              escortName: normalizedRelatedPerson.name || '',
-            });
-          } catch (error) {
-            console.log(error);
-          }
-        })();
-      }
     }
     if (encounterData && patientData) {
       (async () => {
@@ -1237,798 +1200,656 @@ const PatientDetailsBlock = ({
         )} ${t('Do you want to continue?')}`}
       </CustomizedPopup>
       <StyledPatientDetails edit={edit_mode}>
-        <StyledForm onSubmit={handleSubmit(onSubmit)}>
-          {/* Patient Details */}
-          <Title
-            marginTop={'55px'}
-            fontSize={'28px'}
-            color={'#002398'}
-            label={'Patient Details'}
-          />
-          {/* Escorted */}
-          <StyledFormGroup>
-            <Title
-              fontSize={'18px'}
-              color={'#000b40'}
-              label={t('Accompanying patient')}
-              bold
-            />
-            <StyledDivider variant={'fullWidth'} />
-            <Grid
-              container
-              direction={'row'}
-              justify={'flex-start'}
-              alignItems={'center'}
-              style={{ marginBottom: '50px' }}>
-              {configuration.clinikal_pa_arrival_way === '1' && (
-                <React.Fragment>
-                  <span>{`${t('Arrival way')}?`}</span>
-                  <StyledToggleButtonGroup
-                    value={arrivalWay}
-                    onChange={arrivalWayHandler}
-                    exclusive
-                    aria-label='Arrival way'>
-                    <StyledToggleButton
-                      value='Ambulance'
-                      aria-label='ambulance'>
-                      {t('Ambulance')}
-                    </StyledToggleButton>
-                    <StyledToggleButton
-                      value='Independent'
-                      aria-label='Independent'>
-                      {t('Independent')}
-                    </StyledToggleButton>
-                  </StyledToggleButtonGroup>
-                </React.Fragment>
-              )}
-            </Grid>
-            <Grid
-              container
-              direction={'row'}
-              justify={'flex-start'}
-              alignItems={'center'}>
-              <span>
-                {configuration.clinikal_pa_arrival_way === '1'
-                  ? `${t('Arrival with escort')}?`
-                  : `${t('Patient arrived with an escort')}?`}
-              </span>
-              {/* Escorted Information Switch */}
-              <StyledSwitch
-                name='isEscorted'
-                onChange={isEscortedSwitchOnChangeHandle}
-                checked={isEscorted}
-                label_1={'No'}
-                label_2={'Yes'}
-                marginLeft={'40px'}
-                marginRight={'40px'}
-              />
-            </Grid>
-          </StyledFormGroup>
-          {/* Escorted Information */}
-          {isEscorted && (
+        <FormContext
+          {...methods}
+          relatedPersonId={encounterData.relatedPerson}
+          isArrivalWay={configuration.clinikal_pa_arrival_way}
+          encounterArrivalWay={encounterData.extensionArrivalWay}>
+          <StyledForm onSubmit={handleSubmit(onSubmit)}>
+            {/* Patient Details */}
+            <PatientDetailsForm />
+            {/* Contact Information */}
             <StyledFormGroup>
               <Title
                 fontSize={'18px'}
                 color={'#000b40'}
-                label={t('Escort details')}
+                label={t('Contact Information')}
                 bold
               />
               <StyledDivider variant={'fullWidth'} />
-              {/* Escorted Information name */}
-              <Controller
-                as={
-                  <CustomizedTextField width={'70%'} label={t('Escort name')} />
+              {/* Contact Information tabs */}
+              <Tabs
+                value={contactInformationTabValue}
+                onChange={contactInformationTabValueChangeHandler}
+                indicatorColor='primary'
+                textColor='primary'
+                variant='standard'
+                aria-label='full width tabs example'>
+                <Tab label={t('Address')} />
+                <Tab label={t('PO box')} />
+              </Tabs>
+              {/* Contact Information tabs - address */}
+              {contactInformationTabValue === 0 ? (
+                <React.Fragment>
+                  {/* Contact Information - address - city */}
+                  <StyledAutoComplete
+                    id='addressCity'
+                    open={citiesOpen}
+                    onOpen={() => {
+                      setCitiesOpen(true);
+                    }}
+                    onClose={() => {
+                      setCitiesOpen(false);
+                    }}
+                    loading={loadingCities}
+                    options={cities}
+                    value={addressCity}
+                    onChange={(event, newValue) => {
+                      setAddressCity(newValue);
+                    }}
+                    getOptionLabel={(option) =>
+                      Object.keys(option).length === 0 &&
+                      option.constructor === Object
+                        ? ''
+                        : option.name
+                    }
+                    noOptionsText={t('No Results')}
+                    loadingText={t('Loading')}
+                    renderInput={(params) => (
+                      <CustomizedTextField
+                        width={'70%'}
+                        name='addressCity'
+                        inputRef={register()}
+                        {...params}
+                        label={t('City')}
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <React.Fragment>
+                              <InputAdornment position={'end'}>
+                                {loadingCities ? (
+                                  <CircularProgress
+                                    color={'inherit'}
+                                    size={20}
+                                  />
+                                ) : null}
+                                {citiesOpen ? <ExpandLess /> : <ExpandMore />}
+                              </InputAdornment>
+                            </React.Fragment>
+                          ),
+                        }}
+                      />
+                    )}
+                  />
+                  {/* Contact Information - address - streets */}
+                  <StyledAutoComplete
+                    options={streets}
+                    loading={loadingStreets}
+                    open={streetsOpen}
+                    onOpen={() => addressCity.name && setStreetsOpen(true)}
+                    onClose={() => setStreetsOpen(false)}
+                    id='addressStreet'
+                    value={addressStreet}
+                    onChange={(event, newValue) => {
+                      setAddressStreet(newValue);
+                    }}
+                    getOptionLabel={(option) =>
+                      Object.keys(option).length === 0 &&
+                      option.constructor === Object
+                        ? ''
+                        : option.name
+                    }
+                    noOptionsText={t('No Results')}
+                    loadingText={t('Loading')}
+                    getOptionDisabled={(option) => option.code === 'no_result'}
+                    renderInput={(params) => (
+                      <CustomizedTextField
+                        width={'70%'}
+                        {...params}
+                        name='addressStreet'
+                        inputRef={register()}
+                        InputProps={{
+                          ...params.InputProps,
+
+                          endAdornment: (
+                            <InputAdornment position={'end'}>
+                              {loadingStreets ? (
+                                <CircularProgress color={'inherit'} size={20} />
+                              ) : null}
+                              {streetsOpen ? <ExpandLess /> : <ExpandMore />}
+                            </InputAdornment>
+                          ),
+                        }}
+                        label={t('Street')}
+                      />
+                    )}
+                  />
+                  {/* Contact Information - address - house number */}
+                  <Controller
+                    name={'addressStreetNumber'}
+                    control={control}
+                    defaultValue={
+                      addressStreetNumber || patientData.streetNumber
+                    }
+                    onBlur={([event]) => {
+                      onTextBlur(event.target.value, setAddressStreetNumber);
+                      return event.target.value;
+                    }}
+                    as={
+                      <CustomizedTextField
+                        width={'70%'}
+                        id={'addressStreetNumber'}
+                        label={t('House number')}
+                      />
+                    }
+                  />
+                  {/* Contact Information - address - postal code */}
+                  <Controller
+                    defaultValue={addressPostalCode || patientData.postalCode}
+                    name={'addressPostalCode'}
+                    key='addressPostalCode'
+                    control={control}
+                    onBlur={([event]) => {
+                      onTextBlur(event.target.value, setAddressPostalCode);
+                      return event.target.value;
+                    }}
+                    as={
+                      <CustomizedTextField
+                        width={'70%'}
+                        id={'addressPostalCode'}
+                        label={t('Postal code')}
+                        type='number'
+                      />
+                    }
+                    rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
+                    error={errors.addressPostalCode && true}
+                    helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
+                  />
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  {/* Contact Information - POBox - city */}
+                  <StyledAutoComplete
+                    name='POBoxCity'
+                    id='POBoxCity'
+                    open={citiesOpen}
+                    onOpen={() => {
+                      setCitiesOpen(true);
+                    }}
+                    onClose={() => {
+                      setCitiesOpen(false);
+                    }}
+                    onChange={(event, newValue) => {
+                      setPOBoxCity(newValue);
+                    }}
+                    value={POBoxCity}
+                    loading={loadingCities}
+                    options={cities}
+                    getOptionLabel={(option) => option.name}
+                    noOptionsText={t('No Results')}
+                    loadingText={t('Loading')}
+                    renderInput={(params) => (
+                      <CustomizedTextField
+                        width={'70%'}
+                        {...params}
+                        name='POBoxCity'
+                        inputRef={register()}
+                        label={t('City')}
+                        InputProps={{
+                          ...params.InputProps,
+
+                          endAdornment: (
+                            <React.Fragment>
+                              <InputAdornment position={'end'}>
+                                {loadingCities ? (
+                                  <CircularProgress
+                                    color={'inherit'}
+                                    size={20}
+                                  />
+                                ) : null}
+                                {citiesOpen ? <ExpandLess /> : <ExpandMore />}
+                              </InputAdornment>
+                            </React.Fragment>
+                          ),
+                        }}
+                      />
+                    )}
+                  />
+                  {/* Contact Information - POBox - POBox */}
+                  <Controller
+                    name={'POBox'}
+                    control={control}
+                    defaultValue={POBox || patientData.POBox}
+                    onBlur={([event]) => {
+                      onTextBlur(event.target.value, setPOBox);
+                      return event.target.value;
+                    }}
+                    as={
+                      <CustomizedTextField
+                        width={'70%'}
+                        id={'POBox'}
+                        label={t('PO box')}
+                      />
+                    }
+                  />
+                  {/* Contact Information - POBox - postal code */}
+                  <Controller
+                    defaultValue={POBoxPostalCode || patientData.postalCode}
+                    name={'POBoxPostalCode'}
+                    key='POBoxPostalCode'
+                    control={control}
+                    onBlur={([event]) => {
+                      onTextBlur(event.target.value, setPOBoxPostalCode);
+                      return event.target.value;
+                    }}
+                    as={
+                      <CustomizedTextField
+                        width={'70%'}
+                        id={'POBoxPostalCode'}
+                        label={t('Postal code')}
+                        InputLabelProps={{
+                          shrink: patientData.postalCode && true,
+                        }}
+                      />
+                    }
+                    rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
+                    error={errors.POBoxPostalCode && true}
+                    helperText={errors.POBoxPostalCode && 'יש להזין 7 ספרות'}
+                  />
+                </React.Fragment>
+              )}
+            </StyledFormGroup>
+            <span>
+              {t('To find a zip code on the Israel post site')}{' '}
+              <a
+                href={
+                  'https://mypost.israelpost.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/%D7%90%D7%99%D7%AA%D7%95%D7%A8-%D7%9E%D7%99%D7%A7%D7%95%D7%93/'
                 }
-                name={'escortName'}
-                control={control}
-                defaultValue={relatedPerson.name || ''}
+                target={'_blank'}
+                rel='noopener noreferrer'>
+                {t('Click here')}
+              </a>
+            </span>
+            {/* Visit Details */}
+            <Title
+              marginTop={'80px'}
+              fontSize={'28px'}
+              color={'#002398'}
+              label={'Visit Details'}
+            />
+            {/* Requested service */}
+            <StyledFormGroup>
+              <Title
+                fontSize={'18px'}
+                color={'#000b40'}
+                label={'Requested service'}
+                bold
               />
-              {/* Escorted Information cell phone */}
+              <StyledDivider variant={'fullWidth'} />
+              <Grid
+                container
+                direction={'row'}
+                justify={'flex-start'}
+                alignItems={'center'}>
+                <span>{t('Is urgent?')}</span>
+                {/* Requested service - switch */}
+                <StyledSwitch
+                  onChange={isUrgentSwitchOnChangeHandler}
+                  checked={isUrgent}
+                  label_1={'No'}
+                  label_2={'Yes'}
+                  marginLeft={'40px'}
+                  marginRight={'40px'}
+                />
+              </Grid>
+              {/* Requested service - select test */}
+              <StyledAutoComplete
+                filterOptions={filterOptions}
+                multiple
+                noOptionsText={t('No Results')}
+                loadingText={t('Loading')}
+                open={servicesTypeOpen}
+                loading={loadingServicesType}
+                onOpen={selectExaminationOnOpenHandler}
+                onClose={selectExaminationOnCloseHandler}
+                value={pendingValue}
+                onChange={selectExaminationOnChangeHandler}
+                disableCloseOnSelect
+                renderTags={() => null}
+                renderOption={(option, state) => (
+                  <Grid container justify='flex-end' alignItems='center'>
+                    <Grid item xs={3}>
+                      <Checkbox
+                        color='primary'
+                        icon={<CheckBoxOutlineBlankOutlined />}
+                        checkedIcon={<CheckBox />}
+                        checked={state.selected}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText>{option.reasonCode.code}</ListItemText>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText primary={t(option.serviceType.name)} />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <ListItemText primary={t(option.reasonCode.name)} />
+                    </Grid>
+                  </Grid>
+                )}
+                ListboxComponent={ListboxComponent}
+                ListboxProps={{
+                  pendingValue: pendingValue,
+                  setSelectedServicesType: setSelectedServicesType,
+                  setClose: setServicesTypeOpen,
+                  setValue: setValue,
+                  close: unFocusSelectTest,
+                }}
+                options={servicesType}
+                renderInput={(params) => (
+                  <CustomizedTextField
+                    width={'70%'}
+                    name='selectTest'
+                    inputRef={(e) => {
+                      selectTestRef.current = e;
+                    }}
+                    error={requiredErrors.selectTest ? true : false}
+                    helperText={
+                      requiredErrors.selectTest &&
+                      t(
+                        'The visit reason performed during the visit must be selected',
+                      )
+                    }
+                    {...params}
+                    label={`${t('Reason for refferal')} *`}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <React.Fragment>
+                          <InputAdornment position={'end'}>
+                            {loadingServicesType ? (
+                              <CircularProgress color={'inherit'} size={20} />
+                            ) : null}
+                            {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
+                          </InputAdornment>
+                        </React.Fragment>
+                      ),
+                    }}
+                  />
+                )}
+              />
+              {/* Requested service - selected test - chips */}
+              <Grid container direction='row' wrap='wrap'>
+                {selectedServicesType.map((selected, selectedIndex) => (
+                  <StyledChip
+                    deleteIcon={<Close fontSize='small' />}
+                    onDelete={chipOnDeleteHandler(selectedIndex)}
+                    key={selectedIndex}
+                    label={`${selected.reasonCode.code} | ${t(
+                      selected.serviceType.name,
+                    )} | ${t(selected.reasonCode.name)}`}
+                  />
+                ))}
+              </Grid>
               <Controller
-                name={'escortMobilePhone'}
                 control={control}
-                defaultValue={relatedPerson.mobilePhone || ''}
+                name='reasonForReferralDetails'
+                defaultValue={encounterData.extensionReasonCodeDetails || ''}
                 as={
                   <CustomizedTextField
                     width={'70%'}
-                    label={t('Escort cell phone')}
+                    label={t('Reason for referral details')}
                   />
-                }
-                rules={{
-                  pattern: israelPhoneNumberRegex(),
-                }}
-                error={errors.escortMobilePhone && true}
-                helperText={
-                  errors.escortMobilePhone &&
-                  t('The number entered is incorrect')
                 }
               />
             </StyledFormGroup>
-          )}
-          {/* Contact Information */}
-          <StyledFormGroup>
-            <Title
-              fontSize={'18px'}
-              color={'#000b40'}
-              label={t('Contact Information')}
-              bold
-            />
-            <StyledDivider variant={'fullWidth'} />
-            {/* Contact Information tabs */}
-            <Tabs
-              value={contactInformationTabValue}
-              onChange={contactInformationTabValueChangeHandler}
-              indicatorColor='primary'
-              textColor='primary'
-              variant='standard'
-              aria-label='full width tabs example'>
-              <Tab label={t('Address')} />
-              <Tab label={t('PO box')} />
-            </Tabs>
-            {/* Contact Information tabs - address */}
-            {contactInformationTabValue === 0 ? (
-              <React.Fragment>
-                {/* Contact Information - address - city */}
-                <StyledAutoComplete
-                  id='addressCity'
-                  open={citiesOpen}
-                  onOpen={() => {
-                    setCitiesOpen(true);
-                  }}
-                  onClose={() => {
-                    setCitiesOpen(false);
-                  }}
-                  loading={loadingCities}
-                  options={cities}
-                  value={addressCity}
-                  onChange={(event, newValue) => {
-                    setAddressCity(newValue);
-                  }}
-                  getOptionLabel={(option) =>
-                    Object.keys(option).length === 0 &&
-                    option.constructor === Object
-                      ? ''
-                      : option.name
-                  }
-                  noOptionsText={t('No Results')}
-                  loadingText={t('Loading')}
-                  renderInput={(params) => (
-                    <CustomizedTextField
-                      width={'70%'}
-                      name='addressCity'
-                      inputRef={register()}
-                      {...params}
-                      label={t('City')}
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <React.Fragment>
-                            <InputAdornment position={'end'}>
-                              {loadingCities ? (
-                                <CircularProgress color={'inherit'} size={20} />
-                              ) : null}
-                              {citiesOpen ? <ExpandLess /> : <ExpandMore />}
-                            </InputAdornment>
-                          </React.Fragment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-                {/* Contact Information - address - streets */}
-                <StyledAutoComplete
-                  options={streets}
-                  loading={loadingStreets}
-                  open={streetsOpen}
-                  onOpen={() => addressCity.name && setStreetsOpen(true)}
-                  onClose={() => setStreetsOpen(false)}
-                  id='addressStreet'
-                  value={addressStreet}
-                  onChange={(event, newValue) => {
-                    setAddressStreet(newValue);
-                  }}
-                  getOptionLabel={(option) =>
-                    Object.keys(option).length === 0 &&
-                    option.constructor === Object
-                      ? ''
-                      : option.name
-                  }
-                  noOptionsText={t('No Results')}
-                  loadingText={t('Loading')}
-                  getOptionDisabled={(option) => option.code === 'no_result'}
-                  renderInput={(params) => (
-                    <CustomizedTextField
-                      width={'70%'}
-                      {...params}
-                      name='addressStreet'
-                      inputRef={register()}
-                      InputProps={{
-                        ...params.InputProps,
-
-                        endAdornment: (
-                          <InputAdornment position={'end'}>
-                            {loadingStreets ? (
-                              <CircularProgress color={'inherit'} size={20} />
-                            ) : null}
-                            {streetsOpen ? <ExpandLess /> : <ExpandMore />}
-                          </InputAdornment>
-                        ),
-                      }}
-                      label={t('Street')}
-                    />
-                  )}
-                />
-                {/* Contact Information - address - house number */}
-                <Controller
-                  name={'addressStreetNumber'}
-                  control={control}
-                  defaultValue={addressStreetNumber || patientData.streetNumber}
-                  onBlur={([event]) => {
-                    onTextBlur(event.target.value, setAddressStreetNumber);
-                    return event.target.value;
-                  }}
-                  as={
-                    <CustomizedTextField
-                      width={'70%'}
-                      id={'addressStreetNumber'}
-                      label={t('House number')}
-                    />
-                  }
-                />
-                {/* Contact Information - address - postal code */}
-                <Controller
-                  defaultValue={addressPostalCode || patientData.postalCode}
-                  name={'addressPostalCode'}
-                  key='addressPostalCode'
-                  control={control}
-                  onBlur={([event]) => {
-                    onTextBlur(event.target.value, setAddressPostalCode);
-                    return event.target.value;
-                  }}
-                  as={
-                    <CustomizedTextField
-                      width={'70%'}
-                      id={'addressPostalCode'}
-                      label={t('Postal code')}
-                      type='number'
-                    />
-                  }
-                  rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
-                  error={errors.addressPostalCode && true}
-                  helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
-                />
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                {/* Contact Information - POBox - city */}
-                <StyledAutoComplete
-                  name='POBoxCity'
-                  id='POBoxCity'
-                  open={citiesOpen}
-                  onOpen={() => {
-                    setCitiesOpen(true);
-                  }}
-                  onClose={() => {
-                    setCitiesOpen(false);
-                  }}
-                  onChange={(event, newValue) => {
-                    setPOBoxCity(newValue);
-                  }}
-                  value={POBoxCity}
-                  loading={loadingCities}
-                  options={cities}
-                  getOptionLabel={(option) => option.name}
-                  noOptionsText={t('No Results')}
-                  loadingText={t('Loading')}
-                  renderInput={(params) => (
-                    <CustomizedTextField
-                      width={'70%'}
-                      {...params}
-                      name='POBoxCity'
-                      inputRef={register()}
-                      label={t('City')}
-                      InputProps={{
-                        ...params.InputProps,
-
-                        endAdornment: (
-                          <React.Fragment>
-                            <InputAdornment position={'end'}>
-                              {loadingCities ? (
-                                <CircularProgress color={'inherit'} size={20} />
-                              ) : null}
-                              {citiesOpen ? <ExpandLess /> : <ExpandMore />}
-                            </InputAdornment>
-                          </React.Fragment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-                {/* Contact Information - POBox - POBox */}
-                <Controller
-                  name={'POBox'}
-                  control={control}
-                  defaultValue={POBox || patientData.POBox}
-                  onBlur={([event]) => {
-                    onTextBlur(event.target.value, setPOBox);
-                    return event.target.value;
-                  }}
-                  as={
-                    <CustomizedTextField
-                      width={'70%'}
-                      id={'POBox'}
-                      label={t('PO box')}
-                    />
-                  }
-                />
-                {/* Contact Information - POBox - postal code */}
-                <Controller
-                  defaultValue={POBoxPostalCode || patientData.postalCode}
-                  name={'POBoxPostalCode'}
-                  key='POBoxPostalCode'
-                  control={control}
-                  onBlur={([event]) => {
-                    onTextBlur(event.target.value, setPOBoxPostalCode);
-                    return event.target.value;
-                  }}
-                  as={
-                    <CustomizedTextField
-                      width={'70%'}
-                      id={'POBoxPostalCode'}
-                      label={t('Postal code')}
-                      InputLabelProps={{
-                        shrink: patientData.postalCode && true,
-                      }}
-                    />
-                  }
-                  rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
-                  error={errors.POBoxPostalCode && true}
-                  helperText={errors.POBoxPostalCode && 'יש להזין 7 ספרות'}
-                />
-              </React.Fragment>
-            )}
-          </StyledFormGroup>
-          <span>
-            {t('To find a zip code on the Israel post site')}{' '}
-            <a
-              href={
-                'https://mypost.israelpost.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/%D7%90%D7%99%D7%AA%D7%95%D7%A8-%D7%9E%D7%99%D7%A7%D7%95%D7%93/'
-              }
-              target={'_blank'}
-              rel='noopener noreferrer'>
-              {t('Click here')}
-            </a>
-          </span>
-          {/* Visit Details */}
-          <Title
-            marginTop={'80px'}
-            fontSize={'28px'}
-            color={'#002398'}
-            label={'Visit Details'}
-          />
-          {/* Requested service */}
-          <StyledFormGroup>
-            <Title
-              fontSize={'18px'}
-              color={'#000b40'}
-              label={'Requested service'}
-              bold
-            />
-            <StyledDivider variant={'fullWidth'} />
-            <Grid
-              container
-              direction={'row'}
-              justify={'flex-start'}
-              alignItems={'center'}>
-              <span>{t('Is urgent?')}</span>
-              {/* Requested service - switch */}
-              <StyledSwitch
-                onChange={isUrgentSwitchOnChangeHandler}
-                checked={isUrgent}
-                label_1={'No'}
-                label_2={'Yes'}
-                marginLeft={'40px'}
-                marginRight={'40px'}
+            {/* Commitment and payment */}
+            <StyledFormGroup>
+              <Title
+                fontSize={'18px'}
+                color={'#000b40'}
+                label={t('Commitment and payment')}
+                bold
               />
-            </Grid>
-            {/* Requested service - select test */}
-            <StyledAutoComplete
-              filterOptions={filterOptions}
-              multiple
-              noOptionsText={t('No Results')}
-              loadingText={t('Loading')}
-              open={servicesTypeOpen}
-              loading={loadingServicesType}
-              onOpen={selectExaminationOnOpenHandler}
-              onClose={selectExaminationOnCloseHandler}
-              value={pendingValue}
-              onChange={selectExaminationOnChangeHandler}
-              disableCloseOnSelect
-              renderTags={() => null}
-              renderOption={(option, state) => (
-                <Grid container justify='flex-end' alignItems='center'>
-                  <Grid item xs={3}>
-                    <Checkbox
-                      color='primary'
-                      icon={<CheckBoxOutlineBlankOutlined />}
-                      checkedIcon={<CheckBox />}
-                      checked={state.selected}
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ListItemText>{option.reasonCode.code}</ListItemText>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ListItemText primary={t(option.serviceType.name)} />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ListItemText primary={t(option.reasonCode.name)} />
-                  </Grid>
-                </Grid>
-              )}
-              ListboxComponent={ListboxComponent}
-              ListboxProps={{
-                pendingValue: pendingValue,
-                setSelectedServicesType: setSelectedServicesType,
-                setClose: setServicesTypeOpen,
-                setValue: setValue,
-                close: unFocusSelectTest,
-              }}
-              options={servicesType}
-              renderInput={(params) => (
-                <CustomizedTextField
-                  width={'70%'}
-                  name='selectTest'
-                  inputRef={(e) => {
-                    selectTestRef.current = e;
-                  }}
-                  error={requiredErrors.selectTest ? true : false}
-                  helperText={
-                    requiredErrors.selectTest &&
-                    t(
-                      'The visit reason performed during the visit must be selected',
-                    )
-                  }
-                  {...params}
-                  label={`${t('Reason for refferal')} *`}
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <React.Fragment>
-                        <InputAdornment position={'end'}>
-                          {loadingServicesType ? (
-                            <CircularProgress color={'inherit'} size={20} />
-                          ) : null}
-                          {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
-                        </InputAdornment>
-                      </React.Fragment>
-                    ),
-                  }}
-                />
-              )}
-            />
-            {/* Requested service - selected test - chips */}
-            <Grid container direction='row' wrap='wrap'>
-              {selectedServicesType.map((selected, selectedIndex) => (
-                <StyledChip
-                  deleteIcon={<Close fontSize='small' />}
-                  onDelete={chipOnDeleteHandler(selectedIndex)}
-                  key={selectedIndex}
-                  label={`${selected.reasonCode.code} | ${t(
-                    selected.serviceType.name,
-                  )} | ${t(selected.reasonCode.name)}`}
-                />
-              ))}
-            </Grid>
-            <Controller
-              control={control}
-              name='reasonForReferralDetails'
-              defaultValue={encounterData.extensionReasonCodeDetails || ''}
-              as={
-                <CustomizedTextField
-                  width={'70%'}
-                  label={t('Reason for referral details')}
-                />
-              }
-            />
-          </StyledFormGroup>
-          {/* Commitment and payment */}
-          <StyledFormGroup>
-            <Title
-              fontSize={'18px'}
-              color={'#000b40'}
-              label={t('Commitment and payment')}
-              bold
-            />
-            <Title
-              fontSize={'14px'}
-              color={'#000b40'}
-              label={t(
-                `Please fill in the payer details for the current ${
-                  configuration.clinikal_pa_commitment_form === '1'
-                    ? 'test'
-                    : 'visit'
-                }`,
-              )}
-            />
-            <StyledDivider variant='fullWidth' />
-            {/* Commitment and payment - tabs */}
-            <Tabs
-              value={commitmentAndPaymentTabValue}
-              onChange={setCommitmentAndPaymentTabValueChangeHandler}
-              indicatorColor='primary'
-              textColor='primary'
-              variant='standard'
-              aria-label='full width tabs example'>
-              {configuration.clinikal_pa_commitment_form === '1' ? (
-                <Tab label={t('HMO')} value={'HMO'} />
-              ) : (
-                <Tab label={t('Private')} value={'Private'} />
-              )}
-              {/* <Tab label={t('insurance company')} /> */}
-            </Tabs>
-            <TabPanel
-              value='Private'
-              selectedValue={commitmentAndPaymentTabValue}>
-              <CustomizedTextField
-                width={'70%'}
-                onChange={onChangePaymentAmountHandler}
-                onBlur={onBlurPaymentAmountHandler}
-                value={paymentAmount}
-                name='privatePaymentAmount'
-                label={t('Payment amount')}
-              />
-              <Grid
-                container
-                direction='row'
-                justify={'flex-start'}
-                alignItems={'center'}
-                style={{ margin: '24px 0 24px 0' }}>
-                <span>{t('Payment method')}</span>
-                <StyledToggleButtonGroup
-                  value={paymentMethod}
-                  onChange={paymentMethodHandler}
-                  exclusive
-                  aria-label='Payment method'>
-                  <StyledToggleButton value='Cash' aria-label='Cash'>
-                    {t('Cash')}
-                  </StyledToggleButton>
-                  <StyledToggleButton
-                    value='Credit card'
-                    aria-label='Credit card'>
-                    {t('Credit Card')}
-                  </StyledToggleButton>
-                </StyledToggleButtonGroup>
-              </Grid>
-              <CustomizedTextField
-                name='receiptNumber'
-                width={'70%'}
-                inputRef={register}
-                label={t('Receipt number')}
-                InputLabelProps={{ shrink: true }}
-              />
-            </TabPanel>
-            <TabPanel value='HMO' selectedValue={commitmentAndPaymentTabValue}>
-              <CustomizedTextField
-                width={'70%'}
-                name={'commitmentAndPaymentHMO'}
-                inputRef={register()}
-                value={HMO.name || ''}
-                label={t('HMO')}
-                id={'commitmentAndPaymentHMO'}
-                disabled
-              />
-              <CustomizedTextField
-                width={'70%'}
-                name='commitmentAndPaymentReferenceForPaymentCommitment'
-                label={`${t('Reference for payment commitment')} *`}
-                inputRef={register}
-                id={'commitmentAndPaymentReferenceForPaymentCommitment'}
-                type='number'
-                InputLabelProps={{ shrink: true }}
-                error={
-                  requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
-                    ? true
-                    : false
-                }
-                helperText={
-                  requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
-                }
-              />
-              <Controller
-                name='commitmentAndPaymentCommitmentDate'
-                rules={{
-                  validate: {
-                    value: (value) => validateDate(value, 'before'),
-                  },
-                }}
-                defaultValue={commitmentAndPaymentCommitmentDate}
-                control={control}
-                as={
-                  <MuiPickersUtilsProvider
-                    utils={MomentUtils}
-                    moment={moment}
-                    libInstance={moment}>
-                    <CustomizedKeyboardDatePicker
-                      disableToolbar
-                      autoOk
-                      variant='inline'
-                      allowKeyboardControl={true}
-                      format={formatDate}
-                      margin='normal'
-                      id='commitmentAndPaymentCommitmentDate'
-                      label={`${t('Commitment date')} *`}
-                      value={commitmentAndPaymentCommitmentDate}
-                      onChange={(date) =>
-                        dateOnChangeHandler(
-                          date,
-                          'commitmentAndPaymentCommitmentDate',
-                          setCommitmentAndPaymentCommitmentDate,
-                        )
-                      }
-                      KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                      }}
-                      error={errors.commitmentAndPaymentCommitmentDate && true}
-                      helperText={
-                        errors.commitmentAndPaymentCommitmentDate &&
-                        t('An equal date or less than today must be entered')
-                      }
-                    />
-                  </MuiPickersUtilsProvider>
-                }
-              />
-              <Controller
-                name='commitmentAndPaymentCommitmentValidity'
-                control={control}
-                rules={{
-                  validate: {
-                    value: (value) => validateDate(value, 'after'),
-                  },
-                }}
-                defaultValue={commitmentAndPaymentCommitmentValidity}
-                as={
-                  <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
-                    <CustomizedKeyboardDatePicker
-                      disableToolbar
-                      allowKeyboardControl={true}
-                      autoOk
-                      variant='inline'
-                      format={formatDate}
-                      margin='normal'
-                      id='commitmentAndPaymentCommitmentValidity'
-                      label={`${t('Commitment validity')} *`}
-                      value={commitmentAndPaymentCommitmentValidity}
-                      onChange={(date) =>
-                        dateOnChangeHandler(
-                          date,
-                          'commitmentAndPaymentCommitmentValidity',
-                          setCommitmentAndPaymentCommitmentValidity,
-                        )
-                      }
-                      KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                      }}
-                      error={
-                        errors.commitmentAndPaymentCommitmentValidity && true
-                      }
-                      helperText={
-                        errors.commitmentAndPaymentCommitmentValidity &&
-                        t('An equal or greater date must be entered than today')
-                      }
-                    />
-                  </MuiPickersUtilsProvider>
-                }
-              />
-              <CustomizedTextField
-                width={'70%'}
-                name='commitmentAndPaymentDoctorsName'
-                label={`${t('Doctors name')} *`}
-                inputRef={register}
-                id={'commitmentAndPaymentDoctorsName'}
-                InputLabelProps={{ shrink: true }}
-                error={
-                  requiredErrors.commitmentAndPaymentDoctorsName ? true : false
-                }
-                helperText={
-                  requiredErrors.commitmentAndPaymentDoctorsName || ''
-                }
-              />
-              <CustomizedTextField
-                width={'70%'}
-                label={`${t('Doctors license')} *`}
-                name='commitmentAndPaymentDoctorsLicense'
-                inputRef={register}
-                id={'commitmentAndPaymentDoctorsLicense'}
-                type='number'
-                InputLabelProps={{ shrink: true }}
-                error={
-                  requiredErrors.commitmentAndPaymentDoctorsLicense
-                    ? true
-                    : false
-                }
-                helperText={
-                  requiredErrors.commitmentAndPaymentDoctorsLicense || ''
-                }
-              />
-            </TabPanel>
-          </StyledFormGroup>
-          <StyledFormGroup>
-            <Title
-              fontSize={'18px'}
-              color={'#000b40'}
-              label={t('Upload documents')}
-              bold
-            />
-            <Title
-              fontSize={'14px'}
-              color={'#000b40'}
-              label={`${t(
-                'Uploading documents with a maximum size of up to',
-              )} ${FILES_OBJ.maxSize}${FILES_OBJ.type}`}
-            />
-            <StyledDivider variant='fullWidth' />
-            {/* ReferralRef  */}
-            <Grid
-              container
-              alignItems='center'
-              style={{ marginBottom: '41px' }}>
-              <Grid item xs={3}>
-                <label
-                  style={{
-                    color: `${
-                      requiredErrors.ReferralFile ? '#f44336' : '#000b40'
-                    }`,
-                  }}
-                  htmlFor='Referral'>
-                  {`${t('Referral')} *`}
-                </label>
-              </Grid>
-              <Grid item xs={9}>
-                <input
-                  name='ReferralFile'
-                  ref={(e) => {
-                    referralRef.current = e;
-                    register();
-                  }}
-                  id='Referral'
-                  type='file'
-                  accept='.pdf,.gpf,.png,.gif,.jpg'
-                  onChange={() =>
-                    onChangeFileHandler(
-                      referralRef,
-                      setReferralFile,
-                      'Referral',
-                    )
-                  }
-                />
-                {Object.values(referralFile).length > 0 ? (
-                  <ChipWithImage
-                    htmlFor='Referral'
-                    label={referralFile.name}
-                    size={referralFile.size}
-                    onDelete={(event) => {
-                      setPopUpReferenceFile('Referral');
-                      onDeletePopUp(event);
-                    }}
-                    onClick={(event) => onClickFileHandler(event, referralRef)}
-                  />
-                ) : (
-                  <label htmlFor='Referral'>
-                    <StyledButton
-                      variant='outlined'
-                      color='primary'
-                      component='span'
-                      size={'large'}
-                      startIcon={<Scanner />}>
-                      {t('Upload document')}
-                    </StyledButton>
-                  </label>
+              <Title
+                fontSize={'14px'}
+                color={'#000b40'}
+                label={t(
+                  `Please fill in the payer details for the current ${
+                    configuration.clinikal_pa_commitment_form === '1'
+                      ? 'test'
+                      : 'visit'
+                  }`,
                 )}
-              </Grid>
-            </Grid>
-            {/* CommitmentRef  */}
-            {configuration.clinikal_pa_commitment_form === '1' && (
+              />
+              <StyledDivider variant='fullWidth' />
+              {/* Commitment and payment - tabs */}
+              <Tabs
+                value={commitmentAndPaymentTabValue}
+                onChange={setCommitmentAndPaymentTabValueChangeHandler}
+                indicatorColor='primary'
+                textColor='primary'
+                variant='standard'
+                aria-label='full width tabs example'>
+                {configuration.clinikal_pa_commitment_form === '1' ? (
+                  <Tab label={t('HMO')} value={'HMO'} />
+                ) : (
+                  <Tab label={t('Private')} value={'Private'} />
+                )}
+                {/* <Tab label={t('insurance company')} /> */}
+              </Tabs>
+              <TabPanel
+                value='Private'
+                selectedValue={commitmentAndPaymentTabValue}>
+                <CustomizedTextField
+                  width={'70%'}
+                  onChange={onChangePaymentAmountHandler}
+                  onBlur={onBlurPaymentAmountHandler}
+                  value={paymentAmount}
+                  name='privatePaymentAmount'
+                  label={t('Payment amount')}
+                />
+                <Grid
+                  container
+                  direction='row'
+                  justify={'flex-start'}
+                  alignItems={'center'}
+                  style={{ margin: '24px 0 24px 0' }}>
+                  <span>{t('Payment method')}</span>
+                  <StyledToggleButtonGroup
+                    value={paymentMethod}
+                    onChange={paymentMethodHandler}
+                    exclusive
+                    aria-label='Payment method'>
+                    <StyledToggleButton value='Cash' aria-label='Cash'>
+                      {t('Cash')}
+                    </StyledToggleButton>
+                    <StyledToggleButton
+                      value='Credit card'
+                      aria-label='Credit card'>
+                      {t('Credit Card')}
+                    </StyledToggleButton>
+                  </StyledToggleButtonGroup>
+                </Grid>
+                <CustomizedTextField
+                  name='receiptNumber'
+                  width={'70%'}
+                  inputRef={register}
+                  label={t('Receipt number')}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </TabPanel>
+              <TabPanel
+                value='HMO'
+                selectedValue={commitmentAndPaymentTabValue}>
+                <CustomizedTextField
+                  width={'70%'}
+                  name={'commitmentAndPaymentHMO'}
+                  inputRef={register()}
+                  value={HMO.name || ''}
+                  label={t('HMO')}
+                  id={'commitmentAndPaymentHMO'}
+                  disabled
+                />
+                <CustomizedTextField
+                  width={'70%'}
+                  name='commitmentAndPaymentReferenceForPaymentCommitment'
+                  label={`${t('Reference for payment commitment')} *`}
+                  inputRef={register}
+                  id={'commitmentAndPaymentReferenceForPaymentCommitment'}
+                  type='number'
+                  InputLabelProps={{ shrink: true }}
+                  error={
+                    requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
+                  }
+                />
+                <Controller
+                  name='commitmentAndPaymentCommitmentDate'
+                  rules={{
+                    validate: {
+                      value: (value) => validateDate(value, 'before'),
+                    },
+                  }}
+                  defaultValue={commitmentAndPaymentCommitmentDate}
+                  control={control}
+                  as={
+                    <MuiPickersUtilsProvider
+                      utils={MomentUtils}
+                      moment={moment}
+                      libInstance={moment}>
+                      <CustomizedKeyboardDatePicker
+                        disableToolbar
+                        autoOk
+                        variant='inline'
+                        allowKeyboardControl={true}
+                        format={formatDate}
+                        margin='normal'
+                        id='commitmentAndPaymentCommitmentDate'
+                        label={`${t('Commitment date')} *`}
+                        value={commitmentAndPaymentCommitmentDate}
+                        onChange={(date) =>
+                          dateOnChangeHandler(
+                            date,
+                            'commitmentAndPaymentCommitmentDate',
+                            setCommitmentAndPaymentCommitmentDate,
+                          )
+                        }
+                        KeyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        error={
+                          errors.commitmentAndPaymentCommitmentDate && true
+                        }
+                        helperText={
+                          errors.commitmentAndPaymentCommitmentDate &&
+                          t('An equal date or less than today must be entered')
+                        }
+                      />
+                    </MuiPickersUtilsProvider>
+                  }
+                />
+                <Controller
+                  name='commitmentAndPaymentCommitmentValidity'
+                  control={control}
+                  rules={{
+                    validate: {
+                      value: (value) => validateDate(value, 'after'),
+                    },
+                  }}
+                  defaultValue={commitmentAndPaymentCommitmentValidity}
+                  as={
+                    <MuiPickersUtilsProvider
+                      utils={MomentUtils}
+                      moment={moment}>
+                      <CustomizedKeyboardDatePicker
+                        disableToolbar
+                        allowKeyboardControl={true}
+                        autoOk
+                        variant='inline'
+                        format={formatDate}
+                        margin='normal'
+                        id='commitmentAndPaymentCommitmentValidity'
+                        label={`${t('Commitment validity')} *`}
+                        value={commitmentAndPaymentCommitmentValidity}
+                        onChange={(date) =>
+                          dateOnChangeHandler(
+                            date,
+                            'commitmentAndPaymentCommitmentValidity',
+                            setCommitmentAndPaymentCommitmentValidity,
+                          )
+                        }
+                        KeyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        error={
+                          errors.commitmentAndPaymentCommitmentValidity && true
+                        }
+                        helperText={
+                          errors.commitmentAndPaymentCommitmentValidity &&
+                          t(
+                            'An equal or greater date must be entered than today',
+                          )
+                        }
+                      />
+                    </MuiPickersUtilsProvider>
+                  }
+                />
+                <CustomizedTextField
+                  width={'70%'}
+                  name='commitmentAndPaymentDoctorsName'
+                  label={`${t('Doctors name')} *`}
+                  inputRef={register}
+                  id={'commitmentAndPaymentDoctorsName'}
+                  InputLabelProps={{ shrink: true }}
+                  error={
+                    requiredErrors.commitmentAndPaymentDoctorsName
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    requiredErrors.commitmentAndPaymentDoctorsName || ''
+                  }
+                />
+                <CustomizedTextField
+                  width={'70%'}
+                  label={`${t('Doctors license')} *`}
+                  name='commitmentAndPaymentDoctorsLicense'
+                  inputRef={register}
+                  id={'commitmentAndPaymentDoctorsLicense'}
+                  type='number'
+                  InputLabelProps={{ shrink: true }}
+                  error={
+                    requiredErrors.commitmentAndPaymentDoctorsLicense
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    requiredErrors.commitmentAndPaymentDoctorsLicense || ''
+                  }
+                />
+              </TabPanel>
+            </StyledFormGroup>
+            <StyledFormGroup>
+              <Title
+                fontSize={'18px'}
+                color={'#000b40'}
+                label={t('Upload documents')}
+                bold
+              />
+              <Title
+                fontSize={'14px'}
+                color={'#000b40'}
+                label={`${t(
+                  'Uploading documents with a maximum size of up to',
+                )} ${FILES_OBJ.maxSize}${FILES_OBJ.type}`}
+              />
+              <StyledDivider variant='fullWidth' />
+              {/* ReferralRef  */}
               <Grid
                 container
                 alignItems='center'
@@ -2037,46 +1858,46 @@ const PatientDetailsBlock = ({
                   <label
                     style={{
                       color: `${
-                        requiredErrors.CommitmentFile ? '#f44336' : '#000b40'
+                        requiredErrors.ReferralFile ? '#f44336' : '#000b40'
                       }`,
                     }}
-                    htmlFor='Commitment'>
-                    {`${t('Commitment')} *`}
+                    htmlFor='Referral'>
+                    {`${t('Referral')} *`}
                   </label>
                 </Grid>
                 <Grid item xs={9}>
                   <input
-                    name='CommitmentFile'
+                    name='ReferralFile'
                     ref={(e) => {
-                      commitmentRef.current = e;
+                      referralRef.current = e;
                       register();
                     }}
-                    id='Commitment'
+                    id='Referral'
                     type='file'
                     accept='.pdf,.gpf,.png,.gif,.jpg'
                     onChange={() =>
                       onChangeFileHandler(
-                        commitmentRef,
-                        setCommitmentFile,
-                        'Commitment',
+                        referralRef,
+                        setReferralFile,
+                        'Referral',
                       )
                     }
                   />
-                  {Object.values(commitmentFile).length > 0 ? (
+                  {Object.values(referralFile).length > 0 ? (
                     <ChipWithImage
-                      htmlFor='Commitment'
-                      label={commitmentFile.name}
-                      size={commitmentFile.size}
+                      htmlFor='Referral'
+                      label={referralFile.name}
+                      size={referralFile.size}
                       onDelete={(event) => {
-                        setPopUpReferenceFile('Commitment');
+                        setPopUpReferenceFile('Referral');
                         onDeletePopUp(event);
                       }}
                       onClick={(event) =>
-                        onClickFileHandler(event, commitmentRef)
+                        onClickFileHandler(event, referralRef)
                       }
                     />
                   ) : (
-                    <label htmlFor='Commitment'>
+                    <label htmlFor='Referral'>
                       <StyledButton
                         variant='outlined'
                         color='primary'
@@ -2089,56 +1910,56 @@ const PatientDetailsBlock = ({
                   )}
                 </Grid>
               </Grid>
-            )}
-            {/* AdditionalDocumentRef */}
-            {numOfAdditionalDocument.map((_, additionalDocumentIndex) => {
-              return (
+              {/* CommitmentRef  */}
+              {configuration.clinikal_pa_commitment_form === '1' && (
                 <Grid
                   container
                   alignItems='center'
-                  key={additionalDocumentIndex}>
+                  style={{ marginBottom: '41px' }}>
                   <Grid item xs={3}>
-                    <CustomizedTextField
-                      width={'70%'}
-                      onChange={onChangeAdditionalDocumentHandler}
-                      label={`${t('Additional document')}`}
-                    />
+                    <label
+                      style={{
+                        color: `${
+                          requiredErrors.CommitmentFile ? '#f44336' : '#000b40'
+                        }`,
+                      }}
+                      htmlFor='Commitment'>
+                      {`${t('Commitment')} *`}
+                    </label>
                   </Grid>
                   <Grid item xs={9}>
                     <input
-                      name={nameOfAdditionalDocumentFile || 'Document1'}
+                      name='CommitmentFile'
                       ref={(e) => {
-                        additionalDocumentRef.current = e;
+                        commitmentRef.current = e;
                         register();
                       }}
-                      id='AdditionalDocument'
+                      id='Commitment'
                       type='file'
                       accept='.pdf,.gpf,.png,.gif,.jpg'
                       onChange={() =>
                         onChangeFileHandler(
-                          additionalDocumentRef,
-                          setAdditionalDocumentFile,
-                          nameOfAdditionalDocumentFile || 'Document1',
+                          commitmentRef,
+                          setCommitmentFile,
+                          'Commitment',
                         )
                       }
                     />
-                    {Object.values(additionalDocumentFile).length > 0 ? (
+                    {Object.values(commitmentFile).length > 0 ? (
                       <ChipWithImage
-                        htmlFor='AdditionalDocument'
-                        label={additionalDocumentFile.name}
-                        size={additionalDocumentFile.size}
+                        htmlFor='Commitment'
+                        label={commitmentFile.name}
+                        size={commitmentFile.size}
                         onDelete={(event) => {
-                          setPopUpReferenceFile(
-                            nameOfAdditionalDocumentFile || 'Document1',
-                          );
+                          setPopUpReferenceFile('Commitment');
                           onDeletePopUp(event);
                         }}
                         onClick={(event) =>
-                          onClickFileHandler(event, additionalDocumentRef)
+                          onClickFileHandler(event, commitmentRef)
                         }
                       />
                     ) : (
-                      <label htmlFor='AdditionalDocument'>
+                      <label htmlFor='Commitment'>
                         <StyledButton
                           variant='outlined'
                           color='primary'
@@ -2151,33 +1972,95 @@ const PatientDetailsBlock = ({
                     )}
                   </Grid>
                 </Grid>
-              );
-            })}
-            <Grid container alignItems='center'>
-              <AddCircle
-                style={{ color: '#002398', cursor: 'pointer' }}
-                onClick={onClickAdditionalDocumentHandler}
-              />
-              <Title
-                margin='0 8px 0 8px'
-                bold
-                color={'#002398'}
-                label={'Additional document'}
-              />
-            </Grid>
-          </StyledFormGroup>
-          <StyledFormGroup>
-            <Grid container direction='row' justify='flex-end'>
-              <Grid item lg={3} sm={4}>
-                <StyledButton
-                  color='primary'
-                  variant='contained'
-                  type='submit'
-                  letterSpacing={'0.1'}>
-                  {t('Save & Close')}
-                </StyledButton>
+              )}
+              {/* AdditionalDocumentRef */}
+              {numOfAdditionalDocument.map((_, additionalDocumentIndex) => {
+                return (
+                  <Grid
+                    container
+                    alignItems='center'
+                    key={additionalDocumentIndex}>
+                    <Grid item xs={3}>
+                      <CustomizedTextField
+                        width={'70%'}
+                        onChange={onChangeAdditionalDocumentHandler}
+                        label={`${t('Additional document')}`}
+                      />
+                    </Grid>
+                    <Grid item xs={9}>
+                      <input
+                        name={nameOfAdditionalDocumentFile || 'Document1'}
+                        ref={(e) => {
+                          additionalDocumentRef.current = e;
+                          register();
+                        }}
+                        id='AdditionalDocument'
+                        type='file'
+                        accept='.pdf,.gpf,.png,.gif,.jpg'
+                        onChange={() =>
+                          onChangeFileHandler(
+                            additionalDocumentRef,
+                            setAdditionalDocumentFile,
+                            nameOfAdditionalDocumentFile || 'Document1',
+                          )
+                        }
+                      />
+                      {Object.values(additionalDocumentFile).length > 0 ? (
+                        <ChipWithImage
+                          htmlFor='AdditionalDocument'
+                          label={additionalDocumentFile.name}
+                          size={additionalDocumentFile.size}
+                          onDelete={(event) => {
+                            setPopUpReferenceFile(
+                              nameOfAdditionalDocumentFile || 'Document1',
+                            );
+                            onDeletePopUp(event);
+                          }}
+                          onClick={(event) =>
+                            onClickFileHandler(event, additionalDocumentRef)
+                          }
+                        />
+                      ) : (
+                        <label htmlFor='AdditionalDocument'>
+                          <StyledButton
+                            variant='outlined'
+                            color='primary'
+                            component='span'
+                            size={'large'}
+                            startIcon={<Scanner />}>
+                            {t('Upload document')}
+                          </StyledButton>
+                        </label>
+                      )}
+                    </Grid>
+                  </Grid>
+                );
+              })}
+              <Grid container alignItems='center'>
+                <AddCircle
+                  style={{ color: '#002398', cursor: 'pointer' }}
+                  onClick={onClickAdditionalDocumentHandler}
+                />
+                <Title
+                  margin='0 8px 0 8px'
+                  bold
+                  color={'#002398'}
+                  label={'Additional document'}
+                />
               </Grid>
-              {/* <Grid item lg={3} sm={4}>
+            </StyledFormGroup>
+            <StyledFormGroup>
+              <Grid container direction='row' justify='flex-end'>
+                <Grid item lg={3} sm={4}>
+                  <StyledButton
+                    color='primary'
+                    variant='contained'
+                    type='submit'
+                    letterSpacing={'0.1'}>
+                    {t('Save & Close')}
+                  </StyledButton>
+                </Grid>
+                {/* <Grid item lg={3} sm={4}>
                 <StyledButton
                   color='primary'
                   variant='contained'
@@ -2189,9 +2072,10 @@ const PatientDetailsBlock = ({
                   {t('Medical questionnaire')}
                 </StyledButton>
               </Grid> */}
-            </Grid>
-          </StyledFormGroup>
-        </StyledForm>
+              </Grid>
+            </StyledFormGroup>
+          </StyledForm>
+        </FormContext>
         {/* <DevTool control={control} /> */}
       </StyledPatientDetails>
     </React.Fragment>
