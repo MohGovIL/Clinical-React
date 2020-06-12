@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import StyledPatientBackground, {
   StyledEitanButton,
   StyledHeader,
@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import Encounters from 'Components/Generic/EncounterSheet/PatientBackground/Encounters';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 import MedicalIssues from 'Assets/Elements/MedicalIssues';
+import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
 
 const PatientBackground = ({
   encounter,
@@ -21,6 +22,8 @@ const PatientBackground = ({
   const handleEitanClick = () => {
     return;
   };
+  const [listAllergy, setAllergyList] = useState([]);
+  const [listMedicalProblem, setMedicalProblem] = useState([]);
 
   const [prevEncounters, setPrevEncounters] = React.useState([]);
   const currentDate = moment().utc().format('YYYY-MM-DD');
@@ -115,7 +118,7 @@ const PatientBackground = ({
   useEffect(() => {
     (async () => {
       try {
-        const listAllergy = await FHIR('Condition', 'doWork', {
+        const listAllergyResult = await FHIR('Condition', 'doWork', {
           functionName: 'getConditionListByParams',
           functionParams: {
             category: 'allergy',
@@ -123,11 +126,16 @@ const PatientBackground = ({
             status: 'active',
           },
         });
-        if (listAllergy.data && listAllergy.data.total > 0) {
-          console.log('==========allergy list================');
-          //normalizeCondition
-          console.log(listAllergy);
-          console.log('==========allergy list================');
+        if (listAllergyResult.data && listAllergyResult.data.total > 0) {
+          let normalizedlistAllergy = [];
+          // eslint-disable-next-line
+          listAllergyResult.data.entry.map((res, id) => {
+            if (res.resource && res.resource.resourceType === 'Condition') {
+              let allergy = normalizeFhirCondition(res.resource);
+              normalizedlistAllergy.push(allergy);
+            }
+          });
+          setAllergyList(normalizedlistAllergy);
         }
       } catch (e) {
         console.log('Error: ' + e);
@@ -136,7 +144,7 @@ const PatientBackground = ({
 
     (async () => {
       try {
-        const listMedicalProblem = await FHIR('Condition', 'doWork', {
+        const listMedicalProblemResult = await FHIR('Condition', 'doWork', {
           functionName: 'getConditionListByParams',
           functionParams: {
             category: 'medical_problem',
@@ -144,17 +152,26 @@ const PatientBackground = ({
             status: 'active',
           },
         });
-        if (listMedicalProblem.data && listMedicalProblem.data.total > 0) {
-          console.log('==========listMedicalProblem list================');
-          //normalizeCondition
-          console.log(listMedicalProblem);
-          console.log('==========listMedicalProblem list================');
+        if (
+          listMedicalProblemResult.data &&
+          listMedicalProblemResult.data.total > 0
+        ) {
+          let normalizedListMedicalProblem = [];
+          // eslint-disable-next-line
+          listMedicalProblemResult.data.entry.map((res, id) => {
+            if (res.resource && res.resource.resourceType === 'Condition') {
+              let medicalProblem = normalizeFhirCondition(res.resource);
+              normalizedListMedicalProblem.push(medicalProblem);
+            }
+          });
+          setMedicalProblem(normalizedListMedicalProblem);
         }
       } catch (e) {
         console.log('Error: ' + e);
       }
     })();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <StyledPatientBackground dir={languageDirection}>
@@ -178,10 +195,13 @@ const PatientBackground = ({
       />
       <br />
       <br />
-      <MedicalIssues title={t('Sensitivities')} />
+      <MedicalIssues title={t('Sensitivities')} items={listAllergy} />
       <br />
       <br />
-      <MedicalIssues title={t('Background diseases')} />
+      <MedicalIssues
+        title={t('Background diseases')}
+        items={listMedicalProblem}
+      />
       <br />
       <br />
     </StyledPatientBackground>
