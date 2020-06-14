@@ -16,7 +16,14 @@ const EscortPatient = ({
   relatedPersonId,
   encounterArrivalWay,
 }) => {
-  const { errors, reset, setValue, register, watch } = useFormContext();
+  const {
+    errors,
+    reset,
+    setValue,
+    register,
+    watch,
+    unregister,
+  } = useFormContext();
   const { t } = useTranslation();
 
   const [arrivalWay, setArrivalWay] = useState(
@@ -33,6 +40,8 @@ const EscortPatient = ({
   const watchIsEscort = watch('isEscorted', false);
 
   useEffect(() => {
+    register({ name: 'arrivalWay' });
+    setValue('arrivalWay', encounterArrivalWay);
     (async () => {
       try {
         if (relatedPersonId) {
@@ -55,7 +64,17 @@ const EscortPatient = ({
         console.log(error);
       }
     })();
-  }, [relatedPersonId, reset, setValue]);
+    return () => {
+      unregister('arrivalWay');
+    };
+  }, [
+    relatedPersonId,
+    reset,
+    setValue,
+    unregister,
+    register,
+    encounterArrivalWay,
+  ]);
 
   return (
     <React.Fragment>
