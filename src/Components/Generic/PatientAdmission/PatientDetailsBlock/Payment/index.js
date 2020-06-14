@@ -34,6 +34,7 @@ const Payment = ({
     requiredErrors,
     errors,
     reset,
+    unregister,
   } = useFormContext();
 
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -64,7 +65,7 @@ const Payment = ({
 
   const onBlurPaymentAmountHandler = (event) => {
     const format = formatToCurrency(event.target.value);
-    setValue('privateAmountPayment', format);
+    // setValue('paymentAmount', format);
     setPaymentAmount(formatToCurrency(format));
   };
 
@@ -178,12 +179,16 @@ const Payment = ({
               const receiptNumber = normalizedQuestionnaireResponse.items.find(
                 (item) => item.linkId === '8',
               ).answer[0].valueString;
+              register({ name: 'paymentMethod' });
               if (receiptNumber)
                 reset({
-                  receiptNumber: receiptNumber || '',
+                  receiptNumber: receiptNumber,
                 });
               if (paymentAmount) setPaymentAmount(paymentAmount);
-              if (paymentMethod) setPaymentMethod(paymentMethod);
+              if (paymentMethod) {
+                setValue('paymentMethod', paymentMethod);
+                setPaymentMethod(paymentMethod);
+              }
             }
             setQuestionnaireResponse(normalizedQuestionnaireResponse);
           }
@@ -192,6 +197,9 @@ const Payment = ({
         console.log(error);
       }
     })();
+    return () => {
+      unregister('paymentMethod');
+    };
   }, []);
   return (
     <StyledFormGroup>
@@ -232,7 +240,8 @@ const Payment = ({
           onChange={onChangePaymentAmountHandler}
           onBlur={onBlurPaymentAmountHandler}
           value={paymentAmount}
-          name='privatePaymentAmount'
+          inputRef={register}
+          name='paymentAmount'
           label={t('Payment amount')}
         />
         <Grid
@@ -267,7 +276,7 @@ const Payment = ({
         <CustomizedTextField
           width={'70%'}
           name={'commitmentAndPaymentHMO'}
-          inputRef={register()}
+          inputRef={register}
           value={HMO.name || ''}
           label={t('HMO')}
           id={'commitmentAndPaymentHMO'}
