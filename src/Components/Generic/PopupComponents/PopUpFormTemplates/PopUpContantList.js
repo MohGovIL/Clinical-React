@@ -156,7 +156,9 @@ const PopUpContantList = ({
             value={searchThis}
             placeholder={t('Search template')}
           />
-          <img onClick={onClearHandler} alt='search icon' src={X} />
+          {searchThis !== '' ? (
+            <img onClick={onClearHandler} alt='search icon' src={X} />
+          ) : null}
         </SearchTemplates>
         {templates ? (
           <StyledCheckAll
