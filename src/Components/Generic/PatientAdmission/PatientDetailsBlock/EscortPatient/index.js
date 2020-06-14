@@ -11,7 +11,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { israelPhoneNumberRegex } from 'Utils/Helpers/validation/patterns';
 import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
 import { FHIR } from 'Utils/Services/FHIR';
-const PatientDetailsForm = ({
+const EscortPatient = ({
   isArrivalWay,
   relatedPersonId,
   encounterArrivalWay,
@@ -157,4 +157,4 @@ const PatientDetailsForm = ({
   );
 };
 
-export default PatientDetailsForm;
+export default EscortPatient;

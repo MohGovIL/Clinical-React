@@ -42,7 +42,7 @@ import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import ChipWithImage from 'Assets/Elements/StyledChip';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 import TabPanel from './TabPanel';
-import PatientDetailsForm from './PatientDetailsForm';
+import EscortPatient from './EscortPatient';
 
 // Material-UI Icons
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -1203,7 +1203,7 @@ const PatientDetailsBlock = ({
         <FormContext {...methods}>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             {/* Patient Details */}
-            <PatientDetailsForm
+            <EscortPatient
               relatedPersonId={encounterData.relatedPerson}
               isArrivalWay={configuration.clinikal_pa_arrival_way}
               encounterArrivalWay={encounterData.extensionArrivalWay}
