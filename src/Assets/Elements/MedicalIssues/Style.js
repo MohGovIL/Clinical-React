@@ -2,6 +2,10 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 
+export const StyledDiv = styled.div`
+  margin-top: 42px;
+`;
+
 export const StyledTitleTypography = styled(Typography)`
   color: #000b40;
   font-weight: bold;

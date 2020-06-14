@@ -8,6 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Divider from '@material-ui/core/Divider';
 import {
+  StyledDiv,
   StyledTitleTypography,
   StyledTypography,
   StyledChip,
@@ -20,7 +21,7 @@ const MedicalIssues = ({ title, items }) => {
   const { t } = useTranslation();
 
   return (
-    <React.Fragment>
+    <StyledDiv>
       <StyledTitleTypography variant='h6' gutterBottom>
         {title}
       </StyledTitleTypography>
@@ -42,7 +43,7 @@ const MedicalIssues = ({ title, items }) => {
           <StyledTypography>{t('UNknown')}</StyledTypography>
         )}
       </StyledContentBlock>
-    </React.Fragment>
+    </StyledDiv>
   );
 };
 
