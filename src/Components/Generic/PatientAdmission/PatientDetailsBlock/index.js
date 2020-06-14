@@ -46,6 +46,7 @@ import EscortPatient from './EscortPatient';
 import ContactInformation from './ContactInformation';
 import VisitDetails from './VisitDetails';
 import Payment from './Payment';
+import Documents from './Documents';
 // Material-UI Icons
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -954,223 +955,223 @@ const PatientDetailsBlock = ({
     setNameOfAdditionalDocumentFile(e.target.value);
   };
 
-  // Default values
-  useEffect(() => {
-    if (patientData) {
-      if (patientData.managingOrganization) {
-        (async () => {
-          try {
-            // const HMO_Data = await getHMO(patientData.managingOrganization);
-            const Organization = await FHIR('Organization', 'doWork', {
-              functionName: 'readOrganization',
-              functionParams: {
-                OrganizationId: patientData.managingOrganization,
-              },
-            });
-            const normalizedOrganization = normalizeFhirOrganization(
-              Organization.data,
-            );
-            setHMO(normalizedOrganization);
-          } catch (error) {
-            console.log(error);
-          }
-        })();
-      }
-      if (patientData.city) {
-        const defaultAddressCityObj = {
-          name: t(patientData.city),
-          code: patientData.city,
-        };
-        setAddressCity(defaultAddressCityObj);
-        setPOBoxCity(defaultAddressCityObj);
-      }
-      // If there is a streetName there might be streetNumber but that is not required streetName is required according to FHIR.
-      if (patientData.streetName.trim()) {
-        const defaultAddressStreetObj = {
-          name: t(patientData.streetName),
-          code: patientData.streetName,
-        };
-        setAddressStreet(defaultAddressStreetObj);
-      }
-    }
-    if (encounterData) {
-      if (encounterData.examination && encounterData.examination.length) {
-        const selectedArr = encounterData.examination.map(
-          (reasonCodeEl, reasonCodeElIndex) => {
-            return {
-              serviceType: {
-                name: encounterData.serviceType,
-                code: encounterData.serviceTypeCode,
-              },
-              reasonCode: {
-                name: reasonCodeEl,
-                code: encounterData.examinationCode[reasonCodeElIndex],
-              },
-            };
-          },
-        );
-        setSelectedServicesType(selectedArr);
-      }
-      if (encounterData.priority > 1) {
-        setIsUrgent(true);
-      }
-    }
-    if (encounterData && patientData) {
-      (async () => {
-        try {
-          const questionnaire = await FHIR('Questionnaire', 'doWork', {
-            functionName: 'getQuestionnaire',
-            functionParams: { QuestionnaireName: 'commitment_questionnaire' },
-          });
-          if (questionnaire.data.total) {
-            setQuestionnaireId(questionnaire.data.entry[1].resource.id);
-          }
-          const questionnaireResponseData = await FHIR(
-            'QuestionnaireResponse',
-            'doWork',
-            {
-              functionName: 'getQuestionnaireResponse',
-              functionParams: {
-                patientId: patientData.id,
-                encounterId: encounterData.id,
-                questionnaireId: questionnaire.data.entry[1].resource.id,
-              },
-            },
-          );
-          if (questionnaireResponseData.data.total !== 0) {
-            const normalizedQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
-              questionnaireResponseData.data.entry[1].resource,
-            );
-            if (normalizedQuestionnaireResponse.items.length) {
-              if (configuration.clinikal_pa_commitment_form === '1') {
-                reset({
-                  commitmentAndPaymentReferenceForPaymentCommitment:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '1',
-                    ).answer[0].valueInteger || '',
-                  commitmentAndPaymentDoctorsName:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '4',
-                    ).answer[0].valueString || '',
-                  commitmentAndPaymentDoctorsLicense:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '5',
-                    ).answer[0].valueInteger || '',
-                });
-                const commitmentDate = normalizedQuestionnaireResponse.items.find(
-                  (item) => item.text === 'Commitment date',
-                );
-                const commitmentValidity = normalizedQuestionnaireResponse.items.find(
-                  (item) => item.text === 'Commitment expiration date',
-                );
-                if (commitmentDate) {
-                  setCommitmentAndPaymentCommitmentDate(
-                    moment(commitmentDate.answer[0].valueDate),
-                  );
-                }
-                if (commitmentValidity) {
-                  setCommitmentAndPaymentCommitmentValidity(
-                    moment(commitmentValidity.answer[0].valueDate),
-                  );
-                }
-              } else {
-                const paymentAmount = normalizedQuestionnaireResponse.items.find(
-                  (item) => item.linkId === '6',
-                ).answer[0].valueString;
-                const paymentMethod = normalizedQuestionnaireResponse.items.find(
-                  (item) => item.linkId === '7',
-                ).answer[0].valueString;
-                const receiptNumber = normalizedQuestionnaireResponse.items.find(
-                  (item) => item.linkId === '8',
-                ).answer[0].valueString;
-                if (receiptNumber)
-                  reset({
-                    receiptNumber: receiptNumber || '',
-                  });
-                if (paymentAmount) setPaymentAmount(paymentAmount);
-                if (paymentMethod) setPaymentMethod(paymentMethod);
-              }
-              setQuestionnaireResponse(normalizedQuestionnaireResponse);
-            }
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      })();
-      if (encounterData.id && patientData.id) {
-        (async () => {
-          const documentReferenceData = await FHIR(
-            'DocumentReference',
-            'doWork',
-            {
-              functionName: 'getDocumentReference',
-              searchParams: {
-                encounter: encounterData.id,
-                patient: patientData.id,
-              },
-            },
-          );
-          if (documentReferenceData.data.total) {
-            const documentsArray = [];
-            for (
-              let documentIndex = 0;
-              documentReferenceData.data.entry.length > documentIndex;
-              documentIndex++
-            ) {
-              if (documentReferenceData.data.entry[documentIndex].resource) {
-                const normalizedFhirDocumentReference = normalizeFhirDocumentReference(
-                  documentReferenceData.data.entry[documentIndex].resource,
-                );
-                documentsArray.push(normalizedFhirDocumentReference);
-                const base_64 = combineBase_64(
-                  normalizedFhirDocumentReference.data,
-                  normalizedFhirDocumentReference.contentType,
-                );
-                const [, SizeInMB] = calculateFileSize(
-                  atob(normalizedFhirDocumentReference.data).length,
-                  FILES_OBJ.valueInBytes,
-                  FILES_OBJ.fix,
-                  FILES_OBJ.maxSize,
-                );
-                let obj = {
-                  name: normalizedFhirDocumentReference.url,
-                  size: SizeInMB,
-                };
-                const blob = decodeBase_64IntoBlob(
-                  normalizedFhirDocumentReference.data,
-                  normalizedFhirDocumentReference.contentType,
-                );
-                if (
-                  normalizedFhirDocumentReference.url.startsWith('Referral')
-                ) {
-                  setReferralBlob(blob);
-                  setReferralFile_64(base_64);
-                  setReferralFile(obj);
-                  referralRef.current = base_64;
-                } else if (
-                  normalizedFhirDocumentReference.url.startsWith(
-                    'Commitment',
-                  ) &&
-                  configuration.clinikal_pa_commitment_form === '1'
-                ) {
-                  setCommitmentBlob(blob);
-                  commitmentRef.current = base_64;
-                  setCommitmentFile_64(base_64);
-                  setCommitmentFile(obj);
-                } else {
-                  setAdditionalDocumentBlob(blob);
-                  additionalDocumentRef.current = base_64;
-                  setAdditionalDocumentFile_64(base_64);
-                  setAdditionalDocumentFile(obj);
-                }
-              }
-            }
-            setDocuments(documentsArray);
-          }
-        })();
-      }
-    }
-  }, [encounterData, patientData]);
+  // // Default values
+  // useEffect(() => {
+  //   if (patientData) {
+  //     if (patientData.managingOrganization) {
+  //       (async () => {
+  //         try {
+  //           // const HMO_Data = await getHMO(patientData.managingOrganization);
+  //           const Organization = await FHIR('Organization', 'doWork', {
+  //             functionName: 'readOrganization',
+  //             functionParams: {
+  //               OrganizationId: patientData.managingOrganization,
+  //             },
+  //           });
+  //           const normalizedOrganization = normalizeFhirOrganization(
+  //             Organization.data,
+  //           );
+  //           setHMO(normalizedOrganization);
+  //         } catch (error) {
+  //           console.log(error);
+  //         }
+  //       })();
+  //     }
+  //     if (patientData.city) {
+  //       const defaultAddressCityObj = {
+  //         name: t(patientData.city),
+  //         code: patientData.city,
+  //       };
+  //       setAddressCity(defaultAddressCityObj);
+  //       setPOBoxCity(defaultAddressCityObj);
+  //     }
+  //     // If there is a streetName there might be streetNumber but that is not required streetName is required according to FHIR.
+  //     if (patientData.streetName.trim()) {
+  //       const defaultAddressStreetObj = {
+  //         name: t(patientData.streetName),
+  //         code: patientData.streetName,
+  //       };
+  //       setAddressStreet(defaultAddressStreetObj);
+  //     }
+  //   }
+  //   if (encounterData) {
+  //     if (encounterData.examination && encounterData.examination.length) {
+  //       const selectedArr = encounterData.examination.map(
+  //         (reasonCodeEl, reasonCodeElIndex) => {
+  //           return {
+  //             serviceType: {
+  //               name: encounterData.serviceType,
+  //               code: encounterData.serviceTypeCode,
+  //             },
+  //             reasonCode: {
+  //               name: reasonCodeEl,
+  //               code: encounterData.examinationCode[reasonCodeElIndex],
+  //             },
+  //           };
+  //         },
+  //       );
+  //       setSelectedServicesType(selectedArr);
+  //     }
+  //     if (encounterData.priority > 1) {
+  //       setIsUrgent(true);
+  //     }
+  //   }
+  //   if (encounterData && patientData) {
+  //     (async () => {
+  //       try {
+  //         const questionnaire = await FHIR('Questionnaire', 'doWork', {
+  //           functionName: 'getQuestionnaire',
+  //           functionParams: { QuestionnaireName: 'commitment_questionnaire' },
+  //         });
+  //         if (questionnaire.data.total) {
+  //           setQuestionnaireId(questionnaire.data.entry[1].resource.id);
+  //         }
+  //         const questionnaireResponseData = await FHIR(
+  //           'QuestionnaireResponse',
+  //           'doWork',
+  //           {
+  //             functionName: 'getQuestionnaireResponse',
+  //             functionParams: {
+  //               patientId: patientData.id,
+  //               encounterId: encounterData.id,
+  //               questionnaireId: questionnaire.data.entry[1].resource.id,
+  //             },
+  //           },
+  //         );
+  //         if (questionnaireResponseData.data.total !== 0) {
+  //           const normalizedQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
+  //             questionnaireResponseData.data.entry[1].resource,
+  //           );
+  //           if (normalizedQuestionnaireResponse.items.length) {
+  //             if (configuration.clinikal_pa_commitment_form === '1') {
+  //               reset({
+  //                 commitmentAndPaymentReferenceForPaymentCommitment:
+  //                   normalizedQuestionnaireResponse.items.find(
+  //                     (item) => item.linkId === '1',
+  //                   ).answer[0].valueInteger || '',
+  //                 commitmentAndPaymentDoctorsName:
+  //                   normalizedQuestionnaireResponse.items.find(
+  //                     (item) => item.linkId === '4',
+  //                   ).answer[0].valueString || '',
+  //                 commitmentAndPaymentDoctorsLicense:
+  //                   normalizedQuestionnaireResponse.items.find(
+  //                     (item) => item.linkId === '5',
+  //                   ).answer[0].valueInteger || '',
+  //               });
+  //               const commitmentDate = normalizedQuestionnaireResponse.items.find(
+  //                 (item) => item.text === 'Commitment date',
+  //               );
+  //               const commitmentValidity = normalizedQuestionnaireResponse.items.find(
+  //                 (item) => item.text === 'Commitment expiration date',
+  //               );
+  //               if (commitmentDate) {
+  //                 setCommitmentAndPaymentCommitmentDate(
+  //                   moment(commitmentDate.answer[0].valueDate),
+  //                 );
+  //               }
+  //               if (commitmentValidity) {
+  //                 setCommitmentAndPaymentCommitmentValidity(
+  //                   moment(commitmentValidity.answer[0].valueDate),
+  //                 );
+  //               }
+  //             } else {
+  //               const paymentAmount = normalizedQuestionnaireResponse.items.find(
+  //                 (item) => item.linkId === '6',
+  //               ).answer[0].valueString;
+  //               const paymentMethod = normalizedQuestionnaireResponse.items.find(
+  //                 (item) => item.linkId === '7',
+  //               ).answer[0].valueString;
+  //               const receiptNumber = normalizedQuestionnaireResponse.items.find(
+  //                 (item) => item.linkId === '8',
+  //               ).answer[0].valueString;
+  //               if (receiptNumber)
+  //                 reset({
+  //                   receiptNumber: receiptNumber || '',
+  //                 });
+  //               if (paymentAmount) setPaymentAmount(paymentAmount);
+  //               if (paymentMethod) setPaymentMethod(paymentMethod);
+  //             }
+  //             setQuestionnaireResponse(normalizedQuestionnaireResponse);
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     })();
+  //     if (encounterData.id && patientData.id) {
+  //       (async () => {
+  //         const documentReferenceData = await FHIR(
+  //           'DocumentReference',
+  //           'doWork',
+  //           {
+  //             functionName: 'getDocumentReference',
+  //             searchParams: {
+  //               encounter: encounterData.id,
+  //               patient: patientData.id,
+  //             },
+  //           },
+  //         );
+  //         if (documentReferenceData.data.total) {
+  //           const documentsArray = [];
+  //           for (
+  //             let documentIndex = 0;
+  //             documentReferenceData.data.entry.length > documentIndex;
+  //             documentIndex++
+  //           ) {
+  //             if (documentReferenceData.data.entry[documentIndex].resource) {
+  //               const normalizedFhirDocumentReference = normalizeFhirDocumentReference(
+  //                 documentReferenceData.data.entry[documentIndex].resource,
+  //               );
+  //               documentsArray.push(normalizedFhirDocumentReference);
+  //               const base_64 = combineBase_64(
+  //                 normalizedFhirDocumentReference.data,
+  //                 normalizedFhirDocumentReference.contentType,
+  //               );
+  //               const [, SizeInMB] = calculateFileSize(
+  //                 atob(normalizedFhirDocumentReference.data).length,
+  //                 FILES_OBJ.valueInBytes,
+  //                 FILES_OBJ.fix,
+  //                 FILES_OBJ.maxSize,
+  //               );
+  //               let obj = {
+  //                 name: normalizedFhirDocumentReference.url,
+  //                 size: SizeInMB,
+  //               };
+  //               const blob = decodeBase_64IntoBlob(
+  //                 normalizedFhirDocumentReference.data,
+  //                 normalizedFhirDocumentReference.contentType,
+  //               );
+  //               if (
+  //                 normalizedFhirDocumentReference.url.startsWith('Referral')
+  //               ) {
+  //                 setReferralBlob(blob);
+  //                 setReferralFile_64(base_64);
+  //                 setReferralFile(obj);
+  //                 referralRef.current = base_64;
+  //               } else if (
+  //                 normalizedFhirDocumentReference.url.startsWith(
+  //                   'Commitment',
+  //                 ) &&
+  //                 configuration.clinikal_pa_commitment_form === '1'
+  //               ) {
+  //                 setCommitmentBlob(blob);
+  //                 commitmentRef.current = base_64;
+  //                 setCommitmentFile_64(base_64);
+  //                 setCommitmentFile(obj);
+  //               } else {
+  //                 setAdditionalDocumentBlob(blob);
+  //                 additionalDocumentRef.current = base_64;
+  //                 setAdditionalDocumentFile_64(base_64);
+  //                 setAdditionalDocumentFile(obj);
+  //               }
+  //             }
+  //           }
+  //           setDocuments(documentsArray);
+  //         }
+  //       })();
+  //     }
+  //   }
+  // }, [encounterData, patientData]);
   // PopUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   const [popUpReferenceFile, setPopUpReferenceFile] = useState('');
@@ -1232,221 +1233,15 @@ const PatientDetailsBlock = ({
               formatDate={formatDate}
               managingOrganization={patientData.managingOrganization}
             />
-            <StyledFormGroup>
-              <Title
-                fontSize={'18px'}
-                color={'#000b40'}
-                label={t('Upload documents')}
-                bold
-              />
-              <Title
-                fontSize={'14px'}
-                color={'#000b40'}
-                label={`${t(
-                  'Uploading documents with a maximum size of up to',
-                )} ${FILES_OBJ.maxSize}${FILES_OBJ.type}`}
-              />
-              <StyledDivider variant='fullWidth' />
-              {/* ReferralRef  */}
-              <Grid
-                container
-                alignItems='center'
-                style={{ marginBottom: '41px' }}>
-                <Grid item xs={3}>
-                  <label
-                    style={{
-                      color: `${
-                        requiredErrors.ReferralFile ? '#f44336' : '#000b40'
-                      }`,
-                    }}
-                    htmlFor='Referral'>
-                    {`${t('Referral')} *`}
-                  </label>
-                </Grid>
-                <Grid item xs={9}>
-                  <input
-                    name='ReferralFile'
-                    ref={(e) => {
-                      referralRef.current = e;
-                      register();
-                    }}
-                    id='Referral'
-                    type='file'
-                    accept='.pdf,.gpf,.png,.gif,.jpg'
-                    onChange={() =>
-                      onChangeFileHandler(
-                        referralRef,
-                        setReferralFile,
-                        'Referral',
-                      )
-                    }
-                  />
-                  {Object.values(referralFile).length > 0 ? (
-                    <ChipWithImage
-                      htmlFor='Referral'
-                      label={referralFile.name}
-                      size={referralFile.size}
-                      onDelete={(event) => {
-                        setPopUpReferenceFile('Referral');
-                        onDeletePopUp(event);
-                      }}
-                      onClick={(event) =>
-                        onClickFileHandler(event, referralRef)
-                      }
-                    />
-                  ) : (
-                    <label htmlFor='Referral'>
-                      <StyledButton
-                        variant='outlined'
-                        color='primary'
-                        component='span'
-                        size={'large'}
-                        startIcon={<Scanner />}>
-                        {t('Upload document')}
-                      </StyledButton>
-                    </label>
-                  )}
-                </Grid>
-              </Grid>
-              {/* CommitmentRef  */}
-              {configuration.clinikal_pa_commitment_form === '1' && (
-                <Grid
-                  container
-                  alignItems='center'
-                  style={{ marginBottom: '41px' }}>
-                  <Grid item xs={3}>
-                    <label
-                      style={{
-                        color: `${
-                          requiredErrors.CommitmentFile ? '#f44336' : '#000b40'
-                        }`,
-                      }}
-                      htmlFor='Commitment'>
-                      {`${t('Commitment')} *`}
-                    </label>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <input
-                      name='CommitmentFile'
-                      ref={(e) => {
-                        commitmentRef.current = e;
-                        register();
-                      }}
-                      id='Commitment'
-                      type='file'
-                      accept='.pdf,.gpf,.png,.gif,.jpg'
-                      onChange={() =>
-                        onChangeFileHandler(
-                          commitmentRef,
-                          setCommitmentFile,
-                          'Commitment',
-                        )
-                      }
-                    />
-                    {Object.values(commitmentFile).length > 0 ? (
-                      <ChipWithImage
-                        htmlFor='Commitment'
-                        label={commitmentFile.name}
-                        size={commitmentFile.size}
-                        onDelete={(event) => {
-                          setPopUpReferenceFile('Commitment');
-                          onDeletePopUp(event);
-                        }}
-                        onClick={(event) =>
-                          onClickFileHandler(event, commitmentRef)
-                        }
-                      />
-                    ) : (
-                      <label htmlFor='Commitment'>
-                        <StyledButton
-                          variant='outlined'
-                          color='primary'
-                          component='span'
-                          size={'large'}
-                          startIcon={<Scanner />}>
-                          {t('Upload document')}
-                        </StyledButton>
-                      </label>
-                    )}
-                  </Grid>
-                </Grid>
-              )}
-              {/* AdditionalDocumentRef */}
-              {numOfAdditionalDocument.map((_, additionalDocumentIndex) => {
-                return (
-                  <Grid
-                    container
-                    alignItems='center'
-                    key={additionalDocumentIndex}>
-                    <Grid item xs={3}>
-                      <CustomizedTextField
-                        width={'70%'}
-                        onChange={onChangeAdditionalDocumentHandler}
-                        label={`${t('Additional document')}`}
-                      />
-                    </Grid>
-                    <Grid item xs={9}>
-                      <input
-                        name={nameOfAdditionalDocumentFile || 'Document1'}
-                        ref={(e) => {
-                          additionalDocumentRef.current = e;
-                          register();
-                        }}
-                        id='AdditionalDocument'
-                        type='file'
-                        accept='.pdf,.gpf,.png,.gif,.jpg'
-                        onChange={() =>
-                          onChangeFileHandler(
-                            additionalDocumentRef,
-                            setAdditionalDocumentFile,
-                            nameOfAdditionalDocumentFile || 'Document1',
-                          )
-                        }
-                      />
-                      {Object.values(additionalDocumentFile).length > 0 ? (
-                        <ChipWithImage
-                          htmlFor='AdditionalDocument'
-                          label={additionalDocumentFile.name}
-                          size={additionalDocumentFile.size}
-                          onDelete={(event) => {
-                            setPopUpReferenceFile(
-                              nameOfAdditionalDocumentFile || 'Document1',
-                            );
-                            onDeletePopUp(event);
-                          }}
-                          onClick={(event) =>
-                            onClickFileHandler(event, additionalDocumentRef)
-                          }
-                        />
-                      ) : (
-                        <label htmlFor='AdditionalDocument'>
-                          <StyledButton
-                            variant='outlined'
-                            color='primary'
-                            component='span'
-                            size={'large'}
-                            startIcon={<Scanner />}>
-                            {t('Upload document')}
-                          </StyledButton>
-                        </label>
-                      )}
-                    </Grid>
-                  </Grid>
-                );
-              })}
-              <Grid container alignItems='center'>
-                <AddCircle
-                  style={{ color: '#002398', cursor: 'pointer' }}
-                  onClick={onClickAdditionalDocumentHandler}
-                />
-                <Title
-                  margin='0 8px 0 8px'
-                  bold
-                  color={'#002398'}
-                  label={'Additional document'}
-                />
-              </Grid>
-            </StyledFormGroup>
+            <Documents
+              eid={encounterData.id}
+              handlePopUpClose={handlePopUpClose}
+              isCommitmentForm={configuration.clinikal_pa_commitment_form}
+              pid={patientData.id}
+              popUpReferenceFile={popUpReferenceFile}
+              setIsPopUpOpen={setIsPopUpOpen}
+              setPopUpReferenceFile={setPopUpReferenceFile}
+            />
             <StyledFormGroup>
               <Grid container direction='row' justify='flex-end'>
                 <Grid item lg={3} sm={4}>
