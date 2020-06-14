@@ -122,12 +122,12 @@ const PatientDetailsBlock = ({
         const APIsArray = [];
         //Updating patient
         let patientPatchParams = {};
-        if (contactInformationTabValue === 0) {
+        if (data.contactInformationTabValue === 0) {
           if (data.addressCity) {
-            patientPatchParams['city'] = addressCity.code;
+            patientPatchParams['city'] = data.addressCity;
           }
           if (data.addressStreet.trim()) {
-            patientPatchParams['streetName'] = addressStreet.code;
+            patientPatchParams['streetName'] = data.addressStreet;
           }
           if (data.addressStreetNumber.trim()) {
             patientPatchParams['streetNumber'] = data.addressStreetNumber;
@@ -137,7 +137,7 @@ const PatientDetailsBlock = ({
           }
         } else {
           if (data.POBoxCity) {
-            patientPatchParams['city'] = POBoxCity.code;
+            patientPatchParams['city'] = data.POBoxCity;
           }
           if (data.POBox) {
             patientPatchParams['POBox'] = data.POBox;
