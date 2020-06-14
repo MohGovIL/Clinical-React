@@ -24,12 +24,31 @@ const ContactInformation = ({
     setValue,
     errors,
   } = useFormContext();
+
   useEffect(() => {
-    register('contactInformationTabValue');
+    // register({ name: 'contactInformationTabValue' });
+    // register({ name: 'addressCity' });
+    // register({ name: 'addressStreet' });
+    // register({ name: 'POBoxCity' });
+    // setValue([
+    //   { contactInformationTabValue: '0' },
+    //   { addressCity: city },
+    //   { addressStreet: streetName },
+    //   { POBoxCity: city },
+    // ]);
+    register({ name: 'HELLO' });
+    setValue('HELLO', 'hey');
     return () => {
-      unregister('contactInformationTabValue');
+      //TODO change all of the object that are like  {code: '', name: ''} to just a code string and translate just the value
+      unregister('HELLO');
+      // unregister([
+      //   'contactInformationTabValue',
+      //   'addressCity',
+      //   'addressStreet',
+      //   'POBoxCity',
+      // ]);
     };
-  }, [register, unregister]);
+  }, []);
 
   const [contactInformationTabValue, setContactInformationTabValue] = useState(
     0,
@@ -105,6 +124,7 @@ const ContactInformation = ({
       active = false;
     };
   }, [loadingCities]);
+
   useEffect(() => {
     let active = true;
 
@@ -186,6 +206,7 @@ const ContactInformation = ({
               options={cities}
               value={addressCity}
               onChange={(event, newValue) => {
+                setValue('addressCity', newValue.code);
                 setAddressCity(newValue);
               }}
               getOptionLabel={(option) =>
@@ -194,13 +215,13 @@ const ContactInformation = ({
                   ? ''
                   : option.name
               }
+              getOptionSelected={(option, value) => option.code === value.code}
               noOptionsText={t('No Results')}
               loadingText={t('Loading')}
               renderInput={(params) => (
                 <CustomizedTextField
                   width={'70%'}
-                  name='addressCity'
-                  inputRef={register()}
+                  // name='addressCity'
                   {...params}
                   label={t('City')}
                   InputProps={{
@@ -228,7 +249,9 @@ const ContactInformation = ({
               onClose={() => setStreetsOpen(false)}
               id='addressStreet'
               value={addressStreet}
+              getOptionSelected={(option, value) => option.code === value.code}
               onChange={(event, newValue) => {
+                setValue('addressStreet', newValue.code);
                 setAddressStreet(newValue);
               }}
               getOptionLabel={(option) =>
@@ -244,8 +267,7 @@ const ContactInformation = ({
                 <CustomizedTextField
                   width={'70%'}
                   {...params}
-                  name='addressStreet'
-                  inputRef={register()}
+                  // name='addressStreet'
                   InputProps={{
                     ...params.InputProps,
 
@@ -306,7 +328,7 @@ const ContactInformation = ({
           <React.Fragment>
             {/* Contact Information - POBox - city */}
             <StyledAutoComplete
-              name='POBoxCity'
+              // name='POBoxCity'
               id='POBoxCity'
               open={citiesOpen}
               onOpen={() => {
@@ -316,8 +338,10 @@ const ContactInformation = ({
                 setCitiesOpen(false);
               }}
               onChange={(event, newValue) => {
+                setValue('POBoxCity', newValue.code);
                 setPOBoxCity(newValue);
               }}
+              getOptionSelected={(option, value) => option.code === value.code}
               value={POBoxCity}
               loading={loadingCities}
               options={cities}
@@ -328,8 +352,7 @@ const ContactInformation = ({
                 <CustomizedTextField
                   width={'70%'}
                   {...params}
-                  name='POBoxCity'
-                  inputRef={register()}
+                  // name='POBoxCity'
                   label={t('City')}
                   InputProps={{
                     ...params.InputProps,
