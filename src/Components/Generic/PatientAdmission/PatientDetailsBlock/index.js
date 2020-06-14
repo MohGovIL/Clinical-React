@@ -44,6 +44,8 @@ import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 import TabPanel from './TabPanel';
 import EscortPatient from './EscortPatient';
 import ContactInformation from './ContactInformation';
+import VisitDetails from './VisitDetails';
+
 // Material-UI Icons
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -1200,7 +1202,7 @@ const PatientDetailsBlock = ({
         )} ${t('Do you want to continue?')}`}
       </CustomizedPopup>
       <StyledPatientDetails edit={edit_mode}>
-        <FormContext {...methods}>
+        <FormContext {...methods} requiredErrors>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             {/* Patient Details */}
             <EscortPatient
@@ -1215,139 +1217,14 @@ const PatientDetailsBlock = ({
               streetName={patientData.streetName}
               streetNumber={patientData.streetNumber}
             />
-            {/* Visit Details */}
-            <Title
-              marginTop={'80px'}
-              fontSize={'28px'}
-              color={'#002398'}
-              label={'Visit Details'}
+            <VisitDetails
+              reasonCodeDetails={encounterData.extensionReasonCodeDetails}
+              examination={encounterData.examination}
+              examinationCode={encounterData.examinationCode}
+              serviceType={encounterData.serviceType}
+              serviceTypeCode={encounterData.serviceTypeCode}
+              priority={encounterData.priority}
             />
-            {/* Requested service */}
-            <StyledFormGroup>
-              <Title
-                fontSize={'18px'}
-                color={'#000b40'}
-                label={'Requested service'}
-                bold
-              />
-              <StyledDivider variant={'fullWidth'} />
-              <Grid
-                container
-                direction={'row'}
-                justify={'flex-start'}
-                alignItems={'center'}>
-                <span>{t('Is urgent?')}</span>
-                {/* Requested service - switch */}
-                <StyledSwitch
-                  onChange={isUrgentSwitchOnChangeHandler}
-                  checked={isUrgent}
-                  label_1={'No'}
-                  label_2={'Yes'}
-                  marginLeft={'40px'}
-                  marginRight={'40px'}
-                />
-              </Grid>
-              {/* Requested service - select test */}
-              <StyledAutoComplete
-                filterOptions={filterOptions}
-                multiple
-                noOptionsText={t('No Results')}
-                loadingText={t('Loading')}
-                open={servicesTypeOpen}
-                loading={loadingServicesType}
-                onOpen={selectExaminationOnOpenHandler}
-                onClose={selectExaminationOnCloseHandler}
-                value={pendingValue}
-                onChange={selectExaminationOnChangeHandler}
-                disableCloseOnSelect
-                renderTags={() => null}
-                renderOption={(option, state) => (
-                  <Grid container justify='flex-end' alignItems='center'>
-                    <Grid item xs={3}>
-                      <Checkbox
-                        color='primary'
-                        icon={<CheckBoxOutlineBlankOutlined />}
-                        checkedIcon={<CheckBox />}
-                        checked={state.selected}
-                      />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <ListItemText>{option.reasonCode.code}</ListItemText>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <ListItemText primary={t(option.serviceType.name)} />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <ListItemText primary={t(option.reasonCode.name)} />
-                    </Grid>
-                  </Grid>
-                )}
-                ListboxComponent={ListboxComponent}
-                ListboxProps={{
-                  pendingValue: pendingValue,
-                  setSelectedServicesType: setSelectedServicesType,
-                  setClose: setServicesTypeOpen,
-                  setValue: setValue,
-                  close: unFocusSelectTest,
-                }}
-                options={servicesType}
-                renderInput={(params) => (
-                  <CustomizedTextField
-                    width={'70%'}
-                    name='selectTest'
-                    inputRef={(e) => {
-                      selectTestRef.current = e;
-                    }}
-                    error={requiredErrors.selectTest ? true : false}
-                    helperText={
-                      requiredErrors.selectTest &&
-                      t(
-                        'The visit reason performed during the visit must be selected',
-                      )
-                    }
-                    {...params}
-                    label={`${t('Reason for refferal')} *`}
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <React.Fragment>
-                          <InputAdornment position={'end'}>
-                            {loadingServicesType ? (
-                              <CircularProgress color={'inherit'} size={20} />
-                            ) : null}
-                            {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
-                          </InputAdornment>
-                        </React.Fragment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-              {/* Requested service - selected test - chips */}
-              <Grid container direction='row' wrap='wrap'>
-                {selectedServicesType.map((selected, selectedIndex) => (
-                  <StyledChip
-                    deleteIcon={<Close fontSize='small' />}
-                    onDelete={chipOnDeleteHandler(selectedIndex)}
-                    key={selectedIndex}
-                    label={`${selected.reasonCode.code} | ${t(
-                      selected.serviceType.name,
-                    )} | ${t(selected.reasonCode.name)}`}
-                  />
-                ))}
-              </Grid>
-              <Controller
-                control={control}
-                name='reasonForReferralDetails'
-                defaultValue={encounterData.extensionReasonCodeDetails || ''}
-                as={
-                  <CustomizedTextField
-                    width={'70%'}
-                    label={t('Reason for referral details')}
-                  />
-                }
-              />
-            </StyledFormGroup>
             {/* Commitment and payment */}
             <StyledFormGroup>
               <Title
