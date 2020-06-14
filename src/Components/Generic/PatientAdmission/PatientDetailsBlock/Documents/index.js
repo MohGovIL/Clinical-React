@@ -257,7 +257,6 @@ const Documents = ({
               size={referralFile.size}
               onDelete={(event) => {
                 setPopUpReferenceFile('Referral');
-                console.log(popUpReferenceFile);
                 onDeletePopUp(event);
               }}
               onClick={(event) => onClickFileHandler(event, referralRef)}
