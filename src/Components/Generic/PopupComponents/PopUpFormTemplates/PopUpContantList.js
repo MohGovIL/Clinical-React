@@ -147,7 +147,7 @@ const PopUpContantList = ({
   return (
     <React.Fragment>
       <CustomizedPaperHeader languageDirection={languageDirection}>
-        {t('Add template')}
+        {t('Select template')}
       </CustomizedPaperHeader>
       <CustomizedPaper>
         <SearchTemplates>
@@ -160,7 +160,7 @@ const PopUpContantList = ({
             <img onClick={onClearHandler} alt='search icon' src={X} />
           ) : null}
         </SearchTemplates>
-        {templates ? (
+        {templates && searchInsideTemplates ? (
           <StyledCheckAll
             dir={languageDirection}
             onClick={handleSelectAllToggle}>

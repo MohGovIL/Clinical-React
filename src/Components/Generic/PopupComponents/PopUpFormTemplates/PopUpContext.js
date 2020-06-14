@@ -16,6 +16,7 @@ const PopUpContext = ({
   context,
   setTemplatesTextReturned,
   handleCloseOperation,
+  setTemplateWasSaved,
 }) => {
   const { t } = useTranslation();
   const textAreaRef = useRef(null);
@@ -26,17 +27,15 @@ const PopUpContext = ({
     setContext(textAreaRef.current.value);
   };
   const handleSaveAndClose = () => {
-    //ToDo : PC-761
     //SAVE :
     setTemplatesTextReturned(context);
+    setTemplateWasSaved(true);
     //Close :
-    handleCloseOperation();
+    handleCloseOperation({ saved: true });
   };
   return (
     <React.Fragment>
-      <CustomizedPaperHeader>
-        {t('Create context for examination details')}
-      </CustomizedPaperHeader>
+      <CustomizedPaperHeader>{t('Edit field content')}</CustomizedPaperHeader>
       <CustomizedPaper>
         <StyledContextTextArea
           rowsMax={40}
@@ -51,6 +50,11 @@ const PopUpContext = ({
           variant={'contained'}
           color={'primary'}
           fontWeight={'bold'}
+          disabled={
+            textAreaRef &&
+            textAreaRef.current &&
+            textAreaRef.current.value === ''
+          }
           onClick={handleSaveAndClose}>
           {t('Save and Close')}
         </StyledSaveButton>

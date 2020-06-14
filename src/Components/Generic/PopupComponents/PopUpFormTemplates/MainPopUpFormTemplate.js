@@ -16,6 +16,7 @@ const MainPopUpFormTemplate = ({
   languageDirection,
   setTemplatesTextReturned,
   handleCloseOperation,
+  setTemplateWasSaved,
 }) => {
   const { t } = useTranslation();
   const handleTransferOfContent = () => {
@@ -65,7 +66,8 @@ const MainPopUpFormTemplate = ({
           handleCloseOperation={handleCloseOperation}
           setTemplatesTextReturned={setTemplatesTextReturned}
           context={context}
-          setContext={setContext}></PopUpContext>
+          setContext={setContext}
+          setTemplateWasSaved={setTemplateWasSaved}></PopUpContext>
       </Grid>
     </Grid>
   );

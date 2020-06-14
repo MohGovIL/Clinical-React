@@ -12,15 +12,14 @@ const EncounterForms = ({
 
 export default EncounterForms;
 /*
-
-/!*
+<!--
 -------------------------EXAMPLE HOW TO CALL POPUP FORM TEMPLATES ---------------------
 STILL REMAINING - PC-562,PC-602, PC-761 .
                   I have made changes In order to foresee what should be happen in those tasks.
                   a) so here we have an example how to use PC-562
                   b) the returned value which should be saved in PC-602 is implemented here also
                   c) the popup of 761 logic is here also just
-*!/
+!-->
 
 import React from 'react';
 import StyledPatientFiles from './Style';
@@ -34,6 +33,7 @@ const EncounterForms = ({ encounter }) => {
 
   const [popUpTemplates, setPopUpTemplates] = React.useState(true);
   const [templatesTextReturned, setTemplatesTextReturned] = React.useState('');
+
   const handlePopupClose = () => {
     if (setPopUpTemplates) {
       setPopUpTemplates(false);
@@ -44,9 +44,9 @@ const EncounterForms = ({ encounter }) => {
 
   return (
     <StyledPatientFiles>
+      {templatesTextReturned}
       <PopUpFormTemplates
-        setTemplatesTextReturned={setTemplatesTextReturned}
-        templatesTextReturned={templatesTextReturned}
+        setTemplatesTextReturned={setTemplatesTextReturned} //save the text state inside the component
         formID={formID}
         formFields={formFields}
         formFieldsTitle={formFieldsTitle}
@@ -68,4 +68,5 @@ const mapStateToProps = (state) => {
   };
 };
 export default connect(mapStateToProps, null)(EncounterForms);
+
 */

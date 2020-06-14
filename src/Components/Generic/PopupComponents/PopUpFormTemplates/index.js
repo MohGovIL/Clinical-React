@@ -21,7 +21,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const PopUpFormTemplates = ({
   setTemplatesTextReturned,
-  templatesTextReturned,
   formID,
   formFields,
   formFieldsTitle,
@@ -34,26 +33,24 @@ const PopUpFormTemplates = ({
 }) => {
   const { t } = useTranslation();
   const [context, setContext] = React.useState('');
-
+  const [templateWasSaved, setTemplateWasSaved] = React.useState(false);
   const [popupCloseOpen, setPopupCloseOpen] = React.useState(false);
   const handleSavePopupClose = (e) => {
-    //ToDo  : PC-761 - meanwhile :
     setPopupCloseOpen(false);
-    //check if to close or not and do :
     handlePopupClose();
   };
-  const handleCloseOperation = (e) => {
-    //TODO : PC-761 - meanwhile :
-    /* if (
-      (context === '' && templatesTextReturned === '') ||
-      templatesTextReturned !== ''
-    ) {
+  const handleWithoutSavingPopupClose = () => {
+    handleSavePopupClose();
+  };
+  const handleJustClosePopupClose = () => {
+    setPopupCloseOpen(false);
+  };
+  const handleCloseOperation = ({ saved }) => {
+    if ((context === '' && !saved) || (saved && typeof saved != 'object')) {
       handlePopupClose();
     } else {
       setPopupCloseOpen(true);
-    }*/
-
-    handlePopupClose();
+    }
   };
   const dialog_props = {
     fullWidth: true,
@@ -119,13 +116,14 @@ const PopUpFormTemplates = ({
           setContext={setContext}
           defaultContext={defaultContext}
           setTemplatesTextReturned={setTemplatesTextReturned}
+          setTemplateWasSaved={setTemplateWasSaved}
           templates={templates}></MainPopUpFormTemplate>
       </CustomizedPopup>
       <PopUpOnExit
         isOpen={popupCloseOpen}
         isClose={handleSavePopupClose}
-        returnFunction={handleSavePopupClose}
-        exitWithOutSavingFunction={handleSavePopupClose}
+        returnFunction={handleJustClosePopupClose}
+        exitWithOutSavingFunction={handleWithoutSavingPopupClose}
       />
     </React.Fragment>
   ) : null;
