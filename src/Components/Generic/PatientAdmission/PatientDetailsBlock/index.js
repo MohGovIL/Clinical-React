@@ -270,10 +270,8 @@ const PatientDetailsBlock = ({
         }
         const promises = await Promise.all(APIsArray);
         const encounter = { ...encounterData };
-        encounter.examinationCode = selectedServicesType.map((option) => {
-          return option.reasonCode.code;
-        });
-        encounter.serviceTypeCode = selectedServicesType[0].serviceType.code;
+        encounter.examinationCode = data.examinationCode;
+        encounter.serviceTypeCode = data.serviceTypeCode;
         if (configuration.clinikal_pa_arrival_way === '1') {
           encounter['extensionArrivalWay'] = data.arrivalWay;
         }
