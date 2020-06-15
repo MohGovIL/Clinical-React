@@ -302,7 +302,7 @@ const PatientDetailsBlock = ({
         } else {
           delete encounter['relatedPerson'];
         }
-        if (isUrgent) {
+        if (data.isUrgent) {
           encounter['priority'] = 2;
         } else {
           encounter['priority'] = 1;
@@ -476,177 +476,15 @@ const PatientDetailsBlock = ({
     return clean;
   };
 
-  // Escorted Information
-  // Escorted Information - vars
-  // paymentMethods
-  const [paymentMethod, setPaymentMethod] = useState('');
-  const paymentMethodHandler = (event, method) => {
-    setPaymentMethod(method);
-  };
-
-  // Contact Information
-  // Contact Information - cities var
-  const [cities, setCities] = useState([]);
-  const [citiesOpen, setCitiesOpen] = useState(false);
-  const loadingCities = citiesOpen && cities.length === 0;
-  // Contact Information - streets var
-  const [streets, setStreets] = useState([]);
-  const [streetsOpen, setStreetsOpen] = useState(false);
-  const loadingStreets = streetsOpen && streets.length === 0;
-  // Contact Information - tabs var
-  const [contactInformationTabValue, setContactInformationTabValue] = useState(
-    0,
-  );
-  // Contact Information - tabs function
-  const contactInformationTabValueChangeHandler = (event, newValue) => {
-    triggerValidation(['addressPostalCode', 'POBoxPostalCode']);
-    setContactInformationTabValue(newValue);
-  };
-  // Contact Information - address city - var
-  const [addressCity, setAddressCity] = useState({});
-  const [addressStreet, setAddressStreet] = useState({});
-  // Contact Information - PObox city - var
-  const [POBoxCity, setPOBoxCity] = useState({});
-  // Contact Information - address - vars
-  const [addressStreetNumber, setAddressStreetNumber] = useState('');
-
-  const [addressPostalCode, setAddressPostalCode] = useState('');
-
-  const [POBox, setPOBox] = useState('');
-
-  const [POBoxPostalCode, setPOBoxPostalCode] = useState('');
-
-  const onTextBlur = (value, setState) => {
-    // setValue(name, value, true);
-    setState(value);
-  };
-  // Contact Information - functions / useEffect
-  // Contact Information - functions / useEffect - reset cities and streets
-  useEffect(() => {
-    if (!citiesOpen) {
-      setCities([]);
-    }
-    if (!streetsOpen) {
-      setStreets([]);
-    }
-    // if (!servicesTypeOpen) {
-    //   setPendingValue([]);
-    // }
-  }, [citiesOpen, streetsOpen]);
-  // Contact Information - functions / useEffect - loading cities
-  useEffect(() => {
-    let active = true;
-
-    if (!loadingCities) {
-      return undefined;
-    }
-
-    (async () => {
-      try {
-        const cities = await getCities();
-        if (active) {
-          setCities(
-            Object.keys(cities.data).map((cityKey) => {
-              let cityObj = {};
-              cityObj.code = cities.data[cityKey];
-              cityObj.name = t(cities.data[cityKey]);
-
-              return cityObj;
-            }),
-          );
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loadingCities]);
-  // Contact Information - functions / useEffect - loading streets
-  useEffect(() => {
-    let active = true;
-
-    if (!loadingStreets) {
-      return undefined;
-    }
-
-    (async () => {
-      try {
-        const streets = await getStreets(addressCity.code.split('_')[1]);
-        if (active) {
-          if (Object.keys(streets.data).length) {
-            setStreets(
-              Object.keys(streets.data).map((streetKey) => {
-                let streetObj = {};
-                streetObj.code = streets.data[streetKey];
-                streetObj.name = t(streets.data[streetKey]);
-
-                return streetObj;
-              }),
-            );
-          } else {
-            const emptyResultsObj = {
-              code: 'no_result',
-              name: t('No Results'),
-            };
-            const emptyResults = [emptyResultsObj];
-            setStreets(emptyResults);
-          }
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loadingStreets]);
-
-  // Requested service
-  // Requested service - is urgent - vars
-  const [isUrgent, setIsUrgent] = useState(false);
-  // Requested service - is urgent - functions
-  const isUrgentSwitchOnChangeHandler = () => {
-    setIsUrgent((prevState) => !prevState);
-  };
   // Requested service - select examination - vars
   const [selectedServicesType, setSelectedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
   const [servicesType, setServicesType] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
 
-  const [HMO, setHMO] = useState({});
-
   const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
   const selectTestRef = React.useRef();
-  // Requested service - select examination - functions / useEffect
-  const selectExaminationOnChangeHandler = (event, newValue) => {
-    setPendingValue(newValue);
-  };
-  const selectExaminationOnOpenHandler = () => {
-    setPendingValue(selectedServicesType);
-    setServicesTypeOpen(true);
-  };
-  const selectExaminationOnCloseHandler = () => {
-    setServicesTypeOpen(false);
-  };
-  const filterOptions = (options, { inputValue }) => {
-    if (pendingValue.length) {
-      options = matchSorter(options, pendingValue[0].serviceType.code, {
-        keys: ['serviceType.code'],
-      });
-    }
-    return matchSorter(options, inputValue, {
-      keys: [
-        (item) => t(item.reasonCode.name),
-        'reasonCode.code',
-        (item) => t(item.serviceType.name),
-      ],
-    });
-  };
+
   useEffect(() => {
     let active = true;
 
@@ -699,73 +537,6 @@ const PatientDetailsBlock = ({
       active = false;
     };
   }, [loadingServicesType]);
-  const unFocusSelectTest = () => {
-    selectTestRef.current.blur();
-    // Should work don't know why it doesn't work. This function is to close the listBox in the autoComplete
-  };
-  // Requested service - select examination - chips - functions
-  const chipOnDeleteHandler = (chipToDeleteIndex) => () => {
-    const filteredSelectedServicesType = selectedServicesType.filter(
-      (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
-    );
-    setSelectedServicesType(filteredSelectedServicesType);
-  };
-  // Commitment And Payment - vars
-  const [questionnaireResponse, setQuestionnaireResponse] = useState({});
-  const [questionnaireId, setQuestionnaireId] = useState('');
-  const [
-    commitmentAndPaymentCommitmentDate,
-    setCommitmentAndPaymentCommitmentDate,
-  ] = useState(new Date());
-  const [
-    commitmentAndPaymentCommitmentValidity,
-    setCommitmentAndPaymentCommitmentValidity,
-  ] = useState(new Date());
-  const [
-    commitmentAndPaymentTabValue,
-    setCommitmentAndPaymentTabValue,
-  ] = useState(
-    configuration.clinikal_pa_commitment_form === '1' ? 'HMO' : 'Private',
-  );
-
-  const [paymentAmount, setPaymentAmount] = useState('0');
-
-  const onChangePaymentAmountHandler = (event) => {
-    if (checkCurrencyFormat(event.target.value))
-      setPaymentAmount(event.target.value);
-  };
-
-  const onBlurPaymentAmountHandler = (event) => {
-    const format = formatToCurrency(event.target.value);
-    setValue('privateAmountPayment', format);
-    setPaymentAmount(formatToCurrency(format));
-  };
-
-  // Commitment And Payment - functions
-  const validateDate = (date, type) => {
-    switch (type) {
-      case 'before':
-        return moment(date).isSameOrBefore(moment(), 'day');
-
-      case 'after':
-        return moment(date).isSameOrAfter(moment(), 'day');
-
-      default:
-        return false;
-    }
-  };
-  const dateOnChangeHandler = (date, valueName, set) => {
-    try {
-      setValue(valueName, date, true);
-      set(date);
-    } catch (e) {
-      console.log('Error: ' + e);
-    }
-  };
-  const setCommitmentAndPaymentTabValueChangeHandler = (event, newValue) => {
-    setCommitmentAndPaymentTabValue(newValue);
-  };
-
   // Files scan
   // Files scan - vars
   // Files scan - vars - states
