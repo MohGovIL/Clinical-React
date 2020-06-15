@@ -42,6 +42,7 @@ import { getCities, getStreets } from 'Utils/Services/API';
 import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
+import { DevTool } from 'react-hook-form-devtools';
 
 const PatientDetailsBlock = ({
   patientData,
@@ -58,7 +59,13 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
-  const { handleSubmit, setValue, formState, triggerValidation } = methods;
+  const {
+    handleSubmit,
+    setValue,
+    formState,
+    triggerValidation,
+    control,
+  } = methods;
   // Giving the patientAdmission if the form is dirty
   // meaning that there has been changes in the form
   const { dirty } = formState;
@@ -244,11 +251,11 @@ const PatientDetailsBlock = ({
             },
           ];
         }
-        if (Object.values(questionnaireResponse).length) {
+        if (data.questionnaireResponse) {
           APIsArray.push(
             FHIR('QuestionnaireResponse', 'doWork', {
               functionName: 'patchQuestionnaireResponse',
-              questionnaireResponseId: questionnaireResponse.id,
+              questionnaireResponseId: data.questionnaireResponse,
               questionnaireResponseParams: {
                 item,
               },
@@ -260,7 +267,7 @@ const PatientDetailsBlock = ({
               functionName: 'createQuestionnaireResponse',
               functionParams: {
                 questionnaireResponse: {
-                  questionnaire: questionnaireId,
+                  questionnaire: data.questionnaireId,
                   status: 'completed',
                   patient: patientData.id,
                   encounter: encounterData.id,
@@ -1006,7 +1013,7 @@ const PatientDetailsBlock = ({
             </StyledFormGroup>
           </StyledForm>
         </FormContext>
-        {/* <DevTool control={control} /> */}
+        <DevTool control={control} />
       </StyledPatientDetails>
     </React.Fragment>
   );

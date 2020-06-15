@@ -42,6 +42,12 @@ const EscortPatient = ({
   useEffect(() => {
     register({ name: 'arrivalWay' });
     setValue('arrivalWay', encounterArrivalWay);
+    return () => {
+      unregister('arrivalWay');
+    };
+  }, [unregister, register, setValue, encounterArrivalWay]);
+
+  useEffect(() => {
     (async () => {
       try {
         if (relatedPersonId) {
@@ -64,17 +70,7 @@ const EscortPatient = ({
         console.log(error);
       }
     })();
-    return () => {
-      unregister('arrivalWay');
-    };
-  }, [
-    relatedPersonId,
-    reset,
-    setValue,
-    unregister,
-    register,
-    encounterArrivalWay,
-  ]);
+  }, [relatedPersonId, reset]);
 
   return (
     <React.Fragment>
