@@ -38,7 +38,35 @@ const VisitDetails = ({
   priority,
 }) => {
   const { t } = useTranslation();
-  const { register, control, requiredErrors, setValue } = useFormContext();
+  const {
+    register,
+    control,
+    requiredErrors,
+    setValue,
+    unregister,
+    // reset,
+  } = useFormContext();
+
+  useEffect(() => {
+    register({ name: 'serviceTypeCode' });
+    register({ name: 'examinationCode' });
+    setValue([
+      {
+        serviceTypeCode: serviceTypeCode,
+      },
+      {
+        examinationCode: examinationCode,
+      },
+    ]);
+    // if (priority > 1) {
+    //   reset({ isUrgent: true });
+    // } else {
+    //   reset({ isUrgent: false });
+    // }
+    return () => {
+      unregister(['serviceTypeCode', 'examinationCode']);
+    };
+  }, [register, unregister, serviceTypeCode, examinationCode, setValue]);
 
   const [selectedServicesType, setSelectedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
@@ -50,6 +78,26 @@ const VisitDetails = ({
   const selectExaminationOnChangeHandler = (event, newValue) => {
     setPendingValue(newValue);
   };
+
+  const onCloseChangeHandler = (value) => {
+    const examinationCodeArr = [];
+    let serviceTypeCodeValue = '';
+    if (value && value.length) {
+      serviceTypeCodeValue = value[0].serviceType.code;
+      value.forEach((item, itemIndex) => {
+        examinationCodeArr.push(item.reasonCode.code);
+      });
+    }
+    setValue([
+      {
+        serviceTypeCode: serviceTypeCodeValue,
+      },
+      {
+        examinationCode: examinationCodeArr,
+      },
+    ]);
+  };
+
   const selectExaminationOnOpenHandler = () => {
     setPendingValue(selectedServicesType);
     setServicesTypeOpen(true);
@@ -75,6 +123,7 @@ const VisitDetails = ({
     const filteredSelectedServicesType = selectedServicesType.filter(
       (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
     );
+    onCloseChangeHandler(filteredSelectedServicesType);
     setSelectedServicesType(filteredSelectedServicesType);
   };
   useEffect(() => {
@@ -153,11 +202,8 @@ const VisitDetails = ({
         );
         setSelectedServicesType(selectedArr);
       }
-      if (priority > 1) {
-        setValue('isUrgent', true);
-      }
     })();
-  }, []);
+  }, [examination, examinationCode, serviceType, serviceTypeCode]);
   return (
     <React.Fragment>
       <Title
@@ -203,6 +249,9 @@ const VisitDetails = ({
           onClose={selectExaminationOnCloseHandler}
           value={pendingValue}
           onChange={selectExaminationOnChangeHandler}
+          getOptionSelected={(option, value) =>
+            option.reasonCode.name === value.reasonCode.name
+          }
           disableCloseOnSelect
           renderTags={() => null}
           renderOption={(option, state) => (
@@ -231,7 +280,7 @@ const VisitDetails = ({
             pendingValue: pendingValue,
             setSelectedServicesType: setSelectedServicesType,
             setClose: setServicesTypeOpen,
-            setValue: setValue,
+            setValue: onCloseChangeHandler,
             close: unFocusSelectTest,
           }}
           options={servicesType}
