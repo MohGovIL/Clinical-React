@@ -59,13 +59,7 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
-  const {
-    handleSubmit,
-    setValue,
-    formState,
-    triggerValidation,
-    control,
-  } = methods;
+  const { handleSubmit, setValue, formState, control } = methods;
   // Giving the patientAdmission if the form is dirty
   // meaning that there has been changes in the form
   const { dirty } = formState;
@@ -549,88 +543,11 @@ const PatientDetailsBlock = ({
   const [referralFile, setReferralFile] = useState({});
   const [commitmentFile, setCommitmentFile] = useState({});
   const [additionalDocumentFile, setAdditionalDocumentFile] = useState({});
-  const [numOfAdditionalDocument, setNumOfAdditionalDocument] = useState([]);
-  const [
-    nameOfAdditionalDocumentFile,
-    setNameOfAdditionalDocumentFile,
-  ] = useState('');
   // Files scan - vars - refs
   const referralRef = React.useRef();
   const commitmentRef = React.useRef();
   const additionalDocumentRef = React.useRef();
-  const [referralBlob, setReferralBlob] = useState('');
-  const [commitmentBlob, setCommitmentBlob] = useState('');
-  const [additionalDocumentBlob, setAdditionalDocumentBlob] = useState('');
 
-  // Files scan - vars - globals
-  const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
-  // Files scan - functions
-  async function onChangeFileHandler(ref, setState, fileName) {
-    const files = ref.current.files;
-    const [BoolAnswer, SizeInMB] = calculateFileSize(
-      files[files.length - 1].size,
-      FILES_OBJ.valueInBytes,
-      FILES_OBJ.fix,
-      FILES_OBJ.maxSize,
-    );
-    if (!BoolAnswer) {
-      const fileObject = {};
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (fileName === 'Referral') {
-          setReferralFile_64(event.target.result);
-        } else if (fileName === 'Commitment') {
-          setCommitmentFile_64(event.target.result);
-        } else {
-          setAdditionalDocumentFile_64(event.target.result);
-        }
-      };
-      reader.readAsDataURL(ref.current.files[0]);
-      fileObject['name'] = `${fileName}_${moment().format(
-        'L',
-      )}_${moment().format('HH:mm')}_${files[files.length - 1].name}`;
-      fileObject['size'] = SizeInMB;
-      setValue(`${fileName}File`, fileObject.name, true);
-      setState({ ...fileObject });
-    } else {
-      ref.current.value = '';
-    }
-  }
-  const onClickFileHandler = (event, ref) => {
-    event.stopPropagation();
-    event.preventDefault();
-    let refId = ref.current.id;
-    if (documents.length) {
-      if (documents.find((doc) => doc.url.startsWith(refId))) {
-        if (refId.startsWith('Referral')) {
-          window.open(URL.createObjectURL(referralBlob), referralFile.name);
-        } else if (refId.startsWith('Commitment')) {
-          window.open(URL.createObjectURL(commitmentBlob), commitmentFile.name);
-        } else {
-          window.open(
-            URL.createObjectURL(additionalDocumentBlob),
-            additionalDocumentFile.name,
-          );
-        }
-      } else {
-        window.open(
-          URL.createObjectURL(ref.current.files[0]),
-          ref.current.files[0].name,
-        );
-      }
-    } else {
-      window.open(
-        URL.createObjectURL(ref.current.files[0]),
-        ref.current.files[0].name,
-      );
-    }
-  };
-
-  const onDeletePopUp = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsPopUpOpen(true);
-  };
   const handleServerFileDelete = async () => {
     if (documents.length) {
       const documentIndex = documents.findIndex((document) =>
@@ -673,18 +590,6 @@ const PatientDetailsBlock = ({
     }
     handlePopUpClose();
   };
-
-  const onClickAdditionalDocumentHandler = () => {
-    numOfAdditionalDocument.length !== 1 &&
-      setNumOfAdditionalDocument((prevState) => {
-        let clonePrevState = prevState;
-        clonePrevState.push(clonePrevState.length);
-        return [...clonePrevState];
-      });
-  };
-  const onChangeAdditionalDocumentHandler = (e) => {
-    setNameOfAdditionalDocumentFile(e.target.value);
-  };
   // PopUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   const [popUpReferenceFile, setPopUpReferenceFile] = useState('');
@@ -718,10 +623,9 @@ const PatientDetailsBlock = ({
       <StyledPatientDetails edit={edit_mode}>
         <FormContext
           {...methods}
-          requiredErrors
+          requiredErrors={requiredErrors}
           isCommitmentForm={configuration.clinikal_pa_commitment_form}>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
-            {/* Patient Details */}
             <EscortPatient
               relatedPersonId={encounterData.relatedPerson}
               isArrivalWay={configuration.clinikal_pa_arrival_way}
