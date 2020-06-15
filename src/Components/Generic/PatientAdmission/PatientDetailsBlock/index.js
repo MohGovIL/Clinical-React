@@ -1,6 +1,5 @@
 // Other
 import React, { useEffect, useState } from 'react';
-import matchSorter from 'match-sorter';
 import { useForm, FormContext } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -9,12 +8,9 @@ import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 // Helpers
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
-import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
 import { splitBase_64 } from 'Utils/Helpers/splitBase_64';
 
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
-import { checkCurrencyFormat } from 'Utils/Helpers/checkCurrencyFormat';
-import { formatToCurrency } from 'Utils/Helpers/formatToCurrency';
 
 // Styles
 import {
@@ -38,7 +34,6 @@ import Documents from './Documents';
 import Grid from '@material-ui/core/Grid';
 
 // APIs
-import { getCities, getStreets } from 'Utils/Services/API';
 import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
@@ -564,6 +559,11 @@ const PatientDetailsBlock = ({
       }
     }
   };
+  const [
+    nameOfAdditionalDocumentFile,
+    setNameOfAdditionalDocumentFile,
+  ] = useState('');
+
   const onDeleteFileHandler = () => {
     const emptyObj = {};
     if (popUpReferenceFile === 'Referral') {
