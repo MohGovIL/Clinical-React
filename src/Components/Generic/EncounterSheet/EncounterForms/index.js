@@ -28,7 +28,7 @@ const EncounterForms = ({
   }, [listAllergyNew, listMedicalProblemNew]);
 
   return <StyledPatientFiles>
-    <Button onClick={onChangeAllergyButton}>demo Change Allergy and Medical Problem</Button>
+    {/*<Button onClick={onChangeAllergyButton}>demo Change Allergy and Medical Problem</Button>*/}
 
   </StyledPatientFiles>;
 };
