@@ -1,77 +1,47 @@
 // Other
 import React, { useEffect, useState } from 'react';
 import matchSorter from 'match-sorter';
-import { israelPhoneNumberRegex } from 'Utils/Helpers/validation/patterns';
-import { Controller, useForm, FormContext } from 'react-hook-form';
+import { useForm, FormContext } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 
 // Helpers
-import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirOrganization';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
 import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
-import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 import { splitBase_64 } from 'Utils/Helpers/splitBase_64';
-import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
-import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
+
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { checkCurrencyFormat } from 'Utils/Helpers/checkCurrencyFormat';
 import { formatToCurrency } from 'Utils/Helpers/formatToCurrency';
 
 // Styles
 import {
-  StyledAutoComplete,
   StyledButton,
-  StyledChip,
-  StyledDivider,
   StyledForm,
   StyledFormGroup,
   StyledPatientDetails,
 } from './Style';
 import { useTranslation } from 'react-i18next';
 // Assets, Customized elements
-import StyledToggleButton from 'Assets/Elements/StyledToggleButton';
-import StyledToggleButtonGroup from 'Assets/Elements/StyledToggleButtonGroup';
-import CustomizedKeyboardDatePicker from 'Assets/Elements/CustomizedKeyboardDatePicker';
-import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import Title from 'Assets/Elements/Title';
-import ListboxComponent from './ListboxComponent/index';
-import StyledSwitch from 'Assets/Elements/StyledSwitch';
-import ChipWithImage from 'Assets/Elements/StyledChip';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
-import TabPanel from './TabPanel';
+
 import EscortPatient from './EscortPatient';
 import ContactInformation from './ContactInformation';
 import VisitDetails from './VisitDetails';
 import Payment from './Payment';
 import Documents from './Documents';
-// Material-UI Icons
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import CheckBox from '@material-ui/icons/CheckBox';
-import Close from '@material-ui/icons/Close';
-import CheckBoxOutlineBlankOutlined from '@material-ui/icons/CheckBoxOutlineBlankOutlined';
-import Scanner from '@material-ui/icons/Scanner';
-import AddCircle from '@material-ui/icons/AddCircle';
+
 // Material-UI core, lab, pickers components
-import Checkbox from '@material-ui/core/Checkbox';
-import ListItemText from '@material-ui/core/ListItemText';
+
 import Grid from '@material-ui/core/Grid';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
 
 // APIs
 import { getCities, getStreets } from 'Utils/Services/API';
 import moment from 'moment';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
-import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 
 const PatientDetailsBlock = ({
   patientData,
@@ -88,16 +58,7 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
-  const {
-    control,
-    handleSubmit,
-    errors,
-    setValue,
-    register,
-    formState,
-    reset,
-    triggerValidation,
-  } = methods;
+  const { handleSubmit, setValue, formState, triggerValidation } = methods;
   // Giving the patientAdmission if the form is dirty
   // meaning that there has been changes in the form
   const { dirty } = formState;
@@ -259,7 +220,7 @@ const PatientDetailsBlock = ({
               text: 'Payment amount',
               answer: [
                 {
-                  valueString: paymentAmount,
+                  valueString: data.paymentAmount,
                 },
               ],
             },
@@ -268,7 +229,7 @@ const PatientDetailsBlock = ({
               text: 'Payment method',
               answer: [
                 {
-                  valueString: paymentMethod,
+                  valueString: data.paymentMethod,
                 },
               ],
             },
@@ -977,7 +938,10 @@ const PatientDetailsBlock = ({
         )} ${t('Do you want to continue?')}`}
       </CustomizedPopup>
       <StyledPatientDetails edit={edit_mode}>
-        <FormContext {...methods} requiredErrors>
+        <FormContext
+          {...methods}
+          requiredErrors
+          isCommitmentForm={configuration.clinikal_pa_commitment_form}>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             {/* Patient Details */}
             <EscortPatient
@@ -1000,17 +964,16 @@ const PatientDetailsBlock = ({
               serviceTypeCode={encounterData.serviceTypeCode}
               priority={encounterData.priority}
             />
+            {configuration.clinikal_pa_commitment_form}
             <Payment
               pid={patientData.id}
               eid={encounterData.id}
-              isCommitmentForm={configuration.clinikal_pa_commitment_form}
               formatDate={formatDate}
               managingOrganization={patientData.managingOrganization}
             />
             <Documents
               eid={encounterData.id}
               handlePopUpClose={handlePopUpClose}
-              isCommitmentForm={configuration.clinikal_pa_commitment_form}
               pid={patientData.id}
               popUpReferenceFile={popUpReferenceFile}
               setIsPopUpOpen={setIsPopUpOpen}

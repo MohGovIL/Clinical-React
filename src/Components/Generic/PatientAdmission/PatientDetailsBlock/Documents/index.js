@@ -17,13 +17,18 @@ const Documents = ({
   setIsPopUpOpen,
   popUpReferenceFile,
   handlePopUpClose,
-  isCommitmentForm,
+
   eid,
   pid,
   setPopUpReferenceFile,
 }) => {
   const { t } = useTranslation();
-  const { requiredErrors, setValue, register } = useFormContext();
+  const {
+    requiredErrors,
+    setValue,
+    register,
+    isCommitmentForm,
+  } = useFormContext();
 
   const [referralFile_64, setReferralFile_64] = useState('');
   const [commitmentFile_64, setCommitmentFile_64] = useState('');

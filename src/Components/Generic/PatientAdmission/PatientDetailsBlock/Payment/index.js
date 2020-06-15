@@ -18,13 +18,7 @@ import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeF
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 
-const Payment = ({
-  pid,
-  eid,
-  isCommitmentForm,
-  formatDate,
-  managingOrganization,
-}) => {
+const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
   const { t } = useTranslation();
 
   const {
@@ -35,8 +29,8 @@ const Payment = ({
     errors,
     reset,
     unregister,
+    isCommitmentForm,
   } = useFormContext();
-
   const [paymentMethod, setPaymentMethod] = useState('');
   const paymentMethodHandler = (event, method) => {
     setPaymentMethod(method);
@@ -45,6 +39,7 @@ const Payment = ({
     commitmentAndPaymentTabValue,
     setCommitmentAndPaymentTabValue,
   ] = useState(isCommitmentForm === '1' ? 'HMO' : 'Private');
+
   const setCommitmentAndPaymentTabValueChangeHandler = (event, newValue) => {
     setCommitmentAndPaymentTabValue(newValue);
   };
@@ -65,7 +60,7 @@ const Payment = ({
 
   const onBlurPaymentAmountHandler = (event) => {
     const format = formatToCurrency(event.target.value);
-    // setValue('paymentAmount', format);
+    setValue('paymentAmount', format);
     setPaymentAmount(formatToCurrency(format));
   };
 
@@ -179,12 +174,17 @@ const Payment = ({
               const receiptNumber = normalizedQuestionnaireResponse.items.find(
                 (item) => item.linkId === '8',
               ).answer[0].valueString;
-              register({ name: 'paymentMethod' });
+
               if (receiptNumber)
                 reset({
                   receiptNumber: receiptNumber,
                 });
-              if (paymentAmount) setPaymentAmount(paymentAmount);
+              register({ name: 'paymentAmount' });
+              if (paymentAmount) {
+                setValue('paymentAmount', paymentAmount);
+                setPaymentAmount(paymentAmount);
+              }
+              register({ name: 'paymentMethod' });
               if (paymentMethod) {
                 setValue('paymentMethod', paymentMethod);
                 setPaymentMethod(paymentMethod);
@@ -199,6 +199,7 @@ const Payment = ({
     })();
     return () => {
       unregister('paymentMethod');
+      unregister('paymentAmount');
     };
   }, []);
   return (
@@ -240,8 +241,6 @@ const Payment = ({
           onChange={onChangePaymentAmountHandler}
           onBlur={onBlurPaymentAmountHandler}
           value={paymentAmount}
-          inputRef={register}
-          name='paymentAmount'
           label={t('Payment amount')}
         />
         <Grid
