@@ -44,7 +44,6 @@ const VisitDetails = ({
     requiredErrors,
     setValue,
     unregister,
-    // reset,
   } = useFormContext();
 
   useEffect(() => {
@@ -58,6 +57,7 @@ const VisitDetails = ({
         examinationCode: examinationCode,
       },
     ]);
+    //TODO make priority work
     // if (priority > 1) {
     //   reset({ isUrgent: true });
     // } else {

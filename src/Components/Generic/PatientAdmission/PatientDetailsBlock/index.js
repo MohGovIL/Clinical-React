@@ -279,7 +279,7 @@ const PatientDetailsBlock = ({
           encounter['extensionReasonCodeDetails'] =
             data.reasonForReferralDetails;
         }
-        if (data.ControllerisEscorted) {
+        if (data.isEscorted) {
           if (!encounter.relatedPerson) {
             const NewRelatedPerson = normalizeFhirRelatedPerson(
               promises[1].data,
@@ -361,7 +361,7 @@ const PatientDetailsBlock = ({
     selectTest: {
       name: 'selectTest',
       required: function (data) {
-        return selectedServicesType.length > 0;
+        return data.examinationCode.length > 0;
       },
     },
     commitmentAndPaymentReferenceForPaymentCommitment: {
@@ -462,68 +462,6 @@ const PatientDetailsBlock = ({
     }
     return clean;
   };
-
-  // Requested service - select examination - vars
-  const [selectedServicesType, setSelectedServicesType] = useState([]);
-  const [pendingValue, setPendingValue] = useState([]);
-  const [servicesType, setServicesType] = useState([]);
-  const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
-
-  const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
-  const selectTestRef = React.useRef();
-
-  useEffect(() => {
-    let active = true;
-
-    if (!loadingServicesType) {
-      return undefined;
-    }
-
-    (async () => {
-      try {
-        const serviceTypeResponse = await getValueSet('service_types');
-        if (active) {
-          const options = [];
-          const servicesTypeObj = {};
-          const allReasonsCode = await Promise.all(
-            serviceTypeResponse.data.expansion.contains.map((serviceType) => {
-              const normalizedServiceType = normalizeFhirValueSet(serviceType);
-              servicesTypeObj[normalizedServiceType.code] = {
-                ...normalizedServiceType,
-              };
-              return getValueSet(`reason_codes_${normalizedServiceType.code}`);
-            }),
-          );
-
-          for (
-            let reasonsIndex = 0;
-            reasonsIndex < allReasonsCode.length;
-            reasonsIndex++
-          ) {
-            allReasonsCode[reasonsIndex].data.expansion.contains.forEach(
-              (reasonCode) => {
-                const optionObj = {};
-                optionObj['serviceType'] = {
-                  ...servicesTypeObj[
-                    allReasonsCode[reasonsIndex].data.id.split('_')[2]
-                  ],
-                };
-                optionObj['reasonCode'] = normalizeFhirValueSet(reasonCode);
-                options.push(optionObj);
-              },
-            );
-          }
-          setServicesType(options);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loadingServicesType]);
   // Files scan
   // Files scan - vars
   // Files scan - vars - states
