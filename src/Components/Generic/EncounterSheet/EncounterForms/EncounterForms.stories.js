@@ -1,24 +1,33 @@
+/*
+* Created by :  Dror Golan
+* Date : 16-06-2020
+* Comments :
+* * -------------------------EXAMPLE HOW TO CALL POPUP FORM TEMPLATES ---------------------
+
+                  a) so here we have an example how to use PC-562
+                  b) the returned value which should be saved in PC-602 is implemented here also
+                  c) the popup of 761 logic is here also just
+                  d) PC-1159 - will handle default context from main screen
+
+                  *** PC-1169 - create this storybook this is the first example of using mock in order
+                            to inject data into the child components.
+*
+* */
 import React from 'react';
 import { withKnobs, object, select, text } from '@storybook/addon-knobs';
 import ProviderWrapper from '../../../../../.storybook/Provider';
-import { store } from '../../../../index';
+import { store } from 'index';
 import { StylesProvider } from '@material-ui/core/styles';
-
-import PopUpFormTemplates from '../../PopupComponents/PopUpFormTemplates';
-
+import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import StyledPatientFiles from './Style';
-
-import { storiesOf } from '@storybook/react';
-
 // 1. import axios and MockAdapter
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import normalizeFhirEncounter from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 
 // 2. create the mock
 const mock = new MockAdapter(axios);
 const API_REQUEST =
-  'http://localhost:8888/apis/api/templates/search?service-type=4&reason-code=17,2,5,3,12&form=1&form-field=reccomended_medicine';
+  '/apis/api/templates/search?service-type=4&reason-code=17,2,5,3,12&form=1&form-field=reccomended_medicine';
 
 export default {
   title: 'EncounterForms',
@@ -112,19 +121,3 @@ export const PopUpFormTemplatesExample = ({ encounter }) => {
     </StyledPatientFiles>
   );
 };
-
-/*
-* -------------------------EXAMPLE HOW TO CALL POPUP FORM TEMPLATES ---------------------
-
-                  I have made changes In order to foresee what should be happen in those tasks.
-                  a) so here we have an example how to use PC-562
-                  b) the returned value which should be saved in PC-602 is implemented here also
-                  c) the popup of 761 logic is here also just
-                  d) PC-1159 - will handle default context from main screen
-
-                  *
-                  *
-                  * PC-1169 - create this story book this is the first example of using mock in order
-                  *           to inject data into the child components.
-*
-* */
