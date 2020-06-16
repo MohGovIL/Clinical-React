@@ -9,6 +9,7 @@
     "@material-ui/lab": "^4.0.0-alpha.45",
     "@material-ui/pickers": "^3.2.10",
     "axios": "^0.19.0",
+    "axios-mock-adapter": "^1.18.1",
     "date-fns": "^2.9.0",
     "event-source-polyfill": "^1.0.14",
     "i18next": "^19.0.1",

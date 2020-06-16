@@ -163,7 +163,7 @@ const PopUpContantList = ({
         {templates &&
         templates.length > 0 &&
         searchInsideTemplates &&
-        searchInsideTemplates !== '' ? (
+        searchInsideTemplates.length > 0 ? (
           <StyledCheckAll
             dir={languageDirection}
             onClick={handleSelectAllToggle}>
