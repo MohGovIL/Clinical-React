@@ -21,7 +21,7 @@ const API_REQUEST =
   'http://localhost:8888/apis/api/templates/search?service-type=4&reason-code=17,2,5,3,12&form=1&form-field=reccomended_medicine';
 
 export default {
-  title: 'Forms',
+  title: 'EncounterForms',
 
   decorators: [
     withKnobs,
@@ -34,7 +34,7 @@ export default {
   excludeStories: /.*Data$/,
 };
 
-export const EncounterForms = ({ encounter }) => {
+export const PopUpFormTemplatesExample = ({ encounter }) => {
   const lang_dir = select(
     'state.settings.lang_dir',
     { rtl: 'rtl', ltr: 'ltr' },
