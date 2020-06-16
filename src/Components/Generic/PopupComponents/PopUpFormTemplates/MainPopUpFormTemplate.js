@@ -12,6 +12,7 @@ const MainPopUpFormTemplate = ({
   context,
   setContext,
   defaultContext,
+  setDefaultContext,
   templates,
   languageDirection,
   setTemplatesTextReturned,
@@ -36,9 +37,16 @@ const MainPopUpFormTemplate = ({
   const [checked, setChecked] = React.useState([]);
   const handleFirstTimeContext = () => {
     //For future development if we want to show default values
-    if (context !== '') defaultContext = '';
-    return defaultContext !== '' ? defaultContext : context;
+
+    setContext(`${defaultContext} \r\n ${context}`);
+    setDefaultContext('');
   };
+
+  React.useEffect(() => {
+    if (defaultContext !== '') {
+      handleFirstTimeContext();
+    }
+  });
   return (
     <Grid dir={languageDirection} container spacing={3}>
       <Grid item xs={6}>

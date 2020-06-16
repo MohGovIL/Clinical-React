@@ -29,6 +29,7 @@ const PopUpFormTemplates = ({
   languageDirection,
   verticalName,
   defaultContext,
+  setDefaultContext,
   popupOpen,
 }) => {
   const { t } = useTranslation();
@@ -115,6 +116,7 @@ const PopUpFormTemplates = ({
           context={context}
           setContext={setContext}
           defaultContext={defaultContext}
+          setDefaultContext={setDefaultContext}
           setTemplatesTextReturned={setTemplatesTextReturned}
           setTemplateWasSaved={setTemplateWasSaved}
           templates={templates}></MainPopUpFormTemplate>
