@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
 import Title from 'Assets/Elements/Title';
 import { StyledFormGroup, StyledDivider } from '../Style';
-import { Grid } from '@material-ui/core';
+import { Grid, Switch } from '@material-ui/core';
 import StyledToggleButtonGroup from 'Assets/Elements/StyledToggleButtonGroup';
 import StyledToggleButton from 'Assets/Elements/StyledToggleButton';
 import { useTranslation } from 'react-i18next';
@@ -16,14 +16,7 @@ const EscortPatient = ({
   relatedPersonId,
   encounterArrivalWay,
 }) => {
-  const {
-    errors,
-    reset,
-    setValue,
-    register,
-    watch,
-    unregister,
-  } = useFormContext();
+  const { errors, setValue, register, unregister, control } = useFormContext();
   const { t } = useTranslation();
 
   const [arrivalWay, setArrivalWay] = useState(
@@ -37,15 +30,17 @@ const EscortPatient = ({
     });
   };
 
-  const watchIsEscort = watch('isEscorted', false);
-
   useEffect(() => {
     register({ name: 'arrivalWay' });
-    setValue('arrivalWay', encounterArrivalWay);
+    register({ name: 'isEscorted' });
+    setValue([
+      { arrivalWay: encounterArrivalWay },
+      { isEscorted: relatedPersonId ? true : false },
+    ]);
     return () => {
       unregister('arrivalWay');
     };
-  }, [unregister, register, setValue, encounterArrivalWay]);
+  }, [unregister, register, setValue, encounterArrivalWay, relatedPersonId]);
 
   useEffect(() => {
     (async () => {
@@ -60,17 +55,31 @@ const EscortPatient = ({
           const normalizedRelatedPerson = normalizeFhirRelatedPerson(
             relatedPerson.data,
           );
-          reset({
-            escortMobilePhone: normalizedRelatedPerson.mobilePhone,
-            escortName: normalizedRelatedPerson.name,
-            isEscorted: true,
-          });
+          setValue([
+            {
+              escortMobilePhone: normalizedRelatedPerson.mobilePhone,
+              escortName: normalizedRelatedPerson.name,
+            },
+          ]);
+          setName(normalizedRelatedPerson.name);
+          setMobilePhone(normalizedRelatedPerson.mobilePhone);
         }
       } catch (error) {
         console.log(error);
       }
     })();
-  }, [relatedPersonId, reset]);
+  }, [relatedPersonId, setValue]);
+
+  const [isEscorted, setIsEscorted] = useState(relatedPersonId ? true : false);
+  const [mobilePhone, setMobilePhone] = useState('');
+  const [name, setName] = useState('');
+
+  const onChangeSwitchHandler = (event) => {
+    setIsEscorted((prevState) => {
+      setValue('isEscorted', !prevState);
+      return !prevState;
+    });
+  };
 
   return (
     <React.Fragment>
@@ -125,19 +134,18 @@ const EscortPatient = ({
               ? `${t('Arrival with escort')}?`
               : `${t('Patient arrived with an escort')}?`}
           </span>
-          {/* Escorted Information Switch */}
           <StyledSwitch
-            name='isEscorted'
+            onChange={onChangeSwitchHandler}
             label_1={'No'}
-            register={register}
             label_2={'Yes'}
+            checked={isEscorted}
             marginLeft={'40px'}
             marginRight={'40px'}
           />
         </Grid>
       </StyledFormGroup>
       {/* Escorted Information */}
-      {watchIsEscort && (
+      {isEscorted && (
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
@@ -146,25 +154,37 @@ const EscortPatient = ({
             bold
           />
           <StyledDivider variant={'fullWidth'} />
-          {/* Escorted Information name */}
-          <CustomizedTextField
-            width={'70%'}
-            label={t('Escort name')}
+          <Controller
             name='escortName'
-            inputRef={register}
+            control={control}
+            defaultValue={name}
+            onBlur={([event]) => {
+              setName(event.target.value);
+              return event.target.value;
+            }}
+            as={<CustomizedTextField width={'70%'} label={t('Escort name')} />}
           />
-          {/* Escorted Information cell phone */}
-          <CustomizedTextField
-            width={'70%'}
-            label={t('Escort cell phone')}
+          <Controller
             name='escortMobilePhone'
+            control={control}
+            defaultValue={mobilePhone}
             error={errors.escortMobilePhone && true}
             helperText={
               errors.escortMobilePhone && t('The number entered is incorrect')
             }
-            inputRef={register({
+            rules={{
               pattern: israelPhoneNumberRegex(),
-            })}
+            }}
+            onBlur={([event]) => {
+              setMobilePhone(event.target.value);
+              return event.target.value;
+            }}
+            as={
+              <CustomizedTextField
+                width={'70%'}
+                label={t('Escort cell phone')}
+              />
+            }
           />
         </StyledFormGroup>
       )}

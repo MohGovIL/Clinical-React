@@ -6,10 +6,8 @@ import { useHistory } from 'react-router-dom';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
 
 // Helpers
-import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
 import { splitBase_64 } from 'Utils/Helpers/splitBase_64';
-
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 
 // Styles
@@ -44,10 +42,10 @@ const PatientDetailsBlock = ({
   edit_mode,
   encounterData,
   formatDate,
-  setEncounterAndPatient,
   setIsDirty,
   configuration,
 }) => {
+  console.log('render')
   const { t } = useTranslation();
   let history = useHistory();
   const methods = useForm({
@@ -582,7 +580,6 @@ const PatientDetailsBlock = ({
               serviceTypeCode={encounterData.serviceTypeCode}
               priority={encounterData.priority}
             />
-            {configuration.clinikal_pa_commitment_form}
             <Payment
               pid={patientData.id}
               eid={encounterData.id}

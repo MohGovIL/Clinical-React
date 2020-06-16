@@ -2,7 +2,7 @@ import React from 'react';
 import Label from './Style';
 import { useTranslation } from 'react-i18next';
 
-export default function Switches({
+const StyledSwitch = ({
   checked,
   onChange,
   label_1,
@@ -11,7 +11,7 @@ export default function Switches({
   marginLeft,
   register,
   name,
-}) {
+}) => {
   const { t } = useTranslation();
 
   const onChangeHandler = (event) => {
@@ -33,4 +33,6 @@ export default function Switches({
       </span>
     </Label>
   );
-}
+};
+
+export default StyledSwitch;

@@ -44,6 +44,7 @@ const VisitDetails = ({
     requiredErrors,
     setValue,
     unregister,
+    reset,
   } = useFormContext();
 
   useEffect(() => {
@@ -58,11 +59,7 @@ const VisitDetails = ({
       },
     ]);
     //TODO make priority work
-    // if (priority > 1) {
-    //   reset({ isUrgent: true });
-    // } else {
-    //   reset({ isUrgent: false });
-    // }
+
     return () => {
       unregister(['serviceTypeCode', 'examinationCode']);
     };
@@ -200,6 +197,11 @@ const VisitDetails = ({
             };
           },
         );
+        if (priority > 1) {
+          reset({ isUrgent: true });
+        } else {
+          reset({ isUrgent: false });
+        }
         setSelectedServicesType(selectedArr);
       }
     })();
