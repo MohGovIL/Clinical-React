@@ -25,6 +25,7 @@ const EncounterSheet = ({
 
   const [listAllergy, setAllergyList] = useState([]);
   const [listMedicalProblem, setMedicalProblem] = useState([]);
+  const [listMedicationStatement, setMedicationStatement] = useState([]);
   const [medicalProblemIsUpdated, setMedicalProblemIsUpdated] = useState(0); //for online update
 
   const isTabletMode = useMediaQuery(
@@ -103,10 +104,11 @@ const EncounterSheet = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [medicalProblemIsUpdated]);
 
-  const callBackMedicalProblemChange = (listAllergy, listMedicalProblem) => {
+  const callBackMedicalProblemChange = (listAllergy, listMedicalProblem, listMedicationStatement) => {
     // setMedicalProblemIsUpdated(Moment()); for online from db
     setAllergyList(listAllergy);
     setMedicalProblem(listMedicalProblem);
+    setMedicationStatement(listMedicationStatement);
   };
 
 
@@ -135,6 +137,7 @@ const EncounterSheet = ({
           languageDirection={languageDirection}
           listAllergy={listAllergy}
           listMedicalProblem={listMedicalProblem}
+          listMedicationStatement={listMedicationStatement}
         />
         <EncounterForms
           encounter={encounter}

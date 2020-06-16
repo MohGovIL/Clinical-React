@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 import Encounters from 'Components/Generic/EncounterSheet/PatientBackground/Encounters';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 import MedicalIssues from 'Assets/Elements/MedicalIssues';
-import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
 
 const PatientBackground = ({
   encounter,
@@ -18,7 +17,8 @@ const PatientBackground = ({
   languageDirection,
   formatDate,
   listAllergy,
-  listMedicalProblem
+  listMedicalProblem,
+  listMedicationStatement
 }) => {
   const { t } = useTranslation();
   const handleEitanClick = () => {
@@ -142,6 +142,10 @@ const PatientBackground = ({
       <MedicalIssues
         title={t('Background diseases')}
         items={listMedicalProblem}
+      />
+      <MedicalIssues
+        title={t('Chronic medications')}
+        items={listMedicationStatement}
       />
     </StyledPatientBackground>
   );
