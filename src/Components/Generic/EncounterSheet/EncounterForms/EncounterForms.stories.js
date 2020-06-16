@@ -31,7 +31,6 @@ const API_REQUEST =
 
 export default {
   title: 'EncounterForms',
-
   decorators: [
     withKnobs,
     (story) => (
