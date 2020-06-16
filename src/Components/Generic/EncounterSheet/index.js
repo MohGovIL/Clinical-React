@@ -12,6 +12,8 @@ import PatientBackground from './PatientBackground';
 import EncounterForms from './EncounterForms';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
+import normalizeFhirMedicationStatement
+  from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeMedicationStatement';
 
 const EncounterSheet = ({
   patient,
@@ -107,27 +109,27 @@ const EncounterSheet = ({
     //Load Medical Issues - chronic medication list
     (async () => {
       try {
-        const listMedicalProblemResult = await FHIR('Condition', 'doWork', {
-          functionName: 'getConditionListByParams',
+        const listMedicationStatementResult = await FHIR('MedicationStatement', 'doWork', {
+          functionName: 'getMedicationStatementListByParams',
           functionParams: {
-            category: 'chronic_medication',
-            subject: patient.id,
-            status: '1',
+            category: 'medication',
+            patient: patient.id,
+            status: 'active',
           },
         });
         if (
-          listMedicalProblemResult.data &&
-          listMedicalProblemResult.data.total > 0
+          listMedicationStatementResult.data &&
+          listMedicationStatementResult.data.total > 0
         ) {
-          let normalizedListMedicalProblem = [];
+          let normalizedListMedicationStatement = [];
           // eslint-disable-next-line
-          listMedicalProblemResult.data.entry.map((res, id) => {
-            if (res.resource && res.resource.resourceType === 'Condition') {
-              let medicalProblem = normalizeFhirCondition(res.resource);
-              normalizedListMedicalProblem.push(medicalProblem);
+          listMedicationStatementResult.data.entry.map((res, id) => {
+            if (res.resource && res.resource.resourceType === 'MedicationStatement') {
+              let medicationStatement = normalizeFhirMedicationStatement(res.resource);
+              normalizedListMedicationStatement.push(medicationStatement);
             }
           });
-          setMedicalProblem(normalizedListMedicalProblem);
+          setMedicationStatement(normalizedListMedicationStatement);
         }
       } catch (e) {
         console.log('Error: ' + e);
