@@ -53,7 +53,7 @@ const EncounterSheet = ({
           functionParams: {
             category: 'allergy',
             subject: patient.id,
-            status: 'active',
+            status: '1',
           },
         });
         if (listAllergyResult.data && listAllergyResult.data.total > 0) {
@@ -79,7 +79,7 @@ const EncounterSheet = ({
           functionParams: {
             category: 'medical_problem',
             subject: patient.id,
-            status: 'active',
+            status: '1',
           },
         });
         if (
