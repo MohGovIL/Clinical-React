@@ -44,12 +44,13 @@ const VisitDetails = ({
     requiredErrors,
     setValue,
     unregister,
+    reset,
+    getValues,
   } = useFormContext();
 
   useEffect(() => {
     register({ name: 'serviceTypeCode' });
     register({ name: 'examinationCode' });
-    register({ name: 'isUrgent' });
     setValue([
       {
         serviceTypeCode: serviceTypeCode,
@@ -57,23 +58,16 @@ const VisitDetails = ({
       {
         examinationCode: examinationCode,
       },
-      {
-        isUrgent: priority > 1 ? true : false,
-      },
     ]);
-    //TODO make priority work
+    reset({
+      ...getValues(),
+      isUrgent: priority > 1 ? true : false,
+    });
 
     return () => {
       unregister(['serviceTypeCode', 'examinationCode']);
     };
-  }, [
-    register,
-    unregister,
-    serviceTypeCode,
-    examinationCode,
-    setValue,
-    priority,
-  ]);
+  }, []);
 
   const [selectedServicesType, setSelectedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
@@ -190,13 +184,6 @@ const VisitDetails = ({
     // Should work don't know why it doesn't work. This function is to close the listBox in the autoComplete
   };
 
-  const [isUrgent, setIsUrgent] = useState(priority > 1 ? true : false);
-  const onSwitchHandler = (event) => {
-    setIsUrgent((prevState) => {
-      setValue('isUrgent', !prevState);
-      return !prevState;
-    });
-  };
   useEffect(() => {
     (async () => {
       if (examination && examination.length) {
@@ -243,8 +230,8 @@ const VisitDetails = ({
           <span>{t('Is urgent?')}</span>
           {/* Requested service - switch */}
           <StyledSwitch
-            onChange={onSwitchHandler}
-            checked={isUrgent}
+            name='isUrgent'
+            register={register}
             label_1={'No'}
             label_2={'Yes'}
             marginLeft={'40px'}

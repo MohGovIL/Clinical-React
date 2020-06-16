@@ -45,7 +45,6 @@ const PatientDetailsBlock = ({
   setIsDirty,
   configuration,
 }) => {
-  console.log('render')
   const { t } = useTranslation();
   let history = useHistory();
   const methods = useForm({
@@ -580,12 +579,12 @@ const PatientDetailsBlock = ({
               serviceTypeCode={encounterData.serviceTypeCode}
               priority={encounterData.priority}
             />
-            <Payment
+            {/* <Payment
               pid={patientData.id}
               eid={encounterData.id}
               formatDate={formatDate}
               managingOrganization={patientData.managingOrganization}
-            />
+            /> */}
             <Documents
               eid={encounterData.id}
               handlePopUpClose={handlePopUpClose}

@@ -16,8 +16,19 @@ const EscortPatient = ({
   relatedPersonId,
   encounterArrivalWay,
 }) => {
-  const { errors, setValue, register, unregister, control } = useFormContext();
+  const {
+    errors,
+    setValue,
+    register,
+    unregister,
+    control,
+    watch,
+    reset,
+    getValues,
+  } = useFormContext();
   const { t } = useTranslation();
+
+  const watchIsEscorted = watch('isEscorted');
 
   const [arrivalWay, setArrivalWay] = useState(
     encounterArrivalWay || 'Independent',
@@ -32,11 +43,7 @@ const EscortPatient = ({
 
   useEffect(() => {
     register({ name: 'arrivalWay' });
-    register({ name: 'isEscorted' });
-    setValue([
-      { arrivalWay: encounterArrivalWay },
-      { isEscorted: relatedPersonId ? true : false },
-    ]);
+    setValue([{ arrivalWay: encounterArrivalWay }]);
     return () => {
       unregister('arrivalWay');
     };
@@ -55,31 +62,23 @@ const EscortPatient = ({
           const normalizedRelatedPerson = normalizeFhirRelatedPerson(
             relatedPerson.data,
           );
-          setValue([
-            {
-              escortMobilePhone: normalizedRelatedPerson.mobilePhone,
-              escortName: normalizedRelatedPerson.name,
-            },
-          ]);
           setName(normalizedRelatedPerson.name);
           setMobilePhone(normalizedRelatedPerson.mobilePhone);
+          reset({
+            ...getValues(),
+            isEscorted: relatedPersonId ? true : false,
+            escortMobilePhone: normalizedRelatedPerson.mobilePhone,
+            escortName: normalizedRelatedPerson.name,
+          });
         }
       } catch (error) {
         console.log(error);
       }
     })();
-  }, [relatedPersonId, setValue]);
+  }, [relatedPersonId, setValue, getValues, reset]);
 
-  const [isEscorted, setIsEscorted] = useState(relatedPersonId ? true : false);
   const [mobilePhone, setMobilePhone] = useState('');
   const [name, setName] = useState('');
-
-  const onChangeSwitchHandler = (event) => {
-    setIsEscorted((prevState) => {
-      setValue('isEscorted', !prevState);
-      return !prevState;
-    });
-  };
 
   return (
     <React.Fragment>
@@ -135,17 +134,17 @@ const EscortPatient = ({
               : `${t('Patient arrived with an escort')}?`}
           </span>
           <StyledSwitch
-            onChange={onChangeSwitchHandler}
+            register={register}
+            name='isEscorted'
             label_1={'No'}
             label_2={'Yes'}
-            checked={isEscorted}
             marginLeft={'40px'}
             marginRight={'40px'}
           />
         </Grid>
       </StyledFormGroup>
       {/* Escorted Information */}
-      {isEscorted && (
+      {watchIsEscorted && (
         <StyledFormGroup>
           <Title
             fontSize={'18px'}
