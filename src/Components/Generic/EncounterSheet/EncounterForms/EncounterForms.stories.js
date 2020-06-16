@@ -112,3 +112,19 @@ export const PopUpFormTemplatesExample = ({ encounter }) => {
     </StyledPatientFiles>
   );
 };
+
+/*
+* -------------------------EXAMPLE HOW TO CALL POPUP FORM TEMPLATES ---------------------
+
+                  I have made changes In order to foresee what should be happen in those tasks.
+                  a) so here we have an example how to use PC-562
+                  b) the returned value which should be saved in PC-602 is implemented here also
+                  c) the popup of 761 logic is here also just
+                  d) PC-1159 - will handle default context from main screen
+
+                  *
+                  *
+                  * PC-1169 - create this story book this is the first example of using mock in order
+                  *           to inject data into the child components.
+*
+* */
