@@ -47,6 +47,7 @@ const EncounterSheet = ({
   ];
 
   useEffect(() => {
+    //Load Medical Issues - allergy list
     (async () => {
       try {
         const listAllergyResult = await FHIR('Condition', 'doWork', {
@@ -54,7 +55,7 @@ const EncounterSheet = ({
           functionParams: {
             category: 'allergy',
             subject: patient.id,
-            status: 'active',
+            status: '1',
           },
         });
         if (listAllergyResult.data && listAllergyResult.data.total > 0) {
@@ -73,6 +74,7 @@ const EncounterSheet = ({
       }
     })();
 
+    //Load Medical Issues - medical problem list
     (async () => {
       try {
         const listMedicalProblemResult = await FHIR('Condition', 'doWork', {
@@ -80,7 +82,37 @@ const EncounterSheet = ({
           functionParams: {
             category: 'medical_problem',
             subject: patient.id,
-            status: 'active',
+            status: '1',
+          },
+        });
+        if (
+          listMedicalProblemResult.data &&
+          listMedicalProblemResult.data.total > 0
+        ) {
+          let normalizedListMedicalProblem = [];
+          // eslint-disable-next-line
+          listMedicalProblemResult.data.entry.map((res, id) => {
+            if (res.resource && res.resource.resourceType === 'Condition') {
+              let medicalProblem = normalizeFhirCondition(res.resource);
+              normalizedListMedicalProblem.push(medicalProblem);
+            }
+          });
+          setMedicalProblem(normalizedListMedicalProblem);
+        }
+      } catch (e) {
+        console.log('Error: ' + e);
+      }
+    })();
+
+    //Load Medical Issues - chronic medication list
+    (async () => {
+      try {
+        const listMedicalProblemResult = await FHIR('Condition', 'doWork', {
+          functionName: 'getConditionListByParams',
+          functionParams: {
+            category: 'chronic_medication',
+            subject: patient.id,
+            status: '1',
           },
         });
         if (
