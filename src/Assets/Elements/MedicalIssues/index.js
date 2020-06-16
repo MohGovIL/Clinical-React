@@ -27,7 +27,7 @@ const MedicalIssues = ({ title, items }) => {
       </StyledTitleTypography>
       <Divider />
       <StyledContentBlock>
-        {items.length > 0 ? (
+        {items && Object.keys(items).length > 0 ? (
           <Grid container spacing={2}>
             <Grid item>
               <Grid container spacing={2}>
