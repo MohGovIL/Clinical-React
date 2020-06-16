@@ -160,7 +160,10 @@ const PopUpContantList = ({
             <img onClick={onClearHandler} alt='search icon' src={X} />
           ) : null}
         </SearchTemplates>
-        {templates && searchInsideTemplates ? (
+        {templates &&
+        templates.length > 0 &&
+        searchInsideTemplates &&
+        searchInsideTemplates !== '' ? (
           <StyledCheckAll
             dir={languageDirection}
             onClick={handleSelectAllToggle}>

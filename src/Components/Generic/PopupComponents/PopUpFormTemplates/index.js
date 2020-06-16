@@ -90,8 +90,6 @@ const PopUpFormTemplates = ({
   };
 
   useEffect(() => {
-    if (errorInFields) return null;
-
     if (templates.length === 0) handleCreateData();
   });
 
