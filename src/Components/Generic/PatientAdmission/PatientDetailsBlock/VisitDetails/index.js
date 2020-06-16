@@ -48,27 +48,6 @@ const VisitDetails = ({
     getValues,
   } = useFormContext();
 
-  useEffect(() => {
-    register({ name: 'serviceTypeCode' });
-    register({ name: 'examinationCode' });
-    setValue([
-      {
-        serviceTypeCode: serviceTypeCode,
-      },
-      {
-        examinationCode: examinationCode,
-      },
-    ]);
-    reset({
-      ...getValues(),
-      isUrgent: priority > 1 ? true : false,
-    });
-
-    return () => {
-      unregister(['serviceTypeCode', 'examinationCode']);
-    };
-  }, []);
-
   const [selectedServicesType, setSelectedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
   const [servicesType, setServicesType] = useState([]);
@@ -179,31 +158,48 @@ const VisitDetails = ({
       active = false;
     };
   }, [loadingServicesType]);
+
   const unFocusSelectTest = () => {
     selectTestRef.current.blur();
     // Should work don't know why it doesn't work. This function is to close the listBox in the autoComplete
   };
 
   useEffect(() => {
-    (async () => {
-      if (examination && examination.length) {
-        const selectedArr = examination.map(
-          (reasonCodeEl, reasonCodeElIndex) => {
-            return {
-              serviceType: {
-                name: serviceType,
-                code: serviceTypeCode,
-              },
-              reasonCode: {
-                name: reasonCodeEl,
-                code: examinationCode[reasonCodeElIndex],
-              },
-            };
+    register({ name: 'serviceTypeCode' });
+    register({ name: 'examinationCode' });
+    setValue([
+      { serviceTypeCode },
+      { examinationCode },
+      { isUrgent: priority > 1 ? true : false },
+    ]);
+    return () => {
+      unregister(['serviceTypeCode', 'examinationCode']);
+    };
+  }, [
+    register,
+    priority,
+    unregister,
+    examinationCode,
+    serviceTypeCode,
+    setValue,
+  ]);
+
+  useEffect(() => {
+    if (examination && examination.length) {
+      const selectedArr = examination.map((reasonCodeEl, reasonCodeElIndex) => {
+        return {
+          serviceType: {
+            name: serviceType,
+            code: serviceTypeCode,
           },
-        );
-        setSelectedServicesType(selectedArr);
-      }
-    })();
+          reasonCode: {
+            name: reasonCodeEl,
+            code: examinationCode[reasonCodeElIndex],
+          },
+        };
+      });
+      setSelectedServicesType(selectedArr);
+    }
   }, [examination, examinationCode, serviceType, serviceTypeCode]);
   return (
     <React.Fragment>

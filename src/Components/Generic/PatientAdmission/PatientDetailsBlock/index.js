@@ -33,7 +33,6 @@ import Grid from '@material-ui/core/Grid';
 
 // APIs
 import moment from 'moment';
-import { getValueSet } from 'Utils/Services/FhirAPI';
 import { FHIR } from 'Utils/Services/FHIR';
 import { DevTool } from 'react-hook-form-devtools';
 
