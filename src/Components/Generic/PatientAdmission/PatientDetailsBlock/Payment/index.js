@@ -30,6 +30,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
     reset,
     unregister,
     isCommitmentForm,
+    getValues,
   } = useFormContext();
   const [paymentMethod, setPaymentMethod] = useState('');
   const paymentMethodHandler = (event, method) => {
@@ -159,20 +160,6 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                       normalizedQuestionnaireResponse.id || '',
                   },
                 ]);
-                reset({
-                  commitmentAndPaymentReferenceForPaymentCommitment:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '1',
-                    ).answer[0].valueInteger || '',
-                  commitmentAndPaymentDoctorsName:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '4',
-                    ).answer[0].valueString || '',
-                  commitmentAndPaymentDoctorsLicense:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '5',
-                    ).answer[0].valueInteger || '',
-                });
                 const commitmentDate = normalizedQuestionnaireResponse.items.find(
                   (item) => item.text === 'Commitment date',
                 );
@@ -189,6 +176,21 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                     moment(commitmentValidity.answer[0].valueDate),
                   );
                 }
+                reset({
+                  ...getValues(),
+                  commitmentAndPaymentReferenceForPaymentCommitment:
+                    normalizedQuestionnaireResponse.items.find(
+                      (item) => item.linkId === '1',
+                    ).answer[0].valueInteger || '',
+                  commitmentAndPaymentDoctorsName:
+                    normalizedQuestionnaireResponse.items.find(
+                      (item) => item.linkId === '4',
+                    ).answer[0].valueString || '',
+                  commitmentAndPaymentDoctorsLicense:
+                    normalizedQuestionnaireResponse.items.find(
+                      (item) => item.linkId === '5',
+                    ).answer[0].valueInteger || '',
+                });
               } else {
                 const paymentAmount = normalizedQuestionnaireResponse.items.find(
                   (item) => item.linkId === '6',
@@ -200,10 +202,6 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                   (item) => item.linkId === '8',
                 ).answer[0].valueString;
 
-                if (receiptNumber)
-                  reset({
-                    receiptNumber: receiptNumber,
-                  });
                 if (paymentMethod) {
                   setPaymentMethod(paymentMethod);
                 }
@@ -225,6 +223,11 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                       normalizedQuestionnaireResponse.id || '',
                   },
                 ]);
+                if (receiptNumber)
+                  reset({
+                    ...getValues(),
+                    receiptNumber: receiptNumber,
+                  });
               }
             }
           }
