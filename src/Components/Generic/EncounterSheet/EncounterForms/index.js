@@ -13,6 +13,12 @@ const EncounterForms = ({
   const [listMedicalProblemNew, setListMedicalProblemNew] = useState([]);
   const [listMedicationStatementNew, setListMedicationStatementNew] = useState([]);
 
+  /*
+  This function "onChangeAllergyButton" is an on-click event handler for a button in view.
+  The handler calls several useState() to set the values that are passed \
+  to the callback function "changeMedicalProblem". Which in turn makes changes to the middle component:
+   (allergies, background diseases, medications).
+  */
   const onChangeAllergyButton = () => {
     setListAllergyNew([
       {id: '2', title: 'allergy N:' + Math.random().toString().substr(2,5)},
