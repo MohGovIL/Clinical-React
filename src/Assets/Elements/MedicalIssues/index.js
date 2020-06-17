@@ -49,7 +49,6 @@ const MedicalIssues = ({ title, items }) => {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    languageDirection: state.settings.lang_dir,
     props: ownProps,
   };
 };
