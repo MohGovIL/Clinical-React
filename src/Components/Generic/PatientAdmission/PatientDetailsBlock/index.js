@@ -49,7 +49,7 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
-  const { handleSubmit, setValue, formState, control } = methods;
+  const { handleSubmit, formState, control } = methods;
   // Giving the patientAdmission if the form is dirty
   // meaning that there has been changes in the form
   const { dirty } = formState;
