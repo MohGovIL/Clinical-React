@@ -1,16 +1,12 @@
-// Other
+
 import React, { useEffect, useState } from 'react';
 import { useForm, FormContext } from 'react-hook-form';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
-
-// Helpers
 import normalizeFhirRelatedPerson from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirRelatedPerson';
 import { splitBase_64 } from 'Utils/Helpers/splitBase_64';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
-
-// Styles
 import {
   StyledButton,
   StyledForm,
@@ -18,22 +14,15 @@ import {
   StyledPatientDetails,
 } from './Style';
 import { useTranslation } from 'react-i18next';
-// Assets, Customized elements
-
 import EscortPatient from './EscortPatient';
 import ContactInformation from './ContactInformation';
 import VisitDetails from './VisitDetails';
 import Payment from './Payment';
 import Documents from './Documents';
-
-// Material-UI core, lab, pickers components
-
 import Grid from '@material-ui/core/Grid';
-
-// APIs
 import moment from 'moment';
 import { FHIR } from 'Utils/Services/FHIR';
-import { DevTool } from 'react-hook-form-devtools';
+// import { DevTool } from 'react-hook-form-devtools';
 
 const PatientDetailsBlock = ({
   patientData,
@@ -526,7 +515,7 @@ const PatientDetailsBlock = ({
             </StyledFormGroup>
           </StyledForm>
         </FormContext>
-        <DevTool control={control} />
+        {/* <DevTool control={control} /> */}
       </StyledPatientDetails>
     </React.Fragment>
   );
