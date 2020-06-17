@@ -19,7 +19,6 @@ import {
 } from './Style';
 import { useTranslation } from 'react-i18next';
 // Assets, Customized elements
-import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 
 import EscortPatient from './EscortPatient';
 import ContactInformation from './ContactInformation';
@@ -474,84 +473,13 @@ const PatientDetailsBlock = ({
   const referralRef = React.useRef();
   const commitmentRef = React.useRef();
   const additionalDocumentRef = React.useRef();
-
-  const handleServerFileDelete = async () => {
-    if (documents.length) {
-      const documentIndex = documents.findIndex((document) =>
-        document.url.startsWith(popUpReferenceFile),
-      );
-      if (documentIndex !== -1 && documents[documentIndex].id) {
-        const res = await FHIR('DocumentReference', 'doWork', {
-          functionName: 'deleteDocumentReference',
-          documentReferenceId: documents[documentIndex].id,
-        });
-        if (res && res.status === 200) {
-          documents.splice(documentIndex, 1);
-        }
-      }
-    }
-  };
   const [
     nameOfAdditionalDocumentFile,
     setNameOfAdditionalDocumentFile,
   ] = useState('');
 
-  const onDeleteFileHandler = () => {
-    const emptyObj = {};
-    if (popUpReferenceFile === 'Referral') {
-      referralRef.current.value = '';
-      setValue(`${popUpReferenceFile}File`, '');
-      setReferralFile_64('');
-      setReferralFile(emptyObj);
-      handleServerFileDelete();
-    } else if (popUpReferenceFile === 'Commitment') {
-      commitmentRef.current.value = '';
-      setValue(`${popUpReferenceFile}File`, '');
-      setCommitmentFile_64('');
-      setCommitmentFile(emptyObj);
-      handleServerFileDelete();
-    } else if (
-      popUpReferenceFile === nameOfAdditionalDocumentFile ||
-      popUpReferenceFile === 'Document1'
-    ) {
-      setValue(`${popUpReferenceFile}File`, '');
-      additionalDocumentRef.current.value = '';
-      setAdditionalDocumentFile_64('');
-      setAdditionalDocumentFile(emptyObj);
-      handleServerFileDelete();
-    }
-    handlePopUpClose();
-  };
-  // PopUp
-  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-  const [popUpReferenceFile, setPopUpReferenceFile] = useState('');
-  const handlePopUpClose = () => {
-    setIsPopUpOpen(false);
-  };
   return (
     <React.Fragment>
-      <CustomizedPopup
-        isOpen={isPopUpOpen}
-        onClose={handlePopUpClose}
-        bottomButtons={[
-          {
-            color: 'primary',
-            label: 'Delete',
-            variant: 'contained',
-            onClickHandler: onDeleteFileHandler,
-          },
-          {
-            color: 'primary',
-            label: 'Do not delete',
-            variant: 'outlined',
-            onClickHandler: handlePopUpClose,
-          },
-        ]}
-        title={t('System notification')}>
-        {`${t('You choose to delete the document')} ${t(
-          popUpReferenceFile,
-        )} ${t('Do you want to continue?')}`}
-      </CustomizedPopup>
       <StyledPatientDetails edit={edit_mode}>
         <FormContext
           {...methods}
@@ -584,14 +512,7 @@ const PatientDetailsBlock = ({
               formatDate={formatDate}
               managingOrganization={patientData.managingOrganization}
             />
-            <Documents
-              eid={encounterData.id}
-              handlePopUpClose={handlePopUpClose}
-              pid={patientData.id}
-              popUpReferenceFile={popUpReferenceFile}
-              setIsPopUpOpen={setIsPopUpOpen}
-              setPopUpReferenceFile={setPopUpReferenceFile}
-            />
+            <Documents eid={encounterData.id} pid={patientData.id} />
             <StyledFormGroup>
               <Grid container direction='row' justify='flex-end'>
                 <Grid item lg={3} sm={4}>
