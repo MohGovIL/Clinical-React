@@ -123,8 +123,9 @@ const PatientDetailsBlock = ({
         if (data.isEscorted) {
           let relatedPersonParams = {};
           if (encounterData.relatedPerson) {
-            relatedPersonParams['name'] = data.escortName;
-            relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+            if (data.escortName) relatedPersonParams['name'] = data.escortName;
+            if (data.escortMobilePhone)
+              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
             APIsArray.push(
               FHIR('RelatedPerson', 'doWork', {
                 functionName: 'updateRelatedPerson',
@@ -299,14 +300,15 @@ const PatientDetailsBlock = ({
             encounter: encounter,
           },
         });
-        const referral_64Obj = splitBase_64(referralFile_64);
+        // TODO: Check if the document came from the server or not if it did don't send it
+        const referral_64Obj = splitBase_64(data.Referral.base_64);
         const documentReferenceReferral = {
           encounter: encounterData.id,
           patient: patientData.id,
           contentType: referral_64Obj.type,
           data: referral_64Obj.data,
           categoryCode: '2',
-          url: referralFile.name,
+          url: data.Referral.name,
         };
 
         await FHIR('DocumentReference', 'doWork', {
@@ -314,14 +316,14 @@ const PatientDetailsBlock = ({
           functionName: 'createDocumentReference',
         });
         if (configuration.clinikal_pa_commitment_form === '1') {
-          const commitment_64Obj = splitBase_64(commitmentFile_64);
+          const commitment_64Obj = splitBase_64(data.Commitment.base_64);
           const documentReferenceCommitment = {
             encounter: encounterData.id,
             patient: patientData.id,
             contentType: commitment_64Obj.type,
             data: commitment_64Obj.data,
             categoryCode: '2',
-            url: commitmentFile.name,
+            url: data.Commitment.name,
           };
 
           await FHIR('DocumentReference', 'doWork', {
@@ -329,15 +331,20 @@ const PatientDetailsBlock = ({
             functionName: 'createDocumentReference',
           });
         }
-        if (additionalDocumentFile_64.length) {
-          const additional_64Obj = splitBase_64(additionalDocumentFile_64);
+        if (
+          data.additionalDocumentFile_64 &&
+          data.additionalDocumentFile_64.length
+        ) {
+          const additional_64Obj = splitBase_64(
+            data.additionalDocumentFile_64.base_64,
+          );
           const documentReferenceAdditionalDocument = {
             encounter: encounterData.id,
             patient: patientData.id,
             contentType: additional_64Obj.type,
             data: additional_64Obj.data,
             categoryCode: '2',
-            url: additionalDocumentFile.name,
+            url: data.additionalDocumentFile_64.name,
           };
 
           await FHIR('DocumentReference', 'doWork', {
@@ -411,14 +418,14 @@ const PatientDetailsBlock = ({
       name: 'ReferralFile',
       linkId: '',
       required: function (data) {
-        return Object.values(referralFile).length > 0;
+        return Object.keys(data.Referral).length > 0;
       },
     },
     CommitmentFile: {
       name: 'CommitmentFile',
       linkId: '',
       required: function (data) {
-        return Object.values(commitmentFile).length > 0;
+        return Object.keys(data.Commitment).length > 0;
       },
     },
   };
@@ -457,27 +464,6 @@ const PatientDetailsBlock = ({
     }
     return clean;
   };
-  // Files scan
-  // Files scan - vars
-  // Files scan - vars - states
-  const [referralFile_64, setReferralFile_64] = useState('');
-  const [commitmentFile_64, setCommitmentFile_64] = useState('');
-  const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState(
-    '',
-  );
-  const [documents, setDocuments] = useState([]);
-  const [referralFile, setReferralFile] = useState({});
-  const [commitmentFile, setCommitmentFile] = useState({});
-  const [additionalDocumentFile, setAdditionalDocumentFile] = useState({});
-  // Files scan - vars - refs
-  const referralRef = React.useRef();
-  const commitmentRef = React.useRef();
-  const additionalDocumentRef = React.useRef();
-  const [
-    nameOfAdditionalDocumentFile,
-    setNameOfAdditionalDocumentFile,
-  ] = useState('');
-
   return (
     <React.Fragment>
       <StyledPatientDetails edit={edit_mode}>

@@ -20,6 +20,7 @@ const Documents = ({ eid, pid }) => {
     requiredErrors,
     setValue,
     register,
+    unregister,
     isCommitmentForm,
   } = useFormContext();
 
@@ -60,11 +61,20 @@ const Documents = ({ eid, pid }) => {
       const fileObject = {};
       const reader = new FileReader();
       reader.onload = (event) => {
+        const objForForm = {
+          base_64: event.target.result,
+          name: `${fileName}_${moment().format('L')}_${moment().format(
+            'HH:mm',
+          )}_${files[files.length - 1].name}`,
+        };
         if (fileName === 'Referral') {
+          setValue('Referral', objForForm);
           setReferralFile_64(event.target.result);
         } else if (fileName === 'Commitment') {
+          setValue('Commitment', objForForm);
           setCommitmentFile_64(event.target.result);
         } else {
+          setValue('additionalDocumentFile_64', objForForm);
           setAdditionalDocumentFile_64(event.target.result);
         }
       };
@@ -148,13 +158,13 @@ const Documents = ({ eid, pid }) => {
     const emptyObj = {};
     if (popUpReferenceFile === 'Referral') {
       referralRef.current.value = '';
-      setValue(`${popUpReferenceFile}File`, '');
+      setValue(`${popUpReferenceFile}`, {});
       setReferralFile_64('');
       setReferralFile(emptyObj);
       handleServerFileDelete();
     } else if (popUpReferenceFile === 'Commitment') {
       commitmentRef.current.value = '';
-      setValue(`${popUpReferenceFile}File`, '');
+      setValue(`${popUpReferenceFile}`, {});
       setCommitmentFile_64('');
       setCommitmentFile(emptyObj);
       handleServerFileDelete();
@@ -162,7 +172,7 @@ const Documents = ({ eid, pid }) => {
       popUpReferenceFile === nameOfAdditionalDocumentFile ||
       popUpReferenceFile === 'Document1'
     ) {
-      setValue(`${popUpReferenceFile}File`, '');
+      setValue('additionalDocumentFile_64', {});
       additionalDocumentRef.current.value = '';
       setAdditionalDocumentFile_64('');
       setAdditionalDocumentFile(emptyObj);
@@ -177,6 +187,11 @@ const Documents = ({ eid, pid }) => {
     setIsPopUpOpen(false);
   };
   useEffect(() => {
+    if (isCommitmentForm === '1') {
+      register({ name: 'Commitment' });
+    }
+    register({ name: 'Referral' });
+    register({ name: 'additionalDocumentFile_64' });
     (async () => {
       const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
         functionName: 'getDocumentReference',
@@ -215,7 +230,12 @@ const Documents = ({ eid, pid }) => {
               normalizedFhirDocumentReference.data,
               normalizedFhirDocumentReference.contentType,
             );
+            const objForForm = {
+              base_64,
+              name: normalizedFhirDocumentReference.url,
+            };
             if (normalizedFhirDocumentReference.url.startsWith('Referral')) {
+              setValue('Referral', objForForm);
               setReferralBlob(blob);
               setReferralFile_64(base_64);
               setReferralFile(obj);
@@ -224,11 +244,13 @@ const Documents = ({ eid, pid }) => {
               normalizedFhirDocumentReference.url.startsWith('Commitment') &&
               isCommitmentForm === '1'
             ) {
+              setValue('Commitment', objForForm);
               setCommitmentBlob(blob);
               commitmentRef.current = base_64;
               setCommitmentFile_64(base_64);
               setCommitmentFile(obj);
             } else {
+              setValue('additionalDocumentFile_64', objForForm);
               setAdditionalDocumentBlob(blob);
               additionalDocumentRef.current = base_64;
               setAdditionalDocumentFile_64(base_64);
@@ -239,7 +261,22 @@ const Documents = ({ eid, pid }) => {
         setDocuments(documentsArray);
       }
     })();
-  }, []);
+    return () => {
+      let itemsToUnregister = ['additionalDocumentFile_64', 'Referral'];
+      if (isCommitmentForm === '1') itemsToUnregister.push('Commitment');
+      unregister(itemsToUnregister);
+    };
+  }, [
+    FILES_OBJ.fix,
+    eid,
+    pid,
+    isCommitmentForm,
+    FILES_OBJ.maxSize,
+    FILES_OBJ.valueInBytes,
+    register,
+    setValue,
+    unregister,
+  ]);
   return (
     <React.Fragment>
       <CustomizedPopup
