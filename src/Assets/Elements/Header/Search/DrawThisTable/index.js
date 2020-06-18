@@ -105,6 +105,7 @@ const DrawThisTable = ({
     curEncounter,
     nextAppointment,
   ) => {
+    if (hideAppointments === '1') return t('Patient Admission');
     let thereIsEncounterToday =
       curEncounter && curEncounter.data && curEncounter.data.total > 0
         ? true
