@@ -509,7 +509,7 @@ const AppointmentsAndEncountersTables = ({
                               variant='outlined'
                               color='primary'
                               href='#contained-buttons'>
-                              {t('Send result')}
+                              {t('Summary letter')}
                             </StyledHrefTableButton>
                           ) : (
                             ''
