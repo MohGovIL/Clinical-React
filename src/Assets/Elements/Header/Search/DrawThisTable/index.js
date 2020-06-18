@@ -393,7 +393,11 @@ const DrawThisTable = ({
                         patientTrackingStatuses,
                       )
                     }>
-                    {t('Encounters and appointments')}
+                    {t(
+                      hideAppointments === '1'
+                        ? 'All encounters'
+                        : 'Encounters and appointments',
+                    )}
                   </StyledHrefButton>
                   {hideAppointments !== '1' ? (
                     <StyledHrefButton
