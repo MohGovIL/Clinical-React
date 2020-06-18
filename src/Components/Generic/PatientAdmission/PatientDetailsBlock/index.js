@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useForm, FormContext } from 'react-hook-form';
 import { connect } from 'react-redux';
@@ -59,7 +58,7 @@ const PatientDetailsBlock = ({
   const onSubmit = async (data) => {
     try {
       const clear = isRequiredValidation(data);
-      if (true) {
+      if (clear) {
         const APIsArray = [];
         //Updating patient
         let patientPatchParams = {};
