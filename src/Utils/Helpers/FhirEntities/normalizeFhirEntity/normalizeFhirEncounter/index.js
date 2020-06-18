@@ -14,6 +14,18 @@ const normalizeFhirEncounter = (encounter) => {
   let examination = null;
   let relatedPerson = '';
   let practitioner = '';
+  let extensionReasonCodeDetails = '';
+  let extensionArrivalWay = '';
+
+  if (encounter.extension && encounter.extension.length) {
+    encounter.extension.forEach((extension) => {
+      if (extension.url.includes('reasonCodesDetail'))
+        extensionReasonCodeDetails = extension.valueString;
+
+      if (extension.url.includes('arrivalWay'))
+        extensionArrivalWay = extension.valueString;
+    });
+  }
 
   if (encounter.participant && encounter.participant.length) {
     encounter.participant.forEach((participantObj) => {
@@ -80,6 +92,8 @@ const normalizeFhirEncounter = (encounter) => {
     serviceTypeCode,
     relatedPerson,
     practitioner,
+    extensionReasonCodeDetails,
+    extensionArrivalWay,
   };
 };
 

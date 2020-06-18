@@ -17,7 +17,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Grid } from '@material-ui/core';
 
-const MedicalIssues = ({ title, items }) => {
+const MedicalIssue = ({ title, items }) => {
   const { t } = useTranslation();
 
   return (
@@ -52,4 +52,4 @@ const mapStateToProps = (state, ownProps) => {
     props: ownProps,
   };
 };
-export default connect(mapStateToProps, null)(MedicalIssues);
+export default connect(mapStateToProps, null)(MedicalIssue);

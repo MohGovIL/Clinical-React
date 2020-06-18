@@ -9,16 +9,13 @@ import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 import { useTranslation } from 'react-i18next';
 import Encounters from 'Components/Generic/EncounterSheet/PatientBackground/Encounters';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
-import MedicalIssues from 'Assets/Elements/MedicalIssues';
+import MedicalIssues from './MedicalIssues';
 
 const PatientBackground = ({
   encounter,
   patient,
   languageDirection,
   formatDate,
-  listAllergy,
-  listMedicalProblem,
-  listMedicationStatement
 }) => {
   const { t } = useTranslation();
   const handleEitanClick = () => {
@@ -113,7 +110,9 @@ const PatientBackground = ({
   };
   useEffect(() => {
     if (prevEncounters.length === 0) handleCreateData();
-  },[]);
+  }, []);
+
+
 
   return (
     <StyledPatientBackground dir={languageDirection}>
@@ -135,18 +134,7 @@ const PatientBackground = ({
         prevEncounters={prevEncounters}
         handleCreateData={handleCreateData}
       />
-      <MedicalIssues
-        title={t('Sensitivities')}
-        items={listAllergy}
-      />
-      <MedicalIssues
-        title={t('Background diseases')}
-        items={listMedicalProblem}
-      />
-      <MedicalIssues
-        title={t('Chronic medications')}
-        items={listMedicationStatement}
-      />
+      <MedicalIssues patient={patient} />
     </StyledPatientBackground>
   );
 };

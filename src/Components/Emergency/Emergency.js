@@ -1,16 +1,16 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
-import PatientTracking from 'Components/Imaging/PatientTracking';
+import PatientTracking from 'Components/Emergency/PatientTracking';
 import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 import { connect } from 'react-redux';
 
-const Imaging = ({ isAuth }) => {
+const Emergency = ({ isAuth }) => {
   return (
     <Switch>
       <PrivateRoute
         exact
-        path={`${baseRoutePath()}/imaging/patientTracking`}
+        path={`${baseRoutePath()}/emergency/patientTracking`}
         component={PatientTracking}
         isAuth={isAuth}
       />
@@ -20,4 +20,4 @@ const Imaging = ({ isAuth }) => {
 
 const mapStateToProps = (state) => ({ isAuth: state.login.isAuth });
 
-export default connect(mapStateToProps, null)(Imaging);
+export default connect(mapStateToProps, null)(Emergency);

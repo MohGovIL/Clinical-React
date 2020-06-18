@@ -13,7 +13,7 @@ import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTab
 import { TextField, MenuItem, InputAdornment } from '@material-ui/core';
 import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import { StyledFormGroup } from 'Components/Imaging/PatientAdmission/PatientDetailsBlock/Style';
+import { StyledFormGroup } from 'Components/Generic/PatientAdmission/PatientDetailsBlock/Style';
 import { normalizeValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
 import { connect } from 'react-redux';
 import { setPatientDataAfterSave } from 'Store/Actions/FhirActions/fhirActions';

@@ -11,6 +11,7 @@ import {
 import { geti18n } from 'Utils/Services/i18n';
 import { FHIR } from 'Utils/Services/FHIR';
 import { setUserAction } from 'Store/Actions/ActiveActions';
+import {baseRoutePath} from 'Utils/Helpers/baseRoutePath';
 
 export const getSettingsStartAction = () => {
   return {
@@ -49,7 +50,8 @@ export const getSettingsAction = (history, userID) => {
         dispatch(setUserAction(PractitionerData.data));
       }
 
-      history.push(`${firstRouteMapper(settings.data.clinikal_vertical)}`);
+    //history.push(`${firstRouteMapper(settings.data.clinikal_vertical)}`);
+      history.push(`${baseRoutePath()}/${settings.data.clinikal_vertical}/patientTracking`);
     } catch (err) {
       dispatch(getSettingsFailedAction());
     }
