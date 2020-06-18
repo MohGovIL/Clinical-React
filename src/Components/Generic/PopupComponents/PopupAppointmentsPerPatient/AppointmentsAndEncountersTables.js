@@ -1,6 +1,7 @@
 import React from 'react';
 import TitleValueComponent from 'Assets/Elements/Header/Search/DrawThisTable/TitleValueComponent';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import {
   StyledHeaderTableAppointment,
   StyledHrefButton,
@@ -35,6 +36,9 @@ const AppointmentsAndEncountersTables = ({
   patient,
 }) => {
   const history = useHistory();
+  const hideAppointments = useSelector(
+    (state) => state.settings.clinikal.clinikal_hide_appoitments,
+  );
   const { t } = useTranslation();
   // eslint-disable-next-line
   const prevEncountersEntry =
@@ -240,7 +244,9 @@ const AppointmentsAndEncountersTables = ({
                           variant='outlined'
                           color='primary'
                           href='#contained-buttons'
-                          onClick={(event) => handleEncounterSheetClick(encounter)}>
+                          onClick={(event) =>
+                            handleEncounterSheetClick(encounter)
+                          }>
                           {t('navigate to encounter sheet')}
                         </StyledHrefTableButton>
                       </TableCell>
@@ -276,141 +282,151 @@ const AppointmentsAndEncountersTables = ({
           </Table>
         </TableContainer>
       </React.Fragment>
-      <React.Fragment>
-        <br />
-        <StyledHeaderTableAppointment>
-          {t('Future appointments')}
-          <StyledHrefButton
-            disabled={
-              authorizationACO.createNewAppointment !== 'view' &&
-              authorizationACO.createNewAppointment !== 'write'
-            }
-            size={'small'}
-            variant='contained'
-            color='primary'
-            href='#contained-buttons'
-            onClick={() => handleCreateAppointment(patientData)}>
-            {t('Create new appointment')}
-          </StyledHrefButton>
-        </StyledHeaderTableAppointment>
-        <ul></ul>
-        <TableContainer component={Paper}>
-          <Table aria-label='simple table'>
-            <TableHead>
-              <TableRow>
-                <TableCell align='right'>{t('Appointment time')}</TableCell>
-                <TableCell align='right'>{t('Reason for refferal')}</TableCell>
-                <TableCell align='center'>{t('Status')}</TableCell>
-                <TableCell align='right'></TableCell>
-                <TableCell align='right'></TableCell>
-                <TableCell align='right'></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {normalizedNextAppointments.length > 0 ? (
-                // eslint-disable-next-line
-                normalizedNextAppointments.map((appointment, appointmentID) => {
-                  if (--futureAppointmentsCounter >= 0)
-                    return (
-                      <TableRow key={appointmentID}>
-                        <TableCell align='right' omponent='td' scope='row'>
-                          <StyledTableTextCell>
-                            {' '}
-                            {curDate ===
-                            moment
-                              .utc(appointment.startTime)
-                              .format('DD/MM/YYYY')
-                              ? `${t('today')} - ${moment
-                                  .utc(appointment.startTime)
-                                  .format('HH:mm')}`
-                              : moment
-                                  .utc(appointment.startTime)
-                                  .format('DD/MM/YYYY HH:mm')}{' '}
-                          </StyledTableTextCell>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <StyledTableTextCell
-                            title={parseMultipleExaminations(
-                              appointment.serviceType,
-                              appointment.examination,
-                              t,
-                            )}></StyledTableTextCell>
-                        </TableCell>
-                        <TableCell align='center'>
-                          <StyledLabelStatusAppointment>
-                            <TitleValueComponent
-                              name={
-                                patientTrackingStatuses && appointment
-                                  ? t(
-                                      patientTrackingStatuses[
-                                        appointment.status
-                                      ],
-                                    )
-                                  : ''
-                              }
-                            />
-                          </StyledLabelStatusAppointment>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <StyledHrefTableButton
-                            disabled={
-                              authorizationACO.appointmentDetails !== 'view' &&
-                              authorizationACO.appointmentDetails !== 'write'
-                            }
-                            size={'small'}
-                            variant='outlined'
-                            color='primary'
-                            href='#contained-buttons'>
-                            {t('Appointment details')}
-                          </StyledHrefTableButton>
-                        </TableCell>
-                        <TableCell align='right'>
-                          <StyledHrefTableButton
-                            disabled={
-                              authorizationACO.cancelAppointment !== 'view' &&
-                              authorizationACO.cancelAppointment !== 'write'
-                            }
-                            size={'large'}
-                            variant='outlined'
-                            color='primary'
-                            href='#contained-buttons'>
-                            {t('Cancel appointment')}
-                          </StyledHrefTableButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                })
-              ) : (
-                <TableRow key={'encounters_no_past_rows'}>
-                  <TableCell
-                    colSpan='6'
-                    align='center'
-                    omponent='td'
-                    scope='row'>
-                    {t('No data found for display')}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {normalizedNextAppointments.length > 2 ? (
-          <StyledLabelTableButton onClick={toggleFutureAppointmentsTable}>
-            {t(
-              !showAllFutureAppointments
-                ? 'Show all appointments'
-                : 'Show less appointments',
-            )}
-            <StyledIconValueComponent
-              iconType={
-                !showAllFutureAppointments
-                  ? 'keyboard_arrow_down'
-                  : 'keyboard_arrow_up'
+      {hideAppointments !== '1' ? (
+        <React.Fragment>
+          <br />
+          <StyledHeaderTableAppointment>
+            {t('Future appointments')}
+            <StyledHrefButton
+              disabled={
+                authorizationACO.createNewAppointment !== 'view' &&
+                authorizationACO.createNewAppointment !== 'write'
               }
-            />
-          </StyledLabelTableButton>
-        ) : null}
-      </React.Fragment>
+              size={'small'}
+              variant='contained'
+              color='primary'
+              href='#contained-buttons'
+              onClick={() => handleCreateAppointment(patientData)}>
+              {t('Create new appointment')}
+            </StyledHrefButton>
+          </StyledHeaderTableAppointment>
+          <ul></ul>
+          <TableContainer component={Paper}>
+            <Table aria-label='simple table'>
+              <TableHead>
+                <TableRow>
+                  <TableCell align='right'>{t('Appointment time')}</TableCell>
+                  <TableCell align='right'>
+                    {t('Reason for refferal')}
+                  </TableCell>
+                  <TableCell align='center'>{t('Status')}</TableCell>
+                  <TableCell align='right'></TableCell>
+                  <TableCell align='right'></TableCell>
+                  <TableCell align='right'></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {normalizedNextAppointments.length > 0 ? (
+                  // eslint-disable-next-line
+                  normalizedNextAppointments.map(
+                    (appointment, appointmentID) => {
+                      if (--futureAppointmentsCounter >= 0)
+                        return (
+                          <TableRow key={appointmentID}>
+                            <TableCell align='right' omponent='td' scope='row'>
+                              <StyledTableTextCell>
+                                {' '}
+                                {curDate ===
+                                moment
+                                  .utc(appointment.startTime)
+                                  .format('DD/MM/YYYY')
+                                  ? `${t('today')} - ${moment
+                                      .utc(appointment.startTime)
+                                      .format('HH:mm')}`
+                                  : moment
+                                      .utc(appointment.startTime)
+                                      .format('DD/MM/YYYY HH:mm')}{' '}
+                              </StyledTableTextCell>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <StyledTableTextCell
+                                title={parseMultipleExaminations(
+                                  appointment.serviceType,
+                                  appointment.examination,
+                                  t,
+                                )}></StyledTableTextCell>
+                            </TableCell>
+                            <TableCell align='center'>
+                              <StyledLabelStatusAppointment>
+                                <TitleValueComponent
+                                  name={
+                                    patientTrackingStatuses && appointment
+                                      ? t(
+                                          patientTrackingStatuses[
+                                            appointment.status
+                                          ],
+                                        )
+                                      : ''
+                                  }
+                                />
+                              </StyledLabelStatusAppointment>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <StyledHrefTableButton
+                                disabled={
+                                  authorizationACO.appointmentDetails !==
+                                    'view' &&
+                                  authorizationACO.appointmentDetails !==
+                                    'write'
+                                }
+                                size={'small'}
+                                variant='outlined'
+                                color='primary'
+                                href='#contained-buttons'>
+                                {t('Appointment details')}
+                              </StyledHrefTableButton>
+                            </TableCell>
+                            <TableCell align='right'>
+                              <StyledHrefTableButton
+                                disabled={
+                                  authorizationACO.cancelAppointment !==
+                                    'view' &&
+                                  authorizationACO.cancelAppointment !== 'write'
+                                }
+                                size={'large'}
+                                variant='outlined'
+                                color='primary'
+                                href='#contained-buttons'>
+                                {t('Cancel appointment')}
+                              </StyledHrefTableButton>
+                            </TableCell>
+                          </TableRow>
+                        );
+                    },
+                  )
+                ) : (
+                  <TableRow key={'encounters_no_past_rows'}>
+                    <TableCell
+                      colSpan='6'
+                      align='center'
+                      omponent='td'
+                      scope='row'>
+                      {t('No data found for display')}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {normalizedNextAppointments.length > 2 ? (
+            <StyledLabelTableButton onClick={toggleFutureAppointmentsTable}>
+              {t(
+                !showAllFutureAppointments
+                  ? 'Show all appointments'
+                  : 'Show less appointments',
+              )}
+              <StyledIconValueComponent
+                iconType={
+                  !showAllFutureAppointments
+                    ? 'keyboard_arrow_down'
+                    : 'keyboard_arrow_up'
+                }
+              />
+            </StyledLabelTableButton>
+          ) : null}
+        </React.Fragment>
+      ) : null}
+
       <React.Fragment>
         <br />
         <StyledHeaderTableAppointment>
