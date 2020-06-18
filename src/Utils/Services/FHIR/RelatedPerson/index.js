@@ -14,7 +14,7 @@ const RelatedPersonStats = {
   getRelatedPerson: (params) => {
     return CRUDOperations(
       'search',
-      `${params.url}/${params.functionParams.RelatedPersonId}`,
+      `${params.url}/${params.functionParams.relatedPersonId}`,
     );
   },
   createRelatedPerson: (params) => {

@@ -16,6 +16,6 @@ export const gotToPatientAdmission = (encounter, patient, history) => {
 
   store.dispatch(setEncounterAndPatient(encounterData, patient));
   history.push({
-    pathname: `${baseRoutePath()}/imaging/patientAdmission`,
+    pathname: `${baseRoutePath()}/generic/patientAdmission`,
   });
 };
