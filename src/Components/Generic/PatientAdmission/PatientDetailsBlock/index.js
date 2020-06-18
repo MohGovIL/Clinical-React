@@ -66,10 +66,10 @@ const PatientDetailsBlock = ({
           if (data.addressCity) {
             patientPatchParams['city'] = data.addressCity;
           }
-          if (data.addressStreet.trim()) {
+          if (data.addressStreet && data.addressStreet.trim()) {
             patientPatchParams['streetName'] = data.addressStreet;
           }
-          if (data.addressStreetNumber.trim()) {
+          if (data.addressStreetNumber && data.addressStreetNumber.trim()) {
             patientPatchParams['streetNumber'] = data.addressStreetNumber;
           }
           if (data.addressPostalCode) {
@@ -86,12 +86,15 @@ const PatientDetailsBlock = ({
             patientPatchParams['postalCode'] = data.POBoxPostalCode;
           }
         }
-        APIsArray.push(
-          FHIR('Patient', 'doWork', {
-            functionName: 'updatePatient',
-            functionParams: { patientPatchParams, patientId: patientData.id },
-          }),
-        );
+        if (Object.keys(patientPatchParams).length) {
+          APIsArray.push(
+            FHIR('Patient', 'doWork', {
+              functionName: 'updatePatient',
+              functionParams: { patientPatchParams, patientId: patientData.id },
+            }),
+          );
+        }
+
         //Updating/Creating relatedPerson
         if (encounterData.appointment) {
           APIsArray.push(
