@@ -1,22 +1,23 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
-import { connect } from 'react-redux';
+import PatientTracking from 'Components/Emergency/PatientTracking';
+import PatientAdmission from 'Components/Emergency/PatientAdmission';
 import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
-import EncounterSheet from 'Components/Generic/EncounterSheet';
-import PatientAdmission from 'Components/Generic/PatientAdmission';
-const GenericRoute = ({ isAuth }) => {
+import { connect } from 'react-redux';
+
+const Emergency = ({ isAuth }) => {
   return (
     <Switch>
       <PrivateRoute
         exact
-        path={`${baseRoutePath()}/generic/encounterSheet`}
-        component={EncounterSheet}
+        path={`${baseRoutePath()}/emergency/patientTracking`}
+        component={PatientTracking}
         isAuth={isAuth}
       />
       <PrivateRoute
         exact
-        path={`${baseRoutePath()}/generic/patientAdmission`}
+        path={`${baseRoutePath()}/emergency/patientAdmission`}
         component={PatientAdmission}
         isAuth={isAuth}
       />
@@ -26,4 +27,4 @@ const GenericRoute = ({ isAuth }) => {
 
 const mapStateToProps = (state) => ({ isAuth: state.login.isAuth });
 
-export default connect(mapStateToProps, null)(GenericRoute);
+export default connect(mapStateToProps, null)(Emergency);
