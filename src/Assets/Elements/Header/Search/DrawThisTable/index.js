@@ -26,6 +26,7 @@ import { store } from 'index';
 import { useHistory } from 'react-router-dom';
 import PopAppointmentsPerPatient from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
+import { useSelector } from 'react-redux';
 
 const DrawThisTable = ({
   result,
@@ -33,6 +34,9 @@ const DrawThisTable = ({
   setPopupApppointmentsAndEncounters,
   authorizationACO,
 }) => {
+  const hideAppointments = useSelector(
+    (state) => state.settings.clinikal.clinikal_hide_appoitments,
+  );
   const { t } = useTranslation();
   const ADMISSIONWITHOUTAPPOINTMENT = 0;
   const ADMISSIONWITHAPPOINTMENT = 1;
@@ -345,6 +349,7 @@ const DrawThisTable = ({
               </StyledExpansionPanelSummary>
               <StyledExpansionPanelDetails key={'details_' + patientIndex}>
                 <AppointmentsPerPatient
+                  hideAppointments={hideAppointments}
                   key={'appointment_' + patientIndex}
                   nextAppointment={nextAppointment}
                   prevEncounter={prevEncounter}
@@ -390,20 +395,22 @@ const DrawThisTable = ({
                     }>
                     {t('Encounters and appointments')}
                   </StyledHrefButton>
-                  <StyledHrefButton
-                    key={'bottom_links_second_' + patientIndex}
-                    size={'small'}
-                    variant='contained'
-                    color='primary'
-                    href='#contained-buttons'
-                    disabled={
-                      authorizationACO.createNewAppointment !== 'view' &&
-                      authorizationACO.createNewAppointment !== 'write'
-                        ? true
-                        : false
-                    }>
-                    {t('New appointment')}
-                  </StyledHrefButton>
+                  {hideAppointments !== '1' ? (
+                    <StyledHrefButton
+                      key={'bottom_links_second_' + patientIndex}
+                      size={'small'}
+                      variant='contained'
+                      color='primary'
+                      href='#contained-buttons'
+                      disabled={
+                        authorizationACO.createNewAppointment !== 'view' &&
+                        authorizationACO.createNewAppointment !== 'write'
+                          ? true
+                          : false
+                      }>
+                      {t('New appointment')}
+                    </StyledHrefButton>
+                  ) : null}
 
                   <StyledHrefButton
                     key={'bottom_links_third_' + patientIndex}

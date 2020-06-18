@@ -26,11 +26,9 @@ const AppointmentsPerPatient = ({
   authorizationACO,
   gotToPatientAdmission,
   patient,
+  hideAppointments,
 }) => {
   const { t } = useTranslation();
-  const hideAppointments = useSelector(
-    (state) => state.settings.clinikal.clinikal_hide_appoitments,
-  );
   const history = useHistory();
 
   const prevEncounterEntry =
