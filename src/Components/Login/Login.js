@@ -110,6 +110,7 @@ const Login = ({ loginAction, history, status }) => {
         />
         <CustomizedTableButton
           label={t('כניסה למערכת')}
+          backGroundColor={'#002398'}
           variant={'contained'}
           color={'primary'}
           fontWeight={'bold'}
