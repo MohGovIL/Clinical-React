@@ -6,6 +6,7 @@
 const denormalizeFhirEncounter = (encounter) => {
   const denormalizedEncounter = {};
   const participant = [];
+  const extensions = [];
   for (const encounterKey in encounter) {
     if (encounter.hasOwnProperty(encounterKey)) {
       //  encounter[encounterKey];
@@ -75,11 +76,26 @@ const denormalizeFhirEncounter = (encounter) => {
             },
           );
           break;
+        case 'extensionReasonCodeDetails':
+          extensions.push({
+            valueString: encounter[encounterKey],
+            url: 'clinikal/extensions/reasonCodesDetail',
+          });
+          break;
+        case 'extensionArrivalWay':
+          extensions.push({
+            valueString: encounter[encounterKey],
+            url: 'clinikal/extensions/arrivalWay',
+          });
+          break;
         default:
           break;
       }
     }
   }
+
+  if (extensions.length) denormalizedEncounter['extension'] = extensions;
+
   if (participant.length)
     denormalizedEncounter['participant'] = [...participant];
 

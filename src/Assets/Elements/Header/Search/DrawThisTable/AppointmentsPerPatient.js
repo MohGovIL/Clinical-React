@@ -15,6 +15,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const AppointmentsPerPatient = ({
   nextAppointment,
@@ -25,9 +26,9 @@ const AppointmentsPerPatient = ({
   authorizationACO,
   gotToPatientAdmission,
   patient,
+  hideAppointments,
 }) => {
   const { t } = useTranslation();
-
   const history = useHistory();
 
   const prevEncounterEntry =
@@ -113,16 +114,14 @@ const AppointmentsPerPatient = ({
                         mode={authorizationACO.encounterSheet}
                         linkHeader={t('navigate to encounter sheet')}
                         // linkUrl={'#'}
-                        onClick={() =>
-                          onClickEncounterSheetHandler(encounter)
-                        }
+                        onClick={() => onClickEncounterSheetHandler(encounter)}
                       />
                     </StyledLinkWithIconComponent>
                   </ListItem>
                 );
               })
             : null}
-          {nextAppointmentEntry ? (
+          {hideAppointments === '1' ? null : nextAppointmentEntry ? (
             <ListItem key={nextAppointmentEntry.id + '_nextAppointmentEntry'}>
               <StyledLabelAppointment>
                 <TitleValueComponent

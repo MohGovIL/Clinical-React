@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import HeaderPatient from 'Assets/Elements/HeaderPatient';
-import moment from 'moment';
+import * as Moment from 'moment';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,8 @@ import StyledEncounterSheet from './Style';
 import PatientDataBlock from './PatientDataBlock';
 import PatientBackground from './PatientBackground';
 import EncounterForms from './EncounterForms';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
 
 const EncounterSheet = ({
   patient,
@@ -33,14 +35,14 @@ const EncounterSheet = ({
     {
       text: `${patient.firstName} ${patient.lastName} ${
         !isTabletMode ? `${t('Encounter date')}: ` : ''
-      } ${moment(encounter.startTime).format(formatDate)}`,
+      } ${Moment(encounter.startTime).format(formatDate)}`,
       separator: false,
       url: '#',
     },
   ];
 
   const handleCloseClick = () => {
-    history.push(`${firstRouteMapper(verticalName)}`);
+    history.push(`${verticalName}/PatientTracking`);
   };
 
   return (

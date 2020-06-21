@@ -23,6 +23,7 @@ const StyledPatientBackground = styled.div`
   background-color: #fafbff;
   overflow-y: auto;
   overflow-x: hidden;
+  padding: 0px 32px 0px 32px;
 `;
 
 export default StyledPatientBackground;
