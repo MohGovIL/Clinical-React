@@ -125,7 +125,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     //Create an array of permitted tabs according to the user role.
     let staticTabs;
     if (tabs.length === 0) {
-      staticTabs = getStaticTabsArray();
+      staticTabs = getStaticTabsArray(vertical);
       for (let tabIndex = 0; tabIndex < staticTabs.length; tabIndex++) {
         const tab = staticTabs[tabIndex];
         const mode = isAllowed(tab.id);
