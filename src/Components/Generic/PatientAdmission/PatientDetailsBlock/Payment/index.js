@@ -133,6 +133,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
           functionParams: { QuestionnaireName: 'commitment_questionnaire' },
         });
         if (questionnaire.data.total) {
+          setValue('questionnaireId', questionnaire.data.entry[1].resource.id);
           const questionnaireResponseData = await FHIR(
             'QuestionnaireResponse',
             'doWork',
@@ -151,15 +152,10 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
             );
             if (normalizedQuestionnaireResponse.items.length) {
               if (isCommitmentForm === '1') {
-                setValue([
-                  {
-                    questionnaireId: questionnaire.data.entry[1].resource.id,
-                  },
-                  {
-                    questionnaireResponse:
-                      normalizedQuestionnaireResponse.id || '',
-                  },
-                ]);
+                setValue(
+                  'questionnaireResponse',
+                  normalizedQuestionnaireResponse.id || '',
+                );
                 const commitmentDate = normalizedQuestionnaireResponse.items.find(
                   (item) => item.text === 'Commitment date',
                 );
