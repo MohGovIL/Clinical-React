@@ -34,8 +34,8 @@ export const finishedTabActiveFunction = async function (
         date: selectFilter.filter_date,
         serviceProvider: selectFilter.filter_organization,
         serviceType: selectFilter.filter_service_type,
-        statuses: statuses,
-        sortParams: sort,
+        statuses: this.statuses,
+        sortParams: this.sort,
       },
     });
     const [patients, encounters] = normalizeFhirEncountersWithPatients(
@@ -98,7 +98,7 @@ export const finishedTabNotActiveFunction = async function (
           date: selectFilter.filter_date,
           serviceProvider: selectFilter.filter_organization,
           serviceType: selectFilter.filter_service_type,
-          statuses: statuses,
+          statuses: this.statuses,
         },
       },
     );

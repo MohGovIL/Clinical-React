@@ -33,8 +33,8 @@ export const waitingForResultsTabActiveFunction = async function (
         summary: false,
         organization: selectFilter.filter_organization,
         serviceType: selectFilter.filter_service_type,
-        statuses: statuses,
-        sortParams: sort,
+        statuses: this.statuses,
+        sortParams: this.sort,
       },
     });
 
@@ -97,7 +97,7 @@ export const waitingForResultsTabNotActiveFunction = async function (
           summary: true,
           organization: selectFilter.filter_organization,
           serviceType: selectFilter.filter_service_type,
-          statuses: statuses,
+          statuses: this.statuses,
         },
       },
     );
@@ -197,7 +197,7 @@ const setPatientDataWaitingForResultsTableRows = (
             align: 'center',
             color: 'primary',
             onClickHandler() {
-              goToEncounterSheet(encounter, patient, history)
+              goToEncounterSheet(encounter, patient, history);
             },
             mode,
           });

@@ -34,8 +34,8 @@ export const waitingForExaminationTabActiveFunction = async function (
         date: selectFilter.filter_date,
         organization: selectFilter.filter_organization,
         serviceType: selectFilter.filter_service_type,
-        statuses: statuses,
-        sortParams: sort,
+        statuses: this.statuses,
+        sortParams: this.sort,
       },
     });
 
@@ -100,7 +100,7 @@ export const waitingForExaminationTabNotActiveFunction = async function (
           date: selectFilter.filter_date,
           organization: selectFilter.filter_organization,
           serviceType: selectFilter.filter_service_type,
-          statuses: statuses,
+          statuses: this.statuses,
         },
       },
     );

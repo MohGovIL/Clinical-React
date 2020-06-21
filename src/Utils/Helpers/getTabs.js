@@ -33,6 +33,8 @@ const allTabs = {
     tabValue: 1,
     activeAction: waitingForExaminationTabActiveFunction,
     notActiveAction: waitingForExaminationTabNotActiveFunction,
+    sort: 'date,-priority,service-type',
+    statuses: ['arrived', 'triaged', 'in-progress'],
   },
   waiting_for_decoding: {
     tabName: 'Waiting for decoding',
@@ -42,6 +44,8 @@ const allTabs = {
     tabValue: 2,
     activeAction: waitingForResultsTabActiveFunction,
     notActiveAction: waitingForResultsTabNotActiveFunction,
+    sort: '-priority,date,service-type',
+    statuses: ['waiting-for-results'],
   },
   finished: {
     tabName: 'Finished treatment',
@@ -51,6 +55,8 @@ const allTabs = {
     tabValue: 3,
     activeAction: finishedTabActiveFunction,
     notActiveAction: finishedTabNotActiveFunction,
+    sort: 'date,-priority,service-type',
+    statuses: ['finished'],
   },
   waiting_for_nurse: {
     tabName: 'Waiting for nurse',
@@ -64,6 +70,8 @@ const allTabs = {
     notActiveAction: () => {
       console.log('Not implemented');
     },
+    sort: '',
+    status: '',
   },
 };
 
