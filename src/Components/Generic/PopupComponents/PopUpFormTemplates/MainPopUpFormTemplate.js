@@ -5,7 +5,7 @@ import { StyledRoundButton } from 'Components/Generic/PopupComponents/PopUpFormT
 import { useTranslation } from 'react-i18next';
 import PopUpContantList from 'Components/Generic/PopupComponents/PopUpFormTemplates/PopUpContantList';
 import PopUpContext from 'Components/Generic/PopupComponents/PopUpFormTemplates/PopUpContext';
-import l from 'Assets/Images/l.png';
+import l from 'Assets/Images/left.png';
 import Icon from 'Assets/Elements/Header/Search/Icon';
 
 const MainPopUpFormTemplate = ({

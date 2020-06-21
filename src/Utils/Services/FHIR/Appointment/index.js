@@ -7,7 +7,7 @@
  */
 
 import { CRUDOperations } from '../CRUDOperations';
-import { convertParamsToUrl } from '../CommonFunctions';
+import { convertParamsToUrl } from '../../../Helpers/CommonFunctions';
 
 const AppointmentStates = {
   doWork: (parameters = null) => {

@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 import Icon from 'Assets/Elements/Header/Search/Icon';
 import X from 'Assets/Images/x.png';
 import trash from 'Assets/Images/trash.png';
-import { arrayRemove } from 'Utils/Services/FHIR/CommonFunctions';
+import { arrayRemove } from 'Utils/Helpers/CommonFunctions';
 import Grid from '@material-ui/core/Grid';
 
 const PopUpContantList = ({
