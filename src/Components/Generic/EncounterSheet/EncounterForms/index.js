@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import StyledPatientFiles from './Style';
+import { Button } from '@material-ui/core';
 
 const EncounterForms = ({
   encounter,

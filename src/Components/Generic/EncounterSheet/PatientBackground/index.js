@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import StyledPatientBackground, {
   StyledEitanButton,
   StyledHeader,
@@ -9,6 +9,7 @@ import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 import { useTranslation } from 'react-i18next';
 import Encounters from 'Components/Generic/EncounterSheet/PatientBackground/Encounters';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
+import MedicalIssues from './MedicalIssues';
 
 const PatientBackground = ({
   encounter,
@@ -109,7 +110,10 @@ const PatientBackground = ({
   };
   useEffect(() => {
     if (prevEncounters.length === 0) handleCreateData();
-  });
+  }, []);
+
+
+
   return (
     <StyledPatientBackground dir={languageDirection}>
       <StyledHeader>
@@ -130,6 +134,7 @@ const PatientBackground = ({
         prevEncounters={prevEncounters}
         handleCreateData={handleCreateData}
       />
+      <MedicalIssues patient={patient} />
     </StyledPatientBackground>
   );
 };
