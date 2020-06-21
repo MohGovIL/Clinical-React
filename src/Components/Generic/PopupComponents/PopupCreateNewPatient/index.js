@@ -17,6 +17,7 @@ import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
 import {
   getCellPhoneRegexPattern,
   getEmailRegexPattern,
+  getOnlyLettersRegexPattern,
 } from 'Utils/Helpers/validation/patterns';
 import { normalizeValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
 import { emptyArrayAll } from 'Utils/Helpers/emptyArray';
@@ -760,8 +761,24 @@ const PopupCreateNewPatient = ({
                   required
                   onInvalid={handlerOnInvalidField}
                   onInput={handlerOnInvalidField}
-                  error={!errorRequired.firstName ? false : true}
-                  helperText={errorRequired.firstName}
+                  rules={{
+                    validate: (value) => {
+                      return getOnlyLettersRegexPattern().test(value) ? false : true;
+                    }
+                  }}
+                  error={
+                    errors.lastName ||
+                    (!errorRequired.firstName ? false : true)
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    errors.firstName
+                      ? t('Invalid first name entered')
+                      : errorRequired.firstName
+                      ? errorRequired.firstName
+                      : null
+                  }
                   title={''}
                   inputProps={{ tabIndex: 3 }}
                   InputProps={{
@@ -935,8 +952,24 @@ const PopupCreateNewPatient = ({
                   required
                   onInvalid={handlerOnInvalidField}
                   onInput={handlerOnInvalidField}
-                  error={!errorRequired.lastName ? false : true}
-                  helperText={errorRequired.lastName}
+                  rules={{
+                    validate: (value) => {
+                      return getOnlyLettersRegexPattern().test(value) ? false : true;
+                    }
+                  }}
+                  error={
+                    errors.lastName ||
+                    (!errorRequired.lastName ? false : true)
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    errors.lastName
+                      ? t('Invalid family name entered')
+                      : errorRequired.lastName
+                      ? errorRequired.lastName
+                      : null
+                  }
                   title={''}
                   inputProps={{ tabIndex: 4 }}
                   InputProps={{

@@ -20,3 +20,8 @@ export const getOnlyNumbersRegexPattern = () => {
 export const israelPhoneNumberRegex = () => {
   return /^05\d([-]{0,1})\d{7}$/;
 };
+
+export const getOnlyLettersRegexPattern = () => {
+  return /[~`!@#$%^&()_={}[\]:;,.<>+\/?-]|[0-9+]/gm;
+}
+
