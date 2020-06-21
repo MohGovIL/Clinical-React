@@ -6,8 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
-import normalizeFhirMedicationStatement
-  from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeMedicationStatement';
+import normalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeMedicationStatement';
 import MedicalIssue from 'Assets/Elements/MedicalIssue';
 import { useTranslation } from 'react-i18next';
 
@@ -78,14 +77,18 @@ const MedicalIssues = ({ patient }) => {
     //Load Medical Issues - chronic medication list
     (async () => {
       try {
-        const listMedicationStatementResult = await FHIR('MedicationStatement', 'doWork', {
-          functionName: 'getMedicationStatementListByParams',
-          functionParams: {
-            category: 'medication',
-            patient: patient.id,
-            status: 'active',
+        const listMedicationStatementResult = await FHIR(
+          'MedicationStatement',
+          'doWork',
+          {
+            functionName: 'getMedicationStatementListByParams',
+            functionParams: {
+              category: 'medication',
+              patient: patient.id,
+              status: 'active',
+            },
           },
-        });
+        );
         if (
           listMedicationStatementResult.data &&
           listMedicationStatementResult.data.total > 0
@@ -93,8 +96,13 @@ const MedicalIssues = ({ patient }) => {
           let normalizedListMedicationStatement = [];
           // eslint-disable-next-line
           listMedicationStatementResult.data.entry.map((res, id) => {
-            if (res.resource && res.resource.resourceType === 'MedicationStatement') {
-              let medicationStatement = normalizeFhirMedicationStatement(res.resource);
+            if (
+              res.resource &&
+              res.resource.resourceType === 'MedicationStatement'
+            ) {
+              let medicationStatement = normalizeFhirMedicationStatement(
+                res.resource,
+              );
               normalizedListMedicationStatement.push(medicationStatement);
             }
           });
