@@ -23,3 +23,20 @@ export const getCities = () => {
 export const getStreets = (city) => {
   return city && apiTokenInstance().get(`apis/api/lists/streets/${city}`);
 };
+
+export const getForms = (service_type, examination_code) => {
+  if (!service_type && (!examination_code || examination_code.length < 1))
+    return [];
+
+  let reason_code = examination_code ? examination_code.toString() : null;
+
+  return apiTokenInstance().get(
+    `apis/api/load-forms?${service_type ? 'service_type=' + service_type : ''}${
+      reason_code && service_type
+        ? '&reason_code=' + reason_code
+        : reason_code
+        ? 'reason_code=' + reason_code
+        : ''
+    }`,
+  );
+};
