@@ -6,8 +6,8 @@
  *                   Dror Golan - drorgo@matrix.co.il
  */
 
-import { CRUDOperations } from '../CRUDOperations';
-import { convertParamsToUrl } from '../../../Helpers/CommonFunctions';
+import { CRUDOperations } from 'Utils/Services/FHIR/CRUDOperations';
+import { convertParamsToUrl } from 'Utils/Helpers/CommonFunctions';
 
 const AppointmentStates = {
   doWork: (parameters = null) => {
