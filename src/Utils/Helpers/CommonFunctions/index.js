@@ -12,3 +12,15 @@ export const convertParamsToUrl = (obj) => {
   }
   return str;
 };
+
+export const arrayRemove = (arr, value) => {
+  return arr.filter(function (ele) {
+    return ele !== value;
+  });
+};
+
+const stripHtml = (html) => {
+  var tmp = document.createElement('DIV');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
