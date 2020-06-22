@@ -2,6 +2,9 @@
 
 import { connect } from 'react-redux';
 import React from 'react';
+import { Label } from '@material-ui/icons';
+import { useTranslation } from 'react-i18next';
+import TextField from '@material-ui/core/TextField';
 
 const TestsAndTreatment = ({
   patient,
@@ -12,7 +15,19 @@ const TestsAndTreatment = ({
   verticalName,
   permission,
 }) => {
-  return <React.Fragment>TestsAndTretments - {permission}</React.Fragment>;
+  const { t } = useTranslation();
+  console.log(languageDirection);
+  return (
+    <div dir={languageDirection}>
+      <label>{t('Constant Indicators')}</label>
+      <hr />
+      <form autoComplete='off'>
+        <StyledConstantTextField id='height' label={t('Height')} />
+
+        <TextField id='weight' label={t('Weight')} />
+      </form>
+    </div>
+  );
 };
 
 const mapStateToProps = (state) => {

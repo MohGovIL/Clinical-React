@@ -14,7 +14,7 @@ const LazyLoadComponentsToArray = (
   arrayOfElementsToLoad.map((element, key) => {
     if (!componentsArrayLoaded[element.component]) {
       let addThisComponents = React.lazy(() =>
-        import('Components/Forms/' + element.component),
+        import(`Components/Forms/${element.component}/${element.component}`),
       );
       componentsArrayLoaded[element.component] = addThisComponents;
     }
