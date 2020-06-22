@@ -23,3 +23,16 @@ export const getCities = () => {
 export const getStreets = (city) => {
   return city && apiTokenInstance().get(`apis/api/lists/streets/${city}`);
 };
+
+export const getFormTemplates = (
+  serviceType,
+  reasonCode,
+  formID,
+  formField,
+) => {
+  if (serviceType && reasonCode && formID && formField)
+    return apiTokenInstance().get(
+      `apis/api/templates/search?service-type=${serviceType}&reason-code=${reasonCode}&form=${formID}&form-field=${formField}`,
+    );
+  return null;
+};
