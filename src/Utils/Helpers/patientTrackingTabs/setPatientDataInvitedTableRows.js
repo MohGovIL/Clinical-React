@@ -68,7 +68,6 @@ export const setPatientDataInvitedTableRows = (
   mode,
   setIsPopUpOpen,
 ) => {
-  /* console.log("mode 1 = "+ mode);*/
   let result = [];
   let rows = [];
   for (let [appointmentId, appointment] of Object.entries(appointments)) {

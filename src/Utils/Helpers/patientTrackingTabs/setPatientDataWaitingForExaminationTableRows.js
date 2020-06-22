@@ -7,13 +7,6 @@ import {
 } from 'Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
 import moment from 'moment';
 import 'moment/locale/he';
-import { normalizeFhirEncountersWithPatients } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients';
-import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import { store } from 'index';
-import { setEncounterWithPatientsAction } from 'Store/Actions/FhirActions/fhirActions';
-import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
-import { FHIR } from 'Utils/Services/FHIR';
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { goToEncounterSheet } from '../goTo/goToEncounterSheet';
 
 // ממתינים לבדיקה
@@ -68,7 +61,6 @@ export const setPatientDataWaitingForExaminationTableRows = (
   history,
   mode,
 ) => {
-  /* console.log("mode 1 = "+ mode);*/
   let result = [];
   let rows = [];
   for (let [encountersId, encounter] of Object.entries(encounters)) {

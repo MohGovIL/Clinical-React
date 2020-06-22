@@ -11,7 +11,6 @@ export const encounterActiveFunction = async function (
   selectFilter,
 ) {
   try {
-    //const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
     const encountersWithPatients = await FHIR('Encounter', 'doWork', {
       functionName: 'getEncountersWithPatients',
       functionParams: {
@@ -37,7 +36,6 @@ export const encounterActiveFunction = async function (
       ].count = encountersWithPatients.data.total;
       return prevTabsClone;
     });
-    // const {data: {expansion: {contains}}} = await getValueSet('encounter_statuses');
     const {
       data: {
         expansion: { contains },

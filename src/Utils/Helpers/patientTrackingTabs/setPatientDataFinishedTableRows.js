@@ -60,7 +60,6 @@ export const setPatientDataFinishedTableRows = (
   history,
   mode,
 ) => {
-  /* console.log("mode 1 = "+ mode);*/
   let result = [];
   let rows = [];
   for (let [encountersId, encounter] of Object.entries(encounters)) {

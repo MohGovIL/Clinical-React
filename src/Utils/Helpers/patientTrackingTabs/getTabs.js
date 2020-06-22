@@ -47,7 +47,7 @@ const allTabs = {
     mode: 'hide',
     count: 0,
     tabValue: 3,
-    activeAction: encounterNotActiveFunction,
+    activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataFinishedTableRows,
     sort: 'date,-priority,service-type',
