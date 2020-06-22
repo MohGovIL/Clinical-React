@@ -17,107 +17,6 @@ import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { goToEncounterSheet } from '../goTo/goToEncounterSheet';
 
 // ממתינים לבדיקה
-export const waitingForExaminationTabActiveFunction = async function (
-  setTable,
-  setTabs,
-  history,
-  selectFilter,
-) {
-  try {
-    const statuses = ['arrived', 'triaged', 'in-progress'];
-    const sort = 'date,-priority,service-type';
-    //const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-    const encountersWithPatients = await FHIR('Encounter', 'doWork', {
-      functionName: 'getEncountersWithPatients',
-      functionParams: {
-        summary: false,
-        date: selectFilter.filter_date,
-        organization: selectFilter.filter_organization,
-        serviceType: selectFilter.filter_service_type,
-        statuses: this.statuses,
-        sortParams: this.sort,
-      },
-    });
-
-    const [patients, encounters] = normalizeFhirEncountersWithPatients(
-      encountersWithPatients.data.entry,
-    );
-    setTabs((prevTabs) => {
-      //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
-      const prevTabsClone = [...prevTabs];
-      prevTabsClone[
-        prevTabsClone.findIndex(
-          (prevTabsObj) => prevTabsObj.tabValue === this.tabValue,
-        )
-      ].count = encountersWithPatients.data.total;
-      return prevTabsClone;
-    });
-    // const {data: {expansion: {contains}}} = await getValueSet('encounter_statuses');
-    const {
-      data: {
-        expansion: { contains },
-      },
-    } = await FHIR('ValueSet', 'doWork', {
-      functionName: 'getValueSet',
-      functionParams: { id: 'encounter_statuses' },
-    });
-
-    let options = [];
-    for (let status of contains) {
-      options.push(normalizeFhirValueSet(status));
-    }
-    const table = setPatientDataWaitingForExaminationTableRows(
-      patients,
-      encounters,
-      options,
-      history,
-      this.mode,
-    );
-
-    setTable(table);
-
-    store.dispatch(setEncounterWithPatientsAction(patients, encounters));
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const waitingForExaminationTabNotActiveFunction = async function (
-  setTabs,
-  selectFilter,
-) {
-  try {
-    const statuses = ['arrived', 'triaged', 'in-progress'];
-
-    //const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-    const encountersWithPatientsSummaryCount = await FHIR(
-      'Encounter',
-      'doWork',
-      {
-        functionName: 'getEncountersWithPatients',
-        functionParams: {
-          summary: true,
-          date: selectFilter.filter_date,
-          organization: selectFilter.filter_organization,
-          serviceType: selectFilter.filter_service_type,
-          statuses: this.statuses,
-        },
-      },
-    );
-    setTabs((prevTabs) => {
-      //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
-      const prevTabsClone = [...prevTabs];
-      prevTabsClone[
-        prevTabsClone.findIndex(
-          (prevTabsObj) => prevTabsObj.tabValue === this.tabValue,
-        )
-      ].count = encountersWithPatientsSummaryCount.data.total;
-      return prevTabsClone;
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 const tableHeaders = [
   {
@@ -162,7 +61,7 @@ const tableHeaders = [
   },
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataWaitingForExaminationTableRows = (
+export const setPatientDataWaitingForExaminationTableRows = (
   patients,
   encounters,
   options,

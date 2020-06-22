@@ -7,115 +7,10 @@ import {
 } from 'Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
 import moment from 'moment';
 import 'moment/locale/he';
-import { normalizeFhirEncountersWithPatients } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncountersWithPatients';
-import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { store } from 'index';
-import { setEncounterWithPatientsAction } from 'Store/Actions/FhirActions/fhirActions';
-import { setEncounterAndPatient } from 'Store/Actions/ActiveActions/';
-import { FHIR } from 'Utils/Services/FHIR';
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { goToEncounterSheet } from '../goTo/goToEncounterSheet';
 
 //   ממתינים לפענוח
-export const waitingForResultsTabActiveFunction = async function (
-  setTable,
-  setTabs,
-  history,
-  selectFilter,
-) {
-  try {
-    const statuses = ['waiting-for-results'];
-    const sort = '-priority,date,service-type';
-    //  const encountersWithPatients = await getEncountersWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-    const encountersWithPatients = await FHIR('Encounter', 'doWork', {
-      functionName: 'getEncountersWithPatients',
-      functionParams: {
-        summary: false,
-        organization: selectFilter.filter_organization,
-        serviceType: selectFilter.filter_service_type,
-        statuses: this.statuses,
-        sortParams: this.sort,
-      },
-    });
-
-    const [patients, encounters] = normalizeFhirEncountersWithPatients(
-      encountersWithPatients.data.entry,
-    );
-    setTabs((prevTabs) => {
-      //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
-      const prevTabsClone = [...prevTabs];
-      prevTabsClone[
-        prevTabsClone.findIndex(
-          (prevTabsObj) => prevTabsObj.tabValue === this.tabValue,
-        )
-      ].count = encountersWithPatients.data.total;
-      return prevTabsClone;
-    });
-    //const {data: {expansion: {contains}}} = await getValueSet('encounter_statuses');
-    const {
-      data: {
-        expansion: { contains },
-      },
-    } = await FHIR('ValueSet', 'doWork', {
-      functionName: 'getValueSet',
-      functionParams: { id: 'encounter_statuses' },
-    });
-
-    let options = [];
-    for (let status of contains) {
-      options.push(normalizeFhirValueSet(status));
-    }
-    const table = setPatientDataWaitingForResultsTableRows(
-      patients,
-      encounters,
-      options,
-      history,
-      this.mode,
-    );
-
-    setTable(table);
-
-    store.dispatch(setEncounterWithPatientsAction(patients, encounters));
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const waitingForResultsTabNotActiveFunction = async function (
-  setTabs,
-  selectFilter,
-) {
-  try {
-    const statuses = ['waiting-for-results'];
-    // const encountersWithPatientsSummaryCount = await getEncountersWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type, statuses);
-    const encountersWithPatientsSummaryCount = await FHIR(
-      'Encounter',
-      'doWork',
-      {
-        functionName: 'getEncountersWithPatients',
-        functionParams: {
-          summary: true,
-          organization: selectFilter.filter_organization,
-          serviceType: selectFilter.filter_service_type,
-          statuses: this.statuses,
-        },
-      },
-    );
-
-    setTabs((prevTabs) => {
-      //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
-      const prevTabsClone = [...prevTabs];
-      prevTabsClone[
-        prevTabsClone.findIndex(
-          (prevTabsObj) => prevTabsObj.tabValue === this.tabValue,
-        )
-      ].count = encountersWithPatientsSummaryCount.data.total;
-      return prevTabsClone;
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 const tableHeaders = [
   {
@@ -160,7 +55,7 @@ const tableHeaders = [
   },
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataWaitingForResultsTableRows = (
+export const setPatientDataWaitingForResultsTableRows = (
   patients,
   encounters,
   options,

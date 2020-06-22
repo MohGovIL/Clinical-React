@@ -1,13 +1,13 @@
 import { emergencyTabs } from 'Utils/Helpers/Emergency/getStaticTabs';
 import { imagingTabs } from 'Utils/Helpers/Imaging/getStaticTabs';
-import { getTabs } from 'Utils/Helpers/getTabs';
+import { getTabs } from 'Utils/Helpers/patientTrackingTabs/getTabs';
 
 export const getStaticTabsArray = (verticalName) => {
   switch (verticalName) {
     case 'imaging':
       return getTabs(imagingTabs);
     case 'emergency':
-      return getTabs(emergencyTabs);
+      return getTabs(imagingTabs);
     default:
       return [];
   }

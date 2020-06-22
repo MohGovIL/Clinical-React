@@ -8,123 +8,14 @@ import {
 import { updateAppointmentStatus } from 'Utils/Services/FhirAPI';
 import moment from 'moment';
 import 'moment/locale/he';
-import { normalizeFhirAppointmentsWithPatients } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointmentsWithPatients';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
-import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { store } from 'index';
-import {
-  setAppointmentsWithPatientsAction,
-  updateAppointmentAction,
-} from 'Store/Actions/FhirActions/fhirActions';
+import { updateAppointmentAction } from 'Store/Actions/FhirActions/fhirActions';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
 import { FHIR } from 'Utils/Services/FHIR';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 
-//מוזמנים
-export const invitedTabActiveFunction = async function (
-  setTable,
-  setTabs,
-  history,
-  selectFilter,
-  setIsPopUpOpen,
-) {
-  try {
-    //const appointmentsWithPatients = await getAppointmentsWithPatients(false, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.filter_service_type);
-    const appointmentsWithPatients = await FHIR('Appointment', 'doWork', {
-      functionName: 'getAppointmentsWithPatients',
-      functionParams: {
-        summary: false,
-        date: selectFilter.filter_date,
-        organization: selectFilter.filter_organization,
-        serviceType: selectFilter.filter_service_type,
-      },
-    });
-
-    if (!appointmentsWithPatients || !appointmentsWithPatients.data) {
-      return;
-    }
-
-    const [patients, appointments] = normalizeFhirAppointmentsWithPatients(
-      appointmentsWithPatients.data.entry,
-    );
-    setTabs((prevTabs) => {
-      //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
-      const prevTabsClone = [...prevTabs];
-      prevTabsClone[
-        prevTabsClone.findIndex(
-          (prevTabsObj) => prevTabsObj.tabValue === this.tabValue,
-        )
-      ].count = appointmentsWithPatients.data.total;
-      return prevTabsClone;
-    });
-    // const {data: {expansion: {contains}}} = await getValueSet('patient_tracking_statuses');
-
-    const valueSet = await FHIR('ValueSet', 'doWork', {
-      functionName: 'getValueSet',
-      functionParams: { id: 'patient_tracking_statuses' },
-    });
-    if (!valueSet) {
-      return;
-    }
-    if (valueSet && valueSet.data && valueSet.data.expansion) {
-      const {
-        data: {
-          expansion: { contains },
-        },
-      } = valueSet;
-      let options = [];
-      for (let status of contains) {
-        options.push(normalizeFhirValueSet(status));
-      }
-      const table = setPatientDataInvitedTableRows(
-        patients,
-        appointments,
-        options,
-        history,
-        this.mode,
-        setIsPopUpOpen,
-      );
-      setTable(table);
-    }
-    store.dispatch(setAppointmentsWithPatientsAction(patients, appointments));
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const invitedTabNotActiveFunction = async function (
-  setTabs,
-  selectFilter,
-) {
-  try {
-    // const appointmentsWithPatientsSummaryCount = await getAppointmentsWithPatients(true, selectFilter.filter_date, selectFilter.filter_organization, selectFilter.serviceType);
-    const appointmentsWithPatientsSummaryCount = await FHIR(
-      'Appointment',
-      'doWork',
-      {
-        functionName: 'getAppointmentsWithPatients',
-        functionParams: {
-          summary: true,
-          date: selectFilter.filter_date,
-          organization: selectFilter.filter_organization,
-          serviceType: selectFilter.filter_service_type,
-        },
-      },
-    );
-    setTabs((prevTabs) => {
-      //Must be copied with ... operator so it will change reference and re-render StatusFilterBoxTabs
-      const prevTabsClone = [...prevTabs];
-      prevTabsClone[
-        prevTabsClone.findIndex(
-          (prevTabsObj) => prevTabsObj.tabValue === this.tabValue,
-        )
-      ].count = appointmentsWithPatientsSummaryCount.data.total;
-      return prevTabsClone;
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
+// מוזמנים
 
 const tableHeaders = [
   {
@@ -169,7 +60,7 @@ const tableHeaders = [
   },
 ]; //Needs to be placed in another place in the project
 
-const setPatientDataInvitedTableRows = (
+export const setPatientDataInvitedTableRows = (
   patients,
   appointments,
   options,
