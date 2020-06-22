@@ -1,60 +1,10 @@
-import {
-  BADGE_CELL,
-  BUTTON_CELL,
-  LABEL_CELL,
-  PERSONAL_INFORMATION_CELL,
-  SELECT_CELL,
-} from 'Assets/Elements/CustomizedTable/CustomizedTableComponentsTypes';
 import moment from 'moment';
 import 'moment/locale/he';
 import { store } from 'index';
 import { goToEncounterSheet } from '../goTo/goToEncounterSheet';
+import { getTableHeaders } from './tableHeaders';
 
 //   ממתינים לפענוח
-
-const tableHeaders = [
-  {
-    tableHeader: 'Personal information',
-    hideTableHeader: false,
-    component: PERSONAL_INFORMATION_CELL,
-  },
-  {
-    tableHeader: 'Cell phone',
-    hideTableHeader: false,
-    component: LABEL_CELL,
-  },
-  {
-    tableHeader: 'Healthcare service',
-    hideTableHeader: false,
-    component: LABEL_CELL,
-  },
-  {
-    tableHeader: 'Reason for refferal',
-    hideTableHeader: false,
-    component: LABEL_CELL,
-  },
-  {
-    tableHeader: 'Date',
-    hideTableHeader: false,
-    component: LABEL_CELL,
-  },
-  {
-    tableHeader: 'Status',
-    hideTableHeader: false,
-    component: SELECT_CELL,
-  },
-  {
-    tableHeader: 'Messages',
-    hideTableHeader: false,
-    component: BADGE_CELL,
-  },
-  {
-    tableHeader: 'Encounter sheet',
-    hideTableHeader: true,
-    component: BUTTON_CELL,
-  },
-]; //Needs to be placed in another place in the project
-
 export const setPatientDataWaitingForResultsTableRows = (
   patients,
   encounters,
@@ -64,6 +14,17 @@ export const setPatientDataWaitingForResultsTableRows = (
 ) => {
   let result = [];
   let rows = [];
+  const tableHeadersId = [
+    'personalInformation',
+    'cellPhone',
+    'healthcareService',
+    'reasonForReferral',
+    'date',
+    'status',
+    'messages',
+    'encounterSheet',
+  ];
+  const tableHeaders = getTableHeaders(tableHeadersId);
   for (let [encountersId, encounter] of Object.entries(encounters)) {
     let row = [];
     for (
