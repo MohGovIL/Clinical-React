@@ -7,11 +7,10 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
   ref,
 ) {
   const {
-    setClose,
+    setOpen,
     pendingValue,
     setSelectedServicesType,
     setValue,
-    close,
     ...other
   } = props;
   const { t } = useTranslation();
@@ -22,7 +21,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
     });
     // An idea on how to solve when clicking confirm to make the autoComplete to close is to give a ref to the next element or the inputElement of the autoComplete and make it focus on that element or unfocus.
     // close();
-    setClose(true);
+    setOpen(false);
   };
   return (
     <div
