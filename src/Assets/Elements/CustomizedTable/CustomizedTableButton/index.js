@@ -9,6 +9,7 @@ const CustomizedTableButton = ({
   onClickHandler,
   mode,
   fontWeight,
+  backGroundColor,
   other,
 }) => {
   const { t } = useTranslation();
@@ -22,6 +23,7 @@ const CustomizedTableButton = ({
       variant={variant}
       color={color}
       onClick={onClickHandler}
+      backGroundColor={backGroundColor}
       disabled={mode === 'view'}
       {...other}>
       {t(label)}

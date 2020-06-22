@@ -9,13 +9,13 @@ const parseMultipleExaminations = (serviceType, examination, t) => {
   let returnThisServiceTypesExaminations = '';
   returnThisServiceTypesExaminations += t(serviceType);
   if (examination.length > 1) {
-    returnThisServiceTypesExaminations += '-';
+    returnThisServiceTypesExaminations += ' - ';
     for (let id = 0; id < examination.length; id++) {
       returnThisServiceTypesExaminations +=
-        t(examination[id]) + (id + 1 < examination.length ? ',' : '');
+        t(examination[id]) + (id + 1 < examination.length ? ', ' : '');
     }
   } else {
-    returnThisServiceTypesExaminations += '-' + t(examination[0]);
+    returnThisServiceTypesExaminations += ' - ' + t(examination[0]);
   }
   return returnThisServiceTypesExaminations
     ? returnThisServiceTypesExaminations

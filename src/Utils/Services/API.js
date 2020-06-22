@@ -40,3 +40,16 @@ export const getForms = (service_type, examination_code) => {
     }`,
   );
 };
+
+export const getFormTemplates = (
+  serviceType,
+  reasonCode,
+  formID,
+  formField,
+) => {
+  if (serviceType && reasonCode && formID && formField)
+    return apiTokenInstance().get(
+      `apis/api/templates/search?service-type=${serviceType}&reason-code=${reasonCode}&form=${formID}&form-field=${formField}`,
+    );
+  return null;
+};
