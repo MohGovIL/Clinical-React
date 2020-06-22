@@ -767,7 +767,7 @@ const PopupCreateNewPatient = ({
                     }
                   }}
                   error={
-                    errors.lastName ||
+                    errors.firstName ||
                     (!errorRequired.firstName ? false : true)
                       ? true
                       : false
