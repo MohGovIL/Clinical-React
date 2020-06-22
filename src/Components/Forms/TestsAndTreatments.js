@@ -10,8 +10,9 @@ const TestsAndTreatment = ({
   languageDirection,
   history,
   verticalName,
+  permission,
 }) => {
-  return <React.Fragment>TestsAndTretments</React.Fragment>;
+  return <React.Fragment>TestsAndTretments - {permission}</React.Fragment>;
 };
 
 const mapStateToProps = (state) => {

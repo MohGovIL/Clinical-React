@@ -10,8 +10,11 @@ const DiagnosisAndRecommendations = ({
   languageDirection,
   history,
   verticalName,
+  permission,
 }) => {
-  return <React.Fragment>DiagnosisAndRecommendations</React.Fragment>;
+  return (
+    <React.Fragment>DiagnosisAndRecommendations - {permission}</React.Fragment>
+  );
 };
 
 const mapStateToProps = (state) => {

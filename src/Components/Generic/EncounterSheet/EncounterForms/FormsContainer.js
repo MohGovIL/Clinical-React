@@ -36,7 +36,7 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-function a11yProps(index) {
+function allyProps(index) {
   return {
     id: `full-width-tab-${index}`,
     'aria-controls': `full-width-tabpanel-${index}`,
@@ -75,7 +75,7 @@ const FormsContainer = ({ tabs }) => {
               <Tab
                 key={'tab_' + key}
                 label={t(tab.form_name)}
-                {...a11yProps(tab.order)}
+                {...allyProps(tab.order)}
               />
             );
           })}
@@ -95,7 +95,7 @@ const FormsContainer = ({ tabs }) => {
               index={tab.order}
               dir={theme.direction}>
               <Suspense fallback={<div>Loading...</div>}>
-                <FormComponent />
+                <FormComponent permission={tab.permission} />
               </Suspense>
             </TabPanel>
           );

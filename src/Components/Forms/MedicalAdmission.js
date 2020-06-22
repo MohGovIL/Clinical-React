@@ -10,8 +10,9 @@ const MedicalAdmission = ({
   languageDirection,
   history,
   verticalName,
+  permission,
 }) => {
-  return <React.Fragment>MedicalAdmission</React.Fragment>;
+  return <React.Fragment>MedicalAdmission - {permission}</React.Fragment>;
 };
 
 const mapStateToProps = (state) => {
