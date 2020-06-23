@@ -23,7 +23,8 @@ function TabPanel(props) {
       {...other}>
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
+          {/*<Typography>{children}</Typography>*/}
         </Box>
       )}
     </div>
@@ -44,7 +45,6 @@ function allyProps(index) {
 }
 /*[{"component":"MedicalAdmissionForm","form_name":"Medical Admission","order":"1","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Tests and Treatments","order":"2","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Diagnosis and Recommendations","order":"3","permission":"write"}]*/
 const FormsContainer = ({ tabs }) => {
-  console.log(tabs);
   const { t } = useTranslation();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -86,7 +86,6 @@ const FormsContainer = ({ tabs }) => {
         index={value}
         onChangeIndex={handleChangeIndex}>
         {tabs.data.map((tab, key) => {
-          console.log(tab.component);
           let FormComponent = formComponents[tab.component];
           return (
             <TabPanel
@@ -94,7 +93,7 @@ const FormsContainer = ({ tabs }) => {
               value={tab.order}
               index={tab.order}
               dir={theme.direction}>
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={<span>Loading...</span>}>
                 <FormComponent permission={tab.permission} />
               </Suspense>
             </TabPanel>
