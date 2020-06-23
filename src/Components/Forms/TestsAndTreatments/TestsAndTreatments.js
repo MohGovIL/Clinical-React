@@ -19,6 +19,17 @@ const TestsAndTreatment = ({
   const { t } = useTranslation();
   const [height, setHeight] = useState([]);
   const [weight, setWeight] = useState([]);
+  /*const evaluateOnChange = (evt) => ({ functionName }) => {
+    switch (functionName) {
+      case 'handleWeightChange':
+        handleWeightChange(evt);
+        break;
+      case 'handleHeightChange':
+        handleHeightChange(evt);
+        break;
+    }
+  };*/
+
   const handleWeightChange = (evt) => {
     /* add this when bugs arise from design something like
         &&
@@ -40,30 +51,43 @@ const TestsAndTreatment = ({
         : height;
     setHeight(heightTemp);
   };
-
+  const constantIndicators = [
+    {
+      label: 'Height',
+      id: 'height',
+      type: 'cm',
+      pattern: '[1-9]{1,3}',
+      value: height,
+      handleOnChange: handleHeightChange,
+    },
+    {
+      label: 'Weight',
+      id: 'weight',
+      type: 'kg',
+      pattern: '[1-9]{1,3}|[1-9]{1,3}[.]|^[0-9]\\d{2}\\.\\d{1}$',
+      value: weight,
+      handleOnChange: handleWeightChange,
+    },
+  ];
   return (
     <div dir={languageDirection}>
-      <StyledConstantHeaders>{t('Constant Indicators')}</StyledConstantHeaders>
+      <StyledConstantHeaders>{t('Constant indicators')}</StyledConstantHeaders>
       <hr />
       <form autoComplete='off'>
-        <StyledConstantTextField
-          inputProps={{ pattern: '[1-9]{1,3}' }}
-          onChange={handleHeightChange}
-          id='height'
-          label={t('Height') + ' (' + t('cm') + ')'}
-          value={height}
-        />
-
-        <StyledConstantTextField
-          inputProps={{
-            pattern: ['[1-9]{1,3}|[1-9]{1,3}[.]|^[0-9]\\d{2}\\.\\d{1}$'],
-          }}
-          onChange={handleWeightChange}
-          id='weight'
-          label={t('Weight') + ' (' + t('kg') + ')'}
-          value={weight}
-        />
+        {constantIndicators.map((value, index) => {
+          return value ? (
+            <StyledConstantTextField
+              inputProps={{ pattern: value.pattern }}
+              onChange={value.handleOnChange}
+              id={value.id}
+              label={t(value.label) + ' (' + t(value.type) + ')'}
+              value={value.value}
+            />
+          ) : null;
+        })}
       </form>
+      <StyledConstantHeaders>{t('Variable indicators')}</StyledConstantHeaders>
+      <hr />
     </div>
   );
 };
