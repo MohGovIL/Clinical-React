@@ -59,14 +59,46 @@ const allTabs = {
     mode: 'hide',
     count: 0,
     tabValue: 4,
-    activeAction: () => {
-      console.log('Not implemented`');
-    },
-    notActiveAction: () => {
-      console.log('Not implemented');
-    },
+    activeAction: encounterActiveFunction,
+    notActiveAction: encounterNotActiveFunction,
     sort: '-priority,date,service-type',
     status: ['arrived', 'in-progress', 'waiting-for-nurse'],
+  },
+  waiting_for_doctor: {
+    tabName: 'Waiting for doctor',
+    id: 'waiting_for_doctor',
+    mode: 'hide',
+    count: 0,
+    tabValue: 5,
+    activeAction: encounterActiveFunction,
+    notActiveAction: encounterNotActiveFunction,
+  },
+  waiting_for_xray: {
+    name: 'Waiting for Xray',
+    id: 'waiting_for_xray',
+    mode: 'hide',
+    count: 0,
+    tabValue: 6,
+    activeAction: encounterActiveFunction,
+    notActiveAction: encounterNotActiveFunction,
+  },
+  waiting_for_release: {
+    name: 'Waiting for release',
+    id: 'waiting_for_release',
+    mode: 'hide',
+    count: 0,
+    tabValue: 7,
+    activeAction: encounterActiveFunction,
+    notActiveAction: encounterNotActiveFunction,
+  },
+  finished_visit: {
+    name: 'Finished visit',
+    id: 'finished_visit',
+    mode: 'hide',
+    count: 0,
+    tabValue: 8,
+    activeAction: encounterActiveFunction,
+    notActiveAction: encounterNotActiveFunction,
   },
 };
 

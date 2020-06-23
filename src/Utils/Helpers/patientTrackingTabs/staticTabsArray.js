@@ -7,7 +7,7 @@ export const getStaticTabsArray = (verticalName) => {
     case 'imaging':
       return getTabs(imagingTabs);
     case 'emergency':
-      return getTabs(imagingTabs);
+      return getTabs(emergencyTabs);
     default:
       return [];
   }
