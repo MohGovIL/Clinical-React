@@ -6,7 +6,7 @@ import {
   StyledEncounterDocLabel,
   StyledReasonLabel,
   StyledAdmissionFormButton,
-  StyledAvatarIdBlock
+  StyledAvatarIdBlock,
 } from './Style';
 import AvatarIdBlock from 'Assets/Elements/AvatarIdBlock';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
@@ -21,6 +21,7 @@ import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 import Grid from '@material-ui/core/Grid';
 import { useHistory } from 'react-router-dom';
+import isAllowed from '../../../../Utils/Helpers/isAllowed';
 
 const PatientDataBlock = ({
   encounter,
@@ -48,7 +49,11 @@ const PatientDataBlock = ({
   const [commitmentFile, setCommitmentFile] = useState({});
   const [additionalDocumentBlob, setAdditionalDocumentBlob] = useState('');
   //const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState('');
-  const [admissionFormButton, setAdmissionForm] = useState({})
+  const [admissionFormButton, setAdmissionForm] = useState({});
+
+  const authorizationACO = {
+    patientAdmission: isAllowed('patient_admission'),
+  };
 
   useEffect(() => {
     if (encounter) {
@@ -141,13 +146,19 @@ const PatientDataBlock = ({
         }
       })();
     }
-    setAdmissionForm(    {
-      label: t('To admission form'),
-      variant: 'text',
-      color: 'primary',
-      onClickHandler: () => gotToPatientAdmission(encounter, patient, history), //user function
-    });
 
+    if (
+      authorizationACO.patientAdmission === 'view' ||
+      authorizationACO.patientAdmission === 'write'
+    ) {
+      setAdmissionForm({
+        label: t('To admission form'),
+        variant: 'text',
+        color: 'primary',
+        onClickHandler: () =>
+          gotToPatientAdmission(encounter, patient, history), //user function
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encounter, patient]);
 
@@ -174,13 +185,14 @@ const PatientDataBlock = ({
   return (
     <StyledPatientDataBlock>
       <StyledAvatarIdBlock>
-      <AvatarIdBlock
-        edit_mode={0}
-        showEditButton={false}
-        priority={encounter.priority}
-        patientData={patient}
-        showDivider
-      /></StyledAvatarIdBlock>
+        <AvatarIdBlock
+          edit_mode={0}
+          showEditButton={false}
+          priority={encounter.priority}
+          patientData={patient}
+          showDivider
+        />
+      </StyledAvatarIdBlock>
       {/*</StyledPatientDataBlock>*/}
       <StyledTextInput>
         <StyledReasonLabel>{t('Reason for referral')}</StyledReasonLabel>
@@ -197,9 +209,14 @@ const PatientDataBlock = ({
       </StyledTextInput>
 
       <StyledTextInput>
-        <StyledEncounterDocLabel>{t('Encounter documents')}</StyledEncounterDocLabel>
+        <StyledEncounterDocLabel>
+          {t('Encounter documents')}
+        </StyledEncounterDocLabel>
         {Object.values(referralFile).length > 0 && (
-          <Grid container={true} spacing={labelFileButtonSpace} style={{ marginBottom: '34px' }}>
+          <Grid
+            container={true}
+            spacing={labelFileButtonSpace}
+            style={{ marginBottom: '34px' }}>
             <Grid item xs={3}>
               <label
                 style={{
@@ -222,7 +239,10 @@ const PatientDataBlock = ({
           </Grid>
         )}
         {Object.values(commitmentFile).length > 0 && (
-          <Grid container={true} spacing={labelFileButtonSpace} style={{ marginBottom: '34px' }}>
+          <Grid
+            container={true}
+            spacing={labelFileButtonSpace}
+            style={{ marginBottom: '34px' }}>
             <Grid item xs={3}>
               <label
                 style={{
@@ -245,7 +265,10 @@ const PatientDataBlock = ({
           </Grid>
         )}
         {Object.values(additionalDocumentFile).length > 0 && (
-          <Grid container={true} spacing={labelFileButtonSpace} style={{ marginBottom: '34px' }}>
+          <Grid
+            container={true}
+            spacing={labelFileButtonSpace}
+            style={{ marginBottom: '34px' }}>
             <Grid item xs={3}>
               <label
                 style={{
