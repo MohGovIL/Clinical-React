@@ -62,7 +62,7 @@ const allTabs = {
     activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
     sort: '-priority,date,service-type',
-    status: ['arrived', 'in-progress', 'waiting-for-nurse'],
+    statuses: ['arrived', 'in-progress', 'waiting-for-nurse'],
   },
   waiting_for_doctor: {
     tabName: 'Waiting for doctor',
