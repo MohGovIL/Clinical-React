@@ -20,6 +20,7 @@ export const encounterActiveFunction = async function (
         serviceType: selectFilter.filter_service_type,
         statuses: this.statuses,
         sortParams: this.sort,
+        extendedStatuses: this.extendedStatuses,
       },
     });
 

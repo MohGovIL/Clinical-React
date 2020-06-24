@@ -135,14 +135,16 @@ const EncounterStates = {
     let statuses = params.statuses;
     let extendedStatuses = params.extendedStatuses;
     let statusesString = '';
-    if (statuses && !extendedStatuses) {
-      for (let status of statuses) {
-        statusesString = statusesString.concat(`&status=${status}`);
-      }
-    }
-    if (extendedStatuses) {
+    if (extendedStatuses && statuses) {
       for (let status of extendedStatuses) {
         statusesString = statusesString.concat(`&status-extended=${status}`);
+      }
+      for (let status of statuses) {
+        statusesString = statusesString.concat(`&status-extended=${status}`);
+      }
+    } else if (statuses) {
+      for (let status of statuses) {
+        statusesString = statusesString.concat(`&status=${status}`);
       }
     }
 

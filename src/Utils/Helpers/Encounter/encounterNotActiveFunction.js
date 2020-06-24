@@ -16,6 +16,7 @@ export const encounterNotActiveFunction = async function (
           organization: selectFilter.filter_organization,
           serviceType: selectFilter.filter_service_type,
           statuses: this.statuses,
+          extendedStatuses: this.extendedStatuses,
         },
       },
     );

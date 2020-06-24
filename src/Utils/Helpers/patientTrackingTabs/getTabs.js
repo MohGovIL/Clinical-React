@@ -4,6 +4,7 @@ import { setPatientDataWaitingForResultsTableRows } from 'Utils/Helpers/patientT
 import { setPatientDataFinishedTableRows } from 'Utils/Helpers/patientTrackingTabs/setPatientDataFinishedTableRows';
 import { appointmentActiveFunction } from 'Utils/Helpers/Appointment/appointmentActiveFunction';
 import { appointmentNotActiveFunction } from 'Utils/Helpers/Appointment/appointmentNotActiveFunction';
+import { setPatientDataWaitingForNurseTableRows } from 'Utils/Helpers/patientTrackingTabs/setPatientDataWaitingForNurse';
 import { encounterActiveFunction } from 'Utils/Helpers/Encounter/encounterActiveFunction';
 import { encounterNotActiveFunction } from 'Utils/Helpers/Encounter/encounterNotActiveFunction';
 const allTabs = {
@@ -61,8 +62,10 @@ const allTabs = {
     tabValue: 4,
     activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
+    tableFunction: setPatientDataWaitingForNurseTableRows,
     sort: '-priority,date,service-type',
-    statuses: ['arrived', 'in-progress', 'waiting-for-nurse'],
+    statuses: ['arrived'],
+    extendedStatuses: ['waiting-for-nurse'],
   },
   waiting_for_doctor: {
     tabName: 'Waiting for doctor',
