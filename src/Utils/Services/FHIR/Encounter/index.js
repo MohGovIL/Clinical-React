@@ -133,10 +133,19 @@ const EncounterStates = {
     let serviceProvider = params.serviceProvider;
     let serviceType = '';
     let statuses = params.statuses;
+    let extendedStatuses = params.extendedStatuses;
     let statusesString = '';
-    for (let status of statuses) {
-      statusesString = statusesString.concat(`&status=${status}`);
+    if (statuses && !extendedStatuses) {
+      for (let status of statuses) {
+        statusesString = statusesString.concat(`&status=${status}`);
+      }
     }
+    if (extendedStatuses) {
+      for (let status of extendedStatuses) {
+        statusesString = statusesString.concat(`&status-extended=${status}`);
+      }
+    }
+
     let summaryStat = EncounterStates['encountersWithPatientsBasePath'](
       summary,
     );
