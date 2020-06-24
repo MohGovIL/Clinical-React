@@ -3,6 +3,7 @@ import { encounterNotActiveFunction } from 'Utils/Helpers/Encounter/encounterNot
 import { setPatientDataWaitingForNurseTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForNurseTableRows';
 import { setPatientDataWaitingForDoctorTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForDoctorTableRows';
 import { setPatientDataWaitingForXrayTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForXrayTableRows';
+import { setPatientDataWaitingForReleaseTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForReleaseTableRows';
 export const emergencyTabs = [
   {
     tabName: 'Waiting for nurse',
@@ -42,15 +43,18 @@ export const emergencyTabs = [
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataWaitingForXrayTableRows,
   },
-  // {
-  //   tabName: 'Waiting for release',
-  //   id: 'waiting_for_release',
-  //   mode: 'hide',
-  //   count: 0,
-  //   tabValue: 3,
-  //   activeAction: encounterActiveFunction,
-  //   notActiveAction: encounterNotActiveFunction,
-  // },
+  {
+    tabName: 'Waiting for release',
+    id: 'waiting_for_release',
+    mode: 'hide',
+    count: 0,
+    tabValue: 3,
+    sort: '-priority,status-update-date,service-type',
+    extendedStatuses: ['waiting_for_release'],
+    activeAction: encounterActiveFunction,
+    notActiveAction: encounterNotActiveFunction,
+    tableFunction: setPatientDataWaitingForReleaseTableRows,
+  },
   // {
   //   tabName: 'Finished visit',
   //   id: 'finished_visit',

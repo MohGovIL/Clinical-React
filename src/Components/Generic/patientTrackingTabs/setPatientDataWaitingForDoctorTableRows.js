@@ -3,7 +3,7 @@ import 'moment/locale/he';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 
-// ממתינים לאח\ות
+// ממתינים לרופא\ה
 
 export const setPatientDataWaitingForDoctorTableRows = (
   patients,

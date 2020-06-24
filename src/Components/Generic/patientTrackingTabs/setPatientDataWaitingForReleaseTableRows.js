@@ -3,9 +3,9 @@ import 'moment/locale/he';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 
-// ממתינים לצילום
+// ממתינים לשחרור
 
-export const setPatientDataWaitingForXrayTableRows = (
+export const setPatientDataWaitingForReleaseTableRows = (
   patients,
   encounters,
   options,
