@@ -4,7 +4,7 @@ import 'moment/locale/he';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import { store } from 'index';
 import { updateAppointmentAction } from 'Store/Actions/FhirActions/fhirActions';
-import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter/index';
+import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import { FHIR } from 'Utils/Services/FHIR';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 import { getTableHeaders } from './tableHeaders';

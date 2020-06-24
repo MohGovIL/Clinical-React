@@ -1,11 +1,11 @@
 import moment from 'moment';
 import 'moment/locale/he';
-import { goToEncounterSheet } from '../goTo/goToEncounterSheet';
-import { getTableHeaders } from 'Utils/Helpers/patientTrackingTabs/tableHeaders';
+import { store } from 'index';
+import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
+import { getTableHeaders } from './tableHeaders';
 
-// ממתינים לבדיקה
-
-export const setPatientDataWaitingForExaminationTableRows = (
+//   ממתינים לפענוח
+export const setPatientDataWaitingForResultsTableRows = (
   patients,
   encounters,
   options,
@@ -19,7 +19,7 @@ export const setPatientDataWaitingForExaminationTableRows = (
     'cellPhone',
     'healthcareService',
     'reasonForReferral',
-    'time',
+    'date',
     'status',
     'messages',
     'encounterSheet',
@@ -107,11 +107,13 @@ export const setPatientDataWaitingForExaminationTableRows = (
             label: encounter.examination ? encounter.examination : null,
           });
           break;
-        case 'Time':
+        case 'Date':
           row.push({
             padding: 'default',
             align: 'center',
-            label: moment.utc(encounter.startTime).format('LT'),
+            label: moment
+              .utc(encounter.startTime)
+              .format(store.getState().settings.format_date),
           });
           break;
         default:

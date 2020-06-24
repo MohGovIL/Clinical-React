@@ -1,11 +1,11 @@
 import moment from 'moment';
 import 'moment/locale/he';
-import { goToEncounterSheet } from '../goTo/goToEncounterSheet';
-import { getTableHeaders } from 'Utils/Helpers/patientTrackingTabs/tableHeaders';
+import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
+import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 
-// ממתינים לאח\ות
+// ממתינים לבדיקה
 
-export const setPatientDataWaitingForNurseTableRows = (
+export const setPatientDataWaitingForExaminationTableRows = (
   patients,
   encounters,
   options,

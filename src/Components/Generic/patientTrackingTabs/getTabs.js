@@ -1,10 +1,10 @@
-import { setPatientDataInvitedTableRows } from 'Utils/Helpers/patientTrackingTabs/setPatientDataInvitedTableRows';
-import { setPatientDataWaitingForExaminationTableRows } from 'Utils/Helpers/patientTrackingTabs/setPatientDataWaitingForExaminationTableRows';
-import { setPatientDataWaitingForResultsTableRows } from 'Utils/Helpers/patientTrackingTabs/setPatientWaitingForResultsTableRows';
-import { setPatientDataFinishedTableRows } from 'Utils/Helpers/patientTrackingTabs/setPatientDataFinishedTableRows';
+import { setPatientDataInvitedTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataInvitedTableRows';
+import { setPatientDataWaitingForExaminationTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForExaminationTableRows';
+import { setPatientDataWaitingForResultsTableRows } from 'Components/Generic/patientTrackingTabs/setPatientWaitingForResultsTableRows';
+import { setPatientDataFinishedTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataFinishedTableRows';
 import { appointmentActiveFunction } from 'Utils/Helpers/Appointment/appointmentActiveFunction';
 import { appointmentNotActiveFunction } from 'Utils/Helpers/Appointment/appointmentNotActiveFunction';
-import { setPatientDataWaitingForNurseTableRows } from 'Utils/Helpers/patientTrackingTabs/setPatientDataWaitingForNurse';
+import { setPatientDataWaitingForNurseTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForNurse';
 import { encounterActiveFunction } from 'Utils/Helpers/Encounter/encounterActiveFunction';
 import { encounterNotActiveFunction } from 'Utils/Helpers/Encounter/encounterNotActiveFunction';
 const allTabs = {
