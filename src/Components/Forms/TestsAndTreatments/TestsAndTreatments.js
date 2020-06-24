@@ -2,10 +2,12 @@
 
 import { connect } from 'react-redux';
 import React, { useState } from 'react';
-import { Label } from '@material-ui/icons';
+
 import { useTranslation } from 'react-i18next';
-import TextField from '@material-ui/core/TextField';
-import { StyledConstantHeaders, StyledConstantTextField } from './Style';
+
+import ConstantIndicators from './ConstantIndicators';
+import VariantIndicators from './VariantIndicators';
+import * as DataHelpers from './Helpers/DataHelpers';
 
 const TestsAndTreatment = ({
   patient,
@@ -16,78 +18,156 @@ const TestsAndTreatment = ({
   verticalName,
   permission,
 }) => {
-  const { t } = useTranslation();
-  const [height, setHeight] = useState([]);
-  const [weight, setWeight] = useState([]);
-  /*const evaluateOnChange = (evt) => ({ functionName }) => {
-    switch (functionName) {
-      case 'handleWeightChange':
-        handleWeightChange(evt);
-        break;
-      case 'handleHeightChange':
-        handleHeightChange(evt);
-        break;
-    }
-  };*/
+  const [height, setHeight] = useState('10');
+  const [weight, setWeight] = useState('2');
+  const [pressure, setPressure] = useState([
+    10,
+    10,
+    20,
+    10,
+    30,
+    50,
+    90,
+    20,
+    30,
+    40,
+    10,
+    20,
+  ]);
+  const [pulse, setPulse] = useState([
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+  ]);
+  const [userName, setUserName] = useState([
+    { name: 'Smurfette', loggedHour: '9:00' },
+    { name: 'Papa Smurf', loggedHour: '19:00' },
+    { name: 'Clumsy Smurf', loggedHour: '2:00' },
+    { name: 'Brainy Smurf', loggedHour: '4:00' },
+    { name: 'Grouchy Smurf', loggedHour: '5:00' },
+    { name: 'Hefty Smurf', loggedHour: '7:00' },
+    { name: 'Greedy Smurf', loggedHour: '8:00' },
+    { name: 'Chef Smurf', loggedHour: '9:11' },
+    { name: 'Vanity Smurf', loggedHour: '9:22' },
+    { name: 'Handy Smurf', loggedHour: '9:33' },
+    { name: 'Scaredy Smurf', loggedHour: '9:34' },
+    { name: 'Tracker Smurf', loggedHour: '9:36' },
+  ]);
+  const [fever, setFever] = useState([
+    99,
+    98,
+    90,
+    100,
+    99,
+    90,
+    100,
+    100,
+    90,
+    90,
+    100,
+    100,
+  ]);
+  const [saturation, setSaturation] = useState([
+    10,
+    0,
+    0,
+    0,
+    0,
+    10,
+    90,
+    90,
+    90,
+    90,
+    90,
+    98,
+  ]);
+  const [breathsPerMin, setBreathsPerMin] = useState([
+    50,
+    22,
+    33,
+    22,
+    44,
+    55,
+    66,
+    77,
+    66,
+    55,
+    44,
+    33,
+  ]);
+  const [painLevel, setPainLevel] = useState([
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+  ]);
+  const [bloodSugar, setBloodSugar] = useState([
+    90,
+    60,
+    50,
+    40,
+    30,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+  ]);
+  const constantIndicatorsNormalaizedData = [];
+  const variantIndicatorsNormalaizedData = [];
 
-  const handleWeightChange = (evt) => {
-    /* add this when bugs arise from design something like
-        &&
-      evt.target.value < 600*/
-
-    const weightTemp =
-      evt.target.validity.valid && evt.target.value.length < 6
-        ? evt.target.value
-        : weight;
-    setWeight(weightTemp);
-  };
-
-  const handleHeightChange = (evt) => {
-    const heightTemp =
-      /* add this when bugs arise from design something like
-       && evt.target.value < 300*/
-      evt.target.validity.valid && evt.target.value.length < 4
-        ? evt.target.value
-        : height;
-    setHeight(heightTemp);
-  };
-  const constantIndicators = [
-    {
-      label: 'Height',
-      id: 'height',
-      type: 'cm',
-      pattern: '[1-9]{1,3}',
-      value: height,
-      handleOnChange: handleHeightChange,
-    },
-    {
-      label: 'Weight',
-      id: 'weight',
-      type: 'kg',
-      pattern: '[1-9]{1,3}|[1-9]{1,3}[.]|^[0-9]\\d{2}\\.\\d{1}$',
-      value: weight,
-      handleOnChange: handleWeightChange,
-    },
-  ];
+  const constantIndicators = DataHelpers.thickenTheConstantIndicators({
+    height,
+    weight,
+    setWeight,
+    setHeight,
+    constantIndicatorsNormalaizedData,
+  });
+  const variantIndicators = DataHelpers.thickenTheVariantIndicators({
+    variantIndicatorsNormalaizedData,
+    userName,
+    fever,
+    pressure,
+    saturation,
+    painLevel,
+    breathsPerMin,
+    bloodSugar,
+    pulse,
+    setFever,
+    setPressure,
+    setSaturation,
+    setPainLevel,
+    setBreathsPerMin,
+    setBloodSugar,
+    setPulse,
+  });
   return (
     <div dir={languageDirection}>
-      <StyledConstantHeaders>{t('Constant indicators')}</StyledConstantHeaders>
-      <hr />
-      <form autoComplete='off'>
-        {constantIndicators.map((value, index) => {
-          return value ? (
-            <StyledConstantTextField
-              inputProps={{ pattern: value.pattern }}
-              onChange={value.handleOnChange}
-              id={value.id}
-              label={t(value.label) + ' (' + t(value.type) + ')'}
-              value={value.value}
-            />
-          ) : null;
-        })}
-      </form>
-      <StyledConstantHeaders>{t('Variable indicators')}</StyledConstantHeaders>
-      <hr />
+      <ConstantIndicators
+        constantIndicators={constantIndicators}
+        setWeight={setWeight}
+        setHeight={setHeight}
+      />
+      <VariantIndicators variantIndicators={variantIndicators} />
     </div>
   );
 };
