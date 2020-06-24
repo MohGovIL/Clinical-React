@@ -1,7 +1,7 @@
 import { encounterActiveFunction } from 'Utils/Helpers/Encounter/encounterActiveFunction';
 import { encounterNotActiveFunction } from 'Utils/Helpers/Encounter/encounterNotActiveFunction';
-import { setPatientDataWaitingForNurseTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForNurse';
-
+import { setPatientDataWaitingForNurseTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForNurseTableRows';
+import { setPatientDataWaitingForDoctorTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForDoctorTableRows';
 export const emergencyTabs = [
   {
     tabName: 'Waiting for nurse',
@@ -16,15 +16,19 @@ export const emergencyTabs = [
     statuses: ['arrived'],
     extendedStatuses: ['waiting-for-nurse'],
   },
-  // {
-  //   tabName: 'Waiting for doctor',
-  //   id: 'waiting_for_doctor',
-  //   mode: 'hide',
-  //   count: 0,
-  //   tabValue: 1,
-  //   activeAction: encounterActiveFunction,
-  //   notActiveAction: encounterNotActiveFunction,
-  // },
+  {
+    tabName: 'Waiting for doctor',
+    id: 'waiting_for_doctor',
+    mode: 'hide',
+    count: 0,
+    tabValue: 1,
+    sort: '-priority,date,service-type',
+    statuses: ['triaged'],
+    extendedStatuses: ['waiting_for_doctor'],
+    activeAction: encounterActiveFunction,
+    notActiveAction: encounterNotActiveFunction,
+    tableFunction: setPatientDataWaitingForDoctorTableRows,
+  },
   // {
   //   name: 'Waiting for Xray',
   //   id: 'waiting_for_xray',
