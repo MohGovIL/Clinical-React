@@ -76,7 +76,8 @@ export const setPatientDataWaitingForNurseTableRows = (
             },
             text_color: '#076ce9',
             padding: 'default',
-            defaultValue: encounter.status,
+            defaultValue:
+              encounter.extensionSecondaryStatus || encounter.status,
             options,
             align: 'center',
             background_color: '#eaf7ff',
