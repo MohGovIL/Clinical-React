@@ -42,7 +42,7 @@ const EncounterSheet = ({
   ];
 
   const handleCloseClick = () => {
-    history.push(`${verticalName}/PatientTracking`);
+    history.push(`/${verticalName}/PatientTracking`);
   };
 
   return (
