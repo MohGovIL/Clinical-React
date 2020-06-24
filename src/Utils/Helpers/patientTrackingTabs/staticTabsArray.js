@@ -1,5 +1,5 @@
-import { emergencyTabs } from 'Utils/Helpers/Emergency/getStaticTabs';
-import { imagingTabs } from 'Utils/Helpers/Imaging/getStaticTabs';
+import { emergencyTabs } from 'Components/Emergency/getStaticTabs';
+import { imagingTabs } from 'Components/Imaging/getStaticTabs';
 import { getTabs } from 'Utils/Helpers/patientTrackingTabs/getTabs';
 
 export const getStaticTabsArray = (verticalName) => {
