@@ -112,7 +112,7 @@ export const setPatientDataWaitingForNurseTableRows = (
           row.push({
             padding: 'default',
             align: 'center',
-            label: moment.utc(encounter.startTime).format('LT'),
+            label: moment.utc(encounter.extensionStatusUpdateDate).format('LT'),
           });
           break;
         default:

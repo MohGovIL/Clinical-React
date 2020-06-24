@@ -27,7 +27,7 @@ const normalizeFhirEncounter = (encounter) => {
         extensionArrivalWay = extension.valueString;
       if (extension.url.includes('secondaryStatus'))
         extensionSecondaryStatus = extension.valueString;
-      if (examination.url.includes('statusUpdateDate'))
+      if (extension.url.includes('statusUpdateDate'))
         extensionStatusUpdateDate = extension.valueDateTime;
     });
   }
