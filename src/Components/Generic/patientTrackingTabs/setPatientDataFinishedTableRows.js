@@ -1,6 +1,6 @@
 import moment from 'moment';
 import 'moment/locale/he';
-import { goToEncounterSheet } from '../../../Utils/Helpers/goTo/goToEncounterSheet';
+import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from './tableHeaders';
 
 // סיימו טיפול
