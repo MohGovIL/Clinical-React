@@ -21,7 +21,7 @@ import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 import Grid from '@material-ui/core/Grid';
 import { useHistory } from 'react-router-dom';
-import isAllowed from '../../../../Utils/Helpers/isAllowed';
+import isAllowed from 'Utils/Helpers/isAllowed';
 
 const PatientDataBlock = ({
   encounter,
