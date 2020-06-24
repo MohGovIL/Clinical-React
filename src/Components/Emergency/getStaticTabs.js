@@ -2,6 +2,7 @@ import { encounterActiveFunction } from 'Utils/Helpers/Encounter/encounterActive
 import { encounterNotActiveFunction } from 'Utils/Helpers/Encounter/encounterNotActiveFunction';
 import { setPatientDataWaitingForNurseTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForNurseTableRows';
 import { setPatientDataWaitingForDoctorTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForDoctorTableRows';
+import { setPatientDataWaitingForXrayTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForXrayTableRows';
 export const emergencyTabs = [
   {
     tabName: 'Waiting for nurse',
@@ -12,7 +13,7 @@ export const emergencyTabs = [
     activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataWaitingForNurseTableRows,
-    sort: '-priority,date,service-type',
+    sort: '-priority,status-update-date,service-type',
     statuses: ['arrived'],
     extendedStatuses: ['waiting-for-nurse'],
   },
@@ -22,24 +23,27 @@ export const emergencyTabs = [
     mode: 'hide',
     count: 0,
     tabValue: 1,
-    sort: '-priority,date,service-type',
+    sort: '-priority,status-update-date,service-type',
     statuses: ['triaged'],
     extendedStatuses: ['waiting_for_doctor'],
     activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataWaitingForDoctorTableRows,
   },
+  {
+    tabName: 'Waiting for Xray',
+    id: 'waiting_for_xray',
+    mode: 'hide',
+    count: 0,
+    tabValue: 2,
+    sort: '-priority,status-update-date,service-type',
+    extendedStatuses: ['waiting_for_xray'],
+    activeAction: encounterActiveFunction,
+    notActiveAction: encounterNotActiveFunction,
+    tableFunction: setPatientDataWaitingForXrayTableRows,
+  },
   // {
-  //   name: 'Waiting for Xray',
-  //   id: 'waiting_for_xray',
-  //   mode: 'hide',
-  //   count: 0,
-  //   tabValue: 2,
-  //   activeAction: encounterActiveFunction,
-  //   notActiveAction: encounterNotActiveFunction,
-  // },
-  // {
-  //   name: 'Waiting for release',
+  //   tabName: 'Waiting for release',
   //   id: 'waiting_for_release',
   //   mode: 'hide',
   //   count: 0,
@@ -48,7 +52,7 @@ export const emergencyTabs = [
   //   notActiveAction: encounterNotActiveFunction,
   // },
   // {
-  //   name: 'Finished visit',
+  //   tabName: 'Finished visit',
   //   id: 'finished_visit',
   //   mode: 'hide',
   //   count: 0,
