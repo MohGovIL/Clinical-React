@@ -93,7 +93,13 @@ const EscortPatient = ({
         <Title
           fontSize={'18px'}
           color={'#000b40'}
-          label={t('Accompanying patient')}
+          label={t(
+            `${
+              isArrivalWay === '1'
+                ? 'Patient arrival way '
+                : 'Accompanying patient'
+            }`,
+          )}
           bold
         />
         <StyledDivider variant={'fullWidth'} />

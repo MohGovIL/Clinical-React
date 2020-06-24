@@ -90,6 +90,7 @@ const DrawThisTable = ({
             functionParams: {
               facility: store.getState().settings.facility,
               appointment: fhirappointment,
+              patient: { id: patient.id },
             },
           });
           gotToPatientAdmission(encounterData, patient, history);
@@ -142,7 +143,7 @@ const DrawThisTable = ({
   };
 
   const requestValueSet = (valueSet) => {
-    if (!valueSet) {
+    if (!valueSet.data) {
       return;
     }
     const {
