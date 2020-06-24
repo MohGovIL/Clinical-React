@@ -4,6 +4,7 @@ import { setPatientDataWaitingForNurseTableRows } from 'Components/Generic/patie
 import { setPatientDataWaitingForDoctorTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForDoctorTableRows';
 import { setPatientDataWaitingForXrayTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForXrayTableRows';
 import { setPatientDataWaitingForReleaseTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataWaitingForReleaseTableRows';
+import { setPatientDataFinishedVisitTableRows } from 'Components/Generic/patientTrackingTabs/setPatientDataFinishedVisitTableRows';
 export const emergencyTabs = [
   {
     tabName: 'Waiting for nurse',
@@ -55,13 +56,16 @@ export const emergencyTabs = [
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataWaitingForReleaseTableRows,
   },
-  // {
-  //   tabName: 'Finished visit',
-  //   id: 'finished_visit',
-  //   mode: 'hide',
-  //   count: 0,
-  //   tabValue: 4,
-  //   activeAction: encounterActiveFunction,
-  //   notActiveAction: encounterNotActiveFunction,
-  // },
+  {
+    tabName: 'Finished visit',
+    id: 'finished_visit',
+    mode: 'hide',
+    count: 0,
+    tabValue: 4,
+    sort: 'status-update-date,-priority,service-type',
+    statuses: ['finished'],
+    activeAction: encounterActiveFunction,
+    notActiveAction: encounterNotActiveFunction,
+    tableFunction: setPatientDataFinishedVisitTableRows,
+  },
 ];
