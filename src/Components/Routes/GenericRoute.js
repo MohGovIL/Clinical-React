@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 import EncounterSheet from 'Components/Generic/EncounterSheet';
 import PatientAdmission from 'Components/Generic/PatientAdmission';
+import PatientTracking from 'Components/Generic/PatientTracking';
 const GenericRoute = ({ isAuth }) => {
   return (
     <Switch>
@@ -18,6 +19,12 @@ const GenericRoute = ({ isAuth }) => {
         exact
         path={`${baseRoutePath()}/generic/patientAdmission`}
         component={PatientAdmission}
+        isAuth={isAuth}
+      />
+      <PrivateRoute
+        exact
+        path={`${baseRoutePath()}/generic/patientTracking`}
+        component={PatientTracking}
         isAuth={isAuth}
       />
     </Switch>
