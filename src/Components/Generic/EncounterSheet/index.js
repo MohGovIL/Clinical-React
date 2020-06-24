@@ -28,7 +28,7 @@ const EncounterSheet = ({
   );
   const allBreadcrumbs = [
     {
-      text: t('Patient Admission'),
+      text: t('Encounter sheet'),
       separator: 'NavigateNextIcon',
       url: '#',
     },
