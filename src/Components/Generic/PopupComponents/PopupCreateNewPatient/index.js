@@ -39,6 +39,7 @@ const PopupCreateNewPatient = ({
   formatDate,
   facility,
   authorizationACO,
+  hideAppointment,
 }) => {
   const { t } = useTranslation();
 
@@ -606,15 +607,17 @@ const PopupCreateNewPatient = ({
       onClickHandler: patientAdmissionAction, //user function
       other: typeSubmitForButton,
     },
-    {
+  ];
+  if (hideAppointment !== '1') {
+    bottomButtonsData.push({
       label: t('Create appointment'),
       variant: 'contained',
       color: 'primary',
       mode: formButtonCreatApp,
       onClickHandler: handlePopupClose, //user function
       other: { tabIndex: 12 },
-    },
-  ];
+    });
+  }
 
   const PopupTextFieldOpts = {
     color: 'primary',
@@ -1104,6 +1107,7 @@ const mapStateToProps = (state) => {
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     facility: state.settings.facility,
+    hideAppointment: state.settings.clinikal.clinikal_hide_appoitments,
   };
 };
 
