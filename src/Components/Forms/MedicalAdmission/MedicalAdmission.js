@@ -1,7 +1,9 @@
 //MedicalAdmission
 
 import { connect } from 'react-redux';
-import React from 'react';
+import React, { useState } from 'react';
+import VisitDetails from '../../Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
+import { FormContext, useForm } from 'react-hook-form';
 
 const MedicalAdmission = ({
   patient,
@@ -12,7 +14,36 @@ const MedicalAdmission = ({
   verticalName,
   permission,
 }) => {
-  return <React.Fragment>MedicalAdmission - {permission}</React.Fragment>;
+  const methods = useForm({
+    mode: 'onBlur',
+    submitFocusError: true,
+  });
+  const [requiredErrors, setRequiredErrors] = useState({
+    selectTest: '',
+    commitmentAndPaymentReferenceForPaymentCommitment: '',
+    commitmentAndPaymentCommitmentDate: '',
+    commitmentAndPaymentCommitmentValidity: '',
+    commitmentAndPaymentDoctorsName: '',
+    commitmentAndPaymentDoctorsLicense: '',
+    ReferralFile: '',
+    CommitmentFile: '',
+  });
+
+  return (
+    <React.Fragment>
+      MedicalAdmission - {permission}
+        <FormContext {...methods} requiredErrors={requiredErrors}>
+          <VisitDetails
+            reasonCodeDetails={encounter.extensionReasonCodeDetails}
+            examination={encounter.examination}
+            examinationCode={encounter.examinationCode}
+            serviceType={encounter.serviceType}
+            serviceTypeCode={encounter.serviceTypeCode}
+            priority={encounter.priority}
+          />
+        </FormContext>
+    </React.Fragment>
+  );
 };
 
 const mapStateToProps = (state) => {
