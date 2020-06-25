@@ -5,13 +5,13 @@ import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHea
 
 // ממתינים לצילום
 
-export const setPatientDataWaitingForXrayTableRows = (
+export const setPatientDataWaitingForXrayTableRows = function (
   patients,
   encounters,
   options,
   history,
   mode,
-) => {
+) {
   let result = [];
   let rows = [];
   const tableHeadersId = [
@@ -83,7 +83,7 @@ export const setPatientDataWaitingForXrayTableRows = (
             background_color: '#eaf7ff',
             icon_color: '#076ce9',
             langDirection: 'rtl',
-            mode: 'view',
+            mode: this.mode,
           });
           break;
         case 'Cell phone':

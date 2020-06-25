@@ -270,6 +270,9 @@ const EncounterStates = {
     }
     return CRUDOperations('search', `${params.url}${searchString}`);
   },
+  patchEncounter: (params) => {
+    return CRUDOperations('patch', `${params.url}/${params.encountersId}`);
+  },
 };
 
 export default function Encounter(action = null, params = null) {

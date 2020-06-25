@@ -5,13 +5,13 @@ import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHea
 
 // ממתינים לרופא\ה
 
-export const setPatientDataWaitingForDoctorTableRows = (
+export const setPatientDataWaitingForDoctorTableRows = function (
   patients,
   encounters,
   options,
   history,
   mode,
-) => {
+) {
   let result = [];
   let rows = [];
   const tableHeadersId = [
@@ -83,7 +83,7 @@ export const setPatientDataWaitingForDoctorTableRows = (
             background_color: '#eaf7ff',
             icon_color: '#076ce9',
             langDirection: 'rtl',
-            mode: 'view',
+            mode: this.mode,
           });
           break;
         case 'Cell phone':
