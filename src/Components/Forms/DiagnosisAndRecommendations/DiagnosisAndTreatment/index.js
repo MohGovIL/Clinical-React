@@ -12,21 +12,21 @@ const DiagnosisAndTreatment = () => {
     <StyledFormGroup>
       <Title label={t('Diagnosis and treatment')} fontSize='22px' bold />
       <Divider />
-      <Grid container direction='row'>
+      <Grid container direction='row' justify='flex-start'>
         <CustomizedTextField label={t('Findings details')} />
-        <StyledButton color='primary' variant='outlined'>
+        <StyledButton color='primary' variant='outlined' size='small'>
           {t('Select template')}
         </StyledButton>
       </Grid>
-      <Grid container direction='row'>
+      <Grid container direction='row' justify='flex-start'>
         <CustomizedTextField label={t('Diagnosis details')} />
-        <StyledButton color='primary' variant='outlined'>
+        <StyledButton color='primary' variant='outlined' size='small'>
           {t('Select template')}
         </StyledButton>
       </Grid>
-      <Grid container direction='row'>
+      <Grid container direction='row' justify='flex-start'>
         <CustomizedTextField label={t('Treatment details')} />
-        <StyledButton color='primary' variant='outlined'>
+        <StyledButton color='primary' variant='outlined' size='small'>
           {t('Select template')}
         </StyledButton>
       </Grid>
