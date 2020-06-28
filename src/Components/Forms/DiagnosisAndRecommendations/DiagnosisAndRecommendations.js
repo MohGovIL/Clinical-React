@@ -15,7 +15,7 @@ const DiagnosisAndRecommendations = ({
   verticalName,
   permission,
 }) => {
-  return DiagnosisAndTreatment;
+  return <DiagnosisAndTreatment />;
 };
 
 const mapStateToProps = (state) => {
