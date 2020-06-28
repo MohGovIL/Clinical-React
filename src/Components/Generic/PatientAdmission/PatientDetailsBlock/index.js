@@ -95,7 +95,6 @@ const PatientDetailsBlock = ({
           );
         }
 
-        //Updating/Creating relatedPerson
         if (encounterData.appointment) {
           APIsArray.push(
             FHIR('Appointment', 'doWork', {
@@ -110,41 +109,6 @@ const PatientDetailsBlock = ({
               },
             }),
           );
-        }
-        if (data.isEscorted) {
-          let relatedPersonParams = {};
-          if (encounterData.relatedPerson) {
-            if (data.escortName) relatedPersonParams['name'] = data.escortName;
-            if (data.escortMobilePhone)
-              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
-            APIsArray.push(
-              FHIR('RelatedPerson', 'doWork', {
-                functionName: 'updateRelatedPerson',
-                functionParams: {
-                  relatedPersonParams,
-                  relatedPersonId: encounterData.relatedPerson,
-                },
-              }),
-            );
-          } else {
-            if (data.escortName) {
-              relatedPersonParams['name'] = data.escortName;
-            }
-            if (data.escortMobilePhone) {
-              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
-            }
-            if (patientData && patientData.id) {
-              relatedPersonParams['patient'] = patientData.id;
-            }
-            APIsArray.push(
-              FHIR('RelatedPerson', 'doWork', {
-                functionName: 'createRelatedPerson',
-                functionParams: {
-                  relatedPersonParams,
-                },
-              }),
-            );
-          }
         }
         let item = [];
         if (configuration.clinikal_pa_commitment_form === '1') {
@@ -255,6 +219,42 @@ const PatientDetailsBlock = ({
             }),
           );
         }
+        //Updating/Creating relatedPerson
+        if (data.isEscorted) {
+          let relatedPersonParams = {};
+          if (encounterData.relatedPerson) {
+            if (data.escortName) relatedPersonParams['name'] = data.escortName;
+            if (data.escortMobilePhone)
+              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+            APIsArray.push(
+              FHIR('RelatedPerson', 'doWork', {
+                functionName: 'updateRelatedPerson',
+                functionParams: {
+                  relatedPersonParams,
+                  relatedPersonId: encounterData.relatedPerson,
+                },
+              }),
+            );
+          } else {
+            if (data.escortName) {
+              relatedPersonParams['name'] = data.escortName;
+            }
+            if (data.escortMobilePhone) {
+              relatedPersonParams['mobilePhone'] = data.escortMobilePhone;
+            }
+            if (patientData && patientData.id) {
+              relatedPersonParams['patient'] = patientData.id;
+            }
+            APIsArray.push(
+              FHIR('RelatedPerson', 'doWork', {
+                functionName: 'createRelatedPerson',
+                functionParams: {
+                  relatedPersonParams,
+                },
+              }),
+            );
+          }
+        }
         const promises = await Promise.all(APIsArray);
         const encounter = { ...encounterData };
         encounter.examinationCode = data.examinationCode;
@@ -269,7 +269,7 @@ const PatientDetailsBlock = ({
         if (data.isEscorted) {
           if (!encounter.relatedPerson) {
             const NewRelatedPerson = normalizeFhirRelatedPerson(
-              promises[1].data,
+              promises[APIsArray.length - 1].data,
             );
             encounter['relatedPerson'] = NewRelatedPerson.id;
           }
