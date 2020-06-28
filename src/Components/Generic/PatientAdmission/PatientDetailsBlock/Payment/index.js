@@ -46,7 +46,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
     setCommitmentAndPaymentTabValue(newValue);
   };
 
-  const [paymentAmount, setPaymentAmount] = useState('0');
+  const [paymentAmount, setPaymentAmount] = useState('');
   const [
     commitmentAndPaymentCommitmentDate,
     setCommitmentAndPaymentCommitmentDate,

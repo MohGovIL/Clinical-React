@@ -90,6 +90,7 @@ const DrawThisTable = ({
             functionParams: {
               facility: store.getState().settings.facility,
               appointment: fhirappointment,
+              patient: { id: patient.id },
             },
           });
           gotToPatientAdmission(encounterData, patient, history);
@@ -142,7 +143,7 @@ const DrawThisTable = ({
   };
 
   const requestValueSet = (valueSet) => {
-    if (!valueSet) {
+    if (!valueSet.data) {
       return;
     }
     const {
@@ -173,14 +174,17 @@ const DrawThisTable = ({
       });
       const encounterStat = requestValueSet(encounterStatPromise);
       //const appointmentStatPromise = await getValueSet("appointment_statuses");
-      const appointmentStatPromise = await FHIR('ValueSet', 'doWork', {
-        functionName: 'getValueSet',
-        functionParams: { id: 'appointment_statuses' },
-      });
-      const appointmentStat = requestValueSet(appointmentStatPromise);
+      if (hideAppointments !== '1') {
+        const appointmentStatPromise = await FHIR('ValueSet', 'doWork', {
+          functionName: 'getValueSet',
+          functionParams: { id: 'appointment_statuses' },
+        });
+        const appointmentStat = requestValueSet(appointmentStatPromise);
+        if (!patientTrackingStatuses)
+          setPatientTrackingStatuses(appointmentStat);
+      }
 
       if (!encounterStatuses) setEncounterStatuses(encounterStat);
-      if (!patientTrackingStatuses) setPatientTrackingStatuses(appointmentStat);
       //setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
 
       const FHIRNextAppointment = await FHIR('Appointment', 'doWork', {

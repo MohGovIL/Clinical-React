@@ -17,6 +17,7 @@ import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
 import {
   getCellPhoneRegexPattern,
   getEmailRegexPattern,
+  getOnlyLettersRegexPattern,
 } from 'Utils/Helpers/validation/patterns';
 import { normalizeValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
 import { emptyArrayAll } from 'Utils/Helpers/emptyArray';
@@ -39,6 +40,7 @@ const PopupCreateNewPatient = ({
   formatDate,
   facility,
   authorizationACO,
+  hideAppointment,
 }) => {
   const { t } = useTranslation();
 
@@ -606,15 +608,17 @@ const PopupCreateNewPatient = ({
       onClickHandler: patientAdmissionAction, //user function
       other: typeSubmitForButton,
     },
-    {
+  ];
+  if (hideAppointment !== '1') {
+    bottomButtonsData.push({
       label: t('Create appointment'),
       variant: 'contained',
       color: 'primary',
       mode: formButtonCreatApp,
       onClickHandler: handlePopupClose, //user function
       other: { tabIndex: 12 },
-    },
-  ];
+    });
+  }
 
   const PopupTextFieldOpts = {
     color: 'primary',
@@ -760,8 +764,24 @@ const PopupCreateNewPatient = ({
                   required
                   onInvalid={handlerOnInvalidField}
                   onInput={handlerOnInvalidField}
-                  error={!errorRequired.firstName ? false : true}
-                  helperText={errorRequired.firstName}
+                  rules={{
+                    validate: (value) => {
+                      return getOnlyLettersRegexPattern().test(value) ? false : true;
+                    }
+                  }}
+                  error={
+                    errors.firstName ||
+                    (!errorRequired.firstName ? false : true)
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    errors.firstName
+                      ? t('Invalid first name entered')
+                      : errorRequired.firstName
+                      ? errorRequired.firstName
+                      : null
+                  }
                   title={''}
                   inputProps={{ tabIndex: 3 }}
                   InputProps={{
@@ -935,8 +955,24 @@ const PopupCreateNewPatient = ({
                   required
                   onInvalid={handlerOnInvalidField}
                   onInput={handlerOnInvalidField}
-                  error={!errorRequired.lastName ? false : true}
-                  helperText={errorRequired.lastName}
+                  rules={{
+                    validate: (value) => {
+                      return getOnlyLettersRegexPattern().test(value) ? false : true;
+                    }
+                  }}
+                  error={
+                    errors.lastName ||
+                    (!errorRequired.lastName ? false : true)
+                      ? true
+                      : false
+                  }
+                  helperText={
+                    errors.lastName
+                      ? t('Invalid family name entered')
+                      : errorRequired.lastName
+                      ? errorRequired.lastName
+                      : null
+                  }
                   title={''}
                   inputProps={{ tabIndex: 4 }}
                   InputProps={{
@@ -1104,6 +1140,7 @@ const mapStateToProps = (state) => {
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     facility: state.settings.facility,
+    hideAppointment: state.settings.clinikal.clinikal_hide_appoitments,
   };
 };
 
