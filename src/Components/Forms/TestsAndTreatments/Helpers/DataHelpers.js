@@ -22,26 +22,26 @@ export const thickenTheConstantIndicators = ({
         case 'height':
           {
             dataset['type'] = 'cm'; //get from system value set constants
-            dataset['value'] = height; //get from system value set constants
-            dataset['componentType'] = StyledConstantTextField;
-            dataset['handleOnChange'] = (e) =>
-              ComponentsViewHelpers.handleWeightChange({
+            dataset.value = height; //get from system value set constants
+            dataset.componentType = StyledConstantTextField;
+            dataset.handleOnChange = (e) =>
+              ComponentsViewHelpers.handleConstantVariablesChange({
                 value: e.target.value,
                 valid: e.target.validity.valid,
-                weight: weight,
+                current: weight,
                 setterFunction: setHeight,
               });
           }
           break;
         case 'weight': {
           dataset['type'] = 'kg'; //get from system value set constants
-          dataset['value'] = weight; //get from system value set constants
-          dataset['componentType'] = StyledConstantTextField;
-          dataset['handleOnChange'] = (e) =>
-            ComponentsViewHelpers.handleHeightChange({
+          dataset.value = weight; //get from system value set constants
+          dataset.componentType = StyledConstantTextField;
+          dataset.handleOnChange = (e) =>
+            ComponentsViewHelpers.handleConstantVariablesChange({
               value: e.target.value,
               valid: e.target.validity.valid,
-              height: height,
+              current: height,
               setterFunction: setWeight,
             });
         }
@@ -53,7 +53,7 @@ export const thickenTheConstantIndicators = ({
 };
 
 export const thickenTheVariantIndicators = ({
-  constantIndicatorsNormalaizedData,
+  variantIndicatorsNormalaizedData,
   userName,
   fever,
   pressure,
@@ -71,120 +71,120 @@ export const thickenTheVariantIndicators = ({
   setPulse,
 }) => {
   let variantIndicators = [];
+  if (!variantIndicatorsNormalaizedData) return [];
   for (let i = 0; i < userName.length; i++) {
-    variantIndicators.push([
-      {
-        label:
-          userName && userName[i] && userName[i]['name']
-            ? userName[i]['name']
-            : '',
-        componentType: LabelWithHourComponent,
-        value:
-          userName && userName[i] && userName[i]['loggedHour']
-            ? userName[i]['loggedHour']
-            : '',
-      },
-      {
-        label: 'Pressure',
-        type: 'mmHg',
-        componentType: StyledVariantTextField,
-        pattern: '[1-9]{1,3}|[1-9]{1,3}[/]|^[0-9]\\d{2}\\/\\d{1}$',
-        value: pressure && pressure[i] ? pressure[i] : '',
-        handleOnChange: (e) =>
-          ComponentsViewHelpers.handlePressureChange({
-            value: e.target.value,
-            valid: e.target.validity.valid,
-            height: pressure,
-            setterFunction: setPressure,
-            id: i,
-          }),
-      },
-      {
-        label: 'Pulse',
-        componentType: StyledVariantTextField,
-        pattern: '[1-9]{1,2}',
-        value: pulse && pulse[i] ? pulse[i] : '',
-        handleOnChange: (e) =>
-          ComponentsViewHelpers.handlePulseChange({
-            value: e.target.value,
-            valid: e.target.validity.valid,
-            height: pulse,
-            pulse: setPulse,
-            id: i,
-          }),
-      },
-      {
-        label: 'Fever',
-        componentType: StyledVariantTextField,
-        pattern: '[1-9]{1,2}[%]',
-        value: fever && fever[i] ? fever[i] : '',
-        handleOnChange: (e) =>
-          ComponentsViewHelpers.handleFeverChange({
-            value: e.target.value,
-            valid: e.target.validity.valid,
-            fever: fever,
-            setterFunction: setFever,
-            id: i,
-          }),
-      },
-      {
-        label: 'Saturation',
-        componentType: StyledVariantTextField,
-        pattern: '[1-9]{1,3}[%]',
-        value: saturation && saturation[i] ? saturation[i] : '',
-        handleOnChange: (e) =>
-          ComponentsViewHelpers.handleSaturationChange({
-            value: e.target.value,
-            valid: e.target.validity.valid,
-            saturation: saturation,
-            setterFunction: setSaturation,
-            id: i,
-          }),
-      },
-      {
-        label: 'Breaths per minute',
-        componentType: StyledVariantTextField,
-        pattern: '[1-9]{1,2}',
-        value: breathsPerMin && breathsPerMin[i] ? breathsPerMin[i] : '',
-        handleOnChange: (e) =>
-          ComponentsViewHelpers.handleBreathsPerSecChange({
-            value: e.target.value,
-            valid: e.target.validity.valid,
-            breathsPerSec: breathsPerMin,
-            setterFunction: setBreathsPerMin,
-            id: i,
-          }),
-      },
-      {
-        label: 'Pain level',
-        componentType: StyledVariantTextField,
-        pattern: '[1-9]{1,2}',
-        value: painLevel && painLevel[i] ? painLevel[i] : '',
-        handleOnChange: (e) =>
-          ComponentsViewHelpers.handlePainLevelChange({
-            value: e.target.value,
-            valid: e.target.validity.valid,
-            breathsPerSec: painLevel,
-            setterFunction: setPainLevel,
-            id: i,
-          }),
-      },
-      {
-        label: 'Blood sugar',
-        componentType: StyledVariantTextField,
-        pattern: '[1-9]{1,2}',
-        value: bloodSugar && bloodSugar[i] ? bloodSugar[i] : '',
-        handleOnChange: (e) =>
-          ComponentsViewHelpers.handleBloodSugerChange({
-            value: e.target.value,
-            valid: e.target.validity.valid,
-            bloodSugar: bloodSugar,
-            setterFunction: setBloodSugar,
-            id: i,
-          }),
-      },
-    ]);
-  }
+    let variantIndicatorsNormalaizedDataTemp = JSON.parse(
+      JSON.stringify(variantIndicatorsNormalaizedData),
+    );
 
+    /*let variantIndicatorsNormalaizedDataTemp = [
+      ...variantIndicatorsNormalaizedData,
+    ];*/
+
+    for (const [key, dataset] of Object.entries(
+      variantIndicatorsNormalaizedDataTemp,
+    )) {
+      switch (dataset.label) {
+        case 'userName':
+          dataset.componentType = LabelWithHourComponent;
+          dataset.label =
+            userName && userName[i] && userName[i]['name']
+              ? userName[i]['name']
+              : '';
+
+          dataset.value =
+            userName && userName[i] && userName[i]['loggedHour']
+              ? userName[i]['loggedHour']
+              : '';
+          break;
+        case 'Pressure':
+          dataset.value = pressure && pressure[i] ? pressure[i] : '';
+          dataset.componentType = StyledVariantTextField;
+          dataset.handleOnChange = (e) =>
+            ComponentsViewHelpers.handleVariantColumnChange({
+              value: e.target.value,
+              valid: e.target.validity.valid,
+              parentArr: pressure,
+              setterFunction: setPressure,
+              id: i,
+            });
+          break;
+        case 'Pulse':
+          dataset.value = pulse && pulse[i] ? pulse[i] : '';
+          dataset.componentType = StyledVariantTextField;
+          dataset.handleOnChange = (e) =>
+            ComponentsViewHelpers.handleVariantColumnChange({
+              value: e.target.value,
+              valid: e.target.validity.valid,
+              parentArr: pulse,
+              setterFunction: setPulse,
+              id: i,
+            });
+          break;
+        case 'Fever':
+          dataset.value = fever && fever[i] ? fever[i] : '';
+          dataset.componentType = StyledVariantTextField;
+          dataset.handleOnChange = (e) =>
+            ComponentsViewHelpers.handleVariantColumnChange({
+              value: e.target.value,
+              valid: e.target.validity.valid,
+              parentArr: fever,
+              setterFunction: setFever,
+              id: i,
+            });
+          break;
+        case 'Saturation':
+          dataset.value = saturation && saturation[i] ? saturation[i] : '';
+          dataset.componentType = StyledVariantTextField;
+          dataset.handleOnChange = (e) =>
+            ComponentsViewHelpers.handleVariantColumnChange({
+              value: e.target.value,
+              valid: e.target.validity.valid,
+              parentArr: saturation,
+              setterFunction: setSaturation,
+              id: i,
+            });
+          break;
+        case 'Breaths per minute':
+          dataset.value =
+            breathsPerMin && breathsPerMin[i] ? breathsPerMin[i] : '';
+          dataset.componentType = StyledVariantTextField;
+          dataset.handleOnChange = (e) =>
+            ComponentsViewHelpers.handleVariantColumnChange({
+              value: e.target.value,
+              valid: e.target.validity.valid,
+              parentArr: breathsPerMin,
+              setterFunction: setBreathsPerMin,
+              id: i,
+            });
+          break;
+        case 'Pain level':
+          dataset.value = painLevel && painLevel[i] ? painLevel[i] : '';
+          dataset.componentType = StyledVariantTextField;
+          dataset.handleOnChange = (e) =>
+            ComponentsViewHelpers.handleVariantColumnChange({
+              value: e.target.value,
+              valid: e.target.validity.valid,
+              parentArr: painLevel,
+              setterFunction: setPainLevel,
+              id: i,
+            });
+          break;
+        case 'Blood sugar':
+          dataset.value = bloodSugar && bloodSugar[i] ? bloodSugar[i] : '';
+          dataset.componentType = StyledVariantTextField;
+          dataset.handleOnChange = (e) =>
+            ComponentsViewHelpers.handleVariantColumnChange({
+              value: e.target.value,
+              valid: e.target.validity.valid,
+              parentArr: bloodSugar,
+              setterFunction: setBloodSugar,
+              id: i,
+            });
+          break;
+      }
+    }
+    variantIndicators.push(variantIndicatorsNormalaizedDataTemp);
+  }
   return variantIndicators;
 };

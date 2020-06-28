@@ -40,7 +40,7 @@ export const StyledVariantTextField = styled(TextField)`
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
-    text-align: right;
+    text-align: center;
   }
   input {
     text-align: center;

@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 import ConstantIndicators from './ConstantIndicators';
 import VariantIndicators from './VariantIndicators';
 import * as DataHelpers from './Helpers/DataHelpers';
-import { StyledTestsAndTreatments } from './Style';
-
+import { StyledTestsAndTreatments, StyledVariantTextField } from './Style';
+import LabelWithHourComponent from './LabelWithHourComponent';
 const TestsAndTreatments = ({
   patient,
   encounter,
@@ -134,7 +134,46 @@ const TestsAndTreatments = ({
     80,
   ]);
   const constantIndicatorsNormalaizedData = [];
-  const variantIndicatorsNormalaizedData = [];
+  const variantIndicatorsNormalaizedData = [
+    {
+      label: 'userName',
+    },
+    {
+      label: 'Pressure',
+      type: 'mmHg',
+      pattern: '[1-9]{1,3}|[1-9]{1,3}[/]|^[0-9]\\d{2}\\/\\d{1}$',
+    },
+    {
+      label: 'Pulse',
+
+      pattern: '[1-9]{1,2}',
+    },
+    {
+      label: 'Fever',
+      pattern:
+        '[1-9]{1,2} | [1-9]{1,2}[.] | [1-9]{1,2}[.]| ^[0-9]\\d{2}\\.\\d{1}$',
+    },
+    {
+      label: 'Saturation',
+
+      pattern: '[1-9]{1,2}',
+    },
+    {
+      label: 'Breaths per minute',
+
+      pattern: '[1-9]{1,2}',
+    },
+    {
+      label: 'Pain level',
+
+      pattern: '[1-9]{1,2}',
+    },
+    {
+      label: 'Blood sugar',
+
+      pattern: '[1-9]{1,2}',
+    },
+  ];
 
   const constantIndicatorsNormalizedData = {};
   constantIndicatorsNormalizedData['height'] = {
