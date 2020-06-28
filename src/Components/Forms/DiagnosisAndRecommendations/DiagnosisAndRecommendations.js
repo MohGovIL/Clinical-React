@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import React from 'react';
 import DiagnosisAndTreatment from './DiagnosisAndTreatment';
 import RecommendationsOnRelease from './RecommendationsOnRelease ';
+import DecisionOnRelease from './DecisionOnRelease';
 import StyledDiagnosisAndRecommendations from './Style';
-
+import { useForm, FormContext } from 'react-hook-form';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -15,10 +16,21 @@ const DiagnosisAndRecommendations = ({
   verticalName,
   permission,
 }) => {
+  const methods = useForm();
+  const { handleSubmit } = methods;
+
+  const onSubmit = (data) => {
+    console.log(JSON.stringify(data));
+  };
   return (
     <StyledDiagnosisAndRecommendations>
-      <DiagnosisAndTreatment />
-      <RecommendationsOnRelease />
+      <FormContext {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DiagnosisAndTreatment />
+          <RecommendationsOnRelease />
+          <DecisionOnRelease />
+        </form>
+      </FormContext>
     </StyledDiagnosisAndRecommendations>
   );
 };
