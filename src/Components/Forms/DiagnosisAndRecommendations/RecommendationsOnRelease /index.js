@@ -4,7 +4,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Divider, Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
-import { StyledButton } from 'Assets/Elements/CustomizedSelect/Style';
+import { StyledButton } from 'Assets/Elements/StyledButton';
 
 const RecommendationsOnRelease = () => {
   const { t } = useTranslation();
