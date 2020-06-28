@@ -17,7 +17,11 @@ const DiagnosisAndTreatment = () => {
         direction='row'
         justify='flex-start'
         alignItems='baseline'>
-        <CustomizedTextField label={t('Findings details')} width='45%' />
+        <CustomizedTextField
+          label={t('Findings details')}
+          width='45%'
+          multiline
+        />
         <StyledButton
           font-size='15px'
           width='113px'
@@ -33,7 +37,11 @@ const DiagnosisAndTreatment = () => {
         direction='row'
         justify='flex-start'
         alignItems='baseline'>
-        <CustomizedTextField label={t('Diagnosis details')} width='45%' />
+        <CustomizedTextField
+          label={t('Diagnosis details')}
+          width='45%'
+          multiline
+        />
         <StyledButton
           font-size='15px'
           width='113px'
@@ -49,7 +57,11 @@ const DiagnosisAndTreatment = () => {
         direction='row'
         justify='flex-start'
         alignItems='baseline'>
-        <CustomizedTextField label={t('Treatment details')} width='45%' />
+        <CustomizedTextField
+          label={t('Treatment details')}
+          width='45%'
+          multiline
+        />
         <StyledButton
           font-size='15px'
           width='113px'

@@ -2,8 +2,9 @@
 
 import { connect } from 'react-redux';
 import React from 'react';
-import Title from 'Assets/Elements/Title';
 import DiagnosisAndTreatment from './DiagnosisAndTreatment';
+import RecommendationsOnRelease from './RecommendationsOnRelease ';
+import StyledDiagnosisAndRecommendations from './Style';
 
 const DiagnosisAndRecommendations = ({
   patient,
@@ -14,7 +15,12 @@ const DiagnosisAndRecommendations = ({
   verticalName,
   permission,
 }) => {
-  return <DiagnosisAndTreatment />;
+  return (
+    <StyledDiagnosisAndRecommendations>
+      <DiagnosisAndTreatment />
+      <RecommendationsOnRelease />
+    </StyledDiagnosisAndRecommendations>
+  );
 };
 
 const mapStateToProps = (state) => {
