@@ -2,6 +2,9 @@
 
 import { connect } from 'react-redux';
 import React from 'react';
+import Title from 'Assets/Elements/Title';
+import { StyledFormGroup } from './Style';
+import DiagnosisAndTreatment from './DiagnosisAndTreatment';
 
 const DiagnosisAndRecommendations = ({
   patient,
@@ -12,9 +15,7 @@ const DiagnosisAndRecommendations = ({
   verticalName,
   permission,
 }) => {
-  return (
-    <React.Fragment>DiagnosisAndRecommendations - {permission}</React.Fragment>
-  );
+  return DiagnosisAndTreatment;
 };
 
 const mapStateToProps = (state) => {
