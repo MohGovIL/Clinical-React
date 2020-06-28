@@ -1,6 +1,6 @@
 import React from 'react';
 import Title from 'Assets/Elements/Title';
-import { StyledFormGroup } from '../Style';
+import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';

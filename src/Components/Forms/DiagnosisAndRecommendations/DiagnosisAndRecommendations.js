@@ -3,7 +3,6 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import Title from 'Assets/Elements/Title';
-import { StyledFormGroup } from './Style';
 import DiagnosisAndTreatment from './DiagnosisAndTreatment';
 
 const DiagnosisAndRecommendations = ({
