@@ -1,20 +1,28 @@
-import { StyledConstantHeaders } from './Style';
+import {
+  StyledConstantHeaders,
+  StyledForm,
+  StyledVarientIndicatorsTR,
+} from './Style';
 import React from 'react';
 
 import { useTranslation } from 'react-i18next';
 
 const VariantIndicators = ({ variantIndicators }) => {
   const { t } = useTranslation();
-  return (
-    <React.Fragment>
-      <StyledConstantHeaders>{t('Variable indicators')}</StyledConstantHeaders>
-      <hr />
-      {variantIndicators.map((indicatorLogged, index) => {
-        return (
-          <form key={index} autoComplete='off'>
-            <table>
-              <tbody>
-                <tr>
+  if (!variantIndicators) {
+    return null;
+  } else {
+    return (
+      <React.Fragment>
+        <StyledConstantHeaders>
+          {t('Variable indicators')}
+        </StyledConstantHeaders>
+        <hr />
+        <table>
+          <tbody>
+            {variantIndicators.map((indicatorLogged, index) => {
+              return (
+                <StyledVarientIndicatorsTR key={index}>
                   {indicatorLogged.map((value, index) => {
                     return (
                       <td key={index}>
@@ -30,13 +38,14 @@ const VariantIndicators = ({ variantIndicators }) => {
                       </td>
                     );
                   })}
-                </tr>
-              </tbody>
-            </table>
-          </form>
-        );
-      })}
-    </React.Fragment>
-  );
+                </StyledVarientIndicatorsTR>
+              );
+            })}
+          </tbody>
+        </table>
+        <StyledForm autoComplete='off'></StyledForm>
+      </React.Fragment>
+    );
+  }
 };
 export default VariantIndicators;

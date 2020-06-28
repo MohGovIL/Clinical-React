@@ -1,5 +1,5 @@
 //this array is created after normalization of data retrieved from FHIR
-import { StyledConstantTextField } from '../Style';
+import { StyledConstantTextField, StyledVariantTextField } from '../Style';
 import * as ComponentsViewHelpers from './ViewHelpers';
 import LabelWithHourComponent from '../LabelWithHourComponent';
 
@@ -8,43 +8,47 @@ export const thickenTheConstantIndicators = ({
   weight,
   setWeight,
   setHeight,
-  constantIndicatorsNormalaizedData,
+  constantIndicatorsNormalizedData,
 }) => {
-  let heightTemplateData = constantIndicatorsNormalaizedData['height'];
-  let weightemplateData = constantIndicatorsNormalaizedData['weight'];
+  let constantIndicators = [];
+  if (constantIndicatorsNormalizedData) {
+    let heightTemplateData = constantIndicatorsNormalizedData['height'];
+    let weightemplateData = constantIndicatorsNormalizedData['weight'];
 
-  const constantIndicators = [
-    {
-      label: 'Height',
-      id: 'height',
-      type: 'cm',
-      componentType: StyledConstantTextField,
-      pattern: '[1-9]{1,3}',
-      value: height,
-      handleOnChange: (e) =>
-        ComponentsViewHelpers.handleHeightChange({
-          value: e.target.value,
-          valid: e.target.validity.valid,
-          height: height,
-          setterFunction: setWeight,
-        }),
-    },
-    {
-      label: 'Weight',
-      id: 'weight',
-      componentType: StyledConstantTextField,
-      type: 'kg',
-      pattern: '[1-9]{1,3}|[1-9]{1,3}[.]|^[0-9]\\d{2}\\.\\d{1}$',
-      value: weight,
-      handleOnChange: (e) =>
-        ComponentsViewHelpers.handleWeightChange({
-          value: e.target.value,
-          valid: e.target.validity.valid,
-          weight: weight,
-          setterFunction: setHeight,
-        }),
-    },
-  ];
+    for (const [key, dataset] of Object.entries(
+      constantIndicatorsNormalizedData,
+    )) {
+      switch (key) {
+        case 'height':
+          {
+            dataset['type'] = 'cm'; //get from system value set constants
+            dataset['value'] = height; //get from system value set constants
+            dataset['componentType'] = StyledConstantTextField;
+            dataset['handleOnChange'] = (e) =>
+              ComponentsViewHelpers.handleWeightChange({
+                value: e.target.value,
+                valid: e.target.validity.valid,
+                weight: weight,
+                setterFunction: setHeight,
+              });
+          }
+          break;
+        case 'weight': {
+          dataset['type'] = 'kg'; //get from system value set constants
+          dataset['value'] = weight; //get from system value set constants
+          dataset['componentType'] = StyledConstantTextField;
+          dataset['handleOnChange'] = (e) =>
+            ComponentsViewHelpers.handleHeightChange({
+              value: e.target.value,
+              valid: e.target.validity.valid,
+              height: height,
+              setterFunction: setWeight,
+            });
+        }
+      }
+      constantIndicators.push(dataset);
+    }
+  }
   return constantIndicators;
 };
 
@@ -83,7 +87,7 @@ export const thickenTheVariantIndicators = ({
       {
         label: 'Pressure',
         type: 'mmHg',
-        componentType: StyledConstantTextField,
+        componentType: StyledVariantTextField,
         pattern: '[1-9]{1,3}|[1-9]{1,3}[/]|^[0-9]\\d{2}\\/\\d{1}$',
         value: pressure && pressure[i] ? pressure[i] : '',
         handleOnChange: (e) =>
@@ -92,12 +96,12 @@ export const thickenTheVariantIndicators = ({
             valid: e.target.validity.valid,
             height: pressure,
             setterFunction: setPressure,
-            id: 1,
+            id: i,
           }),
       },
       {
         label: 'Pulse',
-        componentType: StyledConstantTextField,
+        componentType: StyledVariantTextField,
         pattern: '[1-9]{1,2}',
         value: pulse && pulse[i] ? pulse[i] : '',
         handleOnChange: (e) =>
@@ -106,12 +110,12 @@ export const thickenTheVariantIndicators = ({
             valid: e.target.validity.valid,
             height: pulse,
             pulse: setPulse,
-            id: 1,
+            id: i,
           }),
       },
       {
         label: 'Fever',
-        componentType: StyledConstantTextField,
+        componentType: StyledVariantTextField,
         pattern: '[1-9]{1,2}[%]',
         value: fever && fever[i] ? fever[i] : '',
         handleOnChange: (e) =>
@@ -120,12 +124,12 @@ export const thickenTheVariantIndicators = ({
             valid: e.target.validity.valid,
             fever: fever,
             setterFunction: setFever,
-            id: 1,
+            id: i,
           }),
       },
       {
         label: 'Saturation',
-        componentType: StyledConstantTextField,
+        componentType: StyledVariantTextField,
         pattern: '[1-9]{1,3}[%]',
         value: saturation && saturation[i] ? saturation[i] : '',
         handleOnChange: (e) =>
@@ -134,12 +138,12 @@ export const thickenTheVariantIndicators = ({
             valid: e.target.validity.valid,
             saturation: saturation,
             setterFunction: setSaturation,
-            id: 1,
+            id: i,
           }),
       },
       {
         label: 'Breaths per minute',
-        componentType: StyledConstantTextField,
+        componentType: StyledVariantTextField,
         pattern: '[1-9]{1,2}',
         value: breathsPerMin && breathsPerMin[i] ? breathsPerMin[i] : '',
         handleOnChange: (e) =>
@@ -148,12 +152,12 @@ export const thickenTheVariantIndicators = ({
             valid: e.target.validity.valid,
             breathsPerSec: breathsPerMin,
             setterFunction: setBreathsPerMin,
-            id: 1,
+            id: i,
           }),
       },
       {
         label: 'Pain level',
-        componentType: StyledConstantTextField,
+        componentType: StyledVariantTextField,
         pattern: '[1-9]{1,2}',
         value: painLevel && painLevel[i] ? painLevel[i] : '',
         handleOnChange: (e) =>
@@ -162,12 +166,12 @@ export const thickenTheVariantIndicators = ({
             valid: e.target.validity.valid,
             breathsPerSec: painLevel,
             setterFunction: setPainLevel,
-            id: 1,
+            id: i,
           }),
       },
       {
         label: 'Blood sugar',
-        componentType: StyledConstantTextField,
+        componentType: StyledVariantTextField,
         pattern: '[1-9]{1,2}',
         value: bloodSugar && bloodSugar[i] ? bloodSugar[i] : '',
         handleOnChange: (e) =>
@@ -176,7 +180,7 @@ export const thickenTheVariantIndicators = ({
             valid: e.target.validity.valid,
             bloodSugar: bloodSugar,
             setterFunction: setBloodSugar,
-            id: 1,
+            id: i,
           }),
       },
     ]);

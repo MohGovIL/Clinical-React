@@ -8,8 +8,9 @@ import { useTranslation } from 'react-i18next';
 import ConstantIndicators from './ConstantIndicators';
 import VariantIndicators from './VariantIndicators';
 import * as DataHelpers from './Helpers/DataHelpers';
+import { StyledTestsAndTreatments } from './Style';
 
-const TestsAndTreatment = ({
+const TestsAndTreatments = ({
   patient,
   encounter,
   formatDate,
@@ -135,12 +136,25 @@ const TestsAndTreatment = ({
   const constantIndicatorsNormalaizedData = [];
   const variantIndicatorsNormalaizedData = [];
 
+  const constantIndicatorsNormalizedData = {};
+  constantIndicatorsNormalizedData['height'] = {
+    label: 'Height',
+    id: 'height',
+
+    pattern: '[1-9]{1,3}',
+  };
+  constantIndicatorsNormalizedData['weight'] = {
+    label: 'Weight',
+    id: 'weight',
+
+    pattern: '[1-9]{1,3}|[1-9]{1,3}[.]|^[0-9]\\d{2}\\.\\d{1}$',
+  };
   const constantIndicators = DataHelpers.thickenTheConstantIndicators({
     height,
     weight,
     setWeight,
     setHeight,
-    constantIndicatorsNormalaizedData,
+    constantIndicatorsNormalizedData,
   });
   const variantIndicators = DataHelpers.thickenTheVariantIndicators({
     variantIndicatorsNormalaizedData,
@@ -161,14 +175,14 @@ const TestsAndTreatment = ({
     setPulse,
   });
   return (
-    <div dir={languageDirection}>
+    <StyledTestsAndTreatments dir={languageDirection}>
       <ConstantIndicators
         constantIndicators={constantIndicators}
         setWeight={setWeight}
         setHeight={setHeight}
       />
       <VariantIndicators variantIndicators={variantIndicators} />
-    </div>
+    </StyledTestsAndTreatments>
   );
 };
 
@@ -181,4 +195,4 @@ const mapStateToProps = (state) => {
     verticalName: state.settings.clinikal_vertical,
   };
 };
-export default connect(mapStateToProps, null)(TestsAndTreatment);
+export default connect(mapStateToProps, null)(TestsAndTreatments);
