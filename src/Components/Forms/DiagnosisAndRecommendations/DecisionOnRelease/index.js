@@ -8,7 +8,7 @@ import { useFormContext } from 'react-hook-form';
 import { StyledDivider } from '../Style';
 const RecommendationsOnRelease = () => {
   const { t } = useTranslation();
-  const { register, unregister, setValue } = useFormContext();
+  const { register, unregister, setValue, permission } = useFormContext();
   const [decision, setDecision] = useState('');
   const [evacuationWay, setEvacuationWay] = useState('');
 
@@ -42,12 +42,22 @@ const RecommendationsOnRelease = () => {
           <FormControlLabel
             value='Evacuation to hospital'
             label={t('Evacuation to hospital')}
-            control={<Radio color='primary' />}
+            control={
+              <Radio
+                color='primary'
+                disabled={permission === 'view' ? true : false}
+              />
+            }
           />
           <FormControlLabel
             value='Release to home'
             label={t('Release to home')}
-            control={<Radio color='primary' />}
+            control={
+              <Radio
+                color='primary'
+                disabled={permission === 'view' ? true : false}
+              />
+            }
           />
         </RadioGroup>
       </Grid>
@@ -67,12 +77,22 @@ const RecommendationsOnRelease = () => {
               <FormControlLabel
                 value='Ambulance'
                 label={t('Ambulance')}
-                control={<Radio color='primary' />}
+                control={
+                  <Radio
+                    color='primary'
+                    disabled={permission === 'view' ? true : false}
+                  />
+                }
               />
               <FormControlLabel
                 value='Independent'
                 label={t('Independent')}
-                control={<Radio color='primary' />}
+                control={
+                  <Radio
+                    color='primary'
+                    disabled={permission === 'view' ? true : false}
+                  />
+                }
               />
             </RadioGroup>
           </React.Fragment>
@@ -90,6 +110,7 @@ const RecommendationsOnRelease = () => {
                 min: '0',
               }}
               inputRef={register}
+              disabled={permission === 'view' ? true : false}
             />
           </React.Fragment>
         )}
