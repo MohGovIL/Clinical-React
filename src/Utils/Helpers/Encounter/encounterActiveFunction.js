@@ -52,7 +52,7 @@ export const encounterActiveFunction = async function (
     });
     APIStatuses.push(mainStatus);
     if (this.valueSet) {
-      const secStatus = FHIR('valueSet', 'doWork', {
+      const secStatus = FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',
         functionParams: {
           id: this.valueSet,
@@ -85,9 +85,9 @@ export const encounterActiveFunction = async function (
       patients,
       encounters,
       options,
-      secOptions,
       history,
       this.mode,
+      secOptions,
     );
 
     setTable(table);

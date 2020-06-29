@@ -12,6 +12,7 @@ export const setPatientDataWaitingForXrayTableRows = function (
   options,
   history,
   mode,
+  secOptions,
 ) {
   let result = [];
   let rows = [];
@@ -79,7 +80,10 @@ export const setPatientDataWaitingForXrayTableRows = function (
             padding: 'default',
             defaultValue:
               encounter.extensionSecondaryStatus || encounter.status,
-            options,
+            options:
+              encounter.extensionSecondaryStatus && secOptions.length
+                ? secOptions
+                : options,
             align: 'center',
             background_color: '#eaf7ff',
             icon_color: '#076ce9',
