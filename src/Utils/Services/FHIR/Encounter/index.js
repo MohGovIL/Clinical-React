@@ -130,13 +130,26 @@ const EncounterStates = {
   getEncountersWithPatients: (params) => {
     let summary = params.summary;
     let date = params.date;
-    let serviceProvider = params.serviceProvider;
-    let serviceType = '';
+    let serviceProvider = params.organization;
+    let serviceType = params.serviceType;
     let statuses = params.statuses;
+    let extendedStatuses = params.extendedStatuses;
     let statusesString = '';
-    for (let status of statuses) {
-      statusesString = statusesString.concat(`&status=${status}`);
+    if (extendedStatuses) {
+      for (let status of extendedStatuses) {
+        statusesString = statusesString.concat(`&status-extended=${status}`);
+      }
+      if (statuses) {
+        for (let status of statuses) {
+          statusesString = statusesString.concat(`&status-extended=${status}`);
+        }
+      }
+    } else if (statuses) {
+      for (let status of statuses) {
+        statusesString = statusesString.concat(`&status=${status}`);
+      }
     }
+
     let summaryStat = EncounterStates['encountersWithPatientsBasePath'](
       summary,
     );
@@ -256,6 +269,34 @@ const EncounterStates = {
       }
     }
     return CRUDOperations('search', `${params.url}${searchString}`);
+  },
+  patchEncounter: (params) => {
+    const patchArr = [];
+    for (const patchKey in params.encounterPatchParams) {
+      if (params.encounterPatchParams.hasOwnProperty(patchKey)) {
+        const element = params.encounterPatchParams[patchKey];
+        switch (patchKey) {
+          case 'extensionSecondaryStatus':
+            patchArr.push({
+              op: 'replace',
+              path: `/extension/${params.encounterPatchParams.extensionSecondaryStatusIndex}`,
+              value: {
+                valueString: element,
+                url: 'http://clinikal/extensions/encounter/secondaryStatus',
+              },
+            });
+
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    return CRUDOperations(
+      'patch',
+      `${params.url}/${params.encountersId}`,
+      patchArr,
+    );
   },
 };
 
