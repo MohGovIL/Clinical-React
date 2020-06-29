@@ -1,17 +1,17 @@
 import React from 'react';
 import Title from 'Assets/Elements/Title';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import { Divider, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledButton } from 'Assets/Elements/StyledButton';
-
+import { StyledDivider } from '../Style';
 const RecommendationsOnRelease = () => {
   const { t } = useTranslation();
   return (
     <StyledFormGroup>
       <Title label={t('Recommendations on release')} fontSize='22px' bold />
-      <Divider />
+      <StyledDivider />
       <Grid
         container
         direction='row'

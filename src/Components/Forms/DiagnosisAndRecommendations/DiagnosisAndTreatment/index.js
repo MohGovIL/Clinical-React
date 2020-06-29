@@ -4,14 +4,14 @@ import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import { Divider, Grid } from '@material-ui/core';
-
+import { Grid } from '@material-ui/core';
+import { StyledDivider } from '../Style';
 const DiagnosisAndTreatment = () => {
   const { t } = useTranslation();
   return (
     <StyledFormGroup>
       <Title label={t('Diagnosis and treatment')} fontSize='22px' bold />
-      <Divider />
+      <StyledDivider />
       <Grid
         container
         direction='row'

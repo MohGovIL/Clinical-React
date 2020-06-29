@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { useFormContext } from 'react-hook-form';
-
+import { StyledDivider } from '../Style';
 const RecommendationsOnRelease = () => {
   const { t } = useTranslation();
   const { register, unregister, setValue } = useFormContext();
@@ -37,7 +37,7 @@ const RecommendationsOnRelease = () => {
   return (
     <StyledFormGroup>
       <Title label={t('Decision on release')} fontSize='22px' bold />
-      <Divider />
+      <StyledDivider />
       <Grid
         container
         direction='row'
