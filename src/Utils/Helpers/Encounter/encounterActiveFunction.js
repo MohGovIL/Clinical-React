@@ -37,14 +37,6 @@ export const encounterActiveFunction = async function (
       ].count = encountersWithPatients.data.total;
       return prevTabsClone;
     });
-    // const {
-    //   data: {
-    //     expansion: { contains },
-    //   },
-    // } = await FHIR('ValueSet', 'doWork', {
-    //   functionName: 'getValueSet',
-    //   functionParams: { id: 'encounter_statuses' },
-    // });
     const APIStatuses = [];
     const mainStatus = FHIR('ValueSet', 'doWork', {
       functionName: 'getValueSet',

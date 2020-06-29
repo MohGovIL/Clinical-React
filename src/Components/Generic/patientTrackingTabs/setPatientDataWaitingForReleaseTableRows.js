@@ -2,6 +2,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
+import { FHIR } from 'Utils/Services/FHIR';
 
 // ממתינים לשחרור
 
@@ -11,6 +12,7 @@ export const setPatientDataWaitingForReleaseTableRows = function (
   options,
   history,
   mode,
+  secOptions,
 ) {
   let result = [];
   let rows = [];
@@ -66,19 +68,35 @@ export const setPatientDataWaitingForReleaseTableRows = function (
           break;
         case 'Status':
           row.push({
-            onChange() {
-              // try{
-              //     const updateAppointmentStatus();
-              //
-              // }catch (err) {
-              //     console.log(err);
-              // }
+            async onChange(code) {
+              try {
+                console.log(code);
+                console.log(secOptions);
+                const answer = await FHIR('Encounter', 'doWork', {
+                  functionName: 'patchEncounter',
+                  functionParams: {
+                    encountersId: encounter.id,
+                    encounterPatchParams: {
+                      extensionSecondaryStatus: code,
+                      extensionSecondaryStatusIndex:
+                        encounter.extensionSecondaryStatusIndex,
+                    },
+                  },
+                });
+                return true;
+              } catch (err) {
+                console.log(err);
+                return false;
+              }
             },
             text_color: '#076ce9',
             padding: 'default',
             defaultValue:
               encounter.extensionSecondaryStatus || encounter.status,
-            options,
+            options:
+              encounter.extensionSecondaryStatus && secOptions.length
+                ? secOptions
+                : options,
             align: 'center',
             background_color: '#eaf7ff',
             icon_color: '#076ce9',
