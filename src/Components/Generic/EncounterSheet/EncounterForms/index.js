@@ -24,7 +24,7 @@ const EncounterForms = ({
   });
 
   return (
-    <StyledPatientFiles>
+    <StyledPatientFiles dir={languageDirection}>
       {formsPerSheet ? (
         <FormsContainer dir={languageDirection} tabs={formsPerSheet} />
       ) : null}

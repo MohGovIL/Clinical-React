@@ -45,20 +45,21 @@ const MedicalAdmission = ({
     submitFocusError: true,
   });
 
-
   return (
     <React.Fragment>
       MedicalAdmission - {permission}
-        <FormContext {...methods} requiredErrors={requiredErrors}>
-          <VisitDetails
-            reasonCodeDetails={encounter.extensionReasonCodeDetails}
-            examination={encounter.examination}
-            examinationCode={encounter.examinationCode}
-            serviceType={encounter.serviceType}
-            serviceTypeCode={encounter.serviceTypeCode}
-            priority={encounter.priority}
-          />
-        </FormContext>
+      <FormContext {...methods} requiredErrors={requiredErrors}>
+        <VisitDetails
+          reasonCodeDetails={encounter.extensionReasonCodeDetails}
+          examination={encounter.examination}
+          examinationCode={encounter.examinationCode}
+          serviceType={encounter.serviceType}
+          serviceTypeCode={encounter.serviceTypeCode}
+          priority={encounter.priority}
+          disableHeaders={false}
+          disableButtonIsUrgent={false}
+        />
+      </FormContext>
       <Grid
         container
         direction={'row'}

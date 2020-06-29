@@ -10,6 +10,10 @@ const StyledPatientFiles = styled.div`
   flex-direction: column;
   background-color: #ffffff;
   box-shadow: 0 0 10px 0 rgba(152, 151, 151, 0.3);
+  
+  .MuiBox-root {
+    direction: ${(props) => (props.dir === 'rtl' ? 'rtl' : 'ltr')};
+  }
 `;
 
 export default StyledPatientFiles;
