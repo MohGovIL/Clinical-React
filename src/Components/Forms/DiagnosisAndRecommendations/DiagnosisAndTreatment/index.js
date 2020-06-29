@@ -6,8 +6,10 @@ import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid } from '@material-ui/core';
 import { StyledDivider } from '../Style';
+import { useFormContext } from 'react-hook-form';
 const DiagnosisAndTreatment = () => {
   const { t } = useTranslation();
+  const { permission } = useFormContext();
   return (
     <StyledFormGroup>
       <Title label={t('Diagnosis and treatment')} fontSize='22px' bold />
@@ -21,9 +23,11 @@ const DiagnosisAndTreatment = () => {
           label={t('Findings details')}
           width='45%'
           multiline
+          disabled={permission === 'view' ? true : false}
         />
         <StyledButton
           width='113px'
+          disabled={permission === 'view' ? true : false}
           margin='0 16px'
           height='32px'
           color='primary'
@@ -41,8 +45,10 @@ const DiagnosisAndTreatment = () => {
           label={t('Diagnosis details')}
           width='45%'
           multiline
+          disabled={permission === 'view' ? true : false}
         />
         <StyledButton
+          disabled={permission === 'view' ? true : false}
           width='113px'
           margin='0 16px'
           height='32px'
@@ -61,8 +67,10 @@ const DiagnosisAndTreatment = () => {
           label={t('Treatment details')}
           width='45%'
           multiline
+          disabled={permission === 'view' ? true : false}
         />
         <StyledButton
+          disabled={permission === 'view' ? true : false}
           width='113px'
           height='32px'
           color='primary'
