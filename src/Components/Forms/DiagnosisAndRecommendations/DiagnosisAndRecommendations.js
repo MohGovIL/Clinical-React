@@ -7,6 +7,7 @@ import RecommendationsOnRelease from './RecommendationsOnRelease ';
 import DecisionOnRelease from './DecisionOnRelease';
 import StyledDiagnosisAndRecommendations from './Style';
 import { useForm, FormContext } from 'react-hook-form';
+import { StyledButton } from 'Assets/Elements/StyledButton';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -16,7 +17,9 @@ const DiagnosisAndRecommendations = ({
   verticalName,
   permission,
 }) => {
-  const methods = useForm();
+  const methods = useForm({
+    mode: 'onBlur',
+  });
   const { handleSubmit } = methods;
 
   const onSubmit = (data) => {
@@ -29,6 +32,9 @@ const DiagnosisAndRecommendations = ({
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />
           <DecisionOnRelease />
+          <StyledButton color='primary' type='submit'>
+            SUBMIT
+          </StyledButton>
         </form>
       </FormContext>
     </StyledDiagnosisAndRecommendations>

@@ -23,7 +23,6 @@ const DiagnosisAndTreatment = () => {
           multiline
         />
         <StyledButton
-          font-size='15px'
           width='113px'
           height='32px'
           color='primary'
@@ -43,7 +42,6 @@ const DiagnosisAndTreatment = () => {
           multiline
         />
         <StyledButton
-          font-size='15px'
           width='113px'
           height='32px'
           color='primary'
@@ -63,7 +61,6 @@ const DiagnosisAndTreatment = () => {
           multiline
         />
         <StyledButton
-          font-size='15px'
           width='113px'
           height='32px'
           color='primary'
