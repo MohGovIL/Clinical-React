@@ -271,7 +271,32 @@ const EncounterStates = {
     return CRUDOperations('search', `${params.url}${searchString}`);
   },
   patchEncounter: (params) => {
-    return CRUDOperations('patch', `${params.url}/${params.encountersId}`);
+    const patchArr = [];
+    for (const patchKey in params.encounterPatchParams) {
+      if (params.encounterPatchParams.hasOwnProperty(patchKey)) {
+        const element = params.encounterPatchParams[patchKey];
+        switch (patchKey) {
+          case 'extensionSecondaryStatus':
+            patchArr.push({
+              op: 'replace',
+              path: '/extension',
+              value: {
+                valueString: element,
+                url: 'http://clinikal/extensions/encounter/secondaryStatus',
+              },
+            });
+            break;
+
+          default:
+            break;
+        }
+      }
+    }
+    return CRUDOperations(
+      'patch',
+      `${params.url}/${params.encountersId}`,
+      patchArr,
+    );
   },
 };
 

@@ -68,13 +68,24 @@ export const setPatientDataWaitingForXrayTableRows = function (
           break;
         case 'Status':
           row.push({
-            onChange() {
-              // try{
-              //     const updateAppointmentStatus();
-              //
-              // }catch (err) {
-              //     console.log(err);
-              // }
+            async onChange(code) {
+              try {
+                const answer = await FHIR('Encounter', 'doWork', {
+                  functionName: 'patchEncounter',
+                  functionParams: {
+                    encountersId: encounter.id,
+                    encounterPatchParams: {
+                      extensionSecondaryStatus: code,
+                    },
+                  },
+                });
+                console.log(answer);
+                // if (answer.status === 200) return true;
+                return false;
+              } catch (err) {
+                console.log(err);
+                return false;
+              }
             },
             text_color: '#076ce9',
             padding: 'default',
