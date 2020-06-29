@@ -76,6 +76,8 @@ export const setPatientDataWaitingForXrayTableRows = function (
                     encountersId: encounter.id,
                     encounterPatchParams: {
                       extensionSecondaryStatus: code,
+                      extensionSecondaryStatusIndex:
+                        encounter.extensionSecondaryStatusIndex,
                     },
                   },
                 });

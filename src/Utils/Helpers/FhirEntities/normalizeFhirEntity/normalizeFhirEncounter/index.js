@@ -17,16 +17,19 @@ const normalizeFhirEncounter = (encounter) => {
   let extensionReasonCodeDetails = '';
   let extensionArrivalWay = '';
   let extensionSecondaryStatus = '';
+  let extensionSecondaryStatusIndex = '';
   let extensionStatusUpdateDate = '';
 
   if (encounter.extension && encounter.extension.length) {
-    encounter.extension.forEach((extension) => {
+    encounter.extension.forEach((extension, index) => {
       if (extension.url.includes('reasonCodesDetail'))
         extensionReasonCodeDetails = extension.valueString;
       if (extension.url.includes('arrivalWay'))
         extensionArrivalWay = extension.valueString;
-      if (extension.url.includes('secondaryStatus'))
+      if (extension.url.includes('secondaryStatus')) {
         extensionSecondaryStatus = extension.valueString;
+        extensionSecondaryStatusIndex = index;
+      }
       if (extension.url.includes('statusUpdateDate'))
         extensionStatusUpdateDate = extension.valueDateTime;
     });
@@ -101,6 +104,7 @@ const normalizeFhirEncounter = (encounter) => {
     extensionArrivalWay,
     extensionSecondaryStatus,
     extensionStatusUpdateDate,
+    extensionSecondaryStatusIndex,
   };
 };
 

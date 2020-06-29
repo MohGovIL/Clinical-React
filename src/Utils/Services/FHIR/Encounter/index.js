@@ -279,14 +279,14 @@ const EncounterStates = {
           case 'extensionSecondaryStatus':
             patchArr.push({
               op: 'replace',
-              path: '/extension/',
+              path: `/extension/${params.encounterPatchParams.extensionSecondaryStatusIndex}`,
               value: {
                 valueString: element,
                 url: 'http://clinikal/extensions/encounter/secondaryStatus',
               },
             });
-            break;
 
+            break;
           default:
             break;
         }
