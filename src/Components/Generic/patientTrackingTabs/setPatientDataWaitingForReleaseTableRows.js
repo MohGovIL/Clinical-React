@@ -70,8 +70,6 @@ export const setPatientDataWaitingForReleaseTableRows = function (
           row.push({
             async onChange(code) {
               try {
-                console.log(code);
-                console.log(secOptions);
                 const answer = await FHIR('Encounter', 'doWork', {
                   functionName: 'patchEncounter',
                   functionParams: {
