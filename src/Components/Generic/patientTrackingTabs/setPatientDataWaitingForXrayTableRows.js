@@ -2,6 +2,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
+import { FHIR } from 'Utils/Services/FHIR';
 
 // ממתינים לצילום
 

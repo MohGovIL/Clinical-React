@@ -37,23 +37,55 @@ export const encounterActiveFunction = async function (
       ].count = encountersWithPatients.data.total;
       return prevTabsClone;
     });
-    const {
-      data: {
-        expansion: { contains },
-      },
-    } = await FHIR('ValueSet', 'doWork', {
+    // const {
+    //   data: {
+    //     expansion: { contains },
+    //   },
+    // } = await FHIR('ValueSet', 'doWork', {
+    //   functionName: 'getValueSet',
+    //   functionParams: { id: 'encounter_statuses' },
+    // });
+    const APIStatuses = [];
+    const mainStatus = FHIR('ValueSet', 'doWork', {
       functionName: 'getValueSet',
       functionParams: { id: 'encounter_statuses' },
     });
-
+    APIStatuses.push(mainStatus);
+    if (this.valueSet) {
+      const secStatus = FHIR('valueSet', 'doWork', {
+        functionName: 'getValueSet',
+        functionParams: {
+          id: this.valueSet,
+        },
+      });
+      APIStatuses.push(secStatus);
+    }
+    const statuses = await Promise.all(APIStatuses);
     let options = [];
+    let secOptions = [];
+    let {
+      data: {
+        expansion: { contains },
+      },
+    } = statuses[0];
     for (let status of contains) {
       options.push(normalizeFhirValueSet(status));
+    }
+    if (this.valueSet) {
+      let {
+        data: {
+          expansion: { contains },
+        },
+      } = statuses[1];
+      for (let status of contains) {
+        secOptions.push(normalizeFhirValueSet(status));
+      }
     }
     const table = this.tableFunction(
       patients,
       encounters,
       options,
+      secOptions,
       history,
       this.mode,
     );
