@@ -4,6 +4,7 @@ const StyledPatientFiles = styled.div`
   display: flex;
   flex-basis: 54%;
   max-width: 54%;
+  overflow-y: scroll;
   margin: 120px 0 0 32px;
   height: calc(100vh - 88px - 32px - 32px);
   max-height: calc(100vh - 88px - 32px - 32px);
