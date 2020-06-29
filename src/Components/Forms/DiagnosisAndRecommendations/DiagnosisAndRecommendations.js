@@ -27,7 +27,7 @@ const DiagnosisAndRecommendations = ({
   };
   return (
     <StyledDiagnosisAndRecommendations>
-      <FormContext {...methods}>
+      <FormContext {...methods} permission={permission}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />

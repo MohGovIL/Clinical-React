@@ -24,6 +24,7 @@ const DiagnosisAndTreatment = () => {
         />
         <StyledButton
           width='113px'
+          margin='0 16px'
           height='32px'
           color='primary'
           variant='outlined'
@@ -43,6 +44,7 @@ const DiagnosisAndTreatment = () => {
         />
         <StyledButton
           width='113px'
+          margin='0 16px'
           height='32px'
           color='primary'
           variant='outlined'
@@ -64,6 +66,7 @@ const DiagnosisAndTreatment = () => {
           width='113px'
           height='32px'
           color='primary'
+          margin='0 16px'
           variant='outlined'
           size='small'>
           {t('Select template')}

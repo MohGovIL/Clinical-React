@@ -26,6 +26,7 @@ const RecommendationsOnRelease = () => {
           width='113px'
           height='32px'
           color='primary'
+          margin='0 16px'
           variant='outlined'
           size='small'>
           {t('Select template')}

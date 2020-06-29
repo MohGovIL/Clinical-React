@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Title from 'Assets/Elements/Title';
-import {
-  Divider,
-  Grid,
-  Radio,
-  FormControlLabel,
-  RadioGroup,
-} from '@material-ui/core';
+import { Grid, Radio, FormControlLabel, RadioGroup } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
@@ -38,17 +32,13 @@ const RecommendationsOnRelease = () => {
     <StyledFormGroup>
       <Title label={t('Decision on release')} fontSize='22px' bold />
       <StyledDivider />
-      <Grid
-        container
-        direction='row'
-        justify='flex-start'
-        alignItems='baseline'>
+      <Grid container direction='row' justify='flex-start' alignItems='center'>
+        <label>{t('Decision')}</label>
         <RadioGroup
           row
           name='decision'
           value={decision}
           onChange={handleDecisionChange}>
-          <label>{t('Decision')}</label>
           <FormControlLabel
             value='Evacuation to hospital'
             label={t('Evacuation to hospital')}
@@ -65,15 +55,15 @@ const RecommendationsOnRelease = () => {
         container
         direction='row'
         justify='flex-start'
-        alignItems='baseline'>
+        alignItems={decision === 'Release to home' ? 'baseline' : 'center'}>
         {decision === 'Evacuation to hospital' && (
-          <RadioGroup
-            row
-            name='evacuationWay'
-            value={evacuationWay}
-            onChange={handleEvacuationWayChange}>
-            <label>
-              {t('Evacuation way')}
+          <React.Fragment>
+            <label>{t('Evacuation way')}</label>
+            <RadioGroup
+              row
+              name='evacuationWay'
+              value={evacuationWay}
+              onChange={handleEvacuationWayChange}>
               <FormControlLabel
                 value='Ambulance'
                 label={t('Ambulance')}
@@ -84,14 +74,16 @@ const RecommendationsOnRelease = () => {
                 label={t('Independent')}
                 control={<Radio color='primary' />}
               />
-            </label>
-          </RadioGroup>
+            </RadioGroup>
+          </React.Fragment>
         )}
         {decision === 'Release to home' && (
           <React.Fragment>
             <label>{t('Sick leave')}</label>
             <CustomizedTextField
+              style={{ marginLeft: '16px', marginRight: '16px' }}
               name='numberOfDays'
+              width='10%'
               label={t('Number of days')}
               type='number'
               inputProps={{
