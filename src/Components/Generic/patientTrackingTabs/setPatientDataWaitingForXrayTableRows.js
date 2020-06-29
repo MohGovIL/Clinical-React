@@ -81,9 +81,7 @@ export const setPatientDataWaitingForXrayTableRows = function (
                     },
                   },
                 });
-                console.log(answer);
-                // if (answer.status === 200) return true;
-                return false;
+                return true;
               } catch (err) {
                 console.log(err);
                 return false;
