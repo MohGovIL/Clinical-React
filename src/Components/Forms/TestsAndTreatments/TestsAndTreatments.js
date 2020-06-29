@@ -4,12 +4,20 @@ import { connect } from 'react-redux';
 import React, { useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
-
+import MomentUtils from '@date-io/moment';
 import ConstantIndicators from './ConstantIndicators';
 import VariantIndicators from './VariantIndicators';
 import * as DataHelpers from './Helpers/DataHelpers';
-import { StyledTestsAndTreatments, StyledVariantTextField } from './Style';
+import {
+  StyledConstantHeaders,
+  StyledForm,
+  StyledTestsAndTreatments,
+  StyledVariantTextField,
+} from './Style';
 import LabelWithHourComponent from './LabelWithHourComponent';
+import * as Moment from 'moment';
+import { store } from '../../../index';
+import normalizeFhirUser from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
 const TestsAndTreatments = ({
   patient,
   encounter,
@@ -18,7 +26,24 @@ const TestsAndTreatments = ({
   history,
   verticalName,
   permission,
+  currentUser,
 }) => {
+  const { t } = useTranslation();
+  const [pressureNew, setPressureNew] = useState([]);
+  const [pulseNew, setPulseNew] = useState([]);
+  const userDetails = normalizeFhirUser(currentUser);
+  const [userNameNew, setUserNameNew] = useState([
+    {
+      name: userDetails.name[0].toString(),
+      loggedHour: Moment(Moment.now()).format('HH:mm'),
+    },
+  ]);
+  const [feverNew, setFeverNew] = useState([]);
+  const [saturationNew, setSaturationNew] = useState([]);
+  const [breathsPerMinNew, setBreathsPerMinNew] = useState([]);
+  const [painLevelNew, setPainLevelNew] = useState([]);
+  const [bloodSugarNew, setBloodSugarNew] = useState([]);
+
   const [height, setHeight] = useState('10');
   const [weight, setWeight] = useState('2');
   const [pressure, setPressure] = useState([
@@ -212,7 +237,29 @@ const TestsAndTreatments = ({
     setBreathsPerMin,
     setBloodSugar,
     setPulse,
+    disabled: true,
   });
+
+  const variantIndicatorsNew = DataHelpers.thickenTheVariantIndicators({
+    variantIndicatorsNormalaizedData,
+    userName: userNameNew,
+    fever: feverNew,
+    pressure: pressureNew,
+    saturation: saturationNew,
+    painLevel: painLevelNew,
+    breathsPerMin: breathsPerMinNew,
+    bloodSugar: bloodSugarNew,
+    pulse: pulseNew,
+    setFever: setFeverNew,
+    setPressure: setPressureNew,
+    setSaturation: setSaturationNew,
+    setPainLevel: setPainLevelNew,
+    setBreathsPerMin: setBreathsPerMinNew,
+    setBloodSugar: setBloodSugarNew,
+    setPulse: setPulseNew,
+    disabled: false,
+  });
+
   return (
     <StyledTestsAndTreatments dir={languageDirection}>
       <ConstantIndicators
@@ -220,7 +267,14 @@ const TestsAndTreatments = ({
         setWeight={setWeight}
         setHeight={setHeight}
       />
+      <StyledConstantHeaders>{t('Variable indicators')}</StyledConstantHeaders>
+      <hr />
       <VariantIndicators variantIndicators={variantIndicators} />
+      {encounter.status !== 'finished' ? (
+        <StyledForm autoComplete='off'>
+          <VariantIndicators variantIndicators={variantIndicatorsNew} />
+        </StyledForm>
+      ) : null}
     </StyledTestsAndTreatments>
   );
 };
@@ -232,6 +286,7 @@ const mapStateToProps = (state) => {
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
+    currentUser: state.active.activeUser,
   };
 };
 export default connect(mapStateToProps, null)(TestsAndTreatments);

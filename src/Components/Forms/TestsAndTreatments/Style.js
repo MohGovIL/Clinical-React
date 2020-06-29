@@ -95,8 +95,8 @@ export const StyledVarientIndicatorsTR = styled.tr`
 `;
 
 export const StyledForm = styled.form`
-  width: 1034px;
-  height: 1550px;
+  width: 100%;
+  height: 114px;
   box-shadow: 0 0 10px 0 rgba(152, 151, 151, 0.3);
   background-color: #ffffff;
 `;

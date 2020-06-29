@@ -69,6 +69,7 @@ export const thickenTheVariantIndicators = ({
   setBreathsPerMin,
   setBloodSugar,
   setPulse,
+  disabled,
 }) => {
   let variantIndicators = [];
   if (!variantIndicatorsNormalaizedData) return [];
@@ -84,6 +85,7 @@ export const thickenTheVariantIndicators = ({
     for (const [key, dataset] of Object.entries(
       variantIndicatorsNormalaizedDataTemp,
     )) {
+      dataset.disabled = disabled;
       switch (dataset.label) {
         case 'userName':
           dataset.componentType = LabelWithHourComponent;

@@ -14,10 +14,6 @@ const VariantIndicators = ({ variantIndicators }) => {
   } else {
     return (
       <React.Fragment>
-        <StyledConstantHeaders>
-          {t('Variable indicators')}
-        </StyledConstantHeaders>
-        <hr />
         <table>
           <tbody>
             {variantIndicators.map((indicatorLogged, index) => {
@@ -27,6 +23,7 @@ const VariantIndicators = ({ variantIndicators }) => {
                     return (
                       <td key={index}>
                         <value.componentType
+                          disabled={value.disabled}
                           inputProps={{ pattern: value.pattern }}
                           onChange={value.handleOnChange}
                           id={value.id}
@@ -43,7 +40,6 @@ const VariantIndicators = ({ variantIndicators }) => {
             })}
           </tbody>
         </table>
-        <StyledForm autoComplete='off'></StyledForm>
       </React.Fragment>
     );
   }
