@@ -36,7 +36,7 @@ const DiagnosisAndRecommendations = ({
           QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
         },
       });
-      console.log(q);
+      const Questionnaire = q.data.entry[1].resource;
     })();
   }, []);
   return (
