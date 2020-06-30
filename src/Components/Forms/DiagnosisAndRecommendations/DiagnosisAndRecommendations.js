@@ -58,12 +58,12 @@ const DiagnosisAndRecommendations = ({
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />
           <DecisionOnRelease />
-          <StyledButton
+          {/* <StyledButton
             color='primary'
             type='submit'
             disabled={permission === 'view' ? true : false}>
             SUBMIT
-          </StyledButton>
+          </StyledButton> */}
         </form>
       </FormContext>
     </StyledDiagnosisAndRecommendations>
