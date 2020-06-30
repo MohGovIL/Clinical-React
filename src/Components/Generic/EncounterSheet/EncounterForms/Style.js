@@ -13,6 +13,7 @@ const StyledPatientFiles = styled.div`
   
   .MuiBox-root {
     direction: ${(props) => (props.dir === 'rtl' ? 'rtl' : 'ltr')};
+    padding: 0px 63px 0 63px;
   }
 `;
 
