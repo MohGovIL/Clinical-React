@@ -7,6 +7,7 @@ import RecommendationsOnRelease from './RecommendationsOnRelease ';
 import DecisionOnRelease from './DecisionOnRelease';
 import StyledDiagnosisAndRecommendations from './Style';
 import { useForm, FormContext } from 'react-hook-form';
+
 import { StyledButton } from 'Assets/Elements/StyledButton';
 const DiagnosisAndRecommendations = ({
   patient,
@@ -29,7 +30,9 @@ const DiagnosisAndRecommendations = ({
     <StyledDiagnosisAndRecommendations>
       <FormContext
         {...methods}
-        permission={encounter.status === 'finished' ? 'view' : permission}>
+        permission={encounter.status === 'finished' ? 'view' : permission}
+        serviceType={encounter.serviceTypeCode}
+        reasonCode={encounter.examinationCode}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />
