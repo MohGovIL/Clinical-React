@@ -22,7 +22,7 @@ const DiagnosisAndRecommendations = ({
   const methods = useForm({
     mode: 'onBlur',
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, setValue, register, unregister } = methods;
 
   const onSubmit = (data) => {
     console.log(JSON.stringify(data));
@@ -30,15 +30,23 @@ const DiagnosisAndRecommendations = ({
 
   React.useEffect(() => {
     (async () => {
-      const q = await FHIR('Questionnaire', 'doWork', {
-        functionName: 'getQuestionnaire',
-        functionParams: {
-          QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
-        },
-      });
-      const Questionnaire = q.data.entry[1].resource;
+      try {
+        const q = await FHIR('Questionnaire', 'doWork', {
+          functionName: 'getQuestionnaire',
+          functionParams: {
+            QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
+          },
+        });
+        const Questionnaire = q.data.entry[1].resource;
+        register({ name: 'questionnaireId' });
+        setValue('questionnaireId', Questionnaire.id);
+      } catch (error) {
+        console.log(error);
+      }
     })();
-  }, []);
+
+    return () => unregister('questionnaireId');
+  }, [register, setValue, unregister]);
   return (
     <StyledDiagnosisAndRecommendations>
       <FormContext
@@ -50,12 +58,12 @@ const DiagnosisAndRecommendations = ({
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />
           <DecisionOnRelease />
-          {/* <StyledButton
+          <StyledButton
             color='primary'
             type='submit'
             disabled={permission === 'view' ? true : false}>
             SUBMIT
-          </StyledButton> */}
+          </StyledButton>
         </form>
       </FormContext>
     </StyledDiagnosisAndRecommendations>
