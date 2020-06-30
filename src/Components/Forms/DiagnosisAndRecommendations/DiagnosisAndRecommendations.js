@@ -9,6 +9,7 @@ import StyledDiagnosisAndRecommendations from './Style';
 import { useForm, FormContext } from 'react-hook-form';
 
 import { StyledButton } from 'Assets/Elements/StyledButton';
+import { FHIR } from 'Utils/Services/FHIR';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -26,6 +27,18 @@ const DiagnosisAndRecommendations = ({
   const onSubmit = (data) => {
     console.log(JSON.stringify(data));
   };
+
+  React.useEffect(() => {
+    (async () => {
+      const q = await FHIR('Questionnaire', 'doWork', {
+        functionName: 'getQuestionnaire',
+        functionParams: {
+          QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
+        },
+      });
+      console.log(q);
+    })();
+  }, []);
   return (
     <StyledDiagnosisAndRecommendations>
       <FormContext
