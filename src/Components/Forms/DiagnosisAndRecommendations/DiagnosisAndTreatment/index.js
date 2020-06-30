@@ -12,7 +12,12 @@ const DiagnosisAndTreatment = () => {
   const { permission } = useFormContext();
   return (
     <StyledFormGroup>
-      <Title label={t('Diagnosis and treatment')} fontSize='22px' bold />
+      <Title
+        label={t('Diagnosis and treatment')}
+        fontSize='22px'
+        bold
+        color='#000b40'
+      />
       <StyledDivider />
       <Grid
         container

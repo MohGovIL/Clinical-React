@@ -12,7 +12,12 @@ const RecommendationsOnRelease = () => {
   const { permission } = useFormContext();
   return (
     <StyledFormGroup>
-      <Title label={t('Recommendations on release')} fontSize='22px' bold />
+      <Title
+        label={t('Recommendations on release')}
+        fontSize='22px'
+        bold
+        color='#000b40'
+      />
       <StyledDivider />
       <Grid
         container

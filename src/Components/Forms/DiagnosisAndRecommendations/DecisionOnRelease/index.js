@@ -30,7 +30,12 @@ const RecommendationsOnRelease = () => {
 
   return (
     <StyledFormGroup>
-      <Title label={t('Decision on release')} fontSize='22px' bold />
+      <Title
+        label={t('Decision on release')}
+        fontSize='22px'
+        bold
+        color='#000b40'
+      />
       <StyledDivider />
       <Grid container direction='row' justify='flex-start' alignItems='center'>
         <label>{t('Decision')}</label>

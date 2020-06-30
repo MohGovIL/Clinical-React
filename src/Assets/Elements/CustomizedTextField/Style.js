@@ -34,6 +34,10 @@ const StyledTextField = styled(TextField)`
   .MuiFormHelperText-root {
     text-align: ${(props) => (props.direction === 'rtl' ? 'right' : 'left')};
   }
+  .MuiSelect-icon {
+    right: ${(props) => props.direction === 'rtl' && 'unset'};
+    left: ${(props) => props.direction === 'rtl' && '0'};
+  }
 `;
 
 export default StyledTextField;

@@ -5,6 +5,7 @@ import React from 'react';
 import DiagnosisAndTreatment from './DiagnosisAndTreatment';
 import RecommendationsOnRelease from './RecommendationsOnRelease ';
 import DecisionOnRelease from './DecisionOnRelease';
+import DrugRecommendation from './DrugRecommendation';
 import StyledDiagnosisAndRecommendations from './Style';
 import { useForm, FormContext } from 'react-hook-form';
 
@@ -21,6 +22,20 @@ const DiagnosisAndRecommendations = ({
 }) => {
   const methods = useForm({
     mode: 'onBlur',
+    defaultValues: {
+      drugRecommendation: [
+        {
+          drugName: '',
+          quantity: '',
+          drugForm: '',
+          drugRoute: '',
+          intervals: '',
+          duration: '',
+          toDate: '',
+          instructionsForTheDrug: '',
+        },
+      ],
+    },
   });
   const { handleSubmit, setValue, register, unregister } = methods;
 
@@ -57,13 +72,14 @@ const DiagnosisAndRecommendations = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />
+          <DrugRecommendation />
           <DecisionOnRelease />
-          {/* <StyledButton
+          <StyledButton
             color='primary'
             type='submit'
             disabled={permission === 'view' ? true : false}>
             SUBMIT
-          </StyledButton> */}
+          </StyledButton>
         </form>
       </FormContext>
     </StyledDiagnosisAndRecommendations>
