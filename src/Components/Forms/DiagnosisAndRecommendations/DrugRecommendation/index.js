@@ -7,6 +7,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid, MenuItem } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
+import { Delete } from '@material-ui/icons';
 
 const DrugRecommendation = () => {
   const { t } = useTranslation();
@@ -47,7 +48,7 @@ const DrugRecommendation = () => {
               toDate: '',
               instructionsForTheDrug: '',
             })
-          }>{`${t('Add Drug')} +`}</StyledButton>
+          }>{` + ${t('Add Drug')}`}</StyledButton>
       </Grid>
       {fields.map((item, index) => {
         return (
@@ -141,7 +142,7 @@ const DrugRecommendation = () => {
                 inputRef={register()}
               />
             </Grid>
-            <Grid container direction='row'>
+            <Grid container direction='row' alignItems='center'>
               <CustomizedTextField
                 name={`drugRecommendation[${index}].instructionsForTheDrug`}
                 label={t('Instructions for the drug')}
@@ -159,7 +160,8 @@ const DrugRecommendation = () => {
               </StyledButton>
             </Grid>
             <Grid container direction='row' justify='flex-end'>
-              {/* Add a delete icon and give it a remove function */}
+              <Delete color='primary' onClick={() => remove(index)} />
+              <span>{t('Delete drug')}</span>
             </Grid>
           </React.Fragment>
         );
