@@ -2,6 +2,8 @@
 import { StyledConstantTextField, StyledVariantTextField } from '../Style';
 import * as ComponentsViewHelpers from './ViewHelpers';
 import LabelWithHourComponent from '../LabelWithHourComponent';
+import React from 'react';
+import FormattedInputs from '../../../Generic/PopupComponents/MaskedControllers/FormattedInputs/FormattedInputs';
 
 export const thickenTheConstantIndicators = ({
   height,
@@ -70,14 +72,17 @@ export const thickenTheVariantIndicators = ({
   setBloodSugar,
   setPulse,
   disabled,
+  newRow,
+  size,
 }) => {
   let variantIndicators = [];
+
   if (!variantIndicatorsNormalaizedData) return [];
   for (let i = 0; i < userName.length; i++) {
     let variantIndicatorsNormalaizedDataTemp = JSON.parse(
       JSON.stringify(variantIndicatorsNormalaizedData),
     );
-
+    size++;
     /*let variantIndicatorsNormalaizedDataTemp = [
       ...variantIndicatorsNormalaizedData,
     ];*/
@@ -86,6 +91,7 @@ export const thickenTheVariantIndicators = ({
       variantIndicatorsNormalaizedDataTemp,
     )) {
       dataset.disabled = disabled;
+      dataset.newRow = newRow;
       switch (dataset.label) {
         case 'userName':
           dataset.componentType = LabelWithHourComponent;
@@ -96,12 +102,17 @@ export const thickenTheVariantIndicators = ({
 
           dataset.value =
             userName && userName[i] && userName[i]['loggedHour']
-              ? userName[i]['loggedHour']
+              ? newRow
+                ? ''
+                : userName[i]['loggedHour']
               : '';
+          dataset.id = `user_name_${size > 0 ? size : i}`;
           break;
-        case 'Pressure':
+        case 'Blood pressure':
           dataset.value = pressure && pressure[i] ? pressure[i] : '';
-          dataset.componentType = StyledVariantTextField;
+          dataset.componentType = disabled
+            ? StyledVariantTextField
+            : FormattedInputs;
           dataset.handleOnChange = (e) =>
             ComponentsViewHelpers.handleVariantColumnChange({
               value: e.target.value,
@@ -110,10 +121,16 @@ export const thickenTheVariantIndicators = ({
               setterFunction: setPressure,
               id: i,
             });
+          dataset.id = `blood_pressure_${size > 0 ? size : i}`;
+          dataset.componenttype = 'textFieldWithMask';
+          /*dataset['aria-describedby'] = dataset.mask;*/
+
           break;
         case 'Pulse':
           dataset.value = pulse && pulse[i] ? pulse[i] : '';
-          dataset.componentType = StyledVariantTextField;
+          dataset.componentType = disabled
+            ? StyledVariantTextField
+            : FormattedInputs;
           dataset.handleOnChange = (e) =>
             ComponentsViewHelpers.handleVariantColumnChange({
               value: e.target.value,
@@ -122,10 +139,16 @@ export const thickenTheVariantIndicators = ({
               setterFunction: setPulse,
               id: i,
             });
+          dataset.componenttype = 'textFieldWithMask';
+          dataset.id = `pulse_${size > 0 ? size : i}`;
+          /*dataset['aria-describedby'] = dataset.mask;*/
+
           break;
         case 'Fever':
           dataset.value = fever && fever[i] ? fever[i] : '';
-          dataset.componentType = StyledVariantTextField;
+          dataset.componentType = disabled
+            ? StyledVariantTextField
+            : FormattedInputs;
           dataset.handleOnChange = (e) =>
             ComponentsViewHelpers.handleVariantColumnChange({
               value: e.target.value,
@@ -133,11 +156,17 @@ export const thickenTheVariantIndicators = ({
               parentArr: fever,
               setterFunction: setFever,
               id: i,
+              paddWithZero: true,
             });
+          dataset.componenttype = 'textFieldWithMask';
+          dataset.id = `fever_${size > 0 ? size : i}`;
+          /*dataset['aria-describedby'] = dataset.mask;*/
           break;
         case 'Saturation':
           dataset.value = saturation && saturation[i] ? saturation[i] : '';
-          dataset.componentType = StyledVariantTextField;
+          dataset.componentType = disabled
+            ? StyledVariantTextField
+            : FormattedInputs;
           dataset.handleOnChange = (e) =>
             ComponentsViewHelpers.handleVariantColumnChange({
               value: e.target.value,
@@ -146,11 +175,16 @@ export const thickenTheVariantIndicators = ({
               setterFunction: setSaturation,
               id: i,
             });
+          dataset.id = `saturation_${size > 0 ? size : i}`;
+          dataset.componenttype = 'textFieldWithMask';
+          /*dataset['aria-describedby'] = dataset.mask;*/
           break;
         case 'Breaths per minute':
           dataset.value =
             breathsPerMin && breathsPerMin[i] ? breathsPerMin[i] : '';
-          dataset.componentType = StyledVariantTextField;
+          dataset.componentType = disabled
+            ? StyledVariantTextField
+            : FormattedInputs;
           dataset.handleOnChange = (e) =>
             ComponentsViewHelpers.handleVariantColumnChange({
               value: e.target.value,
@@ -159,10 +193,15 @@ export const thickenTheVariantIndicators = ({
               setterFunction: setBreathsPerMin,
               id: i,
             });
+          dataset.componenttype = 'textFieldWithMask';
+          dataset.id = `breaths_per_min_${size > 0 ? size : i}`;
+          /*dataset['aria-describedby'] = dataset.mask;*/
           break;
         case 'Pain level':
           dataset.value = painLevel && painLevel[i] ? painLevel[i] : '';
-          dataset.componentType = StyledVariantTextField;
+          dataset.componentType = disabled
+            ? StyledVariantTextField
+            : FormattedInputs;
           dataset.handleOnChange = (e) =>
             ComponentsViewHelpers.handleVariantColumnChange({
               value: e.target.value,
@@ -171,10 +210,15 @@ export const thickenTheVariantIndicators = ({
               setterFunction: setPainLevel,
               id: i,
             });
+          dataset.id = `pain_level_${size > 0 ? size : i}`;
+          dataset.componenttype = 'textFieldWithMask';
+          /*dataset['aria-describedby'] = dataset.mask;*/
           break;
         case 'Blood sugar':
           dataset.value = bloodSugar && bloodSugar[i] ? bloodSugar[i] : '';
-          dataset.componentType = StyledVariantTextField;
+          dataset.componentType = disabled
+            ? StyledVariantTextField
+            : FormattedInputs;
           dataset.handleOnChange = (e) =>
             ComponentsViewHelpers.handleVariantColumnChange({
               value: e.target.value,
@@ -183,6 +227,9 @@ export const thickenTheVariantIndicators = ({
               setterFunction: setBloodSugar,
               id: i,
             });
+          dataset.componenttype = 'textFieldWithMask';
+          dataset.id = `blood_sugar_${size > 0 ? size : i}`;
+          /*dataset['aria-describedby'] = dataset.mask;*/
           break;
       }
     }

@@ -1,4 +1,4 @@
-import { StyledConstantHeaders } from './Style';
+import { StyledConstantForm, StyledConstantHeaders } from './Style';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +13,7 @@ const ConstantIndicators = ({ constantIndicators }) => {
           {t('Constant indicators')}
         </StyledConstantHeaders>
         <hr />
-        <form autoComplete='off'>
+        <StyledConstantForm autoComplete='off'>
           {constantIndicators.map((value, index) => {
             return value ? (
               <value.componentType
@@ -23,10 +23,11 @@ const ConstantIndicators = ({ constantIndicators }) => {
                 id={value.value}
                 label={t(value.label) + ' (' + t(value.type) + ')'}
                 value={value.value}
+                mask={value.mask}
               />
             ) : null;
           })}
-        </form>
+        </StyledConstantForm>
       </React.Fragment>
     );
   }

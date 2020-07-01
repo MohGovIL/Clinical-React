@@ -20,6 +20,7 @@ export const handleVariantColumnChange = ({
   parentArr,
   id,
   setterFunction,
+  paddWithZero,
 }) => {
   if (!parentArr || !setterFunction) return;
 

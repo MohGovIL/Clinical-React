@@ -46,20 +46,7 @@ const TestsAndTreatments = ({
 
   const [height, setHeight] = useState('10');
   const [weight, setWeight] = useState('2');
-  const [pressure, setPressure] = useState([
-    10,
-    10,
-    20,
-    10,
-    30,
-    50,
-    90,
-    20,
-    30,
-    40,
-    10,
-    20,
-  ]);
+  const [pressure, setPressure] = useState([]);
   const [pulse, setPulse] = useState([
     30,
     30,
@@ -164,39 +151,46 @@ const TestsAndTreatments = ({
       label: 'userName',
     },
     {
-      label: 'Pressure',
-      type: 'mmHg',
-      pattern: '[1-9]{1,3}|[1-9]{1,3}[/]|^[0-9]\\d{2}\\/\\d{1}$',
+      label: 'Blood pressure',
+      unit: 'mmHg',
+      /*  pattern: '[1-9]{1,3}|[1-9]{1,3}[/]|^[0-9]\\d{2}\\/\\d{1}$',*/
+      mask: '999/999',
     },
     {
       label: 'Pulse',
 
-      pattern: '[1-9]{1,2}',
+      /*pattern: '[1-9]{1,2}',*/
+      mask: '99',
     },
     {
       label: 'Fever',
-      pattern:
-        '[1-9]{1,2} | [1-9]{1,2}[.] | [1-9]{1,2}[.]| ^[0-9]\\d{2}\\.\\d{1}$',
+      /*pattern:
+        '[1-9]{1,2} | [1-9]{1,2}[.] | [1-9]{1,2}[.]| ^[0-9]\\d{2}\\.\\d{1}$',*/
+      mask: '99.9',
     },
     {
       label: 'Saturation',
 
-      pattern: '[1-9]{1,2}',
+      /*pattern: '[1-9]{1,2}',*/
+      mask: '999%',
     },
     {
       label: 'Breaths per minute',
 
-      pattern: '[1-9]{1,2}',
+      /*pattern: '[1-9]{1,2}',*/
+      mask: '99',
     },
     {
       label: 'Pain level',
 
-      pattern: '[1-9]{1,2}',
+      /*pattern: '[1-9]{1,2}',*/
+      mask: '99',
     },
     {
       label: 'Blood sugar',
 
-      pattern: '[1-9]{1,2}',
+      /*pattern: '[1-9]{1,2}',*/
+      mask: '999',
     },
   ];
 
@@ -238,6 +232,8 @@ const TestsAndTreatments = ({
     setBloodSugar,
     setPulse,
     disabled: true,
+    newRow: false,
+    size: 0,
   });
 
   const variantIndicatorsNew = DataHelpers.thickenTheVariantIndicators({
@@ -258,6 +254,8 @@ const TestsAndTreatments = ({
     setBloodSugar: setBloodSugarNew,
     setPulse: setPulseNew,
     disabled: false,
+    newRow: true,
+    size: userName.length,
   });
 
   return (
@@ -269,12 +267,20 @@ const TestsAndTreatments = ({
       />
       <StyledConstantHeaders>{t('Variable indicators')}</StyledConstantHeaders>
       <hr />
-      <VariantIndicators variantIndicators={variantIndicators} />
-      {encounter.status !== 'finished' ? (
+
+      <VariantIndicators
+        variantIndicators={
+          encounter.status !== 'finished'
+            ? variantIndicators.concat(variantIndicatorsNew)
+            : variantIndicators
+        }
+      />
+
+      {/*{encounter.status !== 'finished' ? (
         <StyledForm autoComplete='off'>
           <VariantIndicators variantIndicators={variantIndicatorsNew} />
         </StyledForm>
-      ) : null}
+      ) : null}*/}
     </StyledTestsAndTreatments>
   );
 };
