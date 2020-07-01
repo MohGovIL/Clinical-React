@@ -7,19 +7,29 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid, MenuItem } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
-import { Delete, KeyboardArrowDown } from '@material-ui/icons';
+import { Delete } from '@material-ui/icons';
 
 const DrugRecommendation = () => {
   const { t } = useTranslation();
-  const { control, permission, register } = useFormContext();
+  const { control, permission, register, watch } = useFormContext();
   const { append, remove, fields } = useFieldArray({
     control,
     name: 'drugRecommendation',
   });
+  const drugRecommendation = watch('drugRecommendation');
   const [value, setValue] = React.useState('hey');
   const handleChange = (event) => {
     setValue(event.target.value);
   };
+
+  const checkIsDisabled = (name, index) => {
+    const value = drugRecommendation[index][name];
+    if (!value) {
+      return true;
+    }
+    return permission === 'view' ? true : false;
+  };
+
   return (
     <StyledFormGroup>
       <Grid container direction='row' justify='space-between'>
@@ -76,8 +86,13 @@ const DrugRecommendation = () => {
               <CustomizedTextField
                 name={`drugRecommendation[${index}].quantity`}
                 inputRef={register()}
-                label={t('Quantity')}
+                label={`${t('Quantity')} *`}
                 width='30%'
+                type='number'
+                disabled={checkIsDisabled('drugName', index)}
+                inputProps={{
+                  min: '0',
+                }}
               />
               <Controller
                 control={control}
@@ -86,6 +101,7 @@ const DrugRecommendation = () => {
                 defaultValue=''
                 as={
                   <CustomizedTextField
+                    disabled={checkIsDisabled('drugName', index)}
                     iconColor='#1976d2'
                     width='30%'
                     select
@@ -104,6 +120,7 @@ const DrugRecommendation = () => {
                 defaultValue=''
                 as={
                   <CustomizedTextField
+                    disabled={checkIsDisabled('drugName', index)}
                     iconColor='#1976d2'
                     width='30%'
                     select
@@ -124,6 +141,7 @@ const DrugRecommendation = () => {
                 defaultValue=''
                 as={
                   <CustomizedTextField
+                    disabled={checkIsDisabled('drugName', index)}
                     iconColor='#1976d2'
                     width='30%'
                     select
@@ -136,26 +154,36 @@ const DrugRecommendation = () => {
                 }
               />
               <CustomizedTextField
+                disabled={checkIsDisabled('drugName', index)}
                 name={`drugRecommendation[${index}].duration`}
                 label={t('Duration (days)')}
                 inputRef={register()}
+                type='number'
+                inputProps={{
+                  min: '0',
+                  max: '99',
+                }}
               />
 
               <CustomizedTextField
+                disabled
+                //TODO needs to add a calculation for the date : today + duration (days)
                 name={`drugRecommendation[${index}].toDate`}
                 label={t('To date')}
                 inputRef={register()}
+                placeholder='dd/mm/yyyy'
               />
             </Grid>
             <Grid container direction='row' alignItems='baseline'>
               <CustomizedTextField
+                disabled={checkIsDisabled('drugName', index)}
                 name={`drugRecommendation[${index}].instructionsForTheDrug`}
                 label={t('Instructions for the drug')}
                 inputRef={register()}
               />
               <StyledButton
                 width='113px'
-                disabled={permission === 'view' ? true : false}
+                disabled={checkIsDisabled('drugName', index)}
                 margin='0 16px'
                 height='32px'
                 color='primary'
@@ -175,7 +203,6 @@ const DrugRecommendation = () => {
           </React.Fragment>
         );
       })}
-      <StyledDivider />
     </StyledFormGroup>
   );
 };

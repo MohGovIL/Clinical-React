@@ -62,6 +62,9 @@ const DiagnosisAndRecommendations = ({
 
     return () => unregister('questionnaireId');
   }, [register, setValue, unregister]);
+
+  const requiredFields = {};
+
   return (
     <StyledDiagnosisAndRecommendations>
       <FormContext
