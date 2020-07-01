@@ -7,7 +7,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid, MenuItem } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
-import { Delete } from '@material-ui/icons';
+import { Delete, KeyboardArrowDown } from '@material-ui/icons';
 
 const DrugRecommendation = () => {
   const { t } = useTranslation();
@@ -22,7 +22,7 @@ const DrugRecommendation = () => {
   };
   return (
     <StyledFormGroup>
-      <Grid container direction='row' justify='space-around'>
+      <Grid container direction='row' justify='space-between'>
         <Title
           label={t('Drug Recommendation')}
           bold
@@ -50,6 +50,7 @@ const DrugRecommendation = () => {
             })
           }>{` + ${t('Add Drug')}`}</StyledButton>
       </Grid>
+      <StyledDivider />
       {fields.map((item, index) => {
         return (
           <React.Fragment key={index}>
@@ -60,6 +61,7 @@ const DrugRecommendation = () => {
               defaultValue=''
               as={
                 <CustomizedTextField
+                  iconColor='#1976d2'
                   width='30%'
                   select
                   label={t('Drug Name')}
@@ -84,6 +86,7 @@ const DrugRecommendation = () => {
                 defaultValue=''
                 as={
                   <CustomizedTextField
+                    iconColor='#1976d2'
                     width='30%'
                     select
                     label={t('Drug form')}
@@ -101,6 +104,7 @@ const DrugRecommendation = () => {
                 defaultValue=''
                 as={
                   <CustomizedTextField
+                    iconColor='#1976d2'
                     width='30%'
                     select
                     label={t('Drug route')}
@@ -120,6 +124,7 @@ const DrugRecommendation = () => {
                 defaultValue=''
                 as={
                   <CustomizedTextField
+                    iconColor='#1976d2'
                     width='30%'
                     select
                     label={t('Intervals')}
@@ -142,7 +147,7 @@ const DrugRecommendation = () => {
                 inputRef={register()}
               />
             </Grid>
-            <Grid container direction='row' alignItems='center'>
+            <Grid container direction='row' alignItems='baseline'>
               <CustomizedTextField
                 name={`drugRecommendation[${index}].instructionsForTheDrug`}
                 label={t('Instructions for the drug')}
@@ -160,8 +165,12 @@ const DrugRecommendation = () => {
               </StyledButton>
             </Grid>
             <Grid container direction='row' justify='flex-end'>
-              <Delete color='primary' onClick={() => remove(index)} />
-              <span>{t('Delete drug')}</span>
+              <Delete
+                color='primary'
+                onClick={() => remove(index)}
+                style={{ cursor: 'pointer' }}
+              />
+              <span style={{ cursor: 'pointer' }}>{t('Delete drug')}</span>
             </Grid>
           </React.Fragment>
         );
