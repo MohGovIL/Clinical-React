@@ -17,7 +17,7 @@ import {
   StyledIsUrgent,
   StyledTemplateSelection,
   StyledForm,
-  StyledGroupCheckbox,
+  StyledGroupCheckbox, StyledRadio,
 } from './Style';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import CustomizedTextField from '../../../Assets/Elements/CustomizedTextField';
@@ -29,6 +29,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 const MedicalAdmission = ({
   patient,
@@ -55,6 +56,8 @@ const MedicalAdmission = ({
   });
   const { handleSubmit, formState, control } = methods;
 
+  const [pregnancyValue, setPregnancyValue] = useState();
+
   const [requiredErrors, setRequiredErrors] = useState({
     selectTest: '',
     commitmentAndPaymentReferenceForPaymentCommitment: '',
@@ -67,18 +70,11 @@ const MedicalAdmission = ({
   });
 
   const onSubmit = async (data) => {};
-  // temporary function
-  function StyledRadio(props) {
-    return (
-      <Radio
-        disableRipple
-        color='default'
-        checkedIcon={<span />}
-        icon={<span />}
-        {...props}
-      />
-    );
-  }
+  const handleChangeRadio = (event) => {
+    setPregnancyValue(event.target.value);
+  };
+
+
   const buttonTemplateSelect = {
     label: t('Template selection'),
     variant: 'text',
@@ -172,14 +168,19 @@ const MedicalAdmission = ({
               justify={'flex-start'}
               alignItems={'center'}>
               <Grid item xs={2}>
-                <FormControl component='fieldset'>
-                  <Typography variant='h6' component='h6'></Typography>
-                  <FormLabel component='legend'><b>{t('Pregnancy')}:</b></FormLabel>
-                  <RadioGroup defaultValue={t('No')} aria-label='Pregnancy' name='customized-radios'>
-                    <FormControlLabel value={t('No')} control={<Radio color='primary' />} label={t('No')}/>
-                    <FormControlLabel value={t('Yes')} control={<Radio color='primary' />} label={t('Yes')}/>
-                  </RadioGroup>
-                </FormControl>
+                  <Typography variant='h6' component='h6'><b>{t('Pregnancy')}:</b></Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <FormLabel component='legend'>{t('No')}<StyledRadio
+                  icon={<FiberManualRecordIcon htmlColor={'#dadbda'} />}
+                  checkedIcon={<FiberManualRecordIcon htmlColor={'#076ce9'}/>}
+                  checked={pregnancyValue === t('No')} onChange={handleChangeRadio} color='primary' value={t("No")} name="pregnancy"/></FormLabel>
+              </Grid>
+              <Grid item xs={2}>
+                <FormLabel component='legend'>{t('Yes')}<StyledRadio
+                  icon={<FiberManualRecordIcon htmlColor={'#dadbda'} />}
+                  checkedIcon={<FiberManualRecordIcon htmlColor={'#076ce9'}/>}
+                  checked={pregnancyValue === t('Yes')} onChange={handleChangeRadio} color='primary' value={t("Yes")} name="pregnancy"/></FormLabel>
               </Grid>
             </Grid>
           </StyledGroupCheckbox>
