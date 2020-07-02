@@ -19,8 +19,6 @@ const DrugRecommendation = () => {
     watch,
     requiredErrors,
     setRequiredErrors,
-    reset,
-    getValues,
     setValue,
   } = useFormContext();
   const { append, remove, fields } = useFieldArray({

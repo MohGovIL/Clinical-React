@@ -40,7 +40,7 @@ const DiagnosisAndRecommendations = ({
   const { handleSubmit, setValue, register, unregister } = methods;
   const { t } = useTranslation();
   const onSubmit = (data) => {
-    // console.log(isRequiredValidation(data));
+    console.log(isRequiredValidation(data));
     console.log(JSON.stringify(data));
   };
 
