@@ -8,7 +8,7 @@ import DecisionOnRelease from './DecisionOnRelease';
 import DrugRecommendation from './DrugRecommendation';
 import StyledDiagnosisAndRecommendations from './Style';
 import { useForm, FormContext } from 'react-hook-form';
-
+import { useTranslation } from 'react-i18next';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import { FHIR } from 'Utils/Services/FHIR';
 const DiagnosisAndRecommendations = ({
@@ -38,8 +38,9 @@ const DiagnosisAndRecommendations = ({
     },
   });
   const { handleSubmit, setValue, register, unregister } = methods;
-
+  const { t } = useTranslation();
   const onSubmit = (data) => {
+    console.log(isRequiredValidation(data));
     console.log(JSON.stringify(data));
   };
 
@@ -63,15 +64,90 @@ const DiagnosisAndRecommendations = ({
     return () => unregister('questionnaireId');
   }, [register, setValue, unregister]);
 
-  const requiredFields = {};
+  const [requiredErrors, setRequiredErrors] = React.useState([
+    {
+      quantity: '',
+      drugForm: '',
+      drugRoute: '',
+      intervals: '',
+      duration: '',
+    },
+  ]);
+  const requiredFields = {
+    quantity: {
+      name: 'quantity',
+      required: function (data) {
+        return data.length > 0;
+      },
+    },
+    drugForm: {
+      name: 'drugForm',
+      required: function (data) {
+        return data.length > 0;
+      },
+    },
+    drugRoute: {
+      name: 'drugRoute',
+      required: function (data) {
+        return data.length > 0;
+      },
+    },
+    intervals: {
+      name: 'intervals',
+      required: function (data) {
+        return data.length > 0;
+      },
+    },
+    duration: {
+      name: 'duration',
+      required: function (data) {
+        return data.length > 0;
+      },
+    },
+  };
 
+  const isRequiredValidation = (data) => {
+    let clean = true;
+    if (!data['drugRecommendation']) {
+      return clean;
+    }
+    requiredErrors.forEach((medicine, medicineIndex) => {
+      for (const fieldKey in requiredFields) {
+        if (requiredFields.hasOwnProperty(fieldKey)) {
+          let answer;
+          const field = requiredFields[fieldKey];
+          answer = field.required(
+            data['drugRecommendation'][medicineIndex][field.name],
+          );
+          if (answer) {
+            setRequiredErrors((prevState) => {
+              const cloneState = [...prevState];
+              cloneState[medicineIndex][field.name] = '';
+              return cloneState;
+            });
+          } else {
+            setRequiredErrors((prevState) => {
+              const cloneState = [...prevState];
+              cloneState[medicineIndex][field.name] = t('Value is required');
+              return cloneState;
+            });
+            clean = false;
+          }
+        }
+      }
+    });
+
+    return clean;
+  };
   return (
     <StyledDiagnosisAndRecommendations>
       <FormContext
         {...methods}
         permission={encounter.status === 'finished' ? 'view' : permission}
         serviceType={encounter.serviceTypeCode}
-        reasonCode={encounter.examinationCode}>
+        reasonCode={encounter.examinationCode}
+        requiredErrors={requiredErrors}
+        setRequiredErrors={setRequiredErrors}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />

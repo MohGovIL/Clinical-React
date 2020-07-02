@@ -11,23 +11,36 @@ import { Delete } from '@material-ui/icons';
 
 const DrugRecommendation = () => {
   const { t } = useTranslation();
-  const { control, permission, register, watch } = useFormContext();
+  const {
+    control,
+    permission,
+    register,
+    watch,
+    requiredErrors,
+    setRequiredErrors,
+    errors,
+  } = useFormContext();
   const { append, remove, fields } = useFieldArray({
     control,
     name: 'drugRecommendation',
   });
   const drugRecommendation = watch('drugRecommendation');
-  const [value, setValue] = React.useState('hey');
+
+  const [value, setValue] = React.useState('');
   const handleChange = (event) => {
     setValue(event.target.value);
   };
 
   const checkIsDisabled = (name, index) => {
-    const value = drugRecommendation[index][name];
-    if (!value) {
+    if (drugRecommendation[index] === undefined) {
       return true;
+    } else {
+      const value = drugRecommendation[index][name];
+      if (!value) {
+        return true;
+      }
+      return permission === 'view' ? true : false;
     }
-    return permission === 'view' ? true : false;
   };
 
   return (
@@ -47,7 +60,18 @@ const DrugRecommendation = () => {
           color='primary'
           variant='outlined'
           size='small'
-          onClick={() =>
+          onClick={() => {
+            setRequiredErrors((prevState) => {
+              const cloneState = [...prevState];
+              cloneState.push({
+                quantity: '',
+                drugForm: '',
+                drugRoute: '',
+                intervals: '',
+                duration: '',
+              });
+              return cloneState;
+            });
             append({
               drugName: '',
               quantity: '',
@@ -57,8 +81,8 @@ const DrugRecommendation = () => {
               duration: '',
               toDate: '',
               instructionsForTheDrug: '',
-            })
-          }>{` + ${t('Add Drug')}`}</StyledButton>
+            });
+          }}>{` + ${t('Add Drug')}`}</StyledButton>
       </Grid>
       <StyledDivider />
       {fields.map((item, index) => {
@@ -91,21 +115,25 @@ const DrugRecommendation = () => {
                 type='number'
                 disabled={checkIsDisabled('drugName', index)}
                 inputProps={{
-                  min: '0',
+                  min: '1',
                 }}
+                error={requiredErrors[index].quantity.length ? true : false}
+                helperText={requiredErrors[index].quantity}
               />
               <Controller
                 control={control}
                 name={`drugRecommendation[${index}].drugForm`}
                 value={value}
                 defaultValue=''
+                error={requiredErrors[index].drugForm.length ? true : false}
+                helperText={requiredErrors[index].drugForm}
                 as={
                   <CustomizedTextField
                     disabled={checkIsDisabled('drugName', index)}
                     iconColor='#1976d2'
                     width='30%'
                     select
-                    label={t('Drug form')}
+                    label={`${t('Drug form')} *`}
                     onChange={handleChange}>
                     <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
@@ -118,13 +146,15 @@ const DrugRecommendation = () => {
                 name={`drugRecommendation[${index}].drugRoute`}
                 value={value}
                 defaultValue=''
+                error={requiredErrors[index].drugRoute.length ? true : false}
+                helperText={requiredErrors[index].drugRoute}
                 as={
                   <CustomizedTextField
                     disabled={checkIsDisabled('drugName', index)}
                     iconColor='#1976d2'
                     width='30%'
                     select
-                    label={t('Drug route')}
+                    label={`${t('Drug route')} *`}
                     onChange={handleChange}>
                     <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
@@ -139,13 +169,15 @@ const DrugRecommendation = () => {
                 value={value}
                 name={`drugRecommendation[${index}].intervals`}
                 defaultValue=''
+                error={requiredErrors[index].intervals.length ? true : false}
+                helperText={requiredErrors[index].intervals}
                 as={
                   <CustomizedTextField
                     disabled={checkIsDisabled('drugName', index)}
                     iconColor='#1976d2'
                     width='30%'
                     select
-                    label={t('Intervals')}
+                    label={`${t('Intervals')} *`}
                     onChange={handleChange}>
                     <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
@@ -153,24 +185,49 @@ const DrugRecommendation = () => {
                   </CustomizedTextField>
                 }
               />
+              {/* <Controller 
+
+              /> */}
               <CustomizedTextField
                 disabled={checkIsDisabled('drugName', index)}
                 name={`drugRecommendation[${index}].duration`}
-                label={t('Duration (days)')}
-                inputRef={register()}
+                label={`${t('Duration (days)')} *`}
+                inputRef={register({
+                  validate: {
+                    positive: (value) =>
+                      parseInt(value, 10) > 0 ||
+                      t('Value must be between 1-99'),
+                    lessThan100: (value) =>
+                      parseInt(value, 10) < 100 ||
+                      t('Value must be between 1-99'),
+                  },
+                })}
+                width='30%'
                 type='number'
+                error={
+                  requiredErrors[index].duration.length ||
+                  (errors.drugRecommendation &&
+                    errors.drugRecommendation[index].duration)
+                    ? true
+                    : false
+                }
+                helperText={
+                  requiredErrors[index].duration ||
+                  (errors.drugRecommendation &&
+                    errors.drugRecommendation[index].duration.message)
+                }
                 inputProps={{
                   min: '0',
                   max: '99',
                 }}
               />
-
               <CustomizedTextField
                 disabled
                 //TODO needs to add a calculation for the date : today + duration (days)
                 name={`drugRecommendation[${index}].toDate`}
                 label={t('To date')}
                 inputRef={register()}
+                width='30%'
                 placeholder='dd/mm/yyyy'
               />
             </Grid>
@@ -195,7 +252,14 @@ const DrugRecommendation = () => {
             <Grid container direction='row' justify='flex-end'>
               <Delete
                 color='primary'
-                onClick={() => remove(index)}
+                onClick={() => {
+                  setRequiredErrors((prevState) => {
+                    const cloneState = [...prevState];
+                    cloneState.splice(index, 1);
+                    return cloneState;
+                  });
+                  remove(index);
+                }}
                 style={{ cursor: 'pointer' }}
               />
               <span style={{ cursor: 'pointer' }}>{t('Delete drug')}</span>
