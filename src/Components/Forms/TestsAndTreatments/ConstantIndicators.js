@@ -21,7 +21,7 @@ const ConstantIndicators = ({ constantIndicators }) => {
                 inputProps={{ pattern: value.pattern }}
                 onChange={value.handleOnChange}
                 id={value.value}
-                label={t(value.label) + ' (' + t(value.type) + ')'}
+                label={t(value.label) + ' (' + t(value.unit) + ')'}
                 value={value.value}
                 mask={value.mask}
               />

@@ -3,7 +3,7 @@ import { StyledConstantTextField, StyledVariantTextField } from '../Style';
 import * as ComponentsViewHelpers from './ViewHelpers';
 import LabelWithHourComponent from '../LabelWithHourComponent';
 import React from 'react';
-import FormattedInputs from '../../../Generic/PopupComponents/MaskedControllers/FormattedInputs/FormattedInputs';
+import FormattedInputs from '../../../Generic/MaskedControllers/FormattedInputs/FormattedInputs';
 function mergeMultipleConstants(
   variantIndicatorsNormalizedData,
   keyOne,

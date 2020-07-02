@@ -8,7 +8,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import { StyledMaskedInput } from './Style';
-import { StyledVariantTextField } from '../../../../Forms/TestsAndTreatments/Style';
+import { StyledVariantTextField } from '../../../Forms/TestsAndTreatments/Style';
 
 function convertDigitsInPattern(stringPattern) {
   let arr = stringPattern.split(',');

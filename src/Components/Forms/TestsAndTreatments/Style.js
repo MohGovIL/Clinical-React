@@ -96,7 +96,7 @@ export const StyledVariantForm = styled.form`
   overflow: auto;
   width: 100%;
   height: 100%;
-  box-shadow: 0 0 10px 0 rgba(152, 151, 151, 0.3);
+  /*box-shadow: 0 0 10px 0 rgba(152, 151, 151, 0.3);*/
   background-color: #ffffff;
   /* .MuiInputLabel-shrink {
     transform: translate(24.5px, 5.5px) scale(0.75);
@@ -107,4 +107,7 @@ export const StyledConstantForm = styled.form``;
 export const StyledTestsAndTreatments = styled.div``;
 export const StyledTable = styled(Table)`
   display: flex;
+  .MuiTableCell-root {
+    padding: 5px;
+  }
 `;

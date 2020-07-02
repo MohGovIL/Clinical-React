@@ -1,6 +1,7 @@
 import {
   StyledConstantHeaders,
   StyledForm,
+  StyledTable,
   StyledVariableForm,
   StyledVariantForm,
   StyledVarientIndicatorsTR,
@@ -23,7 +24,7 @@ const VariantIndicators = ({ variantIndicators }) => {
       <React.Fragment>
         <StyledVariantForm autoComplete='off'>
           <TableContainer component={Paper}>
-            <Table>
+            <StyledTable>
               <TableBody>
                 {variantIndicators.map((indicatorLogged, index) => {
                   return (
@@ -51,7 +52,7 @@ const VariantIndicators = ({ variantIndicators }) => {
                   );
                 })}
               </TableBody>
-            </Table>
+            </StyledTable>
           </TableContainer>
         </StyledVariantForm>
       </React.Fragment>
