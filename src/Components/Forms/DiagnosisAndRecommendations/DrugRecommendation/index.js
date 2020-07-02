@@ -8,6 +8,7 @@ import { Grid, MenuItem } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import { Delete } from '@material-ui/icons';
+import * as moment from 'moment';
 
 const DrugRecommendation = () => {
   const { t } = useTranslation();
@@ -18,7 +19,8 @@ const DrugRecommendation = () => {
     watch,
     requiredErrors,
     setRequiredErrors,
-    errors,
+    reset,
+    getValues,
   } = useFormContext();
   const { append, remove, fields } = useFieldArray({
     control,
@@ -185,50 +187,39 @@ const DrugRecommendation = () => {
                   </CustomizedTextField>
                 }
               />
-              {/* <Controller 
-
-              /> */}
-              <CustomizedTextField
-                disabled={checkIsDisabled('drugName', index)}
+              <Controller
+                control={control}
                 name={`drugRecommendation[${index}].duration`}
-                label={`${t('Duration (days)')} *`}
-                inputRef={register({
-                  validate: {
-                    positive: (value) =>
-                      parseInt(value, 10) > 0 ||
-                      t('Value must be between 1-99'),
-                    lessThan100: (value) =>
-                      parseInt(value, 10) < 100 ||
-                      t('Value must be between 1-99'),
-                  },
-                })}
-                width='30%'
-                type='number'
-                error={
-                  requiredErrors[index].duration.length ||
-                  (errors.drugRecommendation &&
-                    errors.drugRecommendation[index].duration)
-                    ? true
-                    : false
-                }
-                helperText={
-                  requiredErrors[index].duration ||
-                  (errors.drugRecommendation &&
-                    errors.drugRecommendation[index].duration.message)
-                }
-                inputProps={{
-                  min: '0',
-                  max: '99',
+                error={requiredErrors[index].duration.length ? true : false}
+                helperText={requiredErrors[index].duration}
+                onChange={([event]) => {
+                  if (
+                    parseInt(event.target.value, 10) > 0 &&
+                    parseInt(event.target.value, 10) < 100
+                  ) {
+                    return event.target.value;
+                  } else {
+                    return event.target.value.slice(
+                      0,
+                      event.target.value.length - 1,
+                    );
+                  }
                 }}
+                as={
+                  <CustomizedTextField
+                    disabled={checkIsDisabled('drugName', index)}
+                    label={`${t('Duration (days)')} *`}
+                    width='30%'
+                    type='number'
+                  />
+                }
               />
               <CustomizedTextField
-                disabled
-                //TODO needs to add a calculation for the date : today + duration (days)
                 name={`drugRecommendation[${index}].toDate`}
-                label={t('To date')}
                 inputRef={register()}
+                disabled
+                label={t('To date')}
                 width='30%'
-                placeholder='dd/mm/yyyy'
               />
             </Grid>
             <Grid container direction='row' alignItems='baseline'>
