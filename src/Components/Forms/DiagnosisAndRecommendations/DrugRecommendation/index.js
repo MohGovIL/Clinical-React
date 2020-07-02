@@ -93,15 +93,14 @@ const DrugRecommendation = () => {
             <Controller
               name={`drugRecommendation[${index}].drugName`}
               control={control}
-              value={value}
+              onChange={([event]) => event.target.value}
               defaultValue=''
               as={
                 <CustomizedTextField
                   iconColor='#1976d2'
                   width='30%'
                   select
-                  label={t('Drug Name')}
-                  onChange={handleChange}>
+                  label={t('Drug Name')}>
                   <MenuItem value={10}>Ten</MenuItem>
                   <MenuItem value={20}>Twenty</MenuItem>
                   <MenuItem value={30}>Thirty</MenuItem>
@@ -125,18 +124,17 @@ const DrugRecommendation = () => {
               <Controller
                 control={control}
                 name={`drugRecommendation[${index}].drugForm`}
-                value={value}
                 defaultValue=''
                 error={requiredErrors[index].drugForm.length ? true : false}
                 helperText={requiredErrors[index].drugForm}
+                onChange={([event]) => event.target.value}
                 as={
                   <CustomizedTextField
                     disabled={checkIsDisabled('drugName', index)}
                     iconColor='#1976d2'
                     width='30%'
                     select
-                    label={`${t('Drug form')} *`}
-                    onChange={handleChange}>
+                    label={`${t('Drug form')} *`}>
                     <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
                     <MenuItem value={30}>Thirty</MenuItem>
@@ -146,7 +144,6 @@ const DrugRecommendation = () => {
               <Controller
                 control={control}
                 name={`drugRecommendation[${index}].drugRoute`}
-                value={value}
                 defaultValue=''
                 error={requiredErrors[index].drugRoute.length ? true : false}
                 helperText={requiredErrors[index].drugRoute}
@@ -157,7 +154,7 @@ const DrugRecommendation = () => {
                     width='30%'
                     select
                     label={`${t('Drug route')} *`}
-                    onChange={handleChange}>
+                    onChange={([event]) => event.target.value}>
                     <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
                     <MenuItem value={30}>Thirty</MenuItem>
@@ -168,7 +165,6 @@ const DrugRecommendation = () => {
             <Grid container direction='row' justify='space-between'>
               <Controller
                 control={control}
-                value={value}
                 name={`drugRecommendation[${index}].intervals`}
                 defaultValue=''
                 error={requiredErrors[index].intervals.length ? true : false}
@@ -180,7 +176,7 @@ const DrugRecommendation = () => {
                     width='30%'
                     select
                     label={`${t('Intervals')} *`}
-                    onChange={handleChange}>
+                    onChange={([event]) => event.target.value}>
                     <MenuItem value={10}>Ten</MenuItem>
                     <MenuItem value={20}>Twenty</MenuItem>
                     <MenuItem value={30}>Thirty</MenuItem>
@@ -192,6 +188,13 @@ const DrugRecommendation = () => {
                 name={`drugRecommendation[${index}].duration`}
                 error={requiredErrors[index].duration.length ? true : false}
                 helperText={requiredErrors[index].duration}
+                onBlur={([event]) => {
+                  setValue(
+                    `drugRecommendation[${index}].toDate`,
+                    event.target.value,
+                  );
+                  return event.target.value;
+                }}
                 onChange={([event]) => {
                   if (
                     parseInt(event.target.value, 10) > 0 &&
