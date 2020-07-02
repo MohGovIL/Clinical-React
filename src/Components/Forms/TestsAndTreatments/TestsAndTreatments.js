@@ -1,7 +1,7 @@
 //TestsAndTreatment
 
 import { connect } from 'react-redux';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 import MomentUtils from '@date-io/moment';
@@ -18,6 +18,7 @@ import LabelWithHourComponent from './LabelWithHourComponent';
 import * as Moment from 'moment';
 import { store } from '../../../index';
 import normalizeFhirUser from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
+import { getCities, getIndicatorsSettings } from '../../../Utils/Services/API';
 const TestsAndTreatments = ({
   patient,
   encounter,
@@ -145,56 +146,56 @@ const TestsAndTreatments = ({
     70,
     80,
   ]);
-  const constantIndicatorsNormalaizedData = [];
-  const variantIndicatorsNormalaizedData = [
+
+  /*[
     {
       label: 'userName',
     },
     {
       label: 'Blood pressure',
       unit: 'mmHg',
-      /*  pattern: '[1-9]{1,3}|[1-9]{1,3}[/]|^[0-9]\\d{2}\\/\\d{1}$',*/
+      /!*  pattern: '[1-9]{1,3}|[1-9]{1,3}[/]|^[0-9]\\d{2}\\/\\d{1}$',*!/
       mask: '999/999',
     },
     {
       label: 'Pulse',
 
-      /*pattern: '[1-9]{1,2}',*/
+      /!*pattern: '[1-9]{1,2}',*!/
       mask: '99',
     },
     {
       label: 'Fever',
-      /*pattern:
-        '[1-9]{1,2} | [1-9]{1,2}[.] | [1-9]{1,2}[.]| ^[0-9]\\d{2}\\.\\d{1}$',*/
+      /!*pattern:
+        '[1-9]{1,2} | [1-9]{1,2}[.] | [1-9]{1,2}[.]| ^[0-9]\\d{2}\\.\\d{1}$',*!/
       mask: '99.9',
     },
     {
       label: 'Saturation',
 
-      /*pattern: '[1-9]{1,2}',*/
+      /!*pattern: '[1-9]{1,2}',*!/
       mask: '999%',
     },
     {
       label: 'Breaths per minute',
 
-      /*pattern: '[1-9]{1,2}',*/
+      /!*pattern: '[1-9]{1,2}',*!/
       mask: '99',
     },
     {
       label: 'Pain level',
 
-      /*pattern: '[1-9]{1,2}',*/
+      /!*pattern: '[1-9]{1,2}',*!/
       mask: '99',
     },
     {
       label: 'Blood sugar',
 
-      /*pattern: '[1-9]{1,2}',*/
+      /!*pattern: '[1-9]{1,2}',*!/
       mask: '999',
     },
-  ];
+  ];*/
 
-  const constantIndicatorsNormalizedData = {};
+  /*onst constantIndicatorsNormalizedData = {};
   constantIndicatorsNormalizedData['height'] = {
     label: 'Height',
     id: 'height',
@@ -206,75 +207,131 @@ const TestsAndTreatments = ({
     id: 'weight',
 
     pattern: '[1-9]{1,3}|[1-9]{1,3}[.]|^[0-9]\\d{2}\\.\\d{1}$',
-  };
-  const constantIndicators = DataHelpers.thickenTheConstantIndicators({
-    height,
-    weight,
-    setWeight,
-    setHeight,
-    constantIndicatorsNormalizedData,
-  });
-  const variantIndicators = DataHelpers.thickenTheVariantIndicators({
-    variantIndicatorsNormalaizedData,
-    userName,
-    fever,
-    pressure,
-    saturation,
-    painLevel,
-    breathsPerMin,
-    bloodSugar,
-    pulse,
-    setFever,
-    setPressure,
-    setSaturation,
-    setPainLevel,
-    setBreathsPerMin,
-    setBloodSugar,
-    setPulse,
-    disabled: true,
-    newRow: false,
-    size: 0,
-  });
+  };*/
 
-  const variantIndicatorsNew = DataHelpers.thickenTheVariantIndicators({
-    variantIndicatorsNormalaizedData,
-    userName: userNameNew,
-    fever: feverNew,
-    pressure: pressureNew,
-    saturation: saturationNew,
-    painLevel: painLevelNew,
-    breathsPerMin: breathsPerMinNew,
-    bloodSugar: bloodSugarNew,
-    pulse: pulseNew,
-    setFever: setFeverNew,
-    setPressure: setPressureNew,
-    setSaturation: setSaturationNew,
-    setPainLevel: setPainLevelNew,
-    setBreathsPerMin: setBreathsPerMinNew,
-    setBloodSugar: setBloodSugarNew,
-    setPulse: setPulseNew,
-    disabled: false,
-    newRow: true,
-    size: userName.length,
+  const [indicators, setIndicators] = useState(null);
+  const [constantIndicators, setConstantIndicators] = useState(null);
+  const [variantIndicators, setVariantIndicators] = useState(null);
+  const [variantIndicatorsNew, setVariantIndicatorsNew] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        if (!indicators) {
+          const clinicIndicators = await getIndicatorsSettings();
+          if (clinicIndicators) {
+            setIndicators(clinicIndicators);
+
+            let constantIndicatorsNormalizedData =
+              clinicIndicators &&
+              clinicIndicators['data'] &&
+              clinicIndicators['data']['constant']
+                ? clinicIndicators['data']['constant']
+                : null;
+            let constantIndicatorsUIData = DataHelpers.thickenTheConstantIndicators(
+              {
+                height,
+                weight,
+                setWeight,
+                setHeight,
+                constantIndicatorsNormalizedData,
+              },
+            );
+
+            let variantIndicatorsNormalizedData =
+              clinicIndicators &&
+              clinicIndicators['data'] &&
+              clinicIndicators['data']['variant']
+                ? clinicIndicators['data']['variant']
+                : null;
+
+            let variantIndicatorUIData = DataHelpers.thickenTheVariantIndicators(
+              {
+                variantIndicatorsNormalizedData,
+                userName,
+                fever,
+                pressure,
+                saturation,
+                painLevel,
+                breathsPerMin,
+                bloodSugar,
+                pulse,
+                setFever,
+                setPressure,
+                setSaturation,
+                setPainLevel,
+                setBreathsPerMin,
+                setBloodSugar,
+                setPulse,
+                disabled: true,
+                newRow: false,
+                size: 0,
+              },
+            );
+
+            let newVariantIndicatorsUIData = DataHelpers.thickenTheVariantIndicators(
+              {
+                variantIndicatorsNormalizedData,
+                userName: userNameNew,
+                fever: feverNew,
+                pressure: pressureNew,
+                saturation: saturationNew,
+                painLevel: painLevelNew,
+                breathsPerMin: breathsPerMinNew,
+                bloodSugar: bloodSugarNew,
+                pulse: pulseNew,
+                setFever: setFeverNew,
+                setPressure: setPressureNew,
+                setSaturation: setSaturationNew,
+                setPainLevel: setPainLevelNew,
+                setBreathsPerMin: setBreathsPerMinNew,
+                setBloodSugar: setBloodSugarNew,
+                setPulse: setPulseNew,
+                disabled: false,
+                newRow: true,
+                size: userName.length,
+              },
+            );
+            setVariantIndicatorsNew(newVariantIndicatorsUIData);
+            setVariantIndicators(variantIndicatorUIData);
+            setConstantIndicators(constantIndicatorsUIData);
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    })();
   });
 
   return (
     <StyledTestsAndTreatments dir={languageDirection}>
-      <ConstantIndicators
-        constantIndicators={constantIndicators}
-        setWeight={setWeight}
-        setHeight={setHeight}
-      />
-      <StyledConstantHeaders>{t('Variable indicators')}</StyledConstantHeaders>
-      <hr />
+      {constantIndicators ? (
+        <ConstantIndicators
+          constantIndicators={constantIndicators}
+          setWeight={setWeight}
+          setHeight={setHeight}
+        />
+      ) : null}
+      {variantIndicators || variantIndicatorsNew ? (
+        <React.Fragment>
+          <StyledConstantHeaders>
+            {t('Variable indicators')}
+          </StyledConstantHeaders>
+          <hr />
 
-      <VariantIndicators
-        variantIndicators={
-          encounter.status !== 'finished'
-            ? variantIndicators.concat(variantIndicatorsNew)
-            : variantIndicators
-        }
-      />
+          <VariantIndicators
+            variantIndicators={
+              variantIndicators
+                ? encounter.status !== 'finished'
+                  ? variantIndicatorsNew
+                    ? variantIndicators.concat(variantIndicatorsNew)
+                    : variantIndicators
+                  : variantIndicators
+                : null
+            }
+          />
+        </React.Fragment>
+      ) : null}
 
       {/*{encounter.status !== 'finished' ? (
         <StyledForm autoComplete='off'>

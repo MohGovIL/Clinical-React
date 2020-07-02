@@ -4,6 +4,44 @@ import * as ComponentsViewHelpers from './ViewHelpers';
 import LabelWithHourComponent from '../LabelWithHourComponent';
 import React from 'react';
 import FormattedInputs from '../../../Generic/PopupComponents/MaskedControllers/FormattedInputs/FormattedInputs';
+function mergeMultipleConstants(
+  variantIndicatorsNormalizedData,
+  keyOne,
+  keyTwo,
+  seperator,
+) {
+  let keysPlaces = [];
+  for (let i = 0; i < variantIndicatorsNormalizedData.length; i++) {
+    if (
+      variantIndicatorsNormalizedData[i]['description'] === keyOne ||
+      variantIndicatorsNormalizedData[i]['description'] === keyTwo
+    ) {
+      keysPlaces.push(i);
+    }
+  }
+  if (keysPlaces.length > 0) {
+    let variantIndicatorsNormalizedDataTemp = JSON.parse(
+      JSON.stringify(variantIndicatorsNormalizedData),
+    );
+    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['description'] = `${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['description']
+    }/${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['description']}`;
+    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['unit'] = `${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['unit']
+    }/${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['unit']}`;
+    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['mask'] = `${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['mask']
+    }/${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['mask']}`;
+    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['code'] = `${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['code']
+    }/${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['code']}`;
+
+    delete variantIndicatorsNormalizedDataTemp[keysPlaces[1]];
+
+    return variantIndicatorsNormalizedDataTemp;
+  }
+  return variantIndicatorsNormalizedData;
+}
 
 export const thickenTheConstantIndicators = ({
   height,
@@ -14,16 +52,12 @@ export const thickenTheConstantIndicators = ({
 }) => {
   let constantIndicators = [];
   if (constantIndicatorsNormalizedData) {
-    let heightTemplateData = constantIndicatorsNormalizedData['height'];
-    let weightemplateData = constantIndicatorsNormalizedData['weight'];
-
     for (const [key, dataset] of Object.entries(
       constantIndicatorsNormalizedData,
     )) {
-      switch (key) {
-        case 'height':
+      switch (dataset.label) {
+        case 'Height':
           {
-            dataset['type'] = 'cm'; //get from system value set constants
             dataset.value = height; //get from system value set constants
             dataset.componentType = StyledConstantTextField;
             dataset.handleOnChange = (e) =>
@@ -35,8 +69,7 @@ export const thickenTheConstantIndicators = ({
               });
           }
           break;
-        case 'weight': {
-          dataset['type'] = 'kg'; //get from system value set constants
+        case 'Weight': {
           dataset.value = weight; //get from system value set constants
           dataset.componentType = StyledConstantTextField;
           dataset.handleOnChange = (e) =>
@@ -55,7 +88,7 @@ export const thickenTheConstantIndicators = ({
 };
 
 export const thickenTheVariantIndicators = ({
-  variantIndicatorsNormalaizedData,
+  variantIndicatorsNormalizedData: variantIndicatorsNormalizedData,
   userName,
   fever,
   pressure,
@@ -77,18 +110,26 @@ export const thickenTheVariantIndicators = ({
 }) => {
   let variantIndicators = [];
 
-  if (!variantIndicatorsNormalaizedData) return [];
+  if (!variantIndicatorsNormalizedData) return [];
   for (let i = 0; i < userName.length; i++) {
-    let variantIndicatorsNormalaizedDataTemp = JSON.parse(
-      JSON.stringify(variantIndicatorsNormalaizedData),
+    let variantIndicatorsNormalizedDataTemp = JSON.parse(
+      JSON.stringify(variantIndicatorsNormalizedData),
     );
+    variantIndicatorsNormalizedDataTemp.unshift({ label: 'userName' });
     size++;
     /*let variantIndicatorsNormalaizedDataTemp = [
-      ...variantIndicatorsNormalaizedData,
+      ...variantIndicatorsNormalizedData,
     ];*/
 
+    variantIndicatorsNormalizedDataTemp = mergeMultipleConstants(
+      variantIndicatorsNormalizedDataTemp,
+      'Diastolic blood pressure',
+      'Systolic blood pressure',
+      '/',
+    );
+
     for (const [key, dataset] of Object.entries(
-      variantIndicatorsNormalaizedDataTemp,
+      variantIndicatorsNormalizedDataTemp,
     )) {
       dataset.disabled = disabled;
       dataset.newRow = newRow;
@@ -229,11 +270,11 @@ export const thickenTheVariantIndicators = ({
             });
           dataset.componenttype = 'textFieldWithMask';
           dataset.id = `blood_sugar_${size > 0 ? size : i}`;
-          /*dataset['aria-describedby'] = dataset.mask;*/
+
           break;
       }
     }
-    variantIndicators.push(variantIndicatorsNormalaizedDataTemp);
+    variantIndicators.push(variantIndicatorsNormalizedDataTemp);
   }
   return variantIndicators;
 };
