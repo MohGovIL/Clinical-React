@@ -54,7 +54,8 @@ const MedicalAdmission = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
-  const { handleSubmit, formState, control } = methods;
+
+  const { handleSubmit, formState, control, watch, register } = methods;
 
   const [pregnancyValue, setPregnancyValue] = useState();
 
@@ -68,13 +69,16 @@ const MedicalAdmission = ({
     ReferralFile: '',
     CommitmentFile: '',
   });
+  const watchisInsulationInstruction = watch('isInsulationInstruction');
 
   const onSubmit = async (data) => {};
   const handleChangeRadio = (event) => {
     setPregnancyValue(event.target.value);
   };
 
-
+console.log("=====");
+console.log(patient);
+console.log("=====");
   const buttonTemplateSelect = {
     label: t('Template selection'),
     variant: 'text',
@@ -128,14 +132,27 @@ const MedicalAdmission = ({
               </span>
               {/* Requested service - switch */}
               <StyledSwitch
-                name='insulationRequired'
-                // register={register}
+                name='isInsulationInstruction'
+                register={register}
                 label_1={'No'}
                 label_2={'Yes'}
                 marginLeft={'40px'}
                 marginRight={'33px'}
               />
             </Grid>
+            {watchisInsulationInstruction && (
+            <Controller
+              control={control}
+              name='insulationInstruction'
+              //defaultValue={}
+              as={
+                <CustomizedTextField
+                  width={'70%'}
+                  label={t('Insulation instruction')}
+                />
+              }
+            />)
+            }
           </StyledInsulation>
           <StyledTemplateSelection>
             <Grid
@@ -161,6 +178,8 @@ const MedicalAdmission = ({
               </Grid>
             </Grid>
           </StyledTemplateSelection>
+          {/*need to make a new component for radio select*/}
+          { (patient.gender === 'female' || patient.gender === 'other') && (
           <StyledGroupCheckbox>
             <Grid
               container
@@ -172,18 +191,21 @@ const MedicalAdmission = ({
               </Grid>
               <Grid item xs={2}>
                 <FormLabel component='legend'>{t('No')}<StyledRadio
+                  disableRipple
                   icon={<FiberManualRecordIcon htmlColor={'#dadbda'} />}
                   checkedIcon={<FiberManualRecordIcon htmlColor={'#076ce9'}/>}
                   checked={pregnancyValue === t('No')} onChange={handleChangeRadio} color='primary' value={t("No")} name="pregnancy"/></FormLabel>
               </Grid>
               <Grid item xs={2}>
                 <FormLabel component='legend'>{t('Yes')}<StyledRadio
+                  disableRipple
                   icon={<FiberManualRecordIcon htmlColor={'#dadbda'} />}
                   checkedIcon={<FiberManualRecordIcon htmlColor={'#076ce9'}/>}
                   checked={pregnancyValue === t('Yes')} onChange={handleChangeRadio} color='primary' value={t("Yes")} name="pregnancy"/></FormLabel>
               </Grid>
             </Grid>
           </StyledGroupCheckbox>
+          )}
         </StyledForm>
       </FormContext>
     </React.Fragment>
