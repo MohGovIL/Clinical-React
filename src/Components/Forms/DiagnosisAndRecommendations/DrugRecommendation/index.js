@@ -21,17 +21,13 @@ const DrugRecommendation = () => {
     setRequiredErrors,
     reset,
     getValues,
+    setValue,
   } = useFormContext();
   const { append, remove, fields } = useFieldArray({
     control,
     name: 'drugRecommendation',
   });
   const drugRecommendation = watch('drugRecommendation');
-
-  const [value, setValue] = React.useState('');
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
 
   const checkIsDisabled = (name, index) => {
     if (drugRecommendation[index] === undefined) {
