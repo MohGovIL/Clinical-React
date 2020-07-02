@@ -187,7 +187,9 @@ const DrugRecommendation = () => {
                 onBlur={([event]) => {
                   setValue(
                     `drugRecommendation[${index}].toDate`,
-                    event.target.value,
+                    event.target.value
+                      ? moment().add(event.target.value, 'd').format('L')
+                      : event.target.value,
                   );
                   return event.target.value;
                 }}
@@ -217,6 +219,13 @@ const DrugRecommendation = () => {
                 name={`drugRecommendation[${index}].toDate`}
                 inputRef={register()}
                 disabled
+                InputLabelProps={{
+                  shrink:
+                    drugRecommendation[index] &&
+                    drugRecommendation[index]['duration']
+                      ? true
+                      : false,
+                }}
                 label={t('To date')}
                 width='30%'
               />
