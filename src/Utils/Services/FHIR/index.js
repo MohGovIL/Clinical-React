@@ -19,6 +19,7 @@ import DocumentReference from './DocumentReference';
 import Practitioner from './Practitioner';
 import Condition from './Condition';
 import MedicationStatement from './MedicationStatement';
+import Obsevations from './Observations';
 
 const FHIRStates = {
   Appointment: Appointment,
@@ -31,9 +32,10 @@ const FHIRStates = {
   Questionnaire: Questionnaire,
   QuestionnaireResponse: QuestionnaireResponse,
   DocumentReference: DocumentReference,
-  Practitioner:Practitioner,
-  Condition:Condition,
-  MedicationStatement:MedicationStatement,
+  Practitioner: Practitioner,
+  Condition: Condition,
+  MedicationStatement: MedicationStatement,
+  Observations: Obsevations,
   /* More transformers */
   __default__: null,
 };

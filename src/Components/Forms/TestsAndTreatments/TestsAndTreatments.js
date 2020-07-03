@@ -19,6 +19,9 @@ import * as Moment from 'moment';
 import { store } from '../../../index';
 import normalizeFhirUser from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
 import { getCities, getIndicatorsSettings } from '../../../Utils/Services/API';
+import { thickenTheData } from './Helpers/DataHelpers';
+import { FHIR } from '../../../Utils/Services/FHIR';
+
 const TestsAndTreatments = ({
   patient,
   encounter,
@@ -30,6 +33,7 @@ const TestsAndTreatments = ({
   currentUser,
 }) => {
   const { t } = useTranslation();
+  const [observations, setObservations] = useState(null);
   const [pressureNew, setPressureNew] = useState([]);
   const [pulseNew, setPulseNew] = useState([]);
   const userDetails = normalizeFhirUser(currentUser);
@@ -147,68 +151,6 @@ const TestsAndTreatments = ({
     80,
   ]);
 
-  /*[
-    {
-      label: 'userName',
-    },
-    {
-      label: 'Blood pressure',
-      unit: 'mmHg',
-      /!*  pattern: '[1-9]{1,3}|[1-9]{1,3}[/]|^[0-9]\\d{2}\\/\\d{1}$',*!/
-      mask: '999/999',
-    },
-    {
-      label: 'Pulse',
-
-      /!*pattern: '[1-9]{1,2}',*!/
-      mask: '99',
-    },
-    {
-      label: 'Fever',
-      /!*pattern:
-        '[1-9]{1,2} | [1-9]{1,2}[.] | [1-9]{1,2}[.]| ^[0-9]\\d{2}\\.\\d{1}$',*!/
-      mask: '99.9',
-    },
-    {
-      label: 'Saturation',
-
-      /!*pattern: '[1-9]{1,2}',*!/
-      mask: '999%',
-    },
-    {
-      label: 'Breaths per minute',
-
-      /!*pattern: '[1-9]{1,2}',*!/
-      mask: '99',
-    },
-    {
-      label: 'Pain level',
-
-      /!*pattern: '[1-9]{1,2}',*!/
-      mask: '99',
-    },
-    {
-      label: 'Blood sugar',
-
-      /!*pattern: '[1-9]{1,2}',*!/
-      mask: '999',
-    },
-  ];*/
-
-  /*onst constantIndicatorsNormalizedData = {};
-  constantIndicatorsNormalizedData['height'] = {
-    label: 'Height',
-    id: 'height',
-
-    pattern: '[1-9]{1,3}',
-  };
-  constantIndicatorsNormalizedData['weight'] = {
-    label: 'Weight',
-    id: 'weight',
-
-    pattern: '[1-9]{1,3}|[1-9]{1,3}[.]|^[0-9]\\d{2}\\.\\d{1}$',
-  };*/
-
   const [indicators, setIndicators] = useState(null);
   const [constantIndicators, setConstantIndicators] = useState(null);
   const [variantIndicators, setVariantIndicators] = useState(null);
@@ -217,84 +159,58 @@ const TestsAndTreatments = ({
   useEffect(() => {
     (async () => {
       try {
+        const observed = await FHIR('Observations', 'doWork', {
+          functionName: 'getObservations',
+          functionParams: {
+            facility: store.getState().settings.facility,
+            patient: patient,
+          },
+        });
         if (!indicators) {
           const clinicIndicators = await getIndicatorsSettings();
           if (clinicIndicators) {
             setIndicators(clinicIndicators);
 
-            let constantIndicatorsNormalizedData =
-              clinicIndicators &&
-              clinicIndicators['data'] &&
-              clinicIndicators['data']['constant']
-                ? clinicIndicators['data']['constant']
-                : null;
-            let constantIndicatorsUIData = DataHelpers.thickenTheConstantIndicators(
-              {
-                height,
-                weight,
-                setWeight,
-                setHeight,
-                constantIndicatorsNormalizedData,
-              },
-            );
-
-            let variantIndicatorsNormalizedData =
-              clinicIndicators &&
-              clinicIndicators['data'] &&
-              clinicIndicators['data']['variant']
-                ? clinicIndicators['data']['variant']
-                : null;
-
-            let variantIndicatorUIData = DataHelpers.thickenTheVariantIndicators(
-              {
-                variantIndicatorsNormalizedData,
-                userName,
-                fever,
-                pressure,
-                saturation,
-                painLevel,
-                breathsPerMin,
-                bloodSugar,
-                pulse,
-                setFever,
-                setPressure,
-                setSaturation,
-                setPainLevel,
-                setBreathsPerMin,
-                setBloodSugar,
-                setPulse,
-                disabled: true,
-                newRow: false,
-                size: 0,
-              },
-            );
-
-            let newVariantIndicatorsUIData = DataHelpers.thickenTheVariantIndicators(
-              {
-                variantIndicatorsNormalizedData,
-                userName: userNameNew,
-                fever: feverNew,
-                pressure: pressureNew,
-                saturation: saturationNew,
-                painLevel: painLevelNew,
-                breathsPerMin: breathsPerMinNew,
-                bloodSugar: bloodSugarNew,
-                pulse: pulseNew,
-                setFever: setFeverNew,
-                setPressure: setPressureNew,
-                setSaturation: setSaturationNew,
-                setPainLevel: setPainLevelNew,
-                setBreathsPerMin: setBreathsPerMinNew,
-                setBloodSugar: setBloodSugarNew,
-                setPulse: setPulseNew,
-                disabled: false,
-                newRow: true,
-                size: userName.length,
-              },
-            );
-            setVariantIndicatorsNew(newVariantIndicatorsUIData);
-            setVariantIndicators(variantIndicatorUIData);
-            setConstantIndicators(constantIndicatorsUIData);
+            thickenTheData({
+              indicators: clinicIndicators,
+              userName,
+              fever,
+              pressure,
+              saturation,
+              painLevel,
+              breathsPerMin,
+              bloodSugar,
+              pulse,
+              setFever,
+              setPressure,
+              setSaturation,
+              setPainLevel,
+              setBreathsPerMin,
+              setBloodSugar,
+              setPulse,
+              height,
+              weight,
+              setWeight,
+              setHeight,
+              userNameNew,
+              feverNew,
+              pressureNew,
+              saturationNew,
+              painLevelNew,
+              breathsPerMinNew,
+              bloodSugarNew,
+              pulseNew,
+              setFeverNew,
+              setPressureNew,
+              setSaturationNew,
+              setPainLevelNew,
+              setBreathsPerMinNew,
+              setBloodSugarNew,
+              setPulseNew,
+              setVariantIndicatorsNew,
+              setVariantIndicators,
+              setConstantIndicators,
+            });
           }
         }
       } catch (err) {
@@ -332,12 +248,6 @@ const TestsAndTreatments = ({
           />
         </React.Fragment>
       ) : null}
-
-      {/*{encounter.status !== 'finished' ? (
-        <StyledForm autoComplete='off'>
-          <VariantIndicators variantIndicators={variantIndicatorsNew} />
-        </StyledForm>
-      ) : null}*/}
     </StyledTestsAndTreatments>
   );
 };

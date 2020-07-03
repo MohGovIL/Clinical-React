@@ -21,6 +21,12 @@ export const handleVariantColumnChange = ({
   id,
   setterFunction,
   paddWithZero,
+  newRow,
+  setVariantIndicators,
+  variantIndicators,
+  column,
+  min,
+  max,
 }) => {
   if (!parentArr || !setterFunction) return;
 
@@ -29,4 +35,9 @@ export const handleVariantColumnChange = ({
   const tempFeverArray = [...parentArr];
   tempFeverArray[id] = arrTemp;
   setterFunction(tempFeverArray);
+  if (setVariantIndicators && newRow) {
+    variantIndicators[id][column]['value'] = arrTemp;
+    const variantIndicatorsTemp = [...variantIndicators];
+    setVariantIndicators(variantIndicatorsTemp);
+  }
 };
