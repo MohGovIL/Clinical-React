@@ -95,9 +95,9 @@ const DrugRecommendation = () => {
                   width='30%'
                   select
                   label={t('Drug Name')}>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  <MenuItem value={'10'}>Ten</MenuItem>
+                  <MenuItem value={'20'}>Twenty</MenuItem>
+                  <MenuItem value={'30'}>Thirty</MenuItem>
                 </CustomizedTextField>
               }
             />
@@ -129,9 +129,9 @@ const DrugRecommendation = () => {
                     width='30%'
                     select
                     label={`${t('Drug form')} *`}>
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                    <MenuItem value={'10'}>Ten</MenuItem>
+                    <MenuItem value={'20'}>Twenty</MenuItem>
+                    <MenuItem value={'30'}>Thirty</MenuItem>
                   </CustomizedTextField>
                 }
               />
@@ -149,9 +149,9 @@ const DrugRecommendation = () => {
                     select
                     label={`${t('Drug route')} *`}
                     onChange={([event]) => event.target.value}>
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                    <MenuItem value={'10'}>Ten</MenuItem>
+                    <MenuItem value={'20'}>Twenty</MenuItem>
+                    <MenuItem value={'30'}>Thirty</MenuItem>
                   </CustomizedTextField>
                 }
               />
@@ -171,9 +171,9 @@ const DrugRecommendation = () => {
                     select
                     label={`${t('Intervals')} *`}
                     onChange={([event]) => event.target.value}>
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                    <MenuItem value={'10'}>Ten</MenuItem>
+                    <MenuItem value={'20'}>Twenty</MenuItem>
+                    <MenuItem value={'30'}>Thirty</MenuItem>
                   </CustomizedTextField>
                 }
               />
@@ -234,6 +234,7 @@ const DrugRecommendation = () => {
                 name={`drugRecommendation[${index}].instructionsForTheDrug`}
                 label={t('Instructions for the drug')}
                 inputRef={register()}
+                width='60%'
               />
               <StyledButton
                 width='113px'

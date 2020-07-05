@@ -77,31 +77,31 @@ const DiagnosisAndRecommendations = ({
     quantity: {
       name: 'quantity',
       required: function (data) {
-        return data.length > 0;
+        return data && data.length > 0;
       },
     },
     drugForm: {
       name: 'drugForm',
       required: function (data) {
-        return data.length > 0;
+        return data && data.length > 0;
       },
     },
     drugRoute: {
       name: 'drugRoute',
       required: function (data) {
-        return data.length > 0;
+        return data && data.length > 0;
       },
     },
     intervals: {
       name: 'intervals',
       required: function (data) {
-        return data.length > 0;
+        return data && data.length > 0;
       },
     },
     duration: {
       name: 'duration',
       required: function (data) {
-        return data.length > 0;
+        return data && data.length > 0;
       },
     },
   };
@@ -111,7 +111,11 @@ const DiagnosisAndRecommendations = ({
     if (!data['drugRecommendation']) {
       return clean;
     }
-    requiredErrors.forEach((medicine, medicineIndex) => {
+    for (
+      let medicineIndex = 0;
+      medicineIndex < requiredErrors.length;
+      medicineIndex++
+    ) {
       for (const fieldKey in requiredFields) {
         if (requiredFields.hasOwnProperty(fieldKey)) {
           let answer;
@@ -135,8 +139,7 @@ const DiagnosisAndRecommendations = ({
           }
         }
       }
-    });
-
+    }
     return clean;
   };
   return (
