@@ -33,7 +33,7 @@ export const emergencyTabs = [
     tableFunction: setPatientDataWaitingForDoctorTableRows,
   },
   {
-    tabName: 'Waiting for Xray',
+    tabName: 'Waiting for xray',
     id: 'waiting_for_xray',
     mode: 'hide',
     count: 0,
