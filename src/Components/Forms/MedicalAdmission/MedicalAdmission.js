@@ -1,7 +1,7 @@
 //MedicalAdmission
 
 import { connect } from 'react-redux';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import VisitDetails from '../../Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
 import {
   Controller,
@@ -70,15 +70,24 @@ const MedicalAdmission = ({
     CommitmentFile: '',
   });
   const watchisInsulationInstruction = watch('isInsulationInstruction');
+  const watchisUrgent = watch('isUrgent');
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+
+  };
+
+  useEffect(() => {
+       console.log("is urgent: " + watchisUrgent);
+    // console.log("=====");
+    // console.log(patient);
+    // console.log("=====");
+  },[watchisUrgent]);
+
   const handleChangeRadio = (event) => {
     setPregnancyValue(event.target.value);
   };
 
-console.log("=====");
-console.log(patient);
-console.log("=====");
+
   const buttonTemplateSelect = {
     label: t('Template selection'),
     variant: 'text',
@@ -113,7 +122,7 @@ console.log("=====");
               {/* Requested service - switch */}
               <StyledSwitch
                 name='isUrgent'
-                // register={register}
+                register={register}
                 label_1={'No'}
                 label_2={'Yes'}
                 marginLeft={'40px'}
