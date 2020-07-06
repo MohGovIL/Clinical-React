@@ -9,7 +9,37 @@ import { StyledDivider } from '../Style';
 import { useFormContext } from 'react-hook-form';
 const DiagnosisAndTreatment = () => {
   const { t } = useTranslation();
-  const { permission } = useFormContext();
+  const {
+    permission,
+    setPopUpProps,
+    setValue,
+    register,
+    watch,
+  } = useFormContext();
+
+  const diagnosisAndTreatmentFields = watch([
+    'findingsDetails',
+    'diagnosisDetails',
+    'treatmentDetails',
+  ]);
+  console.log(diagnosisAndTreatmentFields);
+  const callBack = (data, name) => {
+    setValue(name, data);
+  };
+
+  const handlePopUpProps = (title, fields, id, callBack, name) => {
+    setPopUpProps((prevState) => {
+      return {
+        ...prevState,
+        popupOpen: true,
+        formFieldsTitle: title,
+        formFields: fields,
+        formID: id,
+        setTemplatesTextReturned: callBack,
+        name,
+      };
+    });
+  };
   return (
     <StyledFormGroup>
       <Title
@@ -25,9 +55,16 @@ const DiagnosisAndTreatment = () => {
         justify='flex-start'
         alignItems='baseline'>
         <CustomizedTextField
+          name='findingsDetails'
+          inputRef={register}
           label={t('Findings details')}
           width='45%'
           multiline
+          InputLabelProps={{
+            shrink: diagnosisAndTreatmentFields['findingsDetails']
+              ? true
+              : false,
+          }}
           disabled={permission === 'view' ? true : false}
         />
         <StyledButton
@@ -37,7 +74,16 @@ const DiagnosisAndTreatment = () => {
           height='32px'
           color='primary'
           variant='outlined'
-          size='small'>
+          size='small'
+          onClick={() =>
+            handlePopUpProps(
+              t('Findings details'),
+              'findings_details',
+              'diagnosis_recommendations',
+              callBack,
+              'findingsDetails',
+            )
+          }>
           {t('Select template')}
         </StyledButton>
       </Grid>
@@ -47,7 +93,14 @@ const DiagnosisAndTreatment = () => {
         justify='flex-start'
         alignItems='baseline'>
         <CustomizedTextField
+          inputRef={register}
+          name='diagnosisDetails'
           label={t('Diagnosis details')}
+          InputLabelProps={{
+            shrink: diagnosisAndTreatmentFields['diagnosisDetails']
+              ? true
+              : false,
+          }}
           width='45%'
           multiline
           disabled={permission === 'view' ? true : false}
@@ -59,7 +112,16 @@ const DiagnosisAndTreatment = () => {
           height='32px'
           color='primary'
           variant='outlined'
-          size='small'>
+          size='small'
+          onClick={() =>
+            handlePopUpProps(
+              t('Diagnosis details'),
+              'diagnosis_details',
+              'diagnosis_recommendations',
+              callBack,
+              'diagnosisDetails',
+            )
+          }>
           {t('Select template')}
         </StyledButton>
       </Grid>
@@ -69,7 +131,14 @@ const DiagnosisAndTreatment = () => {
         justify='flex-start'
         alignItems='baseline'>
         <CustomizedTextField
+          inputRef={register}
+          name='treatmentDetails'
           label={t('Treatment details')}
+          InputLabelProps={{
+            shrink: diagnosisAndTreatmentFields['treatmentDetails']
+              ? true
+              : false,
+          }}
           width='45%'
           multiline
           disabled={permission === 'view' ? true : false}
@@ -81,7 +150,16 @@ const DiagnosisAndTreatment = () => {
           color='primary'
           margin='0 16px'
           variant='outlined'
-          size='small'>
+          size='small'
+          onClick={() =>
+            handlePopUpProps(
+              t('Treatment details'),
+              'treatment_details',
+              'diagnosis_recommendations',
+              callBack,
+              'treatmentDetails',
+            )
+          }>
           {t('Select template')}
         </StyledButton>
       </Grid>
