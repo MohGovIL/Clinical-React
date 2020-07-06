@@ -17,19 +17,11 @@ import {
   StyledIsUrgent,
   StyledTemplateSelection,
   StyledForm,
-  StyledGroupCheckbox, StyledRadio,
 } from './Style';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
-import CustomizedTextField from '../../../Assets/Elements/CustomizedTextField';
-import { StyledFormGroup } from '../../Generic/PatientAdmission/PatientDetailsBlock/Style';
-import { Label } from '@material-ui/icons';
-import Typography from '@material-ui/core/Typography';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
+
+import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
 
 const MedicalAdmission = ({
   patient,
@@ -57,8 +49,6 @@ const MedicalAdmission = ({
 
   const { handleSubmit, formState, control, watch, register } = methods;
 
-  const [pregnancyValue, setPregnancyValue] = useState();
-
   const [requiredErrors, setRequiredErrors] = useState({
     selectTest: '',
     commitmentAndPaymentReferenceForPaymentCommitment: '',
@@ -83,9 +73,7 @@ const MedicalAdmission = ({
     // console.log("=====");
   },[watchisUrgent]);
 
-  const handleChangeRadio = (event) => {
-    setPregnancyValue(event.target.value);
-  };
+
 
 
   const buttonTemplateSelect = {
@@ -189,31 +177,12 @@ const MedicalAdmission = ({
           </StyledTemplateSelection>
           {/*need to make a new component for radio select*/}
           { (patient.gender === 'female' || patient.gender === 'other') && (
-          <StyledGroupCheckbox>
-            <Grid
-              container
-              direction={'row'}
-              justify={'flex-start'}
-              alignItems={'center'}>
-              <Grid item xs={2}>
-                  <Typography variant='h6' component='h6'><b>{t('Pregnancy')}:</b></Typography>
-              </Grid>
-              <Grid item xs={2}>
-                <FormLabel component='legend'>{t('No')}<StyledRadio
-                  disableRipple
-                  icon={<FiberManualRecordIcon htmlColor={'#dadbda'} />}
-                  checkedIcon={<FiberManualRecordIcon htmlColor={'#076ce9'}/>}
-                  checked={pregnancyValue === t('No')} onChange={handleChangeRadio} color='primary' value={t("No")} name="pregnancy"/></FormLabel>
-              </Grid>
-              <Grid item xs={2}>
-                <FormLabel component='legend'>{t('Yes')}<StyledRadio
-                  disableRipple
-                  icon={<FiberManualRecordIcon htmlColor={'#dadbda'} />}
-                  checkedIcon={<FiberManualRecordIcon htmlColor={'#076ce9'}/>}
-                  checked={pregnancyValue === t('Yes')} onChange={handleChangeRadio} color='primary' value={t("Yes")} name="pregnancy"/></FormLabel>
-              </Grid>
-            </Grid>
-          </StyledGroupCheckbox>
+            <RadioGroupChoice
+              gridLabel={t("Pregnancy")}
+              firstValue={t('Yes')}
+              secondValue={t('No')}
+              // callBackFunction={}
+            />
           )}
         </StyledForm>
       </FormContext>
