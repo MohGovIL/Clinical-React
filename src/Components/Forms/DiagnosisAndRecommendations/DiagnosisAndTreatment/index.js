@@ -22,7 +22,6 @@ const DiagnosisAndTreatment = () => {
     'diagnosisDetails',
     'treatmentDetails',
   ]);
-  console.log(diagnosisAndTreatmentFields);
   const callBack = (data, name) => {
     setValue(name, data);
   };

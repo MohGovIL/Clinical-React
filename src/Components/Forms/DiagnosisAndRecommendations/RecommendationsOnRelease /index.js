@@ -9,7 +9,33 @@ import { StyledDivider } from '../Style';
 import { useFormContext } from 'react-hook-form';
 const RecommendationsOnRelease = () => {
   const { t } = useTranslation();
-  const { permission } = useFormContext();
+  const {
+    permission,
+    register,
+    watch,
+    setPopUpProps,
+    setValue,
+  } = useFormContext();
+  const instructionsForFurtherTreatment = watch(
+    'instructionsForFurtherTreatment',
+  );
+  const callBack = (data, name) => {
+    setValue(name, data);
+  };
+
+  const handlePopUpProps = (title, fields, id, callBack, name) => {
+    setPopUpProps((prevState) => {
+      return {
+        ...prevState,
+        popupOpen: true,
+        formFieldsTitle: title,
+        formFields: fields,
+        formID: id,
+        setTemplatesTextReturned: callBack,
+        name,
+      };
+    });
+  };
   return (
     <StyledFormGroup>
       <Title
@@ -25,9 +51,14 @@ const RecommendationsOnRelease = () => {
         justify='flex-start'
         alignItems='baseline'>
         <CustomizedTextField
+          name='instructionsForFurtherTreatment'
+          inputRef={register}
           label={t('Instructions for further treatment')}
           width='45%'
           multiline
+          InputLabelProps={{
+            shrink: instructionsForFurtherTreatment ? true : false,
+          }}
           disabled={permission === 'view' ? true : false}
         />
         <StyledButton
@@ -37,7 +68,16 @@ const RecommendationsOnRelease = () => {
           color='primary'
           margin='0 16px'
           variant='outlined'
-          size='small'>
+          size='small'
+          onClick={() =>
+            handlePopUpProps(
+              t('Instructions for further treatment'),
+              'instructions_further_treatment',
+              'diagnosis_recommendations',
+              callBack,
+              'instructionsForFurtherTreatment',
+            )
+          }>
           {t('Select template')}
         </StyledButton>
       </Grid>
