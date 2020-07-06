@@ -78,7 +78,7 @@ const DiagnosisAndTreatment = () => {
             handlePopUpProps(
               t('Findings details'),
               'findings_details',
-              'diagnosis_recommendations',
+              'diagnosis_and_recommendations',
               callBack,
               'findingsDetails',
             )
@@ -116,7 +116,7 @@ const DiagnosisAndTreatment = () => {
             handlePopUpProps(
               t('Diagnosis details'),
               'diagnosis_details',
-              'diagnosis_recommendations',
+              'diagnosis_and_recommendations',
               callBack,
               'diagnosisDetails',
             )
@@ -154,7 +154,7 @@ const DiagnosisAndTreatment = () => {
             handlePopUpProps(
               t('Treatment details'),
               'treatment_details',
-              'diagnosis_recommendations',
+              'diagnosis_and_recommendations',
               callBack,
               'treatmentDetails',
             )

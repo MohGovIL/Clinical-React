@@ -73,7 +73,7 @@ const RecommendationsOnRelease = () => {
             handlePopUpProps(
               t('Instructions for further treatment'),
               'instructions_further_treatment',
-              'diagnosis_recommendations',
+              'diagnosis_and_recommendations',
               callBack,
               'instructionsForFurtherTreatment',
             )
