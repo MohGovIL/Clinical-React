@@ -11,6 +11,7 @@ import { useForm, FormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import { FHIR } from 'Utils/Services/FHIR';
+import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -142,10 +143,34 @@ const DiagnosisAndRecommendations = ({
     }
     return clean;
   };
+  const handlePopUpClose = () => {
+    setPopUpProps((prevState) => {
+      return {
+        ...prevState,
+        popupOpen: false,
+      };
+    });
+  };
+
+  const [defaultContext, setDefaultContext] = React.useState('');
+  const [popUpProps, setPopUpProps] = React.useState({
+    popupOpen: false,
+    formID: '',
+    encounter,
+    formFieldsTitle: '',
+    defaultContext,
+    setDefaultContext,
+    handlePopupClose: handlePopUpClose,
+    setTemplatesTextReturned: null,
+    name: '',
+  });
+
   return (
     <StyledDiagnosisAndRecommendations>
+      <PopUpFormTemplates {...popUpProps} />
       <FormContext
         {...methods}
+        setPopUpProps={setPopUpProps}
         permission={encounter.status === 'finished' ? 'view' : permission}
         serviceType={encounter.serviceTypeCode}
         reasonCode={encounter.examinationCode}
