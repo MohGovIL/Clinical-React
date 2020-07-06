@@ -2,6 +2,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
+import { FHIR } from 'Utils/Services/FHIR';
 
 // סיימו ביקור
 
@@ -11,6 +12,7 @@ export const setPatientDataFinishedVisitTableRows = function (
   options,
   history,
   mode,
+  secOptions,
 ) {
   let result = [];
   let rows = [];
@@ -66,19 +68,37 @@ export const setPatientDataFinishedVisitTableRows = function (
           break;
         case 'Status':
           row.push({
-            onChange() {
-              // try{
-              //     const updateAppointmentStatus();
-              //
-              // }catch (err) {
-              //     console.log(err);
-              // }
+            async onChange(code) {
+              try {
+                const answer = await FHIR('Encounter', 'doWork', {
+                  functionName: 'patchEncounter',
+                  functionParams: {
+                    encountersId: encounter.id,
+                    encounterPatchParams: {
+                      extensionSecondaryStatus: code,
+                      extensionSecondaryStatusIndex:
+                        encounter.extensionSecondaryStatusIndex,
+                      status: 'in-progress',
+                    },
+                  },
+                });
+                if (answer.status === 200) {
+                  return true;
+                } else {
+                  return true;
+                }
+              } catch (err) {
+                console.log(err);
+                return false;
+              }
             },
             text_color: '#076ce9',
             padding: 'default',
-            defaultValue:
-              encounter.extensionSecondaryStatus || encounter.status,
-            options,
+            defaultValue: encounter.status,
+            options:
+              encounter.extensionSecondaryStatus && secOptions.length
+                ? secOptions
+                : options,
             align: 'center',
             background_color: '#eaf7ff',
             icon_color: '#076ce9',

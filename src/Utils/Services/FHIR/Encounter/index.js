@@ -287,6 +287,13 @@ const EncounterStates = {
             });
 
             break;
+          case 'status':
+            patchArr.push({
+              op: 'replace',
+              path: '/status',
+              value: element,
+            });
+            break;
           default:
             break;
         }
