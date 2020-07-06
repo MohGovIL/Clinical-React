@@ -62,19 +62,29 @@ const MedicalAdmission = ({
   const watchisInsulationInstruction = watch('isInsulationInstruction');
   const watchisUrgent = watch('isUrgent');
 
-  const onSubmit = async (data) => {
+  const watchMedication = watch('medication');
+  const [medicationChanged, setMedicationChanged] = useState(false);
 
-  };
+  const onSubmit = async (data) => {};
 
   useEffect(() => {
-       console.log("is urgent: " + watchisUrgent);
-    // console.log("=====");
-    // console.log(patient);
-    // console.log("=====");
-  },[watchisUrgent]);
+    console.log('is urgent: ' + watchisUrgent);
+  }, [watchisUrgent]);
 
+  const pregnancyHandlerRadio = (value) => {
+    console.log('pregnancy: ' + value);
+  };
 
+  const medicationHandlerRadio = (value) => {
+    console.log('medication: ' + value);
+    setMedicationChanged(value);
+  };
 
+  //Radio buttons for pregnancy
+  const pregnancyRadioList = [t('No'), t('Yes')];
+
+  //Radio buttons for medication details
+  const medicationRadioList = [t("Doesn't exist"), t('Exist')];
 
   const buttonTemplateSelect = {
     label: t('Template selection'),
@@ -138,18 +148,18 @@ const MedicalAdmission = ({
               />
             </Grid>
             {watchisInsulationInstruction && (
-            <Controller
-              control={control}
-              name='insulationInstruction'
-              //defaultValue={}
-              as={
-                <CustomizedTextField
-                  width={'70%'}
-                  label={t('Insulation instruction')}
-                />
-              }
-            />)
-            }
+              <Controller
+                control={control}
+                name='insulationInstruction'
+                //defaultValue={}
+                as={
+                  <CustomizedTextField
+                    width={'70%'}
+                    label={t('Insulation instruction')}
+                  />
+                }
+              />
+            )}
           </StyledInsulation>
           <StyledTemplateSelection>
             <Grid
@@ -175,15 +185,38 @@ const MedicalAdmission = ({
               </Grid>
             </Grid>
           </StyledTemplateSelection>
+          <>
           {/*need to make a new component for radio select*/}
-          { (patient.gender === 'female' || patient.gender === 'other') && (
-            <RadioGroupChoice
-              gridLabel={t("Pregnancy")}
-              firstValue={t('Yes')}
-              secondValue={t('No')}
-              // callBackFunction={}
-            />
+          {(patient.gender === 'female' || patient.gender === 'other') && (
+              <RadioGroupChoice
+                gridLabel={t('Pregnancy')}
+                radioName={'pregnancy'}
+                listValues={pregnancyRadioList}
+                trueValue={t('Yes')}
+                callBackFunction={pregnancyHandlerRadio}
+              />
           )}
+          {/*<RadioGroupChoice*/}
+          {/*  gridLabel={t('Medication')}*/}
+          {/*  radioName={'medication'}*/}
+          {/*  listValues={medicationRadioList}*/}
+          {/*  trueValue={t('Exist')}*/}
+          {/*  callBackFunction={medicationHandlerRadio}*/}
+          {/*/>*/}
+          {/*{medicationChanged && (*/}
+          {/*  <Controller*/}
+          {/*    control={control}*/}
+          {/*    name='medicationInstruction'*/}
+          {/*    //defaultValue={}*/}
+          {/*    as={*/}
+          {/*      <CustomizedTextField*/}
+          {/*        width={'70%'}*/}
+          {/*        label={t('Medications details')}*/}
+          {/*      />*/}
+          {/*    }*/}
+          {/*  />*/}
+          {/*)}*/}
+          </>
         </StyledForm>
       </FormContext>
     </React.Fragment>
