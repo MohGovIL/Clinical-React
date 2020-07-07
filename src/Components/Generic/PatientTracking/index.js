@@ -13,7 +13,7 @@ import { getMenu } from 'Utils/Services/API';
 import FilterBox from './FilterBox';
 import Title from 'Assets/Elements/Title';
 import isAllowed from 'Utils/Helpers/isAllowed';
-import { getStaticTabsArray } from 'Utils/Helpers/patientTrackingTabs/staticTabsArray';
+import { getStaticTabsArray } from 'Components/Generic/patientTrackingTabs/staticTabsArray';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
 import { basePath } from 'Utils/Helpers/basePath';
@@ -125,7 +125,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     //Create an array of permitted tabs according to the user role.
     let staticTabs;
     if (tabs.length === 0) {
-      staticTabs = getStaticTabsArray();
+      staticTabs = getStaticTabsArray(vertical);
       for (let tabIndex = 0; tabIndex < staticTabs.length; tabIndex++) {
         const tab = staticTabs[tabIndex];
         const mode = isAllowed(tab.id);
