@@ -1,7 +1,7 @@
 import React from 'react';
 import StyledTextField from './Style';
 import { useSelector } from 'react-redux';
-
+import { KeyboardArrowDown } from '@material-ui/icons';
 /**
  * @author Idan Gigi idangi@matrix.co.il
  * @param {String} iconColor
@@ -17,6 +17,13 @@ const CustomizedTextField = ({
   ...MuiTextFieldProps
 }) => {
   const direction = useSelector((state) => state.settings.lang_dir);
+  const { select } = MuiTextFieldProps;
+  if (select) {
+    MuiTextFieldProps['SelectProps'] = {
+      IconComponent: KeyboardArrowDown,
+    };
+  }
+
   return (
     <StyledTextField
       direction={direction || lang_dir}

@@ -11,17 +11,15 @@ const EncounterForms = ({
 }) => {
   const [formsPerSheet, setFormsPerSheet] = React.useState(null);
 
-  const handleGetFormsDataFirst = async () => {
-    const forms = await getForms(
-      encounter.serviceTypeCode,
-      encounter.examinationCode,
-    );
-    setFormsPerSheet(forms);
-  };
-
   React.useEffect(() => {
-    if (!formsPerSheet) handleGetFormsDataFirst();
-  });
+    (async () => {
+      const forms = await getForms(
+        encounter.serviceTypeCode,
+        encounter.examinationCode,
+      );
+      setFormsPerSheet(forms);
+    })();
+  }, [encounter.serviceTypeCode, encounter.examinationCode]);
 
   return (
     <StyledPatientFiles>
