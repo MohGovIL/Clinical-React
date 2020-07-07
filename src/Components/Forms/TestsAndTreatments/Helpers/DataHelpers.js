@@ -7,6 +7,11 @@ import {
 import LabelWithHourComponent from 'Components/Forms/TestsAndTreatments/LabelWithHourComponent';
 import React from 'react';
 import FormattedInputs from 'Components/Generic/MaskedControllers/FormattedInputs/FormattedInputs';
+import {
+  handleVarientCustomClickFunction,
+  handleVarientPaddTheZeroPlaceClickFunction,
+} from 'Components/Forms/TestsAndTreatments/Helpers/FunctionHelpers';
+import { thickenWithDataFunction } from './FunctionHelpers';
 
 function mergeMultipleConstants(
   variantIndicatorsNormalizedData,
@@ -168,189 +173,45 @@ export const thickenTheVariantIndicators = ({
         dataset.id = `user_name_${sizeTemp > 0 ? sizeTemp : i}`;
         break;
       case 'Blood pressure':
-        dataset.disabled = disabled;
-        dataset.idTemp = i;
-        dataset.newRow = newRow;
-        dataset.name = dataset.label ? dataset.label : key;
-        dataset.value = dataset.value
-          ? dataset.value
-          : variantIndicatorsNew['Blood pressure']
-          ? variantIndicatorsNew['Blood pressure']
-          : '';
-        dataset.componentType = disabled
-          ? StyledVariantTextField
-          : FormattedInputs;
-
-        dataset.handleOnChange = (evt) => {
-          const name = evt.target.name;
-          const newValue = evt.target.value;
-          const valid = evt.target.validity.valid;
-          const tempVariantIndicators = { ...variantIndicators };
-          tempVariantIndicators[name].value = newValue;
-          setVariantIndicators(tempVariantIndicators);
-        };
-        dataset.id = `blood_pressure_${sizeTemp > 0 ? sizeTemp : i}`;
-        dataset.componenttype = 'textFieldWithMask';
-
-        break;
       case 'Pulse':
-        dataset.disabled = disabled;
-        dataset.newRow = newRow;
-        dataset.name = dataset.label ? dataset.label : key;
-        dataset.value = dataset.value
-          ? dataset.value
-          : variantIndicatorsNew['Pulse']
-          ? variantIndicatorsNew['Pulse']
-          : '';
-        dataset.componentType = disabled
-          ? StyledVariantTextField
-          : FormattedInputs;
-        dataset.handleOnChange = (evt) => {
-          const name = evt.target.name;
-          const newValue = evt.target.value;
-          const valid = evt.target.validity.valid;
-          const tempVariantIndicators = { ...variantIndicators };
-          tempVariantIndicators[name].value = newValue;
-          setVariantIndicators(tempVariantIndicators);
-        };
-
-        dataset.componenttype = 'textFieldWithMask';
-        dataset.id = `pulse_${sizeTemp > 0 ? sizeTemp : i}`;
-        /*dataset['aria-describedby'] = dataset.mask;*/
-
+      case 'Saturation':
+      case 'Breaths per minute':
+      case 'Pain level':
+      case 'Blood sugar':
+        thickenWithDataFunction({
+          newRow,
+          dataset,
+          label: dataset.label,
+          i,
+          disabled,
+          variantIndicatorsNew,
+          sizeTemp,
+          key,
+        });
+        dataset.handleOnChange = (evt) =>
+          handleVarientCustomClickFunction(
+            evt,
+            variantIndicators,
+            setVariantIndicators,
+          );
         break;
       case 'Fever':
-        dataset.disabled = disabled;
-        dataset.newRow = newRow;
-        dataset.name = dataset.label ? dataset.label : key;
-        dataset.value = dataset.value
-          ? dataset.value
-          : variantIndicatorsNew['Fever']
-          ? variantIndicatorsNew['Fever']
-          : '';
-        dataset.componentType = disabled
-          ? StyledVariantTextField
-          : FormattedInputs;
-        dataset.handleOnChange = (evt) => {
-          const name = evt.target.name;
-          let newValue = evt.target.value;
-          const valid = evt.target.validity.valid;
-          //pad Fever With Zeros
-          if (
-            parseFloat(newValue.replace(/_/g, '')) >= 0 &&
-            newValue.slice(-1) === '_' &&
-            parseFloat(newValue.slice(-3).replace(/_/g, '')) >= 0
-          ) {
-            newValue = newValue.replace('._', '.0');
-          } else {
-            newValue = newValue.replace('.0', '._');
-          }
-          //end pad
-          const tempVariantIndicators = { ...variantIndicators };
-          tempVariantIndicators[name].value = newValue;
-          setVariantIndicators(tempVariantIndicators);
-        };
-        dataset.componenttype = 'textFieldWithMask';
-        dataset.id = `fever_${sizeTemp > 0 ? sizeTemp : i}`;
-        /*dataset['aria-describedby'] = dataset.mask;*/
-        break;
-      case 'Saturation':
-        dataset.disabled = disabled;
-        dataset.newRow = newRow;
-        dataset.name = dataset.label ? dataset.label : key;
-        dataset.value = dataset.value
-          ? dataset.value
-          : variantIndicatorsNew['Saturation']
-          ? variantIndicatorsNew['Saturation']
-          : '';
-        dataset.componentType = disabled
-          ? StyledVariantTextField
-          : FormattedInputs;
-
-        dataset.handleOnChange = (evt) => {
-          const name = evt.target.name;
-          const newValue = evt.target.value;
-          const valid = evt.target.validity.valid;
-          const tempVariantIndicators = { ...variantIndicators };
-          tempVariantIndicators[name].value = newValue;
-          setVariantIndicators(tempVariantIndicators);
-        };
-        dataset.id = `saturation_${sizeTemp > 0 ? sizeTemp : i}`;
-        dataset.componenttype = 'textFieldWithMask';
-
-        break;
-
-      case 'Breaths per minute':
-        dataset.disabled = disabled;
-        dataset.newRow = newRow;
-        dataset.name = dataset.label ? dataset.label : key;
-        dataset.value = dataset.value
-          ? dataset.value
-          : variantIndicatorsNew['Breaths per minute']
-          ? variantIndicatorsNew['Breaths per minute']
-          : '';
-        dataset.componentType = disabled
-          ? StyledVariantTextField
-          : FormattedInputs;
-        dataset.handleOnChange = (evt) => {
-          const name = evt.target.name;
-          const newValue = evt.target.value;
-          const valid = evt.target.validity.valid;
-          const tempVariantIndicators = { ...variantIndicators };
-          tempVariantIndicators[name].value = newValue;
-          setVariantIndicators(tempVariantIndicators);
-        };
-        dataset.componenttype = 'textFieldWithMask';
-        dataset.id = `breaths_per_min_${sizeTemp > 0 ? sizeTemp : i}`;
-        /*dataset['aria-describedby'] = dataset.mask;*/
-        break;
-      case 'Pain level':
-        dataset.disabled = disabled;
-        dataset.newRow = newRow;
-        dataset.name = dataset.label ? dataset.label : key;
-        dataset.value = dataset.value
-          ? dataset.value
-          : variantIndicatorsNew['Pain level']
-          ? variantIndicatorsNew['Pain level']
-          : '';
-        dataset.componentType = disabled
-          ? StyledVariantTextField
-          : FormattedInputs;
-        dataset.handleOnChange = (evt) => {
-          const name = evt.target.name;
-          const newValue = evt.target.value;
-          const valid = evt.target.validity.valid;
-          const tempVariantIndicators = { ...variantIndicators };
-          tempVariantIndicators[name].value = newValue;
-          setVariantIndicators(tempVariantIndicators);
-        };
-        dataset.id = `pain_level_${sizeTemp > 0 ? sizeTemp : i}`;
-        dataset.componenttype = 'textFieldWithMask';
-        /*dataset['aria-describedby'] = dataset.mask;*/ break;
-      case 'Blood sugar':
-        dataset.disabled = disabled;
-        dataset.newRow = newRow;
-        dataset.name = dataset.label ? dataset.label : key;
-        dataset.value = dataset.value
-          ? dataset.value
-          : variantIndicatorsNew['Blood sugar']
-          ? variantIndicatorsNew['Blood sugar']
-          : '';
-        dataset.componentType = disabled
-          ? StyledVariantTextField
-          : FormattedInputs;
-
-        dataset.handleOnChange = (evt) => {
-          const name = evt.target.name;
-          const newValue = evt.target.value;
-          const valid = evt.target.validity.valid;
-          const tempVariantIndicators = { ...variantIndicators };
-          tempVariantIndicators[name].value = newValue;
-          setVariantIndicators(tempVariantIndicators);
-        };
-        dataset.componenttype = 'textFieldWithMask';
-        dataset.id = `blood_sugar_${sizeTemp > 0 ? sizeTemp : i}`;
-
+        thickenWithDataFunction({
+          newRow,
+          dataset,
+          label: dataset.label,
+          i,
+          disabled,
+          variantIndicatorsNew,
+          sizeTemp,
+          key,
+        });
+        dataset.handleOnChange = (evt) =>
+          handleVarientPaddTheZeroPlaceClickFunction(
+            evt,
+            variantIndicators,
+            setVariantIndicators,
+          );
         break;
     }
     variantIndicators[
