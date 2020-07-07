@@ -44,9 +44,8 @@ function allyProps(index) {
   };
 }
 /*[{"component":"MedicalAdmissionForm","form_name":"Medical Admission","order":"1","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Tests and Treatments","order":"2","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Diagnosis and Recommendations","order":"3","permission":"write"}]*/
-const FormsContainer = ({ tabs }) => {
+const FormsContainer = ({ tabs, dir }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const [value, setValue] = React.useState(0);
   let formComponents = [];
 
@@ -82,7 +81,8 @@ const FormsContainer = ({ tabs }) => {
         </Tabs>
       </AppBar>
       <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} //fix this
+        style={{ direction: dir }}
+        axis={dir === 'rtl' ? 'x-reverse' : 'x'} //fix this
         index={value}
         onChangeIndex={handleChangeIndex}>
         {tabs.data.map((tab, key) => {
@@ -92,7 +92,7 @@ const FormsContainer = ({ tabs }) => {
               key={'tab_panel_' + key}
               value={tab.order}
               index={tab.order}
-              dir={theme.direction}>
+              dir={dir}>
               <Suspense fallback={<span>Loading...</span>}>
                 <FormComponent permission={tab.permission} />
               </Suspense>

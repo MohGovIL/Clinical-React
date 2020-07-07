@@ -287,9 +287,8 @@ const VisitDetails = ({
           ListboxProps={{
             pendingValue: pendingValue,
             setSelectedServicesType: setSelectedServicesType,
-            setClose: setServicesTypeOpen,
+            setOpen: setServicesTypeOpen,
             setValue: onCloseChangeHandler,
-            close: unFocusSelectTest,
           }}
           options={servicesType}
           renderInput={(params) => (

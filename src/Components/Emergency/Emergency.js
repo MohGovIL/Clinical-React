@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
-import PatientTracking from 'Components/Emergency/PatientTracking';
+import PatientTracking from 'Components/Generic/PatientTracking';
 import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 import { connect } from 'react-redux';
 
