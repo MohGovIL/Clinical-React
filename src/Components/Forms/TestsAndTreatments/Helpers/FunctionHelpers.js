@@ -41,7 +41,60 @@ function padTheZeroPlace(newValue) {
   }
   return newValue;
 }
+export function mergeMultipleIndicators(
+  variantIndicatorsNormalizedData,
+  keyOne,
+  keyTwo,
+  seperator,
+) {
+  let keysPlaces = [];
+  Object.entries(variantIndicatorsNormalizedData).map(([key, dataset]) => {
+    if (
+      dataset &&
+      (dataset['description'] === keyOne || dataset['description'] === keyTwo)
+    ) {
+      keysPlaces.push(key);
+    }
+  });
+  if (keysPlaces.length > 0) {
+    let variantIndicatorsNormalizedDataTemp = JSON.parse(
+      JSON.stringify(variantIndicatorsNormalizedData),
+    );
+    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['description'] = `${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['description']
+    }${seperator}${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['description']
+    }`;
+    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['unit'] = `${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['unit']
+    }${seperator}${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['unit']}`;
+    if (
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['value'] &&
+      variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['value']
+    ) {
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['value'] = `${
+        variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['value']
+          ? variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['value']
+          : ''
+      }${seperator}${
+        variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['value']
+          ? variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['value']
+          : ''
+      }`;
+    }
+    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['mask'] = `${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['mask']
+    }${seperator}${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['mask']}`;
+    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['code'] = `${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['code']
+    }${seperator}${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['code']}`;
 
+    delete variantIndicatorsNormalizedDataTemp[keysPlaces[1]];
+
+    return variantIndicatorsNormalizedDataTemp;
+  }
+  return variantIndicatorsNormalizedData;
+}
 export function thickenWithDataFunction({
   newRow,
   dataset,
