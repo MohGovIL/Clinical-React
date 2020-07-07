@@ -1,26 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import NumberFormat from 'react-number-format';
-
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import { StyledMaskedInput } from './Style';
 import { StyledVariantTextField } from '../../../Forms/TestsAndTreatments/Style';
 
-function convertDigitsInPattern(stringPattern) {
-  let arr = stringPattern.split(',');
-  for (let i = 0; i < arr.length; i++) {
-    arr[i] = arr[i] === 'd' ? /d/ : arr[i];
-    arr[i] = arr[i] === '[1-9]' ? /[1-9]/ : arr[i];
-  }
-  return arr;
-}
 function TextMaskCustom(props) {
   const { inputRef, ...other } = props;
-  /*{convertDigitsInPattern(other['aria-describedby'])}*/
+
   return (
     <StyledMaskedInput
       {...other}
@@ -28,6 +16,7 @@ function TextMaskCustom(props) {
         inputRef(ref ? ref.inputElement : null);
       }}
       mask={other['aria-describedby']}
+      dir='ltr'
     />
   );
 }
@@ -43,8 +32,17 @@ export default function FormattedInputs({
   onChange,
   label,
   mask,
+  name,
 }) {
-  function renderSwitch({ componenttype, value, onChange, id, label, mask }) {
+  function renderSwitch({
+    componenttype,
+    value,
+    onChange,
+    id,
+    label,
+    mask,
+    name,
+  }) {
     switch (componenttype) {
       case 'regularMasked':
         return (
@@ -67,11 +65,14 @@ export default function FormattedInputs({
       case 'textFieldWithMask':
         return (
           <StyledVariantTextField
+            InputLabelProps={{
+              shrink: value !== '' ? true : false,
+            }}
             dir={'ltr'}
             label={label}
-            value={value}
+            value={value && value.replace(mask, '')}
             onChange={onChange}
-            name={`numberformat-${label}-${id}`}
+            name={name}
             id={`formatted-numberformat-input-${label}-${id}`}
             InputProps={{
               'aria-describedby': mask,
@@ -92,5 +93,6 @@ export default function FormattedInputs({
     id,
     onChange,
     label,
+    name,
   });
 }

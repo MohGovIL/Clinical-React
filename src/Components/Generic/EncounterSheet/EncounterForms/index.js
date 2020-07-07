@@ -21,7 +21,7 @@ const EncounterForms = ({
 
   React.useEffect(() => {
     if (!formsPerSheet) handleGetFormsDataFirst();
-  });
+  }, []);
 
   return (
     <StyledPatientFiles>

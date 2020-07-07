@@ -1,4 +1,5 @@
 import {
+  StyledConstantForm,
   StyledConstantHeaders,
   StyledForm,
   StyledTable,
@@ -26,13 +27,14 @@ const VariantIndicators = ({ variantIndicators }) => {
           <TableContainer component={Paper}>
             <StyledTable>
               <TableBody>
-                {variantIndicators.map((indicatorLogged, index) => {
+                {Object.entries(variantIndicators).map(([index, tr]) => {
                   return (
-                    <StyledVarientIndicatorsTR key={index}>
-                      {indicatorLogged.map((value, index) => {
-                        return (
+                    <StyledVarientIndicatorsTR key={`variant_tr_${index}`}>
+                      {Object.entries(tr).map(([index, value]) => {
+                        return value && value.componentType !== undefined ? (
                           <TableCell key={index}>
                             <value.componentType
+                              name={value.name}
                               componenttype={value.componenttype}
                               mask={value.mask}
                               disabled={value.disabled}
@@ -46,7 +48,7 @@ const VariantIndicators = ({ variantIndicators }) => {
                               }
                             />
                           </TableCell>
-                        );
+                        ) : null;
                       })}
                     </StyledVarientIndicatorsTR>
                   );

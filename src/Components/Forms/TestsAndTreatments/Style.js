@@ -22,7 +22,10 @@ export const StyledVariantTextField = styled(TextField)`
   height: 56px;
   border-radius: 10px;
   background-color: #f8faff;
-
+  label + .MuiInput-formControl {
+    margin: 15px 6px;
+    width: 104px;
+  }
   .MuiInputLabel-shrink {
     transform: translate(24.5px, 3.5px) scale(0.75);
     transform-origin: top left;
@@ -37,7 +40,7 @@ export const StyledVariantTextField = styled(TextField)`
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
-    text-align: center;
+    text-align: end;
   }
   input {
     text-align: center;
@@ -108,6 +111,6 @@ export const StyledTestsAndTreatments = styled.div``;
 export const StyledTable = styled(Table)`
   display: flex;
   .MuiTableCell-root {
-    padding: 5px;
+    padding: 2px;
   }
 `;

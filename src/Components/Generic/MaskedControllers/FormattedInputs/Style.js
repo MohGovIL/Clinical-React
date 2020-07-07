@@ -5,6 +5,7 @@ export const StyledMaskedInput = styled(InputMask)`
   input {
     text-align: center;
   }
+
   .MuiInputLabel-shrink {
     transform: translate(37.5px, 5.5px) scale(0.75);
     transform-origin: top left;

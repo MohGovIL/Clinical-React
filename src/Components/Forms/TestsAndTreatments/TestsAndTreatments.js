@@ -1,7 +1,7 @@
 //TestsAndTreatment
 
 import { connect } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 import MomentUtils from '@date-io/moment';
@@ -21,6 +21,7 @@ import normalizeFhirUser from '../../../Utils/Helpers/FhirEntities/normalizeFhir
 import { getCities, getIndicatorsSettings } from '../../../Utils/Services/API';
 import { thickenTheData } from './Helpers/DataHelpers';
 import { FHIR } from '../../../Utils/Services/FHIR';
+import normalizeFhirObservation from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
 
 const TestsAndTreatments = ({
   patient,
@@ -33,200 +34,142 @@ const TestsAndTreatments = ({
   currentUser,
 }) => {
   const { t } = useTranslation();
-  const [observations, setObservations] = useState(null);
-  const [pressureNew, setPressureNew] = useState([]);
-  const [pulseNew, setPulseNew] = useState([]);
-  const userDetails = normalizeFhirUser(currentUser);
-  const [userNameNew, setUserNameNew] = useState([
+  const [constantIndicators, setConstantIndicators] = useReducer(
+    (state, newState) => ({ ...state, ...newState }),
     {
-      name: userDetails.name[0].toString(),
-      loggedHour: Moment(Moment.now()).format('HH:mm'),
+      Height: null,
+      Weight: null,
     },
-  ]);
-  const [feverNew, setFeverNew] = useState([]);
-  const [saturationNew, setSaturationNew] = useState([]);
-  const [breathsPerMinNew, setBreathsPerMinNew] = useState([]);
-  const [painLevelNew, setPainLevelNew] = useState([]);
-  const [bloodSugarNew, setBloodSugarNew] = useState([]);
-
-  const [height, setHeight] = useState('10');
-  const [weight, setWeight] = useState('2');
-  const [pressure, setPressure] = useState([]);
-  const [pulse, setPulse] = useState([
-    30,
-    30,
-    30,
-    30,
-    30,
-    30,
-    30,
-    30,
-    30,
-    30,
-    30,
-    30,
-  ]);
-  const [userName, setUserName] = useState([
-    { name: 'Smurfette', loggedHour: '9:00' },
-    { name: 'Papa Smurf', loggedHour: '19:00' },
-    { name: 'Clumsy Smurf', loggedHour: '2:00' },
-    { name: 'Brainy Smurf', loggedHour: '4:00' },
-    { name: 'Grouchy Smurf', loggedHour: '5:00' },
-    { name: 'Hefty Smurf', loggedHour: '7:00' },
-    { name: 'Greedy Smurf', loggedHour: '8:00' },
-    { name: 'Chef Smurf', loggedHour: '9:11' },
-    { name: 'Vanity Smurf', loggedHour: '9:22' },
-    { name: 'Handy Smurf', loggedHour: '9:33' },
-    { name: 'Scaredy Smurf', loggedHour: '9:34' },
-    { name: 'Tracker Smurf', loggedHour: '9:36' },
-  ]);
-  const [fever, setFever] = useState([
-    99,
-    98,
-    90,
-    100,
-    99,
-    90,
-    100,
-    100,
-    90,
-    90,
-    100,
-    100,
-  ]);
-  const [saturation, setSaturation] = useState([
-    10,
-    0,
-    0,
-    0,
-    0,
-    10,
-    90,
-    90,
-    90,
-    90,
-    90,
-    98,
-  ]);
-  const [breathsPerMin, setBreathsPerMin] = useState([
-    50,
-    22,
-    33,
-    22,
-    44,
-    55,
-    66,
-    77,
-    66,
-    55,
-    44,
-    33,
-  ]);
-  const [painLevel, setPainLevel] = useState([
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-  ]);
-  const [bloodSugar, setBloodSugar] = useState([
-    90,
-    60,
-    50,
-    40,
-    30,
-    20,
-    30,
-    40,
-    50,
-    60,
-    70,
-    80,
-  ]);
-
-  const [indicators, setIndicators] = useState(null);
-  const [constantIndicators, setConstantIndicators] = useState(null);
+  );
+  const userDetails = normalizeFhirUser(currentUser);
   const [variantIndicators, setVariantIndicators] = useState(null);
-  const [variantIndicatorsNew, setVariantIndicatorsNew] = useState(null);
+  const [variantIndicatorsNew, setVariantIndicatorsNew] = useReducer(
+    (state, newState) => ({ ...state, ...newState }),
+    [
+      {
+        userName: {
+          name: userDetails.name[0].toString(),
+          loggedHour: Moment(Moment.now()).format('HH:mm'),
+        },
+        'Blood pressure': null,
+        Pulse: null,
+        Fever: null,
+        Saturation: null,
+        'Breaths per minute': null,
+        'Pain level': null,
+        'Blood sugar': null,
+      },
+    ],
+  );
 
   useEffect(() => {
     (async () => {
       try {
-        const observed = await FHIR('Observations', 'doWork', {
+        const clinicIndicators = await getIndicatorsSettings();
+
+        const constantFromFhirIndicators = await FHIR(
+          'Observations',
+          'doWork',
+          {
+            functionName: 'getObservations',
+            functionParams: {
+              patient: Number(patient.id),
+              encounter: Number(encounter.id),
+              category: 'exam',
+            },
+          },
+        );
+        const variantFromFhirIndicators = await FHIR('Observations', 'doWork', {
           functionName: 'getObservations',
           functionParams: {
-            facility: store.getState().settings.facility,
-            patient: patient,
+            patient: patient.id,
+            encounter: encounter.id,
+            category: 'vital-signs',
           },
         });
-        if (!indicators) {
-          const clinicIndicators = await getIndicatorsSettings();
-          if (clinicIndicators) {
-            setIndicators(clinicIndicators);
+        let normalizedVariantObservation = [];
+        variantFromFhirIndicators.data.entry.map((entry, key) => {
+          if (entry.resource && entry.resource.resourceType === 'Observation') {
+            normalizedVariantObservation.push(
+              normalizeFhirObservation(
+                entry.resource,
+                clinicIndicators.data['variant'],
+              ),
+            );
+          }
+        });
 
+        let normalizedConstantObservation = [];
+        constantFromFhirIndicators.data.entry.map((entry, key) => {
+          if (entry.resource && entry.resource.resourceType === 'Observation') {
+            normalizedConstantObservation.push(
+              normalizeFhirObservation(
+                entry.resource,
+                clinicIndicators.data['constant'],
+              ),
+            );
+          }
+        });
+
+        normalizedConstantObservation = thickenTheData({
+          normalizedConstantObservation:
+            normalizedConstantObservation &&
+            normalizedConstantObservation.length > 0 &&
+            normalizedConstantObservation[0] &&
+            normalizedConstantObservation[0]['observation']
+              ? normalizedConstantObservation[0]['observation']
+              : null,
+          constantIndicators,
+          setConstantIndicators,
+        });
+
+        setConstantIndicators(normalizedConstantObservation);
+
+        let normalizedVarientNewObservation = thickenTheData({
+          indicators: clinicIndicators,
+          variantIndicatorsNew,
+          setVariantIndicatorsNew,
+          normalizedVariantObservation,
+        });
+
+        setVariantIndicatorsNew([normalizedVarientNewObservation]);
+
+        let normalizedVariantObservationTemp = [];
+
+        // eslint-disable-next-line no-unused-expressions
+        normalizedVariantObservation.map((value, index) => {
+          if (value['observation']) {
+            let userName = {
+              userName: {
+                name: value.performer.toString(),
+                loggedHour: Moment(value.issued).format('HH:mm'),
+              },
+            };
+            value['observation'] = { ...userName, ...value.observation };
+          }
+
+          normalizedVariantObservationTemp.push(
             thickenTheData({
               indicators: clinicIndicators,
-              userName,
-              fever,
-              pressure,
-              saturation,
-              painLevel,
-              breathsPerMin,
-              bloodSugar,
-              pulse,
-              setFever,
-              setPressure,
-              setSaturation,
-              setPainLevel,
-              setBreathsPerMin,
-              setBloodSugar,
-              setPulse,
-              height,
-              weight,
-              setWeight,
-              setHeight,
-              userNameNew,
-              feverNew,
-              pressureNew,
-              saturationNew,
-              painLevelNew,
-              breathsPerMinNew,
-              bloodSugarNew,
-              pulseNew,
-              setFeverNew,
-              setPressureNew,
-              setSaturationNew,
-              setPainLevelNew,
-              setBreathsPerMinNew,
-              setBloodSugarNew,
-              setPulseNew,
-              setVariantIndicatorsNew,
+              variantIndicators,
               setVariantIndicators,
-              setConstantIndicators,
-            });
-          }
-        }
+              normalizedVariantObservation:
+                value && value['observation'] ? value['observation'] : null,
+            }),
+          );
+        });
+
+        setVariantIndicators(normalizedVariantObservationTemp);
       } catch (err) {
         console.log(err);
       }
     })();
-  });
+  }, []);
 
   return (
     <StyledTestsAndTreatments dir={languageDirection}>
       {constantIndicators ? (
-        <ConstantIndicators
-          constantIndicators={constantIndicators}
-          setWeight={setWeight}
-          setHeight={setHeight}
-        />
+        <ConstantIndicators constantIndicators={constantIndicators} />
       ) : null}
       {variantIndicators || variantIndicatorsNew ? (
         <React.Fragment>
@@ -240,9 +183,11 @@ const TestsAndTreatments = ({
               variantIndicators
                 ? encounter.status !== 'finished'
                   ? variantIndicatorsNew
-                    ? variantIndicators.concat(variantIndicatorsNew)
+                    ? variantIndicators.concat(variantIndicatorsNew[0])
                     : variantIndicators
                   : variantIndicators
+                : encounter.status !== 'finished'
+                ? variantIndicatorsNew
                 : null
             }
           />
