@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import Title from 'Assets/Elements/Title';
 import { StyledFormGroup, StyledDivider } from '../Style';
-import { Grid, Switch } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import StyledToggleButtonGroup from 'Assets/Elements/StyledToggleButtonGroup';
 import StyledToggleButton from 'Assets/Elements/StyledToggleButton';
 import { useTranslation } from 'react-i18next';
@@ -111,7 +111,7 @@ const EscortPatient = ({
           style={{ marginBottom: '50px' }}>
           {isArrivalWay === '1' && (
             <React.Fragment>
-              <span>{`${t('Arrival way')}?`}</span>
+              <span>{`* ${t('Arrival way')}?`}</span>
               <StyledToggleButtonGroup
                 value={arrivalWay}
                 onChange={arrivalWayHandler}
@@ -136,8 +136,8 @@ const EscortPatient = ({
           alignItems={'center'}>
           <span>
             {isArrivalWay === '1'
-              ? `${t('Arrival with escort')}?`
-              : `${t('Patient arrived with an escort')}?`}
+              ? `* ${t('Arrival with escort')}?`
+              : `* ${t('Patient arrived with an escort')}?`}
           </span>
           <StyledSwitch
             register={register}
