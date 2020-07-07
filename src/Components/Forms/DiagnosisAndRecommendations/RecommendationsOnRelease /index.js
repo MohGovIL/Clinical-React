@@ -4,7 +4,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
-import { StyledButton } from 'Assets/Elements/StyledButton';
+import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import { StyledDivider } from '../Style';
 import { useFormContext } from 'react-hook-form';
 const RecommendationsOnRelease = () => {
@@ -61,14 +61,8 @@ const RecommendationsOnRelease = () => {
           }}
           disabled={permission === 'view' ? true : false}
         />
-        <StyledButton
+        <StyledSelectTemplateButton
           disabled={permission === 'view' ? true : false}
-          width='113px'
-          height='32px'
-          color='primary'
-          margin='0 16px'
-          variant='outlined'
-          size='small'
           onClick={() =>
             handlePopUpProps(
               t('Instructions for further treatment'),
@@ -79,7 +73,7 @@ const RecommendationsOnRelease = () => {
             )
           }>
           {t('Select template')}
-        </StyledButton>
+        </StyledSelectTemplateButton>
       </Grid>
     </StyledFormGroup>
   );

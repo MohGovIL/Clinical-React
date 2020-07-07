@@ -1,7 +1,7 @@
 import React from 'react';
 import Title from 'Assets/Elements/Title';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
-import { StyledButton } from 'Assets/Elements/StyledButton';
+import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid, MenuItem } from '@material-ui/core';
@@ -68,14 +68,8 @@ const DrugRecommendation = () => {
             fontSize='22px'
             color='#000b40'
           />
-          <StyledButton
-            width='113px'
+          <StyledSelectTemplateButton
             disabled={permission === 'view' ? true : false}
-            margin='0 16px'
-            height='32px'
-            color='primary'
-            variant='outlined'
-            size='small'
             onClick={() => {
               setRequiredErrors((prevState) => {
                 const cloneState = [...prevState];
@@ -98,7 +92,7 @@ const DrugRecommendation = () => {
                 toDate: '',
                 instructionsForTheDrug: '',
               });
-            }}>{` + ${t('Add Drug')}`}</StyledButton>
+            }}>{` + ${t('Add Drug')}`}</StyledSelectTemplateButton>
         </Grid>
         <StyledDivider />
         {fields.map((item, index) => {
@@ -263,14 +257,8 @@ const DrugRecommendation = () => {
                   inputRef={register()}
                   width='60%'
                 />
-                <StyledButton
-                  width='113px'
+                <StyledSelectTemplateButton
                   disabled={checkIsDisabled('drugName', index)}
-                  margin='0 16px'
-                  height='32px'
-                  color='primary'
-                  variant='outlined'
-                  size='small'
                   onClick={() =>
                     handlePopUpProps(
                       t('Instructions for the drug'),
@@ -281,7 +269,7 @@ const DrugRecommendation = () => {
                     )
                   }>
                   {t('Select template')}
-                </StyledButton>
+                </StyledSelectTemplateButton>
               </Grid>
               <Grid container direction='row' justify='flex-end'>
                 <Delete

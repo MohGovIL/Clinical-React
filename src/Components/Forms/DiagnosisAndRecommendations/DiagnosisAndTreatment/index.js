@@ -1,7 +1,7 @@
 import React from 'react';
 import Title from 'Assets/Elements/Title';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
-import { StyledButton } from 'Assets/Elements/StyledButton';
+import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid } from '@material-ui/core';
@@ -66,14 +66,8 @@ const DiagnosisAndTreatment = () => {
           }}
           disabled={permission === 'view' ? true : false}
         />
-        <StyledButton
-          width='113px'
+        <StyledSelectTemplateButton
           disabled={permission === 'view' ? true : false}
-          margin='0 16px'
-          height='32px'
-          color='primary'
-          variant='outlined'
-          size='small'
           onClick={() =>
             handlePopUpProps(
               t('Findings details'),
@@ -84,7 +78,7 @@ const DiagnosisAndTreatment = () => {
             )
           }>
           {t('Select template')}
-        </StyledButton>
+        </StyledSelectTemplateButton>
       </Grid>
       <Grid
         container
@@ -104,14 +98,8 @@ const DiagnosisAndTreatment = () => {
           multiline
           disabled={permission === 'view' ? true : false}
         />
-        <StyledButton
+        <StyledSelectTemplateButton
           disabled={permission === 'view' ? true : false}
-          width='113px'
-          margin='0 16px'
-          height='32px'
-          color='primary'
-          variant='outlined'
-          size='small'
           onClick={() =>
             handlePopUpProps(
               t('Diagnosis details'),
@@ -122,7 +110,7 @@ const DiagnosisAndTreatment = () => {
             )
           }>
           {t('Select template')}
-        </StyledButton>
+        </StyledSelectTemplateButton>
       </Grid>
       <Grid
         container
@@ -142,14 +130,8 @@ const DiagnosisAndTreatment = () => {
           multiline
           disabled={permission === 'view' ? true : false}
         />
-        <StyledButton
+        <StyledSelectTemplateButton
           disabled={permission === 'view' ? true : false}
-          width='113px'
-          height='32px'
-          color='primary'
-          margin='0 16px'
-          variant='outlined'
-          size='small'
           onClick={() =>
             handlePopUpProps(
               t('Treatment details'),
@@ -160,7 +142,7 @@ const DiagnosisAndTreatment = () => {
             )
           }>
           {t('Select template')}
-        </StyledButton>
+        </StyledSelectTemplateButton>
       </Grid>
     </StyledFormGroup>
   );
