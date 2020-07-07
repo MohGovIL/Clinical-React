@@ -70,32 +70,7 @@ const PopUpFormTemplates = ({
     !encounter.examinationCode ||
     encounter.examinationCode < 1;
 
-  // const handleCreateData = async () => {
-  //   try {
-  //     const templatesServerData = [];
-  //     let response = await getFormTemplates(
-  //       encounter.serviceTypeCode,
-  //       encounter.examinationCode.toString(),
-  //       formID,
-  //       formFields,
-  //     );
-
-  //     if (response.data && response.data.length > 0) {
-  //       for (let i = 0; i < response.data.length; i++) {
-  //         templatesServerData.push({ title: response.data[i] });
-  //       }
-  //     }
-
-  //     if (templatesServerData && templatesServerData.length > 0) {
-  //       setTemplates(templatesServerData);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   useEffect(() => {
-    // if (templates.length === 0) handleCreateData();
     if (!templates.length)
       (async () => {
         try {
