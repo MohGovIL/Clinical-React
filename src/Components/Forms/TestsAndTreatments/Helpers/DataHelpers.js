@@ -1,10 +1,13 @@
 //this array is created after normalization of data retrieved from FHIR
-import { StyledConstantTextField, StyledVariantTextField } from '../Style';
-import * as ComponentsViewHelpers from './ViewHelpers';
-import LabelWithHourComponent from '../LabelWithHourComponent';
+import {
+  StyledConstantTextField,
+  StyledVariantTextField,
+} from 'Components/Forms/TestsAndTreatments/Style';
+
+import LabelWithHourComponent from 'Components/Forms/TestsAndTreatments/LabelWithHourComponent';
 import React from 'react';
-import FormattedInputs from '../../../Generic/MaskedControllers/FormattedInputs/FormattedInputs';
-import { handleConstantVariablesChange } from './ViewHelpers';
+import FormattedInputs from 'Components/Generic/MaskedControllers/FormattedInputs/FormattedInputs';
+
 function mergeMultipleConstants(
   variantIndicatorsNormalizedData,
   keyOne,
@@ -12,7 +15,6 @@ function mergeMultipleConstants(
   seperator,
 ) {
   let keysPlaces = [];
-  /* for (let i = 0; i < variantIndicatorsNormalizedData.length; i++) {*/
   Object.entries(variantIndicatorsNormalizedData).map(([key, dataset]) => {
     if (
       dataset &&
@@ -65,18 +67,24 @@ export const thickenTheConstantIndicators = ({
   normalizedConstantObservation,
   constantIndicators,
   setConstantIndicators,
+  disabled,
 }) => {
   if (!constantIndicators) constantIndicators = [];
   if (normalizedConstantObservation) {
     for (const [key, dataset] of Object.entries(
       normalizedConstantObservation,
     )) {
-      switch (dataset.label) {
+      switch (dataset && dataset.label ? dataset.label : key) {
         case 'Weight':
         case 'Height':
           {
-            dataset.componentType = FormattedInputs;
+            if (!dataset) return;
+            dataset.value = dataset.value ? dataset.value : '';
+            dataset.componentType = disabled
+              ? StyledVariantTextField
+              : FormattedInputs;
             dataset.name = dataset.label;
+            dataset.disabled = disabled;
             dataset.componenttype = 'textFieldWithMask';
             dataset.handleOnChange = (evt) => {
               const name = evt.target.name;
@@ -89,7 +97,9 @@ export const thickenTheConstantIndicators = ({
           }
           break;
       }
-      constantIndicators[dataset.label] = dataset;
+      constantIndicators[
+        dataset && dataset.label ? dataset.label : key
+      ] = dataset;
     }
   }
 
@@ -107,7 +117,6 @@ export const thickenTheVariantIndicators = ({
   let variantIndicators = {};
   let sizeTemp = size ? size : 0;
   if (!variantIndicatorsNormalizedData) return [];
-  // for (let i = 0; i < variantIndicatorsNormalizedData.length; i++) {
 
   let variantIndicatorsNormalizedDataTemp = variantIndicatorsNew;
   if (newRow) {
@@ -124,9 +133,6 @@ export const thickenTheVariantIndicators = ({
         }
       : variantIndicatorsNormalizedDataTemp;
   sizeTemp++;
-  /*let variantIndicatorsNormalaizedDataTemp = [
-      ...variantIndicatorsNormalizedData,
-    ];*/
 
   variantIndicatorsNormalizedDataTemp = mergeMultipleConstants(
     variantIndicatorsNormalizedDataTemp,
@@ -147,9 +153,6 @@ export const thickenTheVariantIndicators = ({
    *
    * */
   Object.entries(variantIndicatorsNormalizedDataTemp).map(([key, dataset]) => {
-    /* for (const [key, dataset] of Object.entries(
-         variantIndicatorsNormalizedDataTemp,
-       )) {*/
     if (!dataset) return;
 
     switch (dataset.label ? dataset.label : key) {
@@ -369,6 +372,7 @@ export const thickenTheData = ({
   variantIndicatorsNew,
   setVariantIndicatorsNew,
   handleConstantVariablesChange,
+  disabled,
 }) => {
   let constantIndicatorsUIData = [];
   if (normalizedConstantObservation) {
@@ -377,6 +381,7 @@ export const thickenTheData = ({
       constantIndicators,
       setConstantIndicators,
       handleConstantVariablesChange,
+      disabled,
     });
     return constantIndicatorsUIData;
   }

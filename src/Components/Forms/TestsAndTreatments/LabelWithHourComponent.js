@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledLabelWithHourComponent } from './Style';
+import { StyledLabelWithHourComponent } from 'Components/Forms/TestsAndTreatments/Style';
 
 const LabelWithHourComponent = ({ label, value }) => {
   return (

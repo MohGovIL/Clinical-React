@@ -2,26 +2,16 @@
 
 import { connect } from 'react-redux';
 import React, { useEffect, useReducer, useState } from 'react';
-
 import { useTranslation } from 'react-i18next';
-import MomentUtils from '@date-io/moment';
-import ConstantIndicators from './ConstantIndicators';
-import VariantIndicators from './VariantIndicators';
-import * as DataHelpers from './Helpers/DataHelpers';
-import {
-  StyledConstantHeaders,
-  StyledForm,
-  StyledTestsAndTreatments,
-  StyledVariantTextField,
-} from './Style';
-import LabelWithHourComponent from './LabelWithHourComponent';
+import ConstantIndicators from 'Components/Forms/TestsAndTreatments/ConstantIndicators';
+import VariantIndicators from 'Components/Forms/TestsAndTreatments/VariantIndicators';
+import { StyledConstantHeaders, StyledTestsAndTreatments } from './Style';
 import * as Moment from 'moment';
-import { store } from '../../../index';
-import normalizeFhirUser from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
-import { getCities, getIndicatorsSettings } from '../../../Utils/Services/API';
-import { thickenTheData } from './Helpers/DataHelpers';
-import { FHIR } from '../../../Utils/Services/FHIR';
-import normalizeFhirObservation from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
+import normalizeFhirUser from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
+import { getIndicatorsSettings } from 'Utils/Services/API';
+import { thickenTheData } from 'Components/Forms/TestsAndTreatments/Helpers/DataHelpers';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
 
 const TestsAndTreatments = ({
   patient,
@@ -76,6 +66,7 @@ const TestsAndTreatments = ({
               patient: Number(patient.id),
               encounter: Number(encounter.id),
               category: 'exam',
+              /*_sort: '-issued',*/
             },
           },
         );
@@ -85,6 +76,7 @@ const TestsAndTreatments = ({
             patient: patient.id,
             encounter: encounter.id,
             category: 'vital-signs',
+            /*_sort: '-issued',*/
           },
         });
         let normalizedVariantObservation = [];
@@ -115,12 +107,19 @@ const TestsAndTreatments = ({
           normalizedConstantObservation:
             normalizedConstantObservation &&
             normalizedConstantObservation.length > 0 &&
-            normalizedConstantObservation[0] &&
-            normalizedConstantObservation[0]['observation']
-              ? normalizedConstantObservation[0]['observation']
-              : null,
+            normalizedConstantObservation[
+              normalizedConstantObservation.length - 1
+            ] &&
+            normalizedConstantObservation[
+              normalizedConstantObservation.length - 1
+            ]['observation']
+              ? normalizedConstantObservation[
+                  normalizedConstantObservation.length - 1
+                ]['observation']
+              : clinicIndicators.data['constant'],
           constantIndicators,
           setConstantIndicators,
+          disabled: encounter.status === 'finished',
         });
 
         setConstantIndicators(normalizedConstantObservation);

@@ -1,7 +1,9 @@
-import { StyledConstantForm, StyledConstantHeaders } from './Style';
+import {
+  StyledConstantForm,
+  StyledConstantHeaders,
+} from 'Components/Forms/TestsAndTreatments/Style';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { thickenTheData } from './Helpers/DataHelpers';
 
 const ConstantIndicators = ({ constantIndicators }) => {
   const { t } = useTranslation();
@@ -27,6 +29,7 @@ const ConstantIndicators = ({ constantIndicators }) => {
                 mask={value.mask}
                 name={value.name}
                 componenttype={value.componenttype}
+                disabled={value.disabled}
               />
             ) : null;
           })}

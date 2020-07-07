@@ -1,17 +1,11 @@
 import {
-  StyledConstantForm,
-  StyledConstantHeaders,
-  StyledForm,
   StyledTable,
-  StyledVariableForm,
   StyledVariantForm,
   StyledVarientIndicatorsTR,
-} from './Style';
+} from 'Components/Forms/TestsAndTreatments/Style';
 import React from 'react';
-
 import { useTranslation } from 'react-i18next';
 import TableContainer from '@material-ui/core/TableContainer';
-import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import Paper from '@material-ui/core/Paper';
 import TableCell from '@material-ui/core/TableCell';

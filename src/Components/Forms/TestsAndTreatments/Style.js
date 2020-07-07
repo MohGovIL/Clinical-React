@@ -18,7 +18,6 @@ export const StyledConstantTextField = styled(TextField)`
   }
 `;
 export const StyledVariantTextField = styled(TextField)`
-  /*width: 104px;*/
   height: 56px;
   border-radius: 10px;
   background-color: #f8faff;
@@ -62,7 +61,6 @@ export const StyledConstantHeaders = styled.label`
 export const StyledLabelWithHourComponent = styled.div`
   text-align: right;
   label {
-    /* width: 54px;*/
     height: 40px;
     font-size: 16px;
     font-weight: normal;
@@ -99,12 +97,7 @@ export const StyledVariantForm = styled.form`
   overflow: auto;
   width: 100%;
   height: 100%;
-  /*box-shadow: 0 0 10px 0 rgba(152, 151, 151, 0.3);*/
   background-color: #ffffff;
-  /* .MuiInputLabel-shrink {
-    transform: translate(24.5px, 5.5px) scale(0.75);
-    transform-origin: top left;
-  }*/
 `;
 export const StyledConstantForm = styled.form``;
 export const StyledTestsAndTreatments = styled.div``;

@@ -23,11 +23,14 @@ const Observations = {
     let patient = params.patient;
     let encounter = params.encounter;
     let category = params.category;
+    let sort = params._sort;
     return CRUDOperations(
       'search',
       `${params.url}?${patient ? `patient=${patient}` : ''}${
         encounter ? `&encounter=${encounter}` : ''
-      }${category ? `&category=${category}` : ''}`,
+      }${category ? `&category=${category}` : ''}${
+        sort ? `&_sort=${sort}` : ''
+      }`,
     );
 
     return {
