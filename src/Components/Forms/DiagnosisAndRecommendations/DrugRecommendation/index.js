@@ -57,7 +57,7 @@ const DrugRecommendation = () => {
       return permission === 'view' ? true : false;
     }
   };
-
+  const instructionsForTheDrug = t('Instructions for the drug');
   return (
     <>
       <StyledFormGroup>
@@ -246,7 +246,7 @@ const DrugRecommendation = () => {
                 <CustomizedTextField
                   disabled={checkIsDisabled('drugName', index)}
                   name={`drugRecommendation[${index}].instructionsForTheDrug`}
-                  label={t('Instructions for the drug')}
+                  label={instructionsForTheDrug}
                   InputLabelProps={{
                     shrink:
                       drugRecommendation[index] &&
@@ -261,7 +261,7 @@ const DrugRecommendation = () => {
                   disabled={checkIsDisabled('drugName', index)}
                   onClick={() =>
                     handlePopUpProps(
-                      t('Instructions for the drug'),
+                      instructionsForTheDrug,
                       'templates_providing_medicine',
                       'tests_treatments',
                       callBack,

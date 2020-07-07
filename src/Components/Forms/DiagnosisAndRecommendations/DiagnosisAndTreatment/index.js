@@ -39,6 +39,10 @@ const DiagnosisAndTreatment = () => {
       };
     });
   };
+
+  const treatmentDetails = t('Treatment details');
+  const diagnosisDetails = t('Diagnosis details');
+  const findingsDetails = t('Findings details');
   return (
     <StyledFormGroup>
       <Title
@@ -56,7 +60,7 @@ const DiagnosisAndTreatment = () => {
         <CustomizedTextField
           name='findingsDetails'
           inputRef={register}
-          label={t('Findings details')}
+          label={findingsDetails}
           width='45%'
           multiline
           InputLabelProps={{
@@ -70,7 +74,7 @@ const DiagnosisAndTreatment = () => {
           disabled={permission === 'view' ? true : false}
           onClick={() =>
             handlePopUpProps(
-              t('Findings details'),
+              findingsDetails,
               'findings_details',
               'diagnosis_and_recommendations',
               callBack,
@@ -88,7 +92,7 @@ const DiagnosisAndTreatment = () => {
         <CustomizedTextField
           inputRef={register}
           name='diagnosisDetails'
-          label={t('Diagnosis details')}
+          label={diagnosisDetails}
           InputLabelProps={{
             shrink: diagnosisAndTreatmentFields['diagnosisDetails']
               ? true
@@ -102,7 +106,7 @@ const DiagnosisAndTreatment = () => {
           disabled={permission === 'view' ? true : false}
           onClick={() =>
             handlePopUpProps(
-              t('Diagnosis details'),
+              diagnosisDetails,
               'diagnosis_details',
               'diagnosis_and_recommendations',
               callBack,
@@ -120,7 +124,7 @@ const DiagnosisAndTreatment = () => {
         <CustomizedTextField
           inputRef={register}
           name='treatmentDetails'
-          label={t('Treatment details')}
+          label={treatmentDetails}
           InputLabelProps={{
             shrink: diagnosisAndTreatmentFields['treatmentDetails']
               ? true
@@ -134,7 +138,7 @@ const DiagnosisAndTreatment = () => {
           disabled={permission === 'view' ? true : false}
           onClick={() =>
             handlePopUpProps(
-              t('Treatment details'),
+              treatmentDetails,
               'treatment_details',
               'diagnosis_and_recommendations',
               callBack,
