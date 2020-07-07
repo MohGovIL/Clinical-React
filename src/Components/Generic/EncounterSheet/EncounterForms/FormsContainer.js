@@ -44,6 +44,7 @@ function allyProps(index) {
   };
 }
 /*[{"component":"MedicalAdmissionForm","form_name":"Medical Admission","order":"1","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Tests and Treatments","order":"2","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Diagnosis and Recommendations","order":"3","permission":"write"}]*/
+
 const FormsContainer = ({ tabs }) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -87,7 +88,7 @@ const FormsContainer = ({ tabs }) => {
         onChangeIndex={handleChangeIndex}>
         {tabs.data.map((tab, key) => {
           let FormComponent = formComponents[tab.component];
-          return (
+          return key === value ? (
             <TabPanel
               key={'tab_panel_' + key}
               value={tab.order}
@@ -97,6 +98,13 @@ const FormsContainer = ({ tabs }) => {
                 <FormComponent permission={tab.permission} />
               </Suspense>
             </TabPanel>
+          ) : (
+            <TabPanel
+              key={'tab_panel_' + key}
+              value={tab.order}
+              index={tab.order}
+              dir={theme.direction}
+            />
           );
         })}
       </SwipeableViews>
