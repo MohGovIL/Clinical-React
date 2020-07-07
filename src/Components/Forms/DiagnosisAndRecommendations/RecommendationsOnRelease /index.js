@@ -36,6 +36,7 @@ const RecommendationsOnRelease = () => {
       };
     });
   };
+  const instructionsName = t('Instructions for further treatment');
   return (
     <StyledFormGroup>
       <Title
@@ -53,7 +54,7 @@ const RecommendationsOnRelease = () => {
         <CustomizedTextField
           name='instructionsForFurtherTreatment'
           inputRef={register}
-          label={t('Instructions for further treatment')}
+          label={instructionsName}
           width='45%'
           multiline
           InputLabelProps={{
@@ -65,7 +66,7 @@ const RecommendationsOnRelease = () => {
           disabled={permission === 'view' ? true : false}
           onClick={() =>
             handlePopUpProps(
-              t('Instructions for further treatment'),
+              instructionsName,
               'instructions_further_treatment',
               'diagnosis_and_recommendations',
               callBack,
