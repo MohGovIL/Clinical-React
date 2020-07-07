@@ -297,7 +297,7 @@ const EncounterStates = {
           case 'practitioner':
             patchArr.push({
               op: 'replace',
-              path: '/participant/{index}/individual/reference',
+              path: `/participant/${params.encounterPatchParams.practitionerIndex}/individual/reference`,
               value: `Practitioner/${element}`,
             });
             break;

@@ -3,6 +3,7 @@ import 'moment/locale/he';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 import { FHIR } from 'Utils/Services/FHIR';
+import { store } from 'index';
 
 // סיימו ביקור
 
@@ -79,6 +80,8 @@ export const setPatientDataFinishedVisitTableRows = function (
                       extensionSecondaryStatusIndex:
                         encounter.extensionSecondaryStatusIndex,
                       status: 'in-progress',
+                      practitioner: store.getState().login.userID,
+                      practitionerIndex: encounter.practitionerIndex,
                     },
                   },
                 });
