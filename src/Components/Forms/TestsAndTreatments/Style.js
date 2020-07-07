@@ -109,6 +109,9 @@ export const StyledVariantForm = styled.form`
 export const StyledConstantForm = styled.form``;
 export const StyledTestsAndTreatments = styled.div``;
 export const StyledTable = styled(Table)`
+  .MuiInputLabel-formControl {
+    left: 19px;
+  }
   display: flex;
   .MuiTableCell-root {
     padding: 2px;
