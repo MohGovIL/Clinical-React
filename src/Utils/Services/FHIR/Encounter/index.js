@@ -294,6 +294,13 @@ const EncounterStates = {
               value: element,
             });
             break;
+          case 'practitioner':
+            patchArr.push({
+              op: 'replace',
+              path: '/participant/{index}/individual/reference',
+              value: `Practitioner/${element}`,
+            });
+            break;
           default:
             break;
         }
