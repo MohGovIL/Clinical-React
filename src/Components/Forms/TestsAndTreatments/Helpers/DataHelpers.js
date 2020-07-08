@@ -25,6 +25,10 @@ export const thickenTheConstantIndicators = ({
       normalizedConstantObservation,
     )) {
       switch (dataset && dataset.label ? dataset.label : key) {
+        /*
+        case '8308-9'://"Body height --standing":
+        case '8335-2'://"Body weight Estimated":
+        */
         case 'Weight':
         case 'Height':
           {
@@ -65,16 +69,16 @@ export const thickenTheVariantIndicators = ({
   setVariantIndicators,
 }) => {
   /*
-   *
-   *  Blood pressure:
-   *  Pulse:
-   *  Fever:
-   *  Saturation:
-   *  Breaths per minute:
-   *  Pain level:
-   *  Blood sugar:
-   *
-   * */
+  case '20564-1'://"Oxygen saturation in Blood":
+  case '69000-8'://"Heart rate --sitting":
+  case '72514-3'://"Pain severity - 0-10 verbal numeric rating [Score] - Reported":
+  case '8310-5'://"Body temperature":
+  case '8462-4'://"Diastolic blood pressure":
+  case '8480-6'://"Systolic blood pressure":
+  case '74774-1'://"Glucose [Mass/volume] in Serum, Plasma or Blood":
+  case '9303-9'://"Respiratory rate --resting":
+ */
+
   let variantIndicators = {};
   let sizeTemp = size ? size : 0;
   if (!variantIndicatorsNormalizedData) return [];
