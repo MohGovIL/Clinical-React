@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import React from 'react';
 import TableRow from '@material-ui/core/TableRow';
 import Table from '@material-ui/core/Table';
+import Button from '@material-ui/core/Button';
 export const StyledConstantTextField = styled(TextField)`
   width: 104px;
   height: 56px;
@@ -57,6 +58,7 @@ export const StyledConstantHeaders = styled.label`
   letter-spacing: normal;
   text-align: right;
   color: #000b40;
+  margin-top: 10px;
 `;
 export const StyledLabelWithHourComponent = styled.div`
   text-align: right;
@@ -93,13 +95,16 @@ export const StyledVarientIndicatorsTR = styled(TableRow)`
   margin-bottom: 10px;
 `;
 
-export const StyledVariantForm = styled.form`
+export const StyledVariantForm = styled.div`
   overflow: auto;
   width: 100%;
   height: 100%;
   background-color: #ffffff;
+  margin-bottom: 40px;
 `;
-export const StyledConstantForm = styled.form``;
+export const StyledConstantForm = styled.div`
+  margin-bottom: 40px;
+`;
 export const StyledTestsAndTreatments = styled.div``;
 export const StyledTable = styled(Table)`
   .MuiInputLabel-formControl {
@@ -108,5 +113,25 @@ export const StyledTable = styled(Table)`
   display: flex;
   .MuiTableCell-root {
     padding: 2px;
+  }
+`;
+
+export const StyledTreatmentInstructionsButton = styled(Button)`
+  width: 148px;
+  height: 32px;
+  border-radius: 25px;
+  border: solid 1px #002398;
+  float: left;
+  span {
+    width: 110px;
+    height: 22px;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 0.1px;
+    text-align: right;
+    color: #002398;
   }
 `;

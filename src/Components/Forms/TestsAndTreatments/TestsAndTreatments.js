@@ -12,6 +12,7 @@ import { getIndicatorsSettings } from 'Utils/Services/API';
 import { thickenTheData } from 'Components/Forms/TestsAndTreatments/Helpers/DataHelpers';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
+import TreatmentInstructions from 'Components/Forms/TestsAndTreatments/TreatmentInstructions';
 
 const TestsAndTreatments = ({
   patient,
@@ -190,6 +191,8 @@ const TestsAndTreatments = ({
                 : null
             }
           />
+
+          <TreatmentInstructions />
         </React.Fragment>
       ) : null}
     </StyledTestsAndTreatments>
