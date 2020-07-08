@@ -52,8 +52,8 @@ const PatientDetailsBlock = ({
     commitmentAndPaymentCommitmentValidity: '',
     commitmentAndPaymentDoctorsName: '',
     commitmentAndPaymentDoctorsLicense: '',
-    ReferralFile: '',
-    CommitmentFile: '',
+    // ReferralFile: '',
+    // CommitmentFile: '',
   });
   const onSubmit = async (data) => {
     try {
@@ -405,20 +405,20 @@ const PatientDetailsBlock = ({
         return data[this.name] && data[this.name].trim().length;
       },
     },
-    ReferralFile: {
-      name: 'ReferralFile',
-      linkId: '',
-      required: function (data) {
-        return Object.keys(data.Referral).length > 0;
-      },
-    },
-    CommitmentFile: {
-      name: 'CommitmentFile',
-      linkId: '',
-      required: function (data) {
-        return Object.keys(data.Commitment).length > 0;
-      },
-    },
+    // ReferralFile: {
+    //   name: 'ReferralFile',
+    //   linkId: '',
+    //   required: function (data) {
+    //     return Object.keys(data.Referral).length > 0;
+    //   },
+    // },
+    // CommitmentFile: {
+    //   name: 'CommitmentFile',
+    //   linkId: '',
+    //   required: function (data) {
+    //     return Object.keys(data.Commitment).length > 0;
+    //   },
+    // },
   };
 
   const isRequiredValidation = (data) => {
