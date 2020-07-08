@@ -1,4 +1,3 @@
-//this array is created after normalization of data retrieved from FHIR
 import {
   StyledConstantTextField,
   StyledVariantTextField,
@@ -65,6 +64,17 @@ export const thickenTheVariantIndicators = ({
   variantIndicatorsNew,
   setVariantIndicators,
 }) => {
+  /*
+   *
+   *  Blood pressure:
+   *  Pulse:
+   *  Fever:
+   *  Saturation:
+   *  Breaths per minute:
+   *  Pain level:
+   *  Blood sugar:
+   *
+   * */
   let variantIndicators = {};
   let sizeTemp = size ? size : 0;
   if (!variantIndicatorsNormalizedData) return [];
@@ -92,17 +102,7 @@ export const thickenTheVariantIndicators = ({
     '/',
   );
   let i = 0;
-  /*
-   *
-   *  Blood pressure:
-   *  Pulse:
-   *  Fever:
-   *  Saturation:
-   *  Breaths per minute:
-   *  Pain level:
-   *  Blood sugar:
-   *
-   * */
+
   Object.entries(variantIndicatorsNormalizedDataTemp).map(([key, dataset]) => {
     if (!dataset) return;
 
