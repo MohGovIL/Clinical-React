@@ -1,29 +1,22 @@
 //MedicalAdmission
-
 import { connect } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import VisitDetails from '../../Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
 import {
-  Controller,
   FormContext,
   useForm,
-  useFormContext,
 } from 'react-hook-form';
-import { Grid } from '@material-ui/core';
-import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import { useTranslation } from 'react-i18next';
 import {
-  StyledInsulation,
-  StyledIsUrgent,
-  StyledTemplateSelection,
   StyledForm,
 } from './Style';
-import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
-import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 
 import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
-import { StyledSelectTemplateButton } from '../../../Assets/Elements/StyledSelectTempleteButton';
 import PopUpFormTemplates from '../../Generic/PopupComponents/PopUpFormTemplates';
+import NursingAnamnesis from './NursingAnamnesis';
+import { FHIR } from 'Utils/Services/FHIR';
+import { StyledButton } from 'Assets/Elements/StyledButton';
+import UrgentAndInsulation from './UrgentAndInsulation';
 
 const MedicalAdmission = ({
   patient,
@@ -35,21 +28,19 @@ const MedicalAdmission = ({
   permission,
 }) => {
   const { t } = useTranslation();
-  // const {
-  //   register,
-  //   control,
-  //   // requiredErrors,
-  //   setValue,
-  //   unregister,
-  //   reset,
-  //   getValues,
-  // } = useFormContext();
   const methods = useForm({
     mode: 'onBlur',
     submitFocusError: true,
   });
 
-  const { handleSubmit, formState, control, watch, register } = methods;
+  const {
+    handleSubmit,
+    control,
+    watch,
+    register,
+    setValue,
+    unregister
+  } = methods;
 
   const [requiredErrors, setRequiredErrors] = useState({
     selectTest: '',
@@ -61,8 +52,7 @@ const MedicalAdmission = ({
     ReferralFile: '',
     CommitmentFile: '',
   });
-  const watchisInsulationInstruction = watch('isInsulationInstruction');
-  const watchisUrgent = watch('isUrgent');
+
 
   const watchMedication = watch('medication');
   const [medicationChanged, setMedicationChanged] = useState(false);
@@ -88,43 +78,44 @@ const MedicalAdmission = ({
     name: '',
   });
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    console.log(JSON.stringify(data));
+  };
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const q = await FHIR('Questionnaire', 'doWork', {
+          functionName: 'getQuestionnaire',
+          functionParams: {
+            QuestionnaireName: 'medical_admission_questionnaire',
+          },
+        });
+        const Questionnaire = q.data.entry[1].resource;
+        register({ name: 'questionnaireId' });
+        setValue('questionnaireId', Questionnaire.id);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
+    return () => unregister('questionnaireId');
+  }, [register, setValue, unregister]);
 
   useEffect(() => {
-    console.log('is urgent: ' + watchisUrgent);
-  }, [watchisUrgent]);
+    register({ name: 'isPregnancy' });
+    return () => unregister(['isPregnancy']);
+  }, [register, unregister]);
 
   const pregnancyHandlerRadio = (value) => {
-    console.log('pregnancy: ' + value);
+    //console.log('pregnancy: ' + value);
+    setValue("isPregnancy", value);
   };
 
   const medicationHandlerRadio = (value) => {
     console.log('medication: ' + value);
     setMedicationChanged(value);
   };
-
-  //
-  const callBack = (data, name) => {
-    //setValue(name, data);
-  };
-
-  //
-  const handlePopUpProps = (title, fields, id, callBack, name) => {
-    setPopUpProps((prevState) => {
-      return {
-        ...prevState,
-        popupOpen: true,
-        formFieldsTitle: title,
-        formFields: fields,
-        formID: id,
-        setTemplatesTextReturned: callBack,
-        name,
-      };
-    });
-  };
-
-  //
-  const findingsDetails = t('Findings details');
 
   //Radio buttons for pregnancy
   const pregnancyRadioList = [t('No'), t('Yes')];
@@ -135,142 +126,63 @@ const MedicalAdmission = ({
   return (
     <React.Fragment>
       <PopUpFormTemplates {...popUpProps} />
-      <FormContext {...methods} requiredErrors={requiredErrors}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <StyledForm onSubmit={handleSubmit(onSubmit)}>
-            <VisitDetails
-              reasonCodeDetails={encounter.extensionReasonCodeDetails}
-              examination={encounter.examination}
-              examinationCode={encounter.examinationCode}
-              serviceType={encounter.serviceType}
-              serviceTypeCode={encounter.serviceTypeCode}
-              priority={encounter.priority}
-              disableHeaders={false}
-              disableButtonIsUrgent={false}
-            />
-            <StyledIsUrgent>
-              <Grid
-                container
-                direction={'row'}
-                justify={'flex-start'}
-                alignItems={'center'}>
-                <span>
-                  <b>{t('Is urgent?')}</b>
-                </span>
-                {/* Requested service - switch */}
-                <StyledSwitch
-                  name='isUrgent'
-                  register={register}
-                  label_1={'No'}
-                  label_2={'Yes'}
-                  marginLeft={'40px'}
-                  marginRight={'40px'}
-                />
-              </Grid>
-            </StyledIsUrgent>
-            <StyledInsulation>
-              <Grid
-                container
-                direction={'row'}
-                justify={'flex-start'}
-                alignItems={'center'}>
-                <span>
-                  <b>{t('Insulation required')}?</b>
-                </span>
-                {/* Requested service - switch */}
-                <StyledSwitch
-                  name='isInsulationInstruction'
-                  register={register}
-                  label_1={'No'}
-                  label_2={'Yes'}
-                  marginLeft={'40px'}
-                  marginRight={'33px'}
-                />
-              </Grid>
-              {watchisInsulationInstruction && (
-                <Controller
-                  control={control}
-                  name='insulationInstruction'
-                  //defaultValue={}
-                  as={
-                    <CustomizedTextField
-                      width={'70%'}
-                      label={t('Insulation instruction')}
-                    />
-                  }
-                />
-              )}
-            </StyledInsulation>
-            <StyledTemplateSelection>
-              <Grid
-                container
-                direction={'row'}
-                justify={'flex-start'}
-                alignItems={'center'}>
-                <Grid item xs={10}>
-                  <Controller
-                    control={control}
-                    name='nursingAnmenza'
-                    //defaultValue={}
-                    as={
-                      <CustomizedTextField
-                        width={'85%'}
-                        label={t('Nursing anmenza')}
-                      />
-                    }
-                  />
-                </Grid>
-                <Grid item xs={2}>
-                  <StyledSelectTemplateButton
-                    disabled={permission === 'view' ? true : false}
-                    onClick={() =>
-                      handlePopUpProps(
-                        findingsDetails,
-                        'medical_admission_questionnaire', //to change
-                        'medical_admission', //to change
-                        callBack,
-                        'findingsDetails',
-                      )
-                    }>
-                    {t('Select template')}
-                  </StyledSelectTemplateButton>
-                </Grid>
-              </Grid>
-            </StyledTemplateSelection>
-            <>
-              {/*need to make a new component for radio select*/}
-              {(patient.gender === 'female' || patient.gender === 'other') && (
-                <RadioGroupChoice
-                  gridLabel={t('Pregnancy')}
-                  radioName={'pregnancy'}
-                  listValues={pregnancyRadioList}
-                  trueValue={t('Yes')}
-                  callBackFunction={pregnancyHandlerRadio}
-                />
-              )}
-              {/*<RadioGroupChoice*/}
-              {/*  gridLabel={t('Medication')}*/}
-              {/*  radioName={'medication'}*/}
-              {/*  listValues={medicationRadioList}*/}
-              {/*  trueValue={t('Exist')}*/}
-              {/*  callBackFunction={medicationHandlerRadio}*/}
-              {/*/>*/}
-              {/*{medicationChanged && (*/}
-              {/*  <Controller*/}
-              {/*    control={control}*/}
-              {/*    name='medicationInstruction'*/}
-              {/*    //defaultValue={}*/}
-              {/*    as={*/}
-              {/*      <CustomizedTextField*/}
-              {/*        width={'70%'}*/}
-              {/*        label={t('Medications details')}*/}
-              {/*      />*/}
-              {/*    }*/}
-              {/*  />*/}
-              {/*)}*/}
-            </>
-          </StyledForm>
-        </form>
+      <FormContext
+        {...methods}
+        requiredErrors={requiredErrors}
+        setPopUpProps={setPopUpProps}>
+        <StyledForm onSubmit={handleSubmit(onSubmit)}>
+          <VisitDetails
+            reasonCodeDetails={encounter.extensionReasonCodeDetails}
+            examination={encounter.examination}
+            examinationCode={encounter.examinationCode}
+            serviceType={encounter.serviceType}
+            serviceTypeCode={encounter.serviceTypeCode}
+            priority={encounter.priority}
+            disableHeaders={false}
+            disableButtonIsUrgent={false}
+          />
+          <UrgentAndInsulation />
+          <NursingAnamnesis />
+          <>
+            {/*need to make a new component for radio select*/}
+            {(patient.gender === 'female' || patient.gender === 'other') && (
+              <RadioGroupChoice
+                register={register}
+                gridLabel={t('Pregnancy')}
+                radioName={'isPregnancy'}
+                listValues={pregnancyRadioList}
+                trueValue={t('Yes')}
+                callBackFunction={pregnancyHandlerRadio}
+              />
+            )}
+            {/*<RadioGroupChoice*/}
+            {/*  gridLabel={t('Medication')}*/}
+            {/*  radioName={'medication'}*/}
+            {/*  listValues={medicationRadioList}*/}
+            {/*  trueValue={t('Exist')}*/}
+            {/*  callBackFunction={medicationHandlerRadio}*/}
+            {/*/>*/}
+            {/*{medicationChanged && (*/}
+            {/*  <Controller*/}
+            {/*    control={control}*/}
+            {/*    name='medicationInstruction'*/}
+            {/*    //defaultValue={}*/}
+            {/*    as={*/}
+            {/*      <CustomizedTextField*/}
+            {/*        width={'70%'}*/}
+            {/*        label={t('Medications details')}*/}
+            {/*      />*/}
+            {/*    }*/}
+            {/*  />*/}
+            {/*)}*/}
+          </>
+          <StyledButton
+            color='primary'
+            type='submit'
+            disabled={permission === 'view' ? true : false}>
+            SUBMIT
+          </StyledButton>
+        </StyledForm>
       </FormContext>
     </React.Fragment>
   );

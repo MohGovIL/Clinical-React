@@ -76,7 +76,7 @@ const DiagnosisAndTreatment = () => {
             handlePopUpProps(
               findingsDetails,
               'findings_details',
-              'diagnosis_and_recommendations',
+              'diagnosi s_and_recommendations',
               callBack,
               'findingsDetails',
             )
