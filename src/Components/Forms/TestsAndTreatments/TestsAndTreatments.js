@@ -25,6 +25,7 @@ const TestsAndTreatments = ({
   currentUser,
 }) => {
   const { t } = useTranslation();
+  const [clinicIndicators, setClinicIndicators] = useState(null);
   const [constantIndicators, setConstantIndicators] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -57,6 +58,7 @@ const TestsAndTreatments = ({
     (async () => {
       try {
         const clinicIndicators = await getIndicatorsSettings();
+        setClinicIndicators(clinicIndicators);
 
         const constantFromFhirIndicators = await FHIR(
           'Observations',
@@ -67,7 +69,7 @@ const TestsAndTreatments = ({
               patient: Number(patient.id),
               encounter: Number(encounter.id),
               category: 'exam',
-              /*_sort: '-issued',*/
+              _sort: '-issued',
             },
           },
         );
@@ -77,7 +79,7 @@ const TestsAndTreatments = ({
             patient: patient.id,
             encounter: encounter.id,
             category: 'vital-signs',
-            /*_sort: '-issued',*/
+            _sort: '-issued',
           },
         });
         let normalizedVariantObservation = [];
@@ -168,10 +170,10 @@ const TestsAndTreatments = ({
 
   return (
     <StyledTestsAndTreatments dir={languageDirection}>
-      {constantIndicators ? (
+      {constantIndicators && clinicIndicators ? (
         <ConstantIndicators constantIndicators={constantIndicators} />
       ) : null}
-      {variantIndicators || variantIndicatorsNew ? (
+      {clinicIndicators && (variantIndicators || variantIndicatorsNew) ? (
         <React.Fragment>
           <StyledConstantHeaders>
             {t('Variable indicators')}
