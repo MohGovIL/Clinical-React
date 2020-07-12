@@ -15,7 +15,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 const AppointmentsPerPatient = ({
   nextAppointment,

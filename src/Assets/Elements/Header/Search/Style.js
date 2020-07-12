@@ -74,7 +74,6 @@ export const StyledContainer = styled.div`
 
 export const WrapperSearchPaper = styled.div`
   position: absolute;
-  left: 30%;
+  left: ${(props) => (props.direction === 'rtl' ? '30%' : '67%')};
   top: 100%;
-}
 `;
