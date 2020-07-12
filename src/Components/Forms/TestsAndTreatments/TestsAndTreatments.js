@@ -7,7 +7,11 @@
            {object} languageDirection,
            {object} verticalName,
            {object} currentUser,
- * @returns UI DRAW OF ConstantIndicators
+ * @purpose TestsAndTreatments -  will be the main component which will draw all other components -
+ *                                a) the constant indicators - ConstantIndicators.
+ *                                b) the variant indicators - VariantIndicators.
+ *                                c) the new variant indicators - VariantIndicators.
+ * @returns TestsAndTreatments Component.
  */
 
 import { connect } from 'react-redux';
@@ -15,7 +19,10 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConstantIndicators from 'Components/Forms/TestsAndTreatments/ConstantIndicators';
 import VariantIndicators from 'Components/Forms/TestsAndTreatments/VariantIndicators';
-import { StyledConstantHeaders, StyledTestsAndTreatments } from './Style';
+import {
+  StyledConstantHeaders,
+  StyledTestsAndTreatments,
+} from 'Components/Forms/TestsAndTreatments/Style';
 import * as Moment from 'moment';
 import normalizeFhirUser from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
 import { getIndicatorsSettings } from 'Utils/Services/API';
@@ -64,36 +71,7 @@ const TestsAndTreatments = ({
     (async () => {
       try {
         let fhirClinikalCalls = [];
-        /* fhirClinikalCalls['clinicIndicators'] = getIndicatorsSettings();
-        fhirClinikalCalls['constantFromFhirIndicators'] = FHIR(
-          'Observations',
-          'doWork',
-          {
-            functionName: 'getObservations',
-            functionParams: {
-              patient: Number(patient.id),
-              encounter: Number(encounter.id),
-              category: 'exam',
-              _sort: '-issued',
-              _include: 'Observation:performer',
-            },
-          },
-        );
-        fhirClinikalCalls['variantFromFhirIndicators'] = FHIR(
-          'Observations',
-          'doWork',
-          {
-            functionName: 'getObservations',
-            functionParams: {
-              patient: patient.id,
-              encounter: encounter.id,
-              category: 'vital-signs',
-              _sort: '-issued',
-              _include: 'Observation:performer',
-            },
-          },
-        );*/
-        let fhirClinikalOrderedArrayAfterAwait = [];
+
         fhirClinikalCalls.push(getIndicatorsSettings());
 
         fhirClinikalCalls.push(
