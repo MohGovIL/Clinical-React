@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 const StyledEncounterSheet = styled.div`
   width: 100%;
-  height: 100%;
+  max-height: 100vh;
+  overflow: hidden;
   display: flex;
   background-color: #f4f4f4;
 `;

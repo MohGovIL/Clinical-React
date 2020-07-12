@@ -1,11 +1,10 @@
 import React, { Component, Suspense, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import { StyledTabContainer } from './Style';
 import { useTranslation } from 'react-i18next';
@@ -44,10 +43,9 @@ function allyProps(index) {
   };
 }
 /*[{"component":"MedicalAdmissionForm","form_name":"Medical Admission","order":"1","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Tests and Treatments","order":"2","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Diagnosis and Recommendations","order":"3","permission":"write"}]*/
-
-const FormsContainer = ({ tabs }) => {
+const FormsContainer = ({ tabs, dir }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
+
   const [value, setValue] = React.useState(0);
   let formComponents = [];
 
@@ -83,7 +81,7 @@ const FormsContainer = ({ tabs }) => {
         </Tabs>
       </AppBar>
       <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} //fix this
+        axis={dir === 'rtl' ? 'x-reverse' : 'x'} //fix this
         index={value}
         onChangeIndex={handleChangeIndex}>
         {tabs.data.map((tab, key) => {
@@ -93,7 +91,7 @@ const FormsContainer = ({ tabs }) => {
               key={'tab_panel_' + key}
               value={tab.order}
               index={tab.order}
-              dir={theme.direction}>
+              dir={dir}>
               <Suspense fallback={<span>Loading...</span>}>
                 <FormComponent permission={tab.permission} />
               </Suspense>
@@ -103,7 +101,7 @@ const FormsContainer = ({ tabs }) => {
               key={'tab_panel_' + key}
               value={tab.order}
               index={tab.order}
-              dir={theme.direction}
+              dir={dir}
             />
           );
         })}
