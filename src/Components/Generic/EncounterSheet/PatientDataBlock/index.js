@@ -296,7 +296,7 @@ const PatientDataBlock = ({
       </StyledTextInput>
 
       <StyledAdmissionFormButton>
-        <CustomizedTableButton {...admissionFormButton} />
+        <CustomizedTableButton height='32px' {...admissionFormButton} />
       </StyledAdmissionFormButton>
     </StyledPatientDataBlock>
   );
