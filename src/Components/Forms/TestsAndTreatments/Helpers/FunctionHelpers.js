@@ -1,5 +1,5 @@
 import { StyledVariantTextField } from '../Style';
-import FormattedInputs from '../../../Generic/MaskedControllers/FormattedInputs/FormattedInputs';
+import FormattedInputs from '../../../../Assets/Elements/MaskedControllers/FormattedInputs/FormattedInputs';
 
 export const handleVarientCustomClickFunction = (
   evt,

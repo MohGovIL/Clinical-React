@@ -1,3 +1,9 @@
+/**
+ * @author Dror Golan drorgo@matrix.co.il
+ * @param {object} VariantIndicators
+ * @returns UI DRAW OF VariantIndicators
+ */
+
 import {
   StyledTable,
   StyledVariantForm,

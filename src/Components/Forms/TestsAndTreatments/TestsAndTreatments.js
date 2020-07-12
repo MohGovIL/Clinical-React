@@ -1,4 +1,14 @@
-//TestsAndTreatment
+/**
+ * @author Dror Golan drorgo@matrix.co.il
+ * @param  {object} patient,
+           {object} encounter,
+           {object} permission,
+           {object} formatDate,
+           {object} languageDirection,
+           {object} verticalName,
+           {object} currentUser,
+ * @returns UI DRAW OF ConstantIndicators
+ */
 
 import { connect } from 'react-redux';
 import React, { useEffect, useReducer, useState } from 'react';
@@ -16,11 +26,9 @@ import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEn
 const TestsAndTreatments = ({
   patient,
   encounter,
+  permission,
   formatDate,
   languageDirection,
-  history,
-  verticalName,
-  permission,
   currentUser,
 }) => {
   const { t } = useTranslation();
@@ -55,9 +63,9 @@ const TestsAndTreatments = ({
   useEffect(() => {
     (async () => {
       try {
-        const clinicIndicators = await getIndicatorsSettings();
-
-        const constantFromFhirIndicators = await FHIR(
+        let fhirClinikalCalls = [];
+        /* fhirClinikalCalls['clinicIndicators'] = getIndicatorsSettings();
+        fhirClinikalCalls['constantFromFhirIndicators'] = FHIR(
           'Observations',
           'doWork',
           {
@@ -71,16 +79,68 @@ const TestsAndTreatments = ({
             },
           },
         );
-        const variantFromFhirIndicators = await FHIR('Observations', 'doWork', {
-          functionName: 'getObservations',
-          functionParams: {
-            patient: patient.id,
-            encounter: encounter.id,
-            category: 'vital-signs',
-            _sort: '-issued',
-            _include: 'Observation:performer',
+        fhirClinikalCalls['variantFromFhirIndicators'] = FHIR(
+          'Observations',
+          'doWork',
+          {
+            functionName: 'getObservations',
+            functionParams: {
+              patient: patient.id,
+              encounter: encounter.id,
+              category: 'vital-signs',
+              _sort: '-issued',
+              _include: 'Observation:performer',
+            },
           },
+        );*/
+        let fhirClinikalOrderedArrayAfterAwait = [];
+        fhirClinikalCalls.push(getIndicatorsSettings());
+
+        fhirClinikalCalls.push(
+          FHIR('Observations', 'doWork', {
+            functionName: 'getObservations',
+            functionParams: {
+              patient: Number(patient.id),
+              encounter: Number(encounter.id),
+              category: 'exam',
+              _sort: '-issued',
+              _include: 'Observation:performer',
+            },
+          }),
+        );
+
+        fhirClinikalCalls.push(
+          FHIR('Observations', 'doWork', {
+            functionName: 'getObservations',
+            functionParams: {
+              patient: patient.id,
+              encounter: encounter.id,
+              category: 'vital-signs',
+              _sort: '-issued',
+              _include: 'Observation:performer',
+            },
+          }),
+        );
+
+        const fhirClinikalCallsAfterAwait = await Promise.all(
+          fhirClinikalCalls,
+        );
+
+        const clinicIndicators = fhirClinikalCallsAfterAwait[0]; //'clinicIndicators';
+        const constantFromFhirIndicators = fhirClinikalCallsAfterAwait[1]; //'constantFromFhirIndicators';
+        const variantFromFhirIndicators = fhirClinikalCallsAfterAwait[2]; //'variantFromFhirIndicators';
+
+        let performers = [];
+
+        variantFromFhirIndicators.data.entry.map((entry, key) => {
+          if (
+            entry.resource &&
+            entry.resource.resourceType === 'Practitioner'
+          ) {
+            performers[entry.resource.id] = entry.resource.name;
+          }
         });
+
         let normalizedVariantObservation = [];
         variantFromFhirIndicators.data.entry.map((entry, key) => {
           if (entry.resource && entry.resource.resourceType === 'Observation') {
@@ -88,6 +148,7 @@ const TestsAndTreatments = ({
               normalizeFhirObservation(
                 entry.resource,
                 clinicIndicators.data['variant'],
+                performers,
               ),
             );
           }
@@ -100,6 +161,7 @@ const TestsAndTreatments = ({
               normalizeFhirObservation(
                 entry.resource,
                 clinicIndicators.data['constant'],
+                performers,
               ),
             );
           }
@@ -142,7 +204,7 @@ const TestsAndTreatments = ({
           if (value['observation']) {
             let userName = {
               userName: {
-                name: value.performer.toString(),
+                name: value.performerName && value.performerName.toString(),
                 loggedHour: Moment(value.issued).format('HH:mm'),
               },
             };
@@ -204,7 +266,6 @@ const mapStateToProps = (state) => {
     encounter: state.active.activeEncounter,
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
-    verticalName: state.settings.clinikal_vertical,
     currentUser: state.active.activeUser,
   };
 };

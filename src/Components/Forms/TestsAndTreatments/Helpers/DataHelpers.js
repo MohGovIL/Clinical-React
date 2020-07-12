@@ -5,7 +5,7 @@ import {
 
 import LabelWithHourComponent from 'Components/Forms/TestsAndTreatments/LabelWithHourComponent';
 import React from 'react';
-import FormattedInputs from 'Components/Generic/MaskedControllers/FormattedInputs/FormattedInputs';
+import FormattedInputs from 'Assets/Elements/MaskedControllers/FormattedInputs/FormattedInputs';
 import {
   handleVarientCustomClickFunction,
   handleVarientPaddTheZeroPlaceClickFunction,

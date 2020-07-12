@@ -1,3 +1,9 @@
+/**
+ * @author Dror Golan drorgo@matrix.co.il
+ * @param {object} ConstantIndicators
+ * @returns UI DRAW OF ConstantIndicators
+ */
+
 import {
   StyledConstantForm,
   StyledConstantHeaders,
