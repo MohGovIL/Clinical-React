@@ -14,6 +14,7 @@ const normalizeFhirEncounter = (encounter) => {
   let examination = null;
   let relatedPerson = '';
   let practitioner = '';
+  let practitionerIndex = '';
   let extensionReasonCodeDetails = '';
   let extensionArrivalWay = '';
   let extensionSecondaryStatus = '';
@@ -45,7 +46,7 @@ const normalizeFhirEncounter = (encounter) => {
   }
 
   if (encounter.participant && encounter.participant.length) {
-    encounter.participant.forEach((participantObj) => {
+    encounter.participant.forEach((participantObj, participantIndex) => {
       if (participantObj.individual) {
         if (participantObj.individual.reference) {
           if (participantObj.individual.reference.includes('RelatedPerson')) {
@@ -53,6 +54,7 @@ const normalizeFhirEncounter = (encounter) => {
           }
           if (participantObj.individual.reference.includes('Practitioner')) {
             practitioner = participantObj.individual.reference.split('/')[1];
+            practitionerIndex = participantIndex;
           }
         }
       }
@@ -109,6 +111,7 @@ const normalizeFhirEncounter = (encounter) => {
     serviceTypeCode,
     relatedPerson,
     practitioner,
+    practitionerIndex,
     extensionReasonCodeDetails,
     extensionArrivalWay,
     extensionSecondaryStatus,
