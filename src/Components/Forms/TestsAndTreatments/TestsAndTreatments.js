@@ -66,7 +66,8 @@ const TestsAndTreatments = ({
               patient: Number(patient.id),
               encounter: Number(encounter.id),
               category: 'exam',
-              /*_sort: '-issued',*/
+              _sort: '-issued',
+              _include: 'Observation:performer',
             },
           },
         );
@@ -76,7 +77,8 @@ const TestsAndTreatments = ({
             patient: patient.id,
             encounter: encounter.id,
             category: 'vital-signs',
-            /*_sort: '-issued',*/
+            _sort: '-issued',
+            _include: 'Observation:performer',
           },
         });
         let normalizedVariantObservation = [];
