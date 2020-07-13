@@ -10,7 +10,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { StyledMaskedInput } from './Style';
-import { StyledVariantTextField } from '../../../../Components/Forms/TestsAndTreatments/Style';
+import { StyledVariantTextField } from 'Components/Forms/TestsAndTreatments/Style';
 
 function TextMaskCustom(props) {
   const { inputRef, ...other } = props;
