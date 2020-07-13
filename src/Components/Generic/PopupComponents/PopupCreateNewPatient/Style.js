@@ -29,9 +29,10 @@ export const StyledForm = styled.div`
   .MuiInputLabel-shrink {
     color: #1e2132;
     opacity: 60%;
-    right: 0;
+    right: ${(props) => props.languageDirection === 'rtl' && '0'};
     margin-right: 2px;
-    transform-origin: top right;
+    transform-origin: ${(props) =>
+      props.languageDirection === 'rtl' ? 'top right' : 'top left'};
   }
 
   .MuiInputLabel-filled {
