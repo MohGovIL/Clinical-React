@@ -97,7 +97,7 @@ export const StyledLabelAppointment = styled.label`
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
-    text-align: right;
+    text-align: ${(props) => (props.direction === 'rtl' ? 'right' : 'left')};
     color: #000b40;
     margin-right: 19px;
   }

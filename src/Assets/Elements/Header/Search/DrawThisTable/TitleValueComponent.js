@@ -69,7 +69,15 @@ const TitleValueComponent = ({ name, value, searchParam, seperator }) => {
   };
 
   function handleEmptyDiv(divRef, value) {
-    return value && value !== '' ? <div ref={divRef}>{value}</div> : '';
+    return value && value !== '' ? (
+      <div
+        style={{ margin: value === 'Non existence' && '0px 137px' }}
+        ref={divRef}>
+        {value}
+      </div>
+    ) : (
+      ''
+    );
   }
 
   return (

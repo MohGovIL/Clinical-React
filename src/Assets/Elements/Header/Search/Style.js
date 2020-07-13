@@ -47,7 +47,7 @@ export const StyledPaperBottom = styled(Paper)`
   height: 60px;
   box-shadow: 0 -2px 10px 0 rgba(152, 151, 151, 0.3);
   background-color: #ffffff;
-
+  align-items: baseline;
   display: flex;
   justify-content: center;
 `;
