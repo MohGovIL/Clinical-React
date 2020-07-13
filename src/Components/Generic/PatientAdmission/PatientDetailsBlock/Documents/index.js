@@ -16,13 +16,7 @@ import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalize
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 const Documents = ({ eid, pid }) => {
   const { t } = useTranslation();
-  const {
-    requiredErrors,
-    setValue,
-    register,
-    unregister,
-    isCommitmentForm,
-  } = useFormContext();
+  const { setValue, register, unregister, isCommitmentForm } = useFormContext();
 
   const [referralFile_64, setReferralFile_64] = useState('');
   const [commitmentFile_64, setCommitmentFile_64] = useState('');
@@ -319,13 +313,7 @@ const Documents = ({ eid, pid }) => {
         {/* ReferralRef  */}
         <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
           <Grid item xs={3}>
-            <label
-              style={{
-                color: `${requiredErrors.ReferralFile ? '#f44336' : '#000b40'}`,
-              }}
-              htmlFor='Referral'>
-              {`${t('Referral')} *`}
-            </label>
+            <label htmlFor='Referral'>{`${t('Referral')}`}</label>
           </Grid>
           <Grid item xs={9}>
             <input
@@ -370,15 +358,7 @@ const Documents = ({ eid, pid }) => {
         {isCommitmentForm === '1' && (
           <Grid container alignItems='center' style={{ marginBottom: '41px' }}>
             <Grid item xs={3}>
-              <label
-                style={{
-                  color: `${
-                    requiredErrors.CommitmentFile ? '#f44336' : '#000b40'
-                  }`,
-                }}
-                htmlFor='Commitment'>
-                {`${t('Commitment')} *`}
-              </label>
+              <label htmlFor='Commitment'>{`${t('Commitment')}`}</label>
             </Grid>
             <Grid item xs={9}>
               <input
