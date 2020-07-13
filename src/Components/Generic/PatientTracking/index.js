@@ -206,7 +206,7 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
           <Title
             fontSize={'28px'}
             color={'#002398'}
-            label={'Patient tracking'}
+            label={'Patient Tracking'}
           />
         </StyledTitle>
         <StyledFilterBox>
