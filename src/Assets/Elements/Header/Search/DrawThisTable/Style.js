@@ -375,3 +375,7 @@ export const StyledHeaderTableAppointment = styled.div`
 export const StyledLabelTableButton = styled.label`
   float: left;
 `;
+
+export const StyledEmptyDiv = styled.label`
+  width: 108px;
+`;

@@ -87,11 +87,16 @@ const AppointmentsPerPatient = ({
                   <ListItem key={encounterID + '_normalizedCurEncounters'}>
                     <StyledLabelAppointment>
                       <TitleValueComponent
-                        name={t('Current encounter')}
-                        value={moment
-                          .utc(encounter.startTime)
-                          .format('DD/MM/YYYY')}
-                        seperator={true}
+                        name={encounterID < 1 ? t('Current encounter') : ''}
+                        value={'\u00A0'}
+                        /* value={
+                          normalizedCurEncounters.length > 1
+                            ? moment.utc(encounter.startTime).format('HH:MM')
+                            : ''
+                        }
+                        seperator={
+                          normalizedCurEncounters.length > 1 ? true : false
+                        }*/
                       />
                     </StyledLabelAppointment>
 
