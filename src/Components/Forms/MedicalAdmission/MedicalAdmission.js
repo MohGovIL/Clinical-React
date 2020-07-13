@@ -1,7 +1,7 @@
 //MedicalAdmission
 import { connect } from 'react-redux';
 import React, { useEffect, useState } from 'react';
-import VisitDetails from '../../Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
+import VisitDetails from 'Components/Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
 import {
   FormContext,
   useForm,
@@ -12,7 +12,7 @@ import {
 } from './Style';
 
 import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
-import PopUpFormTemplates from '../../Generic/PopupComponents/PopUpFormTemplates';
+import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import NursingAnamnesis from './NursingAnamnesis';
 import { FHIR } from 'Utils/Services/FHIR';
 import { StyledButton } from 'Assets/Elements/StyledButton';
