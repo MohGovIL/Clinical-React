@@ -1,3 +1,10 @@
+/**
+ * @author - Dror Golan drorgo@matrix.co.il -
+ * @changes by - Idan Gigi idangi@matrix.co.il (imoort and routing)
+ * @param {normalizedEncounter} encounter
+ * @param {normalizedPatient} patient
+ * @param {History} history
+ */
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import { store } from 'index';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';

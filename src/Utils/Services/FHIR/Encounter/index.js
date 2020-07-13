@@ -199,7 +199,7 @@ const EncounterStates = {
         //return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=le${date}&_count=1&_sort=-date&patient=${patient}`);
         return CRUDOperations(
           'search',
-          `${url}?date=le${date}&_count=1&${specialOrder}&patient=${patient}`,
+          `${url}?date=lt${date}&_count=1&${specialOrder}&patient=${patient}`,
         );
       } else {
         return CRUDOperations(
@@ -224,7 +224,7 @@ const EncounterStates = {
       if (prev) {
         return CRUDOperations(
           'search',
-          `${url}?date=le${date}&${specialOrder}&patient=${patient}`,
+          `${url}?date=lt${date}&${specialOrder}&patient=${patient}`,
         );
       } else {
         return CRUDOperations(
@@ -286,6 +286,20 @@ const EncounterStates = {
               },
             });
 
+            break;
+          case 'status':
+            patchArr.push({
+              op: 'replace',
+              path: '/status',
+              value: element,
+            });
+            break;
+          case 'practitioner':
+            patchArr.push({
+              op: 'replace',
+              path: `/participant/${params.encounterPatchParams.practitionerIndex}/individual/reference`,
+              value: `Practitioner/${element}`,
+            });
             break;
           default:
             break;

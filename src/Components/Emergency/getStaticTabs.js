@@ -64,6 +64,7 @@ export const emergencyTabs = [
     mode: 'hide',
     count: 0,
     tabValue: 4,
+    valueSet: 'waiting_for_release_statuses',
     sort: 'status-update-date,-priority,service-type',
     statuses: ['finished'],
     activeAction: encounterActiveFunction,

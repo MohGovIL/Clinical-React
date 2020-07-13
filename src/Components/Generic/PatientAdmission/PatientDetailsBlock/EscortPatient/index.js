@@ -25,14 +25,13 @@ const EscortPatient = ({
     watch,
     reset,
     getValues,
+    requiredErrors,
   } = useFormContext();
   const { t } = useTranslation();
 
   const watchIsEscorted = watch('isEscorted');
 
-  const [arrivalWay, setArrivalWay] = useState(
-    encounterArrivalWay || 'Independent',
-  );
+  const [arrivalWay, setArrivalWay] = useState(encounterArrivalWay || '');
 
   const arrivalWayHandler = (event, way) => {
     setArrivalWay(() => {
@@ -43,7 +42,7 @@ const EscortPatient = ({
 
   useEffect(() => {
     register({ name: 'arrivalWay' });
-    setValue([{ arrivalWay: encounterArrivalWay }]);
+    setValue([{ arrivalWay: encounterArrivalWay || '' }]);
     return () => {
       unregister('arrivalWay');
     };
@@ -111,7 +110,10 @@ const EscortPatient = ({
           style={{ marginBottom: '50px' }}>
           {isArrivalWay === '1' && (
             <React.Fragment>
-              <span>{`* ${t('Arrival way')}?`}</span>
+              <span
+                style={{
+                  color: `${requiredErrors.arrivalWay ? '#f44336' : '#000b40'}`,
+                }}>{`${t('Arrival way')}?`}</span>
               <StyledToggleButtonGroup
                 value={arrivalWay}
                 onChange={arrivalWayHandler}
