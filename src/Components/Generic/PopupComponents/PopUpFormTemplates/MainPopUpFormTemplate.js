@@ -18,6 +18,7 @@ const MainPopUpFormTemplate = ({
   setTemplatesTextReturned,
   handleCloseOperation,
   setTemplateWasSaved,
+  name,
 }) => {
   const { t } = useTranslation();
   const handleTransferOfContent = () => {
@@ -73,6 +74,7 @@ const MainPopUpFormTemplate = ({
         <PopUpContext
           handleCloseOperation={handleCloseOperation}
           setTemplatesTextReturned={setTemplatesTextReturned}
+          name={name}
           context={context}
           setContext={setContext}
           setTemplateWasSaved={setTemplateWasSaved}></PopUpContext>

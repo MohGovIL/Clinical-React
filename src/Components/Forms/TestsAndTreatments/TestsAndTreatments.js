@@ -1,11 +1,28 @@
-//TestsAndTreatment
+/**
+ * @author Dror Golan drorgo@matrix.co.il
+ * @param  {object} patient,
+           {object} encounter,
+           {object} permission,
+           {object} formatDate,
+           {object} languageDirection,
+           {object} verticalName,
+           {object} currentUser,
+ * @purpose TestsAndTreatments -  will be the main component which will draw all other components -
+ *                                a) the constant indicators - ConstantIndicators.
+ *                                b) the variant indicators - VariantIndicators.
+ *                                c) the new variant indicators - VariantIndicators.
+ * @returns TestsAndTreatments Component.
+ */
 
 import { connect } from 'react-redux';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConstantIndicators from 'Components/Forms/TestsAndTreatments/ConstantIndicators';
 import VariantIndicators from 'Components/Forms/TestsAndTreatments/VariantIndicators';
-import { StyledConstantHeaders, StyledTestsAndTreatments } from './Style';
+import {
+  StyledConstantHeaders,
+  StyledTestsAndTreatments,
+} from 'Components/Forms/TestsAndTreatments/Style';
 import * as Moment from 'moment';
 import normalizeFhirUser from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
 import { getIndicatorsSettings } from 'Utils/Services/API';
@@ -14,14 +31,23 @@ import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
 import TreatmentInstructions from 'Components/Forms/TestsAndTreatments/TreatmentInstructions';
 
+/**
+ *
+ * @param patient
+ * @param encounter
+ * @param permission
+ * @param formatDate
+ * @param languageDirection
+ * @param currentUser
+ * @returns {*}
+ * @constructor
+ */
 const TestsAndTreatments = ({
   patient,
   encounter,
+  permission,
   formatDate,
   languageDirection,
-  history,
-  verticalName,
-  permission,
   currentUser,
 }) => {
   const { t } = useTranslation();
@@ -57,31 +83,55 @@ const TestsAndTreatments = ({
   useEffect(() => {
     (async () => {
       try {
-        const clinicIndicators = await getIndicatorsSettings();
-        setClinicIndicators(clinicIndicators);
+        let fhirClinikalCalls = [];
+        fhirClinikalCalls.push(getIndicatorsSettings());
 
-        const constantFromFhirIndicators = await FHIR(
-          'Observations',
-          'doWork',
-          {
+        fhirClinikalCalls.push(
+          FHIR('Observations', 'doWork', {
             functionName: 'getObservations',
             functionParams: {
               patient: Number(patient.id),
               encounter: Number(encounter.id),
               category: 'exam',
               _sort: '-issued',
+              _include: 'Observation:performer',
             },
-          },
+          }),
         );
-        const variantFromFhirIndicators = await FHIR('Observations', 'doWork', {
-          functionName: 'getObservations',
-          functionParams: {
-            patient: patient.id,
-            encounter: encounter.id,
-            category: 'vital-signs',
-            _sort: '-issued',
-          },
+
+        fhirClinikalCalls.push(
+          FHIR('Observations', 'doWork', {
+            functionName: 'getObservations',
+            functionParams: {
+              patient: patient.id,
+              encounter: encounter.id,
+              category: 'vital-signs',
+              _sort: '-issued',
+              _include: 'Observation:performer',
+            },
+          }),
+        );
+
+        const fhirClinikalCallsAfterAwait = await Promise.all(
+          fhirClinikalCalls,
+        );
+
+        const clinicIndicators = fhirClinikalCallsAfterAwait[0]; //'clinicIndicators';
+        const constantFromFhirIndicators = fhirClinikalCallsAfterAwait[1]; //'constantFromFhirIndicators';
+        const variantFromFhirIndicators = fhirClinikalCallsAfterAwait[2]; //'variantFromFhirIndicators';
+        setClinicIndicators(clinicIndicators);
+
+        let performers = [];
+
+        variantFromFhirIndicators.data.entry.map((entry, key) => {
+          if (
+            entry.resource &&
+            entry.resource.resourceType === 'Practitioner'
+          ) {
+            performers[entry.resource.id] = entry.resource.name;
+          }
         });
+
         let normalizedVariantObservation = [];
         variantFromFhirIndicators.data.entry.map((entry, key) => {
           if (entry.resource && entry.resource.resourceType === 'Observation') {
@@ -89,6 +139,7 @@ const TestsAndTreatments = ({
               normalizeFhirObservation(
                 entry.resource,
                 clinicIndicators.data['variant'],
+                performers,
               ),
             );
           }
@@ -101,6 +152,7 @@ const TestsAndTreatments = ({
               normalizeFhirObservation(
                 entry.resource,
                 clinicIndicators.data['constant'],
+                performers,
               ),
             );
           }
@@ -143,7 +195,7 @@ const TestsAndTreatments = ({
           if (value['observation']) {
             let userName = {
               userName: {
-                name: value.performer.toString(),
+                name: value.performerName && value.performerName.toString(),
                 loggedHour: Moment(value.issued).format('HH:mm'),
               },
             };
@@ -200,14 +252,17 @@ const TestsAndTreatments = ({
     </StyledTestsAndTreatments>
   );
 };
-
+/**
+ *
+ * @param state
+ * @returns {{formatDate: any, currentUser: {}, languageDirection: any, patient: {}, encounter: {}}}
+ */
 const mapStateToProps = (state) => {
   return {
     patient: state.active.activePatient,
     encounter: state.active.activeEncounter,
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
-    verticalName: state.settings.clinikal_vertical,
     currentUser: state.active.activeUser,
   };
 };

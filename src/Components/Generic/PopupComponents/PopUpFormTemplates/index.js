@@ -31,6 +31,7 @@ const PopUpFormTemplates = ({
   defaultContext,
   setDefaultContext,
   popupOpen,
+  name,
 }) => {
   const { t } = useTranslation();
   const [context, setContext] = React.useState('');
@@ -69,29 +70,38 @@ const PopUpFormTemplates = ({
     !encounter.examinationCode ||
     encounter.examinationCode < 1;
 
-  const handleCreateData = async () => {
-    const templatesServerData = [];
-    let response = await getFormTemplates(
-      encounter.serviceTypeCode,
-      encounter.examinationCode.toString(),
-      formID,
-      formFields,
-    );
-
-    if (response.data && response.data.length > 0) {
-      for (let i = 0; i < response.data.length; i++) {
-        templatesServerData.push({ title: response.data[i] });
-      }
-    }
-
-    if (templatesServerData && templatesServerData.length > 0) {
-      setTemplates(templatesServerData);
-    }
-  };
-
   useEffect(() => {
-    if (templates.length === 0) handleCreateData();
-  });
+    if (!templates.length)
+      (async () => {
+        try {
+          const templatesServerData = [];
+          let response = await getFormTemplates(
+            encounter.serviceTypeCode,
+            encounter.examinationCode.toString(),
+            formID,
+            formFields,
+          );
+
+          if (response.data && response.data.length > 0) {
+            for (let i = 0; i < response.data.length; i++) {
+              templatesServerData.push({ title: response.data[i] });
+            }
+          }
+
+          if (templatesServerData && templatesServerData.length > 0) {
+            setTemplates(templatesServerData);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+  }, [
+    encounter.examinationCode,
+    encounter.serviceTypeCode,
+    formID,
+    formFields,
+    templates.length,
+  ]);
 
   return templates ? (
     <React.Fragment>
@@ -115,6 +125,7 @@ const PopUpFormTemplates = ({
           setContext={setContext}
           defaultContext={defaultContext}
           setDefaultContext={setDefaultContext}
+          name={name}
           setTemplatesTextReturned={setTemplatesTextReturned}
           setTemplateWasSaved={setTemplateWasSaved}
           templates={templates}></MainPopUpFormTemplate>

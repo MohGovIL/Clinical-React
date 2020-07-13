@@ -17,6 +17,7 @@ const PopUpContext = ({
   setTemplatesTextReturned,
   handleCloseOperation,
   setTemplateWasSaved,
+  name,
 }) => {
   const { t } = useTranslation();
   const textAreaRef = useRef(null);
@@ -28,7 +29,7 @@ const PopUpContext = ({
   };
   const handleSaveAndClose = () => {
     //SAVE :
-    setTemplatesTextReturned(context);
+    setTemplatesTextReturned(context, name);
     setTemplateWasSaved(true);
     //Close :
     handleCloseOperation({ saved: true });

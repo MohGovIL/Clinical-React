@@ -1,10 +1,16 @@
+/**
+ * @author Dror Golan drorgo@matrix.co.il
+ * @param {object} props
+ * @returns masked text ui
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { StyledMaskedInput } from './Style';
-import { StyledVariantTextField } from '../../../Forms/TestsAndTreatments/Style';
+import { StyledVariantTextField } from 'Components/Forms/TestsAndTreatments/Style';
 
 function TextMaskCustom(props) {
   const { inputRef, ...other } = props;

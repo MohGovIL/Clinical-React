@@ -1,12 +1,45 @@
-const normalizeFhirObservation = (observation, indicators) => {
+/**
+ * @author Dror Golan drorgo@matrix.co.il
+ * @param {object} observation
+ * @returns {object}
+ */
+
+const normalizeFhirObservation = (observation, indicators, performers) => {
+  /*
+  *
+    id: id,
+    category: category,
+    categoryText: categoryText,
+    categorySystem: categorySystem,
+    performer: performer,
+    performerName: performerName,
+    status: observation.status,
+    encounter: encounter,
+    patient: patient,
+    issued: issued,
+    note: note,
+    observation: returnedObservation,
+    *
+  * */
   if (!indicators)
     //In order to normalize observation we need indicators list
     return null;
   let indicatorsList = null;
   const id = observation.id;
-  const performer = observation.performer
-    ? observation.performer[0].reference.split('/')[1]
-    : null;
+  const performerID =
+    observation.performer && observation.performer[0].reference.split('/')[1]
+      ? observation.performer[0].reference.split('/')[1]
+      : null;
+  const performerName =
+    performerID && performers[performerID]
+      ? `${
+          performers[performerID][0].name ? performers[performerID][0].name : ''
+        } ${
+          performers[performerID][0].family
+            ? performers[performerID][0].family
+            : ''
+        }`
+      : null;
   const patient = observation.subject
     ? observation.subject.reference.split('/')[1]
     : null;
@@ -15,6 +48,24 @@ const normalizeFhirObservation = (observation, indicators) => {
     : null;
   const issued = observation.issued ? observation.issued : null;
   const category =
+    observation.category &&
+    observation.category[0] &&
+    observation.category[0].coding &&
+    observation.category[0].coding[0] &&
+    observation.category[0].coding[0].code
+      ? observation.category[0].coding[0].code
+      : null;
+
+  const categorySystem =
+    observation.category &&
+    observation.category[0] &&
+    observation.category[0].coding &&
+    observation.category[0].coding[0] &&
+    observation.category[0].coding[0].system
+      ? observation.category[0].coding[0].system
+      : null;
+
+  const categoryText =
     observation.category &&
     observation.category[0] &&
     observation.category[0].text
@@ -44,7 +95,11 @@ const normalizeFhirObservation = (observation, indicators) => {
 
   return {
     id: id,
-    performer: performer,
+    category: category,
+    categoryText: categoryText,
+    categorySystem: categorySystem,
+    performer: performerID,
+    performerName: performerName,
     status: observation.status,
     encounter: encounter,
     patient: patient,
