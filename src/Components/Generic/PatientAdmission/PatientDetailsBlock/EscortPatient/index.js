@@ -138,8 +138,8 @@ const EscortPatient = ({
           alignItems={'center'}>
           <span>
             {isArrivalWay === '1'
-              ? `${t('Arrival with escort')}?`
-              : `${t('Patient arrived with an escort')}?`}
+              ? `* ${t('Arrival with escort')}?`
+              : `* ${t('Patient arrived with an escort')}?`}
           </span>
           <StyledSwitch
             register={register}
