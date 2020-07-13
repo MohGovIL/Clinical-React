@@ -22,7 +22,7 @@ const EncounterForms = ({
   }, [encounter.serviceTypeCode, encounter.examinationCode]);
 
   return (
-    <StyledPatientFiles>
+    <StyledPatientFiles dir={languageDirection}>
       {formsPerSheet ? (
         <FormsContainer dir={languageDirection} tabs={formsPerSheet} />
       ) : null}
