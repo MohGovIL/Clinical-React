@@ -202,9 +202,13 @@ const ContactInformation = ({
               value={addressCity}
               onChange={(event, newValue) => {
                 if (newValue) {
-                  setValue('addressCity', newValue.code);
+                  setValue([
+                    { addressCity: newValue.code },
+                    { addressStreet: '' },
+                  ]);
                 }
                 setAddressCity(newValue);
+                setAddressStreet({});
               }}
               getOptionLabel={(option) =>
                 Object.keys(option).length === 0 &&

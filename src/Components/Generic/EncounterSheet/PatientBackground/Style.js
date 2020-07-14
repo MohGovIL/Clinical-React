@@ -12,7 +12,7 @@ const StyledPatientBackground = styled.div`
   -webkit-flex-basis: 25%;
   -ms-flex-preferred-size: 25%;
   flex-basis: 25%;
-  max-width: 25%;
+  max-width: 20%;
   margin: 120px 0px 44px 28px;
   height: calc(100vh - 88px - 32px - 32px);
   max-height: calc(100vh - 88px - 32px - 32px);
@@ -88,7 +88,7 @@ export const StyledCurrentExaminationHeader = styled.div`
 export const StyledIconContainer = styled.div`
   display: flex;
   width: 100%;
-  margin: 0 33%;
+  margin: 0 3%;
 `;
 export const StyledCameraIcon = styled.div`
   cursor: ${(props) => (props.canClickEncounter ? 'pointer' : 'not-allowed')};
@@ -173,8 +173,9 @@ export const StyledHeader = styled.div`
     letter-spacing: normal;
     text-align: right;
     color: #000b40;
-    margin-right: 12%;
-    margin-left: 25%;
+    margin-right: 8%;
+    margin-left: 19%;
+    margin-bottom: 9%;
   }
 `;
 export const StyledEitanButton = styled(Button)`

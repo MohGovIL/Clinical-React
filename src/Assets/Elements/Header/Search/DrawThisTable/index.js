@@ -160,10 +160,16 @@ const DrawThisTable = ({
 
     return options;
   };
-
+  const clearValuesOfExpention = () => {
+    setNextAppointment('');
+    setPrevEncounter('');
+    setCurEncounter('');
+    setNextAppointments('');
+    setPrevEncounters('');
+  };
   const handleChange = (panel, patient) => async (event, newExpanded) => {
+    clearValuesOfExpention();
     setExpanded(newExpanded ? panel : false);
-
     if (newExpanded) {
       let identifier = patient.id;
       let currentDate = moment().utc().format('YYYY-MM-DD');
