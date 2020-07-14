@@ -26,4 +26,8 @@ export const StyledTabContainer = styled.div`
   header {
     background-color: #ffffff;
   }
+  .MuiBox-root {
+    direction: rtl;
+    padding: 31px 21px 34px 21px;
+}
 `;
