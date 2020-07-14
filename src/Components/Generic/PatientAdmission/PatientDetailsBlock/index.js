@@ -88,7 +88,7 @@ const PatientDetailsBlock = ({
         if (Object.keys(patientPatchParams).length) {
           APIsArray.push(
             FHIR('Patient', 'doWork', {
-              functionName: 'updatePatient',
+              functionName: 'patchPatient',
               functionParams: { patientPatchParams, patientId: patientData.id },
             }),
           );
@@ -291,21 +291,27 @@ const PatientDetailsBlock = ({
           },
         });
         // TODO: Check if the document came from the server or not if it did don't send it
-        const referral_64Obj = splitBase_64(data.Referral.base_64);
-        const documentReferenceReferral = {
-          encounter: encounterData.id,
-          patient: patientData.id,
-          contentType: referral_64Obj.type,
-          data: referral_64Obj.data,
-          categoryCode: '2',
-          url: data.Referral.name,
-        };
+        if (data.Referral) {
+          const referral_64Obj = splitBase_64(data.Referral.base_64);
+          const documentReferenceReferral = {
+            encounter: encounterData.id,
+            patient: patientData.id,
+            contentType: referral_64Obj.type,
+            data: referral_64Obj.data,
+            categoryCode: '2',
+            url: data.Referral.name,
+          };
 
-        await FHIR('DocumentReference', 'doWork', {
-          documentReference: documentReferenceReferral,
-          functionName: 'createDocumentReference',
-        });
-        if (configuration.clinikal_pa_commitment_form === '1') {
+          await FHIR('DocumentReference', 'doWork', {
+            documentReference: documentReferenceReferral,
+            functionName: 'createDocumentReference',
+          });
+        }
+
+        if (
+          configuration.clinikal_pa_commitment_form === '1' &&
+          data.Commitment
+        ) {
           const commitment_64Obj = splitBase_64(data.Commitment.base_64);
           const documentReferenceCommitment = {
             encounter: encounterData.id,
