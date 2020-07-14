@@ -7,7 +7,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import PLUS from '../../../Assets/Images/plus.png';
 
-const TreatmentInstructions = ({
+
+const InstructionsForTreatment = ({
   patient,
   encounter,
   formatDate,
@@ -42,4 +43,4 @@ const mapStateToProps = (state) => {
     currentUser: state.active.activeUser,
   };
 };
-export default connect(mapStateToProps, null)(TreatmentInstructions);
+export default connect(mapStateToProps, null)(InstructionsForTreatment);
