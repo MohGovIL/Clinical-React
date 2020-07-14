@@ -1,10 +1,15 @@
-import styled from 'styled-components';
-import TableCell from '@material-ui/core/TableCell';
-
-const CustomizedTableHeaderCell = styled(TableCell)`
-  padding: 0;
-  text-align: center;
-  color: rgba(0, 13, 55, 0.6);
-`;
+import React from 'react';
+import CustomizedTableHeaderCellStyle from './Style';
+import { useSelector } from 'react-redux';
+const CustomizedTableHeaderCell = ({ align, children }) => {
+  const direction = useSelector((state) =>
+    state.settings.lang_dir === 'rtl' ? 'right' : 'left',
+  );
+  return (
+    <CustomizedTableHeaderCellStyle align={align || direction}>
+      {children}
+    </CustomizedTableHeaderCellStyle>
+  );
+};
 
 export default CustomizedTableHeaderCell;

@@ -96,14 +96,12 @@ export const setPatientDataWaitingForResultsTableRows = (
         case 'Healthcare service':
           row.push({
             padding: 'default',
-            align: 'center',
             label: encounter.serviceType ? encounter.serviceType : null,
           });
           break;
         case 'Reason for refferal':
           row.push({
             padding: 'default',
-            align: 'center',
             label: encounter.examination ? encounter.examination : null,
           });
           break;

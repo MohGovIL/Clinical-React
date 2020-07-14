@@ -1,6 +1,5 @@
 import React from 'react';
 import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import { useTranslation } from 'react-i18next';
 import TableBody from '@material-ui/core/TableBody';
 import CustomizedTableHeaderRow from './CustomizedTableHeaderRow';
@@ -12,7 +11,7 @@ import CustomizedTableLabelCell from './CustomizedTableLabelCell';
 import CustomizedTableButtonCell from './CustomizedTableButtonCell';
 import CustomizedTableBadgeCell from './CustomizedTableBadgeCell';
 import CustomizedTableSelectCell from './CustomizedTableSelectCell';
-import CustomizedTableRow from './CustomizedTableRow'
+import CustomizedTableRow from './CustomizedTableRow';
 import NoContentTable from './NoContentTable';
 import {
   SELECT_CELL,
@@ -33,7 +32,9 @@ const CustomizedTable = ({ tableHeaders, tableData }) => {
             <TableHead>
               <CustomizedTableHeaderRow>
                 {tableHeaders.map((tableHeader, tableHeaderIndex) => (
-                  <CustomizedTableHeaderCell key={tableHeaderIndex}>
+                  <CustomizedTableHeaderCell
+                    key={tableHeaderIndex}
+                    align={tableHeader.align}>
                     {tableHeader.hideTableHeader
                       ? null
                       : t(tableHeader.tableHeader)}
