@@ -17,6 +17,7 @@ import NursingAnamnesis from './NursingAnamnesis';
 import { FHIR } from 'Utils/Services/FHIR';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import UrgentAndInsulation from './UrgentAndInsulation';
+import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 
 const MedicalAdmission = ({
   patient,
@@ -56,6 +57,8 @@ const MedicalAdmission = ({
 
   const watchMedication = watch('medication');
   const [medicationChanged, setMedicationChanged] = useState(false);
+  const [sensitivitiesChanged, setSensitivitiesChanged] = useState(false);
+  const [backgroundDisChanged, setBackgroundDisChanged] = useState(false);
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
@@ -117,11 +120,23 @@ const MedicalAdmission = ({
     setMedicationChanged(value);
   };
 
+  const sensitivitiesHandlerRadio = (value) => {
+    console.log('sensitivities: ' + value);
+    setSensitivitiesChanged(value);
+  };
+
+  const backgroundDisHandlerRadio = (value) => {
+    console.log('backgroundDis: ' + value);
+    setBackgroundDisChanged(value);
+  };
+
   //Radio buttons for pregnancy
   const pregnancyRadioList = [t('No'), t('Yes')];
 
   //Radio buttons for medication details
   const medicationRadioList = [t("Doesn't exist"), t('Exist')];
+  const sensitivitiesRadioList = [t("UNknown"), t('Known')];
+  const backgroundDisRadioList = [t("Usually healthy"), t('There are diseases')];
 
   return (
     <React.Fragment>
@@ -155,26 +170,51 @@ const MedicalAdmission = ({
                 callBackFunction={pregnancyHandlerRadio}
               />
             )}
-            {/*<RadioGroupChoice*/}
-            {/*  gridLabel={t('Medication')}*/}
-            {/*  radioName={'medication'}*/}
-            {/*  listValues={medicationRadioList}*/}
-            {/*  trueValue={t('Exist')}*/}
-            {/*  callBackFunction={medicationHandlerRadio}*/}
-            {/*/>*/}
-            {/*{medicationChanged && (*/}
-            {/*  <Controller*/}
-            {/*    control={control}*/}
-            {/*    name='medicationInstruction'*/}
-            {/*    //defaultValue={}*/}
-            {/*    as={*/}
-            {/*      <CustomizedTextField*/}
-            {/*        width={'70%'}*/}
-            {/*        label={t('Medications details')}*/}
-            {/*      />*/}
-            {/*    }*/}
-            {/*  />*/}
-            {/*)}*/}
+            <RadioGroupChoice
+              gridLabel={t('Sensitivities')}
+              radioName={'sensitivities'}
+              listValues={sensitivitiesRadioList}
+              trueValue={t('Known')}
+              callBackFunction={sensitivitiesHandlerRadio}
+            />
+            {sensitivitiesChanged && (
+              <CustomizedTextField
+                control={control}
+                name='medicationInstruction'
+                width={'70%'}
+                label={t('Sensitivities details')}
+              />
+            )}
+            <RadioGroupChoice
+              gridLabel={t('Background diseases')}
+              radioName={'background_diseases'}
+              listValues={backgroundDisRadioList}
+              trueValue={t('There are diseases')}
+              callBackFunction={backgroundDisHandlerRadio}
+            />
+            {backgroundDisChanged && (
+              <CustomizedTextField
+                control={control}
+                name='medicationInstruction'
+                width={'70%'}
+                label={t('Diseases details')}
+              />
+            )}
+            <RadioGroupChoice
+              gridLabel={t('Chronic medications')}
+              radioName={'medication'}
+              listValues={medicationRadioList}
+              trueValue={t('Exist')}
+              callBackFunction={medicationHandlerRadio}
+            />
+            {medicationChanged && (
+              <CustomizedTextField
+                control={control}
+                name='medicationInstruction'
+                width={'70%'}
+                label={t('Medications details')}
+              />
+            )}
           </>
           <StyledButton
             color='primary'
