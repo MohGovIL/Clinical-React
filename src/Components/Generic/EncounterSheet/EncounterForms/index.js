@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import StyledPatientFiles from './Style';
 import { getForms } from 'Utils/Services/API';
 import FormsContainer from './FormsContainer';
@@ -9,21 +9,24 @@ const EncounterForms = ({
   languageDirection,
   formatDate,
 }) => {
-  const [formsPerSheet, setFormsPerSheet] = React.useState(null);
+  const [formsPerSheet, setFormsPerSheet] = React.useState([]);
 
   React.useEffect(() => {
     (async () => {
-      const forms = await getForms(
-        encounter.serviceTypeCode,
-        encounter.examinationCode,
-      );
-      setFormsPerSheet(forms);
+      try {
+        const forms = await getForms(
+          encounter.serviceTypeCode,
+          encounter.examinationCode,
+        );
+        setFormsPerSheet(forms);
+      } catch (error) {
+        console.log(error);
+      }
     })();
   }, [encounter.serviceTypeCode, encounter.examinationCode]);
-
   return (
     <StyledPatientFiles>
-      {formsPerSheet ? (
+      {formsPerSheet.length ? (
         <FormsContainer dir={languageDirection} tabs={formsPerSheet} />
       ) : null}
     </StyledPatientFiles>

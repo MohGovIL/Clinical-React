@@ -196,7 +196,9 @@ const Search = ({ languageDirection }) => {
         <ClickAwayListener
           key={'ClickAwayListener_' + input}
           onClickAway={handleOnClickAway}>
-          <WrapperSearchPaper key={'WrapperSearchPaper_' + input}>
+          <WrapperSearchPaper
+            key={'WrapperSearchPaper_' + input}
+            direction={languageDirection}>
             <StyledTriangle key={'StyledTriangle_' + input} />
             <StyledPaper
               key={'bottom_links_' + input}

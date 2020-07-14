@@ -1,7 +1,7 @@
 import React from 'react';
 import Label from './Style';
 import { useTranslation } from 'react-i18next';
-
+import { useSelector } from 'react-redux';
 const StyledSwitch = ({
   checked,
   onChange,
@@ -14,12 +14,17 @@ const StyledSwitch = ({
 }) => {
   const { t } = useTranslation();
 
+  const languageDirection = useSelector((state) => state.settings.lang_dir);
+
   const onChangeHandler = (event) => {
     onChange(event);
   };
 
   return (
-    <Label marginRight={marginRight} marginLeft={marginLeft}>
+    <Label
+      marginRight={marginRight}
+      marginLeft={marginLeft}
+      direction={languageDirection}>
       <input
         name={name || null}
         ref={register || null}

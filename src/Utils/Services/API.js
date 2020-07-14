@@ -20,6 +20,10 @@ export const getCities = () => {
   return apiTokenInstance().get(`apis/api/lists/cities`);
 };
 
+export const getIndicatorsSettings = () => {
+  return apiTokenInstance().get(`apis/api/indicator-settings`);
+};
+
 export const getStreets = (city) => {
   return city && apiTokenInstance().get(`apis/api/lists/streets/${city}`);
 };

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { StyledEmptyDiv } from 'Assets/Elements/Header/Search/DrawThisTable/Style';
 
 const TitleValueComponent = ({ name, value, searchParam, seperator }) => {
   const isNumeric = (n) => {
@@ -69,7 +70,25 @@ const TitleValueComponent = ({ name, value, searchParam, seperator }) => {
   };
 
   function handleEmptyDiv(divRef, value) {
-    return value && value !== '' ? <div ref={divRef}>{value}</div> : '';
+    if (value !== undefined) {
+      if (value !== '') {
+        let valueTemp = value.toString();
+        if (valueTemp.trim() === '') {
+          return <StyledEmptyDiv></StyledEmptyDiv>;
+        }
+        return (
+          <div
+            style={{ margin: value === 'Non existence' && '0px 137px' }}
+            ref={divRef}>
+            {value}
+          </div>
+        );
+      } else {
+        return '';
+      }
+    } else {
+      return '';
+    }
   }
 
   return (

@@ -14,7 +14,7 @@ export const StyledPatientDataBlock = styled.div`
 
   overflow-y: scroll;
   overflow-x: hidden;
-  
+
   .MuiInputLabel-formControl {
     right: ${(props) => (props.languageDirection === 'rtl' ? '0' : 'unset')};
     left: unset;
@@ -92,16 +92,11 @@ export const StyledAdmissionFormButton = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 80px;
-
-  button.MuiButtonBase-root {
-    width: 104px !important;
-    height: 32px;
-  }
 `;
 
 export const StyledAvatarIdBlock = styled.div`
   div:first-child > div:last-child {
-   margin: 31px;
-   width: auto;
+    margin: 31px;
+    width: auto;
   }
 `;

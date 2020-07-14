@@ -146,14 +146,12 @@ export const setPatientDataInvitedTableRows = (
         case 'Healthcare service':
           row.push({
             padding: 'default',
-            align: 'center',
             label: appointment.serviceType ? appointment.serviceType : null,
           });
           break;
         case 'Reason for refferal':
           row.push({
             padding: 'default',
-            align: 'center',
             label: appointment.examination ? appointment.examination : null,
           });
           break;

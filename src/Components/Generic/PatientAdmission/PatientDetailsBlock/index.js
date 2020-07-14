@@ -37,7 +37,7 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
-  const { handleSubmit, formState, control } = methods;
+  const { handleSubmit, formState } = methods;
   // Giving the patientAdmission if the form is dirty
   // meaning that there has been changes in the form
   const { dirty } = formState;
@@ -52,8 +52,7 @@ const PatientDetailsBlock = ({
     commitmentAndPaymentCommitmentValidity: '',
     commitmentAndPaymentDoctorsName: '',
     commitmentAndPaymentDoctorsLicense: '',
-    ReferralFile: '',
-    CommitmentFile: '',
+    arrivalWay: '',
   });
   const onSubmit = async (data) => {
     try {
@@ -89,7 +88,7 @@ const PatientDetailsBlock = ({
         if (Object.keys(patientPatchParams).length) {
           APIsArray.push(
             FHIR('Patient', 'doWork', {
-              functionName: 'updatePatient',
+              functionName: 'patchPatient',
               functionParams: { patientPatchParams, patientId: patientData.id },
             }),
           );
@@ -292,21 +291,27 @@ const PatientDetailsBlock = ({
           },
         });
         // TODO: Check if the document came from the server or not if it did don't send it
-        const referral_64Obj = splitBase_64(data.Referral.base_64);
-        const documentReferenceReferral = {
-          encounter: encounterData.id,
-          patient: patientData.id,
-          contentType: referral_64Obj.type,
-          data: referral_64Obj.data,
-          categoryCode: '2',
-          url: data.Referral.name,
-        };
+        if (data.Referral) {
+          const referral_64Obj = splitBase_64(data.Referral.base_64);
+          const documentReferenceReferral = {
+            encounter: encounterData.id,
+            patient: patientData.id,
+            contentType: referral_64Obj.type,
+            data: referral_64Obj.data,
+            categoryCode: '2',
+            url: data.Referral.name,
+          };
 
-        await FHIR('DocumentReference', 'doWork', {
-          documentReference: documentReferenceReferral,
-          functionName: 'createDocumentReference',
-        });
-        if (configuration.clinikal_pa_commitment_form === '1') {
+          await FHIR('DocumentReference', 'doWork', {
+            documentReference: documentReferenceReferral,
+            functionName: 'createDocumentReference',
+          });
+        }
+
+        if (
+          configuration.clinikal_pa_commitment_form === '1' &&
+          data.Commitment
+        ) {
           const commitment_64Obj = splitBase_64(data.Commitment.base_64);
           const documentReferenceCommitment = {
             encounter: encounterData.id,
@@ -351,10 +356,16 @@ const PatientDetailsBlock = ({
   };
 
   const requiredFields = {
+    arrivalWay: {
+      name: 'arrivalWay',
+      required: function (data) {
+        return data[this.name];
+      },
+    },
     selectTest: {
       name: 'selectTest',
       required: function (data) {
-        return data.examinationCode.length > 0;
+        return data.examinationCode && data.examinationCode.length > 0;
       },
     },
     commitmentAndPaymentReferenceForPaymentCommitment: {
@@ -405,23 +416,10 @@ const PatientDetailsBlock = ({
         return data[this.name] && data[this.name].trim().length;
       },
     },
-    ReferralFile: {
-      name: 'ReferralFile',
-      linkId: '',
-      required: function (data) {
-        return Object.keys(data.Referral).length > 0;
-      },
-    },
-    CommitmentFile: {
-      name: 'CommitmentFile',
-      linkId: '',
-      required: function (data) {
-        return Object.keys(data.Commitment).length > 0;
-      },
-    },
   };
 
   const isRequiredValidation = (data) => {
+    console.log(data);
     let clean = true;
     for (const fieldKey in requiredFields) {
       if (requiredFields.hasOwnProperty(fieldKey)) {

@@ -22,10 +22,8 @@ export const StyledExpansionPanelSummary = styled(ExpansionPanelSummary)`
 `;
 
 export const StyledExpansionPanelDetails = styled(ExpansionPanelDetails)`
-  width: 744px;
   height: 100%;
   display: block;
-  justify-content: stretch;
 `;
 
 export const StyledBox = styled(Box)`
@@ -99,7 +97,7 @@ export const StyledLabelAppointment = styled.label`
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
-    text-align: right;
+    text-align: ${(props) => (props.direction === 'rtl' ? 'right' : 'left')};
     color: #000b40;
     margin-right: 19px;
   }
@@ -126,7 +124,7 @@ export const StyledLabelStatusAppointment = styled.label`
     margin-right: -12px;
   }
   span {
-    width: 80px;
+    width: 120px;
     height: 18px;
     font-size: 14px;
     font-weight: normal;
@@ -168,8 +166,8 @@ export const StyledLabelServiceTypeAppointment = styled.label`
 
 export const StyledLabelName = styled.label`
   display: inline-table;
-  max-width: 24%;
-  min-width: 24%;
+  max-width: 23%;
+  min-width: 23%;
   height: 22px;
   margin-top: 10px;
   span {
@@ -197,8 +195,8 @@ export const StyledLabelName = styled.label`
 
 export const StyledLabelTZ = styled.label`
   display: inline-flex;
-  max-width: 30%;
-  min-width: 30%;
+  max-width: 29%;
+  min-width: 29%;
   height: 22px;
   margin-top: 10px;
   span {
@@ -225,8 +223,8 @@ export const StyledLabelTZ = styled.label`
 
 export const StyledLabelPhone = styled.label`
   display: inline-flex;
-  max-width: 30%;
-  min-width: 30%;
+  max-width: 31%;
+  min-width: 31%;
   height: 22px;
   margin-top: 10px;
   span {
@@ -254,8 +252,8 @@ export const StyledLabelPhone = styled.label`
 
 export const StyledLabelAge = styled.label`
   display: inline-flex;
-  max-width: 20%;
-  min-width: 20%;
+  max-width: 21%;
+  min-width: 21%;
   height: 22px;
   margin-top: 10px;
   span {
@@ -284,6 +282,7 @@ styled(GenderIcon)``;
 export const StyledIcon = styled(Icon)`
   font-family: 'Material Icons' !important;
   margin-top: 2%;
+  font-size: 16px;
   color: #002cb1;
   height: 24px;
   cursor: pointer;
@@ -292,7 +291,6 @@ export const StyledIcon = styled(Icon)`
 export const StyledIconText = styled.div`
   cursor: pointer;
   user-select: none;
-  width: 132px;
   height: 22px;
   font-size: 16px;
   font-weight: bold;
@@ -320,7 +318,7 @@ export const StyledValueComponent = styled.label`
 `;
 
 export const StyledLinkWithIconComponent = styled.div`
-  margin: 5px 63px;
+  margin: 5px 40px;
   a {
     width: 73px;
     height: 18px;
@@ -334,7 +332,7 @@ export const StyledLinkWithIconComponent = styled.div`
     color: #002398;
   }
   ${StyledIcon} {
-    width: 7px;
+    width: 16px;
     height: 17px;
     object-fit: contain;
   }
@@ -374,4 +372,8 @@ export const StyledHeaderTableAppointment = styled.div`
 
 export const StyledLabelTableButton = styled.label`
   float: left;
+`;
+
+export const StyledEmptyDiv = styled.label`
+  width: 108px;
 `;
