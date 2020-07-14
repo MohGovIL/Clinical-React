@@ -2,7 +2,9 @@
  * @author Dror Golan drorgo@matrix.co.il
  * @param {object} observation
  * @returns {object}
+ * remark not yet completed since never tested or used.
  */
+
 const denormalizeFhirObservation = (observation) => {
   const denormalizedObservation = {};
   denormalizedObservation['component'] = [];

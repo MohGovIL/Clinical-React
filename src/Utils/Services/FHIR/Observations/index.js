@@ -6,6 +6,13 @@
 import { CRUDOperations } from 'Utils/Services/FHIR/CRUDOperations';
 /* TODO : import denormalizeFhirObservation from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';*/
 
+/**
+ *
+ * @type {{deleteObservation: Observations.deleteObservation, doWork: (function(*): *),
+ * createNewObservation: Observations.createNewObservation,
+ * updateObservation: Observations.updateObservation,
+ * getObservations: (function(*): *)}}
+ */
 const Observations = {
   doWork: (parameters) => {
     let componentFhirURL = '/Observation';
