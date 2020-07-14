@@ -1,7 +1,10 @@
-import {
-  StyledConstantTextField,
-  StyledVariantTextField,
-} from 'Components/Forms/TestsAndTreatments/Style';
+/**
+ * @author Dror Golan drorgo@matrix.co.il
+ * purpose : these functions helps with the enhancement of the date  .
+ * By transforming the data into dynamic data that can be rendered as components to the screen.
+ */
+
+import { StyledVariantTextField } from 'Components/Forms/TestsAndTreatments/Style';
 
 import LabelWithHourComponent from 'Components/Forms/TestsAndTreatments/LabelWithHourComponent';
 import React from 'react';
@@ -13,6 +16,14 @@ import {
   thickenWithDataFunction,
 } from 'Components/Forms/TestsAndTreatments/Helpers/FunctionHelpers';
 
+/**
+ *
+ * @param normalizedConstantObservation
+ * @param constantIndicators
+ * @param setConstantIndicators
+ * @param disabled
+ * @returns {{[p: number]: *, some(callbackfn: (value: *, index: number, array: *[]) => unknown, thisArg?: any): boolean, keys(): IterableIterator<number>, shift(): (* | undefined), values(): IterableIterator<*>, pop(): (* | undefined), slice(start?: number, end?: number): *[], flat: {<U>(this:U[][][][][][][][], depth: 7): U[], <U>(this:U[][][][][][][], depth: 6): U[], <U>(this:U[][][][][][], depth: 5): U[], <U>(this:U[][][][][], depth: 4): U[], <U>(this:U[][][][], depth: 3): U[], <U>(this:U[][][], depth: 2): U[], <U>(this:U[][], depth?: 1): U[], <U>(this:U[], depth: 0): U[], <U>(depth?: number): any[], <U>(this:U[][][][][][][][], depth: 7): U[], <U>(this:U[][][][][][][], depth: 6): U[], <U>(this:U[][][][][][], depth: 5): U[], <U>(this:U[][][][][], depth: 4): U[], <U>(this:U[][][][], depth: 3): U[], <U>(this:U[][][], depth: 2): U[], <U>(this:U[][], depth?: 1): U[], <U>(this:U[], depth: 0): U[], <U>(depth?: number): any[]}, find: {<S extends *>(predicate: (this:void, value: *, index: number, obj: *[]) => value is S, thisArg?: any): (S | undefined); (predicate: (value: *, index: number, obj: *[]) => unknown, thisArg?: any): (* | undefined)}, join(separator?: string): string, reduceRight: {(callbackfn: (previousValue: *, currentValue: *, currentIndex: number, array: *[]) => *): *; (callbackfn: (previousValue: *, currentValue: *, currentIndex: number, array: *[]) => *, initialValue: *): *; <U>(callbackfn: (previousValue: U, currentValue: *, currentIndex: number, array: *[]) => U, initialValue: U): U}, copyWithin(target: number, start: number, end?: number): this, indexOf(searchElement: *, fromIndex?: number): number, every(callbackfn: (value: *, index: number, array: *[]) => unknown, thisArg?: any): boolean, map<U>(callbackfn: (value: *, index: number, array: *[]) => U, thisArg?: any): U[], reduce: {(callbackfn: (previousValue: *, currentValue: *, currentIndex: number, array: *[]) => *): *; (callbackfn: (previousValue: *, currentValue: *, currentIndex: number, array: *[]) => *, initialValue: *): *; <U>(callbackfn: (previousValue: U, currentValue: *, currentIndex: number, array: *[]) => U, initialValue: U): U}, splice: {(start: number, deleteCount?: number): *[]; (start: number, deleteCount: number, ...items: *[]): *[]}, forEach(callbackfn: (value: *, index: number, array: *[]) => void, thisArg?: any): void, [Symbol.iterator](): IterableIterator<*>, length: number, includes(searchElement: *, fromIndex?: number): boolean, concat: {(...items: ConcatArray<*>): *[]; (...items: ConcatArray<*> | *[]): *[]}, sort(compareFn?: (a: *, b: *) => number): this, reverse(): *[], fill(value: *, start?: number, end?: number): this, push(...items: *[]): number, [Symbol.unscopables](): {copyWithin: boolean; entries: boolean; fill: boolean; find: boolean; findIndex: boolean; keys: boolean; values: boolean}, filter: {<S extends *>(callbackfn: (value: *, index: number, array: *[]) => value is S, thisArg?: any): S[]; (callbackfn: (value: *, index: number, array: *[]) => unknown, thisArg?: any): *[]}, flatMap: {<U, This=undefined>(callback: (this:This, value: *, index: number, array: *[]) => (ReadonlyArray<U> | U), thisArg?: This): U[], <U, This=undefined>(callback: (this:This, value: *, index: number, array: *[]) => (ReadonlyArray<U> | U), thisArg?: This): U[]}, findIndex(predicate: (value: *, index: number, obj: *[]) => unknown, thisArg?: any): number, lastIndexOf(searchElement: *, fromIndex?: number): number, entries(): IterableIterator<[number, *]>, toString(): string, unshift(...items: *[]): number, toLocaleString(): string}}
+ */
 export const thickenTheConstantIndicators = ({
   normalizedConstantObservation,
   constantIndicators,
@@ -60,6 +71,16 @@ export const thickenTheConstantIndicators = ({
   return { ...constantIndicators };
 };
 
+/**
+ *
+ * @param variantIndicatorsNormalizedData
+ * @param disabled
+ * @param newRow
+ * @param size
+ * @param variantIndicatorsNew
+ * @param setVariantIndicators
+ * @returns {{}|*[]}
+ */
 export const thickenTheVariantIndicators = ({
   variantIndicatorsNormalizedData,
   disabled,
@@ -171,7 +192,21 @@ export const thickenTheVariantIndicators = ({
 
   return { ...variantIndicators };
 };
-
+/**
+ *
+ * @param normalizedConstantObservation
+ * @param normalizedVariantObservation
+ * @param indicators
+ * @param variantIndicators
+ * @param setVariantIndicators
+ * @param constantIndicators
+ * @param setConstantIndicators
+ * @param variantIndicatorsNew
+ * @param setVariantIndicatorsNew
+ * @param handleConstantVariablesChange
+ * @param disabled
+ * @returns {{[p: number]: *, some(callbackfn: (value: *, index: number, array: *[]) => unknown, thisArg?: any): boolean, keys(): IterableIterator<number>, shift(): (* | undefined), values(): IterableIterator<*>, pop(): (* | undefined), slice(start?: number, end?: number): *[], flat: {<U>(this:U[][][][][][][][], depth: 7): U[], <U>(this:U[][][][][][][], depth: 6): U[], <U>(this:U[][][][][][], depth: 5): U[], <U>(this:U[][][][][], depth: 4): U[], <U>(this:U[][][][], depth: 3): U[], <U>(this:U[][][], depth: 2): U[], <U>(this:U[][], depth?: 1): U[], <U>(this:U[], depth: 0): U[], <U>(depth?: number): any[], <U>(this:U[][][][][][][][], depth: 7): U[], <U>(this:U[][][][][][][], depth: 6): U[], <U>(this:U[][][][][][], depth: 5): U[], <U>(this:U[][][][][], depth: 4): U[], <U>(this:U[][][][], depth: 3): U[], <U>(this:U[][][], depth: 2): U[], <U>(this:U[][], depth?: 1): U[], <U>(this:U[], depth: 0): U[], <U>(depth?: number): any[]}, find: {<S extends *>(predicate: (this:void, value: *, index: number, obj: *[]) => value is S, thisArg?: any): (S | undefined); (predicate: (value: *, index: number, obj: *[]) => unknown, thisArg?: any): (* | undefined)}, join(separator?: string): string, reduceRight: {(callbackfn: (previousValue: *, currentValue: *, currentIndex: number, array: *[]) => *): *; (callbackfn: (previousValue: *, currentValue: *, currentIndex: number, array: *[]) => *, initialValue: *): *; <U>(callbackfn: (previousValue: U, currentValue: *, currentIndex: number, array: *[]) => U, initialValue: U): U}, copyWithin(target: number, start: number, end?: number): this, indexOf(searchElement: *, fromIndex?: number): number, every(callbackfn: (value: *, index: number, array: *[]) => unknown, thisArg?: any): boolean, map<U>(callbackfn: (value: *, index: number, array: *[]) => U, thisArg?: any): U[], reduce: {(callbackfn: (previousValue: *, currentValue: *, currentIndex: number, array: *[]) => *): *; (callbackfn: (previousValue: *, currentValue: *, currentIndex: number, array: *[]) => *, initialValue: *): *; <U>(callbackfn: (previousValue: U, currentValue: *, currentIndex: number, array: *[]) => U, initialValue: U): U}, splice: {(start: number, deleteCount?: number): *[]; (start: number, deleteCount: number, ...items: *[]): *[]}, forEach(callbackfn: (value: *, index: number, array: *[]) => void, thisArg?: any): void, [Symbol.iterator](): IterableIterator<*>, length: number, includes(searchElement: *, fromIndex?: number): boolean, concat: {(...items: ConcatArray<*>): *[]; (...items: ConcatArray<*> | *[]): *[]}, sort(compareFn?: (a: *, b: *) => number): this, reverse(): *[], fill(value: *, start?: number, end?: number): this, push(...items: *[]): number, [Symbol.unscopables](): {copyWithin: boolean; entries: boolean; fill: boolean; find: boolean; findIndex: boolean; keys: boolean; values: boolean}, filter: {<S extends *>(callbackfn: (value: *, index: number, array: *[]) => value is S, thisArg?: any): S[]; (callbackfn: (value: *, index: number, array: *[]) => unknown, thisArg?: any): *[]}, flatMap: {<U, This=undefined>(callback: (this:This, value: *, index: number, array: *[]) => (ReadonlyArray<U> | U), thisArg?: This): U[], <U, This=undefined>(callback: (this:This, value: *, index: number, array: *[]) => (ReadonlyArray<U> | U), thisArg?: This): U[]}, findIndex(predicate: (value: *, index: number, obj: *[]) => unknown, thisArg?: any): number, lastIndexOf(searchElement: *, fromIndex?: number): number, entries(): IterableIterator<[number, *]>, toString(): string, unshift(...items: *[]): number, toLocaleString(): string}}
+ */
 export const thickenTheData = ({
   normalizedConstantObservation,
   normalizedVariantObservation,

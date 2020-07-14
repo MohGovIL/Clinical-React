@@ -1,6 +1,18 @@
-import { StyledVariantTextField } from '../Style';
-import FormattedInputs from '../../../../Assets/Elements/MaskedControllers/FormattedInputs/FormattedInputs';
+/**
+ * @author Dror Golan drorgo@matrix.co.il
+ * purpose : these functions handle click in the ui and other things that are to be taken cared of
+ * as requested like : padding a number with zero.
+ */
 
+import { StyledVariantTextField } from '../Style';
+import FormattedInputs from 'Assets/Elements/MaskedControllers/FormattedInputs/FormattedInputs';
+
+/**
+ *
+ * @param evt
+ * @param variantIndicators
+ * @param setVariantIndicators
+ */
 export const handleVarientCustomClickFunction = (
   evt,
   variantIndicators,
@@ -13,7 +25,12 @@ export const handleVarientCustomClickFunction = (
   tempVariantIndicators[name].value = newValue;
   setVariantIndicators(tempVariantIndicators);
 };
-
+/**
+ *
+ * @param evt
+ * @param variantIndicators
+ * @param setVariantIndicators
+ */
 export const handleVarientPaddTheZeroPlaceClickFunction = (
   evt,
   variantIndicators,
@@ -28,6 +45,11 @@ export const handleVarientPaddTheZeroPlaceClickFunction = (
   setVariantIndicators(tempVariantIndicators);
 };
 
+/**
+ *
+ * @param newValue
+ * @returns {*}
+ */
 function padTheZeroPlace(newValue) {
   //pad Fever With Zeros
   if (
@@ -95,6 +117,18 @@ export function mergeMultipleIndicators(
   }
   return variantIndicatorsNormalizedData;
 }
+
+/**
+ *
+ * @param newRow
+ * @param dataset
+ * @param label
+ * @param i
+ * @param disabled
+ * @param variantIndicatorsNew
+ * @param sizeTemp
+ * @param key
+ */
 export function thickenWithDataFunction({
   newRow,
   dataset,
