@@ -30,6 +30,17 @@ import { thickenTheData } from 'Components/Forms/TestsAndTreatments/Helpers/Data
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
 
+/**
+ *
+ * @param patient
+ * @param encounter
+ * @param permission
+ * @param formatDate
+ * @param languageDirection
+ * @param currentUser
+ * @returns {*}
+ * @constructor
+ */
 const TestsAndTreatments = ({
   patient,
   encounter,
@@ -237,7 +248,11 @@ const TestsAndTreatments = ({
     </StyledTestsAndTreatments>
   );
 };
-
+/**
+ *
+ * @param state
+ * @returns {{formatDate: any, currentUser: {}, languageDirection: any, patient: {}, encounter: {}}}
+ */
 const mapStateToProps = (state) => {
   return {
     patient: state.active.activePatient,

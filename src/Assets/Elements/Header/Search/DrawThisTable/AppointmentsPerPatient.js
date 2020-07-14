@@ -1,6 +1,7 @@
 import React from 'react';
 import TitleValueComponent from './TitleValueComponent';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import {
   StyledBox,
   StyledLabelAppointment,
@@ -15,7 +16,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 const AppointmentsPerPatient = ({
   nextAppointment,
@@ -76,7 +76,7 @@ const AppointmentsPerPatient = ({
   const onClickEncounterSheetHandler = (encounter) => {
     goToEncounterSheet(encounter, patient, history);
   };
-
+  const languageDirection = useSelector((state) => state.settings.lang_dir);
   return (
     <React.Fragment>
       <StyledBox>
@@ -85,7 +85,7 @@ const AppointmentsPerPatient = ({
             ? normalizedCurEncounters.map((encounter, encounterID) => {
                 return (
                   <ListItem key={encounterID + '_normalizedCurEncounters'}>
-                    <StyledLabelAppointment>
+                    <StyledLabelAppointment direction={languageDirection}>
                       <TitleValueComponent
                         name={encounterID < 1 ? t('Current encounter') : ''}
                         value={'\u00A0'}
@@ -100,7 +100,7 @@ const AppointmentsPerPatient = ({
                       />
                     </StyledLabelAppointment>
 
-                    <StyledLabelAppointment>
+                    <StyledLabelAppointment direction={languageDirection}>
                       <TitleValueComponent name={t(encounter.serviceType)} />
                     </StyledLabelAppointment>
 
@@ -128,7 +128,7 @@ const AppointmentsPerPatient = ({
             : null}
           {hideAppointments === '1' ? null : nextAppointmentEntry ? (
             <ListItem key={nextAppointmentEntry.id + '_nextAppointmentEntry'}>
-              <StyledLabelAppointment>
+              <StyledLabelAppointment direction={languageDirection}>
                 <TitleValueComponent
                   name={t('Next appointment')}
                   //Check if it is today if so show hour also ...
@@ -138,7 +138,7 @@ const AppointmentsPerPatient = ({
                 />
               </StyledLabelAppointment>
 
-              <StyledLabelAppointment>
+              <StyledLabelAppointment direction={languageDirection}>
                 <TitleValueComponent
                   name={t(nextAppointmentEntry.serviceType)}
                 />
@@ -164,11 +164,11 @@ const AppointmentsPerPatient = ({
             </ListItem>
           ) : (
             <ListItem key={'nextAppointmentEntry_2'}>
-              <StyledLabelAppointment>
+              <StyledLabelAppointment direction={languageDirection}>
                 <TitleValueComponent
                   name={t('Next appointment')}
                   value={t('Non existence')}
-                  seperator={true}
+                  seperator={false}
                 />
               </StyledLabelAppointment>
             </ListItem>
@@ -176,7 +176,7 @@ const AppointmentsPerPatient = ({
           {normalizedPrevEncounter !== null ? (
             <ListItem
               key={normalizedPrevEncounter.id + '_normalizedPrevEncounter'}>
-              <StyledLabelAppointment>
+              <StyledLabelAppointment direction={languageDirection}>
                 <TitleValueComponent
                   name={t('Previous encounter')}
                   value={moment
@@ -186,7 +186,7 @@ const AppointmentsPerPatient = ({
                 />
               </StyledLabelAppointment>
 
-              <StyledLabelAppointment>
+              <StyledLabelAppointment direction={languageDirection}>
                 <TitleValueComponent
                   name={t(normalizedPrevEncounter.serviceType)}
                 />
@@ -215,11 +215,11 @@ const AppointmentsPerPatient = ({
             </ListItem>
           ) : (
             <ListItem key={'normalizedPrevEncounter_3'}>
-              <StyledLabelAppointment>
+              <StyledLabelAppointment direction={languageDirection}>
                 <TitleValueComponent
                   name={t('Previous encounter')}
                   value={t('Non existence')}
-                  seperator={true}
+                  seperator={false}
                 />
               </StyledLabelAppointment>
             </ListItem>
