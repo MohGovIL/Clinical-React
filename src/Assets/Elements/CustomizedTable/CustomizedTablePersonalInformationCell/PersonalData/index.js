@@ -7,7 +7,7 @@ const PersonalData = styled.div`
   flex-direction: column;
   & span {
     font-weight: bold;
-    text-align: right;
+    text-align: ${(props) => props.align};
     width: 125px;
     text-overflow: ellipsis;
     overflow: hidden;

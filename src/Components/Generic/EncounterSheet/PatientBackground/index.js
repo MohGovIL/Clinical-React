@@ -112,21 +112,22 @@ const PatientBackground = ({
     if (prevEncounters.length === 0) handleCreateData();
   }, []);
 
-
-
   return (
     <StyledPatientBackground dir={languageDirection}>
       <StyledHeader>
         <div>{t('Medical Information')}</div>
-        <StyledEitanButton
+        {/* <StyledEitanButton
           onClick={() => handleEitanClick}
           variant='outlined'
           color='primary'>
           {t('to Eitan system')}
-        </StyledEitanButton>
+        </StyledEitanButton> */}
       </StyledHeader>
       <StyledHeader>
-        <label>
+        <label
+          style={{
+            textAlign: `${languageDirection === 'ltr' && 'left'}`,
+          }}>
           <span>{t('Visits')}</span>
         </label>
       </StyledHeader>

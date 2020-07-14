@@ -9,5 +9,7 @@ export default styled(Tab)`
 
   & .MuiTab-wrapper {
     flex-direction: row-reverse;
+    justify-content: space-between;
+    margin: 0px 40px;
   }
 `;
