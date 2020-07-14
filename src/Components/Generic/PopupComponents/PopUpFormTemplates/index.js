@@ -82,7 +82,7 @@ const PopUpFormTemplates = ({
             formFields,
           );
 
-          if (response.data && response.data.length > 0) {
+          if (response && response.data && response.data.length > 0) {
             for (let i = 0; i < response.data.length; i++) {
               templatesServerData.push({ title: response.data[i] });
             }
