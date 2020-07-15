@@ -11,6 +11,8 @@ import {
 import React, { useState } from 'react';
 import * as moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import { FHIR } from '../../../Utils/Services/FHIR';
+import normalizeFhirValueSet from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 
 const AddCardInstruction = ({
   user,
@@ -23,7 +25,7 @@ const AddCardInstruction = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleChange = (event) => {
+  const handleChange = async (event) => {
     if (
       currentTestTreatmentsInstructions &&
       currentTestTreatmentsInstructions.length > 0
@@ -36,6 +38,49 @@ const AddCardInstruction = ({
         tempCurrentTestTreatmentsInstructions,
       );
     }
+    const listsDetailsAndLetters = [];
+    listsDetailsAndLetters.push(
+      FHIR('ValueSet', 'doWork', {
+        functionName: 'getValueSet',
+        functionParams: { id: `letter_${event.target.value}` },
+      }),
+    );
+    listsDetailsAndLetters.push(
+      FHIR('ValueSet', 'doWork', {
+        functionName: 'getValueSet',
+        functionParams: { id: `details_${event.target.value}` },
+      }),
+    );
+    const listsDetailsAndLettersAfterAwait = await Promise.all(
+      listsDetailsAndLetters,
+    );
+
+    listsDetailsAndLettersAfterAwait.map((elem, key) => {
+      if (elem.data && elem.data !== '') {
+        elem.data.expansion.contains.map((data, index) => {
+          const normalizedTestAndTreatmentsFromFhirValueSet = normalizeFhirValueSet(
+            data,
+          );
+          let detailsObj = [];
+          let lettersObj = [];
+
+          switch (index) {
+            case 0:
+              detailsObj.push({
+                title: data.name,
+                code: data.code,
+              });
+              break;
+            case 1:
+              lettersObj.push({
+                title: data.name,
+                code: data.code,
+              });
+              break;
+          }
+        });
+      }
+    });
   };
   return (
     <StyledCardRoot>
