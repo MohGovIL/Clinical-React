@@ -2,14 +2,9 @@
 import { connect } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import VisitDetails from 'Components/Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
-import {
-  FormContext,
-  useForm,
-} from 'react-hook-form';
+import { FormContext, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import {
-  StyledForm,
-} from './Style';
+import { StyledForm } from './Style';
 
 import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
@@ -18,6 +13,7 @@ import { FHIR } from 'Utils/Services/FHIR';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import UrgentAndInsulation from './UrgentAndInsulation';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
+import CustomizedSelectCheckList from '../../../Assets/Elements/CustomizedSelectCheckList';
 
 const MedicalAdmission = ({
   patient,
@@ -40,7 +36,7 @@ const MedicalAdmission = ({
     watch,
     register,
     setValue,
-    unregister
+    unregister,
   } = methods;
 
   const [requiredErrors, setRequiredErrors] = useState({
@@ -53,7 +49,6 @@ const MedicalAdmission = ({
     ReferralFile: '',
     CommitmentFile: '',
   });
-
 
   const watchMedication = watch('medication');
   const [medicationChanged, setMedicationChanged] = useState(false);
@@ -112,7 +107,7 @@ const MedicalAdmission = ({
 
   const pregnancyHandlerRadio = (value) => {
     //console.log('pregnancy: ' + value);
-    setValue("isPregnancy", value);
+    setValue('isPregnancy', value);
   };
 
   const medicationHandlerRadio = (value) => {
@@ -135,8 +130,11 @@ const MedicalAdmission = ({
 
   //Radio buttons for medication details
   const medicationRadioList = [t("Doesn't exist"), t('Exist')];
-  const sensitivitiesRadioList = [t("UNknown"), t('Known')];
-  const backgroundDisRadioList = [t("Usually healthy"), t('There are diseases')];
+  const sensitivitiesRadioList = [t('UNknown'), t('Known')];
+  const backgroundDisRadioList = [
+    t('Usually healthy'),
+    t('There are diseases'),
+  ];
 
   return (
     <React.Fragment>
@@ -156,7 +154,7 @@ const MedicalAdmission = ({
             disableHeaders={false}
             disableButtonIsUrgent={false}
           />
-          <UrgentAndInsulation requiredUrgent requiredInsulation/>
+          <UrgentAndInsulation requiredUrgent requiredInsulation />
           <NursingAnamnesis />
           <>
             {/*need to make a new component for radio select*/}
@@ -178,12 +176,16 @@ const MedicalAdmission = ({
               callBackFunction={sensitivitiesHandlerRadio}
             />
             {sensitivitiesChanged && (
-              <CustomizedTextField
-                control={control}
-                name='medicationInstruction'
-                width={'70%'}
-                label={t('Sensitivities details')}
+              <CustomizedSelectCheckList
+                labelInputText={'Sensitivities details'}
+                helperErrorText={'The visit reason performed during the visit must be selected'}
               />
+              // <CustomizedTextField
+              //   control={control}
+              //   name='medicationInstruction'
+              //   width={'70%'}
+              //   label={t('Sensitivities details')}
+              // />
             )}
             <RadioGroupChoice
               gridLabel={t('Background diseases')}
