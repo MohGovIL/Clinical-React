@@ -38,7 +38,7 @@ const RecommendationsOnRelease = () => {
       />
       <StyledDivider />
       <Grid container direction='row' justify='flex-start' alignItems='center'>
-        <label>{t('Decision')}</label>
+        <label style={{ width: '66px' }}>{t('Decision')}</label>
         <RadioGroup
           row
           name='decision'
