@@ -23,7 +23,7 @@ const PopUpContext = ({
   const textAreaRef = useRef(null);
   useEffect(() => {
     setContext(textAreaRef.current.value);
-  });
+  }, []);
   const handleChange = () => {
     setContext(textAreaRef.current.value);
   };

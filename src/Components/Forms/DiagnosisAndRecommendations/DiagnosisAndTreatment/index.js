@@ -7,6 +7,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext } from 'react-hook-form';
+
 const DiagnosisAndTreatment = () => {
   const { t } = useTranslation();
   const {
@@ -27,6 +28,7 @@ const DiagnosisAndTreatment = () => {
   };
 
   const handlePopUpProps = (title, fields, id, callBack, name) => {
+    console.log('asdasdas' + diagnosisAndTreatmentFields[name], name);
     setPopUpProps((prevState) => {
       return {
         ...prevState,
@@ -36,6 +38,7 @@ const DiagnosisAndTreatment = () => {
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
+        defaultContext: diagnosisAndTreatmentFields[name],
       };
     });
   };
