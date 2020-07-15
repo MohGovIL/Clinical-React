@@ -4,11 +4,17 @@ import { Grid, Radio, FormControlLabel, RadioGroup } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
 import { StyledDivider } from '../Style';
 const RecommendationsOnRelease = () => {
   const { t } = useTranslation();
-  const { register, unregister, setValue, permission } = useFormContext();
+  const {
+    register,
+    unregister,
+    setValue,
+    permission,
+    control,
+  } = useFormContext();
   const [decision, setDecision] = useState('');
   const [evacuationWay, setEvacuationWay] = useState('');
 
@@ -105,17 +111,24 @@ const RecommendationsOnRelease = () => {
         {decision === 'Release to home' && (
           <React.Fragment>
             <label>{t('Sick leave')}</label>
-            <CustomizedTextField
-              style={{ marginLeft: '16px', marginRight: '16px' }}
-              name='numberOfDays'
-              width='10%'
-              label={t('Number of days')}
-              type='number'
-              inputProps={{
-                min: '0',
+            <Controller
+              control={control}
+              onChange={([event]) => {
+                if (event.target.value <= 0) {
+                  return '';
+                }
+                return event.target.value;
               }}
-              inputRef={register}
+              name='numberOfDays'
               disabled={permission === 'view' ? true : false}
+              as={
+                <CustomizedTextField
+                  style={{ marginLeft: '16px', marginRight: '16px' }}
+                  width='10%'
+                  label={t('Number of days')}
+                  type='number'
+                />
+              }
             />
           </React.Fragment>
         )}
