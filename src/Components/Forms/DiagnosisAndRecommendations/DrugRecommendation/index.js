@@ -22,7 +22,7 @@ const DrugRecommendation = () => {
     setValue,
     setPopUpProps,
   } = useFormContext();
-  const { append, remove, fields } = useFieldArray({
+  const { insert, remove, fields } = useFieldArray({
     control,
     name: 'drugRecommendation',
   });
@@ -82,7 +82,7 @@ const DrugRecommendation = () => {
                 });
                 return cloneState;
               });
-              append({
+              insert(parseInt(0, 10), {
                 drugName: '',
                 quantity: '',
                 drugForm: '',
@@ -97,12 +97,12 @@ const DrugRecommendation = () => {
         <StyledDivider />
         {fields.map((item, index) => {
           return (
-            <React.Fragment key={index}>
+            <React.Fragment key={item.id}>
               <Controller
                 name={`drugRecommendation[${index}].drugName`}
                 control={control}
                 onChange={([event]) => event.target.value}
-                defaultValue=''
+                defaultValue={item.drugName}
                 as={
                   <CustomizedTextField
                     iconColor='#1976d2'
@@ -132,7 +132,7 @@ const DrugRecommendation = () => {
                 <Controller
                   control={control}
                   name={`drugRecommendation[${index}].drugForm`}
-                  defaultValue=''
+                  defaultValue={item.drugForm}
                   error={requiredErrors[index].drugForm.length ? true : false}
                   helperText={requiredErrors[index].drugForm}
                   onChange={([event]) => event.target.value}
@@ -152,7 +152,7 @@ const DrugRecommendation = () => {
                 <Controller
                   control={control}
                   name={`drugRecommendation[${index}].drugRoute`}
-                  defaultValue=''
+                  defaultValue={item.drugRoute}
                   error={requiredErrors[index].drugRoute.length ? true : false}
                   helperText={requiredErrors[index].drugRoute}
                   as={
@@ -174,7 +174,7 @@ const DrugRecommendation = () => {
                 <Controller
                   control={control}
                   name={`drugRecommendation[${index}].intervals`}
-                  defaultValue=''
+                  defaultValue={item.intervals}
                   error={requiredErrors[index].intervals.length ? true : false}
                   helperText={requiredErrors[index].intervals}
                   as={
@@ -218,6 +218,7 @@ const DrugRecommendation = () => {
                       );
                     }
                   }}
+                  defaultValue={item.duration}
                   as={
                     <CustomizedTextField
                       disabled={checkIsDisabled('drugName', index)}
