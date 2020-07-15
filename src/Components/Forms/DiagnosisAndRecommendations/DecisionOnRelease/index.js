@@ -114,7 +114,7 @@ const RecommendationsOnRelease = () => {
             <Controller
               control={control}
               onChange={([event]) => {
-                if (event.target.value <= 0) {
+                if (event.target.value <= 0 || event.target.value >= 100) {
                   return '';
                 }
                 return event.target.value;
