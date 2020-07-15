@@ -28,7 +28,6 @@ const DiagnosisAndTreatment = () => {
   };
 
   const handlePopUpProps = (title, fields, id, callBack, name) => {
-    console.log('asdasdas' + diagnosisAndTreatmentFields[name], name);
     setPopUpProps((prevState) => {
       return {
         ...prevState,
