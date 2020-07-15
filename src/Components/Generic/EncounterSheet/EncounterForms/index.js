@@ -9,7 +9,7 @@ const EncounterForms = ({
   languageDirection,
   formatDate,
 }) => {
-  const [formsPerSheet, setFormsPerSheet] = React.useState([]);
+  const [formsPerSheet, setFormsPerSheet] = React.useState();
 
   React.useEffect(() => {
     (async () => {
@@ -26,7 +26,7 @@ const EncounterForms = ({
   }, [encounter.serviceTypeCode, encounter.examinationCode]);
   return (
     <StyledPatientFiles>
-      {formsPerSheet.length ? (
+      {formsPerSheet ? (
         <FormsContainer dir={languageDirection} tabs={formsPerSheet} />
       ) : null}
     </StyledPatientFiles>
