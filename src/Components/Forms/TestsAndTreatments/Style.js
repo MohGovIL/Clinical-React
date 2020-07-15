@@ -155,6 +155,7 @@ export const StyledCardContent = styled(CardContent)`
   border-left: 1px solid #d4cfcf;
   margin-left: 22px;
   width: 20%;
+  margin-top: 23px;
 `;
 export const StyledCardCover = styled(CardMedia)`
   width: 95%;

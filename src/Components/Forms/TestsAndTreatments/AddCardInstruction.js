@@ -13,6 +13,11 @@ import * as moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { FHIR } from '../../../Utils/Services/FHIR';
 import normalizeFhirValueSet from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import TableBody from '@material-ui/core/TableBody';
+import { Grid } from '@material-ui/core';
+import { StyledSelectTemplateButton } from '../../../Assets/Elements/StyledSelectTempleteButton';
+import { StyledFormGroup } from '../../../Assets/Elements/StyledFormGroup';
+import { StyledButton } from '../../../Assets/Elements/StyledButton';
 
 const AddCardInstruction = ({
   user,
@@ -24,6 +29,15 @@ const AddCardInstruction = ({
   index,
 }) => {
   const { t } = useTranslation();
+  const [
+    currentTestTreatmentsInstructionsDetails,
+    setCurrentTestTreatmentsInstructionsDetails,
+  ] = useState([]);
+
+  const [
+    currentTestTreatmentsInstructionsLetters,
+    setCurrentTestTreatmentsInstructionsLetters,
+  ] = useState([]);
 
   const handleChange = async (event) => {
     if (
@@ -39,6 +53,7 @@ const AddCardInstruction = ({
       );
     }
     const listsDetailsAndLetters = [];
+
     listsDetailsAndLetters.push(
       FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',
@@ -55,32 +70,42 @@ const AddCardInstruction = ({
       listsDetailsAndLetters,
     );
 
-    listsDetailsAndLettersAfterAwait.map((elem, key) => {
-      if (elem.data && elem.data !== '') {
-        elem.data.expansion.contains.map((data, index) => {
-          const normalizedTestAndTreatmentsFromFhirValueSet = normalizeFhirValueSet(
-            data,
-          );
-          let detailsObj = [];
-          let lettersObj = [];
+    listsDetailsAndLettersAfterAwait['letters'] =
+      listsDetailsAndLettersAfterAwait[0];
+    delete listsDetailsAndLettersAfterAwait[0];
 
-          switch (index) {
-            case 0:
-              detailsObj.push({
-                title: data.name,
-                code: data.code,
-              });
-              break;
-            case 1:
-              lettersObj.push({
-                title: data.name,
-                code: data.code,
-              });
-              break;
-          }
-        });
-      }
-    });
+    listsDetailsAndLettersAfterAwait['details'] =
+      listsDetailsAndLettersAfterAwait[1];
+    delete listsDetailsAndLettersAfterAwait[1];
+    let detailsObj = [];
+    let lettersObj = [];
+
+    {
+      Object.entries(listsDetailsAndLettersAfterAwait).map((elem, key) => {
+        if (elem && elem[1] && elem[1].status && elem[1].status === 200) {
+          elem[1].data.expansion.contains.map((data) => {
+            switch (elem[0]) {
+              case 'letters':
+                lettersObj.push({
+                  title: dataNormalized.name,
+                  code: dataNormalized.code,
+                });
+                break;
+              case 'details':
+                const dataNormalized = normalizeFhirValueSet(data);
+                detailsObj.push({
+                  title: dataNormalized.name,
+                  code: dataNormalized.code,
+                });
+                break;
+            }
+          });
+        }
+      });
+
+      setCurrentTestTreatmentsInstructionsLetters(lettersObj);
+      setCurrentTestTreatmentsInstructionsDetails(detailsObj);
+    }
   };
   return (
     <StyledCardRoot>
@@ -98,25 +123,88 @@ const AddCardInstruction = ({
         </StyledCardContent>
         <StyledCardName></StyledCardName>
       </StyledCardDetails>
-      <CustomizedTextField
-        onChange={handleChange}
-        value={currentTestTreatmentsInstructions[index].value}
-        iconColor='#1976d2'
-        width='30%'
-        select
-        label={t('Test/Treatment')}>
-        <MenuItem value={''}>
-          <em>{t('Choose')}</em>
-        </MenuItem>
-
-        {collectedTestAndTreatmentsFromFhir.map((value, index) => {
-          return (
-            <MenuItem key={index} value={value.code}>
-              {t(value.title)}
+      <Grid container spacing={4}>
+        <Grid item xs={4}>
+          <CustomizedTextField
+            onChange={handleChange}
+            value={currentTestTreatmentsInstructions[index].value}
+            iconColor='#1976d2'
+            width='100%'
+            select
+            label={t('Test/Treatment')}>
+            <MenuItem value={''}>
+              <em>{t('Choose')}</em>
             </MenuItem>
-          );
-        })}
-      </CustomizedTextField>
+
+            {collectedTestAndTreatmentsFromFhir.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.code}>
+                  {t(value.title)}
+                </MenuItem>
+              );
+            })}
+          </CustomizedTextField>
+        </Grid>
+        <Grid item xs={4}>
+          <CustomizedTextField
+            onChange={handleChange}
+            value={currentTestTreatmentsInstructions[index].value}
+            iconColor='#1976d2'
+            width='100%'
+            select
+            label={t('2')}>
+            <MenuItem value={''}>
+              <em>{t('Choose')}</em>
+            </MenuItem>
+
+            {collectedTestAndTreatmentsFromFhir.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.code}>
+                  {t(value.title)}
+                </MenuItem>
+              );
+            })}
+          </CustomizedTextField>
+        </Grid>
+
+        <Grid item xs={8}>
+          <CustomizedTextField
+            name='recommendations'
+            /*  inputRef={register}*/
+            label={'recommendations'}
+            width='100%'
+            multiline
+            /*InputLabelProps={{
+              shrink: diagnosisAndTreatmentFields['findingsDetails']
+                ? true
+                : false,
+            }}
+            disabled={permission === 'view' ? true : false}*/
+          />
+        </Grid>
+        <Grid item xs={2}>
+          <StyledButton
+            width='113px'
+            height='32px'
+            color='primary'
+            variant='outlined'
+            size='small'
+            margin='33px 18px'
+            /*  disabled={permission === 'view' ? true : false}*/
+            /* onClick={() =>
+              handlePopUpProps(
+                findingsDetails,
+                'findings_details',
+                'diagnosis_and_recommendations',
+                callBack,
+                'findingsDetails',
+              )
+            }*/
+          >
+            {t('Select template')}
+          </StyledButton>
+        </Grid>
+      </Grid>
     </StyledCardRoot>
   );
 };
