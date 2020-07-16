@@ -9,7 +9,7 @@ const EncounterForms = ({
   languageDirection,
   formatDate,
 }) => {
-  const [formsPerSheet, setFormsPerSheet] = React.useState('');
+  const [formsPerSheet, setFormsPerSheet] = React.useState();
 
   React.useEffect(() => {
     (async () => {
