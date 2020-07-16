@@ -9,7 +9,6 @@ import DrugRecommendation from './DrugRecommendation';
 import StyledDiagnosisAndRecommendations from './Style';
 import { useForm, FormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { StyledButton } from 'Assets/Elements/StyledButton';
 import { FHIR } from 'Utils/Services/FHIR';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
@@ -42,8 +41,7 @@ const DiagnosisAndRecommendations = ({
   const { handleSubmit, setValue, register, unregister } = methods;
   const { t } = useTranslation();
   const onSubmit = (data) => {
-    console.log(isRequiredValidation(data));
-    console.log(JSON.stringify(data));
+    if (isRequiredValidation(data)) console.log(data);
   };
 
   React.useEffect(() => {
@@ -187,12 +185,6 @@ const DiagnosisAndRecommendations = ({
           <DrugRecommendation />
           <DecisionOnRelease />
           <SaveForm statuses={statuses} />
-          {/* <StyledButton
-            color='primary'
-            type='submit'
-            disabled={permission === 'view' ? true : false}>
-            SUBMIT
-          </StyledButton> */}
         </form>
       </FormContext>
     </StyledDiagnosisAndRecommendations>
