@@ -23,7 +23,7 @@ const PopUpContext = ({
   const textAreaRef = useRef(null);
   useEffect(() => {
     setContext(textAreaRef.current.value);
-  }, []);
+  }, [context]);
   const handleChange = () => {
     setContext(textAreaRef.current.value);
   };
@@ -32,6 +32,7 @@ const PopUpContext = ({
     setTemplatesTextReturned(context, name);
     setTemplateWasSaved(true);
     //Close :
+    setContext('');
     handleCloseOperation({ saved: true });
   };
   return (

@@ -99,7 +99,6 @@ const PopUpFormTemplates = ({
     encounter.serviceTypeCode,
     formID,
     formFields,
-    templates.length,
   ]);
 
   return templates ? (
