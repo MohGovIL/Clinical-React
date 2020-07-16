@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import { FHIR } from 'Utils/Services/FHIR';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
+import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -164,7 +165,11 @@ const DiagnosisAndRecommendations = ({
     setTemplatesTextReturned: null,
     name: '',
   });
-
+  const statuses = [
+    { label: 'Waiting for nurse', value: 'waiting_for_nurse' },
+    { label: 'Waiting for doctor', value: 'waiting_for_doctor' },
+    { label: 'Waiting for release', value: 'waiting_for_release' },
+  ];
   return (
     <StyledDiagnosisAndRecommendations>
       <PopUpFormTemplates {...popUpProps} />
@@ -181,12 +186,13 @@ const DiagnosisAndRecommendations = ({
           <RecommendationsOnRelease />
           <DrugRecommendation />
           <DecisionOnRelease />
-          <StyledButton
+          <SaveForm statuses={statuses} />
+          {/* <StyledButton
             color='primary'
             type='submit'
             disabled={permission === 'view' ? true : false}>
             SUBMIT
-          </StyledButton>
+          </StyledButton> */}
         </form>
       </FormContext>
     </StyledDiagnosisAndRecommendations>
