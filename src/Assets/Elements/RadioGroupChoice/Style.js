@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Radio from '@material-ui/core/Radio';
 
 export const StyledRadioGroup = styled.div`
-  margin-bottom: 80px;
   .MuiTypography-h6 {
     font-size: 18px;
   }

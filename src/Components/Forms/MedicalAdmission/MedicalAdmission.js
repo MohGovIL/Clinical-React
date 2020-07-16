@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import VisitDetails from 'Components/Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
 import { FormContext, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { StyledForm } from './Style';
+import { StyledForm, StyledRadioGroupChoice } from './Style';
 
 import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
@@ -14,6 +14,9 @@ import { StyledButton } from 'Assets/Elements/StyledButton';
 import UrgentAndInsulation from './UrgentAndInsulation';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import CustomizedSelectCheckList from '../../../Assets/Elements/CustomizedSelectCheckList';
+import Sensitivities from './Sensitivities';
+import BackgroundDiseases from './BackgroundDiseases';
+import ChronicMedication from './ChronicMedication';
 
 const MedicalAdmission = ({
   patient,
@@ -51,9 +54,6 @@ const MedicalAdmission = ({
   });
 
   const watchMedication = watch('medication');
-  const [medicationChanged, setMedicationChanged] = useState(false);
-  const [sensitivitiesChanged, setSensitivitiesChanged] = useState(false);
-  const [backgroundDisChanged, setBackgroundDisChanged] = useState(false);
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
@@ -110,21 +110,6 @@ const MedicalAdmission = ({
     setValue('isPregnancy', value);
   };
 
-  const medicationHandlerRadio = (value) => {
-    console.log('medication: ' + value);
-    setMedicationChanged(value);
-  };
-
-  const sensitivitiesHandlerRadio = (value) => {
-    console.log('sensitivities: ' + value);
-    setSensitivitiesChanged(value);
-  };
-
-  const backgroundDisHandlerRadio = (value) => {
-    console.log('backgroundDis: ' + value);
-    setBackgroundDisChanged(value);
-  };
-
   //Radio buttons for pregnancy
   const pregnancyRadioList = [t('No'), t('Yes')];
 
@@ -156,9 +141,9 @@ const MedicalAdmission = ({
           />
           <UrgentAndInsulation requiredUrgent requiredInsulation />
           <NursingAnamnesis />
-          <>
-            {/*need to make a new component for radio select*/}
-            {(patient.gender === 'female' || patient.gender === 'other') && (
+          {/*need to make a new component for radio select*/}
+          {(patient.gender === 'female' || patient.gender === 'other') && (
+            <StyledRadioGroupChoice>
               <RadioGroupChoice
                 register={register}
                 gridLabel={t('Pregnancy')}
@@ -167,57 +152,11 @@ const MedicalAdmission = ({
                 trueValue={t('Yes')}
                 callBackFunction={pregnancyHandlerRadio}
               />
-            )}
-            <RadioGroupChoice
-              gridLabel={t('Sensitivities')}
-              radioName={'sensitivities'}
-              listValues={sensitivitiesRadioList}
-              trueValue={t('Known')}
-              callBackFunction={sensitivitiesHandlerRadio}
-            />
-            {sensitivitiesChanged && (
-              <CustomizedSelectCheckList
-                labelInputText={'Sensitivities details'}
-                helperErrorText={'The visit reason performed during the visit must be selected'}
-              />
-              // <CustomizedTextField
-              //   control={control}
-              //   name='medicationInstruction'
-              //   width={'70%'}
-              //   label={t('Sensitivities details')}
-              // />
-            )}
-            <RadioGroupChoice
-              gridLabel={t('Background diseases')}
-              radioName={'background_diseases'}
-              listValues={backgroundDisRadioList}
-              trueValue={t('There are diseases')}
-              callBackFunction={backgroundDisHandlerRadio}
-            />
-            {backgroundDisChanged && (
-              <CustomizedTextField
-                control={control}
-                name='medicationInstruction'
-                width={'70%'}
-                label={t('Diseases details')}
-              />
-            )}
-            <RadioGroupChoice
-              gridLabel={t('Chronic medications')}
-              radioName={'medication'}
-              listValues={medicationRadioList}
-              trueValue={t('Exist')}
-              callBackFunction={medicationHandlerRadio}
-            />
-            {medicationChanged && (
-              <CustomizedTextField
-                control={control}
-                name='medicationInstruction'
-                width={'70%'}
-                label={t('Medications details')}
-              />
-            )}
-          </>
+            </StyledRadioGroupChoice>
+          )}
+          <Sensitivities/>
+          <BackgroundDiseases/>
+          <ChronicMedication/>
           <StyledButton
             color='primary'
             type='submit'

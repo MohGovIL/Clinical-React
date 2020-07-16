@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyledAutoComplete,
   StyledChip,
@@ -23,10 +23,15 @@ import CustomizedTextField from '../CustomizedTextField';
 import { useTranslation } from 'react-i18next';
 import matchSorter from 'match-sorter';
 import { useFormContext } from 'react-hook-form';
-import { getValueSet } from '../../../Utils/Services/FhirAPI';
-import normalizeFhirValueSet from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 
-const CustomizedSelectCheckList = ({ labelInputText, helperErrorText }) => {
+const CustomizedSelectCheckList = ({
+  labelInputText,
+  helperErrorText,
+  servicesType,
+  loadingServicesType,
+  servicesTypeOpen,
+  setServicesTypeOpen,
+}) => {
   const { t } = useTranslation();
   const {
     register,
@@ -40,39 +45,36 @@ const CustomizedSelectCheckList = ({ labelInputText, helperErrorText }) => {
 
   const [selectedServicesType, setSelectedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
-  const [servicesType, setServicesType] = useState([]);
-  const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
-  const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
   const selectTestRef = React.useRef();
   // Requested service - select examination - functions / useEffect
-  const selectExaminationOnChangeHandler = (event, newValue) => {
+  const selectCheckListOnChangeHandler = (event, newValue) => {
     setPendingValue(newValue);
   };
 
   const onCloseChangeHandler = (value) => {
-    const examinationCodeArr = [];
+    const checkListCodeArr = [];
     let serviceTypeCodeValue = '';
     if (value && value.length) {
       serviceTypeCodeValue = value[0].serviceType.code;
       value.forEach((item, itemIndex) => {
-        examinationCodeArr.push(item.reasonCode.code);
+        checkListCodeArr.push(item.reasonCode.code);
       });
     }
-    setValue([
-      {
-        serviceTypeCode: serviceTypeCodeValue,
-      },
-      {
-        examinationCode: examinationCodeArr,
-      },
-    ]);
+    // setValue([
+    //   {
+    //     serviceTypeCode: serviceTypeCodeValue,
+    //   },
+    //   {
+    //     examinationCode: examinationCodeArr,
+    //   },
+    // ]);
   };
 
-  const selectExaminationOnOpenHandler = () => {
+  const selectCheckListOnOpenHandler = () => {
     setPendingValue(selectedServicesType);
     setServicesTypeOpen(true);
   };
-  const selectExaminationOnCloseHandler = () => {
+  const selectCheckListOnCloseHandler = () => {
     setServicesTypeOpen(false);
   };
   const filterOptions = (options, { inputValue }) => {
@@ -97,59 +99,6 @@ const CustomizedSelectCheckList = ({ labelInputText, helperErrorText }) => {
     setSelectedServicesType(filteredSelectedServicesType);
   };
 
-  useEffect(() => {
-    let active = true;
-
-    if (!loadingServicesType) {
-      return undefined;
-    }
-
-    (async () => {
-      try {
-        const serviceTypeResponse = await getValueSet('service_types');
-        if (active) {
-          const options = [];
-          const servicesTypeObj = {};
-          const allReasonsCode = await Promise.all(
-            serviceTypeResponse.data.expansion.contains.map((serviceType) => {
-              const normalizedServiceType = normalizeFhirValueSet(serviceType);
-              servicesTypeObj[normalizedServiceType.code] = {
-                ...normalizedServiceType,
-              };
-              return getValueSet(`reason_codes_${normalizedServiceType.code}`);
-            }),
-          );
-
-          for (
-            let reasonsIndex = 0;
-            reasonsIndex < allReasonsCode.length;
-            reasonsIndex++
-          ) {
-            allReasonsCode[reasonsIndex].data.expansion.contains.forEach(
-              (reasonCode) => {
-                const optionObj = {};
-                optionObj['serviceType'] = {
-                  ...servicesTypeObj[
-                    allReasonsCode[reasonsIndex].data.id.split('_')[2]
-                  ],
-                };
-                optionObj['reasonCode'] = normalizeFhirValueSet(reasonCode);
-                options.push(optionObj);
-              },
-            );
-          }
-          setServicesType(options);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loadingServicesType]);
-
   return (
     <React.Fragment>
       <StyledAutoComplete
@@ -159,10 +108,10 @@ const CustomizedSelectCheckList = ({ labelInputText, helperErrorText }) => {
         loadingText={t('Loading')}
         open={servicesTypeOpen}
         loading={loadingServicesType}
-        onOpen={selectExaminationOnOpenHandler}
-        onClose={selectExaminationOnCloseHandler}
+        onOpen={selectCheckListOnOpenHandler}
+        onClose={selectCheckListOnCloseHandler}
         value={pendingValue}
-        onChange={selectExaminationOnChangeHandler}
+        onChange={selectCheckListOnChangeHandler}
         getOptionSelected={(option, value) =>
           option.reasonCode.name === value.reasonCode.name
         }
@@ -178,15 +127,21 @@ const CustomizedSelectCheckList = ({ labelInputText, helperErrorText }) => {
                 checked={state.selected}
               />
             </Grid>
-            <Grid item xs={3}>
-              <ListItemText>{option.reasonCode.code}</ListItemText>
-            </Grid>
-            <Grid item xs={3}>
-              <ListItemText primary={t(option.serviceType.name)} />
-            </Grid>
-            <Grid item xs={3}>
-              <ListItemText primary={t(option.reasonCode.name)} />
-            </Grid>
+            {option.reasonCode && option.reasonCode.code && (
+              <Grid item xs={3}>
+                <ListItemText>{option.reasonCode.code}</ListItemText>
+              </Grid>
+            )}
+            {option.serviceType && option.serviceType.name && (
+              <Grid item xs={3}>
+                <ListItemText primary={t(option.serviceType.name)} />
+              </Grid>
+            )}
+            {option.reasonCode && option.reasonCode.name && (
+              <Grid item xs={3}>
+                <ListItemText primary={t(option.reasonCode.name)} />
+              </Grid>
+            )}
           </Grid>
         )}
         ListboxComponent={ListboxComponent}
