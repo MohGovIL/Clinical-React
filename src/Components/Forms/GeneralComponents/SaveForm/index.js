@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import { useTranslation } from 'react-i18next';
-import StyledSaveForm from './Style';
+import StyledSaveForm, { CenterButton } from './Style';
 import Content from './Content';
 import { useFormContext } from 'react-hook-form';
 /**
@@ -15,14 +15,16 @@ const SaveForm = ({ statuses }) => {
   return (
     <StyledSaveForm>
       <Content statuses={statuses} />
-      <StyledButton
-        color='primary'
-        variant='contained'
-        type='submit'
-        letterSpacing={'0.1'}
-        disabled={permission === 'view' ? true : false}>
-        {t('Save & Close')}
-      </StyledButton>
+      <CenterButton>
+        <StyledButton
+          color='primary'
+          variant='contained'
+          type='submit'
+          letterSpacing={'0.1'}
+          disabled={permission === 'view' ? true : false}>
+          {t('Save & Close')}
+        </StyledButton>
+      </CenterButton>
     </StyledSaveForm>
   );
 };
