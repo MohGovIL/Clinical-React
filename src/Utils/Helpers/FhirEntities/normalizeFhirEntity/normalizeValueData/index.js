@@ -20,7 +20,7 @@ export const normalizeHealthCareServiceValueData = (valueData) => {
       code: isNaN(parseInt(valueData.type[0].coding[0].code))
         ? valueData.type[0].coding[0].code
         : parseInt(valueData.type[0].coding[0].code),
-      name: valueData.name,
+      name: valueData.type[0].text
     };
   }
 };

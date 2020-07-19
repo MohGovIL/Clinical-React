@@ -76,7 +76,13 @@ const TitleValueComponent = ({ name, value, searchParam, seperator }) => {
         if (valueTemp.trim() === '') {
           return <StyledEmptyDiv></StyledEmptyDiv>;
         }
-        return <div ref={divRef}>{value}</div>;
+        return (
+          <div
+            style={{ margin: value === 'Non existence' && '0px 137px' }}
+            ref={divRef}>
+            {value}
+          </div>
+        );
       } else {
         return '';
       }

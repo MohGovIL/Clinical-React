@@ -47,7 +47,7 @@ const MainPopUpFormTemplate = ({
     if (defaultContext !== '') {
       handleFirstTimeContext();
     }
-  });
+  }, []);
   return (
     <Grid dir={languageDirection} container spacing={3}>
       <Grid item xs={6}>

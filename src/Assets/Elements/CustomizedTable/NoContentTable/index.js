@@ -9,7 +9,7 @@ const NoContentTable = () => {
   return (
     <StyledNoContentTable>
       <img alt={'No Content'} src={NoContentTablePic} />
-      <Styledh1>{t('There are no invites for today')}</Styledh1>
+      <Styledh1>{t('No data to display')}</Styledh1>
     </StyledNoContentTable>
   );
 };

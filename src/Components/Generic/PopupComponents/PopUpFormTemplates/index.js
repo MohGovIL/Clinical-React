@@ -71,36 +71,39 @@ const PopUpFormTemplates = ({
     encounter.examinationCode < 1;
 
   useEffect(() => {
-    if (!templates.length)
-      (async () => {
-        try {
-          const templatesServerData = [];
-          let response = await getFormTemplates(
-            encounter.serviceTypeCode,
-            encounter.examinationCode.toString(),
-            formID,
-            formFields,
-          );
+    (async () => {
+      try {
+        const templatesServerData = [];
+        let response = await getFormTemplates(
+          encounter.serviceTypeCode,
+          encounter.examinationCode.toString(),
+          formID,
+          formFields,
+        );
 
+        if (response.data && response.data.length > 0) {
+          for (let i = 0; i < response.data.length; i++) {
+            templatesServerData.push({ title: response.data[i] });
+          }
+        }
           if (response && response.data && response.data.length > 0) {
             for (let i = 0; i < response.data.length; i++) {
               templatesServerData.push({ title: response.data[i] });
             }
           }
 
-          if (templatesServerData && templatesServerData.length > 0) {
-            setTemplates(templatesServerData);
-          }
-        } catch (error) {
-          console.log(error);
+        if (templatesServerData && templatesServerData.length > 0) {
+          setTemplates(templatesServerData);
         }
-      })();
+      } catch (error) {
+        console.log(error);
+      }
+    })();
   }, [
     encounter.examinationCode,
     encounter.serviceTypeCode,
     formID,
     formFields,
-    templates.length,
   ]);
 
   return templates ? (

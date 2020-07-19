@@ -136,11 +136,8 @@ export const StyledMedicalFileIcon = styled.div`
   }
 `;
 export const StyledHeader = styled.div`
-  margin-top: 4%;
+  margin-top: 48px;
   display: flex;
-  label > span {
-    margin: 0px 45px;
-  }
   label {
     left: 0;
     right: 0;
