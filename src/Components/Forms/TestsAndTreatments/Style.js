@@ -189,4 +189,37 @@ export const StyledTypographyName = styled(Typography)`
 `;
 
 export const StyledInstructions = styled.div``;
-export const StyledIconedButton = styled(IconButton)``;
+export const StyledIconedButton = styled(Button)`
+  width: 150px;
+  height: 40px;
+  border-radius: 0px 23.5px 23.5px 0px;
+  background-color: #eaf7ff;
+  top: 34%;
+  right: 32%;
+
+  p {
+    width: 89px;
+    height: 20px;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.25;
+    letter-spacing: normal;
+    text-align: right;
+    color: #000b40;
+  }
+
+  div {
+    width: 32px;
+    height: 32px;
+    box-shadow: 0 0 14px 0 rgba(165, 166, 169, 0.2);
+    border-radius: 23.5px;
+    background-color: #ffffff;
+  }
+  img {
+    width: 14px;
+    height: 17px;
+    margin: 8px 8px;
+  }
+`;

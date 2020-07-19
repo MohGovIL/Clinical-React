@@ -20,7 +20,7 @@ import { StyledSelectTemplateButton } from '../../../Assets/Elements/StyledSelec
 import { StyledFormGroup } from '../../../Assets/Elements/StyledFormGroup';
 import { StyledButton } from '../../../Assets/Elements/StyledButton';
 import { StyledIconButton } from '../../../Assets/Elements/HeaderPatient/Style';
-
+import PDF from 'Assets/Images/pdf.png';
 const AddCardInstruction = ({
   user,
   edit,
@@ -37,10 +37,17 @@ const AddCardInstruction = ({
   ] = useState([]);
 
   const [
+    currentTestTreatmentsInstructionsDetailsSelectedId,
+    setCurrentTestTreatmentsInstructionsDetailsSelectedId,
+  ] = useState('');
+
+  const [
     currentTestTreatmentsInstructionsLetters,
     setCurrentTestTreatmentsInstructionsLetters,
   ] = useState([]);
-
+  const handleChangeOfDetails = async (event) => {
+    setCurrentTestTreatmentsInstructionsDetailsSelectedId(event.target.value);
+  };
   const handleChange = async (event) => {
     if (
       currentTestTreatmentsInstructions &&
@@ -126,7 +133,7 @@ const AddCardInstruction = ({
         <StyledCardName></StyledCardName>
       </StyledCardDetails>
       <Grid container spacing={4}>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <CustomizedTextField
             onChange={handleChange}
             value={currentTestTreatmentsInstructions[index].value}
@@ -149,14 +156,18 @@ const AddCardInstruction = ({
         </Grid>
         {currentTestTreatmentsInstructionsDetails &&
         currentTestTreatmentsInstructionsDetails.length > 0 ? (
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <CustomizedTextField
-              onChange={handleChange}
-              value={currentTestTreatmentsInstructions[index].value}
+              onChange={handleChangeOfDetails}
+              value={
+                currentTestTreatmentsInstructionsDetailsSelectedId
+                  ? currentTestTreatmentsInstructionsDetailsSelectedId
+                  : ''
+              }
               iconColor='#1976d2'
               width='100%'
               select
-              label={t('2')}>
+              label={t('X-Ray Type')}>
               <MenuItem value={''}>
                 <em>{t('Choose')}</em>
               </MenuItem>
@@ -171,28 +182,27 @@ const AddCardInstruction = ({
             </CustomizedTextField>
           </Grid>
         ) : (
-          <Grid item xs={4}></Grid>
+          <Grid item xs={3}></Grid>
         )}
         <Grid item xs={2}></Grid>
         <Grid item xs={2}>
           {/*{encounter.status !== "finished" && true  }
           //see em-84 - to be continued*/}
-          <StyledIconedButton>{t('Refferal for x-ray')}</StyledIconedButton>
+          <StyledIconedButton>
+            <div>
+              <img src={PDF} />
+            </div>
+            <p>{t('Referral for x-ray')}</p>
+          </StyledIconedButton>
         </Grid>
 
-        <Grid item xs={8}>
+        <Grid item xs={6}>
           <CustomizedTextField
-            name='recommendations'
+            name='instructions'
             /*  inputRef={register}*/
-            label={'recommendations'}
+            label={t('Instructions')}
             width='100%'
             multiline
-            /*InputLabelProps={{
-              shrink: diagnosisAndTreatmentFields['findingsDetails']
-                ? true
-                : false,
-            }}
-            disabled={permission === 'view' ? true : false}*/
           />
         </Grid>
         <Grid item xs={2}>
