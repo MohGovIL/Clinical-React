@@ -5,8 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { StyledSensitivities } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import { Checkbox, Grid, ListItemText } from '@material-ui/core';
+import { CheckBox, CheckBoxOutlineBlankOutlined } from '@material-ui/icons';
 
-const Sensitivities = ({}) => {
+const Sensitivities = ({
+  defaultRenderOptionFunction,
+  defaultChipLabelFunction,
+}) => {
   const { t } = useTranslation();
   const [sensitivitiesChanged, setSensitivitiesChanged] = useState(false);
 
@@ -38,7 +43,7 @@ const Sensitivities = ({}) => {
               const normalizedSensitiveSet = normalizeFhirValueSet(sensitive);
               const optionObj = {};
               optionObj['serviceType'] = {
-                ...servicesTypeObj[normalizedSensitiveSet.code]
+                ...servicesTypeObj[normalizedSensitiveSet.code],
               };
               optionObj['reasonCode'] = normalizedSensitiveSet;
               options.push(optionObj);
@@ -71,12 +76,11 @@ const Sensitivities = ({}) => {
           loadingServicesType={loadingServicesType}
           servicesTypeOpen={servicesTypeOpen}
           setServicesTypeOpen={setServicesTypeOpen}
-
           valueSetCode={'sensitivities'}
           labelInputText={'Sensitivities details'}
-          helperErrorText={
-            'The visit reason performed during the visit must be selected'
-          }
+          helperErrorText={'Some error text'}
+          defaultRenderOptionFunction={defaultRenderOptionFunction}
+          defaultChipLabelFunction={defaultChipLabelFunction}
         />
       )}
     </StyledSensitivities>

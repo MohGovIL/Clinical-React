@@ -6,7 +6,10 @@ import { StyleBackgroundDiseases } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 
-const BackgroundDiseases = ({}) => {
+const BackgroundDiseases = ({
+  defaultRenderOptionFunction,
+  defaultChipLabelFunction,
+}) => {
   const { t } = useTranslation();
   const [backgroundDisChanged, setBackgroundDisChanged] = useState(false);
   const [servicesType, setServicesType] = useState([]);
@@ -41,7 +44,7 @@ const BackgroundDiseases = ({}) => {
               const normalizedSensitiveSet = normalizeFhirValueSet(sensitive);
               const optionObj = {};
               optionObj['serviceType'] = {
-                ...servicesTypeObj[normalizedSensitiveSet.code]
+                ...servicesTypeObj[normalizedSensitiveSet.code],
               };
               optionObj['reasonCode'] = normalizedSensitiveSet;
               options.push(optionObj);
@@ -74,11 +77,10 @@ const BackgroundDiseases = ({}) => {
           loadingServicesType={loadingServicesType}
           servicesTypeOpen={servicesTypeOpen}
           setServicesTypeOpen={setServicesTypeOpen}
-
           labelInputText={'Diseases details'}
-          helperErrorText={
-            'The visit reason performed during the visit must be selected'
-          }
+          helperErrorText={'Some error text'}
+          defaultRenderOptionFunction={defaultRenderOptionFunction}
+          defaultChipLabelFunction={defaultChipLabelFunction}
         />
       )}
     </StyleBackgroundDiseases>

@@ -17,6 +17,8 @@ import CustomizedSelectCheckList from '../../../Assets/Elements/CustomizedSelect
 import Sensitivities from './Sensitivities';
 import BackgroundDiseases from './BackgroundDiseases';
 import ChronicMedication from './ChronicMedication';
+import { Checkbox, Grid, ListItemText } from '@material-ui/core';
+import { CheckBox, CheckBoxOutlineBlankOutlined } from '@material-ui/icons';
 
 const MedicalAdmission = ({
   patient,
@@ -121,6 +123,37 @@ const MedicalAdmission = ({
     t('There are diseases'),
   ];
 
+  const medicalAdmissionRenderOption = (option, state) => {
+    return (
+      <React.Fragment>
+        <Grid container justify='flex-start' alignItems='center'>
+          <Grid item xs={3}>
+            <Checkbox
+              color='primary'
+              icon={<CheckBoxOutlineBlankOutlined />}
+              checkedIcon={<CheckBox />}
+              checked={state.selected}
+            />
+          </Grid>
+          {option.serviceType && option.serviceType.name && (
+            <Grid item xs={3}>
+              <ListItemText primary={t(option.serviceType.name)} />
+            </Grid>
+          )}
+          {option.reasonCode && option.reasonCode.name && (
+            <Grid item xs={3}>
+              <ListItemText primary={t(option.reasonCode.name)} />
+            </Grid>
+          )}
+        </Grid>
+      </React.Fragment>
+    );
+  };
+
+  const medicalAdmissionChipLabel = (selected) => {
+    return `${t(selected.reasonCode.name)}`;
+  };
+
   return (
     <React.Fragment>
       <PopUpFormTemplates {...popUpProps} />
@@ -154,9 +187,9 @@ const MedicalAdmission = ({
               />
             </StyledRadioGroupChoice>
           )}
-          <Sensitivities/>
-          <BackgroundDiseases/>
-          <ChronicMedication/>
+          <Sensitivities defaultRenderOptionFunction={medicalAdmissionRenderOption} defaultChipLabelFunction={medicalAdmissionChipLabel}/>
+          <BackgroundDiseases defaultRenderOptionFunction={medicalAdmissionRenderOption} defaultChipLabelFunction={medicalAdmissionChipLabel}/>
+          <ChronicMedication defaultRenderOptionFunction={medicalAdmissionRenderOption} defaultChipLabelFunction={medicalAdmissionChipLabel}/>
           <StyledButton
             color='primary'
             type='submit'

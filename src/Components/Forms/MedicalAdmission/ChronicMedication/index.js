@@ -6,7 +6,10 @@ import { StyleChronicMedication } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 
-const ChronicMedication = ({}) => {
+const ChronicMedication = ({
+  defaultRenderOptionFunction,
+  defaultChipLabelFunction,
+}) => {
   const { t } = useTranslation();
   const [medicationChanged, setMedicationChanged] = useState(false);
   const [servicesType, setServicesType] = useState([]);
@@ -39,7 +42,7 @@ const ChronicMedication = ({}) => {
               const normalizedSensitiveSet = normalizeFhirValueSet(sensitive);
               const optionObj = {};
               optionObj['serviceType'] = {
-                ...servicesTypeObj[normalizedSensitiveSet.code]
+                ...servicesTypeObj[normalizedSensitiveSet.code],
               };
               optionObj['reasonCode'] = normalizedSensitiveSet;
               options.push(optionObj);
@@ -72,13 +75,13 @@ const ChronicMedication = ({}) => {
           loadingServicesType={loadingServicesType}
           servicesTypeOpen={servicesTypeOpen}
           setServicesTypeOpen={setServicesTypeOpen}
-
           labelInputText={'Medications details'}
           helperErrorText={
             'The visit reason performed during the visit must be selected'
           }
+          defaultRenderOptionFunction={defaultRenderOptionFunction}
+          defaultChipLabelFunction={defaultChipLabelFunction}
         />
-
       )}
     </StyleChronicMedication>
   );

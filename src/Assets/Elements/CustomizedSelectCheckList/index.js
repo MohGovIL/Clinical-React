@@ -23,6 +23,7 @@ import CustomizedTextField from '../CustomizedTextField';
 import { useTranslation } from 'react-i18next';
 import matchSorter from 'match-sorter';
 import { useFormContext } from 'react-hook-form';
+import { StyledAutocomplete } from './Style';
 
 const CustomizedSelectCheckList = ({
   labelInputText,
@@ -31,6 +32,8 @@ const CustomizedSelectCheckList = ({
   loadingServicesType,
   servicesTypeOpen,
   setServicesTypeOpen,
+  defaultRenderOptionFunction,
+  defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
   const {
@@ -99,9 +102,47 @@ const CustomizedSelectCheckList = ({
     setSelectedServicesType(filteredSelectedServicesType);
   };
 
+  //this function for change dropdown list style
+  const defaultRenderOption = (option, state) => {
+    return (
+      <React.Fragment>
+        <Grid container justify='flex-start' alignItems='center'>
+          <Grid item xs={3}>
+            <Checkbox
+              color='primary'
+              icon={<CheckBoxOutlineBlankOutlined />}
+              checkedIcon={<CheckBox />}
+              checked={state.selected}
+            />
+          </Grid>
+          {option.reasonCode && option.reasonCode.code && (
+            <Grid item xs={3}>
+              <ListItemText>{option.reasonCode.code}</ListItemText>
+            </Grid>
+          )}
+          {option.serviceType && option.serviceType.name && (
+            <Grid item xs={3}>
+              <ListItemText primary={t(option.serviceType.name)} />
+            </Grid>
+          )}
+          {option.reasonCode && option.reasonCode.name && (
+            <Grid item xs={3}>
+              <ListItemText primary={t(option.reasonCode.name)} />
+            </Grid>
+          )}
+        </Grid>
+      </React.Fragment>
+    )
+  }
+
+  //this function draw default chip-label style
+  const defaultChipLabel = (selected) => {
+    return `${selected.reasonCode.code} | ${t(selected.serviceType.name)} | ${t(selected.reasonCode.name)}`;
+  };
+
   return (
     <React.Fragment>
-      <StyledAutoComplete
+      <StyledAutocomplete
         filterOptions={filterOptions}
         multiple
         noOptionsText={t('No Results')}
@@ -117,33 +158,7 @@ const CustomizedSelectCheckList = ({
         }
         disableCloseOnSelect
         renderTags={() => null}
-        renderOption={(option, state) => (
-          <Grid container justify='flex-end' alignItems='center'>
-            <Grid item xs={3}>
-              <Checkbox
-                color='primary'
-                icon={<CheckBoxOutlineBlankOutlined />}
-                checkedIcon={<CheckBox />}
-                checked={state.selected}
-              />
-            </Grid>
-            {option.reasonCode && option.reasonCode.code && (
-              <Grid item xs={3}>
-                <ListItemText>{option.reasonCode.code}</ListItemText>
-              </Grid>
-            )}
-            {option.serviceType && option.serviceType.name && (
-              <Grid item xs={3}>
-                <ListItemText primary={t(option.serviceType.name)} />
-              </Grid>
-            )}
-            {option.reasonCode && option.reasonCode.name && (
-              <Grid item xs={3}>
-                <ListItemText primary={t(option.reasonCode.name)} />
-              </Grid>
-            )}
-          </Grid>
-        )}
+        renderOption={(option, state) => defaultRenderOptionFunction ? defaultRenderOptionFunction(option,state) : defaultRenderOption(option,state)}
         ListboxComponent={ListboxComponent}
         ListboxProps={{
           pendingValue: pendingValue,
@@ -189,9 +204,7 @@ const CustomizedSelectCheckList = ({
             deleteIcon={<Close fontSize='small' />}
             onDelete={chipOnDeleteHandler(selectedIndex)}
             key={selectedIndex}
-            label={`${selected.reasonCode.code} | ${t(
-              selected.serviceType.name,
-            )} | ${t(selected.reasonCode.name)}`}
+            label={defaultChipLabelFunction ? defaultChipLabelFunction(selected) : defaultChipLabel(selected)}
           />
         ))}
       </Grid>
