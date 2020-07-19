@@ -60,64 +60,84 @@ const DiagnosisAndRecommendations = ({
   };
   const onSubmit = async (data) => {
     if (isRequiredValidation(data) || true) {
-      console.log(data);
-      const items = qItem.item.map((i) => {
-        const item = {
-          linkId: i.linkId,
-          text: i.text,
-        };
-        switch (i.text) {
-          case 'Finding details':
-            if (data.findingsDetails)
-              item['answer'] = answerType(i.type, data.findingsDetails);
-            break;
-          case 'Diagnosis details':
-            if (data.diagnosisDetails)
-              item['answer'] = answerType(i.type, data.diagnosisDetails);
-            break;
-          case 'Treatment details':
-            if (data.treatmentDetails)
-              item['answer'] = answerType(i.type, data.treatmentDetails);
-            break;
-          case 'Instructions for further treatment':
-            if (data.instructionsForFurtherTreatment)
-              item['answer'] = answerType(
-                i.type,
-                data.instructionsForFurtherTreatment,
-              );
-            break;
-          case 'Decision':
-            if (data.decision)
-              item['answer'] = answerType(i.type, data.decision);
-            break;
-          case 'Evacuation way':
-            if (data.evacuationWay)
-              item['answer'] = answerType(i.type, data.evacuationWay);
-            break;
-          case 'Sick leave':
-            if (data.numberOfDays)
-              item['answer'] = answerType(i.type, data.numberOfDays);
-            break;
-          default:
-            break;
-        }
-        return item;
-      });
-      const ans = await FHIR('QuestionnaireResponse', 'doWork', {
-        functionName: 'createQuestionnaireResponse',
-        functionParams: {
-          questionnaireResponse: {
-            questionnaire: data.questionnaireId,
-            status: 'completed',
-            patient: patient.id,
-            encounter: encounter.id,
-            authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-            source: patient.id,
-            item: items,
+      try {
+        const APIsArray = [];
+        console.log(data);
+        // Creating QuestionnaireResponse
+        // const items = qItem.item.map((i) => {
+        //   const item = {
+        //     linkId: i.linkId,
+        //     text: i.text,
+        //   };
+        //   switch (i.text) {
+        //     case 'Finding details':
+        //       if (data.findingsDetails)
+        //         item['answer'] = answerType(i.type, data.findingsDetails);
+        //       break;
+        //     case 'Diagnosis details':
+        //       if (data.diagnosisDetails)
+        //         item['answer'] = answerType(i.type, data.diagnosisDetails);
+        //       break;
+        //     case 'Treatment details':
+        //       if (data.treatmentDetails)
+        //         item['answer'] = answerType(i.type, data.treatmentDetails);
+        //       break;
+        //     case 'Instructions for further treatment':
+        //       if (data.instructionsForFurtherTreatment)
+        //         item['answer'] = answerType(
+        //           i.type,
+        //           data.instructionsForFurtherTreatment,
+        //         );
+        //       break;
+        //     case 'Decision':
+        //       if (data.decision)
+        //         item['answer'] = answerType(i.type, data.decision);
+        //       break;
+        //     case 'Evacuation way':
+        //       if (data.evacuationWay)
+        //         item['answer'] = answerType(i.type, data.evacuationWay);
+        //       break;
+        //     case 'Sick leave':
+        //       if (data.numberOfDays)
+        //         item['answer'] = answerType(i.type, data.numberOfDays);
+        //       break;
+        //     default:
+        //       break;
+        //   }
+        //   return item;
+        // });
+
+        // const ans = await FHIR('QuestionnaireResponse', 'doWork', {
+        //   functionName: 'createQuestionnaireResponse',
+        //   functionParams: {
+        //     questionnaireResponse: {
+        //       questionnaire: data.questionnaireId,
+        //       status: 'completed',
+        //       patient: patient.id,
+        //       encounter: encounter.id,
+        //       authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        //       source: patient.id,
+        //       item: items,
+        //     },
+        //   },
+        // });
+
+        //Updating encounter
+        const cloneEncounter = { ...encounter };
+        cloneEncounter.extensionSecondaryStatus = data.nextStatus;
+        cloneEncounter.status = 'in-progress';
+
+        const ans = await FHIR('Encounter', 'doWork', {
+          functionName: 'updateEncounter',
+          functionParams: {
+            encounterId: encounter.id,
+            encounter: cloneEncounter,
           },
-        },
-      });
-      console.log(ans);
+        });
+        console.log(ans);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
   const [qItem, setQItem] = React.useState([]);
