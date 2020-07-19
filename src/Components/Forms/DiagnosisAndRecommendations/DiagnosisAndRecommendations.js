@@ -234,7 +234,9 @@ const DiagnosisAndRecommendations = ({
           } else {
             setRequiredErrors((prevState) => {
               const cloneState = [...prevState];
-              cloneState[medicineIndex][field.name] = t('Value is required');
+              cloneState[medicineIndex][field.name] = t(
+                'A value must be entered in the field',
+              );
               return cloneState;
             });
             clean = false;
