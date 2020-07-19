@@ -8,6 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { Card } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
 export const StyledConstantTextField = styled(TextField)`
   width: 104px;
   height: 56px;
@@ -188,3 +189,4 @@ export const StyledTypographyName = styled(Typography)`
 `;
 
 export const StyledInstructions = styled.div``;
+export const StyledIconedButton = styled(IconButton)``;

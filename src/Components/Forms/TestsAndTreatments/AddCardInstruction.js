@@ -5,6 +5,7 @@ import {
   StyledCardDetails,
   StyledCardName,
   StyledCardRoot,
+  StyledIconedButton,
   StyledTypographyHour,
   StyledTypographyName,
 } from './Style';
@@ -18,6 +19,7 @@ import { Grid } from '@material-ui/core';
 import { StyledSelectTemplateButton } from '../../../Assets/Elements/StyledSelectTempleteButton';
 import { StyledFormGroup } from '../../../Assets/Elements/StyledFormGroup';
 import { StyledButton } from '../../../Assets/Elements/StyledButton';
+import { StyledIconButton } from '../../../Assets/Elements/HeaderPatient/Style';
 
 const AddCardInstruction = ({
   user,
@@ -145,26 +147,37 @@ const AddCardInstruction = ({
             })}
           </CustomizedTextField>
         </Grid>
-        <Grid item xs={4}>
-          <CustomizedTextField
-            onChange={handleChange}
-            value={currentTestTreatmentsInstructions[index].value}
-            iconColor='#1976d2'
-            width='100%'
-            select
-            label={t('2')}>
-            <MenuItem value={''}>
-              <em>{t('Choose')}</em>
-            </MenuItem>
+        {currentTestTreatmentsInstructionsDetails &&
+        currentTestTreatmentsInstructionsDetails.length > 0 ? (
+          <Grid item xs={4}>
+            <CustomizedTextField
+              onChange={handleChange}
+              value={currentTestTreatmentsInstructions[index].value}
+              iconColor='#1976d2'
+              width='100%'
+              select
+              label={t('2')}>
+              <MenuItem value={''}>
+                <em>{t('Choose')}</em>
+              </MenuItem>
 
-            {collectedTestAndTreatmentsFromFhir.map((value, index) => {
-              return (
-                <MenuItem key={index} value={value.code}>
-                  {t(value.title)}
-                </MenuItem>
-              );
-            })}
-          </CustomizedTextField>
+              {currentTestTreatmentsInstructionsDetails.map((value, index) => {
+                return (
+                  <MenuItem key={index} value={value.code}>
+                    {t(value.title)}
+                  </MenuItem>
+                );
+              })}
+            </CustomizedTextField>
+          </Grid>
+        ) : (
+          <Grid item xs={4}></Grid>
+        )}
+        <Grid item xs={2}></Grid>
+        <Grid item xs={2}>
+          {/*{encounter.status !== "finished" && true  }
+          //see em-84 - to be continued*/}
+          <StyledIconedButton>{t('Refferal for x-ray')}</StyledIconedButton>
         </Grid>
 
         <Grid item xs={8}>
