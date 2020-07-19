@@ -13,15 +13,17 @@ import { FHIR } from 'Utils/Services/FHIR';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
 import * as moment from 'moment';
+import { useHistory } from 'react-router-dom';
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
   formatDate,
   languageDirection,
-  history,
   verticalName,
   permission,
 }) => {
+  const history = useHistory();
   const methods = useForm({
     mode: 'onBlur',
     defaultValues: {
@@ -123,18 +125,19 @@ const DiagnosisAndRecommendations = ({
         // });
 
         //Updating encounter
-        const cloneEncounter = { ...encounter };
-        cloneEncounter.extensionSecondaryStatus = data.nextStatus;
-        cloneEncounter.status = 'in-progress';
+        // const cloneEncounter = { ...encounter };
+        // cloneEncounter.extensionSecondaryStatus = data.nextStatus;
+        // cloneEncounter.status = 'in-progress';
 
-        const ans = await FHIR('Encounter', 'doWork', {
-          functionName: 'updateEncounter',
-          functionParams: {
-            encounterId: encounter.id,
-            encounter: cloneEncounter,
-          },
-        });
-        console.log(ans);
+        // const ans = await FHIR('Encounter', 'doWork', {
+        //   functionName: 'updateEncounter',
+        //   functionParams: {
+        //     encounterId: encounter.id,
+        //     encounter: cloneEncounter,
+        //   },
+        // });
+        // console.log(ans)
+        history.push(`${baseRoutePath()}/generic/patientTracking`);
       } catch (error) {
         console.log(error);
       }
@@ -150,7 +153,7 @@ const DiagnosisAndRecommendations = ({
             QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
           },
         });
-        // TODO:  needs to fetch QResponse
+        // TODO:  needs to fetch QResponse prob gonna need to pass it down either via formContext or props for each component
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaireId' });
         setValue('questionnaireId', Questionnaire.id);
