@@ -20,6 +20,7 @@ import Practitioner from './Practitioner';
 import Condition from './Condition';
 import MedicationStatement from './MedicationStatement';
 import Obsevations from './Observations';
+import MedicationRequest from './MedicationRequest';
 
 const FHIRStates = {
   Appointment: Appointment,
@@ -36,6 +37,7 @@ const FHIRStates = {
   Condition: Condition,
   MedicationStatement: MedicationStatement,
   Observations: Obsevations,
+  MedicationRequest: MedicationRequest,
   /* More transformers */
   __default__: null,
 };

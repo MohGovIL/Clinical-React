@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { FHIR } from 'Utils/Services/FHIR';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
+import * as moment from 'moment';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -40,10 +41,86 @@ const DiagnosisAndRecommendations = ({
   });
   const { handleSubmit, setValue, register, unregister } = methods;
   const { t } = useTranslation();
-  const onSubmit = (data) => {
-    if (isRequiredValidation(data)) console.log(data);
+  const answerType = (type, data) => {
+    if (type === 'string') {
+      return [
+        {
+          valueString: data,
+        },
+      ];
+    } else if (type === 'integer') {
+      return [
+        {
+          valueInteger: data,
+        },
+      ];
+    } else {
+      return `No such type: ${type}`;
+    }
   };
-
+  const onSubmit = async (data) => {
+    if (isRequiredValidation(data) || true) {
+      console.log(data);
+      const items = qItem.item.map((i) => {
+        const item = {
+          linkId: i.linkId,
+          text: i.text,
+        };
+        switch (i.text) {
+          case 'Finding details':
+            if (data.findingsDetails)
+              item['answer'] = answerType(i.type, data.findingsDetails);
+            break;
+          case 'Diagnosis details':
+            if (data.diagnosisDetails)
+              item['answer'] = answerType(i.type, data.diagnosisDetails);
+            break;
+          case 'Treatment details':
+            if (data.treatmentDetails)
+              item['answer'] = answerType(i.type, data.treatmentDetails);
+            break;
+          case 'Instructions for further treatment':
+            if (data.instructionsForFurtherTreatment)
+              item['answer'] = answerType(
+                i.type,
+                data.instructionsForFurtherTreatment,
+              );
+            break;
+          case 'Decision':
+            if (data.decision)
+              item['answer'] = answerType(i.type, data.decision);
+            break;
+          case 'Evacuation way':
+            if (data.evacuationWay)
+              item['answer'] = answerType(i.type, data.evacuationWay);
+            break;
+          case 'Sick leave':
+            if (data.numberOfDays)
+              item['answer'] = answerType(i.type, data.numberOfDays);
+            break;
+          default:
+            break;
+        }
+        return item;
+      });
+      const ans = await FHIR('QuestionnaireResponse', 'doWork', {
+        functionName: 'createQuestionnaireResponse',
+        functionParams: {
+          questionnaireResponse: {
+            questionnaire: data.questionnaireId,
+            status: 'completed',
+            patient: patient.id,
+            encounter: encounter.id,
+            authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+            source: patient.id,
+            item: items,
+          },
+        },
+      });
+      console.log(ans);
+    }
+  };
+  const [qItem, setQItem] = React.useState([]);
   React.useEffect(() => {
     (async () => {
       try {
@@ -53,9 +130,11 @@ const DiagnosisAndRecommendations = ({
             QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
           },
         });
+        // TODO:  needs to fetch QResponse
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaireId' });
         setValue('questionnaireId', Questionnaire.id);
+        setQItem(Questionnaire);
       } catch (error) {
         console.log(error);
       }
