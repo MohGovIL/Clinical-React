@@ -11,7 +11,10 @@ import { useFormContext } from 'react-hook-form';
  */
 const SaveForm = ({ statuses }) => {
   const { t } = useTranslation();
-  const { permission } = useFormContext();
+  const { permission, watch } = useFormContext();
+
+  const selectedStatus = watch('nextStatus');
+
   return (
     <StyledSaveForm>
       <Content statuses={statuses} />
@@ -21,7 +24,9 @@ const SaveForm = ({ statuses }) => {
           variant='contained'
           type='submit'
           letterSpacing={'0.1'}
-          disabled={permission === 'view' ? true : false}>
+          disabled={
+            !selectedStatus ? true : permission === 'view' ? true : false
+          }>
           {t('Save & Close')}
         </StyledButton>
       </CenterButton>
