@@ -5,19 +5,23 @@ import { useTranslation } from 'react-i18next';
 import { StyledSensitivities } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import { Checkbox, Grid, ListItemText } from '@material-ui/core';
-import { CheckBox, CheckBoxOutlineBlankOutlined } from '@material-ui/icons';
+import { useFormContext } from 'react-hook-form';
 
 const Sensitivities = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
+  const {
+    register,
+    unregister,
+  } = useFormContext();
   const [sensitivitiesChanged, setSensitivitiesChanged] = useState(false);
 
-  const [servicesType, setServicesType] = useState([]);
+  const [sensitivitiesList, setSensitivitiesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
-  const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
+  const loadingSensitivitiesList =
+    servicesTypeOpen && sensitivitiesList.length === 0;
 
   const sensitivitiesRadioList = [t('UNknown'), t('Known')];
 
@@ -25,10 +29,16 @@ const Sensitivities = ({
     console.log('sensitivities: ' + value);
     setSensitivitiesChanged(value);
   };
+
+  useEffect(() => {
+    register({ name: 'sensitivitiesCodes' });
+    return () => unregister(['sensitivitiesCodes']);
+  }, [register, unregister]);
+
   useEffect(() => {
     let active = true;
 
-    if (!loadingServicesType) {
+    if (!loadingSensitivitiesList) {
       return undefined;
     }
 
@@ -49,7 +59,7 @@ const Sensitivities = ({
               options.push(optionObj);
             }),
           );
-          setServicesType(options);
+          setSensitivitiesList(options);
         }
       } catch (err) {
         console.log(err);
@@ -59,7 +69,7 @@ const Sensitivities = ({
     return () => {
       active = false;
     };
-  }, [loadingServicesType]);
+  }, [loadingSensitivitiesList]);
 
   return (
     <StyledSensitivities>
@@ -72,11 +82,11 @@ const Sensitivities = ({
       />
       {sensitivitiesChanged && (
         <CustomizedSelectCheckList
-          servicesType={servicesType}
-          loadingServicesType={loadingServicesType}
+          selectCheckList={sensitivitiesList}
+          loadingCheckList={loadingSensitivitiesList}
           servicesTypeOpen={servicesTypeOpen}
           setServicesTypeOpen={setServicesTypeOpen}
-          valueSetCode={'sensitivities'}
+          valueSetCode={'sensitivitiesCodes'}
           labelInputText={'Sensitivities details'}
           helperErrorText={'Some error text'}
           defaultRenderOptionFunction={defaultRenderOptionFunction}

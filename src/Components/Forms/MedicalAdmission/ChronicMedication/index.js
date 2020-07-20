@@ -5,16 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { StyleChronicMedication } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import { useFormContext } from 'react-hook-form';
 
 const ChronicMedication = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
+  const { register, unregister } = useFormContext();
   const [medicationChanged, setMedicationChanged] = useState(false);
-  const [servicesType, setServicesType] = useState([]);
+
+  const [chronicMedicationList, setChronicMedicationList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
-  const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
+  const loadingChronicMedicationList =
+    servicesTypeOpen && chronicMedicationList.length === 0;
 
   //Radio buttons for medication details
   const medicationRadioList = [t("Doesn't exist"), t('Exist')];
@@ -25,9 +29,14 @@ const ChronicMedication = ({
   };
 
   useEffect(() => {
+    register({ name: 'chronicMedicationCodes' });
+    return () => unregister(['chronicMedicationCodes']);
+  }, [register, unregister]);
+
+  useEffect(() => {
     let active = true;
 
-    if (!loadingServicesType) {
+    if (!loadingChronicMedicationList) {
       return undefined;
     }
 
@@ -48,7 +57,7 @@ const ChronicMedication = ({
               options.push(optionObj);
             }),
           );
-          setServicesType(options);
+          setChronicMedicationList(options);
         }
       } catch (err) {
         console.log(err);
@@ -58,7 +67,7 @@ const ChronicMedication = ({
     return () => {
       active = false;
     };
-  }, [loadingServicesType]);
+  }, [loadingChronicMedicationList]);
 
   return (
     <StyleChronicMedication>
@@ -71,10 +80,11 @@ const ChronicMedication = ({
       />
       {medicationChanged && (
         <CustomizedSelectCheckList
-          servicesType={servicesType}
-          loadingServicesType={loadingServicesType}
+          selectCheckList={chronicMedicationList}
+          loadingCheckList={loadingChronicMedicationList}
           servicesTypeOpen={servicesTypeOpen}
           setServicesTypeOpen={setServicesTypeOpen}
+          valueSetCode={'chronicMedicationCodes'}
           labelInputText={'Medications details'}
           helperErrorText={
             'The visit reason performed during the visit must be selected'

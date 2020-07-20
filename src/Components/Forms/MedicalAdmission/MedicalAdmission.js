@@ -12,8 +12,6 @@ import NursingAnamnesis from './NursingAnamnesis';
 import { FHIR } from 'Utils/Services/FHIR';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import UrgentAndInsulation from './UrgentAndInsulation';
-import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import CustomizedSelectCheckList from '../../../Assets/Elements/CustomizedSelectCheckList';
 import Sensitivities from './Sensitivities';
 import BackgroundDiseases from './BackgroundDiseases';
 import ChronicMedication from './ChronicMedication';
@@ -114,14 +112,6 @@ const MedicalAdmission = ({
 
   //Radio buttons for pregnancy
   const pregnancyRadioList = [t('No'), t('Yes')];
-
-  //Radio buttons for medication details
-  const medicationRadioList = [t("Doesn't exist"), t('Exist')];
-  const sensitivitiesRadioList = [t('UNknown'), t('Known')];
-  const backgroundDisRadioList = [
-    t('Usually healthy'),
-    t('There are diseases'),
-  ];
 
   const medicalAdmissionRenderOption = (option, state) => {
     return (

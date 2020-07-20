@@ -5,16 +5,22 @@ import { useTranslation } from 'react-i18next';
 import { StyleBackgroundDiseases } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import { useFormContext } from 'react-hook-form';
 
 const BackgroundDiseases = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
+  const {
+    register,
+    unregister,
+  } = useFormContext();
   const [backgroundDisChanged, setBackgroundDisChanged] = useState(false);
-  const [servicesType, setServicesType] = useState([]);
+
+  const [backgroundDiseasesList, setBackgroundDiseasesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
-  const loadingServicesType = servicesTypeOpen && servicesType.length === 0;
+  const loadingBackgroundDiseasesList = servicesTypeOpen && backgroundDiseasesList.length === 0;
 
   const backgroundDisRadioList = [
     t('Usually healthy'),
@@ -27,9 +33,14 @@ const BackgroundDiseases = ({
   };
 
   useEffect(() => {
+    register({ name: 'backgroundDiseasesCodes' });
+    return () => unregister(['backgroundDiseasesCodes']);
+  }, [register, unregister]);
+
+  useEffect(() => {
     let active = true;
 
-    if (!loadingServicesType) {
+    if (!loadingBackgroundDiseasesList) {
       return undefined;
     }
 
@@ -50,7 +61,7 @@ const BackgroundDiseases = ({
               options.push(optionObj);
             }),
           );
-          setServicesType(options);
+          setBackgroundDiseasesList(options);
         }
       } catch (err) {
         console.log(err);
@@ -60,7 +71,7 @@ const BackgroundDiseases = ({
     return () => {
       active = false;
     };
-  }, [loadingServicesType]);
+  }, [loadingBackgroundDiseasesList]);
 
   return (
     <StyleBackgroundDiseases>
@@ -73,10 +84,11 @@ const BackgroundDiseases = ({
       />
       {backgroundDisChanged && (
         <CustomizedSelectCheckList
-          servicesType={servicesType}
-          loadingServicesType={loadingServicesType}
+          selectCheckList={backgroundDiseasesList}
+          loadingCheckList={loadingBackgroundDiseasesList}
           servicesTypeOpen={servicesTypeOpen}
           setServicesTypeOpen={setServicesTypeOpen}
+          valueSetCode={'backgroundDiseasesCodes'}
           labelInputText={'Diseases details'}
           helperErrorText={'Some error text'}
           defaultRenderOptionFunction={defaultRenderOptionFunction}

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import {
-  StyledAutoComplete,
   StyledChip,
-  StyledFormGroup,
 } from 'Components/Generic/PatientAdmission/PatientDetailsBlock/Style';
 import {
   Checkbox,
@@ -28,10 +26,11 @@ import { StyledAutocomplete } from './Style';
 const CustomizedSelectCheckList = ({
   labelInputText,
   helperErrorText,
-  servicesType,
-  loadingServicesType,
+  selectCheckList,
+  loadingCheckList,
   servicesTypeOpen,
   setServicesTypeOpen,
+  valueSetCode,
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
@@ -56,21 +55,16 @@ const CustomizedSelectCheckList = ({
 
   const onCloseChangeHandler = (value) => {
     const checkListCodeArr = [];
-    let serviceTypeCodeValue = '';
     if (value && value.length) {
-      serviceTypeCodeValue = value[0].serviceType.code;
       value.forEach((item, itemIndex) => {
         checkListCodeArr.push(item.reasonCode.code);
       });
     }
-    // setValue([
-    //   {
-    //     serviceTypeCode: serviceTypeCodeValue,
-    //   },
-    //   {
-    //     examinationCode: examinationCodeArr,
-    //   },
-    // ]);
+    setValue([
+      {
+        [valueSetCode]: checkListCodeArr,
+      },
+    ]);
   };
 
   const selectCheckListOnOpenHandler = () => {
@@ -132,12 +126,14 @@ const CustomizedSelectCheckList = ({
           )}
         </Grid>
       </React.Fragment>
-    )
-  }
+    );
+  };
 
   //this function draw default chip-label style
   const defaultChipLabel = (selected) => {
-    return `${selected.reasonCode.code} | ${t(selected.serviceType.name)} | ${t(selected.reasonCode.name)}`;
+    return `${selected.reasonCode.code} | ${t(selected.serviceType.name)} | ${t(
+      selected.reasonCode.name,
+    )}`;
   };
 
   return (
@@ -148,7 +144,7 @@ const CustomizedSelectCheckList = ({
         noOptionsText={t('No Results')}
         loadingText={t('Loading')}
         open={servicesTypeOpen}
-        loading={loadingServicesType}
+        loading={loadingCheckList}
         onOpen={selectCheckListOnOpenHandler}
         onClose={selectCheckListOnCloseHandler}
         value={pendingValue}
@@ -158,7 +154,11 @@ const CustomizedSelectCheckList = ({
         }
         disableCloseOnSelect
         renderTags={() => null}
-        renderOption={(option, state) => defaultRenderOptionFunction ? defaultRenderOptionFunction(option,state) : defaultRenderOption(option,state)}
+        renderOption={(option, state) =>
+          defaultRenderOptionFunction
+            ? defaultRenderOptionFunction(option, state)
+            : defaultRenderOption(option, state)
+        }
         ListboxComponent={ListboxComponent}
         ListboxProps={{
           pendingValue: pendingValue,
@@ -166,7 +166,7 @@ const CustomizedSelectCheckList = ({
           setOpen: setServicesTypeOpen,
           setValue: onCloseChangeHandler,
         }}
-        options={servicesType}
+        options={selectCheckList}
         renderInput={(params) => (
           <CustomizedTextField
             width={'70%'}
@@ -186,7 +186,7 @@ const CustomizedSelectCheckList = ({
               endAdornment: (
                 <React.Fragment>
                   <InputAdornment position={'end'}>
-                    {loadingServicesType ? (
+                    {loadingCheckList ? (
                       <CircularProgress color={'inherit'} size={20} />
                     ) : null}
                     {servicesTypeOpen ? <ExpandLess /> : <ExpandMore />}
@@ -204,7 +204,11 @@ const CustomizedSelectCheckList = ({
             deleteIcon={<Close fontSize='small' />}
             onDelete={chipOnDeleteHandler(selectedIndex)}
             key={selectedIndex}
-            label={defaultChipLabelFunction ? defaultChipLabelFunction(selected) : defaultChipLabel(selected)}
+            label={
+              defaultChipLabelFunction
+                ? defaultChipLabelFunction(selected)
+                : defaultChipLabel(selected)
+            }
           />
         ))}
       </Grid>
