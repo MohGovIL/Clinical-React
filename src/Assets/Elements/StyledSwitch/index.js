@@ -11,6 +11,8 @@ const StyledSwitch = ({
   marginLeft,
   register,
   name,
+  margin,
+  width,
 }) => {
   const { t } = useTranslation();
 
@@ -24,7 +26,9 @@ const StyledSwitch = ({
     <Label
       marginRight={marginRight}
       marginLeft={marginLeft}
-      direction={languageDirection}>
+      direction={languageDirection}
+      margin={margin}
+      width={width}>
       <input
         name={name || null}
         ref={register || null}

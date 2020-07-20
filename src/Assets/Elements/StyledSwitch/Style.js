@@ -3,10 +3,11 @@ import styled from 'styled-components';
 const Label = styled.label`
   position: relative;
   display: inline-block;
-  width: 80px;
-  height: 40px;
+  width: ${(props) => props.width || '80px'};
+  height: ${(props) => props.height || '40px'};
   margin-right: ${(props) => props.marginRight || null};
   margin-left: ${(props) => props.marginLeft || null};
+  margin: ${(props) => props.margin || null};
   & input {
     opacity: 0;
     width: 0;
@@ -34,11 +35,12 @@ const Label = styled.label`
     font-weight: bold;
   }
   & span:before {
-    border-radius: 50%;
+    border-radius: ${(props) => (props.width ? '18px 18px' : '50%')};
     position: absolute;
     content: '';
     height: 30px;
-    width: 30px;
+    width: ${(props) =>
+      props.width ? props.width.split('px')[0] / 2 + 'px' : '30px'};
     left: 4px;
     bottom: 5px;
     background-color: white;
@@ -56,9 +58,18 @@ const Label = styled.label`
   }
 
   & input:checked + span:before {
-    -webkit-transform: translateX(42px);
-    -ms-transform: translateX(42px);
-    transform: translateX(42px);
+    -webkit-transform: translateX(
+      ${(props) =>
+        props.width ? props.width.split('px')[0] / 2 - 10 + 'px' : '42px'}
+    );
+    -ms-transform: translateX(
+      ${(props) =>
+        props.width ? props.width.split('px')[0] / 2 - 10 + 'px' : '42px'}
+    );
+    transform: translateX(
+      ${(props) =>
+        props.width ? props.width.split('px')[0] / 2 - 10 + 'px' : '42px'}
+    );
   }
 `;
 
