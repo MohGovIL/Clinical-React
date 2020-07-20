@@ -141,7 +141,7 @@ const MedicalAdmission = ({
             disableHeaders={false}
             disableButtonIsUrgent={false}
           />
-          <UrgentAndInsulation />
+          <UrgentAndInsulation requiredUrgent requiredInsulation/>
           <NursingAnamnesis />
           <>
             {/*need to make a new component for radio select*/}

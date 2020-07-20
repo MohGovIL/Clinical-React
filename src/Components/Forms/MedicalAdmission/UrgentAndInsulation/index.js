@@ -6,7 +6,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { StyledInsulation, StyledIsUrgent } from './Style';
 import { useTranslation } from 'react-i18next';
 
-const UrgentAndInsulation = () => {
+const UrgentAndInsulation = (requiredUrgent, requiredInsulation) => {
   const { t } = useTranslation();
 
   const {
@@ -31,7 +31,7 @@ const UrgentAndInsulation = () => {
           justify={'flex-start'}
           alignItems={'center'}>
           <span>
-            <b>{t('Is urgent?')}</b>
+            <b>{t('Is urgent?')} {requiredUrgent || requiredUrgent === true ? ("*") : ''}</b>
           </span>
           {/* Requested service - switch */}
           <StyledSwitch
@@ -51,7 +51,7 @@ const UrgentAndInsulation = () => {
           justify={'flex-start'}
           alignItems={'center'}>
           <span>
-            <b>{t('Insulation required')}?</b>
+            <b>{t('Insulation required')}? {requiredInsulation || requiredInsulation === true ? ("*") : ''}</b>
           </span>
           {/* Requested service - switch */}
           <StyledSwitch
