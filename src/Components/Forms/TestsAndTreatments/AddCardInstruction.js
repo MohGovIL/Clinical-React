@@ -260,7 +260,7 @@ const AddCardInstruction = ({
                   'templates_x_ray', //to change
                   'tests_and_treatments', //to change
                   callBack,
-                  'X-Ray details',
+                  'x_ray_details',
                 )
               }>
               {t('Select template')}
