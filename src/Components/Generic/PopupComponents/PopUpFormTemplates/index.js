@@ -43,6 +43,7 @@ const PopUpFormTemplates = ({
   };
   const handleWithoutSavingPopupClose = () => {
     handleSavePopupClose();
+    setContext('');
   };
   const handleJustClosePopupClose = () => {
     setPopupCloseOpen(false);
@@ -51,7 +52,13 @@ const PopUpFormTemplates = ({
     if ((context === '' && !saved) || (saved && typeof saved !== 'object')) {
       handlePopupClose();
     } else {
-      setPopupCloseOpen(true);
+      if (defaultContext.trim() !== context.trim()) {
+        setPopupCloseOpen(true);
+      } else {
+        setPopupCloseOpen(false);
+        setContext('');
+        handlePopupClose();
+      }
     }
   };
   const dialog_props = {
