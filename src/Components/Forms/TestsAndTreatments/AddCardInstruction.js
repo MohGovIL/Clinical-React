@@ -34,44 +34,10 @@ const AddCardInstruction = ({
   currentTestTreatmentsInstructions,
   setCurrentTestTreatmentsInstructions,
   index,
+  handlePopUpProps,
+  callBack,
+  popUpProps,
 }) => {
-  const [defaultContext, setDefaultContext] = useState('');
-  const handlePopUpClose = () => {
-    setPopUpProps((prevState) => {
-      return {
-        ...prevState,
-        popupOpen: false,
-      };
-    });
-  };
-  const [popUpProps, setPopUpProps] = React.useState({
-    popupOpen: false,
-    formID: '',
-    encounter,
-    formFieldsTitle: '',
-    defaultContext,
-    setDefaultContext,
-    handlePopupClose: handlePopUpClose,
-    setTemplatesTextReturned: null,
-    name: '',
-  });
-
-  const handlePopUpProps = (title, fields, id, callBack, name) => {
-    setPopUpProps((prevState) => {
-      return {
-        ...prevState,
-        popupOpen: true,
-        formFieldsTitle: title,
-        formFields: fields,
-        formID: id,
-        setTemplatesTextReturned: callBack,
-        name,
-      };
-    });
-  };
-  const callBack = (data, name) => {
-    // setValue(name, data);
-  };
   const { t } = useTranslation();
   const [
     currentTestTreatmentsInstructionsDetails,
@@ -160,7 +126,6 @@ const AddCardInstruction = ({
   };
   return (
     <React.Fragment>
-      <PopUpFormTemplates {...popUpProps} />
       <StyledCardRoot>
         <StyledCardDetails>
           <StyledCardContent>
@@ -179,6 +144,7 @@ const AddCardInstruction = ({
         <Grid container spacing={4}>
           <Grid item xs={3}>
             <CustomizedTextField
+              name={'test_treatment'}
               onChange={handleChange}
               value={currentTestTreatmentsInstructions[index].value}
               iconColor='#1976d2'
@@ -202,6 +168,7 @@ const AddCardInstruction = ({
           currentTestTreatmentsInstructionsDetails.length > 0 ? (
             <Grid item xs={3}>
               <CustomizedTextField
+                name={'test_treatment_type'}
                 onChange={handleChangeOfDetails}
                 value={
                   currentTestTreatmentsInstructionsDetailsSelectedId
@@ -234,7 +201,7 @@ const AddCardInstruction = ({
           <Grid item xs={2}>
             {/*{encounter.status !== "finished" && true  }
           //see em-84 - to be continued*/}
-            <StyledIconedButton>
+            <StyledIconedButton name={'test_treatment_referral'}>
               <div>
                 <img src={PDF} />
               </div>
@@ -253,6 +220,7 @@ const AddCardInstruction = ({
           </Grid>
           <Grid item xs={2}>
             <StyledSelectTemplateButton
+              name={'test_treatment_recommendations'}
               /* disabled={permission === 'view' ? true : false}*/
               onClick={() =>
                 handlePopUpProps(
@@ -277,7 +245,7 @@ const AddCardInstruction = ({
             </span>
             {/* Requested service - switch */}
             <StyledSwitch
-              name='performed'
+              name='test_treatment_status'
               //register={register}
               label_1={'Not done'}
               label_2={'Performed'}
@@ -295,7 +263,7 @@ const AddCardInstruction = ({
             <CustomizedTextField
               /*disabled={permission === 'view' ? true : false}*/
               /* inputRef={register}*/
-              name='remark'
+              name='test_treatment_remark'
               multiline
               width={'85%'}
               label={t('remark')}
