@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Title from 'Assets/Elements/Title';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
@@ -9,6 +9,7 @@ import { StyledDivider } from '../Style';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import { Delete } from '@material-ui/icons';
 import * as moment from 'moment';
+import { FHIR } from 'Utils/Services/FHIR';
 
 const DrugRecommendation = () => {
   const { t } = useTranslation();
@@ -58,6 +59,42 @@ const DrugRecommendation = () => {
     }
   };
   const instructionsForTheDrug = t('Instructions for the drug');
+
+  const fetchDrugsData = async () => {
+    const APIsArray = [
+      FHIR('ValueSet', 'doWork', {
+        functionName: 'getValueSet',
+        functionParams: {
+          id: 'drugs_list',
+        },
+      }),
+      FHIR('ValueSet', 'doWork', {
+        functionName: 'getValueSet',
+        functionParams: {
+          id: 'drug_form',
+        },
+      }),
+      FHIR('ValueSet', 'doWork', {
+        functionName: 'getValueSet',
+        functionParams: {
+          id: 'drug_route',
+        },
+      }),
+      FHIR('ValueSet', 'doWork', {
+        functionName: 'getValueSet',
+        functionParams: {
+          id: 'drug_intervals',
+        },
+      }),
+    ];
+    const drugsData = await Promise.all(APIsArray);
+    console.log(drugsData);
+  };
+
+  useEffect(() => {
+    fetchDrugsData();
+  }, []);
+
   return (
     <>
       <StyledFormGroup>

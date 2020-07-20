@@ -15,6 +15,7 @@ import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
 import * as moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+import { store } from 'index';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -125,17 +126,18 @@ const DiagnosisAndRecommendations = ({
         // });
 
         //Updating encounter
-        // const cloneEncounter = { ...encounter };
-        // cloneEncounter.extensionSecondaryStatus = data.nextStatus;
-        // cloneEncounter.status = 'in-progress';
+        const cloneEncounter = { ...encounter };
+        cloneEncounter.extensionSecondaryStatus = data.nextStatus;
+        cloneEncounter.status = 'in-progress';
+        cloneEncounter.practitioner = store.getState().login.userID;
 
-        // const ans = await FHIR('Encounter', 'doWork', {
-        //   functionName: 'updateEncounter',
-        //   functionParams: {
-        //     encounterId: encounter.id,
-        //     encounter: cloneEncounter,
-        //   },
-        // });
+        const ans = await FHIR('Encounter', 'doWork', {
+          functionName: 'updateEncounter',
+          functionParams: {
+            encounterId: encounter.id,
+            encounter: cloneEncounter,
+          },
+        });
         // console.log(ans)
         history.push(`${baseRoutePath()}/generic/patientTracking`);
       } catch (error) {
@@ -153,6 +155,7 @@ const DiagnosisAndRecommendations = ({
             QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
           },
         });
+
         // TODO:  needs to fetch QResponse prob gonna need to pass it down either via formContext or props for each component
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaireId' });
