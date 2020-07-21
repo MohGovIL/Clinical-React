@@ -69,19 +69,21 @@ export const setPatientDataWaitingForReleaseTableRows = function (
         case 'Status':
           row.push({
             async onChange(code) {
+              console.log(code);
               try {
                 const answer = await FHIR('Encounter', 'doWork', {
                   functionName: 'patchEncounter',
                   functionParams: {
                     encountersId: encounter.id,
                     encounterPatchParams: {
-                      extensionSecondaryStatus: code,
-                      extensionSecondaryStatusIndex:
-                        encounter.extensionSecondaryStatusIndex,
+                      status: code,
                     },
                   },
                 });
-                return true;
+                if (answer.status === 200) {
+                  return true;
+                }
+                return false;
               } catch (err) {
                 console.log(err);
                 return false;
