@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Title from 'Assets/Elements/Title';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import { Grid, MenuItem } from '@material-ui/core';
+import { Grid, MenuItem, ListItem } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import { Delete } from '@material-ui/icons';
 import * as moment from 'moment';
 import { FHIR } from 'Utils/Services/FHIR';
+import { FixedSizeList } from 'react-window';
 
 const DrugRecommendation = () => {
   const { t } = useTranslation();
@@ -60,6 +61,13 @@ const DrugRecommendation = () => {
   };
   const instructionsForTheDrug = t('Instructions for the drug');
 
+  const [drugsData, setDrugsData] = useState({
+    drugsList: [],
+    drugForm: [],
+    drugRoute: [],
+    drugIntervals: [],
+  });
+
   const fetchDrugsData = async () => {
     const APIsArray = [
       FHIR('ValueSet', 'doWork', {
@@ -88,12 +96,35 @@ const DrugRecommendation = () => {
       }),
     ];
     const drugsData = await Promise.all(APIsArray);
-    console.log(drugsData);
+
+    setDrugsData({
+      drugList:
+        drugsData[0].status === 200 ? drugsData[0].data.expansion.contains : [],
+      drugForm:
+        drugsData[1].status === 200 ? drugsData[1].data.expansion.contains : [],
+      drugRoute:
+        drugsData[2].status === 200 ? drugsData[2].data.expansion.contains : [],
+      drugIntervals:
+        drugsData[3].status === 200 ? drugsData[3].data.expansion.contains : [],
+    });
   };
 
   useEffect(() => {
     fetchDrugsData();
   }, []);
+
+  const returnMenuItem = (name) => {
+    console.log(drugsData);
+    if (!drugsData[name]) return [];
+    if (!drugsData[name].length) return [];
+    return drugsData[name].map((form, formIndex) => {
+      return (
+        <ListItem value={form.code} key={form.code + formIndex}>
+          {form.display}
+        </ListItem>
+      );
+    });
+  };
 
   return (
     <>
@@ -146,9 +177,7 @@ const DrugRecommendation = () => {
                     width='30%'
                     select
                     label={t('Drug Name')}>
-                    <MenuItem value={'10'}>Ten</MenuItem>
-                    <MenuItem value={'20'}>Twenty</MenuItem>
-                    <MenuItem value={'30'}>Thirty</MenuItem>
+                    {returnMenuItem('drugList')}
                   </CustomizedTextField>
                 }
               />
@@ -180,9 +209,7 @@ const DrugRecommendation = () => {
                       width='30%'
                       select
                       label={`${t('Drug form')} *`}>
-                      <MenuItem value={'10'}>Ten</MenuItem>
-                      <MenuItem value={'20'}>Twenty</MenuItem>
-                      <MenuItem value={'30'}>Thirty</MenuItem>
+                      {returnMenuItem('drugForm')}
                     </CustomizedTextField>
                   }
                 />
@@ -200,9 +227,7 @@ const DrugRecommendation = () => {
                       select
                       label={`${t('Drug route')} *`}
                       onChange={([event]) => event.target.value}>
-                      <MenuItem value={'10'}>Ten</MenuItem>
-                      <MenuItem value={'20'}>Twenty</MenuItem>
-                      <MenuItem value={'30'}>Thirty</MenuItem>
+                      {returnMenuItem('drugRoute')}
                     </CustomizedTextField>
                   }
                 />
@@ -222,9 +247,7 @@ const DrugRecommendation = () => {
                       select
                       label={`${t('Intervals')} *`}
                       onChange={([event]) => event.target.value}>
-                      <MenuItem value={'10'}>Ten</MenuItem>
-                      <MenuItem value={'20'}>Twenty</MenuItem>
-                      <MenuItem value={'30'}>Thirty</MenuItem>
+                      {returnMenuItem('drugIntervals')}
                     </CustomizedTextField>
                   }
                 />
