@@ -326,7 +326,7 @@ const DiagnosisAndRecommendations = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />
-          <DrugRecommendation />
+          <DrugRecommendation encounterId={encounter.id} />
           <DecisionOnRelease />
           <SaveForm statuses={statuses} />
         </form>

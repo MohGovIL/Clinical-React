@@ -16,9 +16,19 @@ const MedicationRequestState = {
     const denormalizedMedicationRequest = denormalizeFhirMedicationRequest(
       params.medicationRequest,
     );
-    CRUDOperations('create', `${params.url}`, denormalizedMedicationRequest);
+    return CRUDOperations(
+      'create',
+      `${params.url}`,
+      denormalizedMedicationRequest,
+    );
   },
   updateMedicationRequest: (params) => {},
+  getMedicationRequest: (params) => {
+    return CRUDOperations(
+      'read',
+      `${params.url}?encounter=${params.encounterId}`,
+    );
+  },
 };
 
 export default function MedicationRequest(action = null, params = null) {

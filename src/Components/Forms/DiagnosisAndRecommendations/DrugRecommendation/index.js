@@ -12,7 +12,7 @@ import * as moment from 'moment';
 import { FHIR } from 'Utils/Services/FHIR';
 import { FixedSizeList } from 'react-window';
 
-const DrugRecommendation = () => {
+const DrugRecommendation = ({ encounterId }) => {
   const { t } = useTranslation();
   const {
     control,
@@ -68,6 +68,8 @@ const DrugRecommendation = () => {
     drugIntervals: [],
   });
 
+  const [m, sm] = useState();
+
   const fetchDrugsData = async () => {
     const APIsArray = [
       FHIR('ValueSet', 'doWork', {
@@ -112,8 +114,20 @@ const DrugRecommendation = () => {
     });
   };
 
+  const fetchMedicationRequest = async () => {
+    const res = await FHIR('MedicationRequest', 'doWork', {
+      functionName: 'getMedicationRequest',
+      functionParams: {
+        encounterId: encounterId,
+      },
+    });
+    console.log(res);
+    sm(res.data);
+  };
+
   useEffect(() => {
     fetchDrugsData();
+    fetchMedicationRequest();
   }, []);
 
   const returnMenuItem = (name) => {
@@ -122,9 +136,9 @@ const DrugRecommendation = () => {
     if (!drugsData[name].length) return [];
     return drugsData[name].map((form, formIndex) => {
       return (
-        <ListItem value={form.code} key={form.code + formIndex}>
+        <MenuItem value={form.code} key={form.code + formIndex}>
           {form.display}
-        </ListItem>
+        </MenuItem>
       );
     });
   };
