@@ -42,7 +42,7 @@ const DiagnosisAndRecommendations = ({
       ],
     },
   });
-  const { handleSubmit, setValue, register, unregister } = methods;
+  const { handleSubmit, setValue, register, unregister, getValues } = methods;
   const { t } = useTranslation();
   const answerType = (type, data) => {
     if (type === 'string') {
@@ -61,6 +61,115 @@ const DiagnosisAndRecommendations = ({
       return `No such type: ${type}`;
     }
   };
+
+  const [qItem, setQItem] = React.useState([]);
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const q = await FHIR('Questionnaire', 'doWork', {
+          functionName: 'getQuestionnaire',
+          functionParams: {
+            QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
+          },
+        });
+
+        // TODO:  needs to fetch QResponse prob gonna need to pass it down either via formContext or props for each component
+        const Questionnaire = q.data.entry[1].resource;
+        register({ name: 'questionnaireId' });
+        setValue('questionnaireId', Questionnaire.id);
+        setQItem(Questionnaire);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
+    return () => unregister('questionnaireId');
+  }, [register, setValue, unregister]);
+
+  const [requiredErrors, setRequiredErrors] = React.useState([
+    {
+      quantity: '',
+      drugForm: '',
+      drugRoute: '',
+      intervals: '',
+      duration: '',
+    },
+  ]);
+
+  const requiredFields = React.useMemo(() => {
+    return {
+      quantity: {
+        name: 'quantity',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+      drugForm: {
+        name: 'drugForm',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+      drugRoute: {
+        name: 'drugRoute',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+      intervals: {
+        name: 'intervals',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+      duration: {
+        name: 'duration',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+    };
+  }, []);
+
+  const isRequiredValidation = (data) => {
+    let clean = true;
+    if (!data['drugRecommendation']) {
+      return clean;
+    }
+    for (
+      let medicineIndex = 0;
+      medicineIndex < requiredErrors.length;
+      medicineIndex++
+    ) {
+      for (const fieldKey in requiredFields) {
+        if (requiredFields.hasOwnProperty(fieldKey)) {
+          let answer;
+          const field = requiredFields[fieldKey];
+          answer = field.required(
+            data['drugRecommendation'][medicineIndex][field.name],
+          );
+          if (answer) {
+            setRequiredErrors((prevState) => {
+              const cloneState = [...prevState];
+              cloneState[medicineIndex][field.name] = '';
+              return cloneState;
+            });
+          } else {
+            setRequiredErrors((prevState) => {
+              const cloneState = [...prevState];
+              cloneState[medicineIndex][field.name] = t(
+                'A value must be entered in the field',
+              );
+              return cloneState;
+            });
+            clean = false;
+          }
+        }
+      }
+    }
+    return clean;
+  };
+
   const onSubmit = async (data) => {
     if (isRequiredValidation(data) || true) {
       try {
@@ -126,129 +235,26 @@ const DiagnosisAndRecommendations = ({
         // });
 
         //Updating encounter
-        const cloneEncounter = { ...encounter };
-        cloneEncounter.extensionSecondaryStatus = data.nextStatus;
-        cloneEncounter.status = 'in-progress';
-        cloneEncounter.practitioner = store.getState().login.userID;
+        // const cloneEncounter = { ...encounter };
+        // cloneEncounter.extensionSecondaryStatus = data.nextStatus;
+        // cloneEncounter.status = 'in-progress';
+        // cloneEncounter.practitioner = store.getState().login.userID;
 
-        const ans = await FHIR('Encounter', 'doWork', {
-          functionName: 'updateEncounter',
-          functionParams: {
-            encounterId: encounter.id,
-            encounter: cloneEncounter,
-          },
-        });
+        // const ans = await FHIR('Encounter', 'doWork', {
+        //   functionName: 'updateEncounter',
+        //   functionParams: {
+        //     encounterId: encounter.id,
+        //     encounter: cloneEncounter,
+        //   },
+        // });
         // console.log(ans)
-        history.push(`${baseRoutePath()}/generic/patientTracking`);
+        // history.push(`${baseRoutePath()}/generic/patientTracking`);
       } catch (error) {
         console.log(error);
       }
     }
   };
-  const [qItem, setQItem] = React.useState([]);
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const q = await FHIR('Questionnaire', 'doWork', {
-          functionName: 'getQuestionnaire',
-          functionParams: {
-            QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
-          },
-        });
 
-        // TODO:  needs to fetch QResponse prob gonna need to pass it down either via formContext or props for each component
-        const Questionnaire = q.data.entry[1].resource;
-        register({ name: 'questionnaireId' });
-        setValue('questionnaireId', Questionnaire.id);
-        setQItem(Questionnaire);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-
-    return () => unregister('questionnaireId');
-  }, [register, setValue, unregister]);
-
-  const [requiredErrors, setRequiredErrors] = React.useState([
-    {
-      quantity: '',
-      drugForm: '',
-      drugRoute: '',
-      intervals: '',
-      duration: '',
-    },
-  ]);
-  const requiredFields = {
-    quantity: {
-      name: 'quantity',
-      required: function (data) {
-        return data && data.length > 0;
-      },
-    },
-    drugForm: {
-      name: 'drugForm',
-      required: function (data) {
-        return data && data.length > 0;
-      },
-    },
-    drugRoute: {
-      name: 'drugRoute',
-      required: function (data) {
-        return data && data.length > 0;
-      },
-    },
-    intervals: {
-      name: 'intervals',
-      required: function (data) {
-        return data && data.length > 0;
-      },
-    },
-    duration: {
-      name: 'duration',
-      required: function (data) {
-        return data && data.length > 0;
-      },
-    },
-  };
-
-  const isRequiredValidation = (data) => {
-    let clean = true;
-    if (!data['drugRecommendation']) {
-      return clean;
-    }
-    for (
-      let medicineIndex = 0;
-      medicineIndex < requiredErrors.length;
-      medicineIndex++
-    ) {
-      for (const fieldKey in requiredFields) {
-        if (requiredFields.hasOwnProperty(fieldKey)) {
-          let answer;
-          const field = requiredFields[fieldKey];
-          answer = field.required(
-            data['drugRecommendation'][medicineIndex][field.name],
-          );
-          if (answer) {
-            setRequiredErrors((prevState) => {
-              const cloneState = [...prevState];
-              cloneState[medicineIndex][field.name] = '';
-              return cloneState;
-            });
-          } else {
-            setRequiredErrors((prevState) => {
-              const cloneState = [...prevState];
-              cloneState[medicineIndex][field.name] = t(
-                'A value must be entered in the field',
-              );
-              return cloneState;
-            });
-            clean = false;
-          }
-        }
-      }
-    }
-    return clean;
-  };
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
       return {
