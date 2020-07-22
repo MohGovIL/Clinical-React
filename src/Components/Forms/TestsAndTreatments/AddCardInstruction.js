@@ -24,7 +24,7 @@ import PDF from 'Assets/Images/pdf.png';
 import StyledSwitch from '../../../Assets/Elements/StyledSwitch';
 import { StyledInsulation } from '../MedicalAdmission/UrgentAndInsulation/Style';
 import TextField from '@material-ui/core/TextField';
-import { FormContext, useFormContext } from 'react-hook-form';
+import { Controller, FormContext, useFormContext } from 'react-hook-form';
 import PopUpFormTemplates from '../../Generic/PopupComponents/PopUpFormTemplates';
 const AddCardInstruction = ({
   user,
@@ -36,9 +36,10 @@ const AddCardInstruction = ({
   index,
   handlePopUpProps,
   callBack,
-  popUpProps,
+  control,
 }) => {
   const { t } = useTranslation();
+
   const [
     currentTestTreatmentsInstructionsDetails,
     setCurrentTestTreatmentsInstructionsDetails,
@@ -53,11 +54,14 @@ const AddCardInstruction = ({
     currentTestTreatmentsInstructionsLetters,
     setCurrentTestTreatmentsInstructionsLetters,
   ] = useState([]);
-  const handleChangeOfDetails = async (event) => {
-    setCurrentTestTreatmentsInstructionsDetailsSelectedId(event.target.value);
+  const handleChangeOfDetails = async (value) => {
+    /* setCurrentTestTreatmentsInstructionsDetailsSelectedId(event.target.value);*/
   };
-  const handleChange = async (event) => {
-    if (
+  const handleRadioChange = (event) => {
+    return event;
+  };
+  const handleChange = async (value) => {
+    /*    if (
       currentTestTreatmentsInstructions &&
       currentTestTreatmentsInstructions.length > 0
     ) {
@@ -68,19 +72,19 @@ const AddCardInstruction = ({
       setCurrentTestTreatmentsInstructions(
         tempCurrentTestTreatmentsInstructions,
       );
-    }
+    }*/
     const listsDetailsAndLetters = [];
 
     listsDetailsAndLetters.push(
       FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',
-        functionParams: { id: `letter_${event.target.value}` },
+        functionParams: { id: `letter_${value}` },
       }),
     );
     listsDetailsAndLetters.push(
       FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',
-        functionParams: { id: `details_${event.target.value}` },
+        functionParams: { id: `details_${value}` },
       }),
     );
     const listsDetailsAndLettersAfterAwait = await Promise.all(
@@ -123,7 +127,9 @@ const AddCardInstruction = ({
       setCurrentTestTreatmentsInstructionsLetters(lettersObj);
       setCurrentTestTreatmentsInstructionsDetails(detailsObj);
     }
+    return value;
   };
+
   return (
     <React.Fragment>
       <StyledCardRoot>
@@ -143,56 +149,67 @@ const AddCardInstruction = ({
         </StyledCardDetails>
         <Grid container spacing={4}>
           <Grid item xs={3}>
-            <CustomizedTextField
-              name={'test_treatment'}
-              onChange={handleChange}
-              value={currentTestTreatmentsInstructions[index].value}
-              iconColor='#1976d2'
-              width='100%'
-              select
-              label={t('Test/Treatment')}>
-              <MenuItem value={''}>
-                <em>{t('Choose')}</em>
-              </MenuItem>
-
-              {collectedTestAndTreatmentsFromFhir.map((value, index) => {
-                return (
-                  <MenuItem key={index} value={value.code}>
-                    {t(value.title)}
-                  </MenuItem>
-                );
-              })}
-            </CustomizedTextField>
-          </Grid>
-          {currentTestTreatmentsInstructionsDetails &&
-          currentTestTreatmentsInstructionsDetails.length > 0 ? (
-            <Grid item xs={3}>
-              <CustomizedTextField
-                name={'test_treatment_type'}
-                onChange={handleChangeOfDetails}
-                value={
-                  currentTestTreatmentsInstructionsDetailsSelectedId
-                    ? currentTestTreatmentsInstructionsDetailsSelectedId
-                    : ''
-                }
-                iconColor='#1976d2'
-                width='100%'
-                select
-                label={t('X-Ray Type')}>
-                <MenuItem value={''}>
-                  <em>{t('Choose')}</em>
-                </MenuItem>
-
-                {currentTestTreatmentsInstructionsDetails.map(
-                  (value, index) => {
+            <Controller
+              name={`test_treatment[${index}]`}
+              control={control}
+              rule={{ required: 'it is required' }}
+              onChange={([event]) => {
+                handleChange(event.target.value);
+                return event.target.value;
+              }}
+              as={
+                <CustomizedTextField
+                  defaultValue=''
+                  iconColor='#1976d2'
+                  width='100%'
+                  select
+                  label={t('Test/Treatment')}>
+                  {/* <MenuItem value={''}>
+                    <em>{t('Choose')}</em>
+                  </MenuItem>*/}
+                  {collectedTestAndTreatmentsFromFhir.map((value, index) => {
                     return (
                       <MenuItem key={index} value={value.code}>
                         {t(value.title)}
                       </MenuItem>
                     );
-                  },
-                )}
-              </CustomizedTextField>
+                  })}
+                </CustomizedTextField>
+              }
+            />
+          </Grid>
+          {currentTestTreatmentsInstructionsDetails &&
+          currentTestTreatmentsInstructionsDetails.length > 0 ? (
+            <Grid item xs={3}>
+              <Controller
+                defaultValue=''
+                name={`test_treatment_type[${index}]`}
+                control={control}
+                /* onChange={([event]) =>
+                  handleChangeOfDetails(event.target.value)
+                }*/
+                as={
+                  <CustomizedTextField
+                    iconColor='#1976d2'
+                    width='100%'
+                    select
+                    label={t('X-Ray Type')}>
+                    {/* <MenuItem value={''}>
+                      <em>{t('Choose')}</em>
+                    </MenuItem>*/}
+
+                    {currentTestTreatmentsInstructionsDetails.map(
+                      (value, index) => {
+                        return (
+                          <MenuItem key={index} value={value.code}>
+                            {t(value.title)}
+                          </MenuItem>
+                        );
+                      },
+                    )}
+                  </CustomizedTextField>
+                }
+              />
             </Grid>
           ) : (
             <Grid item xs={3}></Grid>
@@ -201,7 +218,7 @@ const AddCardInstruction = ({
           <Grid item xs={2}>
             {/*{encounter.status !== "finished" && true  }
           //see em-84 - to be continued*/}
-            <StyledIconedButton name={'test_treatment_referral'}>
+            <StyledIconedButton name={`test_treatment_referral[${index}]`}>
               <div>
                 <img src={PDF} />
               </div>
@@ -210,17 +227,21 @@ const AddCardInstruction = ({
           </Grid>
 
           <Grid item xs={6}>
-            <CustomizedTextField
-              name='instructions'
-              /*  inputRef={register}*/
-              label={t('Instructions')}
-              width='100%'
-              multiline
+            <Controller
+              name={`instructions[${index}]`}
+              control={control}
+              as={
+                <CustomizedTextField
+                  /*  control={control}*/
+                  label={t('Instructions')}
+                  width='100%'
+                  multiline
+                />
+              }
             />
           </Grid>
           <Grid item xs={2}>
             <StyledSelectTemplateButton
-              name={'test_treatment_recommendations'}
               /* disabled={permission === 'view' ? true : false}*/
               onClick={() =>
                 handlePopUpProps(
@@ -244,9 +265,16 @@ const AddCardInstruction = ({
               <b>{t('Status')}</b>
             </span>
             {/* Requested service - switch */}
+            {/*   <Controller
+              defaultValue={true}
+              name={`test_treatment_status[${index}]`}
+              control={control}
+              onChange={([event]) => event.target.checked}
+              as={*/}
             <StyledSwitch
-              name='test_treatment_status'
-              //register={register}
+              defaultValue={true}
+              name={`test_treatment_status[${index}]`}
+              control={control}
               label_1={'Not done'}
               label_2={'Performed'}
               marginLeft={'70px'}
@@ -254,19 +282,26 @@ const AddCardInstruction = ({
               width={'200px'}
               margin={'10px 14px'}
             />
+            {/* }
+            />*/}
           </Grid>
           <Grid
             container
             direction={'row'}
             justify={'flex-start'}
             alignItems={'center'}>
-            <CustomizedTextField
-              /*disabled={permission === 'view' ? true : false}*/
-              /* inputRef={register}*/
-              name='test_treatment_remark'
-              multiline
-              width={'85%'}
-              label={t('remark')}
+            <Controller
+              name={`test_treatment_remark[${index}]`}
+              control={control}
+              as={
+                <CustomizedTextField
+                  /*disabled={permission === 'view' ? true : false}*/
+
+                  multiline
+                  width={'85%'}
+                  label={t('remark')}
+                />
+              }
             />
           </Grid>
         </Grid>
