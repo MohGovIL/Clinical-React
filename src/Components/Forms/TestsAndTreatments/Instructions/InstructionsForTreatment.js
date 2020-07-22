@@ -11,29 +11,29 @@ import {
   StyledTreatmentInstructionsButton,
   StyledTypographyHour,
   StyledTypographyName,
-} from './Style';
+} from '../Style';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import PLUS from '../../../Assets/Images/plus.png';
+import PLUS from '../../../../Assets/Images/plus.png';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import normalizeFhirUser from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
-import { FHIR } from '../../../Utils/Services/FHIR';
+import normalizeFhirUser from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
+import { FHIR } from '../../../../Utils/Services/FHIR';
 import {
   StyledAutoComplete,
   StyledFormGroup,
-} from '../../Generic/PatientAdmission/PatientDetailsBlock/Style';
-import normalizeFhirValueSet from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import AutoCompleteWithCheckboxes from '../../../Assets/Elements/AutoComplete/AutoCompleteWithCheckboxes';
-import { getValueSet } from '../../../Utils/Services/FhirAPI';
+} from '../../../Generic/PatientAdmission/PatientDetailsBlock/Style';
+import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import AutoCompleteWithCheckboxes from '../../../../Assets/Elements/AutoComplete/AutoCompleteWithCheckboxes';
+import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import moment from 'moment';
-import AutoCompleteWithText from '../../../Assets/Elements/AutoComplete/AutoCompleteWithText';
-import CustomizedTextField from '../../../Assets/Elements/CustomizedTextField';
+import AutoCompleteWithText from '../../../../Assets/Elements/AutoComplete/AutoCompleteWithText';
+import CustomizedTextField from '../../../../Assets/Elements/CustomizedTextField';
 import { MenuItem } from '@material-ui/core';
 import AddCardInstruction from './AddCardInstruction';
 import { FormContext, useFieldArray, useForm } from 'react-hook-form';
-import StyledDiagnosisAndRecommendations from '../DiagnosisAndRecommendations/Style';
-import PopUpFormTemplates from '../../Generic/PopupComponents/PopUpFormTemplates';
+import StyledDiagnosisAndRecommendations from '../../DiagnosisAndRecommendations/Style';
+import PopUpFormTemplates from '../../../Generic/PopupComponents/PopUpFormTemplates';
 
 const InstructionsForTreatment = ({
   patient,
@@ -99,8 +99,8 @@ const InstructionsForTreatment = ({
     };
 
     let currentTestTreatmentsInstructionsTemp = [
-      addThisInstruction,
       ...currentTestTreatmentsInstructions,
+      addThisInstruction,
     ];
 
     setCurrentTestTreatmentsInstructions([
@@ -170,7 +170,6 @@ const InstructionsForTreatment = ({
                 handlePopUpProps={handlePopUpProps}
                 control={control}
                 key={index}
-                value={value.value}
                 index={index}
                 user={value.user}
                 edit={value.edit}

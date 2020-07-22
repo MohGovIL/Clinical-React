@@ -17,8 +17,8 @@
 import { connect } from 'react-redux';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ConstantIndicators from 'Components/Forms/TestsAndTreatments/ConstantIndicators';
-import VariantIndicators from 'Components/Forms/TestsAndTreatments/VariantIndicators';
+import ConstantIndicators from 'Components/Forms/TestsAndTreatments/Indicators/ConstantIndicators';
+import VariantIndicators from 'Components/Forms/TestsAndTreatments/Indicators/VariantIndicators';
 import {
   StyledConstantHeaders,
   StyledTestsAndTreatments,
@@ -29,7 +29,7 @@ import { getIndicatorsSettings } from 'Utils/Services/API';
 import { thickenTheData } from 'Components/Forms/TestsAndTreatments/Helpers/DataHelpers';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
-import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/InstructionsForTreatment';
+import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instructions/InstructionsForTreatment';
 
 /**
  *

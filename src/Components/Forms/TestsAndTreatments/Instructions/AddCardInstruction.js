@@ -1,5 +1,5 @@
 import MenuItem from '@material-ui/core/MenuItem';
-import CustomizedTextField from '../../../Assets/Elements/CustomizedTextField';
+import CustomizedTextField from '../../../../Assets/Elements/CustomizedTextField';
 import {
   StyledCardContent,
   StyledCardDetails,
@@ -8,24 +8,24 @@ import {
   StyledIconedButton,
   StyledTypographyHour,
   StyledTypographyName,
-} from './Style';
+} from '../Style';
 import React, { useState } from 'react';
 import * as moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import { FHIR } from '../../../Utils/Services/FHIR';
-import normalizeFhirValueSet from '../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import { FHIR } from '../../../../Utils/Services/FHIR';
+import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import TableBody from '@material-ui/core/TableBody';
 import { Grid } from '@material-ui/core';
-import { StyledSelectTemplateButton } from '../../../Assets/Elements/StyledSelectTempleteButton';
-import { StyledFormGroup } from '../../../Assets/Elements/StyledFormGroup';
-import { StyledButton } from '../../../Assets/Elements/StyledButton';
-import { StyledIconButton } from '../../../Assets/Elements/HeaderPatient/Style';
+import { StyledSelectTemplateButton } from '../../../../Assets/Elements/StyledSelectTempleteButton';
+import { StyledFormGroup } from '../../../../Assets/Elements/StyledFormGroup';
+import { StyledButton } from '../../../../Assets/Elements/StyledButton';
+import { StyledIconButton } from '../../../../Assets/Elements/HeaderPatient/Style';
 import PDF from 'Assets/Images/pdf.png';
-import StyledSwitch from '../../../Assets/Elements/StyledSwitch';
-import { StyledInsulation } from '../MedicalAdmission/UrgentAndInsulation/Style';
+import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
+import { StyledInsulation } from '../../MedicalAdmission/UrgentAndInsulation/Style';
 import TextField from '@material-ui/core/TextField';
 import { Controller, FormContext, useFormContext } from 'react-hook-form';
-import PopUpFormTemplates from '../../Generic/PopupComponents/PopUpFormTemplates';
+import PopUpFormTemplates from '../../../Generic/PopupComponents/PopUpFormTemplates';
 const AddCardInstruction = ({
   user,
   edit,
@@ -152,6 +152,7 @@ const AddCardInstruction = ({
             <Controller
               name={`test_treatment[${index}]`}
               control={control}
+              defaultValue=''
               rule={{ required: 'it is required' }}
               onChange={([event]) => {
                 handleChange(event.target.value);
@@ -159,7 +160,6 @@ const AddCardInstruction = ({
               }}
               as={
                 <CustomizedTextField
-                  defaultValue=''
                   iconColor='#1976d2'
                   width='100%'
                   select

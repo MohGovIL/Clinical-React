@@ -6,7 +6,7 @@
 
 import { StyledVariantTextField } from 'Components/Forms/TestsAndTreatments/Style';
 
-import LabelWithHourComponent from 'Components/Forms/TestsAndTreatments/LabelWithHourComponent';
+import LabelWithHourComponent from 'Components/Forms/TestsAndTreatments/Indicators/LabelWithHourComponent';
 import React from 'react';
 import FormattedInputs from 'Assets/Elements/MaskedControllers/FormattedInputs/FormattedInputs';
 import {
