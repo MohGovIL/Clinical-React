@@ -96,14 +96,17 @@ const DrugRecommendation = () => {
       }),
     ];
     const drugsData = await Promise.all(APIsArray);
-
+    // const drugList = [{ code: '123', display: 'medicine' }];
+    // const drugIntervals = [{ code: '1234', display: '10minutes' }];
     setDrugsData({
+      // drugList,
       drugList:
         drugsData[0].status === 200 ? drugsData[0].data.expansion.contains : [],
       drugForm:
         drugsData[1].status === 200 ? drugsData[1].data.expansion.contains : [],
       drugRoute:
         drugsData[2].status === 200 ? drugsData[2].data.expansion.contains : [],
+      // drugIntervals,
       drugIntervals:
         drugsData[3].status === 200 ? drugsData[3].data.expansion.contains : [],
     });

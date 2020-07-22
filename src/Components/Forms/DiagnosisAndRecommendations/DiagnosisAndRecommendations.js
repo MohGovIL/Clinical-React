@@ -251,7 +251,7 @@ const DiagnosisAndRecommendations = ({
         // history.push(`${baseRoutePath()}/generic/patientTracking`);
         if (data.drugRecommendation && data.drugRecommendation.length) {
           const medicationRequest = {};
-          data.drugRecommendation.forEach((drug, drugIndex) => {
+          data.drugRecommendation.forEach((drug) => {
             medicationRequest['status'] = 'active';
             medicationRequest['patient'] = patient.id;
             medicationRequest['encounter'] = encounter.id;
@@ -262,6 +262,16 @@ const DiagnosisAndRecommendations = ({
             medicationRequest['medicationCodeableConceptCode'] = drug.drugName;
             medicationRequest['timingCode'] = drug.intervals;
             medicationRequest['doseQuantity'] = drug.quantity;
+            medicationRequest['methodCode'] = drug.drugForm;
+            medicationRequest['timingRepeatStart'] = moment(drug.toDate)
+              .subtract(drug.duration, 'days')
+              .format('DD-MM-YYYY');
+            medicationRequest['timingRepeatEnd'] = moment(drug.toDate).format(
+              'DD-MM-YYYY',
+            );
+            medicationRequest['authoredOn'] = moment().format(
+              'YYYY-MM-DDTHH:mm:ss[Z]',
+            );
           });
           await FHIR('MedicationRequest', 'doWork', {
             functionName: 'createMedicationRequest',
