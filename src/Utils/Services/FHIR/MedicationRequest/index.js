@@ -12,7 +12,12 @@ const MedicationRequestState = {
     paramsToCRUD.url = componentFhirURL;
     return MedicationRequestState[parameters.functionName](paramsToCRUD);
   },
-  createMedicationRequest: (params) => {},
+  createMedicationRequest: (params) => {
+    const denormalizedMedicationRequest = denormalizeFhirMedicationRequest(
+      params.medicationRequest,
+    );
+    CRUDOperations('create', `${params.url}`, denormalizedMedicationRequest);
+  },
   updateMedicationRequest: (params) => {},
 };
 

@@ -17,6 +17,7 @@ export const denormalizeFhirMedicationRequest = (medicationRequest) => {
         const element = medicationRequest[medicationRequestKey];
         switch (medicationRequestKey) {
           case 'status':
+            denormalizedMedicationRequest['status'] = element;
             break;
           case 'medicationCodeableConceptCode':
             medicationCodeableConcept.coding[0]['code'] = element;

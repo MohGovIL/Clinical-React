@@ -249,6 +249,27 @@ const DiagnosisAndRecommendations = ({
         // });
         // console.log(ans)
         // history.push(`${baseRoutePath()}/generic/patientTracking`);
+        if (data.drugRecommendation && data.drugRecommendation.length) {
+          const medicationRequest = {};
+          data.drugRecommendation.forEach((drug, drugIndex) => {
+            medicationRequest['status'] = 'active';
+            medicationRequest['patient'] = patient.id;
+            medicationRequest['encounter'] = encounter.id;
+            medicationRequest['requester'] = store.getState().login.userID;
+            medicationRequest['recorder'] = store.getState().login.userID;
+            medicationRequest['note'] = drug.instructionsForTheDrug;
+            medicationRequest['routeCode'] = drug.drugRoute;
+            medicationRequest['medicationCodeableConceptCode'] = drug.drugName;
+            medicationRequest['timingCode'] = drug.intervals;
+            medicationRequest['doseQuantity'] = drug.quantity;
+          });
+          await FHIR('MedicationRequest', 'doWork', {
+            functionName: 'createMedicationRequest',
+            functionParams: {
+              medicationRequest,
+            },
+          });
+        }
       } catch (error) {
         console.log(error);
       }
