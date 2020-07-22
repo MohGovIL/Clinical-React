@@ -34,6 +34,7 @@ const CustomizedDatePicker = ({
   languageCode,
   filterDate,
   setFilterDateAction,
+  isDisabled,
   props,
 }) => {
   languageCode = languageCode === 'en' ? 'en-gb' : languageCode;
@@ -82,11 +83,11 @@ const CustomizedDatePicker = ({
       disableUnderline: true,
     },
     id: 'date-picker-inline',
-    value: filterDate,
+    value: isDisabled ? Moment().format('YYYY-MM-DD') : filterDate,
     onChange: handleDateChange,
     autoOk: true,
-    text_color: props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor,
-    disabled: props.isDisabled,
+    text_color: isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor,
+    disabled: isDisabled,
     color: null,
   };
 
@@ -115,7 +116,6 @@ const CustomizedDatePicker = ({
   if ('PickerProps' in props && typeof props.PickerProps !== 'undefined') {
     PickerProps = props.PickerProps;
   }
-
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} moment={Moment}>
       <GlobalStyledDatePicker
@@ -124,27 +124,19 @@ const CustomizedDatePicker = ({
       />
       <>
         {showPrevArrow && (
-          <IconButton
-            onClick={() => scrollDays('prev')}
-            disabled={props.isDisabled}>
+          <IconButton onClick={() => scrollDays('prev')} disabled={isDisabled}>
             <ChevronFirst
               style={props.iconSize ? { fontSize: props.iconSize } : {}}
-              htmlColor={
-                props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor
-              }
+              htmlColor={isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}
             />
           </IconButton>
         )}
         <DatePickerType {...PickerProps} />
         {showNextArrow && (
-          <IconButton
-            onClick={() => scrollDays('next')}
-            disabled={props.isDisabled}>
+          <IconButton onClick={() => scrollDays('next')} disabled={isDisabled}>
             <ChevronSecond
               style={props.iconSize ? { fontSize: props.iconSize } : {}}
-              htmlColor={
-                props.isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor
-              }
+              htmlColor={isDisabled ? 'rgba(0, 0, 0, 0.26)' : props.iconColor}
             />
           </IconButton>
         )}
@@ -159,6 +151,7 @@ const mapStateToProps = (state, ownProps) => {
     languageDirection: state.settings.lang_dir,
     languageCode: state.settings.lang_code,
     filterDate: state.filters.filter_date,
+    isDisabled: state.filters.isDisabled,
     props: ownProps,
   };
 };
