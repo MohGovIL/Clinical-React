@@ -250,8 +250,10 @@ const DiagnosisAndRecommendations = ({
         // console.log(ans)
         // history.push(`${baseRoutePath()}/generic/patientTracking`);
         if (data.drugRecommendation && data.drugRecommendation.length) {
-          const medicationRequest = {};
-          data.drugRecommendation.forEach((drug) => {
+          const medications = [];
+          data.drugRecommendation.forEach((drug, drugIndex) => {
+            const medicationRequest = {};
+
             medicationRequest['status'] = 'active';
             medicationRequest['patient'] = patient.id;
             medicationRequest['encounter'] = encounter.id;
@@ -263,22 +265,44 @@ const DiagnosisAndRecommendations = ({
             medicationRequest['timingCode'] = drug.intervals;
             medicationRequest['doseQuantity'] = drug.quantity;
             medicationRequest['methodCode'] = drug.drugForm;
-            medicationRequest['timingRepeatStart'] = moment(drug.toDate)
+            medicationRequest['timingRepeatStart'] = moment(
+              drug.toDate,
+              'DD/MM/YYYY',
+            )
               .subtract(drug.duration, 'days')
-              .format('DD-MM-YYYY');
-            medicationRequest['timingRepeatEnd'] = moment(drug.toDate).format(
-              'DD-MM-YYYY',
-            );
+              .format('YYYY-MM-DD');
+            medicationRequest['timingRepeatEnd'] = moment(
+              drug.toDate,
+              'DD/MM/YYYY',
+            ).format('YYYY-MM-DD');
             medicationRequest['authoredOn'] = moment().format(
               'YYYY-MM-DDTHH:mm:ss[Z]',
             );
+
+            if (data.medicationRequest[drugIndex]) {
+              // Needs to implement
+              medications.push(
+                FHIR('MedicationRequest', 'doWork', {
+                  functionName: 'updateMedicationRequest',
+                  functionParams: {
+                    medicationRequest,
+                    _id: data.medicationRequest[drugIndex],
+                  },
+                }),
+              );
+            } else {
+              medications.push(
+                FHIR('MedicationRequest', 'doWork', {
+                  functionName: 'createMedicationRequest',
+                  functionParams: {
+                    medicationRequest,
+                  },
+                }),
+              );
+            }
           });
-          await FHIR('MedicationRequest', 'doWork', {
-            functionName: 'createMedicationRequest',
-            functionParams: {
-              medicationRequest,
-            },
-          });
+          const res = await Promise.all[medications];
+          console.log(res);
         }
       } catch (error) {
         console.log(error);

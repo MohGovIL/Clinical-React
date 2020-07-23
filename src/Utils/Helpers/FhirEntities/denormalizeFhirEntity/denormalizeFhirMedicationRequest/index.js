@@ -1,4 +1,4 @@
-export const denormalizeFhirMedicationRequest = (medicationRequest) => {
+const denormalizeFhirMedicationRequest = (medicationRequest) => {
   if (Object.prototype.toString.call(medicationRequest === '[object Object]')) {
     const maxDosePerAdministration = {};
     const method = {};
@@ -163,3 +163,5 @@ export const denormalizeFhirMedicationRequest = (medicationRequest) => {
     return 'Error';
   }
 };
+
+export default denormalizeFhirMedicationRequest;

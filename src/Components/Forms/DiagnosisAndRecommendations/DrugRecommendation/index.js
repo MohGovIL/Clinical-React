@@ -11,6 +11,8 @@ import { Delete } from '@material-ui/icons';
 import * as moment from 'moment';
 import { FHIR } from 'Utils/Services/FHIR';
 import { FixedSizeList } from 'react-window';
+import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationRequest';
+import { unregister } from 'serviceWorker';
 
 const DrugRecommendation = ({ encounterId }) => {
   const { t } = useTranslation();
@@ -70,7 +72,7 @@ const DrugRecommendation = ({ encounterId }) => {
 
   const [m, sm] = useState();
 
-  const fetchDrugsData = async () => {
+  const fetchDrugsData = React.useCallback(async () => {
     const APIsArray = [
       FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',
@@ -97,38 +99,74 @@ const DrugRecommendation = ({ encounterId }) => {
         },
       }),
     ];
-    const drugsData = await Promise.all(APIsArray);
-    // const drugList = [{ code: '123', display: 'medicine' }];
-    // const drugIntervals = [{ code: '1234', display: '10minutes' }];
-    setDrugsData({
-      // drugList,
-      drugList:
-        drugsData[0].status === 200 ? drugsData[0].data.expansion.contains : [],
-      drugForm:
-        drugsData[1].status === 200 ? drugsData[1].data.expansion.contains : [],
-      drugRoute:
-        drugsData[2].status === 200 ? drugsData[2].data.expansion.contains : [],
-      // drugIntervals,
-      drugIntervals:
-        drugsData[3].status === 200 ? drugsData[3].data.expansion.contains : [],
-    });
-  };
+    try {
+      const drugsData = await Promise.all(APIsArray);
+      const drugList = [{ code: '123', display: 'medicine' }];
+      const drugIntervals = [{ code: '1234', display: '10minutes' }];
+      setDrugsData({
+        drugList,
+        // drugList:
+        //   drugsData[0].status === 200
+        //     ? drugsData[0].data.expansion.contains
+        //     : [],
+        drugForm:
+          drugsData[1].status === 200
+            ? drugsData[1].data.expansion.contains
+            : [],
+        drugRoute:
+          drugsData[2].status === 200
+            ? drugsData[2].data.expansion.contains
+            : [],
+        drugIntervals,
+        // drugIntervals:
+        //   drugsData[3].status === 200
+        //     ? drugsData[3].data.expansion.contains
+        //     : [],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
-  const fetchMedicationRequest = async () => {
-    const res = await FHIR('MedicationRequest', 'doWork', {
-      functionName: 'getMedicationRequest',
-      functionParams: {
-        encounterId: encounterId,
-      },
-    });
-    console.log(res);
-    sm(res.data);
-  };
+  const fetchMedicationRequest = React.useCallback(async () => {
+    try {
+      register({ name: 'medicationRequest' });
+      const res = await FHIR('MedicationRequest', 'doWork', {
+        functionName: 'getMedicationRequest',
+        functionParams: {
+          encounterId: encounterId,
+        },
+      });
+      // I could just do res.status === 204 for no content but I'm not sure that it's implemented in all of the entities
+      if (res.status === 200 && res.data.total) {
+        // medicationUniqData = {index =  medicationId}
+        const medicationUniqData = {};
+        res.data.entry.forEach((medicationRequest, medicationRequestIndex) => {
+          if (medicationRequest.resource) {
+            const normalizedFhirMedicationRequest = normalizeFhirMedicationRequest(
+              medicationRequest.resource,
+            );
+            medicationUniqData[medicationRequestIndex] =
+              normalizedFhirMedicationRequest.id;
+            console.log(normalizedFhirMedicationRequest);
+          }
+        });
+        setValue({ medicationRequest: medicationUniqData });
+        sm(res.data.entry);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    return () => {
+      unregister('medicationRequest');
+    };
+  }, [encounterId, register, setValue]);
 
   useEffect(() => {
     fetchDrugsData();
     fetchMedicationRequest();
-  }, []);
+  }, [fetchMedicationRequest, fetchDrugsData]);
 
   const returnMenuItem = (name) => {
     console.log(drugsData);

@@ -3,7 +3,7 @@
  */
 
 import { CRUDOperations } from '../CRUDOperations';
-import { denormalizeFhirMedicationRequest } from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirMedicationRequest';
+import denormalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirMedicationRequest';
 
 const MedicationRequestState = {
   doWork: (parameters = null) => {
@@ -22,7 +22,16 @@ const MedicationRequestState = {
       denormalizedMedicationRequest,
     );
   },
-  updateMedicationRequest: (params) => {},
+  updateMedicationRequest: (params) => {
+    const denormalizedMedicationRequest = denormalizeFhirMedicationRequest(
+      params.medicationRequest,
+    );
+    return CRUDOperations(
+      'update',
+      `${params.url}/${params._id}`,
+      denormalizedMedicationRequest,
+    );
+  },
   getMedicationRequest: (params) => {
     /**
      *  _id - If _id is supplied all other params will be ignored
