@@ -75,13 +75,14 @@ export const setPatientDataWaitingForReleaseTableRows = function (
                   functionParams: {
                     encountersId: encounter.id,
                     encounterPatchParams: {
-                      extensionSecondaryStatus: code,
-                      extensionSecondaryStatusIndex:
-                        encounter.extensionSecondaryStatusIndex,
+                      status: code,
                     },
                   },
                 });
-                return true;
+                if (answer.status === 200) {
+                  return true;
+                }
+                return false;
               } catch (err) {
                 console.log(err);
                 return false;
