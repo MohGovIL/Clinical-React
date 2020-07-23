@@ -6,39 +6,47 @@ import {
   StyledCardName,
   StyledCardRoot,
   StyledIconedButton,
+  StyledInstructions,
   StyledTypographyHour,
   StyledTypographyName,
 } from '../Style';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { FHIR } from '../../../../Utils/Services/FHIR';
 import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
-import TableBody from '@material-ui/core/TableBody';
+
 import { Grid } from '@material-ui/core';
 import { StyledSelectTemplateButton } from '../../../../Assets/Elements/StyledSelectTempleteButton';
-import { StyledFormGroup } from '../../../../Assets/Elements/StyledFormGroup';
-import { StyledButton } from '../../../../Assets/Elements/StyledButton';
-import { StyledIconButton } from '../../../../Assets/Elements/HeaderPatient/Style';
+
 import PDF from 'Assets/Images/pdf.png';
 import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
-import { StyledInsulation } from '../../MedicalAdmission/UrgentAndInsulation/Style';
-import TextField from '@material-ui/core/TextField';
+
 import { Controller, FormContext, useFormContext } from 'react-hook-form';
-import PopUpFormTemplates from '../../../Generic/PopupComponents/PopUpFormTemplates';
+
 const AddCardInstruction = ({
   user,
   edit,
   encounter,
   collectedTestAndTreatmentsFromFhir,
-  currentTestTreatmentsInstructions,
-  setCurrentTestTreatmentsInstructions,
   index,
   handlePopUpProps,
   callBack,
   control,
+  item,
+  watch,
+  setValue,
+  register,
+  watchInstructions,
 }) => {
   const { t } = useTranslation();
+
+  const [
+    currentTestTreatmentsInstructionsKey,
+    setCurrentTestTreatmentsInstructionsKey,
+  ] = useState('');
+
+  const [instructionFocused, setInstructionFocused] = useState([]);
 
   const [
     currentTestTreatmentsInstructionsDetails,
@@ -46,35 +54,13 @@ const AddCardInstruction = ({
   ] = useState([]);
 
   const [
-    currentTestTreatmentsInstructionsDetailsSelectedId,
-    setCurrentTestTreatmentsInstructionsDetailsSelectedId,
-  ] = useState('');
-
-  const [
     currentTestTreatmentsInstructionsLetters,
     setCurrentTestTreatmentsInstructionsLetters,
   ] = useState([]);
-  const handleChangeOfDetails = async (value) => {
-    /* setCurrentTestTreatmentsInstructionsDetailsSelectedId(event.target.value);*/
-  };
-  const handleRadioChange = (event) => {
-    return event;
-  };
-  const handleChange = async (value) => {
-    /*    if (
-      currentTestTreatmentsInstructions &&
-      currentTestTreatmentsInstructions.length > 0
-    ) {
-      let tempCurrentTestTreatmentsInstructions = [
-        ...currentTestTreatmentsInstructions,
-      ];
-      tempCurrentTestTreatmentsInstructions[index].value = event.target.value;
-      setCurrentTestTreatmentsInstructions(
-        tempCurrentTestTreatmentsInstructions,
-      );
-    }*/
-    const listsDetailsAndLetters = [];
 
+  const handleChange = async (value) => {
+    const listsDetailsAndLetters = [];
+    setCurrentTestTreatmentsInstructionsKey(value);
     listsDetailsAndLetters.push(
       FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',
@@ -129,8 +115,13 @@ const AddCardInstruction = ({
     }
     return value;
   };
-
-  return (
+  let count = 0;
+  const handleFocusBlur = (name, trueFalse) => {
+    const instructionFocusBlurTemp = [...instructionFocused];
+    instructionFocusBlurTemp[name] = trueFalse;
+    setInstructionFocused(instructionFocusBlurTemp);
+  };
+  return item ? (
     <React.Fragment>
       <StyledCardRoot>
         <StyledCardDetails>
@@ -150,12 +141,16 @@ const AddCardInstruction = ({
         <Grid container spacing={4}>
           <Grid item xs={3}>
             <Controller
-              name={`test_treatment[${index}]`}
+              name={`Instruction[${index}].test_treatment`}
               control={control}
-              defaultValue=''
+              defaultValue={item.test_treatment}
               rule={{ required: 'it is required' }}
               onChange={([event]) => {
                 handleChange(event.target.value);
+                setValue(
+                  `Instruction[${index}].test_treatment`,
+                  event.target.value,
+                );
                 return event.target.value;
               }}
               as={
@@ -164,16 +159,14 @@ const AddCardInstruction = ({
                   width='100%'
                   select
                   label={t('Test/Treatment')}>
-                  {/* <MenuItem value={''}>
-                    <em>{t('Choose')}</em>
-                  </MenuItem>*/}
-                  {collectedTestAndTreatmentsFromFhir.map((value, index) => {
-                    return (
-                      <MenuItem key={index} value={value.code}>
-                        {t(value.title)}
-                      </MenuItem>
-                    );
-                  })}
+                  {collectedTestAndTreatmentsFromFhir &&
+                    collectedTestAndTreatmentsFromFhir.map((value, index) => {
+                      return (
+                        <MenuItem key={index} value={value.code}>
+                          {t(value.title)}
+                        </MenuItem>
+                      );
+                    })}
                 </CustomizedTextField>
               }
             />
@@ -182,31 +175,32 @@ const AddCardInstruction = ({
           currentTestTreatmentsInstructionsDetails.length > 0 ? (
             <Grid item xs={3}>
               <Controller
-                defaultValue=''
-                name={`test_treatment_type[${index}]`}
+                defaultValue={item.test_treatment_type}
+                name={`Instruction[${index}].test_treatment_type`}
                 control={control}
-                /* onChange={([event]) =>
-                  handleChangeOfDetails(event.target.value)
-                }*/
+                onChange={([event]) => {
+                  setValue(
+                    `Instruction[${index}].test_treatment_type`,
+                    event.target.value,
+                  );
+                  return event.target.value;
+                }}
                 as={
                   <CustomizedTextField
                     iconColor='#1976d2'
                     width='100%'
                     select
                     label={t('X-Ray Type')}>
-                    {/* <MenuItem value={''}>
-                      <em>{t('Choose')}</em>
-                    </MenuItem>*/}
-
-                    {currentTestTreatmentsInstructionsDetails.map(
-                      (value, index) => {
-                        return (
-                          <MenuItem key={index} value={value.code}>
-                            {t(value.title)}
-                          </MenuItem>
-                        );
-                      },
-                    )}
+                    {currentTestTreatmentsInstructionsDetails &&
+                      currentTestTreatmentsInstructionsDetails.map(
+                        (value, index) => {
+                          return (
+                            <MenuItem key={index} value={value.code}>
+                              {t(value.title)}
+                            </MenuItem>
+                          );
+                        },
+                      )}
                   </CustomizedTextField>
                 }
               />
@@ -216,9 +210,8 @@ const AddCardInstruction = ({
           )}
           <Grid item xs={2}></Grid>
           <Grid item xs={2}>
-            {/*{encounter.status !== "finished" && true  }
-          //see em-84 - to be continued*/}
-            <StyledIconedButton name={`test_treatment_referral[${index}]`}>
+            <StyledIconedButton
+              name={`Instruction[${index}].test_treatment_referral`}>
               <div>
                 <img src={PDF} />
               </div>
@@ -228,10 +221,37 @@ const AddCardInstruction = ({
 
           <Grid item xs={6}>
             <Controller
-              name={`instructions[${index}]`}
+              name={`Instruction[${index}].instructions`}
               control={control}
+              defaultValue={item.instructions}
+              /* onFocus={(evt) => {
+                handleFocusBlur(`Instruction[${index}].instructions`, true);
+              }}
+              onBlur={(evt) => {
+                handleFocusBlur(`Instruction[${index}].instructions`, false);
+              }}
+              onChange={([event]) => {
+                setValue(
+                  `Instruction[${index}].instructions`,
+                  event.target.value,
+                );
+
+                watchInstructions =
+                  watch(`Instruction[${index}]`) &&
+                  watch(`Instruction[${index}]`).instructions;
+
+                return event.target.value;
+              }}*/
+
               as={
                 <CustomizedTextField
+                  InputLabelProps={{
+                    shrink:
+                      watch(`Instruction[${index}]`) &&
+                      watch(`Instruction[${index}]`).instructions
+                        ? true
+                        : false,
+                  }}
                   /*  control={control}*/
                   label={t('Instructions')}
                   width='100%'
@@ -242,14 +262,17 @@ const AddCardInstruction = ({
           </Grid>
           <Grid item xs={2}>
             <StyledSelectTemplateButton
-              /* disabled={permission === 'view' ? true : false}*/
+              margin={'30px 30px'}
+              disabled={currentTestTreatmentsInstructionsKey ? false : true}
               onClick={() =>
                 handlePopUpProps(
                   t('X-Ray recommendations'),
-                  'templates_x_ray', //to change
+                  `templates_${currentTestTreatmentsInstructionsKey}`, //to change
                   'tests_and_treatments', //to change
                   callBack,
-                  'x_ray_details',
+                  `Instruction[${index}].instructions`,
+                  watch(`Instruction[${index}]`) &&
+                    watch(`Instruction[${index}]`).instructions,
                 )
               }>
               {t('Select template')}
@@ -264,16 +287,18 @@ const AddCardInstruction = ({
             <span>
               <b>{t('Status')}</b>
             </span>
-            {/* Requested service - switch */}
-            {/*   <Controller
-              defaultValue={true}
-              name={`test_treatment_status[${index}]`}
-              control={control}
-              onChange={([event]) => event.target.checked}
-              as={*/}
+
             <StyledSwitch
-              defaultValue={true}
-              name={`test_treatment_status[${index}]`}
+              register={register}
+              defaultChecked={item.test_treatment_status}
+              onChange={([event]) => {
+                setValue(
+                  `Instruction[${index}].test_treatment_status`,
+                  event.target.checked,
+                );
+                return event.target.checked;
+              }}
+              name={`Instruction[${index}].test_treatment_status`}
               control={control}
               label_1={'Not done'}
               label_2={'Performed'}
@@ -282,8 +307,6 @@ const AddCardInstruction = ({
               width={'200px'}
               margin={'10px 14px'}
             />
-            {/* }
-            />*/}
           </Grid>
           <Grid
             container
@@ -291,12 +314,18 @@ const AddCardInstruction = ({
             justify={'flex-start'}
             alignItems={'center'}>
             <Controller
-              name={`test_treatment_remark[${index}]`}
+              onChange={([event]) => {
+                setValue(
+                  `Instruction[${index}].test_treatment_remark`,
+                  event.target.checked,
+                );
+                return event.target.value;
+              }}
+              name={`Instruction[${index}].test_treatment_remark`}
               control={control}
+              defaultValue={item.test_treatment_remark}
               as={
                 <CustomizedTextField
-                  /*disabled={permission === 'view' ? true : false}*/
-
                   multiline
                   width={'85%'}
                   label={t('remark')}
@@ -307,7 +336,7 @@ const AddCardInstruction = ({
         </Grid>
       </StyledCardRoot>
     </React.Fragment>
-  );
+  ) : null;
 };
 
 export default AddCardInstruction;

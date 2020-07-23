@@ -29,11 +29,20 @@ import { getValueSet } from '../../../../Utils/Services/FhirAPI';
 import moment from 'moment';
 import AutoCompleteWithText from '../../../../Assets/Elements/AutoComplete/AutoCompleteWithText';
 import CustomizedTextField from '../../../../Assets/Elements/CustomizedTextField';
-import { MenuItem } from '@material-ui/core';
+import { Grid, MenuItem } from '@material-ui/core';
 import AddCardInstruction from './AddCardInstruction';
-import { FormContext, useFieldArray, useForm } from 'react-hook-form';
+import {
+  Controller,
+  FormContext,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from 'react-hook-form';
 import StyledDiagnosisAndRecommendations from '../../DiagnosisAndRecommendations/Style';
 import PopUpFormTemplates from '../../../Generic/PopupComponents/PopUpFormTemplates';
+import PDF from '../../../../Assets/Images/pdf.png';
+import { StyledSelectTemplateButton } from '../../../../Assets/Elements/StyledSelectTempleteButton';
+import StyledSwitch from '../../../../Assets/Elements/StyledSwitch';
 
 const InstructionsForTreatment = ({
   patient,
@@ -45,8 +54,18 @@ const InstructionsForTreatment = ({
   permission,
   currentUser,
 }) => {
-  let user = normalizeFhirUser(currentUser);
+  const { t } = useTranslation();
+  /*  test_treatment: '',
+    test_treatment_type: '',
+    test_treatment_referral: '',
+    instructions: '',
+    details: '',
+    test_treatment_remark: '',
+    test_treatment_status: true,*/
 
+  const addNewInstruction = (evt) => {
+    prepend({});
+  };
   const [
     collectedTestAndTreatmentsFromFhir,
     setCollectedTestAndTreatmentsFromFhir,
@@ -83,31 +102,10 @@ const InstructionsForTreatment = ({
       );
 
       setCollectedTestAndTreatmentsFromFhir(testAndTreatmentObj);
-      setCurrentTestTreatmentsInstructions(collectedTestAndTreatmentsFromFhir);
     })();
   }, []);
-
+  let user = normalizeFhirUser(currentUser);
   let edit = encounter.status === 'finished' ? false : true; // is this form in edit mode or in view mode
-  const addNewInstruction = (evt) => {
-    let addThisInstruction = {
-      user,
-      edit,
-      encounter,
-      collectedTestAndTreatmentsFromFhir,
-      value: '',
-      currentTestTreatmentsInstructions,
-    };
-
-    let currentTestTreatmentsInstructionsTemp = [
-      ...currentTestTreatmentsInstructions,
-      addThisInstruction,
-    ];
-
-    setCurrentTestTreatmentsInstructions([
-      ...currentTestTreatmentsInstructionsTemp,
-    ]);
-  };
-
   const [defaultContext, setDefaultContext] = useState('');
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
@@ -117,6 +115,7 @@ const InstructionsForTreatment = ({
       };
     });
   };
+
   const [popUpProps, setPopUpProps] = React.useState({
     popupOpen: false,
     formID: '',
@@ -129,7 +128,14 @@ const InstructionsForTreatment = ({
     name: '',
   });
 
-  const handlePopUpProps = (title, fields, id, callBack, name) => {
+  const handlePopUpProps = (
+    title,
+    fields,
+    id,
+    callBack,
+    name,
+    defaultContext,
+  ) => {
     setPopUpProps((prevState) => {
       return {
         ...prevState,
@@ -139,57 +145,71 @@ const InstructionsForTreatment = ({
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
+        defaultContext: defaultContext,
       };
     });
   };
 
-  const { control, handleSubmit } = useForm();
-  /*const { handleSubmit, setValue, register, unregister } = methods;*/
-  const { t } = useTranslation();
-  const onSubmit = (data) => {
-    console.log(JSON.stringify(data));
-  };
+  const { register, control, handleSubmit, reset, watch, setValue } = useForm();
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control,
+      name: 'Instructions',
+    },
+  );
+  let watchInstructions = [];
 
+  const callBack = (data, name) => {
+    setDefaultContext(data);
+    setValue(name, data);
+  };
   return (
     <React.Fragment>
       <PopUpFormTemplates {...popUpProps} />
+      <StyledConstantHeaders>
+        {t('Instructions for treatment')}
+      </StyledConstantHeaders>
+      <StyledTreatmentInstructionsButton onClick={addNewInstruction}>
+        <img alt='plus icon' src={PLUS} />
+        {t('Instructions for treatment')}
+      </StyledTreatmentInstructionsButton>
+      <hr />
+      <StyledInstructions id='newRefInstructions'>
+        <FormContext>
+          <form onSubmit={handleSubmit((data) => console.log(data))}>
+            {fields.map((item, index) => {
+              /*    watchInstructions =
+                watch(`Instruction[${index}]`) &&
+                watch(`Instruction[${index}]`).instructions
+                  ? watch(`Instruction[${index}]`).instructions
+                  : '';*/
+              return (
+                <AddCardInstruction
+                  watchInstructions={watchInstructions}
+                  callBack={callBack}
+                  setValue={setValue}
+                  item={item}
+                  name={'Instructions'}
+                  handlePopUpProps={handlePopUpProps}
+                  control={control}
+                  key={item.id}
+                  index={index}
+                  user={user}
+                  edit={edit}
+                  encounter={encounter}
+                  watch={watch}
+                  register={register}
+                  collectedTestAndTreatmentsFromFhir={
+                    collectedTestAndTreatmentsFromFhir
+                  }
+                />
+              );
+            })}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <StyledConstantHeaders>
-          {t('Instructions for treatment')}
-        </StyledConstantHeaders>
-        <StyledTreatmentInstructionsButton onClick={addNewInstruction}>
-          <img alt='plus icon' src={PLUS} />
-          {t('Instructions for treatment')}
-        </StyledTreatmentInstructionsButton>
-        <hr />
-        <StyledInstructions id='newRefInstructions'>
-          {currentTestTreatmentsInstructions.map((value, index) => {
-            return (
-              <AddCardInstruction
-                handlePopUpProps={handlePopUpProps}
-                control={control}
-                key={index}
-                index={index}
-                user={value.user}
-                edit={value.edit}
-                encounter={value.encounter}
-                collectedTestAndTreatmentsFromFhir={
-                  value.collectedTestAndTreatmentsFromFhir
-                }
-                currentTestTreatmentsInstructions={
-                  currentTestTreatmentsInstructions
-                }
-                setCurrentTestTreatmentsInstructions={
-                  setCurrentTestTreatmentsInstructions
-                }
-              />
-            );
-          })}
-        </StyledInstructions>
-        <button type='submit'>Submit</button>
-      </form>
-      {/* </FormContext>*/}
+            <input type='submit' />
+          </form>
+        </FormContext>
+      </StyledInstructions>
     </React.Fragment>
   );
 };

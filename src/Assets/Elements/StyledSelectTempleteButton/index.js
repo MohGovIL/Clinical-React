@@ -14,7 +14,7 @@ export const StyledSelectTemplateButton = ({
     width='113px'
     height='32px'
     color='primary'
-    margin='0 16px'
+    margin={margin ? margin : '0 16px'}
     variant='outlined'
     size='small'
     {...rest}
