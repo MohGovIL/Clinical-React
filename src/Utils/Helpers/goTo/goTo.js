@@ -1,5 +1,6 @@
 import { store } from 'index';
 import { setEncounterAndPatient } from 'Store/Actions/ActiveActions';
+import { setFilterDateDisabledAction } from 'Store/Actions/FilterActions/FilterActions';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 
 /**
@@ -10,6 +11,7 @@ import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
  * @param {string} path
  */
 export const goTo = (encounter, patient, history, path) => {
+  store.dispatch(setFilterDateDisabledAction(false));
   store.dispatch(setEncounterAndPatient(encounter, patient));
   history.push({
     pathname: `${baseRoutePath()}${path}`,

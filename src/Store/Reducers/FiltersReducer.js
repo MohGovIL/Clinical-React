@@ -4,6 +4,7 @@ import {
   SET_FILTER_DATE,
   SET_ORGANIZATION_FILTER_VALUE,
   SET_SERVICE_TYPE_FILTER_VALUE,
+  SET_FILTER_DATE_DISABLED,
 } from 'Store/Actions/FilterActions/FilterActionsTypes';
 
 const INITIAL_STATE = {
@@ -13,6 +14,7 @@ const INITIAL_STATE = {
   filter_organization: 0,
   filter_service_type: 0,
   filter_is_set: 0,
+  isDisabled: false,
 };
 
 const FiltersReducer = (state = INITIAL_STATE, action) => {
@@ -28,14 +30,14 @@ const FiltersReducer = (state = INITIAL_STATE, action) => {
         ...state,
         STATUS: action.type,
         filter_date: Moment(action.filter_date).format('YYYY-MM-DD'),
-        filter_is_set: 1
+        filter_is_set: 1,
       };
     case SET_ORGANIZATION_FILTER_VALUE:
       return {
         ...state,
         STATUS: action.type,
         filter_organization: action.filter_organization,
-        filter_is_set: 1
+        filter_is_set: 1,
       };
     case SET_SERVICE_TYPE_FILTER_VALUE:
       return {
@@ -43,6 +45,12 @@ const FiltersReducer = (state = INITIAL_STATE, action) => {
         STATUS: action.type,
         filter_service_type: action.filter_service_type,
         filter_is_set: 1,
+      };
+    case SET_FILTER_DATE_DISABLED:
+      return {
+        ...state,
+        STATUS: action.type,
+        isDisabled: action.isDisabled,
       };
     default:
       return state;
