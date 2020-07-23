@@ -52,7 +52,11 @@ const PopUpFormTemplates = ({
     if ((context === '' && !saved) || (saved && typeof saved !== 'object')) {
       handlePopupClose();
     } else {
-      if (defaultContext.trim() !== context.trim()) {
+      if (
+        defaultContext &&
+        context &&
+        defaultContext.trim() !== context.trim()
+      ) {
         setPopupCloseOpen(true);
       } else {
         setPopupCloseOpen(false);
