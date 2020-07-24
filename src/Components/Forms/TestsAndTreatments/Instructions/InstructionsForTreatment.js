@@ -58,7 +58,7 @@ const InstructionsForTreatment = ({
     setCurrentTestTreatmentsInstructionsLetters,
   ] = useState([]);
 
-  const handleChange = async (value) => {
+  const handleChange = async (value, index) => {
     const listsDetailsAndLetters = [];
     setCurrentTestTreatmentsInstructionsKey(value);
     listsDetailsAndLetters.push(
@@ -109,9 +109,21 @@ const InstructionsForTreatment = ({
           });
         }
       });
+      let currentTestTreatmentsInstructionsLettersTemp = [
+        ...currentTestTreatmentsInstructionsLetters,
+      ];
+      currentTestTreatmentsInstructionsLettersTemp[index] = lettersObj;
+      setCurrentTestTreatmentsInstructionsLetters(
+        currentTestTreatmentsInstructionsLettersTemp,
+      );
 
-      setCurrentTestTreatmentsInstructionsLetters(lettersObj);
-      setCurrentTestTreatmentsInstructionsDetails(detailsObj);
+      let currentTestTreatmentsInstructionsDetailsTemp = [
+        ...currentTestTreatmentsInstructionsDetails,
+      ];
+      currentTestTreatmentsInstructionsDetailsTemp[index] = detailsObj;
+      setCurrentTestTreatmentsInstructionsDetails(
+        currentTestTreatmentsInstructionsDetailsTemp,
+      );
     }
     return value;
   };
@@ -123,15 +135,9 @@ const InstructionsForTreatment = ({
   };
 
   const { register, control, handleSubmit, reset, watch, setValue } = useForm({
-    defaultValues: {
-      test_treatment: '',
-      test_treatment_type: '',
-      test_treatment_referral: '',
-      instructions: '',
-      details: '',
-      test_treatment_remark: '',
-      test_treatment_status: true,
-    },
+    /* defaultValues: {
+
+    },*/
   });
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -144,7 +150,27 @@ const InstructionsForTreatment = ({
 
   renderCount++;
   const addNewInstruction = (evt) => {
-    prepend({});
+    prepend({
+      Instructions: [
+        {
+          test_treatment: '',
+          test_treatment_type: '',
+          test_treatment_referral: '',
+          instructions: '',
+          details: '',
+          test_treatment_remark: '',
+          test_treatment_status: true,
+        },
+      ],
+    });
+    let currentTestTreatmentsInstructionsDetailsTemp = [
+      ...currentTestTreatmentsInstructionsDetails,
+    ];
+    currentTestTreatmentsInstructionsDetailsTemp.unshift([]);
+
+    setCurrentTestTreatmentsInstructionsDetails(
+      currentTestTreatmentsInstructionsDetailsTemp,
+    );
   };
   const [
     collectedTestAndTreatmentsFromFhir,
@@ -248,9 +274,9 @@ const InstructionsForTreatment = ({
       <hr />
       <StyledInstructions id='newRefInstructions'>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <h1>Field Array </h1>
+          {/*   <h1>Field Array </h1>
           <p>The following demo allow you to delete, append, prepend items</p>
-          <span className='counter'>Render Count: {renderCount}</span>
+          <span className='counter'>Render Count: {renderCount}</span>*/}
 
           {fields.map((item, index) => {
             return (
@@ -283,7 +309,7 @@ const InstructionsForTreatment = ({
                           defaultValue={item.test_treatment}
                           rule={{ required: 'it is required' }}
                           onChange={([event]) => {
-                            handleChange(event.target.value);
+                            handleChange(event.target.value, index);
                             setValue(
                               `Instruction[${index}].test_treatment`,
                               event.target.value,
@@ -311,7 +337,9 @@ const InstructionsForTreatment = ({
                         />
                       </Grid>
                       {currentTestTreatmentsInstructionsDetails &&
-                      currentTestTreatmentsInstructionsDetails.length > 0 ? (
+                      currentTestTreatmentsInstructionsDetails[index] &&
+                      currentTestTreatmentsInstructionsDetails[index].length >
+                        0 ? (
                         <Grid item xs={3}>
                           <Controller
                             defaultValue={item.test_treatment_type}
@@ -331,17 +359,18 @@ const InstructionsForTreatment = ({
                                 select
                                 label={t('X-Ray Type')}>
                                 {currentTestTreatmentsInstructionsDetails &&
-                                  currentTestTreatmentsInstructionsDetails.map(
-                                    (value, index) => {
-                                      return (
-                                        <MenuItem
-                                          key={index}
-                                          value={value.code}>
-                                          {t(value.title)}
-                                        </MenuItem>
-                                      );
-                                    },
-                                  )}
+                                  currentTestTreatmentsInstructionsDetails[
+                                    index
+                                  ] &&
+                                  currentTestTreatmentsInstructionsDetails[
+                                    index
+                                  ].map((value, index) => {
+                                    return (
+                                      <MenuItem key={index} value={value.code}>
+                                        {t(value.title)}
+                                      </MenuItem>
+                                    );
+                                  })}
                               </CustomizedTextField>
                             }
                           />
@@ -432,15 +461,14 @@ const InstructionsForTreatment = ({
                         </span>
 
                         <StyledSwitch
-                          register={register}
-                          defaultChecked={item.test_treatment_status}
-                          onChange={([event]) => {
+                          onChange={(event) => {
                             setValue(
                               `Instruction[${index}].test_treatment_status`,
-                              event.target.checked,
+                              event.target.value,
                             );
-                            return event.target.checked;
                           }}
+                          register={register}
+                          checked={item.test_treatment_status}
                           name={`Instruction[${index}].test_treatment_status`}
                           control={control}
                           label_1={'Not done'}
@@ -482,7 +510,7 @@ const InstructionsForTreatment = ({
               </div>
             );
           })}
-
+          {/*
           <section>
             <button
               type='button'
@@ -533,7 +561,7 @@ const InstructionsForTreatment = ({
               }>
               reset
             </button>
-          </section>
+          </section>*/}
 
           <input type='submit' />
         </form>
