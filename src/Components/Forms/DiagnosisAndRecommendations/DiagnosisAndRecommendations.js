@@ -240,21 +240,27 @@ const DiagnosisAndRecommendations = ({
         //   }
         //   return item;
         // });
+        if (Object.keys(normalizedQuestionnaireResponse).length) {
+          //Update
+          // [] need to implement
+        } else {
+          // Create
+          // const ans = await FHIR('QuestionnaireResponse', 'doWork', {
+          //   functionName: 'createQuestionnaireResponse',
+          //   functionParams: {
+          //     questionnaireResponse: {
+          //       questionnaire: data.questionnaireId,
+          //       status: 'completed',
+          //       patient: patient.id,
+          //       encounter: encounter.id,
+          //       authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          //       source: patient.id,
+          //       item: items,
+          //     },
+          //   },
+          // });
+        }
 
-        // const ans = await FHIR('QuestionnaireResponse', 'doWork', {
-        //   functionName: 'createQuestionnaireResponse',
-        //   functionParams: {
-        //     questionnaireResponse: {
-        //       questionnaire: data.questionnaireId,
-        //       status: 'completed',
-        //       patient: patient.id,
-        //       encounter: encounter.id,
-        //       authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-        //       source: patient.id,
-        //       item: items,
-        //     },
-        //   },
-        // });
         // console.log(ans);
         //Updating encounter
         // const cloneEncounter = { ...encounter };

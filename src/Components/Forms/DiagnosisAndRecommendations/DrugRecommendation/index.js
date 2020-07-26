@@ -146,6 +146,30 @@ const DrugRecommendation = ({ encounterId }) => {
             const normalizedFhirMedicationRequest = normalizeFhirMedicationRequest(
               medicationRequest.resource,
             );
+            setRequiredErrors((prevState) => {
+              const cloneState = [...prevState];
+              cloneState.push({
+                quantity: '',
+                drugForm: '',
+                drugRoute: '',
+                intervals: '',
+                duration: '',
+              });
+              return cloneState;
+            });
+            //[] Need to do subtract to repeatEnd and repeatStart to get the duration delete this msg after you finish that
+            append({
+              drugName:
+                normalizedFhirMedicationRequest.medicationCodeableConceptCode,
+              quantity: normalizedFhirMedicationRequest.doseQuantity || '',
+              drugForm: normalizedFhirMedicationRequest.methodCode || '',
+              drugRoute: normalizedFhirMedicationRequest.routeCode || '',
+              intervals: normalizedFhirMedicationRequest.timingCode || '',
+              duration: normalizedFhirMedicationRequest.d || '',
+              toDate: normalizedFhirMedicationRequest.timingRepeatEnd || '',
+              instructionsForTheDrug:
+                normalizedFhirMedicationRequest.note || '',
+            });
             medicationUniqData[medicationRequestIndex - 1] =
               normalizedFhirMedicationRequest.id;
           }
