@@ -15,6 +15,7 @@ const RecommendationsOnRelease = () => {
     watch,
     setPopUpProps,
     setValue,
+    questionnaireResponse,
   } = useFormContext();
   const instructionsForFurtherTreatment = watch(
     'instructionsForFurtherTreatment',
@@ -37,6 +38,27 @@ const RecommendationsOnRelease = () => {
     });
   };
   const instructionsName = t('Instructions for further treatment');
+
+  React.useEffect(() => {
+    const { items } = questionnaireResponse;
+    if (items) {
+      items.forEach((item) => {
+        if (item.answer) {
+          switch (item.text) {
+            case 'Instructions for further treatment':
+              setValue(
+                'instructionsForFurtherTreatment',
+                item.answer[0].valueString,
+              );
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    }
+  }, [questionnaireResponse, setValue]);
+
   return (
     <StyledFormGroup>
       <Title

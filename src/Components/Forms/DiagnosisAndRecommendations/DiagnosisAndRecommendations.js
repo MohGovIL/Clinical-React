@@ -302,7 +302,6 @@ const DiagnosisAndRecommendations = ({
             );
 
             if (data.medicationRequest[drugIndex]) {
-              // Needs to implement the delete method for the medicationRequest that comes from the server
               medications.push(
                 FHIR('MedicationRequest', 'doWork', {
                   functionName: 'updateMedicationRequest',
