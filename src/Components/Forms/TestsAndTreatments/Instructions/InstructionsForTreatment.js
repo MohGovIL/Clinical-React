@@ -9,12 +9,12 @@ import {
 } from '@material-ui/core';
 import { FormContext, useForm } from 'react-hook-form';
 import Fields from './Fields';
-import { FHIR } from '../../../../Utils/Services/FHIR';
-import normalizeFhirValueSet from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 
-let renderCount = 0;
+import PopUpFormTemplates from '../../../Generic/PopupComponents/PopUpFormTemplates';
 
-const InstructionsForTreatment = () => {
+import { connect } from 'react-redux';
+
+const InstructionsForTreatment = ({ encounter }) => {
   const methods = useForm({
     mode: 'onBlur',
     defaultValues: {
@@ -22,22 +22,74 @@ const InstructionsForTreatment = () => {
     },
   });
   const { handleSubmit } = methods;
-
   const onSubmit = (data) => console.log('data', JSON.stringify(data));
 
-  renderCount++;
+  let edit = encounter.status === 'finished' ? false : true; // is this form in edit mode or in view mode
+  const [defaultContext, setDefaultContext] = useState('');
+  const handlePopUpClose = () => {
+    setPopUpProps((prevState) => {
+      return {
+        ...prevState,
+        popupOpen: false,
+      };
+    });
+  };
+
+  const [popUpProps, setPopUpProps] = React.useState({
+    popupOpen: false,
+    formID: '',
+    encounter,
+    formFieldsTitle: '',
+    defaultContext,
+    setDefaultContext,
+    handlePopupClose: handlePopUpClose,
+    setTemplatesTextReturned: null,
+    name: '',
+  });
+
+  const handlePopUpProps = (
+    title,
+    fields,
+    id,
+    callBack,
+    name,
+    defaultContext,
+  ) => {
+    setPopUpProps((prevState) => {
+      return {
+        ...prevState,
+        popupOpen: true,
+        formFieldsTitle: title,
+        formFields: fields,
+        formID: id,
+        setTemplatesTextReturned: callBack,
+        name,
+        defaultContext: defaultContext,
+      };
+    });
+  };
 
   return (
     <FormContext {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <h1>Field Array </h1>
-        <p>The following demo allow you to delete, append, prepend items</p>
-        <span className='counter'>Render Count: {renderCount}</span>
+        <PopUpFormTemplates {...popUpProps} />
+
         <Fields />
+
         <input type='submit' />
       </form>
     </FormContext>
   );
 };
 
-export default InstructionsForTreatment;
+const mapStateToProps = (state) => {
+  return {
+    patient: state.active.activePatient,
+    encounter: state.active.activeEncounter,
+    languageDirection: state.settings.lang_dir,
+    formatDate: state.settings.format_date,
+    verticalName: state.settings.clinikal_vertical,
+    currentUser: state.active.activeUser,
+  };
+};
+export default connect(mapStateToProps, null)(InstructionsForTreatment);
