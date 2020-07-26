@@ -25,6 +25,7 @@ const DrugRecommendation = ({ encounterId }) => {
     setRequiredErrors,
     setValue,
     setPopUpProps,
+    getValues,
   } = useFormContext();
   const { append, remove, fields } = useFieldArray({
     control,
@@ -69,8 +70,6 @@ const DrugRecommendation = ({ encounterId }) => {
     drugRoute: [],
     drugIntervals: [],
   });
-
-  const [m, sm] = useState();
 
   const fetchDrugsData = React.useCallback(async () => {
     const APIsArray = [
@@ -130,6 +129,7 @@ const DrugRecommendation = ({ encounterId }) => {
 
   const fetchMedicationRequest = React.useCallback(async () => {
     try {
+      // Name of the medicationRequest the comes from the server
       register({ name: 'medicationRequest' });
       const res = await FHIR('MedicationRequest', 'doWork', {
         functionName: 'getMedicationRequest',
@@ -139,7 +139,8 @@ const DrugRecommendation = ({ encounterId }) => {
       });
       // I could just do res.status === 204 for no content but I'm not sure that it's implemented in all of the entities
       if (res.status === 200 && res.data.total) {
-        // medicationUniqData = {index =  medicationId}
+        // medicationUniqData
+        // [index]: medicationId
         const medicationUniqData = {};
         res.data.entry.forEach((medicationRequest, medicationRequestIndex) => {
           if (medicationRequest.resource) {
@@ -148,11 +149,9 @@ const DrugRecommendation = ({ encounterId }) => {
             );
             medicationUniqData[medicationRequestIndex] =
               normalizedFhirMedicationRequest.id;
-            console.log(normalizedFhirMedicationRequest);
           }
         });
         setValue({ medicationRequest: medicationUniqData });
-        sm(res.data.entry);
       }
     } catch (error) {
       console.log(error);
@@ -169,7 +168,6 @@ const DrugRecommendation = ({ encounterId }) => {
   }, [fetchMedicationRequest, fetchDrugsData]);
 
   const returnMenuItem = (name) => {
-    console.log(drugsData);
     if (!drugsData[name]) return [];
     if (!drugsData[name].length) return [];
     return drugsData[name].map((form, formIndex) => {
@@ -390,6 +388,10 @@ const DrugRecommendation = ({ encounterId }) => {
                 <Delete
                   color='primary'
                   onClick={() => {
+                    // When deleting a medication needs to search if it is a medication that came from db so I can delete that from the data object
+                    // and maybe delete them from the db if that will be a mission
+                    const { medicationRequest } = getValues({ nest: true });
+
                     setRequiredErrors((prevState) => {
                       const cloneState = [...prevState];
                       cloneState.splice(index, 1);

@@ -174,7 +174,7 @@ const DiagnosisAndRecommendations = ({
     if (isRequiredValidation(data) || true) {
       try {
         const APIsArray = [];
-        console.log(data);
+        // console.log(data);
         // Creating QuestionnaireResponse
         // const items = qItem.item.map((i) => {
         //   const item = {
@@ -280,7 +280,7 @@ const DiagnosisAndRecommendations = ({
             );
 
             if (data.medicationRequest[drugIndex]) {
-              // Needs to implement
+              // Needs to implement the delete method for the medicationRequest that comes from the server
               medications.push(
                 FHIR('MedicationRequest', 'doWork', {
                   functionName: 'updateMedicationRequest',
@@ -302,7 +302,6 @@ const DiagnosisAndRecommendations = ({
             }
           });
           const res = await Promise.all[medications];
-          console.log(res);
         }
       } catch (error) {
         console.log(error);

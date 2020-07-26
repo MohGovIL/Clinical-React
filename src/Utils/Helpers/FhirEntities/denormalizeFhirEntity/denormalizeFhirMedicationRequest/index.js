@@ -1,3 +1,8 @@
+/**
+ * @author Idan Gigi idangi@matrix.co.il
+ * @param {object} medicationRequest - needs to be a normalized medicationRequest 
+ */
+
 const denormalizeFhirMedicationRequest = (medicationRequest) => {
   if (Object.prototype.toString.call(medicationRequest === '[object Object]')) {
     const maxDosePerAdministration = {};
