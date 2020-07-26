@@ -8,7 +8,13 @@ import { useFormContext } from 'react-hook-form';
 import { StyledDivider } from '../Style';
 const RecommendationsOnRelease = () => {
   const { t } = useTranslation();
-  const { register, unregister, setValue, permission } = useFormContext();
+  const {
+    register,
+    unregister,
+    setValue,
+    permission,
+    questionnaireResponse,
+  } = useFormContext();
   const [decision, setDecision] = useState('');
   const [evacuationWay, setEvacuationWay] = useState('');
 
@@ -25,8 +31,30 @@ const RecommendationsOnRelease = () => {
   useEffect(() => {
     register({ name: 'decision' });
     register({ name: 'evacuationWay' });
+    const { items } = questionnaireResponse;
+    if (items) {
+      items.forEach((item) => {
+        if (item.answer) {
+          switch (item.text) {
+            case 'Decision':
+              setDecision(item.answer[0].valueString);
+              setValue('decision', item.answer[0].valueString);
+              break;
+            case 'Evacuation way':
+              setEvacuationWay(item.answer[0].valueString);
+              setValue('evacuationWay', item.answer[0].valueString);
+              break;
+            case 'Sick leave':
+              setValue('numberOfDays', item.answer[0].valueString);
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    }
     return () => unregister(['decision', 'evacuationWay']);
-  }, [register, unregister]);
+  }, [register, unregister, questionnaireResponse, setValue]);
 
   return (
     <StyledFormGroup>
