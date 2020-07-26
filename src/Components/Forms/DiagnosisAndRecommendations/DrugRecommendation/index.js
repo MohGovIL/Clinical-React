@@ -4,13 +4,12 @@ import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import { Grid, MenuItem, ListItem } from '@material-ui/core';
+import { Grid, MenuItem } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import { Delete } from '@material-ui/icons';
 import * as moment from 'moment';
 import { FHIR } from 'Utils/Services/FHIR';
-import { FixedSizeList } from 'react-window';
 import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationRequest';
 import { unregister } from 'serviceWorker';
 

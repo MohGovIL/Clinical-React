@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { store } from 'index';
+import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -63,6 +64,10 @@ const DiagnosisAndRecommendations = ({
   };
 
   const [qItem, setQItem] = React.useState([]);
+  const [
+    normalizedQuestionnaireResponse,
+    setNormalizedQuestionnaireResponse,
+  ] = React.useState({});
   React.useEffect(() => {
     (async () => {
       try {
@@ -72,8 +77,25 @@ const DiagnosisAndRecommendations = ({
             QuestionnaireName: 'diagnosis_and_recommendations_questionnaire',
           },
         });
-
-        // TODO:  needs to fetch QResponse prob gonna need to pass it down either via formContext or props for each component
+        const questionnaireResponse = await FHIR(
+          'QuestionnaireResponse',
+          'doWork',
+          {
+            functionName: 'getQuestionnaireResponse',
+            functionParams: {
+              encounterId: encounter.id,
+              patientId: patient.id,
+              questionnaireId: q.data.entry[1].resource.id,
+            },
+          },
+        );
+        if (questionnaireResponse.data.total) {
+          setNormalizedQuestionnaireResponse(
+            normalizeFhirQuestionnaireResponse(
+              questionnaireResponse.data.entry[1].resource,
+            ),
+          );
+        }
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaireId' });
         setValue('questionnaireId', Questionnaire.id);
@@ -233,7 +255,7 @@ const DiagnosisAndRecommendations = ({
         //     },
         //   },
         // });
-
+        // console.log(ans);
         //Updating encounter
         // const cloneEncounter = { ...encounter };
         // cloneEncounter.extensionSecondaryStatus = data.nextStatus;
@@ -345,7 +367,8 @@ const DiagnosisAndRecommendations = ({
         serviceType={encounter.serviceTypeCode}
         reasonCode={encounter.examinationCode}
         requiredErrors={requiredErrors}
-        setRequiredErrors={setRequiredErrors}>
+        setRequiredErrors={setRequiredErrors}
+        questionnaireResponse={normalizedQuestionnaireResponse}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />

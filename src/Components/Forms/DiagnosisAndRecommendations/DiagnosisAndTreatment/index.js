@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid } from '@material-ui/core';
 import { StyledDivider } from '../Style';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
 const DiagnosisAndTreatment = () => {
   const { t } = useTranslation();
   const {
@@ -15,6 +15,7 @@ const DiagnosisAndTreatment = () => {
     setValue,
     register,
     watch,
+    questionnaireResponse,
   } = useFormContext();
 
   const diagnosisAndTreatmentFields = watch([
@@ -39,10 +40,38 @@ const DiagnosisAndTreatment = () => {
       };
     });
   };
-
   const treatmentDetails = t('Treatment details');
   const diagnosisDetails = t('Diagnosis details');
   const findingsDetails = t('Findings details');
+  React.useEffect(() => {
+    const { items } = questionnaireResponse;
+    if (items) {
+      items.forEach((item) => {
+        if (item.answer) {
+          switch (item.text) {
+            case 'Findings details':
+              setValue('findingsDetails', item.answer[0].valueString);
+              break;
+            case 'Diagnosis details':
+              setValue('diagnosisDetails', item.answer[0].valueString);
+              break;
+            case 'Treatment details':
+              setValue('treatmentDetails', item.answer[0].valueString);
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    }
+  }, [
+    questionnaireResponse,
+    setValue,
+    diagnosisDetails,
+    treatmentDetails,
+    findingsDetails,
+  ]);
+
   return (
     <StyledFormGroup>
       <Title
