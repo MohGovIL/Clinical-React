@@ -147,7 +147,7 @@ const DrugRecommendation = ({ encounterId }) => {
             const normalizedFhirMedicationRequest = normalizeFhirMedicationRequest(
               medicationRequest.resource,
             );
-            medicationUniqData[medicationRequestIndex] =
+            medicationUniqData[medicationRequestIndex - 1] =
               normalizedFhirMedicationRequest.id;
           }
         });
@@ -387,10 +387,18 @@ const DrugRecommendation = ({ encounterId }) => {
               <Grid container direction='row' justify='flex-end'>
                 <Delete
                   color='primary'
-                  onClick={() => {
-                    // When deleting a medication needs to search if it is a medication that came from db so I can delete that from the data object
-                    // and maybe delete them from the db if that will be a mission
+                  onClick={async () => {
                     const { medicationRequest } = getValues({ nest: true });
+                    if (medicationRequest[index]) {
+                      await FHIR('MedicationRequest', 'doWork', {
+                        functionName: 'deleteMedicationRequest',
+                        functionParams: {
+                          _id: medicationRequest[index],
+                        },
+                      });
+                    }
+                    delete medicationRequest[index];
+                    setValue('medicationRequest', medicationRequest);
 
                     setRequiredErrors((prevState) => {
                       const cloneState = [...prevState];

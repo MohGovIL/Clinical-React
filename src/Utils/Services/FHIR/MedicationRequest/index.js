@@ -79,6 +79,9 @@ const MedicationRequestState = {
     }
     return CRUDOperations('read', `${params.url}`);
   },
+  deleteMedicationRequest: (params) => {
+    return CRUDOperations('delete', `${params.url}/${params._id}`);
+  },
 };
 
 export default function MedicationRequest(action = null, params = null) {
