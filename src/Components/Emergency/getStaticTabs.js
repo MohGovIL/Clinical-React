@@ -18,6 +18,7 @@ export const emergencyTabs = [
     sort: '-priority,status-update-date,service-type',
     statuses: ['arrived'],
     extendedStatuses: ['waiting-for-nurse'],
+    isDateDisabled: true,
   },
   {
     tabName: 'Waiting for doctor',
@@ -31,6 +32,7 @@ export const emergencyTabs = [
     activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataWaitingForDoctorTableRows,
+    isDateDisabled: true,
   },
   {
     tabName: 'Waiting for xray',
@@ -44,6 +46,7 @@ export const emergencyTabs = [
     activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataWaitingForXrayTableRows,
+    isDateDisabled: true,
   },
   {
     tabName: 'Waiting for release',
@@ -57,6 +60,7 @@ export const emergencyTabs = [
     activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataWaitingForReleaseTableRows,
+    isDateDisabled: true,
   },
   {
     tabName: 'Finished visit',
@@ -70,5 +74,6 @@ export const emergencyTabs = [
     activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataFinishedVisitTableRows,
+    isDateDisabled: false,
   },
 ];

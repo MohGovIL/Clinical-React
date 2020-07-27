@@ -7,6 +7,7 @@ import PatientTrackingStyle, {
 import StatusFilterBox from 'Assets/Elements/StatusFilterBox';
 import CustomizedTable from 'Assets/Elements/CustomizedTable';
 import { connect } from 'react-redux';
+import { setFilterDateDisabledAction } from 'Store/Actions/FilterActions/FilterActions';
 import Header from 'Assets/Elements/Header';
 import { useTranslation } from 'react-i18next';
 import { getMenu } from 'Utils/Services/API';
@@ -21,7 +22,13 @@ import { ApiTokens } from 'Utils/Services/ApiTokens';
 import { getToken } from 'Utils/Helpers/getToken';
 import { stateLessOrNot } from 'Utils/Helpers/StatelessOrNot';
 
-const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
+const PatientTracking = ({
+  vertical,
+  history,
+  selectFilter,
+  facilityId,
+  setFilterDateDisabledAction,
+}) => {
   const { t } = useTranslation();
   // Set the popUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
@@ -146,6 +153,9 @@ const PatientTracking = ({ vertical, history, selectFilter, facilityId }) => {
     for (let tabIndex = 0; tabIndex < staticTabs.length; tabIndex++) {
       const tab = staticTabs[tabIndex];
       if (tab.tabValue === selectFilter.statusFilterBoxValue) {
+        if (tab.isDateDisabled !== undefined) {
+          setFilterDateDisabledAction(tab.isDateDisabled);
+        }
         tab.activeAction(
           setTable,
           setTabs,
@@ -233,4 +243,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(PatientTracking);
+export default connect(mapStateToProps, { setFilterDateDisabledAction })(
+  PatientTracking,
+);

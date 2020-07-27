@@ -41,6 +41,7 @@ export const imagingTabs = [
     tableFunction: setPatientDataWaitingForResultsTableRows,
     sort: '-priority,date,service-type',
     statuses: ['waiting-for-results'],
+    //add date disabled true
   },
   {
     tabName: 'Finished treatment',

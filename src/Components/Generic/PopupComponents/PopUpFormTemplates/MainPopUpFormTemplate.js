@@ -40,14 +40,15 @@ const MainPopUpFormTemplate = ({
     //For future development if we want to show default values
 
     setContext(`${defaultContext} \r\n ${context}`);
-    setDefaultContext('');
+    //setDefaultContext('');
   };
 
   React.useEffect(() => {
+    setContext('');
     if (defaultContext !== '') {
       handleFirstTimeContext();
     }
-  });
+  }, []);
   return (
     <Grid dir={languageDirection} container spacing={3}>
       <Grid item xs={6}>

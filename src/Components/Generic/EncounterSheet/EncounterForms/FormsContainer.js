@@ -61,7 +61,7 @@ const FormsContainer = ({ tabs, dir }) => {
   }
   return (
     <StyledTabContainer>
-      <AppBar position='static' color='default'>
+      <AppBar position='sticky' color='default'>
         <Tabs
           value={value}
           onChange={handleChange}
