@@ -55,6 +55,7 @@ const PatientDetailsBlock = ({
     arrivalWay: '',
   });
   const onSubmit = async (data) => {
+    console.log(data);
     try {
       const clear = isRequiredValidation(data);
       if (clear) {

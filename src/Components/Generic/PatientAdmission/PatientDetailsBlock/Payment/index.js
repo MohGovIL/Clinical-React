@@ -109,20 +109,12 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
   }, [managingOrganization]);
 
   useEffect(() => {
+    register({ name: 'questionnaireId' });
+    register({ name: 'questionnaireResponse' });
     if (isCommitmentForm !== '1') {
       register({ name: 'paymentMethod' });
       register({ name: 'paymentAmount' });
     }
-    return () => {
-      if (isCommitmentForm !== '1') {
-        unregister(['paymentMethod', 'paymentAmount']);
-      }
-    };
-  }, [register, unregister, isCommitmentForm]);
-
-  useEffect(() => {
-    register({ name: 'questionnaireId' });
-    register({ name: 'questionnaireResponse' });
     (async () => {
       try {
         const questionnaire = await FHIR('Questionnaire', 'doWork', {
@@ -169,21 +161,47 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                     moment(commitmentValidity.answer[0].valueDate),
                   );
                 }
-                reset({
-                  ...getValues(),
-                  commitmentAndPaymentReferenceForPaymentCommitment:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '1',
-                    ).answer[0].valueInteger || '',
-                  commitmentAndPaymentDoctorsName:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '4',
-                    ).answer[0].valueString || '',
-                  commitmentAndPaymentDoctorsLicense:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '5',
-                    ).answer[0].valueInteger || '',
-                });
+                const commitmentAndPaymentReferenceForPaymentCommitment =
+                  normalizedQuestionnaireResponse.items.find(
+                    (item) => item.linkId === '1',
+                  ).answer[0].valueInteger || '';
+                const commitmentAndPaymentDoctorsName =
+                  normalizedQuestionnaireResponse.items.find(
+                    (item) => item.linkId === '4',
+                  ).answer[0].valueString || '';
+                const commitmentAndPaymentDoctorsLicense =
+                  normalizedQuestionnaireResponse.items.find(
+                    (item) => item.linkId === '5',
+                  ).answer[0].valueInteger || '';
+                setValue([
+                  {
+                    commitmentAndPaymentReferenceForPaymentCommitment:
+                      commitmentAndPaymentReferenceForPaymentCommitment || '',
+                  },
+                  {
+                    commitmentAndPaymentDoctorsName:
+                      commitmentAndPaymentDoctorsName || '',
+                  },
+                  {
+                    commitmentAndPaymentDoctorsLicense:
+                      commitmentAndPaymentDoctorsLicense || '',
+                  },
+                ]);
+                // reset({
+                //   ...getValues(),
+                //   commitmentAndPaymentReferenceForPaymentCommitment:
+                //     normalizedQuestionnaireResponse.items.find(
+                //       (item) => item.linkId === '1',
+                //     ).answer[0].valueInteger || '',
+                //   commitmentAndPaymentDoctorsName:
+                //     normalizedQuestionnaireResponse.items.find(
+                //       (item) => item.linkId === '4',
+                //     ).answer[0].valueString || '',
+                //   commitmentAndPaymentDoctorsLicense:
+                //     normalizedQuestionnaireResponse.items.find(
+                //       (item) => item.linkId === '5',
+                //     ).answer[0].valueInteger || '',
+                // });
               } else {
                 const paymentAmount = normalizedQuestionnaireResponse.items.find(
                   (item) => item.linkId === '6',
@@ -194,13 +212,6 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                 const receiptNumber = normalizedQuestionnaireResponse.items.find(
                   (item) => item.linkId === '8',
                 ).answer[0].valueString;
-
-                if (paymentMethod) {
-                  setPaymentMethod(paymentMethod);
-                }
-                if (paymentAmount) {
-                  setPaymentAmount(paymentAmount);
-                }
                 setValue([
                   {
                     paymentAmount: paymentAmount || 0,
@@ -208,19 +219,29 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                   {
                     paymentMethod: paymentMethod || '',
                   },
-                  {
-                    questionnaireId: questionnaire.data.entry[1].resource.id,
-                  },
+                  // {
+                  //   questionnaireId: questionnaire.data.entry[1].resource.id,
+                  // },
                   {
                     questionnaireResponse:
                       normalizedQuestionnaireResponse.id || '',
                   },
+                  {
+                    receiptNumber: receiptNumber || '',
+                  },
                 ]);
-                if (receiptNumber)
-                  reset({
-                    ...getValues(),
-                    receiptNumber: receiptNumber,
-                  });
+                if (paymentMethod) {
+                  setPaymentMethod(paymentMethod);
+                }
+                if (paymentAmount) {
+                  setPaymentAmount(paymentAmount);
+                }
+
+                // if (receiptNumber)
+                //   reset({
+                //     ...getValues(),
+                //     receiptNumber: receiptNumber,
+                //   });
               }
             }
           }
@@ -230,9 +251,12 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
       }
     })();
     return () => {
+      if (isCommitmentForm !== '1') {
+        unregister(['paymentMethod', 'paymentAmount']);
+      }
       unregister(['questionnaireId', 'questionnaireResponse']);
     };
-  }, [reset, setValue, pid, eid, isCommitmentForm]);
+  }, [setValue, pid, eid, isCommitmentForm, register, unregister]);
   return (
     <StyledFormGroup>
       <Title
