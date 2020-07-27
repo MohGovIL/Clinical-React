@@ -33,7 +33,7 @@ const RadioGroupChoice = ({
           direction={'row'}
           justify={'flex-start'}
           alignItems={'center'}>
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <Typography variant='h6' component='h6'>
               <b>{gridLabel}:</b>
             </Typography>
@@ -41,9 +41,8 @@ const RadioGroupChoice = ({
           {listValues &&
             listValues.map((value, indexValue) => {
               return (
-                <Grid item xs={2} key={indexValue}>
+                <Grid item xs={3} key={indexValue}>
                   <FormLabel component='legend'>
-                    {value}
                     <StyledRadio
                       disableRipple
                       icon={<FiberManualRecordIcon htmlColor={'#dadbda'} />}
@@ -56,6 +55,7 @@ const RadioGroupChoice = ({
                       value={value}
                       name={radioName}
                     />
+                    {value}
                   </FormLabel>
                 </Grid>
               );
