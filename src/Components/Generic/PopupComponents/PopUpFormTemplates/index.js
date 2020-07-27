@@ -83,6 +83,8 @@ const PopUpFormTemplates = ({
 
   useEffect(() => {
     (async () => {
+      //fix rerendering from same screen
+      setTemplates([]);
       try {
         const templatesServerData = [];
         let response = await getFormTemplates(

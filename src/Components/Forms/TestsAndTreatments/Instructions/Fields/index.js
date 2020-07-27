@@ -3,13 +3,15 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import Grid from '@material-ui/core/Grid';
 
 import TestTreatment from '../TestTreatment';
-import TestTreatmentInstructions from '../TestTreatmentType';
+import TestTreatmentInstructions from '../TestTreatmentInstructions';
+
 import {
   StyledCardContent,
   StyledCardDetails,
   StyledCardName,
   StyledCardRoot,
   StyledConstantHeaders,
+  StyledIconedButton,
   StyledInstructions,
   StyledTreatmentInstructionsButton,
   StyledTypographyHour,
@@ -21,8 +23,10 @@ import { connect } from 'react-redux';
 import normalizeFhirUser from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
 import PLUS from 'Assets/Images/plus.png';
 import { useTranslation } from 'react-i18next';
-const Fields = ({ encounter, currentUser }) => {
-  const { control } = useFormContext();
+import TestTreatmentReferral from '../TestTreatmentRefferal';
+
+const Fields = ({ encounter, currentUser, handlePopUpProps }) => {
+  const { control, watch } = useFormContext();
   const { fields, insert, prepend, append, remove } = useFieldArray({
     control,
     name: 'Instruction',
@@ -30,15 +34,22 @@ const Fields = ({ encounter, currentUser }) => {
   let user = normalizeFhirUser(currentUser);
   const edit = true;
 
-  const addNewInstruction = () => {
+  const addNewInstruction = async () => {
     if (fields.length > 0) {
-      insert(parseInt(0, 10), {
+      await insert(parseInt(0, 10), {
         test_treatment: '',
         test_treatment_type: '',
+        instructions: '',
       });
     } else {
-      append({ test_treatment: '', test_treatment_type: '' });
+      await append({
+        test_treatment: '',
+        test_treatment_type: '',
+        instructions: '',
+      });
+      watch();
     }
+
     /* prepend({ test_treatment: '', test_treatment_type: '' });*/
   };
   const { t } = useTranslation();
@@ -83,7 +94,16 @@ const Fields = ({ encounter, currentUser }) => {
                   <Grid item xs={3}>
                     <TestTreatmentType index={index} item={item} />
                   </Grid>
-                  <Grid item xs={3}></Grid>
+                  <Grid item xs={2}></Grid>
+                  <Grid item xs={2}>
+                    <TestTreatmentReferral index={index} item={item} />
+                  </Grid>
+
+                  <TestTreatmentInstructions
+                    index={index}
+                    item={item}
+                    handlePopUpProps={handlePopUpProps}
+                  />
                 </Grid>
               </StyledCardRoot>
             </div>

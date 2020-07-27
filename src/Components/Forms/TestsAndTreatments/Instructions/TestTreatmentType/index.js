@@ -7,7 +7,7 @@ import { FHIR } from '../../../../../Utils/Services/FHIR';
 import normalizeFhirValueSet from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useTranslation } from 'react-i18next';
 
-const TestTreatmentType = ({ item, index }) => {
+const TestTreatmentType = ({ item, index, handlePopUpProps }) => {
   const { watch, control, getValues } = useFormContext();
   const { t } = useTranslation();
 

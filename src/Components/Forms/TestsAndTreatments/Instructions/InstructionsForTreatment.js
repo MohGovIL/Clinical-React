@@ -21,11 +21,15 @@ const InstructionsForTreatment = ({ encounter }) => {
       Instruction: [],
     },
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, setValue } = methods;
   const onSubmit = (data) => console.log('data', JSON.stringify(data));
-
-  let edit = encounter.status === 'finished' ? false : true; // is this form in edit mode or in view mode
   const [defaultContext, setDefaultContext] = useState('');
+
+  const callBack = (data, name) => {
+    setDefaultContext(data);
+    setValue(name, data);
+  };
+
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
       return {
@@ -68,13 +72,14 @@ const InstructionsForTreatment = ({ encounter }) => {
       };
     });
   };
+  let edit = encounter.status === 'finished' ? false : true; // is this form in edit mode or in view mode
 
   return (
     <FormContext {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <PopUpFormTemplates {...popUpProps} />
 
-        <Fields />
+        <Fields handlePopUpProps={handlePopUpProps} />
 
         <input type='submit' />
       </form>
