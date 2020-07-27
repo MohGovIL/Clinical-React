@@ -243,6 +243,15 @@ const DiagnosisAndRecommendations = ({
         if (Object.keys(normalizedQuestionnaireResponse).length) {
           //Update
           // [] need to implement
+          //const ans = await FHIR('QuestionnaireResponse', 'doWork', {
+          // functionName: 'patchQuestionnaireResponse',
+          // functionParams: {
+          // questionnaireResponseId: normalizedQuestionnaireResponse.id,
+          // questionnaireResponseParams: {
+          // item: items,
+          // },
+          // }
+          // })
         } else {
           // Create
           // const ans = await FHIR('QuestionnaireResponse', 'doWork', {

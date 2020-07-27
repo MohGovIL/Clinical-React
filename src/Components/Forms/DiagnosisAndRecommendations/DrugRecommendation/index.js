@@ -157,7 +157,24 @@ const DrugRecommendation = ({ encounterId }) => {
               });
               return cloneState;
             });
-            //[] Need to do subtract to repeatEnd and repeatStart to get the duration delete this msg after you finish that
+            let duration = '';
+            if (
+              normalizedFhirMedicationRequest.timingRepeatEnd &&
+              normalizedFhirMedicationRequest.timingRepeatStart
+            ) {
+              const end = moment(
+                normalizedFhirMedicationRequest.timingRepeatEnd,
+                'YYYY-MM-DD',
+              );
+              const start = moment(
+                normalizedFhirMedicationRequest.timingRepeatStart,
+                'YYYY-MM-DD',
+              );
+              if (end.isValid() && start.isValid()) {
+                duration = end.diff(start, 'days');
+                console.log(duration);
+              }
+            }
             append({
               drugName:
                 normalizedFhirMedicationRequest.medicationCodeableConceptCode,
@@ -165,7 +182,7 @@ const DrugRecommendation = ({ encounterId }) => {
               drugForm: normalizedFhirMedicationRequest.methodCode || '',
               drugRoute: normalizedFhirMedicationRequest.routeCode || '',
               intervals: normalizedFhirMedicationRequest.timingCode || '',
-              duration: normalizedFhirMedicationRequest.d || '',
+              duration,
               toDate: normalizedFhirMedicationRequest.timingRepeatEnd || '',
               instructionsForTheDrug:
                 normalizedFhirMedicationRequest.note || '',
@@ -241,12 +258,12 @@ const DrugRecommendation = ({ encounterId }) => {
         <StyledDivider />
         {fields.map((item, index) => {
           return (
-            <React.Fragment key={index}>
+            <React.Fragment key={item.id}>
               <Controller
                 name={`drugRecommendation[${index}].drugName`}
                 control={control}
                 onChange={([event]) => event.target.value}
-                defaultValue=''
+                defaultValue={item.drugName}
                 as={
                   <CustomizedTextField
                     iconColor='#1976d2'
@@ -259,6 +276,7 @@ const DrugRecommendation = ({ encounterId }) => {
               />
               <Grid container direction='row' justify='space-between'>
                 <CustomizedTextField
+                  defaultValue={item.quantity}
                   name={`drugRecommendation[${index}].quantity`}
                   inputRef={register()}
                   label={`${t('Quantity')} *`}
@@ -274,7 +292,7 @@ const DrugRecommendation = ({ encounterId }) => {
                 <Controller
                   control={control}
                   name={`drugRecommendation[${index}].drugForm`}
-                  defaultValue=''
+                  defaultValue={item.drugForm}
                   error={requiredErrors[index].drugForm.length ? true : false}
                   helperText={requiredErrors[index].drugForm}
                   onChange={([event]) => event.target.value}
@@ -292,7 +310,7 @@ const DrugRecommendation = ({ encounterId }) => {
                 <Controller
                   control={control}
                   name={`drugRecommendation[${index}].drugRoute`}
-                  defaultValue=''
+                  defaultValue={item.drugRoute}
                   error={requiredErrors[index].drugRoute.length ? true : false}
                   helperText={requiredErrors[index].drugRoute}
                   as={
@@ -312,7 +330,7 @@ const DrugRecommendation = ({ encounterId }) => {
                 <Controller
                   control={control}
                   name={`drugRecommendation[${index}].intervals`}
-                  defaultValue=''
+                  defaultValue={item.intervals}
                   error={requiredErrors[index].intervals.length ? true : false}
                   helperText={requiredErrors[index].intervals}
                   as={
@@ -329,6 +347,7 @@ const DrugRecommendation = ({ encounterId }) => {
                 />
                 <Controller
                   control={control}
+                  defaultValue={item.duration}
                   name={`drugRecommendation[${index}].duration`}
                   error={requiredErrors[index].duration.length ? true : false}
                   helperText={requiredErrors[index].duration}
@@ -364,6 +383,7 @@ const DrugRecommendation = ({ encounterId }) => {
                   }
                 />
                 <CustomizedTextField
+                  defaultValue={item.toDate}
                   name={`drugRecommendation[${index}].toDate`}
                   inputRef={register()}
                   disabled
@@ -380,6 +400,7 @@ const DrugRecommendation = ({ encounterId }) => {
               </Grid>
               <Grid container direction='row' alignItems='baseline'>
                 <CustomizedTextField
+                  defaultValue={item.instructionsForTheDrug}
                   disabled={checkIsDisabled('drugName', index)}
                   name={`drugRecommendation[${index}].instructionsForTheDrug`}
                   label={instructionsForTheDrug}
