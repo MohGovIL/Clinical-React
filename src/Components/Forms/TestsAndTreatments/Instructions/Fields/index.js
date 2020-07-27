@@ -24,6 +24,8 @@ import normalizeFhirUser from '../../../../../Utils/Helpers/FhirEntities/normali
 import PLUS from 'Assets/Images/plus.png';
 import { useTranslation } from 'react-i18next';
 import TestTreatmentReferral from '../TestTreatmentRefferal';
+import TestTreatMentStatus from '../TestTreatmentStatus';
+import TestTreatmentRemark from '../TestTreatmentRemark';
 
 const Fields = ({ encounter, currentUser, handlePopUpProps }) => {
   const { control, watch } = useFormContext();
@@ -40,12 +42,16 @@ const Fields = ({ encounter, currentUser, handlePopUpProps }) => {
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
+        test_treatment_status: true,
+        test_treatment_remark: '',
       });
     } else {
       await append({
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
+        test_treatment_status: true,
+        test_treatment_remark: '',
       });
       watch();
     }
@@ -104,6 +110,13 @@ const Fields = ({ encounter, currentUser, handlePopUpProps }) => {
                     item={item}
                     handlePopUpProps={handlePopUpProps}
                   />
+
+                  <Grid item xs={12}>
+                    <TestTreatMentStatus index={index} item={item} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TestTreatmentRemark index={index} item={item} />
+                  </Grid>
                 </Grid>
               </StyledCardRoot>
             </div>
