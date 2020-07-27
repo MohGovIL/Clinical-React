@@ -26,6 +26,7 @@ import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
 
 const AppointmentsAndEncountersTables = ({
+  patientId,
   nextAppointments,
   curEncounters,
   prevEncounters,
@@ -33,7 +34,6 @@ const AppointmentsAndEncountersTables = ({
   encounterStatuses,
   gotToPatientAdmission,
   authorizationACO,
-  patient,
 }) => {
   const history = useHistory();
   const hideAppointments = useSelector(
@@ -60,7 +60,7 @@ const AppointmentsAndEncountersTables = ({
   const normalizedPrevEncounter = prevEncountersEntry
     ? normalizeFhirEncounter(prevEncountersEntry)
     : null;
-  const patientData = patient;
+  const patientData = patientId;
   const curDate = moment().utc().format('DD/MM/YYYY');
   let normalizedCurEncounters = [];
   let normalizedNextAppointments = [];
@@ -114,11 +114,11 @@ const AppointmentsAndEncountersTables = ({
 
  ;*/
   const handleAdmissionClick = (encounter) => {
-    gotToPatientAdmission(encounter, patient, history);
+    gotToPatientAdmission(encounter, patientData, history);
   };
 
   const handleEncounterSheetClick = (encounter) => {
-    goToEncounterSheet(encounter, patient, history);
+    goToEncounterSheet(encounter, patientData, history);
   };
   if (curEncounters && curEncounters.data && curEncounters.data.total > 0) {
     let entry = curEncounters.data.entry;
@@ -260,7 +260,13 @@ const AppointmentsAndEncountersTables = ({
                           variant='outlined'
                           color='primary'
                           href='#contained-buttons'
-                          onClick={(event) => handleAdmissionClick(encounter)}>
+                          onClick={(event) =>
+                            handleAdmissionClick(
+                              encounter,
+                              patientData,
+                              history,
+                            )
+                          }>
                           {t('Admission form')}
                         </StyledHrefTableButton>
                       </TableCell>

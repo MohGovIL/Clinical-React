@@ -146,7 +146,6 @@ const DrugRecommendation = ({ encounterId }) => {
             const normalizedFhirMedicationRequest = normalizeFhirMedicationRequest(
               medicationRequest.resource,
             );
-            console.log(normalizedFhirMedicationRequest);
             if (medicationRequestIndex - 1 !== 0) {
               setRequiredErrors((prevState) => {
                 const cloneState = [...prevState];

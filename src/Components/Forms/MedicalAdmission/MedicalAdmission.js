@@ -2,14 +2,9 @@
 import { connect } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import VisitDetails from 'Components/Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
-import {
-  FormContext,
-  useForm,
-} from 'react-hook-form';
+import { FormContext, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import {
-  StyledForm,
-} from './Style';
+import { StyledForm, StyledRadioGroupChoice } from './Style';
 
 import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
@@ -17,6 +12,11 @@ import NursingAnamnesis from './NursingAnamnesis';
 import { FHIR } from 'Utils/Services/FHIR';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import UrgentAndInsulation from './UrgentAndInsulation';
+import Sensitivities from './Sensitivities';
+import BackgroundDiseases from './BackgroundDiseases';
+import ChronicMedication from './ChronicMedication';
+import { Checkbox, Grid, ListItemText } from '@material-ui/core';
+import { CheckBox, CheckBoxOutlineBlankOutlined } from '@material-ui/icons';
 
 const MedicalAdmission = ({
   patient,
@@ -39,7 +39,7 @@ const MedicalAdmission = ({
     watch,
     register,
     setValue,
-    unregister
+    unregister,
   } = methods;
 
   const [requiredErrors, setRequiredErrors] = useState({
@@ -53,9 +53,7 @@ const MedicalAdmission = ({
     CommitmentFile: '',
   });
 
-
   const watchMedication = watch('medication');
-  const [medicationChanged, setMedicationChanged] = useState(false);
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
@@ -109,19 +107,42 @@ const MedicalAdmission = ({
 
   const pregnancyHandlerRadio = (value) => {
     //console.log('pregnancy: ' + value);
-    setValue("isPregnancy", value);
-  };
-
-  const medicationHandlerRadio = (value) => {
-    console.log('medication: ' + value);
-    setMedicationChanged(value);
+    setValue('isPregnancy', value);
   };
 
   //Radio buttons for pregnancy
   const pregnancyRadioList = [t('No'), t('Yes')];
 
-  //Radio buttons for medication details
-  const medicationRadioList = [t("Doesn't exist"), t('Exist')];
+  const medicalAdmissionRenderOption = (option, state) => {
+    return (
+      <React.Fragment>
+        <Grid container justify='flex-start' alignItems='center'>
+          <Grid item xs={3}>
+            <Checkbox
+              color='primary'
+              icon={<CheckBoxOutlineBlankOutlined />}
+              checkedIcon={<CheckBox />}
+              checked={state.selected}
+            />
+          </Grid>
+          {option.serviceType && option.serviceType.name && (
+            <Grid item xs={3}>
+              <ListItemText primary={t(option.serviceType.name)} />
+            </Grid>
+          )}
+          {option.reasonCode && option.reasonCode.name && (
+            <Grid item xs={3}>
+              <ListItemText primary={t(option.reasonCode.name)} />
+            </Grid>
+          )}
+        </Grid>
+      </React.Fragment>
+    );
+  };
+
+  const medicalAdmissionChipLabel = (selected) => {
+    return `${t(selected.reasonCode.name)}`;
+  };
 
   return (
     <React.Fragment>
@@ -141,11 +162,11 @@ const MedicalAdmission = ({
             disableHeaders={false}
             disableButtonIsUrgent={false}
           />
-          <UrgentAndInsulation />
+          <UrgentAndInsulation requiredUrgent requiredInsulation />
           <NursingAnamnesis />
-          <>
-            {/*need to make a new component for radio select*/}
-            {(patient.gender === 'female' || patient.gender === 'other') && (
+          {/*need to make a new component for radio select*/}
+          {(patient.gender === 'female' || patient.gender === 'other') && (
+            <StyledRadioGroupChoice>
               <RadioGroupChoice
                 register={register}
                 gridLabel={t('Pregnancy')}
@@ -154,28 +175,11 @@ const MedicalAdmission = ({
                 trueValue={t('Yes')}
                 callBackFunction={pregnancyHandlerRadio}
               />
-            )}
-            {/*<RadioGroupChoice*/}
-            {/*  gridLabel={t('Medication')}*/}
-            {/*  radioName={'medication'}*/}
-            {/*  listValues={medicationRadioList}*/}
-            {/*  trueValue={t('Exist')}*/}
-            {/*  callBackFunction={medicationHandlerRadio}*/}
-            {/*/>*/}
-            {/*{medicationChanged && (*/}
-            {/*  <Controller*/}
-            {/*    control={control}*/}
-            {/*    name='medicationInstruction'*/}
-            {/*    //defaultValue={}*/}
-            {/*    as={*/}
-            {/*      <CustomizedTextField*/}
-            {/*        width={'70%'}*/}
-            {/*        label={t('Medications details')}*/}
-            {/*      />*/}
-            {/*    }*/}
-            {/*  />*/}
-            {/*)}*/}
-          </>
+            </StyledRadioGroupChoice>
+          )}
+          <Sensitivities defaultRenderOptionFunction={medicalAdmissionRenderOption} defaultChipLabelFunction={medicalAdmissionChipLabel}/>
+          <BackgroundDiseases defaultRenderOptionFunction={medicalAdmissionRenderOption} defaultChipLabelFunction={medicalAdmissionChipLabel}/>
+          <ChronicMedication defaultRenderOptionFunction={medicalAdmissionRenderOption} defaultChipLabelFunction={medicalAdmissionChipLabel}/>
           <StyledButton
             color='primary'
             type='submit'
