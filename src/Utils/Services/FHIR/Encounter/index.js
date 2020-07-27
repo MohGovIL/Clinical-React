@@ -192,19 +192,24 @@ const EncounterStates = {
       url = params.url,
       specialOrder = `${
         params.specialOrder ? params.specialOrder : '_sort=-date'
-      }`;
+      }`,
+      equal = params.equal;
 
     try {
       if (prev) {
         //return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=le${date}&_count=1&_sort=-date&patient=${patient}`);
         return CRUDOperations(
           'search',
-          `${url}?date=lt${date}&_count=1&${specialOrder}&patient=${patient}`,
+          `${url}?date=${
+            equal ? 'le' : 'lt'
+          }${date}&_count=1&${specialOrder}&patient=${patient}`,
         );
       } else {
         return CRUDOperations(
           'search',
-          `${url}?date=gt${date}&_count=1&${specialOrder}&patient=${patient}`,
+          `${url}?date=${
+            equal ? 'ge' : 'gt'
+          }${date}&_count=1&${specialOrder}&patient=${patient}`,
         );
       }
     } catch (err) {
@@ -217,19 +222,23 @@ const EncounterStates = {
       patient = params.patient,
       prev = params.prev,
       url = params.url,
-      specialOrder = params.specialOrder ? params.specialOrder : '_sort=-date';
-
+      specialOrder = params.specialOrder ? params.specialOrder : '_sort=-date',
+      equal = params.equal;
     //PC-216 endpoint: /Encounter?date=le<DATE>&_count=1&_sort=-date&patient=<PID>
     try {
       if (prev) {
         return CRUDOperations(
           'search',
-          `${url}?date=lt${date}&${specialOrder}&patient=${patient}`,
+          `${url}?date=${
+            equal ? 'le' : 'lt'
+          }${date}&${specialOrder}&patient=${patient}`,
         );
       } else {
         return CRUDOperations(
           'search',
-          `${url}?date=gt${date}&${specialOrder}&patient=${patient}`,
+          `${url}?date=${
+            equal ? 'ge' : 'gt'
+          }${date}&${specialOrder}&patient=${patient}`,
         );
       }
     } catch (err) {
