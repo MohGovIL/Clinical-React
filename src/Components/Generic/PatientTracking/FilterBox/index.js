@@ -36,7 +36,6 @@ const FilterBox = ({
   setFilterOrganizationAction,
   setFilterServiceTypeAction,
   selectFilterIsSet,
-  tabValue,
 }) => {
   const { t } = useTranslation();
 
@@ -147,11 +146,7 @@ const FilterBox = ({
 
   return (
     <StyledFilterBox>
-      <CustomizedDatePicker
-        iconColor={'#076ce9'}
-        iconSize={'27px'}
-        isDisabled={tabValue === 2}
-      />
+      <CustomizedDatePicker iconColor={'#076ce9'} iconSize={'27px'} />
       <StyledCustomizedSelect>
         <ListItemText>{t('Branch name')}</ListItemText>
         <CustomizedSelect
