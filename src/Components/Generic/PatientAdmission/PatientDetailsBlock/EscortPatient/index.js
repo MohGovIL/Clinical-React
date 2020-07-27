@@ -113,7 +113,7 @@ const EscortPatient = ({
               <span
                 style={{
                   color: `${requiredErrors.arrivalWay ? '#f44336' : '#000b40'}`,
-                }}>{`${t('Arrival way')}?`}</span>
+                }}>{`* ${t('Arrival way')}?`}</span>
               <StyledToggleButtonGroup
                 value={arrivalWay}
                 onChange={arrivalWayHandler}
