@@ -109,23 +109,20 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
   }, [managingOrganization]);
 
   useEffect(() => {
-    register({ name: 'questionnaireId' });
-    register({ name: 'questionnaireResponse' });
     if (isCommitmentForm !== '1') {
       register({ name: 'paymentMethod' });
       register({ name: 'paymentAmount' });
     }
     return () => {
-      const itemsToUnregister = ['questionnaireResponse', 'questionnaireId'];
       if (isCommitmentForm !== '1') {
-        itemsToUnregister.push('paymentMethod');
-        itemsToUnregister.push('paymentAmount');
+        unregister(['paymentMethod', 'paymentAmount']);
       }
-      unregister(itemsToUnregister);
     };
   }, [register, unregister, isCommitmentForm]);
 
   useEffect(() => {
+    register({ name: 'questionnaireId' });
+    register({ name: 'questionnaireResponse' });
     (async () => {
       try {
         const questionnaire = await FHIR('Questionnaire', 'doWork', {
@@ -151,11 +148,11 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
               questionnaireResponseData.data.entry[1].resource,
             );
             if (normalizedQuestionnaireResponse.items.length) {
+              setValue(
+                'questionnaireResponse',
+                normalizedQuestionnaireResponse.id || '',
+              );
               if (isCommitmentForm === '1') {
-                setValue(
-                  'questionnaireResponse',
-                  normalizedQuestionnaireResponse.id || '',
-                );
                 const commitmentDate = normalizedQuestionnaireResponse.items.find(
                   (item) => item.text === 'Commitment date',
                 );
@@ -232,6 +229,9 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
         console.log(error);
       }
     })();
+    return () => {
+      unregister(['questionnaireId', 'questionnaireResponse']);
+    };
   }, [reset, setValue, pid, eid, isCommitmentForm]);
   return (
     <StyledFormGroup>
