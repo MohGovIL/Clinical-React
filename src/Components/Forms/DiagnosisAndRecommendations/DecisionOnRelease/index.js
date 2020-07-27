@@ -13,11 +13,8 @@ const RecommendationsOnRelease = () => {
     unregister,
     setValue,
     permission,
-<<<<<<< HEAD
     questionnaireResponse,
-=======
     control,
->>>>>>> 12aa34bc5e62a0b6dbb37cf74e2ab96f09d7c570
   } = useFormContext();
   const [decision, setDecision] = useState('');
   const [evacuationWay, setEvacuationWay] = useState('');
