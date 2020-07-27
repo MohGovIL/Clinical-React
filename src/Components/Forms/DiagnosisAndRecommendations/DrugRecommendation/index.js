@@ -99,14 +99,14 @@ const DrugRecommendation = ({ encounterId }) => {
     ];
     try {
       const drugsData = await Promise.all(APIsArray);
-      const drugList = [{ code: '123', display: 'medicine' }];
-      const drugIntervals = [{ code: '1234', display: '10minutes' }];
+      // const drugList = [{ code: '123', display: 'medicine' }];
+      // const drugIntervals = [{ code: '1234', display: '10minutes' }];
       setDrugsData({
-        drugList,
-        // drugList:
-        //   drugsData[0].status === 200
-        //     ? drugsData[0].data.expansion.contains
-        //     : [],
+        // drugList,
+        drugList:
+          drugsData[0].status === 200
+            ? drugsData[0].data.expansion.contains
+            : [],
         drugForm:
           drugsData[1].status === 200
             ? drugsData[1].data.expansion.contains
@@ -115,11 +115,11 @@ const DrugRecommendation = ({ encounterId }) => {
           drugsData[2].status === 200
             ? drugsData[2].data.expansion.contains
             : [],
-        drugIntervals,
-        // drugIntervals:
-        //   drugsData[3].status === 200
-        //     ? drugsData[3].data.expansion.contains
-        //     : [],
+        // drugIntervals,
+        drugIntervals:
+          drugsData[3].status === 200
+            ? drugsData[3].data.expansion.contains
+            : [],
       });
     } catch (error) {
       console.log(error);
@@ -146,17 +146,21 @@ const DrugRecommendation = ({ encounterId }) => {
             const normalizedFhirMedicationRequest = normalizeFhirMedicationRequest(
               medicationRequest.resource,
             );
-            setRequiredErrors((prevState) => {
-              const cloneState = [...prevState];
-              cloneState.push({
-                quantity: '',
-                drugForm: '',
-                drugRoute: '',
-                intervals: '',
-                duration: '',
+            console.log(normalizedFhirMedicationRequest);
+            if (medicationRequestIndex - 1 !== 0) {
+              setRequiredErrors((prevState) => {
+                const cloneState = [...prevState];
+                cloneState.push({
+                  quantity: '',
+                  drugForm: '',
+                  drugRoute: '',
+                  intervals: '',
+                  duration: '',
+                });
+                return cloneState;
               });
-              return cloneState;
-            });
+            }
+
             let duration = '';
             if (
               normalizedFhirMedicationRequest.timingRepeatEnd &&
@@ -171,22 +175,79 @@ const DrugRecommendation = ({ encounterId }) => {
                 'YYYY-MM-DD',
               );
               if (end.isValid() && start.isValid()) {
-                duration = end.diff(start, 'days');
-                console.log(duration);
+                duration = end.diff(start, 'days').toString();
               }
             }
-            append({
-              drugName:
-                normalizedFhirMedicationRequest.medicationCodeableConceptCode,
-              quantity: normalizedFhirMedicationRequest.doseQuantity || '',
-              drugForm: normalizedFhirMedicationRequest.methodCode || '',
-              drugRoute: normalizedFhirMedicationRequest.routeCode || '',
-              intervals: normalizedFhirMedicationRequest.timingCode || '',
-              duration,
-              toDate: normalizedFhirMedicationRequest.timingRepeatEnd || '',
-              instructionsForTheDrug:
-                normalizedFhirMedicationRequest.note || '',
-            });
+            if (medicationRequestIndex - 1 === 0) {
+              setValue([
+                {
+                  [`drugRecommendation[${
+                    medicationRequestIndex - 1
+                  }].drugName`]:
+                    normalizedFhirMedicationRequest.medicationCodeableConceptCode ||
+                    '',
+                },
+                {
+                  [`drugRecommendation[${
+                    medicationRequestIndex - 1
+                  }].quantity`]:
+                    normalizedFhirMedicationRequest.doseQuantity || '',
+                },
+                {
+                  [`drugRecommendation[${
+                    medicationRequestIndex - 1
+                  }].drugForm`]:
+                    normalizedFhirMedicationRequest.methodCode || '',
+                },
+                {
+                  [`drugRecommendation[${
+                    medicationRequestIndex - 1
+                  }].drugRoute`]:
+                    normalizedFhirMedicationRequest.routeCode || '',
+                },
+                {
+                  [`drugRecommendation[${
+                    medicationRequestIndex - 1
+                  }].intervals`]: normalizedFhirMedicationRequest.timingCode,
+                },
+                {
+                  [`drugRecommendation[${
+                    medicationRequestIndex - 1
+                  }].duration`]: duration,
+                },
+                {
+                  [`drugRecommendation[${medicationRequestIndex - 1}].toDate`]:
+                    moment(
+                      normalizedFhirMedicationRequest.timingRepeatEnd,
+                      'YYYY-MM-DD',
+                    ).format('DD/MM/YYYY') || '',
+                },
+                {
+                  [`drugRecommendation[${
+                    medicationRequestIndex - 1
+                  }].instructionsForTheDrug`]:
+                    normalizedFhirMedicationRequest.note || '',
+                },
+              ]);
+            } else {
+              append({
+                drugName:
+                  normalizedFhirMedicationRequest.medicationCodeableConceptCode,
+                quantity: normalizedFhirMedicationRequest.doseQuantity || '',
+                drugForm: normalizedFhirMedicationRequest.methodCode || '',
+                drugRoute: normalizedFhirMedicationRequest.routeCode || '',
+                intervals: normalizedFhirMedicationRequest.timingCode || '',
+                duration,
+                toDate:
+                  moment(
+                    normalizedFhirMedicationRequest.timingRepeatEnd,
+                    'YYYY-MM-DD',
+                  ).format('DD/MM/YYYY') || '',
+                instructionsForTheDrug:
+                  normalizedFhirMedicationRequest.note || '',
+              });
+            }
+
             medicationUniqData[medicationRequestIndex - 1] =
               normalizedFhirMedicationRequest.id;
           }
