@@ -43,8 +43,10 @@ const DiagnosisAndRecommendations = ({
       ],
     },
   });
+
   const { handleSubmit, setValue, register, unregister, getValues } = methods;
   const { t } = useTranslation();
+
   const answerType = (type, data) => {
     if (type === 'string') {
       return [
@@ -68,6 +70,7 @@ const DiagnosisAndRecommendations = ({
     normalizedQuestionnaireResponse,
     setNormalizedQuestionnaireResponse,
   ] = React.useState({});
+
   React.useEffect(() => {
     (async () => {
       try {
@@ -106,7 +109,7 @@ const DiagnosisAndRecommendations = ({
     })();
 
     return () => unregister('questionnaireId');
-  }, [register, setValue, unregister]);
+  }, [register, setValue, unregister, encounter.id, patient.id]);
 
   const [requiredErrors, setRequiredErrors] = React.useState([
     {
@@ -192,7 +195,7 @@ const DiagnosisAndRecommendations = ({
     return clean;
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data, event) => {
     if (isRequiredValidation(data)) {
       try {
         const APIsArray = [];
@@ -267,20 +270,22 @@ const DiagnosisAndRecommendations = ({
           );
         }
         //Updating encounter
-        const cloneEncounter = { ...encounter };
-        cloneEncounter.extensionSecondaryStatus = data.nextStatus;
-        cloneEncounter.status = 'in-progress';
-        cloneEncounter.practitioner = store.getState().login.userID;
+        if (event !== 'onTabChange') {
+          const cloneEncounter = { ...encounter };
+          cloneEncounter.extensionSecondaryStatus = data.nextStatus;
+          cloneEncounter.status = 'in-progress';
+          cloneEncounter.practitioner = store.getState().login.userID;
 
-        APIsArray.push(
-          FHIR('Encounter', 'doWork', {
-            functionName: 'updateEncounter',
-            functionParams: {
-              encounterId: encounter.id,
-              encounter: cloneEncounter,
-            },
-          }),
-        );
+          APIsArray.push(
+            FHIR('Encounter', 'doWork', {
+              functionName: 'updateEncounter',
+              functionParams: {
+                encounterId: encounter.id,
+                encounter: cloneEncounter,
+              },
+            }),
+          );
+        }
         if (data.drugRecommendation && data.drugRecommendation.length) {
           data.drugRecommendation.forEach((drug, drugIndex) => {
             const medicationRequest = {};
@@ -331,15 +336,21 @@ const DiagnosisAndRecommendations = ({
               );
             }
           });
-          const res = await Promise.all[APIsArray];
-          console.log(res);
-          history.push(`${baseRoutePath()}/generic/patientTracking`);
+          await Promise.all[APIsArray];
+          if (event !== 'onTabChange')
+            history.push(`${baseRoutePath()}/generic/patientTracking`);
         }
       } catch (error) {
         console.log(error);
       }
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      onSubmit(getValues({ nest: true }), 'onTabChange');
+    };
+  }, []);
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
