@@ -8,7 +8,7 @@ import { FHIR } from '../../../../../Utils/Services/FHIR';
 import normalizeFhirValueSet from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 const TestTreatment = ({ index, item }) => {
   console.log(`item from testTreatment ${index} - ${JSON.stringify(item)}`);
-  const { control, watch } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
 
   const [
     collectedTestAndTreatmentsFromFhir,
@@ -52,6 +52,7 @@ const TestTreatment = ({ index, item }) => {
       control={control}
       name={`Instruction[${index}].test_treatment`}
       onChange={([event]) => {
+        setValue(`Instruction[${index}].test_treatment_type`, '');
         watch(`Instruction`);
         return event.target.value;
       }}
