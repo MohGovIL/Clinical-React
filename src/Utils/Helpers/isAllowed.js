@@ -8,16 +8,16 @@
 import { store } from 'index';
 import getUIACOMapping from 'Utils/Helpers/acoMapping';
 // const modes = ['write', 'view'];
-
+//In case you need to add more permissions go to getUIACOMapping and add the id and the actual name of the permission
 const isAllowed = (acoMappingId) => {
   let codeToCheck = getUIACOMapping[acoMappingId];
   let allowedWritePermissions = store.getState().settings.user_aco['write'];
   if (allowedWritePermissions) {
-    if(allowedWritePermissions.includes('SuperUser')){
+    if (allowedWritePermissions.includes('SuperUser')) {
       return 'write';
     }
     for (const permission of allowedWritePermissions) {
-      if(permission === codeToCheck) {
+      if (permission === codeToCheck) {
         return 'write';
       }
     }
@@ -29,5 +29,5 @@ const isAllowed = (acoMappingId) => {
     }
   }
   return 'hide';
-}
+};
 export default isAllowed;
