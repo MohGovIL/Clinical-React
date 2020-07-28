@@ -28,7 +28,7 @@ const TestTreatMentStatus = ({ index, item, requiredErrors }) => {
         onChange={handleChange}
         name={`Instruction[${index}].test_treatment_status`}
         control={control}
-        label_1={'Not done'}
+        label_1={'Past Due'}
         label_2={'Performed'}
         marginLeft={'70px'}
         marginRight={'70px'}
@@ -37,7 +37,7 @@ const TestTreatMentStatus = ({ index, item, requiredErrors }) => {
         error={requiredErrors[index].test_treatment_status ? true : false}
         helperText={
           requiredErrors[index].test_treatment_status &&
-          `${t('Performed')} - ${'Must be selected'} `
+          `  ${t('Please Select')}  : ${t('Performed')} `
         }
       />
     </>
