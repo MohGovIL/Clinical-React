@@ -27,7 +27,13 @@ import TestTreatmentReferral from '../TestTreatmentRefferal';
 import TestTreatMentStatus from '../TestTreatmentStatus';
 import TestTreatmentRemark from '../TestTreatmentRemark';
 
-const Fields = ({ encounter, currentUser, handlePopUpProps }) => {
+const Fields = ({
+  encounter,
+  currentUser,
+  handlePopUpProps,
+  requiredErrors,
+  setRequiredErrors,
+}) => {
   const { control, watch } = useFormContext();
   const { fields, insert, prepend, append, remove } = useFieldArray({
     control,
@@ -37,12 +43,21 @@ const Fields = ({ encounter, currentUser, handlePopUpProps }) => {
   const edit = true;
 
   const addNewInstruction = async () => {
+    setRequiredErrors((prevState) => {
+      const cloneState = [...prevState];
+      cloneState.unshift({
+        test_treatment_type: '',
+        test_treatment_status: false,
+      });
+      return cloneState;
+    });
+
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
-        test_treatment_status: true,
+        test_treatment_status: false,
         test_treatment_remark: '',
       });
     } else {
@@ -50,7 +65,7 @@ const Fields = ({ encounter, currentUser, handlePopUpProps }) => {
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
-        test_treatment_status: true,
+        test_treatment_status: false,
         test_treatment_remark: '',
       });
       watch();
@@ -98,7 +113,11 @@ const Fields = ({ encounter, currentUser, handlePopUpProps }) => {
                     <TestTreatment index={index} item={item} />
                   </Grid>
                   <Grid item xs={3}>
-                    <TestTreatmentType index={index} item={item} />
+                    <TestTreatmentType
+                      requiredErrors={requiredErrors}
+                      index={index}
+                      item={item}
+                    />
                   </Grid>
                   <Grid item xs={2}></Grid>
                   <Grid item xs={2}>
@@ -112,7 +131,11 @@ const Fields = ({ encounter, currentUser, handlePopUpProps }) => {
                   />
 
                   <Grid item xs={12}>
-                    <TestTreatMentStatus index={index} item={item} />
+                    <TestTreatMentStatus
+                      requiredErrors={requiredErrors}
+                      index={index}
+                      item={item}
+                    />
                   </Grid>
                   <Grid item xs={12}>
                     <TestTreatmentRemark index={index} item={item} />

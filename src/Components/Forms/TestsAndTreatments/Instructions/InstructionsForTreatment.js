@@ -13,6 +13,7 @@ import Fields from './Fields';
 import PopUpFormTemplates from '../../../Generic/PopupComponents/PopUpFormTemplates';
 
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const InstructionsForTreatment = ({ encounter }) => {
   const methods = useForm({
@@ -22,9 +23,12 @@ const InstructionsForTreatment = ({ encounter }) => {
     },
   });
   const { handleSubmit, setValue } = methods;
-  const onSubmit = (data) => console.log('data', JSON.stringify(data));
+  const onSubmit = (data) => {
+    console.log('data', JSON.stringify(data));
+    console.log(isRequiredValidation(data));
+  };
   const [defaultContext, setDefaultContext] = useState('');
-
+  const { t } = useTranslation();
   const callBack = (data, name) => {
     setDefaultContext(data);
     setValue(name, data);
@@ -73,13 +77,97 @@ const InstructionsForTreatment = ({ encounter }) => {
     });
   };
   let edit = encounter.status === 'finished' ? false : true; // is this form in edit mode or in view mode
+  const [requiredErrors, setRequiredErrors] = useState([
+    {
+      test_treatment_type: '',
+      test_treatment_status: '',
+    },
+  ]);
+
+  const requiredFields = {
+    test_treatment_type: {
+      name: 'test_treatment_type',
+      type: 'checkbox',
+      required: function (data) {
+        return data !== '';
+      },
+    },
+    test_treatment_status: {
+      name: 'test_treatment_status',
+      required: function (data) {
+        return data !== false || data === '';
+      },
+    },
+  };
+  const isRequiredValidation = (data) => {
+    let clean = true;
+    if (!data['Instruction']) {
+      return clean;
+    }
+    for (
+      let instructionIndex = 0;
+      instructionIndex < requiredErrors.length;
+      instructionIndex++
+    ) {
+      for (const fieldKey in requiredFields) {
+        if (requiredFields.hasOwnProperty(fieldKey)) {
+          const field = requiredFields[fieldKey];
+          /* if (
+            !data ||
+            !data['Instruction'] ||
+            !data['Instruction'][instructionIndex] ||
+            (!data['Instruction'][instructionIndex][field.name] &&
+              data['Instruction'][instructionIndex][field.name] !== '' &&
+              !data['Instruction'][instructionIndex][field.name] &&
+              data['Instruction'][instructionIndex][field.name].type !==
+                'checkbox' &&
+              data['Instruction'][instructionIndex][field.name] !== '' &&
+              data['Instruction'][instructionIndex][field.name].type ===
+                'checkbox' &&
+              data['Instruction'][instructionIndex][field.name] !== '')
+          )
+            continue;*/
+          if (
+            !data ||
+            !data['Instruction'] ||
+            !data['Instruction'][instructionIndex] ||
+            data['Instruction'][instructionIndex][field.name] === undefined
+          )
+            continue;
+
+          let answer = field.required(
+            data['Instruction'][instructionIndex][field.name],
+          );
+          if (answer) {
+            setRequiredErrors((prevState) => {
+              const cloneState = [...prevState];
+              cloneState[instructionIndex][field.name] = '';
+              return cloneState;
+            });
+          } else {
+            setRequiredErrors((prevState) => {
+              const cloneState = [...prevState];
+              cloneState[instructionIndex][field.name] = t('Value is required');
+              return cloneState;
+            });
+            clean = false;
+          }
+        }
+      }
+    }
+    return clean;
+  };
 
   return (
     <FormContext {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <PopUpFormTemplates {...popUpProps} />
 
-        <Fields handlePopUpProps={handlePopUpProps} />
+        <Fields
+          setRequiredErrors={setRequiredErrors}
+          requiredErrors={requiredErrors}
+          handlePopUpProps={handlePopUpProps}
+        />
 
         <input type='submit' />
       </form>

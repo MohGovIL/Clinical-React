@@ -1,5 +1,5 @@
 import React from 'react';
-import Label from './Style';
+import Label, { StyledErr } from './Style';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 const StyledSwitch = ({
@@ -13,6 +13,8 @@ const StyledSwitch = ({
   name,
   margin,
   width,
+  helperText,
+  error,
 }) => {
   const { t } = useTranslation();
 
@@ -23,24 +25,27 @@ const StyledSwitch = ({
   };
 
   return (
-    <Label
-      marginRight={marginRight}
-      marginLeft={marginLeft}
-      direction={languageDirection}
-      margin={margin}
-      width={width}>
-      <input
-        name={name || null}
-        ref={register || null}
-        type='checkbox'
-        checked={checked || null}
-        onChange={onChange && onChangeHandler}
-      />
-      <span>
-        <div>{label_1 ? t(label_1) : 'Yes'}</div>
-        <div>{label_2 ? t(label_2) : 'No'}</div>
-      </span>
-    </Label>
+    <>
+      <Label
+        marginRight={marginRight}
+        marginLeft={marginLeft}
+        direction={languageDirection}
+        margin={margin}
+        width={width}>
+        <input
+          name={name || null}
+          ref={register || null}
+          type='checkbox'
+          checked={checked || null}
+          onChange={onChange && onChangeHandler}
+        />
+        <span>
+          <div>{label_1 ? t(label_1) : 'Yes'}</div>
+          <div>{label_2 ? t(label_2) : 'No'}</div>
+        </span>
+      </Label>
+      <StyledErr>{error ? helperText : ''}</StyledErr>
+    </>
   );
 };
 

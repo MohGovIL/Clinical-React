@@ -74,3 +74,7 @@ const Label = styled.label`
 `;
 
 export default Label;
+
+export const StyledErr = styled.div`
+  color: red;
+`;

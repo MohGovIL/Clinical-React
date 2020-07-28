@@ -7,7 +7,12 @@ import { FHIR } from '../../../../../Utils/Services/FHIR';
 import normalizeFhirValueSet from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useTranslation } from 'react-i18next';
 
-const TestTreatmentType = ({ item, index, handlePopUpProps }) => {
+const TestTreatmentType = ({
+  item,
+  index,
+  handlePopUpProps,
+  requiredErrors,
+}) => {
   const { watch, control, getValues } = useFormContext();
   const { t } = useTranslation();
 
@@ -69,15 +74,17 @@ const TestTreatmentType = ({ item, index, handlePopUpProps }) => {
     currentTestTreatmentsInstructionsDetails.length > 0 && (
       <Controller
         onChange={([event]) => {
+          requiredErrors[index].test_treatment_type = false;
           watch(`Instruction`);
           return event.target.value;
         }}
         name={`Instruction[${index}].test_treatment_type`}
         control={control}
         defaultValue={item.test_treatment_type || ''}
+        error={requiredErrors[index].test_treatment_type.length ? true : false}
+        helperText={requiredErrors[index].test_treatment_type}
         as={
           <CustomizedTextField
-            rules={{ required: true }}
             //needed unless you want a uncontrolled controlled issue on your hands
             iconColor='#1976d2'
             width='100%'
