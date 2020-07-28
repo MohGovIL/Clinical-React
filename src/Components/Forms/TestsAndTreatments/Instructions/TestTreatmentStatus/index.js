@@ -8,7 +8,6 @@ import CustomizedTextField from '../../../../../Assets/Elements/CustomizedTextFi
 const TestTreatMentStatus = ({ index, item, requiredErrors }) => {
   const { t } = useTranslation();
   const { control, register, setValue, getValues, watch } = useFormContext();
-  const { Instruction } = getValues({ nest: true });
 
   const handleChange = (event) => {
     requiredErrors[index].test_treatment_status = false;
@@ -26,14 +25,6 @@ const TestTreatMentStatus = ({ index, item, requiredErrors }) => {
       </span>
       <StyledSwitch
         register={register}
-        checked={
-          Instruction &&
-          Instruction[index] &&
-          (Instruction[index].test_treatment_status === true ||
-            Instruction[index].test_treatment_status === false)
-            ? Instruction[index].test_treatment_status
-            : false
-        }
         onChange={handleChange}
         name={`Instruction[${index}].test_treatment_status`}
         control={control}
