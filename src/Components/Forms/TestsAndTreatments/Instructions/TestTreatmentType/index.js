@@ -12,11 +12,6 @@ const TestTreatmentType = ({ item, index, handlePopUpProps }) => {
   const { t } = useTranslation();
 
   const { Instruction } = getValues({ nest: true });
-  /* const InstructionsWatch = watch(`Instruction`);
-
-  let test_treatment_watch = InstructionsWatch[index]
-    ? InstructionsWatch[index].test_treatment
-    : '';*/
 
   const test_treatment =
     Instruction && Instruction[index] && Instruction[index].test_treatment;
@@ -28,7 +23,7 @@ const TestTreatmentType = ({ item, index, handlePopUpProps }) => {
     currentTestTreatmentsInstructionsDetails,
     setCurrentTestTreatmentsInstructionsDetails,
   ] = useState([]);
-
+  const [currentTitle, setCurrentTitle] = useState('');
   useEffect(() => {
     (async () => {
       if (!test_treatment) return;
@@ -58,16 +53,17 @@ const TestTreatmentType = ({ item, index, handlePopUpProps }) => {
         });
 
       setCurrentTestTreatmentsInstructionsDetails(detailsObj);
+      setCurrentTitle(listsDetailsAfterAwait[0].data.title);
     })();
   }, [test_treatment]);
-  console.log(
+  /* console.log(
     `item from testTreatmentInstructions ${index} - ${JSON.stringify(item)}`,
     `currentTestTreatmentsInstructionsDetails :${currentTestTreatmentsInstructionsDetails.length}`,
   );
 
   console.log(
     `index=${index} , test_treatment = ${test_treatment}  , test_treatment_type = ${test_treatment_type}`,
-  );
+  );*/
   return (
     currentTestTreatmentsInstructionsDetails &&
     currentTestTreatmentsInstructionsDetails.length > 0 && (
@@ -81,11 +77,12 @@ const TestTreatmentType = ({ item, index, handlePopUpProps }) => {
         defaultValue={item.test_treatment_type || ''}
         as={
           <CustomizedTextField
+            rules={{ required: true }}
             //needed unless you want a uncontrolled controlled issue on your hands
             iconColor='#1976d2'
             width='100%'
             select
-            label={t('X-Ray Type')}>
+            label={t(currentTitle)}>
             {currentTestTreatmentsInstructionsDetails.map((value, index) => {
               return (
                 <MenuItem key={index} value={value.code}>
