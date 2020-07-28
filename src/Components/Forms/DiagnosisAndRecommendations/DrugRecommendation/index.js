@@ -13,7 +13,7 @@ import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationRequest';
 import { unregister } from 'serviceWorker';
 
-const DrugRecommendation = ({ encounterId }) => {
+const DrugRecommendation = ({ encounterId, formatDate }) => {
   const { t } = useTranslation();
   const {
     control,
@@ -219,7 +219,7 @@ const DrugRecommendation = ({ encounterId }) => {
                     moment(
                       normalizedFhirMedicationRequest.timingRepeatEnd,
                       'YYYY-MM-DD',
-                    ).format('DD/MM/YYYY') || '',
+                    ).format(formatDate) || '',
                 },
                 {
                   [`drugRecommendation[${
@@ -241,7 +241,7 @@ const DrugRecommendation = ({ encounterId }) => {
                   moment(
                     normalizedFhirMedicationRequest.timingRepeatEnd,
                     'YYYY-MM-DD',
-                  ).format('DD/MM/YYYY') || '',
+                  ).format(formatDate) || '',
                 instructionsForTheDrug:
                   normalizedFhirMedicationRequest.note || '',
               });

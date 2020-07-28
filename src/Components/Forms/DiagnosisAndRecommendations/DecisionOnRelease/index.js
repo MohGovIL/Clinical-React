@@ -36,16 +36,16 @@ const RecommendationsOnRelease = () => {
     if (items) {
       items.forEach((item) => {
         if (item.answer) {
-          switch (item.text) {
-            case 'Decision':
+          switch (item.linkId) {
+            case '5':
               setDecision(item.answer[0].valueString);
               setValue('decision', item.answer[0].valueString);
               break;
-            case 'Evacuation way':
+            case '6':
               setEvacuationWay(item.answer[0].valueString);
               setValue('evacuationWay', item.answer[0].valueString);
               break;
-            case 'Sick leave':
+            case '7':
               setValue('numberOfDays', item.answer[0].valueString);
               break;
             default:

@@ -44,7 +44,7 @@ const RecommendationsOnRelease = () => {
     if (items) {
       items.forEach((item) => {
         if (item.answer) {
-          switch (item.text) {
+          switch (item.linkId) {
             case 'Instructions for further treatment':
               setValue(
                 'instructionsForFurtherTreatment',

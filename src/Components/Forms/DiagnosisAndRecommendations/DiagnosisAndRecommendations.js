@@ -106,7 +106,7 @@ const DiagnosisAndRecommendations = ({
     })();
 
     return () => unregister('questionnaireId');
-  }, [register, setValue, unregister]);
+  }, [register, setValue, unregister, encounter.id, patient.id]);
 
   const [requiredErrors, setRequiredErrors] = React.useState([
     {
@@ -201,35 +201,35 @@ const DiagnosisAndRecommendations = ({
             linkId: i.linkId,
             text: i.text,
           };
-          switch (i.text) {
-            case 'Finding details':
+          switch (i.linkId) {
+            case '1':
               if (data.findingsDetails)
                 item['answer'] = answerType(i.type, data.findingsDetails);
               break;
-            case 'Diagnosis details':
+            case '2':
               if (data.diagnosisDetails)
                 item['answer'] = answerType(i.type, data.diagnosisDetails);
               break;
-            case 'Treatment details':
+            case '3':
               if (data.treatmentDetails)
                 item['answer'] = answerType(i.type, data.treatmentDetails);
               break;
-            case 'Instructions for further treatment':
+            case '4':
               if (data.instructionsForFurtherTreatment)
                 item['answer'] = answerType(
                   i.type,
                   data.instructionsForFurtherTreatment,
                 );
               break;
-            case 'Decision':
+            case '5':
               if (data.decision)
                 item['answer'] = answerType(i.type, data.decision);
               break;
-            case 'Evacuation way':
+            case '6':
               if (data.evacuationWay)
                 item['answer'] = answerType(i.type, data.evacuationWay);
               break;
-            case 'Sick leave':
+            case '7':
               if (data.numberOfDays)
                 item['answer'] = answerType(i.type, data.numberOfDays);
               break;
@@ -298,13 +298,13 @@ const DiagnosisAndRecommendations = ({
             medicationRequest['methodCode'] = drug.drugForm;
             medicationRequest['timingRepeatStart'] = moment(
               drug.toDate,
-              'DD/MM/YYYY',
+              formatDate,
             )
               .subtract(drug.duration, 'days')
               .format('YYYY-MM-DD');
             medicationRequest['timingRepeatEnd'] = moment(
               drug.toDate,
-              'DD/MM/YYYY',
+              formatDate,
             ).format('YYYY-MM-DD');
             medicationRequest['authoredOn'] = moment().format(
               'YYYY-MM-DDTHH:mm:ss[Z]',
@@ -382,7 +382,10 @@ const DiagnosisAndRecommendations = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <DiagnosisAndTreatment />
           <RecommendationsOnRelease />
-          <DrugRecommendation encounterId={encounter.id} />
+          <DrugRecommendation
+            encounterId={encounter.id}
+            formatDate={formatDate}
+          />
           <DecisionOnRelease />
           <SaveForm statuses={statuses} />
         </form>

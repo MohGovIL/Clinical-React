@@ -50,14 +50,14 @@ const DiagnosisAndTreatment = () => {
     if (items) {
       items.forEach((item) => {
         if (item.answer) {
-          switch (item.text) {
-            case 'Findings details':
+          switch (item.linkId) {
+            case '1':
               setValue('findingsDetails', item.answer[0].valueString);
               break;
-            case 'Diagnosis details':
+            case '2':
               setValue('diagnosisDetails', item.answer[0].valueString);
               break;
-            case 'Treatment details':
+            case '3':
               setValue('treatmentDetails', item.answer[0].valueString);
               break;
             default:
