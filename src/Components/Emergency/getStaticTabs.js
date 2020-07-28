@@ -8,7 +8,7 @@ import { setPatientDataFinishedVisitTableRows } from 'Components/Generic/patient
 export const emergencyTabs = [
   {
     tabName: 'Waiting for nurse',
-    id: 'waiting_for_nurse',
+    id: 'Patient Tracking Waiting for Nurse',
     mode: 'hide',
     count: 0,
     tabValue: 0,
@@ -22,7 +22,7 @@ export const emergencyTabs = [
   },
   {
     tabName: 'Waiting for doctor',
-    id: 'waiting_for_doctor',
+    id: 'Patient Tracking Waiting for Doctor',
     mode: 'hide',
     count: 0,
     tabValue: 1,
@@ -36,7 +36,7 @@ export const emergencyTabs = [
   },
   {
     tabName: 'Waiting for xray',
-    id: 'waiting_for_xray',
+    id: 'Patient Tracking Waiting for Xray',
     mode: 'hide',
     count: 0,
     tabValue: 2,
@@ -50,7 +50,7 @@ export const emergencyTabs = [
   },
   {
     tabName: 'Waiting for release',
-    id: 'waiting_for_release',
+    id: 'Patient Tracking Waiting for Release',
     mode: 'hide',
     count: 0,
     tabValue: 3,
@@ -64,7 +64,7 @@ export const emergencyTabs = [
   },
   {
     tabName: 'Finished visit',
-    id: 'finished_visit',
+    id: 'Patient Tracking Finished visit',
     mode: 'hide',
     count: 0,
     tabValue: 4,
