@@ -1,6 +1,5 @@
 import React, { Component, Suspense, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import SwipeableViews from 'react-swipeable-views';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -19,12 +18,12 @@ function TabPanel(props) {
       id={`full-width-tabpanel-${index}`}
       aria-labelledby={`full-width-tab-${index}`}
       {...other}>
-      {value === index && (
+      {value === index ? (
         <Box p={3}>
           <div>{children}</div>
           {/*<Typography>{children}</Typography>*/}
         </Box>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -48,27 +47,36 @@ const FormsContainer = ({ tabs, dir }) => {
   const [value, setValue] = React.useState(0);
   let formComponents = [];
 
-  const handleChange = (event, newValue) => {
-    // if (shouldTabChange.current) {
-    //   functionToRunOnTabChange.current();
-    //   setValue(newValue);
-    // }
-    setValue(newValue);
-  };
+  // Instruction for how to work with validations this tab forms
+  // Overview when a tab is changing these following steps will happen:
+  //  validationFunctionToRun -> shouldTabChange -> functionToRunOnTabChange -> setValue
+  // If shouldTabChange is false the steps after it won't be executed
+  // -------------------------------------------------------
+  // 1. Each component is going to be getting in their props
+  // {functionToRunOnTabChange,
+  // validationFunction,
+  // permission}
+  // 2. Inside your from  you'll have to use useEffect and initialize the props with their co-responding functions or values(Setting these values won't cause a re-render since it's a ref).
+  // Added ',' and '{}' so you can just copy paste these rows into your props
+  // 3. You can't be using the embedded rules that react-hook-form is providing you.
+  //    Because from the last standup the solution was to not use the handleSubmit from react-hook-form
+  //    which means you'll have to create a state for your validations and set your own validation function (Until a better solution will be available).
+  // 4. Your validation function should return true or false. True if validation passed and false when validation failed.
+  // 5. Your functionToRunOnChange needs to return an array with all of the promises(unresolved - for more information go to DiagnosisAndRecommendation search for onSubmit function);
+  // 6. Make sure that where you initialize functionToRunOnTabChange and validationFunction make sure to create an 'unMount' function inside the useEffect to set validationFunction to return true and functionToRunOnTabChange to return an empty array
+  // Sorry for this long description. Hopefully it will be easy to understand.
 
-  // Passed down to each FormComponent and each FormComponent should implement when he wants to allow the tabs index to change.
-  // Setting shouldChange won't cause a re-render since it's a useRef.
-  // Note to access the data or to change the data you'll need to do shouldChange.current which hold the value
-  // Please make sure to use bool type (I can't enforce using bool type)
-  const shouldTabChange = React.useRef(true);
+  const validationFunctionToRun = React.useRef(() => true);
+  const functionToRunOnTabChange = React.useRef(() => []);
 
-  const functionToRunOnTabChange = React.useRef(() =>
-    console.log('No function was provided'),
-  );
-
-  const handleChangeIndex = (index) => {
-    // if (shouldTabChange.current) setValue(index);
-    setValue(index);
+  const handleChange = async (event, newValue) => {
+    if (validationFunctionToRun.current()) {
+      const shouldBeArray = functionToRunOnTabChange.current();
+      if (Array.isArray(shouldBeArray)) {
+        await Promise.all(shouldBeArray);
+        setValue(newValue);
+      }
+    }
   };
   if (tabs && tabs.data) {
     formComponents = LazyLoadComponentsToArray(tabs.data, formComponents);
@@ -94,36 +102,31 @@ const FormsContainer = ({ tabs, dir }) => {
           })}
         </Tabs>
       </AppBar>
-      <SwipeableViews
-        axis={dir === 'rtl' ? 'x-reverse' : 'x'} //fix this
-        index={value}
-        onChangeIndex={handleChangeIndex}>
-        {tabs.data.map((tab, key) => {
-          let FormComponent = formComponents[tab.component];
-          return key === value ? (
-            <TabPanel
-              key={'tab_panel_' + key}
-              value={tab.order}
-              index={tab.order}
-              dir={dir}>
-              <Suspense fallback={<span>Loading...</span>}>
-                <FormComponent
-                  functionToRunOnTabChange={functionToRunOnTabChange}
-                  shouldTabChange={shouldTabChange}
-                  permission={tab.permission}
-                />
-              </Suspense>
-            </TabPanel>
-          ) : (
-            <TabPanel
-              key={'tab_panel_' + key}
-              value={tab.order}
-              index={tab.order}
-              dir={dir}
-            />
-          );
-        })}
-      </SwipeableViews>
+      {tabs.data.map((tab, key) => {
+        let FormComponent = formComponents[tab.component];
+        return key === value ? (
+          <TabPanel
+            key={'tab_panel_' + key}
+            value={value}
+            index={key}
+            dir={dir}>
+            <Suspense fallback={<span>Loading...</span>}>
+              <FormComponent
+                functionToRunOnTabChange={functionToRunOnTabChange}
+                validationFunction={validationFunctionToRun}
+                permission={tab.permission}
+              />
+            </Suspense>
+          </TabPanel>
+        ) : (
+          <TabPanel
+            key={'tab_panel_' + key}
+            value={value}
+            index={key}
+            dir={dir}
+          />
+        );
+      })}
     </StyledTabContainer>
   );
 };

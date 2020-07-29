@@ -260,7 +260,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     return () => {
       unregister('medicationRequest');
     };
-  }, [encounterId, register, setValue]);
+  }, [encounterId, register, setValue, formatDate]);
 
   useEffect(() => {
     fetchDrugsData();

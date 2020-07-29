@@ -24,8 +24,8 @@ const DiagnosisAndRecommendations = ({
   languageDirection,
   verticalName,
   permission,
-  shouldTabChange,
   functionToRunOnTabChange,
+  validationFunction,
 }) => {
   // const history = useHistory();
   const methods = useForm({
@@ -68,7 +68,7 @@ const DiagnosisAndRecommendations = ({
     }
   };
 
-  const [qItem, setQItem] = React.useState([]);
+  // const [qItem, setQItem] = React.useState([]);
   const [
     normalizedQuestionnaireResponse,
     setNormalizedQuestionnaireResponse,
@@ -77,6 +77,7 @@ const DiagnosisAndRecommendations = ({
   React.useEffect(() => {
     (async () => {
       try {
+        let normalizedFhirQuestionnaireResponse = {};
         const q = await FHIR('Questionnaire', 'doWork', {
           functionName: 'getQuestionnaire',
           functionParams: {
@@ -96,22 +97,26 @@ const DiagnosisAndRecommendations = ({
           },
         );
         if (questionnaireResponse.data.total) {
+          normalizedFhirQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
+            questionnaireResponse.data.entry[1].resource,
+          );
           setNormalizedQuestionnaireResponse(
-            normalizeFhirQuestionnaireResponse(
-              questionnaireResponse.data.entry[1].resource,
-            ),
+            normalizedFhirQuestionnaireResponse,
           );
         }
         const Questionnaire = q.data.entry[1].resource;
-        register({ name: 'questionnaireId' });
-        setValue('questionnaireId', Questionnaire.id);
-        setQItem(Questionnaire);
+        register({ name: 'questionnaire' });
+        register({ name: 'questionnaireResponseId' });
+        setValue([
+          { questionnaire: Questionnaire },
+          { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
+        ]);
       } catch (error) {
         console.log(error);
       }
     })();
 
-    return () => unregister('questionnaireId');
+    return () => unregister(['questionnaire', 'questionnaireResponseId']);
   }, [register, setValue, unregister, encounter.id, patient.id]);
 
   const [requiredErrors, setRequiredErrors] = React.useState([
@@ -161,8 +166,9 @@ const DiagnosisAndRecommendations = ({
 
   const isRequiredValidation = (data) => {
     let clean = true;
+    if (!data) data = getValues({ nest: true });
+
     if (!data['drugRecommendation']) {
-      shouldTabChange.current = clean;
       return clean;
     }
     for (
@@ -199,168 +205,165 @@ const DiagnosisAndRecommendations = ({
         }
       }
     }
-    shouldTabChange.current = clean;
     return clean;
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     if (!data) data = getValues({ nest: true });
-    if (isRequiredValidation(data)) {
-      try {
-        const APIsArray = [];
-        const items = qItem.item.map((i) => {
-          const item = {
-            linkId: i.linkId,
-            text: i.text,
-          };
-          switch (i.linkId) {
-            case '1':
-              if (data.findingsDetails)
-                item['answer'] = answerType(i.type, data.findingsDetails);
-              break;
-            case '2':
-              if (data.diagnosisDetails)
-                item['answer'] = answerType(i.type, data.diagnosisDetails);
-              break;
-            case '3':
-              if (data.treatmentDetails)
-                item['answer'] = answerType(i.type, data.treatmentDetails);
-              break;
-            case '4':
-              if (data.instructionsForFurtherTreatment)
-                item['answer'] = answerType(
-                  i.type,
-                  data.instructionsForFurtherTreatment,
-                );
-              break;
-            case '5':
-              if (data.decision)
-                item['answer'] = answerType(i.type, data.decision);
-              break;
-            case '6':
-              if (data.evacuationWay)
-                item['answer'] = answerType(i.type, data.evacuationWay);
-              break;
-            case '7':
-              if (data.numberOfDays)
-                item['answer'] = answerType(i.type, data.numberOfDays);
-              break;
-            default:
-              break;
-          }
-          return item;
-        });
-        if (Object.keys(normalizedQuestionnaireResponse).length) {
-          APIsArray.push(
-            FHIR('QuestionnaireResponse', 'doWork', {
-              functionName: 'patchQuestionnaireResponse',
-              questionnaireResponseId: normalizedQuestionnaireResponse.id,
-              questionnaireResponseParams: {
+    try {
+      const APIsArray = [];
+      const items = data.questionnaire.item.map((i) => {
+        const item = {
+          linkId: i.linkId,
+          text: i.text,
+        };
+        switch (i.linkId) {
+          case '1':
+            if (data.findingsDetails)
+              item['answer'] = answerType(i.type, data.findingsDetails);
+            break;
+          case '2':
+            if (data.diagnosisDetails)
+              item['answer'] = answerType(i.type, data.diagnosisDetails);
+            break;
+          case '3':
+            if (data.treatmentDetails)
+              item['answer'] = answerType(i.type, data.treatmentDetails);
+            break;
+          case '4':
+            if (data.instructionsForFurtherTreatment)
+              item['answer'] = answerType(
+                i.type,
+                data.instructionsForFurtherTreatment,
+              );
+            break;
+          case '5':
+            if (data.decision)
+              item['answer'] = answerType(i.type, data.decision);
+            break;
+          case '6':
+            if (data.evacuationWay)
+              item['answer'] = answerType(i.type, data.evacuationWay);
+            break;
+          case '7':
+            if (data.numberOfDays)
+              item['answer'] = answerType(i.type, data.numberOfDays);
+            break;
+          default:
+            break;
+        }
+        return item;
+      });
+      if (data.questionnaireResponseId) {
+        APIsArray.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
+            functionName: 'patchQuestionnaireResponse',
+            questionnaireResponseId: data.questionnaireResponseId,
+            questionnaireResponseParams: {
+              item: items,
+            },
+          }),
+        );
+      } else {
+        APIsArray.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
+            functionName: 'createQuestionnaireResponse',
+            functionParams: {
+              questionnaireResponse: {
+                questionnaire: data.questionnaire.id,
+                status: 'completed',
+                patient: patient.id,
+                encounter: encounter.id,
+                authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                source: patient.id,
                 item: items,
               },
-            }),
-          );
-        } else {
-          APIsArray.push(
-            FHIR('QuestionnaireResponse', 'doWork', {
-              functionName: 'createQuestionnaireResponse',
-              functionParams: {
-                questionnaireResponse: {
-                  questionnaire: data.questionnaireId,
-                  status: 'completed',
-                  patient: patient.id,
-                  encounter: encounter.id,
-                  authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-                  source: patient.id,
-                  item: items,
-                },
-              },
-            }),
-          );
-        }
-        //Updating encounter
-        // const cloneEncounter = { ...encounter };
-        // cloneEncounter.extensionSecondaryStatus = data.nextStatus;
-        // cloneEncounter.status = 'in-progress';
-        // cloneEncounter.practitioner = store.getState().login.userID;
-
-        // APIsArray.push(
-        //   FHIR('Encounter', 'doWork', {
-        //     functionName: 'updateEncounter',
-        //     functionParams: {
-        //       encounterId: encounter.id,
-        //       encounter: cloneEncounter,
-        //     },
-        //   }),
-        // );
-        if (data.drugRecommendation && data.drugRecommendation.length) {
-          data.drugRecommendation.forEach((drug, drugIndex) => {
-            if (drug.drugName) {
-              // There is a drugName and since we check if all required values are filled so I can add that to the APIsArray
-              const medicationRequest = {};
-
-              medicationRequest['status'] = 'active';
-              medicationRequest['patient'] = patient.id;
-              medicationRequest['encounter'] = encounter.id;
-              medicationRequest['requester'] = store.getState().login.userID;
-              medicationRequest['recorder'] = store.getState().login.userID;
-              medicationRequest['note'] = drug.instructionsForTheDrug;
-              medicationRequest['routeCode'] = drug.drugRoute;
-              medicationRequest['medicationCodeableConceptCode'] =
-                drug.drugName;
-              medicationRequest['timingCode'] = drug.intervals;
-              medicationRequest['doseQuantity'] = drug.quantity;
-              medicationRequest['methodCode'] = drug.drugForm;
-              medicationRequest['timingRepeatStart'] = moment(
-                drug.toDate,
-                formatDate,
-              )
-                .subtract(drug.duration, 'days')
-                .format('YYYY-MM-DD');
-              medicationRequest['timingRepeatEnd'] = moment(
-                drug.toDate,
-                formatDate,
-              ).format('YYYY-MM-DD');
-              medicationRequest['authoredOn'] = moment().format(
-                'YYYY-MM-DDTHH:mm:ss[Z]',
-              );
-
-              if (data.medicationRequest && data.medicationRequest[drugIndex]) {
-                APIsArray.push(
-                  FHIR('MedicationRequest', 'doWork', {
-                    functionName: 'updateMedicationRequest',
-                    functionParams: {
-                      medicationRequest,
-                      _id: data.medicationRequest[drugIndex],
-                    },
-                  }),
-                );
-              } else {
-                APIsArray.push(
-                  FHIR('MedicationRequest', 'doWork', {
-                    functionName: 'createMedicationRequest',
-                    functionParams: {
-                      medicationRequest,
-                    },
-                  }),
-                );
-              }
-            }
-          });
-          await Promise.all[APIsArray];
-          // history.push(`${baseRoutePath()}/generic/patientTracking`);
-        }
-      } catch (error) {
-        console.log(error);
+            },
+          }),
+        );
       }
+      //Updating encounter
+      // const cloneEncounter = { ...encounter };
+      // cloneEncounter.extensionSecondaryStatus = data.nextStatus;
+      // cloneEncounter.status = 'in-progress';
+      // cloneEncounter.practitioner = store.getState().login.userID;
+
+      // APIsArray.push(
+      //   FHIR('Encounter', 'doWork', {
+      //     functionName: 'updateEncounter',
+      //     functionParams: {
+      //       encounterId: encounter.id,
+      //       encounter: cloneEncounter,
+      //     },
+      //   }),
+      // );
+      if (data.drugRecommendation && data.drugRecommendation.length) {
+        data.drugRecommendation.forEach((drug, drugIndex) => {
+          if (drug.drugName) {
+            // There is a drugName and since we check if all required values are filled so I can add that to the APIsArray
+            const medicationRequest = {};
+
+            medicationRequest['status'] = 'active';
+            medicationRequest['patient'] = patient.id;
+            medicationRequest['encounter'] = encounter.id;
+            medicationRequest['requester'] = store.getState().login.userID;
+            medicationRequest['recorder'] = store.getState().login.userID;
+            medicationRequest['note'] = drug.instructionsForTheDrug;
+            medicationRequest['routeCode'] = drug.drugRoute;
+            medicationRequest['medicationCodeableConceptCode'] = drug.drugName;
+            medicationRequest['timingCode'] = drug.intervals;
+            medicationRequest['doseQuantity'] = drug.quantity;
+            medicationRequest['methodCode'] = drug.drugForm;
+            medicationRequest['timingRepeatStart'] = moment(
+              drug.toDate,
+              formatDate,
+            )
+              .subtract(drug.duration, 'days')
+              .format('YYYY-MM-DD');
+            medicationRequest['timingRepeatEnd'] = moment(
+              drug.toDate,
+              formatDate,
+            ).format('YYYY-MM-DD');
+            medicationRequest['authoredOn'] = moment().format(
+              'YYYY-MM-DDTHH:mm:ss[Z]',
+            );
+
+            if (data.medicationRequest && data.medicationRequest[drugIndex]) {
+              APIsArray.push(
+                FHIR('MedicationRequest', 'doWork', {
+                  functionName: 'updateMedicationRequest',
+                  functionParams: {
+                    medicationRequest,
+                    _id: data.medicationRequest[drugIndex],
+                  },
+                }),
+              );
+            } else {
+              APIsArray.push(
+                FHIR('MedicationRequest', 'doWork', {
+                  functionName: 'createMedicationRequest',
+                  functionParams: {
+                    medicationRequest,
+                  },
+                }),
+              );
+            }
+          }
+        });
+        // history.push(`${baseRoutePath()}/generic/patientTracking`);
+      }
+      return APIsArray;
+    } catch (error) {
+      console.log(error);
     }
   };
 
   React.useEffect(() => {
-    shouldTabChange.current = false;
+    validationFunction.current = isRequiredValidation;
     functionToRunOnTabChange.current = onSubmit;
     return () => {
-      functionToRunOnTabChange.current = () => console.log('Unmount DAR');
+      functionToRunOnTabChange.current = () => [];
+      validationFunction.current = () => true;
     };
   }, []);
 
@@ -413,6 +416,7 @@ const DiagnosisAndRecommendations = ({
           <SaveForm
             statuses={statuses}
             encounter={encounter}
+            validationFunction={isRequiredValidation}
             onSubmit={onSubmit}
           />
         </form>

@@ -14,7 +14,7 @@ import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
  * @param { [{value: string, label: string}] } statuses
  * @description The data from this component will be inside the data object as 'nextStatus' in the onSubmitHandler
  */
-const SaveForm = ({ statuses, encounter, onSubmit }) => {
+const SaveForm = ({ statuses, encounter, onSubmit, validationFunction }) => {
   const { t } = useTranslation();
   const { permission, watch, getValues } = useFormContext();
 
@@ -42,9 +42,11 @@ const SaveForm = ({ statuses, encounter, onSubmit }) => {
     }
   };
 
-  const onClickHandler = () => {
-    onSubmit(getValues({ nest: true }));
-    updateEncounter();
+  const onClickHandler = async () => {
+    if (validationFunction(getValues({ nest: true }))) {
+      await Promise.all(onSubmit(getValues({ nest: true })));
+      updateEncounter();
+    }
   };
 
   return (
