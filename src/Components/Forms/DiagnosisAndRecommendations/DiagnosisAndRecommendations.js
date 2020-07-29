@@ -334,7 +334,6 @@ const DiagnosisAndRecommendations = ({
             }
           }
         });
-        // history.push(`${baseRoutePath()}/generic/patientTracking`);
       }
       return APIsArray;
     } catch (error) {
