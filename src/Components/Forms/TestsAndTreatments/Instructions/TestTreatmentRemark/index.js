@@ -1,10 +1,21 @@
-import { Controller, useFormContext } from 'react-hook-form';
-import CustomizedTextField from '../../../../../Assets/Elements/CustomizedTextField';
+/**
+ * @date - 29/07/2020
+ * @author Dror Golan drorgo@matrix.co.il
+ * @purpose TestTreatmentRemark - TextField - holds additional comments on the test treatment instruction to be made.
+ * @returns UI Field of the main form.
+ */
 
+import { Controller, useFormContext } from 'react-hook-form';
+import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const TestTreatmentRemark = ({ index, item }) => {
+/**
+ *
+ * @param index
+ * @returns UI Field of the main form.
+ */
+const TestTreatmentRemark = ({ index }) => {
   const { t } = useTranslation();
   const { control, watch, getValues, setValue } = useFormContext();
   const { Instruction } = getValues({ nest: true });

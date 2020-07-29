@@ -1,10 +1,22 @@
+/**
+ * @date - 29/07/2020
+ * @author Dror Golan drorgo@matrix.co.il
+ * @purpose Fields -  The main component which will hold and render EM Test and Treatment instruction form fields.
+ * The fields are :
+                                TestTreatment
+                                TestTreatmentInstructions
+                                TestTreatmentRefferal
+                                TestTreatmentRemark
+                                TestTreatmentStatus
+                                TestTreatmentType
+ * @returns Fields of the main form Component.
+ */
+
 import React, { useEffect } from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import Grid from '@material-ui/core/Grid';
-
-import TestTreatment from '../TestTreatment';
-import TestTreatmentInstructions from '../TestTreatmentInstructions';
-
+import TestTreatment from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatment';
+import TestTreatmentInstructions from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentInstructions';
 import {
   StyledCardContent,
   StyledCardDetails,
@@ -16,17 +28,27 @@ import {
   StyledTreatmentInstructionsButton,
   StyledTypographyHour,
   StyledTypographyName,
-} from '../../Style';
-import TestTreatmentType from '../TestTreatmentType';
+} from 'Components/Forms/TestsAndTreatments/Style';
+import TestTreatmentType from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentType';
 import * as moment from 'moment';
 import { connect } from 'react-redux';
-import normalizeFhirUser from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
+import normalizeFhirUser from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
 import PLUS from 'Assets/Images/plus.png';
 import { useTranslation } from 'react-i18next';
-import TestTreatmentReferral from '../TestTreatmentRefferal';
-import TestTreatMentStatus from '../TestTreatmentStatus';
-import TestTreatmentRemark from '../TestTreatmentRemark';
+import TestTreatmentReferral from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentRefferal';
+import TestTreatMentStatus from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentStatus';
+import TestTreatmentRemark from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentRemark';
 
+/**
+ *
+ * @param encounter
+ * @param currentUser
+ * @param handlePopUpProps
+ * @param requiredErrors
+ * @param setRequiredErrors
+ * @returns {*}
+ * @constructor
+ */
 const Fields = ({
   encounter,
   currentUser,
@@ -43,6 +65,9 @@ const Fields = ({
   const edit = true;
 
   const addNewInstruction = async () => {
+    //prepend has a bug in hookform soI used it like this :
+
+    //1) set the errors in a new error array of errors
     setRequiredErrors((prevState) => {
       const cloneState = [...prevState];
       cloneState.unshift({
@@ -52,6 +77,7 @@ const Fields = ({
       return cloneState;
     });
 
+    //2) if it is the first record do append otherwise do insert this is basically prepend
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
         test_treatment: '',
@@ -68,10 +94,9 @@ const Fields = ({
         test_treatment_status: false,
         test_treatment_remark: '',
       });
-      watch();
     }
-
-    /* prepend({ test_treatment: '', test_treatment_type: '' });*/
+    //3)render all the elements to the screen  with watch
+    watch();
   };
   const { t } = useTranslation();
   return (
@@ -94,9 +119,7 @@ const Fields = ({
                     <StyledTypographyName component='h5' variant='h5'>
                       {edit ? user.name.toString() : ''}
                     </StyledTypographyName>
-                    <StyledTypographyHour
-                      variant='subtitle1'
-                      color='textSecondary'>
+                    <StyledTypographyHour variant='subtitle1' color='#076ce9'>
                       {' '}
                       {edit
                         ? moment

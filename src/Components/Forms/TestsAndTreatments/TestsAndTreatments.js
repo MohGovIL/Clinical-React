@@ -11,6 +11,7 @@
  *                                a) the constant indicators - ConstantIndicators.
  *                                b) the variant indicators - VariantIndicators.
  *                                c) the new variant indicators - VariantIndicators.
+ *                                d) Test and treatment instructions
  * @returns TestsAndTreatments Component.
  */
 

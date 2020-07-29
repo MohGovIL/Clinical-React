@@ -1,11 +1,25 @@
+/**
+ * @date - 29/07/2020
+ * @author Dror Golan drorgo@matrix.co.il
+ * @purpose TestTreatment - A select box ,
+ *                          holds the test and treatment instruction classifier.
+ * @returns UI Field of the main form.
+ */
+
 import { Controller, useFormContext } from 'react-hook-form';
-import CustomizedTextField from '../../../../../Assets/Elements/CustomizedTextField';
+import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FHIR } from '../../../../../Utils/Services/FHIR';
-import normalizeFhirValueSet from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+
+/**
+ *
+ * @param index
+ * @param item
+ * @returns UI Field of the main form.
+ */
 const TestTreatment = ({ index, item }) => {
   console.log(`item from testTreatment ${index} - ${JSON.stringify(item)}`);
   const { control, watch, setValue } = useFormContext();

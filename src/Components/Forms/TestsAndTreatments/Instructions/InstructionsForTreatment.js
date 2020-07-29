@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
+/**
+ * @date - 29/07/2020
+ * @author Dror Golan drorgo@matrix.co.il
+ * @purpose InstructionsForTreatment -  will be the main component which will hold and render EM Test and Treatment instruction form .
+ * @returns the main form Component.
+ */
 
-import {
-  Select,
-  MenuItem,
-  createMuiTheme,
-  ThemeProvider,
-  Grid,
-} from '@material-ui/core';
+import React, { useState } from 'react';
 import { FormContext, useForm } from 'react-hook-form';
-import Fields from './Fields';
-
-import PopUpFormTemplates from '../../../Generic/PopupComponents/PopUpFormTemplates';
-
+import Fields from 'Components/Forms/TestsAndTreatments/Instructions/Fields';
+import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
+/**
+ *
+ * @param encounter
+ * @returns   UI main form.
+ */
 const InstructionsForTreatment = ({ encounter }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -112,21 +114,6 @@ const InstructionsForTreatment = ({ encounter }) => {
       for (const fieldKey in requiredFields) {
         if (requiredFields.hasOwnProperty(fieldKey)) {
           const field = requiredFields[fieldKey];
-          /* if (
-            !data ||
-            !data['Instruction'] ||
-            !data['Instruction'][instructionIndex] ||
-            (!data['Instruction'][instructionIndex][field.name] &&
-              data['Instruction'][instructionIndex][field.name] !== '' &&
-              !data['Instruction'][instructionIndex][field.name] &&
-              data['Instruction'][instructionIndex][field.name].type !==
-                'checkbox' &&
-              data['Instruction'][instructionIndex][field.name] !== '' &&
-              data['Instruction'][instructionIndex][field.name].type ===
-                'checkbox' &&
-              data['Instruction'][instructionIndex][field.name] !== '')
-          )
-            continue;*/
           if (
             !data ||
             !data['Instruction'] ||

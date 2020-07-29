@@ -1,18 +1,26 @@
+/**
+ * @date - 29/07/2020
+ * @author Dror Golan drorgo@matrix.co.il
+ * @purpose TestTreatmentRemark - select - holds the test and treatment instruction classifier type.
+ * @returns UI Field of the main form.
+ */
+
 import { Controller, useFormContext } from 'react-hook-form';
-import CustomizedTextField from '../../../../../Assets/Elements/CustomizedTextField';
+import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { FHIR } from '../../../../../Utils/Services/FHIR';
-import normalizeFhirValueSet from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useTranslation } from 'react-i18next';
 
-const TestTreatmentType = ({
-  item,
-  index,
-  handlePopUpProps,
-  requiredErrors,
-}) => {
+/**
+ *
+ * @param item
+ * @param index
+ * @param requiredErrors
+ * @returns UI Field of the main form.
+ */
+const TestTreatmentType = ({ item, index, requiredErrors }) => {
   const { watch, control, getValues } = useFormContext();
   const { t } = useTranslation();
 
@@ -61,14 +69,7 @@ const TestTreatmentType = ({
       setCurrentTitle(listsDetailsAfterAwait[0].data.title);
     })();
   }, [test_treatment]);
-  /* console.log(
-    `item from testTreatmentInstructions ${index} - ${JSON.stringify(item)}`,
-    `currentTestTreatmentsInstructionsDetails :${currentTestTreatmentsInstructionsDetails.length}`,
-  );
 
-  console.log(
-    `index=${index} , test_treatment = ${test_treatment}  , test_treatment_type = ${test_treatment_type}`,
-  );*/
   return (
     currentTestTreatmentsInstructionsDetails &&
     currentTestTreatmentsInstructionsDetails.length > 0 && (
@@ -80,12 +81,11 @@ const TestTreatmentType = ({
         }}
         name={`Instruction[${index}].test_treatment_type`}
         control={control}
-        defaultValue={item.test_treatment_type || ''}
+        defaultValue={item.test_treatment_type || ''} //needed unless you want a uncontrolled controlled issue on your hands
         error={requiredErrors[index].test_treatment_type.length ? true : false}
         helperText={requiredErrors[index].test_treatment_type}
         as={
           <CustomizedTextField
-            //needed unless you want a uncontrolled controlled issue on your hands
             iconColor='#1976d2'
             width='100%'
             select

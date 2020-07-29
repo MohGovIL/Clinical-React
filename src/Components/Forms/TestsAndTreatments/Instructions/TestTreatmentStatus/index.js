@@ -1,11 +1,22 @@
-import StyledSwitch from '../../../../../Assets/Elements/StyledSwitch';
+/**
+ * @date - 29/07/2020
+ * @author Dror Golan drorgo@matrix.co.il
+ * @purpose TestTreatmentRemark - Checkbox knob - holds the status of the advised instruction.
+ * @returns UI Field of the main form.
+ */
 
+import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from 'react-hook-form';
-import CustomizedTextField from '../../../../../Assets/Elements/CustomizedTextField';
 
-const TestTreatMentStatus = ({ index, item, requiredErrors }) => {
+/**
+ *
+ * @param index
+ * @param requiredErrors
+ * @returns UI Field of the main form.
+ */
+const TestTreatMentStatus = ({ index, requiredErrors }) => {
   const { t } = useTranslation();
   const { control, register, setValue, getValues, watch } = useFormContext();
 

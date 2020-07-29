@@ -1,10 +1,23 @@
-import PDF from '../../../../../Assets/Images/pdf.png';
-import React, { useEffect, useState } from 'react';
+/**
+ * @date - 29/07/2020
+ * @author Dror Golan drorgo@matrix.co.il
+ * @purpose TestTreatmentReferral - A button ,
+ *                                  will create a referral x-ray photography (pdf).
+ * @returns UI Field of the main form.
+ */
+import PDF from 'Assets/Images/pdf.png';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { StyledIconedButton } from '../../Style';
+import { StyledIconedButton } from 'Components/Forms/TestsAndTreatments/Style';
 import { useFormContext } from 'react-hook-form';
-const TestTreatmentReferral = ({ index, item }) => {
+
+/**
+ *
+ * @param index
+ * @returns UI Field of the main form.
+ */
+
+const TestTreatmentReferral = ({ index }) => {
   const { control, watch, getValues, setValue } = useFormContext();
   const { Instruction } = getValues({ nest: true });
   const { t } = useTranslation();
