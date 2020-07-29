@@ -13,8 +13,8 @@ import { FHIR } from 'Utils/Services/FHIR';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
 import * as moment from 'moment';
-import { useHistory } from 'react-router-dom';
-import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+// import { useHistory } from 'react-router-dom';
+// import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { store } from 'index';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 const DiagnosisAndRecommendations = ({
@@ -24,8 +24,10 @@ const DiagnosisAndRecommendations = ({
   languageDirection,
   verticalName,
   permission,
+  shouldTabChange,
+  functionToRunOnTabChange,
 }) => {
-  const history = useHistory();
+  // const history = useHistory();
   const methods = useForm({
     mode: 'onBlur',
     defaultValues: {
@@ -43,8 +45,11 @@ const DiagnosisAndRecommendations = ({
       ],
     },
   });
+
   const { handleSubmit, setValue, register, unregister, getValues } = methods;
+
   const { t } = useTranslation();
+
   const answerType = (type, data) => {
     if (type === 'string') {
       return [
@@ -68,6 +73,7 @@ const DiagnosisAndRecommendations = ({
     normalizedQuestionnaireResponse,
     setNormalizedQuestionnaireResponse,
   ] = React.useState({});
+
   React.useEffect(() => {
     (async () => {
       try {
@@ -156,6 +162,7 @@ const DiagnosisAndRecommendations = ({
   const isRequiredValidation = (data) => {
     let clean = true;
     if (!data['drugRecommendation']) {
+      shouldTabChange.current = clean;
       return clean;
     }
     for (
@@ -163,36 +170,41 @@ const DiagnosisAndRecommendations = ({
       medicineIndex < requiredErrors.length;
       medicineIndex++
     ) {
-      for (const fieldKey in requiredFields) {
-        if (requiredFields.hasOwnProperty(fieldKey)) {
-          let answer;
-          const field = requiredFields[fieldKey];
-          answer = field.required(
-            data['drugRecommendation'][medicineIndex][field.name],
-          );
-          if (answer) {
-            setRequiredErrors((prevState) => {
-              const cloneState = [...prevState];
-              cloneState[medicineIndex][field.name] = '';
-              return cloneState;
-            });
-          } else {
-            setRequiredErrors((prevState) => {
-              const cloneState = [...prevState];
-              cloneState[medicineIndex][field.name] = t(
-                'A value must be entered in the field',
-              );
-              return cloneState;
-            });
-            clean = false;
+      if (data['drugRecommendation'][medicineIndex].drugName) {
+        //drugName is not a falsy value
+        for (const fieldKey in requiredFields) {
+          if (requiredFields.hasOwnProperty(fieldKey)) {
+            let answer;
+            const field = requiredFields[fieldKey];
+            answer = field.required(
+              data['drugRecommendation'][medicineIndex][field.name],
+            );
+            if (answer) {
+              setRequiredErrors((prevState) => {
+                const cloneState = [...prevState];
+                cloneState[medicineIndex][field.name] = '';
+                return cloneState;
+              });
+            } else {
+              setRequiredErrors((prevState) => {
+                const cloneState = [...prevState];
+                cloneState[medicineIndex][field.name] = t(
+                  'A value must be entered in the field',
+                );
+                return cloneState;
+              });
+              clean = false;
+            }
           }
         }
       }
     }
+    shouldTabChange.current = clean;
     return clean;
   };
 
   const onSubmit = async (data) => {
+    if (!data) data = getValues({ nest: true });
     if (isRequiredValidation(data)) {
       try {
         const APIsArray = [];
@@ -267,79 +279,90 @@ const DiagnosisAndRecommendations = ({
           );
         }
         //Updating encounter
-        const cloneEncounter = { ...encounter };
-        cloneEncounter.extensionSecondaryStatus = data.nextStatus;
-        cloneEncounter.status = 'in-progress';
-        cloneEncounter.practitioner = store.getState().login.userID;
+        // const cloneEncounter = { ...encounter };
+        // cloneEncounter.extensionSecondaryStatus = data.nextStatus;
+        // cloneEncounter.status = 'in-progress';
+        // cloneEncounter.practitioner = store.getState().login.userID;
 
-        APIsArray.push(
-          FHIR('Encounter', 'doWork', {
-            functionName: 'updateEncounter',
-            functionParams: {
-              encounterId: encounter.id,
-              encounter: cloneEncounter,
-            },
-          }),
-        );
+        // APIsArray.push(
+        //   FHIR('Encounter', 'doWork', {
+        //     functionName: 'updateEncounter',
+        //     functionParams: {
+        //       encounterId: encounter.id,
+        //       encounter: cloneEncounter,
+        //     },
+        //   }),
+        // );
         if (data.drugRecommendation && data.drugRecommendation.length) {
           data.drugRecommendation.forEach((drug, drugIndex) => {
-            const medicationRequest = {};
+            if (drug.drugName) {
+              // There is a drugName and since we check if all required values are filled so I can add that to the APIsArray
+              const medicationRequest = {};
 
-            medicationRequest['status'] = 'active';
-            medicationRequest['patient'] = patient.id;
-            medicationRequest['encounter'] = encounter.id;
-            medicationRequest['requester'] = store.getState().login.userID;
-            medicationRequest['recorder'] = store.getState().login.userID;
-            medicationRequest['note'] = drug.instructionsForTheDrug;
-            medicationRequest['routeCode'] = drug.drugRoute;
-            medicationRequest['medicationCodeableConceptCode'] = drug.drugName;
-            medicationRequest['timingCode'] = drug.intervals;
-            medicationRequest['doseQuantity'] = drug.quantity;
-            medicationRequest['methodCode'] = drug.drugForm;
-            medicationRequest['timingRepeatStart'] = moment(
-              drug.toDate,
-              formatDate,
-            )
-              .subtract(drug.duration, 'days')
-              .format('YYYY-MM-DD');
-            medicationRequest['timingRepeatEnd'] = moment(
-              drug.toDate,
-              formatDate,
-            ).format('YYYY-MM-DD');
-            medicationRequest['authoredOn'] = moment().format(
-              'YYYY-MM-DDTHH:mm:ss[Z]',
-            );
+              medicationRequest['status'] = 'active';
+              medicationRequest['patient'] = patient.id;
+              medicationRequest['encounter'] = encounter.id;
+              medicationRequest['requester'] = store.getState().login.userID;
+              medicationRequest['recorder'] = store.getState().login.userID;
+              medicationRequest['note'] = drug.instructionsForTheDrug;
+              medicationRequest['routeCode'] = drug.drugRoute;
+              medicationRequest['medicationCodeableConceptCode'] =
+                drug.drugName;
+              medicationRequest['timingCode'] = drug.intervals;
+              medicationRequest['doseQuantity'] = drug.quantity;
+              medicationRequest['methodCode'] = drug.drugForm;
+              medicationRequest['timingRepeatStart'] = moment(
+                drug.toDate,
+                formatDate,
+              )
+                .subtract(drug.duration, 'days')
+                .format('YYYY-MM-DD');
+              medicationRequest['timingRepeatEnd'] = moment(
+                drug.toDate,
+                formatDate,
+              ).format('YYYY-MM-DD');
+              medicationRequest['authoredOn'] = moment().format(
+                'YYYY-MM-DDTHH:mm:ss[Z]',
+              );
 
-            if (data.medicationRequest && data.medicationRequest[drugIndex]) {
-              APIsArray.push(
-                FHIR('MedicationRequest', 'doWork', {
-                  functionName: 'updateMedicationRequest',
-                  functionParams: {
-                    medicationRequest,
-                    _id: data.medicationRequest[drugIndex],
-                  },
-                }),
-              );
-            } else {
-              APIsArray.push(
-                FHIR('MedicationRequest', 'doWork', {
-                  functionName: 'createMedicationRequest',
-                  functionParams: {
-                    medicationRequest,
-                  },
-                }),
-              );
+              if (data.medicationRequest && data.medicationRequest[drugIndex]) {
+                APIsArray.push(
+                  FHIR('MedicationRequest', 'doWork', {
+                    functionName: 'updateMedicationRequest',
+                    functionParams: {
+                      medicationRequest,
+                      _id: data.medicationRequest[drugIndex],
+                    },
+                  }),
+                );
+              } else {
+                APIsArray.push(
+                  FHIR('MedicationRequest', 'doWork', {
+                    functionName: 'createMedicationRequest',
+                    functionParams: {
+                      medicationRequest,
+                    },
+                  }),
+                );
+              }
             }
           });
-          const res = await Promise.all[APIsArray];
-          console.log(res);
-          history.push(`${baseRoutePath()}/generic/patientTracking`);
+          await Promise.all[APIsArray];
+          // history.push(`${baseRoutePath()}/generic/patientTracking`);
         }
       } catch (error) {
         console.log(error);
       }
     }
   };
+
+  React.useEffect(() => {
+    shouldTabChange.current = false;
+    functionToRunOnTabChange.current = onSubmit;
+    return () => {
+      functionToRunOnTabChange.current = () => console.log('Unmount DAR');
+    };
+  }, []);
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
@@ -387,7 +410,11 @@ const DiagnosisAndRecommendations = ({
             formatDate={formatDate}
           />
           <DecisionOnRelease />
-          <SaveForm statuses={statuses} />
+          <SaveForm
+            statuses={statuses}
+            encounter={encounter}
+            onSubmit={onSubmit}
+          />
         </form>
       </FormContext>
     </StyledDiagnosisAndRecommendations>
