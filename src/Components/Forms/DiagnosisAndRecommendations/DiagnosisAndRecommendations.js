@@ -68,7 +68,6 @@ const DiagnosisAndRecommendations = ({
     }
   };
 
-  // const [qItem, setQItem] = React.useState([]);
   const [
     normalizedQuestionnaireResponse,
     setNormalizedQuestionnaireResponse,
@@ -282,21 +281,6 @@ const DiagnosisAndRecommendations = ({
           }),
         );
       }
-      //Updating encounter
-      // const cloneEncounter = { ...encounter };
-      // cloneEncounter.extensionSecondaryStatus = data.nextStatus;
-      // cloneEncounter.status = 'in-progress';
-      // cloneEncounter.practitioner = store.getState().login.userID;
-
-      // APIsArray.push(
-      //   FHIR('Encounter', 'doWork', {
-      //     functionName: 'updateEncounter',
-      //     functionParams: {
-      //       encounterId: encounter.id,
-      //       encounter: cloneEncounter,
-      //     },
-      //   }),
-      // );
       if (data.drugRecommendation && data.drugRecommendation.length) {
         data.drugRecommendation.forEach((drug, drugIndex) => {
           if (drug.drugName) {
