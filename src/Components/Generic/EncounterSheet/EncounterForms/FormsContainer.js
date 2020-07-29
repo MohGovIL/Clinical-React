@@ -1,7 +1,6 @@
 import React, { Component, Suspense, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
-import { useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -50,10 +49,25 @@ const FormsContainer = ({ tabs, dir }) => {
   let formComponents = [];
 
   const handleChange = (event, newValue) => {
+    // if (shouldTabChange.current) {
+    //   functionToRunOnTabChange.current();
+    //   setValue(newValue);
+    // }
     setValue(newValue);
   };
 
+  // Passed down to each FormComponent and each FormComponent should implement when he wants to allow the tabs index to change.
+  // Setting shouldChange won't cause a re-render since it's a useRef.
+  // Note to access the data or to change the data you'll need to do shouldChange.current which hold the value
+  // Please make sure to use bool type (I can't enforce using bool type)
+  const shouldTabChange = React.useRef(true);
+
+  const functionToRunOnTabChange = React.useRef(() =>
+    console.log('No function was provided'),
+  );
+
   const handleChangeIndex = (index) => {
+    // if (shouldTabChange.current) setValue(index);
     setValue(index);
   };
   if (tabs && tabs.data) {
@@ -93,7 +107,11 @@ const FormsContainer = ({ tabs, dir }) => {
               index={tab.order}
               dir={dir}>
               <Suspense fallback={<span>Loading...</span>}>
-                <FormComponent permission={tab.permission} />
+                <FormComponent
+                  functionToRunOnTabChange={functionToRunOnTabChange}
+                  shouldTabChange={shouldTabChange}
+                  permission={tab.permission}
+                />
               </Suspense>
             </TabPanel>
           ) : (

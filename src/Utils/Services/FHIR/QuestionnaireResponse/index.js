@@ -36,12 +36,14 @@ const QuestionnaireResponseStats = {
         switch (dataKey) {
           case 'item':
             element.forEach((item) => {
-              const itemObj = {
-                op: 'replace',
-                path: `/item/${item.linkId - 1}/answer/0`,
-                value: item.answer[0],
-              };
-              patchArr.push(itemObj);
+              if (item.answer) {
+                const itemObj = {
+                  op: 'replace',
+                  path: `/item/${item.linkId - 1}/answer/0`,
+                  value: item.answer[0],
+                };
+                patchArr.push(itemObj);
+              }
             });
             break;
 

@@ -88,6 +88,12 @@ const denormalizeFhirEncounter = (encounter) => {
             url: 'clinikal/extensions/arrivalWay',
           });
           break;
+        case 'extensionSecondaryStatus':
+          extensions.push({
+            valueString: encounter[encounterKey],
+            url: 'http://clinikal/extensions/encounter/secondaryStatus',
+          });
+          break;
         default:
           break;
       }

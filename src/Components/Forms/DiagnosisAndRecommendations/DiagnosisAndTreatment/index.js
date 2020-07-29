@@ -16,6 +16,7 @@ const DiagnosisAndTreatment = () => {
     setValue,
     register,
     watch,
+    questionnaireResponse,
   } = useFormContext();
 
   const diagnosisAndTreatmentFields = watch([
@@ -41,10 +42,38 @@ const DiagnosisAndTreatment = () => {
       };
     });
   };
-
   const treatmentDetails = t('Treatment details');
   const diagnosisDetails = t('Diagnosis details');
   const findingsDetails = t('Findings details');
+  React.useEffect(() => {
+    const { items } = questionnaireResponse;
+    if (items) {
+      items.forEach((item) => {
+        if (item.answer) {
+          switch (item.linkId) {
+            case '1':
+              setValue('findingsDetails', item.answer[0].valueString);
+              break;
+            case '2':
+              setValue('diagnosisDetails', item.answer[0].valueString);
+              break;
+            case '3':
+              setValue('treatmentDetails', item.answer[0].valueString);
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    }
+  }, [
+    questionnaireResponse,
+    setValue,
+    diagnosisDetails,
+    treatmentDetails,
+    findingsDetails,
+  ]);
+
   return (
     <StyledFormGroup>
       <Title

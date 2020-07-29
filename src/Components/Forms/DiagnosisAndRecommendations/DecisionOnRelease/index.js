@@ -13,6 +13,7 @@ const RecommendationsOnRelease = () => {
     unregister,
     setValue,
     permission,
+    questionnaireResponse,
     control,
   } = useFormContext();
   const [decision, setDecision] = useState('');
@@ -31,8 +32,30 @@ const RecommendationsOnRelease = () => {
   useEffect(() => {
     register({ name: 'decision' });
     register({ name: 'evacuationWay' });
+    const { items } = questionnaireResponse;
+    if (items) {
+      items.forEach((item) => {
+        if (item.answer) {
+          switch (item.linkId) {
+            case '5':
+              setDecision(item.answer[0].valueString);
+              setValue('decision', item.answer[0].valueString);
+              break;
+            case '6':
+              setEvacuationWay(item.answer[0].valueString);
+              setValue('evacuationWay', item.answer[0].valueString);
+              break;
+            case '7':
+              setValue('numberOfDays', item.answer[0].valueString);
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    }
     return () => unregister(['decision', 'evacuationWay']);
-  }, [register, unregister]);
+  }, [register, unregister, questionnaireResponse, setValue]);
 
   return (
     <StyledFormGroup>
