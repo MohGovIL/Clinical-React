@@ -31,6 +31,7 @@ import { thickenTheData } from 'Components/Forms/TestsAndTreatments/Helpers/Data
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
 import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instructions/InstructionsForTreatment';
+import SaveTestAndTreatments from 'Components/Forms/TestsAndTreatments/Instructions/SaveTestAndTreatments';
 
 /**
  *
@@ -53,6 +54,7 @@ const TestsAndTreatments = ({
 }) => {
   const { t } = useTranslation();
   const [clinicIndicators, setClinicIndicators] = useState(null);
+
   const [constantIndicators, setConstantIndicators] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {

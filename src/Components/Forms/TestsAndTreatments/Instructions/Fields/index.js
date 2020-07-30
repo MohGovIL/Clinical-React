@@ -119,7 +119,7 @@ const Fields = ({
                     <StyledTypographyName component='h5' variant='h5'>
                       {edit ? user.name.toString() : ''}
                     </StyledTypographyName>
-                    <StyledTypographyHour variant='subtitle1' color='#076ce9'>
+                    <StyledTypographyHour variant='subtitle1' color='primary'>
                       {' '}
                       {edit
                         ? moment

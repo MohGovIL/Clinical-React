@@ -40,7 +40,9 @@ const TestTreatmentInstructions = ({ index, item, handlePopUpProps }) => {
             <CustomizedTextField
               InputLabelProps={{
                 shrink:
-                  Instruction[index] && Instruction[index].instructions
+                  Instruction &&
+                  Instruction[index] &&
+                  Instruction[index].instructions
                     ? true
                     : false,
               }}
@@ -55,6 +57,7 @@ const TestTreatmentInstructions = ({ index, item, handlePopUpProps }) => {
         <StyledSelectTemplateButton
           margin={'30px 30px'}
           disabled={
+            Instruction &&
             Instruction[index] &&
             Instruction[index].test_treatment &&
             Instruction[index].test_treatment !== ''

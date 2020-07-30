@@ -11,13 +11,19 @@ import Fields from 'Components/Forms/TestsAndTreatments/Instructions/Fields';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import SaveTestAndTreatments from './SaveTestAndTreatments';
+import Grid from '@material-ui/core/Grid';
 
 /**
  *
  * @param encounter
  * @returns   UI main form.
  */
-const InstructionsForTreatment = ({ encounter }) => {
+const InstructionsForTreatment = ({
+  encounter,
+  permission,
+  setSaveFunction,
+}) => {
   const methods = useForm({
     mode: 'onBlur',
     defaultValues: {
@@ -155,8 +161,12 @@ const InstructionsForTreatment = ({ encounter }) => {
           requiredErrors={requiredErrors}
           handlePopUpProps={handlePopUpProps}
         />
-
-        <input type='submit' />
+        <Grid container spacing={4}>
+          <SaveTestAndTreatments
+            setSaveFunction={setSaveFunction}
+            permission={permission}
+          />
+        </Grid>
       </form>
     </FormContext>
   );

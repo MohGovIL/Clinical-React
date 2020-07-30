@@ -175,7 +175,9 @@ export const StyledTypographyHour = styled(Typography)`
   line-height: normal;
   letter-spacing: 0.7px;
   text-align: center;
-  color: #076ce9;
+  h6 {
+    color: #076ce9;
+  }
 `;
 export const StyledTypographyName = styled(Typography)`
   font-size: 16px;
@@ -222,4 +224,31 @@ export const StyledIconedButton = styled(Button)`
     height: 17px;
     margin: 8px 8px;
   }
+`;
+
+export const StyledSubHeader = styled.p`
+  width: 346px;
+  height: 22px;
+
+  font-size: 16px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: right;
+  color: #000b40;
+`;
+
+export const StyledHeader = styled.p`
+  width: 347px;
+  height: 33px;
+  font-size: 24px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: right;
+  color: #000b40;
 `;
