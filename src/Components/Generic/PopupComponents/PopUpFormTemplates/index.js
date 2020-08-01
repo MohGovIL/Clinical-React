@@ -52,7 +52,11 @@ const PopUpFormTemplates = ({
     if ((context === '' && !saved) || (saved && typeof saved !== 'object')) {
       handlePopupClose();
     } else {
-      if (defaultContext.trim() !== context.trim()) {
+      if (
+        defaultContext &&
+        context &&
+        defaultContext.trim() !== context.trim()
+      ) {
         setPopupCloseOpen(true);
       } else {
         setPopupCloseOpen(false);
@@ -79,6 +83,8 @@ const PopUpFormTemplates = ({
 
   useEffect(() => {
     (async () => {
+      //fix rerendering from same screen
+      setTemplates([]);
       try {
         const templatesServerData = [];
         let response = await getFormTemplates(
@@ -87,8 +93,7 @@ const PopUpFormTemplates = ({
           formID,
           formFields,
         );
-
-        if (response.data && response.data.length > 0) {
+        if (response && response.data && response.data.length > 0) {
           for (let i = 0; i < response.data.length; i++) {
             templatesServerData.push({ title: response.data[i] });
           }

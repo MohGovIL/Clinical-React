@@ -19,11 +19,8 @@ const DiagnosisAndTreatment = () => {
     questionnaireResponse,
   } = useFormContext();
 
-  const diagnosisAndTreatmentFields = watch([
-    'findingsDetails',
-    'diagnosisDetails',
-    'treatmentDetails',
-  ]);
+  const diagnosisAndTreatmentFields = watch(['findingsDetails']);
+
   const callBack = (data, name) => {
     setValue(name, data);
   };

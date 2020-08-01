@@ -11,14 +11,15 @@
  *                                a) the constant indicators - ConstantIndicators.
  *                                b) the variant indicators - VariantIndicators.
  *                                c) the new variant indicators - VariantIndicators.
+ *                                d) Test and treatment instructions
  * @returns TestsAndTreatments Component.
  */
 
 import { connect } from 'react-redux';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ConstantIndicators from 'Components/Forms/TestsAndTreatments/ConstantIndicators';
-import VariantIndicators from 'Components/Forms/TestsAndTreatments/VariantIndicators';
+import ConstantIndicators from 'Components/Forms/TestsAndTreatments/Indicators/ConstantIndicators';
+import VariantIndicators from 'Components/Forms/TestsAndTreatments/Indicators/VariantIndicators';
 import {
   StyledConstantHeaders,
   StyledTestsAndTreatments,
@@ -29,6 +30,7 @@ import { getIndicatorsSettings } from 'Utils/Services/API';
 import { thickenTheData } from 'Components/Forms/TestsAndTreatments/Helpers/DataHelpers';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
+import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instructions/InstructionsForTreatment';
 
 /**
  *
@@ -50,6 +52,7 @@ const TestsAndTreatments = ({
   currentUser,
 }) => {
   const { t } = useTranslation();
+  const [clinicIndicators, setClinicIndicators] = useState(null);
   const [constantIndicators, setConstantIndicators] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -82,7 +85,6 @@ const TestsAndTreatments = ({
     (async () => {
       try {
         let fhirClinikalCalls = [];
-
         fhirClinikalCalls.push(getIndicatorsSettings());
 
         fhirClinikalCalls.push(
@@ -118,6 +120,7 @@ const TestsAndTreatments = ({
         const clinicIndicators = fhirClinikalCallsAfterAwait[0]; //'clinicIndicators';
         const constantFromFhirIndicators = fhirClinikalCallsAfterAwait[1]; //'constantFromFhirIndicators';
         const variantFromFhirIndicators = fhirClinikalCallsAfterAwait[2]; //'variantFromFhirIndicators';
+        setClinicIndicators(clinicIndicators);
 
         let performers = [];
 
@@ -220,10 +223,10 @@ const TestsAndTreatments = ({
 
   return (
     <StyledTestsAndTreatments dir={languageDirection}>
-      {constantIndicators ? (
+      {constantIndicators && clinicIndicators ? (
         <ConstantIndicators constantIndicators={constantIndicators} />
       ) : null}
-      {variantIndicators || variantIndicatorsNew ? (
+      {clinicIndicators && (variantIndicators || variantIndicatorsNew) ? (
         <React.Fragment>
           <StyledConstantHeaders>
             {t('Variable indicators')}
@@ -243,6 +246,8 @@ const TestsAndTreatments = ({
                 : null
             }
           />
+
+          <InstructionsForTreatment />
         </React.Fragment>
       ) : null}
     </StyledTestsAndTreatments>
