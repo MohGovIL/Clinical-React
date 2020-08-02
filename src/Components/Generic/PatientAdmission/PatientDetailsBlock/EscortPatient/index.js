@@ -95,7 +95,7 @@ const EscortPatient = ({
           label={t(
             `${
               isArrivalWay === '1'
-                ? 'Patient arrival way '
+                ? 'Patient arrival way'
                 : 'Accompanying patient'
             }`,
           )}
