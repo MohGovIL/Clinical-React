@@ -32,6 +32,7 @@ import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
 import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instructions/InstructionsForTreatment';
 import SaveTestAndTreatments from 'Components/Forms/TestsAndTreatments/Instructions/SaveTestAndTreatments';
+import denormalizeFhirObservation from '../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';
 
 /**
  *
@@ -82,6 +83,35 @@ const TestsAndTreatments = ({
       },
     ],
   );
+
+  const saveIndicatorsOnSubmit = () => {
+    const denormelizedConstantObservation = denormalizeFhirObservation({
+      component: constantIndicators,
+      status: 'amended',
+      subject: 'active patient (pid)',
+      encounter: 'active encouner (id)',
+      issued: Moment(Moment.now()).format(formatDate),
+      performer: userDetails.id,
+      category: {
+        code: 'exam',
+        system: 'http://hl7.org/fhir/ValueSet/observation-category',
+      },
+    });
+    const denormelizedVariantIndicatorsNew = denormalizeFhirObservation({
+      component: variantIndicatorsNew[0],
+      status: 'amended',
+      subject: Number(patient.id),
+      encounter: Number(encounter.id),
+      issued: Moment(Moment.now()).format(formatDate),
+      performer: userDetails.id,
+      category: {
+        code: 'vital-signs',
+        system: 'http://hl7.org/fhir/ValueSet/observation-category',
+      },
+    });
+    console.log(JSON.stringify(denormelizedConstantObservation));
+    console.log(JSON.stringify(denormelizedVariantIndicatorsNew));
+  };
 
   useEffect(() => {
     (async () => {
@@ -249,7 +279,9 @@ const TestsAndTreatments = ({
             }
           />
 
-          <InstructionsForTreatment />
+          <InstructionsForTreatment
+            saveIndicatorsOnSubmit={saveIndicatorsOnSubmit}
+          />
         </React.Fragment>
       ) : null}
     </StyledTestsAndTreatments>

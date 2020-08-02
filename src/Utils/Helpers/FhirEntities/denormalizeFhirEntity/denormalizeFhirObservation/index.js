@@ -10,16 +10,14 @@ const denormalizeFhirObservation = (observation) => {
   denormalizedObservation['component'] = [];
 
   const extensions = [];
+  denormalizedObservation['resourceType'] = 'Observation';
   for (const observationKey in observation) {
     if (observation.hasOwnProperty(observationKey)) {
-      //  observation[observationKey];
       switch (observationKey) {
-        case 'resourceType':
-          denormalizedObservation['resourceType'] = 'Observation';
         case 'status':
           denormalizedObservation['status'] = observation[observationKey];
           break;
-        case 'patient':
+        case 'subject':
           denormalizedObservation['subject'] = {
             reference: `Patient/${observation[observationKey]}`,
           };
@@ -59,15 +57,15 @@ const denormalizeFhirObservation = (observation) => {
           };
           break;
         case 'component':
-          observation[observationKey].map((observed, key) => {
+          for (const observed in observation[observationKey]) {
             denormalizedObservation['component'].push({
               valueQuantity: {
-                value: observed.value,
+                value: observation[observationKey][observed].value,
                 system: 'http://loinc.org',
-                code: observed.code,
+                code: observation[observationKey][observed].code,
               },
             });
-          });
+          }
 
           break;
         default:

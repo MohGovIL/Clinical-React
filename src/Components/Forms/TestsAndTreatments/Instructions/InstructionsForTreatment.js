@@ -23,6 +23,7 @@ const InstructionsForTreatment = ({
   encounter,
   permission,
   setSaveFunction,
+  saveIndicatorsOnSubmit,
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -34,6 +35,7 @@ const InstructionsForTreatment = ({
   const onSubmit = (data) => {
     console.log('data', JSON.stringify(data));
     console.log(isRequiredValidation(data));
+    saveIndicatorsOnSubmit();
   };
   const [defaultContext, setDefaultContext] = useState('');
   const { t } = useTranslation();
