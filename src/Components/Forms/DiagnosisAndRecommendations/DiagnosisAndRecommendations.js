@@ -13,10 +13,9 @@ import { FHIR } from 'Utils/Services/FHIR';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
 import * as moment from 'moment';
-// import { useHistory } from 'react-router-dom';
-// import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { store } from 'index';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
+import isAllowed from 'Utils/Helpers/isAllowed';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -27,7 +26,6 @@ const DiagnosisAndRecommendations = ({
   functionToRunOnTabChange,
   validationFunction,
 }) => {
-  // const history = useHistory();
   const methods = useForm({
     mode: 'onBlur',
     defaultValues: {
@@ -376,13 +374,20 @@ const DiagnosisAndRecommendations = ({
     { label: 'Waiting for doctor', value: 'waiting_for_doctor' },
     { label: 'Waiting for release', value: 'waiting_for_release' },
   ];
+  const permissionHandler = React.useCallback(() => {
+    let clonePermission = permission;
+    if (encounter.status === 'finished') clonePermission = 'view';
+    clonePermission = isAllowed('diagnosis_and_recommendations_form');
+    return clonePermission;
+  }, [encounter.status, permission]);
+
   return (
     <StyledDiagnosisAndRecommendations>
       <PopUpFormTemplates {...popUpProps} />
       <FormContext
         {...methods}
         setPopUpProps={setPopUpProps}
-        permission={encounter.status === 'finished' ? 'view' : permission}
+        permission={permissionHandler()}
         serviceType={encounter.serviceTypeCode}
         reasonCode={encounter.examinationCode}
         requiredErrors={requiredErrors}
