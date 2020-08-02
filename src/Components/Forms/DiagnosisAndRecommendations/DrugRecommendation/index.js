@@ -26,7 +26,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     setPopUpProps,
     getValues,
   } = useFormContext();
-  const { append, remove, fields } = useFieldArray({
+  const { insert, remove, fields } = useFieldArray({
     control,
     name: 'drugRecommendation',
   });
@@ -303,7 +303,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                 });
                 return cloneState;
               });
-              append({
+              insert(parseInt(0, 10), {
                 drugName: '',
                 quantity: '',
                 drugForm: '',
@@ -433,6 +433,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                       );
                     }
                   }}
+                  defaultValue={item.duration}
                   as={
                     <CustomizedTextField
                       disabled={checkIsDisabled('drugName', index)}
