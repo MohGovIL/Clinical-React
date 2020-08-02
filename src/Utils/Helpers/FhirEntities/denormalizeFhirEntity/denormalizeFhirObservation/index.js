@@ -32,8 +32,8 @@ const denormalizeFhirObservation = (observation) => {
             {
               coding: [
                 {
-                  system: observation.categorySystem,
-                  code: observation[observationKey],
+                  system: observation.category.system,
+                  code: observation.category.code,
                 },
               ],
               text: observation.categoryText,

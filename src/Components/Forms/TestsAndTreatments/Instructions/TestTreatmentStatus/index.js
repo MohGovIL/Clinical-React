@@ -21,7 +21,7 @@ const TestTreatMentStatus = ({ index, requiredErrors }) => {
   const { control, register, setValue, getValues, watch } = useFormContext();
 
   const handleChange = (event) => {
-    requiredErrors[index].test_treatment_status = false;
+    //requiredErrors[index].test_treatment_status = false;
     setValue(
       `Instruction[${index}].test_treatment_status`,
       event.target.checked,
@@ -45,11 +45,11 @@ const TestTreatMentStatus = ({ index, requiredErrors }) => {
         marginRight={'70px'}
         width={'200px'}
         margin={'10px 14px'}
-        error={requiredErrors[index].test_treatment_status ? true : false}
+        /*  error={requiredErrors[index].test_treatment_status ? true : false}
         helperText={
           requiredErrors[index].test_treatment_status &&
           `  ${t('Please Select')}  : ${t('Performed')} `
-        }
+        }*/
       />
     </>
   );

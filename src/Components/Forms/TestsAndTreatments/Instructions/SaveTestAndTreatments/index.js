@@ -3,8 +3,8 @@ import { StyledHeader, StyledSubHeader } from '../../Style';
 import { useTranslation } from 'react-i18next';
 import { FormControlLabel, Grid, Radio, RadioGroup } from '@material-ui/core';
 import { useFormContext } from 'react-hook-form';
-import { StyledButton } from '../../../../../Assets/Elements/StyledButton';
-import { StyledSubmitButton } from '../../../style';
+
+import { StyledSubmitButton } from '../../../Style';
 const SaveTestAndTreatents = ({ permission }) => {
   const { t } = useTranslation();
   const [decision, setDecision] = useState('');

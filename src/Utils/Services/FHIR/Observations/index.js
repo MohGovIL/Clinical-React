@@ -22,10 +22,10 @@ const Observations = {
   },
 
   createNewObservation: (params) => {
-    //Todo in the future
+    return CRUDOperations('create', `${params.url}`, params.data);
   },
   updateObservation: (params) => {
-    //Todo in the future
+    return CRUDOperations('update', `${params.url}/${params.id}`, params.data);
   },
   deleteObservation: (params) => {
     //Todo in the future

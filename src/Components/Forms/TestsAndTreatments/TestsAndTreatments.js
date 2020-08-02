@@ -33,6 +33,7 @@ import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEn
 import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instructions/InstructionsForTreatment';
 import SaveTestAndTreatments from 'Components/Forms/TestsAndTreatments/Instructions/SaveTestAndTreatments';
 import denormalizeFhirObservation from '../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';
+import moment from 'moment';
 
 /**
  *
@@ -54,6 +55,10 @@ const TestsAndTreatments = ({
   currentUser,
 }) => {
   const { t } = useTranslation();
+  const [
+    thereIsARecordOfExamObservation,
+    setThereIsARecordOfExamObservation,
+  ] = useState(false);
   const [clinicIndicators, setClinicIndicators] = useState(null);
 
   const [constantIndicators, setConstantIndicators] = useReducer(
@@ -88,9 +93,9 @@ const TestsAndTreatments = ({
     const denormelizedConstantObservation = denormalizeFhirObservation({
       component: constantIndicators,
       status: 'amended',
-      subject: 'active patient (pid)',
-      encounter: 'active encouner (id)',
-      issued: Moment(Moment.now()).format(formatDate),
+      subject: Number(patient.id),
+      encounter: Number(encounter.id),
+      issued: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
       performer: userDetails.id,
       category: {
         code: 'exam',
@@ -102,11 +107,29 @@ const TestsAndTreatments = ({
       status: 'amended',
       subject: Number(patient.id),
       encounter: Number(encounter.id),
-      issued: Moment(Moment.now()).format(formatDate),
+      issued: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
       performer: userDetails.id,
       category: {
         code: 'vital-signs',
         system: 'http://hl7.org/fhir/ValueSet/observation-category',
+      },
+    });
+    FHIR('Observations', 'doWork', {
+      functionName: 'createNewObservation',
+      functionParams: {
+        id: null,
+        data: denormelizedVariantIndicatorsNew,
+      },
+    });
+    FHIR('Observations', 'doWork', {
+      functionName: thereIsARecordOfExamObservation
+        ? 'updateObservation'
+        : 'createNewObservation',
+      functionParams: {
+        id: thereIsARecordOfExamObservation
+          ? thereIsARecordOfExamObservation
+          : null,
+        data: denormelizedConstantObservation,
       },
     });
     console.log(JSON.stringify(denormelizedConstantObservation));
@@ -151,6 +174,16 @@ const TestsAndTreatments = ({
 
         const clinicIndicators = fhirClinikalCallsAfterAwait[0]; //'clinicIndicators';
         const constantFromFhirIndicators = fhirClinikalCallsAfterAwait[1]; //'constantFromFhirIndicators';
+
+        if (
+          constantFromFhirIndicators &&
+          constantFromFhirIndicators.data &&
+          constantFromFhirIndicators.data.total > 0
+        ) {
+          setThereIsARecordOfExamObservation(
+            constantFromFhirIndicators.data.entry[1].resource.id,
+          );
+        }
         const variantFromFhirIndicators = fhirClinikalCallsAfterAwait[2]; //'variantFromFhirIndicators';
         setClinicIndicators(clinicIndicators);
 

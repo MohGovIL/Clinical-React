@@ -72,7 +72,6 @@ const Fields = ({
       const cloneState = [...prevState];
       cloneState.unshift({
         test_treatment_type: '',
-        test_treatment_status: false,
       });
       return cloneState;
     });

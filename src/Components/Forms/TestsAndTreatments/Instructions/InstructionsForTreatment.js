@@ -90,7 +90,7 @@ const InstructionsForTreatment = ({
   const [requiredErrors, setRequiredErrors] = useState([
     {
       test_treatment_type: '',
-      test_treatment_status: '',
+      /*  test_treatment_status: '',*/
     },
   ]);
 
@@ -102,12 +102,12 @@ const InstructionsForTreatment = ({
         return data !== '';
       },
     },
-    test_treatment_status: {
+    /*   test_treatment_status: {
       name: 'test_treatment_status',
       required: function (data) {
         return data !== false || data === '';
       },
-    },
+    },*/
   };
   const isRequiredValidation = (data) => {
     let clean = true;
