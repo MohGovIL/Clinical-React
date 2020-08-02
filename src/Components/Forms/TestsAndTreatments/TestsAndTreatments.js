@@ -34,6 +34,7 @@ import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instru
 import SaveTestAndTreatments from 'Components/Forms/TestsAndTreatments/Instructions/SaveTestAndTreatments';
 import denormalizeFhirObservation from '../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';
 import moment from 'moment';
+import { explodeMultipleIndicators } from './Helpers/FunctionHelpers';
 
 /**
  *
@@ -102,6 +103,22 @@ const TestsAndTreatments = ({
         system: 'http://hl7.org/fhir/ValueSet/observation-category',
       },
     });
+    FHIR('Observations', 'doWork', {
+      functionName: thereIsARecordOfExamObservation
+        ? 'updateObservation'
+        : 'createNewObservation',
+      functionParams: {
+        id: thereIsARecordOfExamObservation
+          ? thereIsARecordOfExamObservation
+          : null,
+        data: denormelizedConstantObservation,
+      },
+    });
+    const explodeMultiIndicators = explodeMultipleIndicators(
+      variantIndicatorsNew[0],
+      'Systolic blood pressure/Diastolic blood pressure',
+      '/',
+    );
     const denormelizedVariantIndicatorsNew = denormalizeFhirObservation({
       component: variantIndicatorsNew[0],
       status: 'amended',
@@ -121,17 +138,7 @@ const TestsAndTreatments = ({
         data: denormelizedVariantIndicatorsNew,
       },
     });
-    FHIR('Observations', 'doWork', {
-      functionName: thereIsARecordOfExamObservation
-        ? 'updateObservation'
-        : 'createNewObservation',
-      functionParams: {
-        id: thereIsARecordOfExamObservation
-          ? thereIsARecordOfExamObservation
-          : null,
-        data: denormelizedConstantObservation,
-      },
-    });
+
     console.log(JSON.stringify(denormelizedConstantObservation));
     console.log(JSON.stringify(denormelizedVariantIndicatorsNew));
   };
@@ -228,15 +235,9 @@ const TestsAndTreatments = ({
           normalizedConstantObservation:
             normalizedConstantObservation &&
             normalizedConstantObservation.length > 0 &&
-            normalizedConstantObservation[
-              normalizedConstantObservation.length - 1
-            ] &&
-            normalizedConstantObservation[
-              normalizedConstantObservation.length - 1
-            ]['observation']
-              ? normalizedConstantObservation[
-                  normalizedConstantObservation.length - 1
-                ]['observation']
+            normalizedConstantObservation[0] &&
+            normalizedConstantObservation[0]['observation']
+              ? normalizedConstantObservation[0]['observation']
               : clinicIndicators.data['constant'],
           constantIndicators,
           setConstantIndicators,

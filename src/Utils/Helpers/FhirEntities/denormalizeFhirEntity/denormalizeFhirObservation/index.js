@@ -58,13 +58,15 @@ const denormalizeFhirObservation = (observation) => {
           break;
         case 'component':
           for (const observed in observation[observationKey]) {
-            denormalizedObservation['component'].push({
-              valueQuantity: {
-                value: observation[observationKey][observed].value,
-                system: 'http://loinc.org',
-                code: observation[observationKey][observed].code,
-              },
-            });
+            if (observation[observationKey][observed].code) {
+              denormalizedObservation['component'].push({
+                valueQuantity: {
+                  value: observation[observationKey][observed].value,
+                  system: 'http://loinc.org',
+                  code: observation[observationKey][observed].code,
+                },
+              });
+            }
           }
 
           break;

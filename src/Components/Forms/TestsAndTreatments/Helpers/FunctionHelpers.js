@@ -63,6 +63,73 @@ function padTheZeroPlace(newValue) {
   }
   return newValue;
 }
+export function explodeMultipleIndicators(
+  variantIndicatorsNormalizedData,
+  keyOne,
+  seperator,
+) {
+  let keysPlaces = [];
+  Object.entries(variantIndicatorsNormalizedData).map(([key, dataset]) => {
+    if (dataset && dataset['description'] === keyOne) {
+      keysPlaces.push(key);
+    }
+  });
+  if (keysPlaces.length > 0) {
+    let variantIndicatorsNormalizedDataTemp = JSON.parse(
+      JSON.stringify(variantIndicatorsNormalizedData),
+    );
+    let indicatorOne = variantIndicatorsNormalizedDataTemp[keysPlaces[0]][
+      'description'
+    ].split(seperator)[0];
+    let indicatorTwo = variantIndicatorsNormalizedDataTemp[keysPlaces[0]][
+      'description'
+    ].split(seperator)[1];
+
+    variantIndicatorsNormalizedDataTemp[indicatorOne] = {};
+    variantIndicatorsNormalizedDataTemp[indicatorTwo] = {};
+    Object.entries(variantIndicatorsNormalizedDataTemp[keysPlaces]).map(
+      ([key, value]) => {
+        let indicatorOneValue = null;
+        let indicatorTwoValue = null;
+        if (
+          variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key] == true ||
+          variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key] == false
+        ) {
+          indicatorOneValue =
+            variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key];
+          indicatorTwoValue =
+            variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key];
+        } else {
+          indicatorOneValue = variantIndicatorsNormalizedDataTemp[
+            keysPlaces[0]
+          ][key].split(seperator)[0]
+            ? variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key].split(
+                seperator,
+              )[0]
+            : variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key];
+          indicatorTwoValue = variantIndicatorsNormalizedDataTemp[
+            keysPlaces[0]
+          ][key].split(seperator)[1]
+            ? variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key].split(
+                seperator,
+              )[1]
+            : variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key];
+        }
+
+        variantIndicatorsNormalizedDataTemp[indicatorOne][
+          key
+        ] = indicatorOneValue;
+        variantIndicatorsNormalizedDataTemp[indicatorTwo][
+          key
+        ] = indicatorTwoValue;
+      },
+    );
+    delete variantIndicatorsNormalizedDataTemp[keysPlaces[0]];
+    return variantIndicatorsNormalizedDataTemp;
+  }
+  return variantIndicatorsNormalizedData;
+}
+
 export function mergeMultipleIndicators(
   variantIndicatorsNormalizedData,
   keyOne,
