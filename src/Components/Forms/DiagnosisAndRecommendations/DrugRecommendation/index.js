@@ -11,7 +11,6 @@ import { Delete } from '@material-ui/icons';
 import * as moment from 'moment';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationRequest';
-import { unregister } from 'serviceWorker';
 
 const DrugRecommendation = ({ encounterId, formatDate }) => {
   const { t } = useTranslation();
@@ -20,6 +19,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     permission,
     register,
     watch,
+    unregister,
     requiredErrors,
     setRequiredErrors,
     setValue,
@@ -260,7 +260,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     return () => {
       unregister('medicationRequest');
     };
-  }, [encounterId, register, setValue, formatDate]);
+  }, [encounterId, register, setValue, formatDate, unregister]);
 
   useEffect(() => {
     fetchDrugsData();
