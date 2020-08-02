@@ -37,7 +37,7 @@ const VisitDetails = ({
   serviceType,
   serviceTypeCode,
   priority,
-  props
+  props,
 }) => {
   const { t } = useTranslation();
   const {
@@ -46,8 +46,6 @@ const VisitDetails = ({
     requiredErrors,
     setValue,
     unregister,
-    reset,
-    getValues,
   } = useFormContext();
 
   const [selectedServicesType, setSelectedServicesType] = useState([]);
@@ -205,46 +203,48 @@ const VisitDetails = ({
   }, [examination, examinationCode, serviceType, serviceTypeCode]);
   return (
     <React.Fragment>
-      {!props.hasOwnProperty("disableHeaders") || props.disableHeaders === true ?
-        (<Title
-        marginTop={'80px'}
-        fontSize={'28px'}
-        color={'#002398'}
-        label={'Visit Details'}
-        />) : null
-      }
+      {!props.hasOwnProperty('disableHeaders') ||
+      props.disableHeaders === true ? (
+        <Title
+          marginTop={'80px'}
+          fontSize={'28px'}
+          color={'#002398'}
+          label={'Visit Details'}
+        />
+      ) : null}
       {/* Requested service */}
       <StyledFormGroup>
-        {!props.hasOwnProperty("disableHeaders") || props.disableHeaders === true ?
-          (<>
+        {!props.hasOwnProperty('disableHeaders') ||
+        props.disableHeaders === true ? (
+          <>
             <Title
-            fontSize={'18px'}
-            color={'#000b40'}
-            label={'Requested service'}
-            bold
-          />
-          <StyledDivider variant={'fullWidth'} />
-          </>) : null
-        }
-        {!props.hasOwnProperty("disableButtonIsUrgent") || props.disableButtonIsUrgent === true ?
-          (
-            <Grid
-              container
-              direction={'row'}
-              justify={'flex-start'}
-              alignItems={'center'}>
-              <span>{t('Is urgent?')}</span>
-              {/* Requested service - switch */}
-              <StyledSwitch
-                name='isUrgent'
-                register={register}
-                label_1={'No'}
-                label_2={'Yes'}
-                marginLeft={'40px'}
-                marginRight={'40px'}
-              />
-            </Grid>) : null
-        }
+              fontSize={'18px'}
+              color={'#000b40'}
+              label={'Requested service'}
+              bold
+            />
+            <StyledDivider variant={'fullWidth'} />
+          </>
+        ) : null}
+        {!props.hasOwnProperty('disableButtonIsUrgent') ||
+        props.disableButtonIsUrgent === true ? (
+          <Grid
+            container
+            direction={'row'}
+            justify={'flex-start'}
+            alignItems={'center'}>
+            <span>{t('Is urgent?')}</span>
+            {/* Requested service - switch */}
+            <StyledSwitch
+              name='isUrgent'
+              register={register}
+              label_1={'No'}
+              label_2={'Yes'}
+              marginLeft={'40px'}
+              marginRight={'40px'}
+            />
+          </Grid>
+        ) : null}
         {/* Requested service - select test */}
         <StyledAutoComplete
           filterOptions={filterOptions}
