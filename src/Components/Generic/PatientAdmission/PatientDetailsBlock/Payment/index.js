@@ -115,17 +115,6 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
       register({ name: 'paymentMethod' });
       register({ name: 'paymentAmount' });
     }
-    return () => {
-      const itemsToUnregister = ['questionnaireResponse', 'questionnaireId'];
-      if (isCommitmentForm !== '1') {
-        itemsToUnregister.push('paymentMethod');
-        itemsToUnregister.push('paymentAmount');
-      }
-      unregister(itemsToUnregister);
-    };
-  }, [register, unregister, isCommitmentForm]);
-
-  useEffect(() => {
     (async () => {
       try {
         const questionnaire = await FHIR('Questionnaire', 'doWork', {
@@ -151,11 +140,11 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
               questionnaireResponseData.data.entry[1].resource,
             );
             if (normalizedQuestionnaireResponse.items.length) {
+              setValue(
+                'questionnaireResponse',
+                normalizedQuestionnaireResponse.id || '',
+              );
               if (isCommitmentForm === '1') {
-                setValue(
-                  'questionnaireResponse',
-                  normalizedQuestionnaireResponse.id || '',
-                );
                 const commitmentDate = normalizedQuestionnaireResponse.items.find(
                   (item) => item.text === 'Commitment date',
                 );
@@ -172,21 +161,47 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                     moment(commitmentValidity.answer[0].valueDate),
                   );
                 }
-                reset({
-                  ...getValues(),
-                  commitmentAndPaymentReferenceForPaymentCommitment:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '1',
-                    ).answer[0].valueInteger || '',
-                  commitmentAndPaymentDoctorsName:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '4',
-                    ).answer[0].valueString || '',
-                  commitmentAndPaymentDoctorsLicense:
-                    normalizedQuestionnaireResponse.items.find(
-                      (item) => item.linkId === '5',
-                    ).answer[0].valueInteger || '',
-                });
+                const commitmentAndPaymentReferenceForPaymentCommitment =
+                  normalizedQuestionnaireResponse.items.find(
+                    (item) => item.linkId === '1',
+                  ).answer[0].valueInteger || '';
+                const commitmentAndPaymentDoctorsName =
+                  normalizedQuestionnaireResponse.items.find(
+                    (item) => item.linkId === '4',
+                  ).answer[0].valueString || '';
+                const commitmentAndPaymentDoctorsLicense =
+                  normalizedQuestionnaireResponse.items.find(
+                    (item) => item.linkId === '5',
+                  ).answer[0].valueInteger || '';
+                setValue([
+                  {
+                    commitmentAndPaymentReferenceForPaymentCommitment:
+                      commitmentAndPaymentReferenceForPaymentCommitment || '',
+                  },
+                  {
+                    commitmentAndPaymentDoctorsName:
+                      commitmentAndPaymentDoctorsName || '',
+                  },
+                  {
+                    commitmentAndPaymentDoctorsLicense:
+                      commitmentAndPaymentDoctorsLicense || '',
+                  },
+                ]);
+                // reset({
+                //   ...getValues(),
+                //   commitmentAndPaymentReferenceForPaymentCommitment:
+                //     normalizedQuestionnaireResponse.items.find(
+                //       (item) => item.linkId === '1',
+                //     ).answer[0].valueInteger || '',
+                //   commitmentAndPaymentDoctorsName:
+                //     normalizedQuestionnaireResponse.items.find(
+                //       (item) => item.linkId === '4',
+                //     ).answer[0].valueString || '',
+                //   commitmentAndPaymentDoctorsLicense:
+                //     normalizedQuestionnaireResponse.items.find(
+                //       (item) => item.linkId === '5',
+                //     ).answer[0].valueInteger || '',
+                // });
               } else {
                 const paymentAmount = normalizedQuestionnaireResponse.items.find(
                   (item) => item.linkId === '6',
@@ -197,13 +212,6 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                 const receiptNumber = normalizedQuestionnaireResponse.items.find(
                   (item) => item.linkId === '8',
                 ).answer[0].valueString;
-
-                if (paymentMethod) {
-                  setPaymentMethod(paymentMethod);
-                }
-                if (paymentAmount) {
-                  setPaymentAmount(paymentAmount);
-                }
                 setValue([
                   {
                     paymentAmount: paymentAmount || 0,
@@ -211,19 +219,28 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                   {
                     paymentMethod: paymentMethod || '',
                   },
-                  {
-                    questionnaireId: questionnaire.data.entry[1].resource.id,
-                  },
+                  // {
+                  //   questionnaireId: questionnaire.data.entry[1].resource.id,
+                  // },
                   {
                     questionnaireResponse:
                       normalizedQuestionnaireResponse.id || '',
                   },
+                  {
+                    receiptNumber: receiptNumber || '',
+                  },
                 ]);
-                if (receiptNumber)
-                  reset({
-                    ...getValues(),
-                    receiptNumber: receiptNumber,
-                  });
+                if (paymentMethod) {
+                  setPaymentMethod(paymentMethod);
+                }
+                if (paymentAmount) {
+                  setPaymentAmount(paymentAmount);
+                }
+                // if (receiptNumber)
+                //   reset({
+                //     ...getValues(),
+                //     receiptNumber: receiptNumber,
+                //   });
               }
             }
           }
@@ -232,7 +249,13 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
         console.log(error);
       }
     })();
-  }, [reset, setValue, pid, eid, isCommitmentForm]);
+    return () => {
+      if (isCommitmentForm !== '1') {
+        unregister(['paymentMethod', 'paymentAmount']);
+      }
+      unregister(['questionnaireId', 'questionnaireResponse']);
+    };
+  }, [setValue, pid, eid, isCommitmentForm, register, unregister]);
   return (
     <StyledFormGroup>
       <Title
