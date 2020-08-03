@@ -80,16 +80,49 @@ const normalizeFhirObservation = (observation, indicators, performers) => {
   if (!category) return null;
   if (observation.component && observation.component.length > 0) {
     observation.component.map((observed, indexQuantity) => {
+      let mergeObjects = null;
       if (observed.valueQuantity && indicators[observed.valueQuantity.code]) {
-        let mergeObjects = {
+        mergeObjects = {
           ...observed.valueQuantity,
           ...indicators[observed.valueQuantity.code],
         };
         returnedObservation[
           indicators[observed.valueQuantity.code].description
         ] = mergeObjects;
-        returnedObservation.length++;
+      } else if (
+        observed.valueCodeableConcept &&
+        indicators[
+          observed.valueCodeableConcept.coding[0].system.split(
+            'http://loinc.org/',
+          )[1]
+        ]
+      ) {
+        mergeObjects = {
+          ...{
+            value: observed.valueCodeableConcept.text,
+            system: observed.valueCodeableConcept.coding[0].system.split(
+              'http://loinc.org/',
+            )[0],
+            code: observed.valueCodeableConcept.coding[0].system.split(
+              'http://loinc.org/',
+            )[1],
+          },
+          ...indicators[
+            observed.valueCodeableConcept.coding[0].system.split(
+              'http://loinc.org/',
+            )[1]
+          ],
+        };
+        returnedObservation[
+          indicators[
+            observed.valueCodeableConcept.coding[0].system.split(
+              'http://loinc.org/',
+            )[1]
+          ].description
+        ] = mergeObjects;
       }
+
+      returnedObservation.length++;
     });
   }
 

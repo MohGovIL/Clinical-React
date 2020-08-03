@@ -93,7 +93,10 @@ export function explodeMultipleIndicators(
         let indicatorTwoValue = null;
         if (
           variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key] == true ||
-          variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key] == false
+          variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key] == false ||
+          variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key].indexOf(
+            seperator,
+          ) < 0
         ) {
           indicatorOneValue =
             variantIndicatorsNormalizedDataTemp[keysPlaces[0]][key];
@@ -124,6 +127,7 @@ export function explodeMultipleIndicators(
         ] = indicatorTwoValue;
       },
     );
+
     delete variantIndicatorsNormalizedDataTemp[keysPlaces[0]];
     return variantIndicatorsNormalizedDataTemp;
   }
@@ -210,11 +214,12 @@ export function thickenWithDataFunction({
   dataset.idTemp = i;
   dataset.newRow = newRow;
   dataset.name = dataset.label ? dataset.label : key;
-  dataset.value = dataset.value
-    ? dataset.value
-    : variantIndicatorsNew[label]
-    ? variantIndicatorsNew[label]
-    : '';
+  dataset.value =
+    dataset.value && dataset.value !== 0 && dataset.value !== '0.00'
+      ? dataset.value
+      : variantIndicatorsNew[label]
+      ? variantIndicatorsNew[label]
+      : '';
   dataset.componentType = disabled ? StyledVariantTextField : FormattedInputs;
   dataset.id = `blood_pressure_${sizeTemp > 0 ? sizeTemp : i}`;
   dataset.componenttype = 'textFieldWithMask';

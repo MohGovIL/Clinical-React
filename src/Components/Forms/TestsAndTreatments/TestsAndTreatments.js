@@ -61,6 +61,7 @@ const TestsAndTreatments = ({
     setThereIsARecordOfExamObservation,
   ] = useState(false);
   const [clinicIndicators, setClinicIndicators] = useState(null);
+  const [saveFormClicked, setSaveFormClicked] = useState(0);
 
   const [constantIndicators, setConstantIndicators] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
@@ -71,76 +72,90 @@ const TestsAndTreatments = ({
   );
   const userDetails = normalizeFhirUser(currentUser);
   const [variantIndicators, setVariantIndicators] = useState(null);
+  const variantNewState = [
+    {
+      userName: {
+        name: userDetails.name[0].toString(),
+        loggedHour: Moment(Moment.now()).format('HH:mm'),
+      },
+      'Blood pressure': null,
+      Pulse: null,
+      Fever: null,
+      Saturation: null,
+      'Breaths per minute': null,
+      'Pain level': null,
+      'Blood sugar': null,
+    },
+  ];
   const [variantIndicatorsNew, setVariantIndicatorsNew] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
-    [
-      {
-        userName: {
-          name: userDetails.name[0].toString(),
-          loggedHour: Moment(Moment.now()).format('HH:mm'),
-        },
-        'Blood pressure': null,
-        Pulse: null,
-        Fever: null,
-        Saturation: null,
-        'Breaths per minute': null,
-        'Pain level': null,
-        'Blood sugar': null,
-      },
-    ],
+    variantNewState,
   );
 
-  const saveIndicatorsOnSubmit = () => {
+  const saveIndicatorsOnSubmit = async () => {
+    let FHIRAsyncCalls = [];
+
     const denormelizedConstantObservation = denormalizeFhirObservation({
       component: constantIndicators,
       status: 'amended',
       subject: Number(patient.id),
       encounter: Number(encounter.id),
-      issued: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
+      issued: moment().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
       performer: userDetails.id,
       category: {
         code: 'exam',
         system: 'http://hl7.org/fhir/ValueSet/observation-category',
       },
     });
-    FHIR('Observations', 'doWork', {
-      functionName: thereIsARecordOfExamObservation
-        ? 'updateObservation'
-        : 'createNewObservation',
-      functionParams: {
-        id: thereIsARecordOfExamObservation
-          ? thereIsARecordOfExamObservation
-          : null,
-        data: denormelizedConstantObservation,
-      },
-    });
+
     const explodeMultiIndicators = explodeMultipleIndicators(
       variantIndicatorsNew[0],
       'Systolic blood pressure/Diastolic blood pressure',
       '/',
     );
+    explodeMultiIndicators['Saturation']['value'] = parseInt(
+      explodeMultiIndicators['Saturation']['value'],
+    );
+
     const denormelizedVariantIndicatorsNew = denormalizeFhirObservation({
-      component: variantIndicatorsNew[0],
+      component: explodeMultiIndicators,
       status: 'amended',
       subject: Number(patient.id),
       encounter: Number(encounter.id),
-      issued: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
+      issued: moment().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
       performer: userDetails.id,
       category: {
         code: 'vital-signs',
         system: 'http://hl7.org/fhir/ValueSet/observation-category',
       },
     });
-    FHIR('Observations', 'doWork', {
-      functionName: 'createNewObservation',
-      functionParams: {
-        id: null,
-        data: denormelizedVariantIndicatorsNew,
-      },
-    });
-
-    console.log(JSON.stringify(denormelizedConstantObservation));
-    console.log(JSON.stringify(denormelizedVariantIndicatorsNew));
+    FHIRAsyncCalls.push(
+      FHIR('Observations', 'doWork', {
+        functionName: thereIsARecordOfExamObservation
+          ? 'updateObservation'
+          : 'createNewObservation',
+        functionParams: {
+          id: thereIsARecordOfExamObservation
+            ? thereIsARecordOfExamObservation
+            : null,
+          data: denormelizedConstantObservation,
+        },
+      }),
+    );
+    FHIRAsyncCalls.push(
+      FHIR('Observations', 'doWork', {
+        functionName: 'createNewObservation',
+        functionParams: {
+          id: null,
+          data: denormelizedVariantIndicatorsNew,
+        },
+      }),
+    );
+    const fhirClinikalCallsAfterAwait = await Promise.all(FHIRAsyncCalls);
+    console.log(JSON.stringify(fhirClinikalCallsAfterAwait[0]));
+    console.log(JSON.stringify(fhirClinikalCallsAfterAwait[1]));
+    setVariantIndicatorsNew();
+    setSaveFormClicked(saveFormClicked + 1);
   };
 
   useEffect(() => {
@@ -248,9 +263,9 @@ const TestsAndTreatments = ({
 
         let normalizedVarientNewObservation = thickenTheData({
           indicators: clinicIndicators,
-          variantIndicatorsNew,
+          variantIndicatorsNew: variantNewState,
           setVariantIndicatorsNew,
-          normalizedVariantObservation,
+          normalizedVariantObservation: [],
         });
 
         setVariantIndicatorsNew([normalizedVarientNewObservation]);
@@ -285,7 +300,7 @@ const TestsAndTreatments = ({
         console.log(err);
       }
     })();
-  }, []);
+  }, [saveFormClicked]);
 
   return (
     <StyledTestsAndTreatments dir={languageDirection}>

@@ -44,7 +44,10 @@ export const thickenTheConstantIndicators = ({
         case 'Height':
           {
             if (!dataset) return;
-            dataset.value = dataset.value ? dataset.value : '';
+            dataset.value =
+              dataset.value && dataset.value !== 0 && dataset.value !== '0.00'
+                ? dataset.value
+                : '';
             dataset.componentType = disabled
               ? StyledVariantTextField
               : FormattedInputs;
