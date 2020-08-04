@@ -12,10 +12,7 @@ const Sensitivities = ({
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const {
-    register,
-    unregister,
-  } = useFormContext();
+  const { register, unregister, setValue } = useFormContext();
   const [sensitivitiesChanged, setSensitivitiesChanged] = useState(false);
 
   const [sensitivitiesList, setSensitivitiesList] = useState([]);
@@ -27,12 +24,15 @@ const Sensitivities = ({
 
   const sensitivitiesHandlerRadio = (value) => {
     console.log('sensitivities: ' + value);
+    if (!value) setValue('sensitivitiesCodes', []);
+    setValue('sensitivity', value);
     setSensitivitiesChanged(value);
   };
 
   useEffect(() => {
     register({ name: 'sensitivitiesCodes' });
-    return () => unregister(['sensitivitiesCodes']);
+    register({ name: 'sensitivity' });
+    return () => unregister(['sensitivitiesCodes', 'sensitivity']);
   }, [register, unregister]);
 
   useEffect(() => {

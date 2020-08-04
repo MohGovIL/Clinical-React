@@ -12,15 +12,13 @@ const BackgroundDiseases = ({
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const {
-    register,
-    unregister,
-  } = useFormContext();
+  const { register, unregister, setValue } = useFormContext();
   const [backgroundDisChanged, setBackgroundDisChanged] = useState(false);
 
   const [backgroundDiseasesList, setBackgroundDiseasesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
-  const loadingBackgroundDiseasesList = servicesTypeOpen && backgroundDiseasesList.length === 0;
+  const loadingBackgroundDiseasesList =
+    servicesTypeOpen && backgroundDiseasesList.length === 0;
 
   const backgroundDisRadioList = [
     t('Usually healthy'),
@@ -28,12 +26,14 @@ const BackgroundDiseases = ({
   ];
 
   const backgroundDisHandlerRadio = (value) => {
-    console.log('backgroundDis: ' + value);
+    if (!value) setValue('backgroundDiseasesCodes', []);
+    setValue('backgroundDiseases', value);
     setBackgroundDisChanged(value);
   };
 
   useEffect(() => {
     register({ name: 'backgroundDiseasesCodes' });
+    register({ name: 'backgroundDiseases' });
     return () => unregister(['backgroundDiseasesCodes']);
   }, [register, unregister]);
 

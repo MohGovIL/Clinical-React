@@ -12,7 +12,7 @@ const ChronicMedication = ({
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister } = useFormContext();
+  const { register, unregister, setValue } = useFormContext();
   const [medicationChanged, setMedicationChanged] = useState(false);
 
   const [chronicMedicationList, setChronicMedicationList] = useState([]);
@@ -24,13 +24,15 @@ const ChronicMedication = ({
   const medicationRadioList = [t("Doesn't exist"), t('Exist')];
 
   const medicationHandlerRadio = (value) => {
-    console.log('medication: ' + value);
+    if (!value) setValue('chronicMedicationCodes', []);
+    setValue('chronicMedication', value);
     setMedicationChanged(value);
   };
 
   useEffect(() => {
     register({ name: 'chronicMedicationCodes' });
-    return () => unregister(['chronicMedicationCodes']);
+    register({ name: 'chronicMedication' });
+    return () => unregister(['chronicMedicationCodes', 'chronicMedication']);
   }, [register, unregister]);
 
   useEffect(() => {
