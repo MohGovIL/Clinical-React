@@ -209,8 +209,6 @@ const DiagnosisAndRecommendations = ({
 
   const onSubmit = (data) => {
     if (!data) data = getValues({ nest: true });
-    // console.log(data);
-    // return;
     try {
       const APIsArray = [];
       const items = data.questionnaire.item.map((i) => {

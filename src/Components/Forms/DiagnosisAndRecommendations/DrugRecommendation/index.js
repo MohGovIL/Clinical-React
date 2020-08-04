@@ -138,10 +138,10 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
         },
       });
       // I could just do res.status === 204 for no content but I'm not sure that it's implemented in all of the entities
+      const medicationUniqData = {};
       if (res.status === 200 && res.data.total) {
         // medicationUniqData
         // [index]: medicationId
-        const medicationUniqData = {};
         res.data.entry.forEach((medicationRequest, medicationRequestIndex) => {
           if (medicationRequest.resource) {
             const normalizedFhirMedicationRequest = normalizeFhirMedicationRequest(
@@ -257,8 +257,8 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
               normalizedFhirMedicationRequest.id;
           }
         });
-        setValue({ medicationRequest: medicationUniqData });
       }
+      setValue({ medicationRequest: medicationUniqData });
     } catch (error) {
       console.log(error);
     }
