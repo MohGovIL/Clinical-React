@@ -175,7 +175,7 @@ const DiagnosisAndRecommendations = ({
       medicineIndex < requiredErrors.length;
       medicineIndex++
     ) {
-      if (data['drugRecommendation'][medicineIndex].drugName) {
+      if (data['drugRecommendation'][medicineIndex].drugName.display) {
         //drugName is not a falsy value
         for (const fieldKey in requiredFields) {
           if (requiredFields.hasOwnProperty(fieldKey)) {
@@ -209,6 +209,8 @@ const DiagnosisAndRecommendations = ({
 
   const onSubmit = (data) => {
     if (!data) data = getValues({ nest: true });
+    // console.log(data);
+    // return;
     try {
       const APIsArray = [];
       const items = data.questionnaire.item.map((i) => {
@@ -283,7 +285,7 @@ const DiagnosisAndRecommendations = ({
       }
       if (data.drugRecommendation && data.drugRecommendation.length) {
         data.drugRecommendation.forEach((drug, drugIndex) => {
-          if (drug.drugName) {
+          if (drug.drugName.code) {
             // There is a drugName and since we check if all required values are filled so I can add that to the APIsArray
             const medicationRequest = {};
 
@@ -294,7 +296,10 @@ const DiagnosisAndRecommendations = ({
             medicationRequest['recorder'] = store.getState().login.userID;
             medicationRequest['note'] = drug.instructionsForTheDrug;
             medicationRequest['routeCode'] = drug.drugRoute;
-            medicationRequest['medicationCodeableConceptCode'] = drug.drugName;
+            medicationRequest['medicationCodeableConceptCode'] =
+              drug.drugName.code;
+            medicationRequest['medicationCodeableConceptDisplay'] =
+              drug.drugName.display;
             medicationRequest['timingCode'] = drug.intervals;
             medicationRequest['doseQuantity'] = drug.quantity;
             medicationRequest['methodCode'] = drug.drugForm;
