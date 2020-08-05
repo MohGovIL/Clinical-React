@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import {
-  StyledChip,
-} from 'Components/Generic/PatientAdmission/PatientDetailsBlock/Style';
+import { StyledChip } from 'Components/Generic/PatientAdmission/PatientDetailsBlock/Style';
 import {
   Checkbox,
   CircularProgress,
@@ -35,15 +33,7 @@ const CustomizedSelectCheckList = ({
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const {
-    register,
-    control,
-    requiredErrors,
-    setValue,
-    unregister,
-    reset,
-    getValues,
-  } = useFormContext();
+  const { requiredErrors, setValue } = useFormContext();
 
   const [selectedServicesType, setSelectedServicesType] = useState([]);
   const [pendingValue, setPendingValue] = useState([]);
@@ -174,10 +164,11 @@ const CustomizedSelectCheckList = ({
             inputRef={(e) => {
               selectTestRef.current = e;
             }}
-            error={requiredErrors.selectTest ? true : false}
+            error={requiredErrors[valueSetCode] ? true : false}
             helperText={
-              requiredErrors.selectTest && helperErrorText && t(helperErrorText)
+              // requiredErrors[valueSetCode] && helperErrorText && t(helperErrorText)
               // t('The visit reason performed during the visit must be selected')
+              requiredErrors[valueSetCode] || ''
             }
             {...params}
             label={`${t(labelInputText)} *`}

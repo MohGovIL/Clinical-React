@@ -92,7 +92,7 @@ const Sensitivities = ({
           setServicesTypeOpen={setServicesTypeOpen}
           valueSetCode={'sensitivitiesCodes'}
           labelInputText={'Sensitivities details'}
-          helperErrorText={'Some error text'}
+          // helperErrorText={'Some error text'}
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
         />

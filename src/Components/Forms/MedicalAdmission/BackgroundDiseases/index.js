@@ -88,7 +88,7 @@ const BackgroundDiseases = ({
           setServicesTypeOpen={setServicesTypeOpen}
           valueSetCode={'backgroundDiseasesCodes'}
           labelInputText={'Diseases details'}
-          helperErrorText={'Some error text'}
+          // helperErrorText={'Some error text'}
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
         />

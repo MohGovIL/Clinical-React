@@ -91,9 +91,9 @@ const ChronicMedication = ({
           setServicesTypeOpen={setServicesTypeOpen}
           valueSetCode={'chronicMedicationCodes'}
           labelInputText={'Medications details'}
-          helperErrorText={
-            'The visit reason performed during the visit must be selected'
-          }
+          // helperErrorText={
+          //   'The visit reason performed during the visit must be selected'
+          // }
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
         />
