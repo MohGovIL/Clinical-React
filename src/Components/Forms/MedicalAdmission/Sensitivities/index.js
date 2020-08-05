@@ -28,8 +28,6 @@ const Sensitivities = ({
 
   const sensitivitiesRadioList = ['UNknown', 'Known'];
 
-  // const focus = React.useRef(null);
-
   useEffect(() => {
     register({ name: 'sensitivitiesCodes' });
     return () => unregister(['sensitivitiesCodes']);

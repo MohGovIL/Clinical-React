@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
  * @param {listValues} string[]
  * @param {radioName} string
  */
-const RadioGroupChoice = ({ gridLabel, listValues, radioName, customRef }) => {
+const RadioGroupChoice = ({ gridLabel, listValues, radioName }) => {
   const { t } = useTranslation();
 
   const { control } = useFormContext();
@@ -41,7 +41,6 @@ const RadioGroupChoice = ({ gridLabel, listValues, radioName, customRef }) => {
                     <Grid item xs={3} key={indexValue}>
                       <FormLabel component='legend'>
                         <FormControlLabel
-                          inputRef={customRef}
                           label={t(value)}
                           value={value}
                           control={
