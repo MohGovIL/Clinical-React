@@ -57,7 +57,7 @@ const MedicalAdmission = ({
       sensitivitiesCodes: {
         name: 'sensitivitiesCodes',
         required: function (data) {
-          if (data.sensitivities || data.sensitivities === 'UNknown') {
+          if (data.sensitivities === '' || data.sensitivities === 'UNknown') {
             return true;
           }
           return data[this.name] && data[this.name].length > 0;
@@ -73,7 +73,7 @@ const MedicalAdmission = ({
         name: 'backgroundDiseasesCodes',
         required: function (data) {
           if (
-            data.background_diseases ||
+            data.background_diseases === '' ||
             data.background_diseases === 'Usually healthy'
           ) {
             return true;
@@ -90,7 +90,7 @@ const MedicalAdmission = ({
       chronicMedicationCodes: {
         name: 'chronicMedicationCodes',
         required: function (data) {
-          if (data.medication || data.medication === "Doesn't exist") {
+          if (data.medication === '' || data.medication === "Doesn't exist") {
             return true;
           }
           return data[this.name] && data[this.name].length > 0;
@@ -108,27 +108,22 @@ const MedicalAdmission = ({
   const isRequiredValidation = (data) => {
     let clean = true;
     if (!data) data = getValues({ nest: true });
+    const cloneRequiredErrors = { ...requiredErrors };
     for (const fieldKey in requiredFields) {
       if (requiredFields.hasOwnProperty(fieldKey)) {
-        let answer;
         const field = requiredFields[fieldKey];
-        answer = field.required(data);
+        const answer = field.required(data);
         if (answer) {
-          setRequiredErrors((prevState) => {
-            const cloneState = { ...prevState };
-            cloneState[field.name] = '';
-            return cloneState;
-          });
+          cloneRequiredErrors[field.name] = '';
         } else {
-          setRequiredErrors((prevState) => {
-            const cloneState = { ...prevState };
-            cloneState[field.name] = t('A value must be entered in the field');
-            return cloneState;
-          });
+          cloneRequiredErrors[field.name] = t(
+            'A value must be entered in the field',
+          );
           clean = false;
         }
       }
     }
+    setRequiredErrors(cloneRequiredErrors);
     return clean;
   };
 
@@ -154,9 +149,9 @@ const MedicalAdmission = ({
   });
 
   const onSubmit = async (data) => {
+    console.log(data);
     console.log(isRequiredValidation(data));
   };
-  console.log(requiredErrors);
   useEffect(() => {
     (async () => {
       try {
@@ -229,6 +224,8 @@ const MedicalAdmission = ({
   const medicalAdmissionChipLabel = (selected) => {
     return `${t(selected.reasonCode.name)}`;
   };
+
+  console.log(requiredErrors);
 
   return (
     <React.Fragment>

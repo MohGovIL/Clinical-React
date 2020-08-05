@@ -6,14 +6,19 @@ import { StyleBackgroundDiseases } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useFormContext } from 'react-hook-form';
+import { FormHelperText } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 
 const BackgroundDiseases = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister, watch } = useFormContext();
-  const backgroundDiseasesToggleValue = watch('background_diseases');
+  const { register, unregister, watch, requiredErrors } = useFormContext();
+  const radioName = 'background_diseases';
+  const backgroundDiseasesToggleValue = watch(radioName);
+
+  const direction = useSelector((state) => state.settings.lang_dir);
 
   const [backgroundDiseasesList, setBackgroundDiseasesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
@@ -67,9 +72,14 @@ const BackgroundDiseases = ({
     <StyleBackgroundDiseases>
       <RadioGroupChoice
         gridLabel={t('Background diseases')}
-        radioName={'background_diseases'}
+        radioName={radioName}
         listValues={backgroundDisRadioList}
       />
+      <FormHelperText
+        style={{ textAlign: `${direction === 'rtl' ? 'right' : 'left'}` }}
+        error={requiredErrors[radioName] ? true : false}>
+        {requiredErrors[radioName] || ' '}
+      </FormHelperText>
       {backgroundDiseasesToggleValue === 'There are diseases' && (
         <CustomizedSelectCheckList
           selectCheckList={backgroundDiseasesList}

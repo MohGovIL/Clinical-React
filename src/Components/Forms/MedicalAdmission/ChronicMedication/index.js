@@ -6,15 +6,19 @@ import { StyleChronicMedication } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useFormContext } from 'react-hook-form';
+import { FormHelperText } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 
 const ChronicMedication = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister, watch } = useFormContext();
+  const { register, unregister, watch, requiredErrors } = useFormContext();
 
-  const medicationToggleButton = watch('medication');
+  const direction = useSelector((state) => state.settings.lang_dir);
+  const radioName = 'medication';
+  const medicationToggleButton = watch(radioName);
 
   const [chronicMedicationList, setChronicMedicationList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
@@ -71,9 +75,14 @@ const ChronicMedication = ({
     <StyleChronicMedication>
       <RadioGroupChoice
         gridLabel={t('Chronic medications')}
-        radioName={'medication'}
+        radioName={radioName}
         listValues={medicationRadioList}
       />
+      <FormHelperText
+        style={{ textAlign: `${direction === 'rtl' ? 'right' : 'left'}` }}
+        error={requiredErrors[radioName] ? true : false}>
+        {requiredErrors[radioName] || ' '}
+      </FormHelperText>
       {medicationToggleButton === 'Exist' && (
         <CustomizedSelectCheckList
           selectCheckList={chronicMedicationList}

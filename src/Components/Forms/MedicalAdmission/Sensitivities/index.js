@@ -6,15 +6,20 @@ import { StyledSensitivities } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useFormContext } from 'react-hook-form';
+import { FormHelperText } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 
 const Sensitivities = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister, watch } = useFormContext();
+  const { register, unregister, watch, requiredErrors } = useFormContext();
 
-  const sensitivityToggleValue = watch('sensitivities');
+  const direction = useSelector((state) => state.settings.lang_dir);
+  const radioName = 'sensitivities';
+
+  const sensitivityToggleValue = watch(radioName);
 
   const [sensitivitiesList, setSensitivitiesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
@@ -22,6 +27,8 @@ const Sensitivities = ({
     servicesTypeOpen && sensitivitiesList.length === 0;
 
   const sensitivitiesRadioList = ['UNknown', 'Known'];
+
+  // const focus = React.useRef(null);
 
   useEffect(() => {
     register({ name: 'sensitivitiesCodes' });
@@ -68,9 +75,15 @@ const Sensitivities = ({
     <StyledSensitivities>
       <RadioGroupChoice
         gridLabel={t('Sensitivities')}
-        radioName={'sensitivities'}
+        radioName={radioName}
         listValues={sensitivitiesRadioList}
+        // customRef={focus}
       />
+      <FormHelperText
+        style={{ textAlign: `${direction === 'rtl' ? 'right' : 'left'}` }}
+        error={requiredErrors[radioName] ? true : false}>
+        {requiredErrors[radioName] || ' '}
+      </FormHelperText>
       {sensitivityToggleValue === 'Known' && (
         <CustomizedSelectCheckList
           selectCheckList={sensitivitiesList}
