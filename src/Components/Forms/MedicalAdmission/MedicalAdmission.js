@@ -5,7 +5,6 @@ import VisitDetails from 'Components/Generic/PatientAdmission/PatientDetailsBloc
 import { FormContext, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyledForm, StyledRadioGroupChoice } from './Style';
-
 import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import NursingAnamnesis from './NursingAnamnesis';
@@ -26,6 +25,8 @@ const MedicalAdmission = ({
   history,
   verticalName,
   permission,
+  validationFunction,
+  functionToRunOnTabChange,
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -33,17 +34,16 @@ const MedicalAdmission = ({
     submitFocusError: true,
   });
 
-  const { handleSubmit, register, setValue, unregister } = methods;
+  const { handleSubmit, register, setValue, unregister, getValues } = methods;
 
   const [requiredErrors, setRequiredErrors] = useState({
-    selectTest: '',
-    commitmentAndPaymentReferenceForPaymentCommitment: '',
-    commitmentAndPaymentCommitmentDate: '',
-    commitmentAndPaymentCommitmentValidity: '',
-    commitmentAndPaymentDoctorsName: '',
-    commitmentAndPaymentDoctorsLicense: '',
-    ReferralFile: '',
-    CommitmentFile: '',
+    examinationCode: '',
+    sensitivitiesCodes: '',
+    sensitivities: '',
+    backgroundDiseasesCodes: '',
+    background_diseases: '',
+    chronicMedicationCodes: '',
+    medication: '',
   });
 
   const requiredFields = React.useMemo(() => {
@@ -51,35 +51,86 @@ const MedicalAdmission = ({
       examinationCode: {
         name: 'examinationCode',
         required: function (data) {
-          return data && data.length > 0;
+          return data[this.name] && data[this.name].length > 0;
         },
       },
       sensitivitiesCodes: {
         name: 'sensitivitiesCodes',
         required: function (data) {
-          return data && data.length > 0;
+          if (data.sensitivities || data.sensitivities === 'UNknown') {
+            return true;
+          }
+          return data[this.name] && data[this.name].length > 0;
         },
       },
       sensitivities: {
         name: 'sensitivities',
         required: function (data) {
-          return data && data.length > 0;
+          return data[this.name] && data[this.name].length > 0;
         },
       },
       backgroundDiseasesCodes: {
         name: 'backgroundDiseasesCodes',
         required: function (data) {
-          return data && data.length > 0;
+          if (
+            data.background_diseases ||
+            data.background_diseases === 'Usually healthy'
+          ) {
+            return true;
+          }
+          return data[this.name] && data[this.name].length > 0;
         },
       },
       background_diseases: {
         name: 'background_diseases',
         required: function (data) {
-          return data && data.length > 0;
+          return data[this.name] && data[this.name].length > 0;
+        },
+      },
+      chronicMedicationCodes: {
+        name: 'chronicMedicationCodes',
+        required: function (data) {
+          if (data.medication || data.medication === "Doesn't exist") {
+            return true;
+          }
+          return data[this.name] && data[this.name].length > 0;
+        },
+      },
+      medication: {
+        name: 'medication',
+        required: function (data) {
+          return data[this.name] && data[this.name].length > 0;
         },
       },
     };
   }, []);
+
+  const isRequiredValidation = (data) => {
+    let clean = true;
+    if (!data) data = getValues({ nest: true });
+    for (const fieldKey in requiredFields) {
+      if (requiredFields.hasOwnProperty(fieldKey)) {
+        let answer;
+        const field = requiredFields[fieldKey];
+        answer = field.required(data);
+        if (answer) {
+          setRequiredErrors((prevState) => {
+            const cloneState = { ...prevState };
+            cloneState[field.name] = '';
+            return cloneState;
+          });
+        } else {
+          setRequiredErrors((prevState) => {
+            const cloneState = { ...prevState };
+            cloneState[field.name] = t('A value must be entered in the field');
+            return cloneState;
+          });
+          clean = false;
+        }
+      }
+    }
+    return clean;
+  };
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
@@ -103,10 +154,10 @@ const MedicalAdmission = ({
   });
 
   const onSubmit = async (data) => {
-    console.log(JSON.stringify(data));
+    console.log(isRequiredValidation(data));
   };
-
-  React.useEffect(() => {
+  console.log(requiredErrors);
+  useEffect(() => {
     (async () => {
       try {
         const q = await FHIR('Questionnaire', 'doWork', {
@@ -130,6 +181,15 @@ const MedicalAdmission = ({
     register({ name: 'isPregnancy' });
     return () => unregister(['isPregnancy']);
   }, [register, unregister]);
+
+  useEffect(() => {
+    validationFunction.current = isRequiredValidation;
+    functionToRunOnTabChange.current = onSubmit;
+    return () => {
+      functionToRunOnTabChange.current = () => [];
+      validationFunction.current = () => true;
+    };
+  }, []);
 
   const pregnancyHandlerRadio = (value) => {
     //console.log('pregnancy: ' + value);
@@ -215,12 +275,17 @@ const MedicalAdmission = ({
             defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
           />
-          <StyledButton
-            color='primary'
-            type='submit'
-            disabled={permission === 'view' ? true : false}>
-            SUBMIT
-          </StyledButton>
+          <Grid
+            container
+            justify={languageDirection === 'rtl' ? 'flex-end' : 'flex-start'}>
+            <StyledButton
+              color='primary'
+              variant='contained'
+              type='submit'
+              letterSpacing={'0.1'}>
+              {t('Save & Close')}
+            </StyledButton>
+          </Grid>
         </StyledForm>
       </FormContext>
     </React.Fragment>
