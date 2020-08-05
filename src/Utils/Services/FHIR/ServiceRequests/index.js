@@ -1,36 +1,36 @@
 /**
  * @author Dror Golan - drorgo@matrix.co.il
- * @fileOverview  - this is a Observations strategy
+ * @fileOverview  - this is a ServiceRequests strategy
  */
 
 import { CRUDOperations } from 'Utils/Services/FHIR/CRUDOperations';
-/* TODO : import denormalizeFhirObservation from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';*/
+/* TODO : import denormalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';*/
 
 /**
  *
- * @type {{deleteObservation: Observations.deleteObservation, doWork: (function(*): *),
- * createNewObservation: Observations.createNewObservation,
- * updateObservation: Observations.updateObservation,
- * getObservations: (function(*): *)}}
+ * @type {{deleteServiceRequest: ServiceRequests.deleteServiceRequest, doWork: (function(*): *),
+ * createNewServiceRequest: ServiceRequests.createNewServiceRequest,
+ * updateServiceRequest: ServiceRequests.updateServiceRequest,
+ * getServiceRequests: (function(*): *)}}
  */
-const Observations = {
+const ServiceRequests = {
   doWork: (parameters) => {
-    let componentFhirURL = '/Observation';
+    let componentFhirURL = '/ServiceRequest';
     let paramsToCRUD = parameters.functionParams; //convertParamsToUrl(parameters.functionParams);
     paramsToCRUD.url = componentFhirURL;
-    return Observations[parameters.functionName](paramsToCRUD);
+    return ServiceRequests[parameters.functionName](paramsToCRUD);
   },
 
-  createNewObservation: (params) => {
+  createNewServiceRequest: (params) => {
     return CRUDOperations('create', `${params.url}`, params.data);
   },
-  updateObservation: (params) => {
+  updateServiceRequest: (params) => {
     return CRUDOperations('update', `${params.url}/${params.id}`, params.data);
   },
-  deleteObservation: (params) => {
+  deleteServiceRequest: (params) => {
     //Todo in the future
   },
-  getObservations: (params) => {
+  getServiceRequests: (params) => {
     let patient = params.patient;
     let encounter = params.encounter;
     let category = params.category;
@@ -47,9 +47,9 @@ const Observations = {
   },
 };
 
-export default function Observation(action = null, params = null) {
+export default function ServiceRequest(action = null, params = null) {
   if (action) {
-    const transformer = Observations[action] ?? Observations.__default__;
+    const transformer = ServiceRequests[action] ?? ServiceRequests.__default__;
     return transformer(params);
   }
 }

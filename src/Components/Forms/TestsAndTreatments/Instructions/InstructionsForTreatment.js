@@ -5,7 +5,7 @@
  * @returns the main form Component.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormContext, useForm } from 'react-hook-form';
 import Fields from 'Components/Forms/TestsAndTreatments/Instructions/Fields';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import SaveTestAndTreatments from './SaveTestAndTreatments';
 import Grid from '@material-ui/core/Grid';
+import { FHIR } from '../../../../Utils/Services/FHIR';
 
 /**
  *
@@ -21,6 +22,7 @@ import Grid from '@material-ui/core/Grid';
  */
 const InstructionsForTreatment = ({
   encounter,
+  patient,
   permission,
   setSaveFunction,
   saveIndicatorsOnSubmit,
@@ -38,6 +40,7 @@ const InstructionsForTreatment = ({
     saveIndicatorsOnSubmit();
   };
   const [defaultContext, setDefaultContext] = useState('');
+  const [serviceRequests, setServiceRequests] = useState('');
   const { t } = useTranslation();
   const callBack = (data, name) => {
     setDefaultContext(data);
@@ -152,13 +155,38 @@ const InstructionsForTreatment = ({
     }
     return clean;
   };
-
+  //http://localhost/apis/fhir/v4/ServiceRequest?patient=1&encounter=1&_include=ServiceRequest:performer
+  useEffect(() => {
+    (async () => {
+      let fhirClinikalCalls = null;
+      try {
+        const fhirClinikalCallsAfterAwait = await FHIR(
+          'ServiceRequests',
+          'doWork',
+          {
+            functionName: 'getServiceRequests',
+            functionParams: {
+              patient: patient.id,
+              encounter: encounter.id,
+              /* _sort: '-issued',*/
+              _include: 'ServiceRequest:performer',
+            },
+          },
+        );
+        if (fhirClinikalCallsAfterAwait['status'] === 200)
+          setServiceRequests(fhirClinikalCallsAfterAwait['data']);
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  }, []);
   return (
     <FormContext {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <PopUpFormTemplates {...popUpProps} />
 
         <Fields
+          serviceRequests={serviceRequests}
           setRequiredErrors={setRequiredErrors}
           requiredErrors={requiredErrors}
           handlePopUpProps={handlePopUpProps}

@@ -152,9 +152,9 @@ const TestsAndTreatments = ({
       }),
     );
     const fhirClinikalCallsAfterAwait = await Promise.all(FHIRAsyncCalls);
-    console.log(JSON.stringify(fhirClinikalCallsAfterAwait[0]));
+    /*console.log(JSON.stringify(fhirClinikalCallsAfterAwait[0]));
     console.log(JSON.stringify(fhirClinikalCallsAfterAwait[1]));
-    setVariantIndicatorsNew();
+    setVariantIndicatorsNew();*/
     setSaveFormClicked(saveFormClicked + 1);
   };
 

@@ -38,6 +38,8 @@ import { useTranslation } from 'react-i18next';
 import TestTreatmentReferral from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentRefferal';
 import TestTreatMentStatus from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentStatus';
 import TestTreatmentRemark from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentRemark';
+import denormalizeFhirServiceRequest from '../../../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
+import normalizeFhirServiceRequest from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
 
 /**
  *
@@ -50,6 +52,7 @@ import TestTreatmentRemark from 'Components/Forms/TestsAndTreatments/Instruction
  * @constructor
  */
 const Fields = ({
+  serviceRequests,
   encounter,
   currentUser,
   handlePopUpProps,
@@ -61,6 +64,60 @@ const Fields = ({
     control,
     name: 'Instruction',
   });
+  useEffect(() => {
+    if (serviceRequests && serviceRequests != '' && serviceRequests.total > 0) {
+      serviceRequests.entry.map((value, index) => {
+        if (
+          value &&
+          value.resource &&
+          value.resource.resourceType &&
+          value.resource.resourceType === 'ServiceRequest'
+        ) {
+          const serviceReq = normalizeFhirServiceRequest(value.resource);
+          appendInsertData({ serviceReq });
+          /*
+          insert(parseInt(0, 10), {
+            test_treatment: serviceReq.instructionCode,
+            test_treatment_type: serviceReq.orderDetailCode,
+            instructions: serviceReq.patientInstruction,
+            test_treatment_status:
+              serviceReq.status === 'active' ? 'not_done' : 'done',
+            test_treatment_remark: serviceReq.note,
+          });*/
+        }
+      });
+    }
+  }, [serviceRequests]);
+
+  const appendInsertData = async ({ serviceReq }) => {
+    if (!serviceReq) {
+      serviceReq = {};
+      serviceReq.instructionCode = '';
+      serviceReq.orderDetailCode = '';
+      serviceReq.patientInstruction = '';
+      serviceReq.status = 'not_done';
+      serviceReq.note = '';
+    }
+    if (fields.length > 0) {
+      await insert(parseInt(0, 10), {
+        test_treatment: serviceReq.instructionCode,
+        test_treatment_type: serviceReq.orderDetailCode,
+        instructions: serviceReq.patientInstruction,
+        test_treatment_status:
+          serviceReq.status === 'active' ? 'not_done' : 'done',
+        test_treatment_remark: serviceReq.note,
+      });
+    } else {
+      await append({
+        test_treatment: serviceReq.instructionCode,
+        test_treatment_type: serviceReq.orderDetailCode,
+        instructions: serviceReq.patientInstruction,
+        test_treatment_status:
+          serviceReq.status === 'active' ? 'not_done' : 'done',
+        test_treatment_remark: serviceReq.note,
+      });
+    }
+  };
   let user = normalizeFhirUser(currentUser);
   const edit = true;
 
