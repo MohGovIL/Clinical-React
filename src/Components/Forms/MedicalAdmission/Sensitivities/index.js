@@ -12,27 +12,20 @@ const Sensitivities = ({
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister, setValue } = useFormContext();
-  const [sensitivitiesChanged, setSensitivitiesChanged] = useState(false);
+  const { register, unregister, watch } = useFormContext();
+
+  const sensitivityToggleValue = watch('sensitivities');
 
   const [sensitivitiesList, setSensitivitiesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
   const loadingSensitivitiesList =
     servicesTypeOpen && sensitivitiesList.length === 0;
 
-  const sensitivitiesRadioList = [t('UNknown'), t('Known')];
-
-  const sensitivitiesHandlerRadio = (value) => {
-    console.log('sensitivities: ' + value);
-    if (!value) setValue('sensitivitiesCodes', []);
-    setValue('sensitivity', value);
-    setSensitivitiesChanged(value);
-  };
+  const sensitivitiesRadioList = ['UNknown', 'Known'];
 
   useEffect(() => {
     register({ name: 'sensitivitiesCodes' });
-    register({ name: 'sensitivity' });
-    return () => unregister(['sensitivitiesCodes', 'sensitivity']);
+    return () => unregister(['sensitivitiesCodes']);
   }, [register, unregister]);
 
   useEffect(() => {
@@ -48,7 +41,7 @@ const Sensitivities = ({
         if (active) {
           const options = [];
           const servicesTypeObj = {};
-          const allReasonsCode = await Promise.all(
+          await Promise.all(
             sensitivitiesResponse.data.expansion.contains.map((sensitive) => {
               const normalizedSensitiveSet = normalizeFhirValueSet(sensitive);
               const optionObj = {};
@@ -77,10 +70,8 @@ const Sensitivities = ({
         gridLabel={t('Sensitivities')}
         radioName={'sensitivities'}
         listValues={sensitivitiesRadioList}
-        trueValue={t('Known')}
-        callBackFunction={sensitivitiesHandlerRadio}
       />
-      {sensitivitiesChanged && (
+      {sensitivityToggleValue === 'Known' && (
         <CustomizedSelectCheckList
           selectCheckList={sensitivitiesList}
           loadingCheckList={loadingSensitivitiesList}

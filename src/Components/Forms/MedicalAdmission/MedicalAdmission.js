@@ -33,14 +33,7 @@ const MedicalAdmission = ({
     submitFocusError: true,
   });
 
-  const {
-    handleSubmit,
-    control,
-    watch,
-    register,
-    setValue,
-    unregister,
-  } = methods;
+  const { handleSubmit, register, setValue, unregister } = methods;
 
   const [requiredErrors, setRequiredErrors] = useState({
     selectTest: '',
@@ -53,7 +46,7 @@ const MedicalAdmission = ({
     CommitmentFile: '',
   });
 
-  const watchMedication = watch('medication');
+  // const watchMedication = watch('medication');
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
@@ -177,9 +170,18 @@ const MedicalAdmission = ({
               />
             </StyledRadioGroupChoice>
           )}
-          <Sensitivities defaultRenderOptionFunction={medicalAdmissionRenderOption} defaultChipLabelFunction={medicalAdmissionChipLabel}/>
-          <BackgroundDiseases defaultRenderOptionFunction={medicalAdmissionRenderOption} defaultChipLabelFunction={medicalAdmissionChipLabel}/>
-          <ChronicMedication defaultRenderOptionFunction={medicalAdmissionRenderOption} defaultChipLabelFunction={medicalAdmissionChipLabel}/>
+          <Sensitivities
+            defaultRenderOptionFunction={medicalAdmissionRenderOption}
+            defaultChipLabelFunction={medicalAdmissionChipLabel}
+          />
+          <BackgroundDiseases
+            defaultRenderOptionFunction={medicalAdmissionRenderOption}
+            defaultChipLabelFunction={medicalAdmissionChipLabel}
+          />
+          <ChronicMedication
+            defaultRenderOptionFunction={medicalAdmissionRenderOption}
+            defaultChipLabelFunction={medicalAdmissionChipLabel}
+          />
           <StyledButton
             color='primary'
             type='submit'

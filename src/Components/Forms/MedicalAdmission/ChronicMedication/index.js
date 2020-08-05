@@ -12,8 +12,9 @@ const ChronicMedication = ({
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister, setValue } = useFormContext();
-  const [medicationChanged, setMedicationChanged] = useState(false);
+  const { register, unregister, watch } = useFormContext();
+
+  const medicationToggleButton = watch('medication');
 
   const [chronicMedicationList, setChronicMedicationList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
@@ -21,18 +22,11 @@ const ChronicMedication = ({
     servicesTypeOpen && chronicMedicationList.length === 0;
 
   //Radio buttons for medication details
-  const medicationRadioList = [t("Doesn't exist"), t('Exist')];
-
-  const medicationHandlerRadio = (value) => {
-    if (!value) setValue('chronicMedicationCodes', []);
-    setValue('chronicMedication', value);
-    setMedicationChanged(value);
-  };
+  const medicationRadioList = ["Doesn't exist", 'Exist'];
 
   useEffect(() => {
     register({ name: 'chronicMedicationCodes' });
-    register({ name: 'chronicMedication' });
-    return () => unregister(['chronicMedicationCodes', 'chronicMedication']);
+    return () => unregister(['chronicMedicationCodes']);
   }, [register, unregister]);
 
   useEffect(() => {
@@ -46,6 +40,7 @@ const ChronicMedication = ({
       try {
         const sensitivitiesResponse = await getValueSet('drugs_list');
         if (active) {
+          const myOptions = [{ code: '1', display: 'sadfadsasd' }];
           const options = [];
           const servicesTypeObj = {};
           const allReasonsCode = await Promise.all(
@@ -59,7 +54,8 @@ const ChronicMedication = ({
               options.push(optionObj);
             }),
           );
-          setChronicMedicationList(options);
+          // setChronicMedicationList(options);
+          setChronicMedicationList(myOptions);
         }
       } catch (err) {
         console.log(err);
@@ -77,10 +73,8 @@ const ChronicMedication = ({
         gridLabel={t('Chronic medications')}
         radioName={'medication'}
         listValues={medicationRadioList}
-        trueValue={t('Exist')}
-        callBackFunction={medicationHandlerRadio}
       />
-      {medicationChanged && (
+      {medicationToggleButton === 'Exist' && (
         <CustomizedSelectCheckList
           selectCheckList={chronicMedicationList}
           loadingCheckList={loadingChronicMedicationList}

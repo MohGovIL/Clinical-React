@@ -12,28 +12,18 @@ const BackgroundDiseases = ({
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister, setValue } = useFormContext();
-  const [backgroundDisChanged, setBackgroundDisChanged] = useState(false);
+  const { register, unregister, watch } = useFormContext();
+  const backgroundDiseasesToggleValue = watch('background_diseases');
 
   const [backgroundDiseasesList, setBackgroundDiseasesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
   const loadingBackgroundDiseasesList =
     servicesTypeOpen && backgroundDiseasesList.length === 0;
 
-  const backgroundDisRadioList = [
-    t('Usually healthy'),
-    t('There are diseases'),
-  ];
-
-  const backgroundDisHandlerRadio = (value) => {
-    if (!value) setValue('backgroundDiseasesCodes', []);
-    setValue('backgroundDiseases', value);
-    setBackgroundDisChanged(value);
-  };
+  const backgroundDisRadioList = ['Usually healthy', 'There are diseases'];
 
   useEffect(() => {
     register({ name: 'backgroundDiseasesCodes' });
-    register({ name: 'backgroundDiseases' });
     return () => unregister(['backgroundDiseasesCodes']);
   }, [register, unregister]);
 
@@ -50,7 +40,7 @@ const BackgroundDiseases = ({
         if (active) {
           const options = [];
           const servicesTypeObj = {};
-          const allReasonsCode = await Promise.all(
+          await Promise.all(
             sensitivitiesResponse.data.expansion.contains.map((sensitive) => {
               const normalizedSensitiveSet = normalizeFhirValueSet(sensitive);
               const optionObj = {};
@@ -79,10 +69,8 @@ const BackgroundDiseases = ({
         gridLabel={t('Background diseases')}
         radioName={'background_diseases'}
         listValues={backgroundDisRadioList}
-        trueValue={t('There are diseases')}
-        callBackFunction={backgroundDisHandlerRadio}
       />
-      {backgroundDisChanged && (
+      {backgroundDiseasesToggleValue === 'There are diseases' && (
         <CustomizedSelectCheckList
           selectCheckList={backgroundDiseasesList}
           loadingCheckList={loadingBackgroundDiseasesList}
