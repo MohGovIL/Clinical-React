@@ -7,7 +7,7 @@
 
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Controller, useFormContext } from 'react-hook-form';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import Grid from '@material-ui/core/Grid';
@@ -28,7 +28,12 @@ const TestTreatmentInstructions = ({ index, item, handlePopUpProps }) => {
   const callBack = (data, name) => {
     setValue(name, data);
   };
-
+  /*  useEffect(() => {
+    try {
+      const { Instruction } = getValues({ nest: true });
+      console.log(Instruction.test_treatment);
+    } catch (e) {}
+  }, [Instruction && Instruction.test_treatment]);*/
   return (
     <>
       <Grid item xs={6}>
@@ -43,6 +48,8 @@ const TestTreatmentInstructions = ({ index, item, handlePopUpProps }) => {
                   Instruction &&
                   Instruction[index] &&
                   Instruction[index].instructions
+                    ? true
+                    : item.instructions
                     ? true
                     : false,
               }}

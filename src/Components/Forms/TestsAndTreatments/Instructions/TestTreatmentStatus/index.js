@@ -16,7 +16,7 @@ import { useFormContext } from 'react-hook-form';
  * @param requiredErrors
  * @returns UI Field of the main form.
  */
-const TestTreatMentStatus = ({ index, requiredErrors }) => {
+const TestTreatMentStatus = ({ index, requiredErrors, item }) => {
   const { t } = useTranslation();
   const { control, register, setValue, getValues, watch } = useFormContext();
 
@@ -35,6 +35,7 @@ const TestTreatMentStatus = ({ index, requiredErrors }) => {
         <b>{t('Status')}</b>
       </span>
       <StyledSwitch
+        checked={item.test_treatment_status === 'done' ? true : false}
         register={register}
         onChange={handleChange}
         name={`Instruction[${index}].test_treatment_status`}

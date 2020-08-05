@@ -27,10 +27,14 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
   const { Instruction } = getValues({ nest: true });
 
   const test_treatment =
-    Instruction && Instruction[index] && Instruction[index].test_treatment;
+    (Instruction && Instruction[index] && Instruction[index].test_treatment) ||
+    item.test_treatment;
 
   const test_treatment_type =
-    Instruction && Instruction[index] && Instruction[index].test_treatment_type;
+    (Instruction &&
+      Instruction[index] &&
+      Instruction[index].test_treatment_type) ||
+    item.test_treatment;
 
   const [
     currentTestTreatmentsInstructionsDetails,
@@ -82,8 +86,18 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
         name={`Instruction[${index}].test_treatment_type`}
         control={control}
         defaultValue={item.test_treatment_type || ''} //needed unless you want a uncontrolled controlled issue on your hands
-        error={requiredErrors[index].test_treatment_type.length ? true : false}
-        helperText={requiredErrors[index].test_treatment_type}
+        error={
+          requiredErrors[index] &&
+          requiredErrors[index].test_treatment_type &&
+          requiredErrors[index].test_treatment_type.length
+            ? true
+            : false
+        }
+        helperText={
+          requiredErrors[index] && requiredErrors[index].test_treatment_type
+            ? requiredErrors[index].test_treatment_type
+            : ''
+        }
         as={
           <CustomizedTextField
             iconColor='#1976d2'

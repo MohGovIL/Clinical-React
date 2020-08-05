@@ -91,71 +91,85 @@ const TestsAndTreatments = ({
     (state, newState) => ({ ...state, ...newState }),
     variantNewState,
   );
+  function checkWhaterToSaveIndicators(indicators) {
+    if (!indicators) return;
 
+    let saveThis = false;
+    for (const observed in indicators) {
+      if (indicators[observed].value !== '') return true;
+    }
+    return saveThis;
+  }
   const saveIndicatorsOnSubmit = async () => {
     let FHIRAsyncCalls = [];
-
-    const denormelizedConstantObservation = denormalizeFhirObservation({
-      component: constantIndicators,
-      status: 'amended',
-      subject: Number(patient.id),
-      encounter: Number(encounter.id),
-      issued: moment().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
-      performer: userDetails.id,
-      category: {
-        code: 'exam',
-        system: 'http://hl7.org/fhir/ValueSet/observation-category',
-      },
-    });
-
-    const explodeMultiIndicators = explodeMultipleIndicators(
-      variantIndicatorsNew[0],
-      'Systolic blood pressure/Diastolic blood pressure',
-      '/',
-    );
-    explodeMultiIndicators['Saturation']['value'] = parseInt(
-      explodeMultiIndicators['Saturation']['value'],
-    );
-
-    const denormelizedVariantIndicatorsNew = denormalizeFhirObservation({
-      component: explodeMultiIndicators,
-      status: 'amended',
-      subject: Number(patient.id),
-      encounter: Number(encounter.id),
-      issued: moment().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
-      performer: userDetails.id,
-      category: {
-        code: 'vital-signs',
-        system: 'http://hl7.org/fhir/ValueSet/observation-category',
-      },
-    });
-    FHIRAsyncCalls.push(
-      FHIR('Observations', 'doWork', {
-        functionName: thereIsARecordOfExamObservation
-          ? 'updateObservation'
-          : 'createNewObservation',
-        functionParams: {
-          id: thereIsARecordOfExamObservation
-            ? thereIsARecordOfExamObservation
-            : null,
-          data: denormelizedConstantObservation,
+    if (checkWhaterToSaveIndicators(constantIndicators)) {
+      const denormelizedConstantObservation = denormalizeFhirObservation({
+        component: constantIndicators,
+        status: 'amended',
+        subject: Number(patient.id),
+        encounter: Number(encounter.id),
+        issued: moment().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
+        performer: userDetails.id,
+        category: {
+          code: 'exam',
+          system: 'http://hl7.org/fhir/ValueSet/observation-category',
         },
-      }),
-    );
-    FHIRAsyncCalls.push(
-      FHIR('Observations', 'doWork', {
-        functionName: 'createNewObservation',
-        functionParams: {
-          id: null,
-          data: denormelizedVariantIndicatorsNew,
+      });
+      FHIRAsyncCalls.push(
+        FHIR('Observations', 'doWork', {
+          functionName: thereIsARecordOfExamObservation
+            ? 'updateObservation'
+            : 'createNewObservation',
+          functionParams: {
+            id: thereIsARecordOfExamObservation
+              ? thereIsARecordOfExamObservation
+              : null,
+            data: denormelizedConstantObservation,
+          },
+        }),
+      );
+    }
+
+    if (checkWhaterToSaveIndicators(variantIndicatorsNew[0])) {
+      const explodeMultiIndicators = explodeMultipleIndicators(
+        variantIndicatorsNew[0],
+        'Systolic blood pressure/Diastolic blood pressure',
+        '/',
+      );
+      explodeMultiIndicators['Saturation']['value'] = parseInt(
+        explodeMultiIndicators['Saturation']['value'],
+      );
+
+      const denormelizedVariantIndicatorsNew = denormalizeFhirObservation({
+        component: explodeMultiIndicators,
+        status: 'amended',
+        subject: Number(patient.id),
+        encounter: Number(encounter.id),
+        issued: moment().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
+        performer: userDetails.id,
+        category: {
+          code: 'vital-signs',
+          system: 'http://hl7.org/fhir/ValueSet/observation-category',
         },
-      }),
-    );
-    const fhirClinikalCallsAfterAwait = await Promise.all(FHIRAsyncCalls);
-    /*console.log(JSON.stringify(fhirClinikalCallsAfterAwait[0]));
-    console.log(JSON.stringify(fhirClinikalCallsAfterAwait[1]));
-    setVariantIndicatorsNew();*/
-    setSaveFormClicked(saveFormClicked + 1);
+      });
+
+      FHIRAsyncCalls.push(
+        FHIR('Observations', 'doWork', {
+          functionName: 'createNewObservation',
+          functionParams: {
+            id: null,
+            data: denormelizedVariantIndicatorsNew,
+          },
+        }),
+      );
+    }
+    if (FHIRAsyncCalls.length > 0) {
+      const fhirClinikalCallsAfterAwait = await Promise.all(FHIRAsyncCalls);
+      /*console.log(JSON.stringify(fhirClinikalCallsAfterAwait[0]));
+      console.log(JSON.stringify(fhirClinikalCallsAfterAwait[1]));
+      setVariantIndicatorsNew();*/
+      setSaveFormClicked(saveFormClicked + 1);
+    }
   };
 
   useEffect(() => {

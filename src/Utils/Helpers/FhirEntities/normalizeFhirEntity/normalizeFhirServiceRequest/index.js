@@ -35,8 +35,8 @@ const normalizeFhirServiceRequest = (ServiceRequest) => {
   const encounter = ServiceRequest.encounter.reference.split('/')[1];
   const reasonCode = ServiceRequest.reasonCode[0].coding['code'];
   const patient = ServiceRequest.subject.reference.split('/')[1];
-  const instructionCode = ServiceRequest.category[0].coding[0].code;
-  const instructionCodeSystem = ServiceRequest.category[0].coding[0].system;
+  const instructionCode = ServiceRequest.code.coding[0].code;
+  const instructionCodeSystem = ServiceRequest.code.coding[0].system;
   const orderDetailCode = ServiceRequest.orderDetail[0].coding[0].code;
   const orderDetailSystem = ServiceRequest.orderDetail[0].coding[0].system;
   const patientInstruction = ServiceRequest.patientInstruction;

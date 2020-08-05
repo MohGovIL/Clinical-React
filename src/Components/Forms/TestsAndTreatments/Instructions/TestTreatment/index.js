@@ -55,6 +55,10 @@ const TestTreatment = ({ index, item }) => {
       );
 
       setCollectedTestAndTreatmentsFromFhir(testAndTreatmentObj);
+      setValue(
+        `Instruction[${index}].test_treatment_type`,
+        item.test_treatment,
+      );
     })();
   }, []);
 

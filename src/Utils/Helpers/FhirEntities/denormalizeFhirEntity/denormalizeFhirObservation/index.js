@@ -61,7 +61,9 @@ const denormalizeFhirObservation = (observation) => {
             if (observation[observationKey][observed].code) {
               denormalizedObservation['component'].push({
                 valueQuantity: {
-                  value: observation[observationKey][observed].value,
+                  value: observation[observationKey][observed].value
+                    ? observation[observationKey][observed].value
+                    : 0,
                   system: 'http://loinc.org',
                   code: observation[observationKey][observed].code,
                 },

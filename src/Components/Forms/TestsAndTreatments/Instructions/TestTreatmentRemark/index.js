@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
  * @param index
  * @returns UI Field of the main form.
  */
-const TestTreatmentRemark = ({ index }) => {
+const TestTreatmentRemark = ({ index, item }) => {
   const { t } = useTranslation();
   const { control, watch, getValues, setValue } = useFormContext();
   const { Instruction } = getValues({ nest: true });
@@ -32,9 +32,10 @@ const TestTreatmentRemark = ({ index }) => {
       name={`Instruction[${index}].test_treatment_remark`}
       control={control}
       defaultValue={
-        Instruction &&
-        Instruction[index] &&
-        Instruction[index].test_treatment_remark
+        item.test_treatment_remark /* ||
+        (Instruction &&
+          Instruction[index] &&
+          Instruction[index].test_treatment_remark)*/
       }
       as={<CustomizedTextField multiline width={'85%'} label={t('remark')} />}
     />

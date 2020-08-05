@@ -65,17 +65,24 @@ const Fields = ({
     name: 'Instruction',
   });
   useEffect(() => {
-    if (serviceRequests && serviceRequests != '' && serviceRequests.total > 0) {
-      serviceRequests.entry.map((value, index) => {
-        if (
-          value &&
-          value.resource &&
-          value.resource.resourceType &&
-          value.resource.resourceType === 'ServiceRequest'
-        ) {
-          const serviceReq = normalizeFhirServiceRequest(value.resource);
-          appendInsertData({ serviceReq });
-          /*
+    (async () => {
+      if (
+        serviceRequests &&
+        serviceRequests !== '' &&
+        serviceRequests.total > 0
+      ) {
+        let fieldsArray = [];
+        await serviceRequests.entry.map((value, index) => {
+          if (
+            value &&
+            value.resource &&
+            value.resource.resourceType &&
+            value.resource.resourceType === 'ServiceRequest'
+          ) {
+            const serviceReq = normalizeFhirServiceRequest(value.resource);
+            fieldsArray.push(createDataFromRecord({ serviceReq }));
+
+            /*
           insert(parseInt(0, 10), {
             test_treatment: serviceReq.instructionCode,
             test_treatment_type: serviceReq.orderDetailCode,
@@ -84,11 +91,29 @@ const Fields = ({
               serviceReq.status === 'active' ? 'not_done' : 'done',
             test_treatment_remark: serviceReq.note,
           });*/
-        }
-      });
-    }
+          }
+        });
+        const fieldsArrayTemp = await Promise.all(fieldsArray);
+        append(fieldsArrayTemp);
+      }
+    })();
   }, [serviceRequests]);
 
+  const createDataFromRecord = async ({ serviceReq }) => {
+    serviceReq = {
+      performer_or_requester:
+        serviceReq.status === 'active'
+          ? serviceReq.requester
+          : serviceReq.performer,
+      test_treatment: serviceReq.instructionCode,
+      test_treatment_type: serviceReq.orderDetailCode,
+      instructions: serviceReq.patientInstruction,
+      test_treatment_status:
+        serviceReq.status === 'active' ? 'not_done' : 'done',
+      test_treatment_remark: serviceReq.note,
+    };
+    return serviceReq;
+  };
   const appendInsertData = async ({ serviceReq }) => {
     if (!serviceReq) {
       serviceReq = {};
@@ -100,6 +125,10 @@ const Fields = ({
     }
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
+        performer_or_requester:
+          serviceReq.status === 'active'
+            ? serviceReq.requester
+            : serviceReq.performer,
         test_treatment: serviceReq.instructionCode,
         test_treatment_type: serviceReq.orderDetailCode,
         instructions: serviceReq.patientInstruction,
@@ -109,6 +138,10 @@ const Fields = ({
       });
     } else {
       await append({
+        performer_or_requester:
+          serviceReq.status === 'active'
+            ? serviceReq.requester
+            : serviceReq.performer,
         test_treatment: serviceReq.instructionCode,
         test_treatment_type: serviceReq.orderDetailCode,
         instructions: serviceReq.patientInstruction,
@@ -136,6 +169,7 @@ const Fields = ({
     //2) if it is the first record do append otherwise do insert this is basically prepend
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
+        performer_or_requester: '',
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
@@ -144,6 +178,7 @@ const Fields = ({
       });
     } else {
       await append({
+        performer_or_requester: '',
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
