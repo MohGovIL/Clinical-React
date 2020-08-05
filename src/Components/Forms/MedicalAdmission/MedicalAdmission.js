@@ -46,7 +46,40 @@ const MedicalAdmission = ({
     CommitmentFile: '',
   });
 
-  // const watchMedication = watch('medication');
+  const requiredFields = React.useMemo(() => {
+    return {
+      examinationCode: {
+        name: 'examinationCode',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+      sensitivitiesCodes: {
+        name: 'sensitivitiesCodes',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+      sensitivities: {
+        name: 'sensitivities',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+      backgroundDiseasesCodes: {
+        name: 'backgroundDiseasesCodes',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+      background_diseases: {
+        name: 'background_diseases',
+        required: function (data) {
+          return data && data.length > 0;
+        },
+      },
+    };
+  }, []);
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
