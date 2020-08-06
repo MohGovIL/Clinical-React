@@ -65,7 +65,7 @@ const normalizeFhirCondition = (condition) => {
       stageTypeSystem = condition.stage[0].type.coding[0].system;
 
       if (condition.stage[0].type.text) {
-        stageTypeText = condition.stage[0].type;
+        stageTypeText = condition.stage[0].type; // This is the entire object idk how this works...
       }
     }
   }
