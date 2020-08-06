@@ -8,7 +8,7 @@ const StyledFormSave = styled.div`
     #fafbff 0%,
     rgba(247, 248, 252, 0)
   );
-  flex-direction: row;
+  flex-direction: ${({ direction }) => direction};
 `;
 
 export default StyledFormSave;

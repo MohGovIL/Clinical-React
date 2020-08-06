@@ -1,6 +1,6 @@
 //MedicalAdmission
 import { connect } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import VisitDetails from 'Components/Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
 import { FormContext, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,9 @@ import BackgroundDiseases from './BackgroundDiseases';
 import ChronicMedication from './ChronicMedication';
 import { Checkbox, Grid, ListItemText } from '@material-ui/core';
 import { CheckBox, CheckBoxOutlineBlankOutlined } from '@material-ui/icons';
-
+import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
+import moment from 'moment';
+import SaveForm from '../GeneralComponents/SaveForm';
 const MedicalAdmission = ({
   patient,
   encounter,
@@ -45,6 +47,22 @@ const MedicalAdmission = ({
     chronicMedicationCodes: '',
     medication: '',
   });
+
+  // KEEP this comment code here need that for later
+  // const requiredErrorsRef = useRef({
+  //   examinationCode: '',
+  //   sensitivitiesCodes: '',
+  //   sensitivities: '',
+  //   backgroundDiseasesCodes: '',
+  //   background_diseases: '',
+  //   chronicMedicationCodes: '',
+  //   medication: '',
+  // });
+
+  const [
+    normalizedQuestionnaireResponse,
+    setNormalizedQuestionnaireResponse,
+  ] = React.useState({});
 
   const requiredFields = React.useMemo(() => {
     return {
@@ -148,29 +166,50 @@ const MedicalAdmission = ({
     name: '',
   });
 
-  const onSubmit = async (data) => {
-    console.log(data);
-    console.log(isRequiredValidation(data));
-  };
   useEffect(() => {
     (async () => {
       try {
+        let normalizedFhirQuestionnaireResponse = {};
         const q = await FHIR('Questionnaire', 'doWork', {
           functionName: 'getQuestionnaire',
           functionParams: {
             QuestionnaireName: 'medical_admission_questionnaire',
           },
         });
+        const questionnaireResponse = await FHIR(
+          'QuestionnaireResponse',
+          'doWork',
+          {
+            functionName: 'getQuestionnaireResponse',
+            functionParams: {
+              encounterId: encounter.id,
+              patientId: patient.id,
+              questionnaireId: q.data.entry[1].resource.id,
+            },
+          },
+        );
+        if (questionnaireResponse.data.total) {
+          normalizedFhirQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
+            questionnaireResponse.data.entry[1].resource,
+          );
+          // setNormalizedQuestionnaireResponse(
+          //   normalizedFhirQuestionnaireResponse,
+          // );
+        }
         const Questionnaire = q.data.entry[1].resource;
-        register({ name: 'questionnaireId' });
-        setValue('questionnaireId', Questionnaire.id);
+        register({ name: 'questionnaire' });
+        register({ name: 'questionnaireResponseId' });
+        setValue([
+          { questionnaire: Questionnaire },
+          { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
+        ]);
       } catch (error) {
         console.log(error);
       }
     })();
 
-    return () => unregister('questionnaireId');
-  }, [register, setValue, unregister]);
+    return () => unregister(['questionnaire', 'questionnaireResponseId']);
+  }, [register, setValue, unregister, encounter.id, patient.id]);
 
   useEffect(() => {
     register({ name: 'isPregnancy' });
@@ -185,11 +224,6 @@ const MedicalAdmission = ({
       validationFunction.current = () => true;
     };
   }, []);
-
-  const pregnancyHandlerRadio = (value) => {
-    //console.log('pregnancy: ' + value);
-    setValue('isPregnancy', value);
-  };
 
   //Radio buttons for pregnancy
   const pregnancyRadioList = [t('No'), t('Yes')];
@@ -225,7 +259,101 @@ const MedicalAdmission = ({
     return `${t(selected.reasonCode.name)}`;
   };
 
-  console.log(requiredErrors);
+  const answerType = (type, data) => {
+    if (type === 'string') {
+      return [
+        {
+          valueString: data,
+        },
+      ];
+    } else if (type === 'boolean') {
+      return [
+        {
+          valueBoolean: data,
+        },
+      ];
+    } else {
+      return `No such type: ${type}`;
+    }
+  };
+
+  const onSubmit = async (data) => {
+    if (!data) getValues({ nest: true });
+    console.log(data);
+    console.log(isRequiredValidation(data));
+    try {
+      const APIsArray = [];
+      const items = data.questionnaire.item.map((i) => {
+        const item = {
+          linkId: i.linkId,
+          text: i.text,
+        };
+        switch (i.linkId) {
+          case '1':
+            item['answer'] = answerType(i.type, data.isInsulationInstruction);
+
+            break;
+          case '2':
+            item['answer'] = answerType(
+              i.type,
+              data.insulationInstruction || '',
+            );
+            break;
+          case '3':
+            item['answer'] = answerType(i.type, data.nursingDetails);
+            break;
+          case '4':
+            item['answer'] = answerType(i.type, data.isPregnancy || '');
+            break;
+          default:
+            break;
+        }
+        return item;
+      });
+      if (data.questionnaireResponseId) {
+        APIsArray.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
+            functionName: 'patchQuestionnaireResponse',
+            questionnaireResponseId: data.questionnaireResponseId,
+            questionnaireResponseParams: {
+              item: items,
+            },
+          }),
+        );
+      } else {
+        APIsArray.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
+            functionName: 'createQuestionnaireResponse',
+            functionParams: {
+              questionnaireResponse: {
+                questionnaire: data.questionnaire.id,
+                status: 'completed',
+                patient: patient.id,
+                encounter: encounter.id,
+                authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                source: patient.id,
+                item: items,
+              },
+            },
+          }),
+        );
+      }
+      const cloneEncounter = { ...encounter };
+      cloneEncounter['examinationCode'] = data.examinationCode;
+      cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
+      cloneEncounter['priority'] = data.isUrgent;
+      await FHIR('Encounter', 'doWork', {
+        functionName: 'updateEncounter',
+        functionParams: {
+          encounterId: encounter.id,
+          encounter: cloneEncounter,
+        },
+      });
+      return APIsArray;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -251,12 +379,9 @@ const MedicalAdmission = ({
           {(patient.gender === 'female' || patient.gender === 'other') && (
             <StyledRadioGroupChoice>
               <RadioGroupChoice
-                register={register}
                 gridLabel={t('Pregnancy')}
                 radioName={'isPregnancy'}
                 listValues={pregnancyRadioList}
-                trueValue={t('Yes')}
-                callBackFunction={pregnancyHandlerRadio}
               />
             </StyledRadioGroupChoice>
           )}
@@ -272,17 +397,12 @@ const MedicalAdmission = ({
             defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
           />
-          <Grid
-            container
-            justify={languageDirection === 'rtl' ? 'flex-end' : 'flex-start'}>
-            <StyledButton
-              color='primary'
-              variant='contained'
-              type='submit'
-              letterSpacing={'0.1'}>
-              {t('Save & Close')}
-            </StyledButton>
-          </Grid>
+          <SaveForm
+            encounter={encounter}
+            mainStatus={'triaged'}
+            onSubmit={onSubmit}
+            validationFunction={isRequiredValidation}
+          />
         </StyledForm>
       </FormContext>
     </React.Fragment>
