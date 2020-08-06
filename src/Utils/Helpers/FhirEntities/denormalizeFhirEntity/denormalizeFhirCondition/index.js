@@ -104,3 +104,5 @@ const denormalizeFhirCondition = (condition) => {
     denormalizedFhirCondition['code'] = code;
   return denormalizedFhirCondition;
 };
+
+export default denormalizeFhirCondition;
