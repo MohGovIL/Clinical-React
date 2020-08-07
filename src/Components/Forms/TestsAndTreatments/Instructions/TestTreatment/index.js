@@ -21,7 +21,7 @@ import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntit
  * @returns UI Field of the main form.
  */
 const TestTreatment = ({ index, item }) => {
-  console.log(`item from testTreatment ${index} - ${JSON.stringify(item)}`);
+  //console.log(`item from testTreatment ${index} - ${JSON.stringify(item)}`);
   const { control, watch, setValue } = useFormContext();
 
   const [
@@ -59,6 +59,7 @@ const TestTreatment = ({ index, item }) => {
         `Instruction[${index}].test_treatment_type`,
         item.test_treatment,
       );
+      setValue(`Instruction[${index}].serviceReqID`, item.serviceReqID);
     })();
   }, []);
 
@@ -66,7 +67,7 @@ const TestTreatment = ({ index, item }) => {
   return collectedTestAndTreatmentsFromFhir &&
     collectedTestAndTreatmentsFromFhir.length > 0 ? (
     <Controller
-      defaultValue={item.test_treatment || ''}
+      defaultValue={item.test_treatment}
       control={control}
       name={`Instruction[${index}].test_treatment`}
       onChange={([event]) => {

@@ -59,7 +59,7 @@ const Fields = ({
   requiredErrors,
   setRequiredErrors,
 }) => {
-  const { control, watch } = useFormContext();
+  const { control, watch, register, setValue } = useFormContext();
   const { fields, insert, prepend, append, remove } = useFieldArray({
     control,
     name: 'Instruction',
@@ -111,17 +111,20 @@ const Fields = ({
       test_treatment_status:
         serviceReq.status === 'active' ? 'not_done' : 'done',
       test_treatment_remark: serviceReq.note,
+      serviceReqID: serviceReq.id,
     };
     return serviceReq;
   };
   const appendInsertData = async ({ serviceReq }) => {
     if (!serviceReq) {
       serviceReq = {};
+      serviceReq.performer_or_requester = '';
       serviceReq.instructionCode = '';
       serviceReq.orderDetailCode = '';
       serviceReq.patientInstruction = '';
       serviceReq.status = 'not_done';
       serviceReq.note = '';
+      serviceReq.serviceReqID = '';
     }
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
@@ -135,6 +138,7 @@ const Fields = ({
         test_treatment_status:
           serviceReq.status === 'active' ? 'not_done' : 'done',
         test_treatment_remark: serviceReq.note,
+        serviceReqID: serviceReq.id,
       });
     } else {
       await append({
@@ -148,6 +152,7 @@ const Fields = ({
         test_treatment_status:
           serviceReq.status === 'active' ? 'not_done' : 'done',
         test_treatment_remark: serviceReq.note,
+        serviceReqID: serviceReq.id,
       });
     }
   };
@@ -175,6 +180,7 @@ const Fields = ({
         instructions: '',
         test_treatment_status: false,
         test_treatment_remark: '',
+        serviceReqID: '',
       });
     } else {
       await append({
@@ -184,6 +190,7 @@ const Fields = ({
         instructions: '',
         test_treatment_status: false,
         test_treatment_remark: '',
+        serviceReqID: '',
       });
     }
     //3)render all the elements to the screen  with watch
@@ -202,6 +209,7 @@ const Fields = ({
       <hr />
       <StyledInstructions id='newRefInstructions'>
         {fields.map((item, index) => {
+          //I am missing the data of the include in order to complete username
           return (
             <div key={item.id}>
               <StyledCardRoot>
@@ -223,6 +231,19 @@ const Fields = ({
                 </StyledCardDetails>
 
                 <Grid container spacing={4}>
+                  <Controller
+                    hidden
+                    name={`Instruction[${index}].serviceReqID`}
+                    defaultValue={item.serviceReqID}
+                    /*onChange={([event]) => {
+                      setValue(
+                        `Instruction[${index}].serviceReqID`,
+                        event.target.value,
+                      );
+                      return event.target.value;
+                    }}*/
+                    as={<input />}
+                  />
                   <Grid item xs={3}>
                     <TestTreatment index={index} item={item} />
                   </Grid>

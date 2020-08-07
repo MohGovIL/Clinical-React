@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
  * @returns UI Field of the main form.
  */
 const TestTreatmentType = ({ item, index, requiredErrors }) => {
-  const { watch, control, getValues } = useFormContext();
+  const { watch, control, getValues, setValue } = useFormContext();
   const { t } = useTranslation();
 
   const { Instruction } = getValues({ nest: true });
@@ -34,7 +34,7 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
     (Instruction &&
       Instruction[index] &&
       Instruction[index].test_treatment_type) ||
-    item.test_treatment;
+    item.test_treatment_type;
 
   const [
     currentTestTreatmentsInstructionsDetails,
@@ -42,6 +42,7 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
   ] = useState([]);
   const [currentTitle, setCurrentTitle] = useState('');
   useEffect(() => {
+    if (!test_treatment_type) return;
     (async () => {
       if (!test_treatment) return;
       let listsDetails = [];
@@ -72,49 +73,49 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
       setCurrentTestTreatmentsInstructionsDetails(detailsObj);
       setCurrentTitle(listsDetailsAfterAwait[0].data.title);
     })();
-  }, [test_treatment]);
+  }, [test_treatment, test_treatment_type]);
 
-  return (
+  return test_treatment &&
+    test_treatment !== '' &&
     currentTestTreatmentsInstructionsDetails &&
-    currentTestTreatmentsInstructionsDetails.length > 0 && (
-      <Controller
-        onChange={([event]) => {
-          requiredErrors[index].test_treatment_type = false;
-          watch(`Instruction`);
-          return event.target.value;
-        }}
-        name={`Instruction[${index}].test_treatment_type`}
-        control={control}
-        defaultValue={item.test_treatment_type || ''} //needed unless you want a uncontrolled controlled issue on your hands
-        error={
-          requiredErrors[index] &&
-          requiredErrors[index].test_treatment_type &&
-          requiredErrors[index].test_treatment_type.length
-            ? true
-            : false
-        }
-        helperText={
-          requiredErrors[index] && requiredErrors[index].test_treatment_type
-            ? requiredErrors[index].test_treatment_type
-            : ''
-        }
-        as={
-          <CustomizedTextField
-            iconColor='#1976d2'
-            width='100%'
-            select
-            label={t(currentTitle)}>
-            {currentTestTreatmentsInstructionsDetails.map((value, index) => {
-              return (
-                <MenuItem key={index} value={value.code}>
-                  {t(value.title)}
-                </MenuItem>
-              );
-            })}
-          </CustomizedTextField>
-        }
-      />
-    )
-  );
+    currentTestTreatmentsInstructionsDetails.length > 0 ? (
+    <Controller
+      onChange={([event]) => {
+        requiredErrors[index].test_treatment_type = false;
+        watch(`Instruction`);
+        return event.target.value;
+      }}
+      name={`Instruction[${index}].test_treatment_type`}
+      control={control}
+      defaultValue={test_treatment_type} //needed unless you want a uncontrolled controlled issue on your hands
+      error={
+        requiredErrors[index] &&
+        requiredErrors[index].test_treatment_type &&
+        requiredErrors[index].test_treatment_type.length
+          ? true
+          : false
+      }
+      helperText={
+        requiredErrors[index] && requiredErrors[index].test_treatment_type
+          ? requiredErrors[index].test_treatment_type
+          : ''
+      }
+      as={
+        <CustomizedTextField
+          iconColor='#1976d2'
+          width='100%'
+          select
+          label={t(currentTitle)}>
+          {currentTestTreatmentsInstructionsDetails.map((value, index) => {
+            return (
+              <MenuItem key={index} value={value.code}>
+                {t(value.title)}
+              </MenuItem>
+            );
+          })}
+        </CustomizedTextField>
+      }
+    />
+  ) : null;
 };
 export default TestTreatmentType;

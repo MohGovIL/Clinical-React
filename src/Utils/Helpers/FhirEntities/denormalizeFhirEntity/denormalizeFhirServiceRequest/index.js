@@ -5,13 +5,15 @@
  * remark not yet completed since never tested or used.
  */
 
-const denormalizeFhirServiceRequest = (
+const denormalizeFhirServiceRequest = ({
   serviceRequest,
   valueSetRequests,
   valueSetDetails,
-) => {
+}) => {
+  if (!serviceRequest) return;
+
   const denormalizedServiceRequest = {
-    id: serviceRequest.id,
+    id: serviceRequest.serviceReqID,
     resourceType: 'ServiceRequest',
     intent: 'order',
     status: serviceRequest.status === 'not_done' ? 'active' : 'completed',
@@ -26,30 +28,7 @@ const denormalizeFhirServiceRequest = (
         text: 'Emergency Medicine',
       },
     ],
-    code: {
-      coding: [
-        {
-          system: `http://clinikal/valueset/${
-            valueSetRequests[serviceRequest.categoryCode]
-          }`,
-          code: serviceRequest.categoryCode,
-        },
-      ],
-      text: valueSetRequests[serviceRequest.categoryCode],
-    },
-    orderDetail: [
-      {
-        coding: [
-          {
-            system: `http://clinikal/valueset/${
-              valueSetRequests[serviceRequest.instructionCode]
-            }`,
-            code: serviceRequest.instructionCode,
-          },
-        ],
-        text: valueSetDetails[serviceRequest.instructionCode],
-      },
-    ],
+
     subject: {
       reference: `Patient/${serviceRequest.patient}`,
     },
@@ -87,6 +66,33 @@ const denormalizeFhirServiceRequest = (
     ],
     patientInstruction: serviceRequest.patientInstruction,
   };
+
+  if (valueSetRequests) {
+    denormalizedServiceRequest.code = {
+      coding: [
+        {
+          system: `http://clinikal/valueset/${serviceRequest.test_treatment}`,
+          code: serviceRequest.test_treatment,
+        },
+      ],
+      text: valueSetRequests[serviceRequest.test_treatment],
+    };
+  }
+
+  if (valueSetDetails) {
+    denormalizedServiceRequest.orderDetail = [
+      {
+        coding: [
+          {
+            system: `http://clinikal/valueset/details_${serviceRequest.test_treatment}`,
+            code: serviceRequest.test_treatment_type,
+          },
+        ],
+        text: valueSetDetails[serviceRequest.test_treatment_type],
+      },
+    ];
+  }
+
   return denormalizedServiceRequest;
 };
 

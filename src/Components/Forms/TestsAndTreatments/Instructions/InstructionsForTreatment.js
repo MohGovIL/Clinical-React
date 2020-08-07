@@ -14,12 +14,15 @@ import { useTranslation } from 'react-i18next';
 import SaveTestAndTreatments from './SaveTestAndTreatments';
 import Grid from '@material-ui/core/Grid';
 import { FHIR } from '../../../../Utils/Services/FHIR';
+import denormalizeFhirServiceRequest from '../../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
+import { getValueSetLists } from '../../../../Utils/Helpers/getValueSetArray';
 
 /**
  *
  * @param encounter
  * @returns   UI main form.
  */
+
 const InstructionsForTreatment = ({
   encounter,
   patient,
@@ -33,11 +36,56 @@ const InstructionsForTreatment = ({
       Instruction: [],
     },
   });
-  const { handleSubmit, setValue } = methods;
+  const { handleSubmit, setValue, watch, getValues } = methods;
+  const saveServiceRequestData = async (data) => {
+    const test_and_treatments_list = await getValueSetLists(
+      ['tests_and_treatments'],
+      true,
+    );
+    data.Instruction.map(async (value, index) => {
+      const { Instruction } = getValues({ nest: true });
+
+      const test_treatment_type_list = await getValueSetLists(
+        [`details_${value.test_treatment}`],
+        true,
+      );
+      const temp = denormalizeFhirServiceRequest({
+        serviceRequest: value,
+        valueSetRequests: test_and_treatments_list,
+        valueSetDetails: test_treatment_type_list,
+      });
+
+      console.log(`save this - ${JSON.stringify(temp)}`);
+    });
+
+    //console.log(test_and_treatments_list);
+    /*const test_and_treatments_list = await getValueSetLists([
+      'tests_and_treatments',
+    ]);
+    data.Instruction.map(async (value, index) => {
+      console.log(`index:${index} , value:${value}`);
+
+      let test_treatment_type_list = null;
+      if (value.test_treatment_type) {
+        test_treatment_type_list = await getValueSetLists([
+          value.test_treatment_type,
+        ]);
+      }
+
+      console.log(
+        denormalizeFhirServiceRequest({
+          serviceRequest: value,
+          valueSetRequest: test_and_treatments_list['tests_and_treatments'],
+          valueSetDetails: test_treatment_type_list[0],
+        }),
+      );
+    });*/
+  };
   const onSubmit = (data) => {
-    console.log('data', JSON.stringify(data));
-    console.log(isRequiredValidation(data));
+    //  console.log('data', JSON.stringify(data));
+    // console.log(isRequiredValidation(data));
     saveIndicatorsOnSubmit();
+    saveServiceRequestData(data);
   };
   const [defaultContext, setDefaultContext] = useState('');
   const [serviceRequests, setServiceRequests] = useState('');

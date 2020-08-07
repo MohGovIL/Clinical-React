@@ -17,8 +17,8 @@ const SaveTestAndTreatents = ({ permission }) => {
 
   useEffect(() => {
     register({ name: 'decision' });
-    register({ name: 'evacuationWay' });
-    return () => unregister(['decision', 'evacuationWay']);
+
+    return () => unregister(['decision']);
   }, [register, unregister]);
   return (
     <>
