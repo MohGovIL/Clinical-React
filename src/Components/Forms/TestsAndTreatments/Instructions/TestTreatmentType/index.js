@@ -74,7 +74,11 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
       setCurrentTitle(listsDetailsAfterAwait[0].data.title);
     })();
   }, [test_treatment, test_treatment_type]);
-
+  useEffect(() => {
+    return () => {
+      console.log('cleaned up test and treatments type');
+    };
+  }, []);
   return test_treatment &&
     test_treatment !== '' &&
     currentTestTreatmentsInstructionsDetails &&
