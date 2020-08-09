@@ -351,6 +351,8 @@ const MedicalAdmission = ({
       //     encounter: cloneEncounter,
       //   },
       // });
+
+      //Creating new conditions for sensitivity
       if (data.background_diseases === 'There are diseases') {
         data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
           APIsArray.push(
