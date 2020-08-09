@@ -44,19 +44,11 @@ export const VirtualizedListboxComponent = React.forwardRef(
     const itemCount = itemData.length;
     const itemSize = smUp ? 36 : 48;
 
-    const getChildSize = (child) => {
-      if (React.isValidElement(child) && child.type === ListSubheader) {
-        return 48;
-      }
-
-      return itemSize;
-    };
-
     const getHeight = () => {
       if (itemCount > 8) {
         return 8 * itemSize;
       }
-      return itemData.map(getChildSize).reduce((a, b) => a + b, 0);
+      return itemData.map(itemSize).reduce((a, b) => a + b, 0);
     };
 
     const gridRef = useResetCache(itemCount);
@@ -71,7 +63,7 @@ export const VirtualizedListboxComponent = React.forwardRef(
             ref={gridRef}
             outerElementType={OuterElementType}
             innerElementType={InnerElementType}
-            itemSize={(index) => getChildSize(itemData[index])}
+            itemSize={() => itemSize}
             overscanCount={5}
             itemCount={itemCount}>
             {renderRow}
