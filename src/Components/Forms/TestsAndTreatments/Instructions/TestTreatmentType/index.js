@@ -73,12 +73,8 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
       setCurrentTestTreatmentsInstructionsDetails(detailsObj);
       setCurrentTitle(listsDetailsAfterAwait[0].data.title);
     })();
-  }, [test_treatment, test_treatment_type]);
-  useEffect(() => {
-    return () => {
-      console.log('cleaned up test and treatments type');
-    };
-  }, []);
+  }, [test_treatment]);
+
   return test_treatment &&
     test_treatment !== '' &&
     currentTestTreatmentsInstructionsDetails &&
@@ -91,7 +87,7 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
       }}
       name={`Instruction[${index}].test_treatment_type`}
       control={control}
-      defaultValue={test_treatment_type} //needed unless you want a uncontrolled controlled issue on your hands
+      defaultValue={item.test_treatment_type} //needed unless you want a uncontrolled controlled issue on your hands
       error={
         requiredErrors[index] &&
         requiredErrors[index].test_treatment_type &&

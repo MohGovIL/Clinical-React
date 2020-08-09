@@ -55,10 +55,7 @@ const TestTreatment = ({ index, item }) => {
       );
 
       setCollectedTestAndTreatmentsFromFhir(testAndTreatmentObj);
-      setValue(
-        `Instruction[${index}].test_treatment_type`,
-        item.test_treatment,
-      );
+      setValue(`Instruction[${index}].test_treatment`, item.test_treatment);
       setValue(`Instruction[${index}].serviceReqID`, item.serviceReqID);
     })();
   }, []);
@@ -71,7 +68,7 @@ const TestTreatment = ({ index, item }) => {
       control={control}
       name={`Instruction[${index}].test_treatment`}
       onChange={([event]) => {
-        setValue(`Instruction[${index}].test_treatment_type`, '');
+        setValue(`Instruction[${index}].test_treatment`, event.target.value);
         watch(`Instruction`);
         return event.target.value;
       }}
