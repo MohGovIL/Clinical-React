@@ -36,6 +36,10 @@ const ServiceRequests = {
     let category = params.category;
     let sort = params._sort;
     let include = params._include;
+    if (Array.isArray(params._include)) {
+      include = params._include.join('&include=');
+    }
+
     return CRUDOperations(
       'search',
       `${params.url}?${patient ? `patient=${patient}` : ''}${

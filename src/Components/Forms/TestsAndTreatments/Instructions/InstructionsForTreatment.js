@@ -255,8 +255,11 @@ const InstructionsForTreatment = ({
             functionParams: {
               patient: patient.id,
               encounter: encounter.id,
-              _sort: '-authoredOn',
-              _include: 'ServiceRequest:performer',
+              _sort: '-authored',
+              _include: [
+                'ServiceRequest:requester',
+                'ServiceRequest:performer',
+              ],
             },
           },
         );
