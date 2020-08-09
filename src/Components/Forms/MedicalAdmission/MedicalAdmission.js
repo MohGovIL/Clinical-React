@@ -19,6 +19,7 @@ import { CheckBox, CheckBoxOutlineBlankOutlined } from '@material-ui/icons';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 import moment from 'moment';
 import SaveForm from '../GeneralComponents/SaveForm';
+import { store } from 'index';
 const MedicalAdmission = ({
   patient,
   encounter,
@@ -281,74 +282,95 @@ const MedicalAdmission = ({
     if (!data) getValues({ nest: true });
     console.log(data);
     console.log(isRequiredValidation(data));
+    // return;
     try {
       const APIsArray = [];
-      const items = data.questionnaire.item.map((i) => {
-        const item = {
-          linkId: i.linkId,
-          text: i.text,
-        };
-        switch (i.linkId) {
-          case '1':
-            item['answer'] = answerType(i.type, data.isInsulationInstruction);
+      // const items = data.questionnaire.item.map((i) => {
+      //   const item = {
+      //     linkId: i.linkId,
+      //     text: i.text,
+      //   };
+      //   switch (i.linkId) {
+      //     case '1':
+      //       item['answer'] = answerType(i.type, data.isInsulationInstruction);
 
-            break;
-          case '2':
-            item['answer'] = answerType(
-              i.type,
-              data.insulationInstruction || '',
-            );
-            break;
-          case '3':
-            item['answer'] = answerType(i.type, data.nursingDetails);
-            break;
-          case '4':
-            item['answer'] = answerType(i.type, data.isPregnancy || '');
-            break;
-          default:
-            break;
-        }
-        return item;
-      });
-      if (data.questionnaireResponseId) {
-        APIsArray.push(
-          FHIR('QuestionnaireResponse', 'doWork', {
-            functionName: 'patchQuestionnaireResponse',
-            questionnaireResponseId: data.questionnaireResponseId,
-            questionnaireResponseParams: {
-              item: items,
-            },
-          }),
-        );
-      } else {
-        APIsArray.push(
-          FHIR('QuestionnaireResponse', 'doWork', {
-            functionName: 'createQuestionnaireResponse',
-            functionParams: {
-              questionnaireResponse: {
-                questionnaire: data.questionnaire.id,
-                status: 'completed',
-                patient: patient.id,
-                encounter: encounter.id,
-                authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-                source: patient.id,
-                item: items,
+      //       break;
+      //     case '2':
+      //       item['answer'] = answerType(
+      //         i.type,
+      //         data.insulationInstruction || '',
+      //       );
+      //       break;
+      //     case '3':
+      //       item['answer'] = answerType(i.type, data.nursingDetails);
+      //       break;
+      //     case '4':
+      //       item['answer'] = answerType(i.type, data.isPregnancy || '');
+      //       break;
+      //     default:
+      //       break;
+      //   }
+      //   return item;
+      // });
+      // if (data.questionnaireResponseId) {
+      //   APIsArray.push(
+      //     FHIR('QuestionnaireResponse', 'doWork', {
+      //       functionName: 'patchQuestionnaireResponse',
+      //       questionnaireResponseId: data.questionnaireResponseId,
+      //       questionnaireResponseParams: {
+      //         item: items,
+      //       },
+      //     }),
+      //   );
+      // } else {
+      //   APIsArray.push(
+      //     FHIR('QuestionnaireResponse', 'doWork', {
+      //       functionName: 'createQuestionnaireResponse',
+      //       functionParams: {
+      //         questionnaireResponse: {
+      //           questionnaire: data.questionnaire.id,
+      //           status: 'completed',
+      //           patient: patient.id,
+      //           encounter: encounter.id,
+      //           authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+      //           source: patient.id,
+      //           item: items,
+      //         },
+      //       },
+      //     }),
+      //   );
+      // }
+      // const cloneEncounter = { ...encounter };
+      // cloneEncounter['examinationCode'] = data.examinationCode;
+      // cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
+      // cloneEncounter['priority'] = data.isUrgent;
+      // await FHIR('Encounter', 'doWork', {
+      //   functionName: 'updateEncounter',
+      //   functionParams: {
+      //     encounterId: encounter.id,
+      //     encounter: cloneEncounter,
+      //   },
+      // });
+      if (data.background_diseases === 'There are diseases') {
+        data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
+          APIsArray.push(
+            FHIR('Condition', 'doWork', {
+              functionParams: {
+                condition: {
+                  categorySystem:
+                    'http://clinikal/condition/category/medical_problem',
+                  codeSystem: 'http://clinikal/diagnosis/type/MOH_ICD10',
+                  codeCode: backgroundDisease,
+                  patient: patient.id,
+                  recorder: store.getState().login.userID,
+                  clinicalStatus: 'active',
+                },
               },
-            },
-          }),
-        );
+              functionName: 'createCondition',
+            }),
+          );
+        });
       }
-      const cloneEncounter = { ...encounter };
-      cloneEncounter['examinationCode'] = data.examinationCode;
-      cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
-      cloneEncounter['priority'] = data.isUrgent;
-      await FHIR('Encounter', 'doWork', {
-        functionName: 'updateEncounter',
-        functionParams: {
-          encounterId: encounter.id,
-          encounter: cloneEncounter,
-        },
-      });
       return APIsArray;
     } catch (error) {
       console.log(error);

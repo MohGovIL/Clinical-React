@@ -98,7 +98,7 @@ const denormalizeFhirCondition = (condition) => {
     }
   }
 
-  if (Object.keys(stage[0].length)) denormalizedFhirCondition['stage'] = stage;
+  if (Object.keys(stage[0]).length) denormalizedFhirCondition['stage'] = stage;
 
   if (Object.keys(code.coding[0]).length)
     denormalizedFhirCondition['code'] = code;
