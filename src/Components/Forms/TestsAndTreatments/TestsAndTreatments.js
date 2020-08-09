@@ -91,7 +91,7 @@ const TestsAndTreatments = ({
     (state, newState) => ({ ...state, ...newState }),
     variantNewState,
   );
-  function checkWhaterToSaveIndicators(indicators) {
+  function checkWheterToSaveIndicators(indicators) {
     if (!indicators) return;
 
     let saveThis = false;
@@ -102,7 +102,7 @@ const TestsAndTreatments = ({
   }
   const saveIndicatorsOnSubmit = async () => {
     let FHIRAsyncCalls = [];
-    if (checkWhaterToSaveIndicators(constantIndicators)) {
+    if (checkWheterToSaveIndicators(constantIndicators)) {
       const denormelizedConstantObservation = denormalizeFhirObservation({
         component: constantIndicators,
         status: 'amended',
@@ -130,7 +130,7 @@ const TestsAndTreatments = ({
       );
     }
 
-    if (checkWhaterToSaveIndicators(variantIndicatorsNew[0])) {
+    if (checkWheterToSaveIndicators(variantIndicatorsNew[0])) {
       const explodeMultiIndicators = explodeMultipleIndicators(
         variantIndicatorsNew[0],
         'Systolic blood pressure/Diastolic blood pressure',
@@ -165,9 +165,6 @@ const TestsAndTreatments = ({
     }
     if (FHIRAsyncCalls.length > 0) {
       const fhirClinikalCallsAfterAwait = await Promise.all(FHIRAsyncCalls);
-      /*console.log(JSON.stringify(fhirClinikalCallsAfterAwait[0]));
-      console.log(JSON.stringify(fhirClinikalCallsAfterAwait[1]));
-      setVariantIndicatorsNew();*/
       setSaveFormClicked(saveFormClicked + 1);
     }
   };

@@ -32,22 +32,37 @@ const normalizeFhirServiceRequest = (ServiceRequest) => {
   const id = ServiceRequest.id;
   const categoryCode = ServiceRequest.category[0].coding['code'];
   const categorySystem = ServiceRequest.category[0].coding['system'];
-  const encounter = ServiceRequest.encounter.reference.split('/')[1];
-  const reasonCode = ServiceRequest.reasonCode[0].coding['code'];
-  const patient = ServiceRequest.subject.reference.split('/')[1];
-  const instructionCode = ServiceRequest.code.coding[0].code;
-  const instructionCodeSystem = ServiceRequest.code.coding[0].system;
-  const orderDetailCode = ServiceRequest.orderDetail[0].coding[0].code;
-  const orderDetailSystem = ServiceRequest.orderDetail[0].coding[0].system;
+  const encounter =
+    ServiceRequest.encounter &&
+    ServiceRequest.encounter.reference.split('/')[1];
+  const reasonCode =
+    ServiceRequest.reasonCode && ServiceRequest.reasonCode[0].coding['code'];
+  const patient =
+    ServiceRequest.subject && ServiceRequest.subject.reference.split('/')[1];
+  const instructionCode =
+    ServiceRequest.code && ServiceRequest.code.coding[0].code;
+  const instructionCodeSystem =
+    ServiceRequest.code && ServiceRequest.code.coding[0].system;
+  const orderDetailCode =
+    ServiceRequest.orderDetail && ServiceRequest.orderDetail[0].coding[0].code;
+  const orderDetailSystem =
+    ServiceRequest.orderDetail &&
+    ServiceRequest.orderDetail[0].coding[0].system;
   const patientInstruction = ServiceRequest.patientInstruction;
-  const requester = ServiceRequest.requester.reference.split('/')[1];
+  const requester =
+    ServiceRequest.requester &&
+    ServiceRequest.requester.reference.split('/')[1];
   const authoredOn = ServiceRequest.authoredOn;
   const status = ServiceRequest.status;
   const intent = ServiceRequest.intent;
   const note = ServiceRequest.note[0].text;
-  const performer = ServiceRequest.performer[0].reference.split('/')[1];
+  const performer =
+    ServiceRequest.performer &&
+    ServiceRequest.performer[0].reference.split('/')[1];
   const occurrence = ServiceRequest.occurrenceDateTime;
-  const reasonReferenceDocId = ServiceRequest.reasonReference[0].reference;
+  const reasonReferenceDocId =
+    ServiceRequest.reasonReference &&
+    ServiceRequest.reasonReference[0].reference;
 
   return {
     id: id,

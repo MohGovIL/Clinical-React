@@ -42,7 +42,6 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
   ] = useState([]);
   const [currentTitle, setCurrentTitle] = useState('');
   useEffect(() => {
-    if (!test_treatment_type) return;
     (async () => {
       if (!test_treatment) return;
       let listsDetails = [];

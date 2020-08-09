@@ -16,6 +16,7 @@ import Grid from '@material-ui/core/Grid';
 import { FHIR } from '../../../../Utils/Services/FHIR';
 import denormalizeFhirServiceRequest from '../../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
 import { getValueSetLists } from '../../../../Utils/Helpers/getValueSetArray';
+import moment from 'moment';
 
 /**
  *
@@ -29,6 +30,7 @@ const InstructionsForTreatment = ({
   permission,
   setSaveFunction,
   saveIndicatorsOnSubmit,
+  currentUser,
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -49,13 +51,50 @@ const InstructionsForTreatment = ({
         [`details_${value.test_treatment}`],
         true,
       );
-      const temp = denormalizeFhirServiceRequest({
-        serviceRequest: value,
+      const serviceRequest = {
+        id: value.serviceReqID,
+        encounter: encounter.id,
+        patient: patient.id,
+        reasonCode: encounter.examinationCode,
+        reasonReferenceDocId: null, //EM-84
+        note: value.test_treatment_remark,
+        patientInstruction: value.instructions,
+        serviceReqID: value.serviceReqID,
+        status: value.test_treatment_status,
+        test_treatment: value.test_treatment,
+        test_treatment_type: value.test_treatment_type,
+      };
+
+      if (value.test_treatment_status === 'done') {
+        serviceRequest.occurrence = moment()
+          .utc()
+          .format('YYYY-MM-DDTHH:mm:ss[Z]');
+        serviceRequest.practitioner = currentUser.id;
+      }
+
+      if (value.serviceReqID !== '') {
+        serviceRequest.authoredOn = moment()
+          .utc()
+          .format('YYYY-MM-DDTHH:mm:ss[Z]');
+        serviceRequest.requester = currentUser.id;
+      }
+
+      const serviceRequestDataToSave = denormalizeFhirServiceRequest({
+        serviceRequest: serviceRequest,
         valueSetRequests: test_and_treatments_list,
         valueSetDetails: test_treatment_type_list,
       });
 
-      console.log(`save this - ${JSON.stringify(temp)}`);
+      const savedServiceRequest = await FHIR('ServiceRequests', 'doWork', {
+        functionName: serviceRequestDataToSave.id
+          ? 'updateServiceRequest'
+          : 'createNewServiceRequest',
+        functionParams: {
+          id: serviceRequestDataToSave.id,
+          data: serviceRequestDataToSave,
+        },
+      });
+      console.log(`save this - ${JSON.stringify(serviceRequestDataToSave)}`);
     });
 
     //console.log(test_and_treatments_list);
@@ -216,7 +255,7 @@ const InstructionsForTreatment = ({
             functionParams: {
               patient: patient.id,
               encounter: encounter.id,
-              /* _sort: '-issued',*/
+              _sort: '-authoredOn',
               _include: 'ServiceRequest:performer',
             },
           },

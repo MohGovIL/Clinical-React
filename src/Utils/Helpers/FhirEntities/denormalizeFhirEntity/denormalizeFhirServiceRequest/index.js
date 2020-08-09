@@ -35,25 +35,7 @@ const denormalizeFhirServiceRequest = ({
     encounter: {
       reference: `Encounter/${serviceRequest.encounter}`,
     },
-    occurrenceDateTime: serviceRequest.occurrence,
-    authoredOn: serviceRequest.authoredOn,
-    requester: {
-      reference: `Practitioner/${serviceRequest.requester}`,
-    },
-    performer: [
-      {
-        reference: `Practitioner/${serviceRequest.practitioner}`,
-      },
-    ],
-    reasonCode: [
-      {
-        coding: [
-          {
-            code: serviceRequest.reasonCode,
-          },
-        ],
-      },
-    ],
+
     reasonReference: [
       {
         reference: `DocumentReference/${serviceRequest.reasonReferenceDocId}`,
@@ -92,6 +74,33 @@ const denormalizeFhirServiceRequest = ({
       },
     ];
   }
+
+  if (serviceRequest.reasonCode && serviceRequest.reasonCode.length > 0) {
+    const reasonCodes = [];
+    serviceRequest.reasonCode.map((value, index) => {
+      reasonCodes.push({
+        coding: [
+          {
+            code: value,
+          },
+        ],
+      });
+    });
+    denormalizedServiceRequest.reasonCode = reasonCodes;
+  }
+
+  if (serviceRequest.occurrence)
+    denormalizedServiceRequest.occurrenceDateTime = serviceRequest.occurrence;
+  if (serviceRequest.authoredOn)
+    denormalizedServiceRequest.authoredOn = serviceRequest.authoredOn;
+  if (serviceRequest.requester)
+    denormalizedServiceRequest.reference = {
+      reference: `Practitioner/${serviceRequest.requester}`,
+    };
+  if (serviceRequest.performer)
+    denormalizedServiceRequest.performer = [
+      { reference: `Practitioner/${serviceRequest.practitioner}` },
+    ];
 
   return denormalizedServiceRequest;
 };
