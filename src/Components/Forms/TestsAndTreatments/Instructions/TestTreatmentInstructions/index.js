@@ -25,6 +25,12 @@ const TestTreatmentInstructions = ({ index, item, handlePopUpProps }) => {
 
   const { control, watch, getValues, setValue } = useFormContext();
   const { Instruction } = getValues({ nest: true });
+  const test_treatment =
+    (Instruction && Instruction[index] && Instruction[index].test_treatment) ||
+    item.test_treatment;
+  const instructions =
+    (Instruction && Instruction[index] && Instruction[index].instructions) ||
+    item.instructions;
   const callBack = (data, name) => {
     setValue(name, data);
   };
@@ -63,24 +69,18 @@ const TestTreatmentInstructions = ({ index, item, handlePopUpProps }) => {
       <Grid item xs={2}>
         <StyledSelectTemplateButton
           margin={'30px 30px'}
-          disabled={
-            Instruction &&
-            Instruction[index] &&
-            Instruction[index].test_treatment &&
-            Instruction[index].test_treatment !== ''
-              ? false
-              : true
-          }
-          onClick={() =>
+          disabled={test_treatment ? false : true}
+          onClick={() => {
+            console.log(test_treatment);
             handlePopUpProps(
               t('X-Ray recommendations'),
-              `templates_${Instruction[index].test_treatment}`, //to change
+              `templates_${test_treatment}`, //to change
               'tests_and_treatments', //to change
               callBack,
               `Instruction[${index}].instructions`,
-              Instruction[index] && Instruction[index].instructions,
-            )
-          }>
+              instructions,
+            );
+          }}>
           {t('Select template')}
         </StyledSelectTemplateButton>
       </Grid>
