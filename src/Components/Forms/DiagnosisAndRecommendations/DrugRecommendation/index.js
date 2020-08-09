@@ -26,7 +26,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     setPopUpProps,
     getValues,
   } = useFormContext();
-  const { insert, remove, fields } = useFieldArray({
+  const { insert, remove, fields, append } = useFieldArray({
     control,
     name: 'drugRecommendation',
   });
