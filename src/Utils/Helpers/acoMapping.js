@@ -17,6 +17,11 @@ const getUIACOMapping = {
   search_patient: 'SearchPatient',
   appointments_and_encounters: 'AppointmentsAndEncounters',
   summary_letter: `SummaryLetter`,
+  waiting_for_nurse: 'PatientTrackingWaitingForNurse',
+  waiting_for_doctor: 'PatientTrackingWaitingForDoctor',
+  waiting_for_xray: 'PatientTrackingWaitingForXray',
+  waiting_for_release: 'PatientTrackingWaitingForRelease',
+  finished_visit: 'PatientTrackingFinishedVisit',
 };
 
 export default getUIACOMapping;

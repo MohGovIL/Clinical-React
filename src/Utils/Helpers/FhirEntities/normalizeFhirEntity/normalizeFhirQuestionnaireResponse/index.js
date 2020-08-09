@@ -40,7 +40,6 @@ const normalizeFhirQuestionnaireResponse = (questionnaireResponse) => {
   if (questionnaireResponse.item.length) {
     item = [...questionnaireResponse.item];
   }
-
   return {
     id: questionnaireResponse.id || id,
     questionnaire,

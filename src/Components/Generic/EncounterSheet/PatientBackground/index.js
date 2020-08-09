@@ -36,6 +36,7 @@ const PatientBackground = ({
         date: currentDate,
         patient: patient.id,
         prev: true,
+        equal: true,
       },
     });
     if (

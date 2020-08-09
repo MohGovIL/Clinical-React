@@ -79,13 +79,19 @@ const denormalizeFhirEncounter = (encounter) => {
         case 'extensionReasonCodeDetails':
           extensions.push({
             valueString: encounter[encounterKey],
-            url: 'clinikal/extensions/reasonCodesDetail',
+            url: 'http://clinikal/extensions/reasonCodesDetail',
           });
           break;
         case 'extensionArrivalWay':
           extensions.push({
             valueString: encounter[encounterKey],
-            url: 'clinikal/extensions/arrivalWay',
+            url: 'http://clinikal/extensions/arrivalWay',
+          });
+          break;
+        case 'extensionSecondaryStatus':
+          extensions.push({
+            valueString: encounter[encounterKey],
+            url: 'http://clinikal/extensions/encounter/secondaryStatus',
           });
           break;
         default:
