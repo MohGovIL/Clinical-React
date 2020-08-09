@@ -44,7 +44,7 @@ const ChronicMedication = ({
       try {
         const sensitivitiesResponse = await getValueSet('drugs_list');
         if (active) {
-          const myOptions = [{ code: '1', display: 'sadfadsasd' }];
+          // const myOptions = [{ code: '1', display: 'sadfadsasd' }];
           const options = [];
           const servicesTypeObj = {};
           const allReasonsCode = await Promise.all(
@@ -58,8 +58,8 @@ const ChronicMedication = ({
               options.push(optionObj);
             }),
           );
-          // setChronicMedicationList(options);
-          setChronicMedicationList(myOptions);
+          setChronicMedicationList(options);
+          // setChronicMedicationList(myOptions);
         }
       } catch (err) {
         console.log(err);
