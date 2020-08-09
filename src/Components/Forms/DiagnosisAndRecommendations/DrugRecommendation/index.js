@@ -94,14 +94,14 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
       FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',
         functionParams: {
-          id: 'drug_intervals',
+          id: 'drug_interval',
         },
       }),
     ];
     try {
       const drugsData = await Promise.all(APIsArray);
       // const drugList = [{ code: '123', display: 'medicine' }];
-      const drugIntervals = [{ code: '1234', display: '10minutes' }];
+      // const drugIntervals = [{ code: '1234', display: '10minutes' }];
       setDrugsData({
         // drugList,
         drugList:
@@ -116,11 +116,10 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
           drugsData[2].status === 200
             ? drugsData[2].data.expansion.contains
             : [],
-        drugIntervals,
-        // drugIntervals:
-        //   drugsData[3].status === 200
-        //     ? drugsData[3].data.expansion.contains
-        //     : [],
+        drugIntervals:
+          drugsData[3].status === 200
+            ? drugsData[3].data.expansion.contains
+            : [],
       });
     } catch (error) {
       console.log(error);
