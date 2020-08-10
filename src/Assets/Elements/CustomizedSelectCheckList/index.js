@@ -6,6 +6,7 @@ import {
   Grid,
   InputAdornment,
   ListItemText,
+  Typography,
 } from '@material-ui/core';
 import {
   CheckBox,
@@ -15,6 +16,7 @@ import {
   ExpandMore,
 } from '@material-ui/icons';
 import ListboxComponent from 'Components/Generic/PatientAdmission/PatientDetailsBlock/ListboxComponent';
+import VirtualizedListBoxWithConfirmButton from 'Assets/Elements/AutoComplete/VirtualizedListBoxWithConfirmButton';
 import CustomizedTextField from '../CustomizedTextField';
 import { useTranslation } from 'react-i18next';
 import matchSorter from 'match-sorter';
@@ -31,6 +33,7 @@ const CustomizedSelectCheckList = ({
   valueSetCode,
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
+  virtual,
 }) => {
   const { t } = useTranslation();
   const { requiredErrors, setValue } = useFormContext();
@@ -101,17 +104,20 @@ const CustomizedSelectCheckList = ({
           </Grid>
           {option.reasonCode && option.reasonCode.code && (
             <Grid item xs={3}>
-              <ListItemText>{option.reasonCode.code}</ListItemText>
+              <Typography noWrap>{option.reasonCode.code}</Typography>
+              {/* <ListItemText>{option.reasonCode.code}</ListItemText> */}
             </Grid>
           )}
           {option.serviceType && option.serviceType.name && (
             <Grid item xs={3}>
-              <ListItemText primary={t(option.serviceType.name)} />
+              <Typography noWrap>{option.serviceType.name}</Typography>
+              {/* <ListItemText primary={t(option.serviceType.name)} /> */}
             </Grid>
           )}
           {option.reasonCode && option.reasonCode.name && (
             <Grid item xs={3}>
-              <ListItemText primary={t(option.reasonCode.name)} />
+              <Typography noWrap>{option.reasonCode.name}</Typography>
+              {/* <ListItemText primary={t(option.reasonCode.name)} /> */}
             </Grid>
           )}
         </Grid>
@@ -149,7 +155,9 @@ const CustomizedSelectCheckList = ({
             ? defaultRenderOptionFunction(option, state)
             : defaultRenderOption(option, state)
         }
-        ListboxComponent={ListboxComponent}
+        ListboxComponent={
+          virtual ? VirtualizedListBoxWithConfirmButton : ListboxComponent
+        }
         ListboxProps={{
           pendingValue: pendingValue,
           setSelectedServicesType: setSelectedServicesType,

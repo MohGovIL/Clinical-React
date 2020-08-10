@@ -60,11 +60,6 @@ const MedicalAdmission = ({
   //   medication: '',
   // });
 
-  const [
-    normalizedQuestionnaireResponse,
-    setNormalizedQuestionnaireResponse,
-  ] = React.useState({});
-
   const requiredFields = React.useMemo(() => {
     return {
       examinationCode: {
@@ -285,72 +280,72 @@ const MedicalAdmission = ({
     // return;
     try {
       const APIsArray = [];
-      // const items = data.questionnaire.item.map((i) => {
-      //   const item = {
-      //     linkId: i.linkId,
-      //     text: i.text,
-      //   };
-      //   switch (i.linkId) {
-      //     case '1':
-      //       item['answer'] = answerType(i.type, data.isInsulationInstruction);
+      const items = data.questionnaire.item.map((i) => {
+        const item = {
+          linkId: i.linkId,
+          text: i.text,
+        };
+        switch (i.linkId) {
+          case '1':
+            item['answer'] = answerType(i.type, data.isInsulationInstruction);
 
-      //       break;
-      //     case '2':
-      //       item['answer'] = answerType(
-      //         i.type,
-      //         data.insulationInstruction || '',
-      //       );
-      //       break;
-      //     case '3':
-      //       item['answer'] = answerType(i.type, data.nursingDetails);
-      //       break;
-      //     case '4':
-      //       item['answer'] = answerType(i.type, data.isPregnancy || '');
-      //       break;
-      //     default:
-      //       break;
-      //   }
-      //   return item;
-      // });
-      // if (data.questionnaireResponseId) {
-      //   APIsArray.push(
-      //     FHIR('QuestionnaireResponse', 'doWork', {
-      //       functionName: 'patchQuestionnaireResponse',
-      //       questionnaireResponseId: data.questionnaireResponseId,
-      //       questionnaireResponseParams: {
-      //         item: items,
-      //       },
-      //     }),
-      //   );
-      // } else {
-      //   APIsArray.push(
-      //     FHIR('QuestionnaireResponse', 'doWork', {
-      //       functionName: 'createQuestionnaireResponse',
-      //       functionParams: {
-      //         questionnaireResponse: {
-      //           questionnaire: data.questionnaire.id,
-      //           status: 'completed',
-      //           patient: patient.id,
-      //           encounter: encounter.id,
-      //           authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
-      //           source: patient.id,
-      //           item: items,
-      //         },
-      //       },
-      //     }),
-      //   );
-      // }
-      // const cloneEncounter = { ...encounter };
-      // cloneEncounter['examinationCode'] = data.examinationCode;
-      // cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
-      // cloneEncounter['priority'] = data.isUrgent;
-      // await FHIR('Encounter', 'doWork', {
-      //   functionName: 'updateEncounter',
-      //   functionParams: {
-      //     encounterId: encounter.id,
-      //     encounter: cloneEncounter,
-      //   },
-      // });
+            break;
+          case '2':
+            item['answer'] = answerType(
+              i.type,
+              data.insulationInstruction || '',
+            );
+            break;
+          case '3':
+            item['answer'] = answerType(i.type, data.nursingDetails);
+            break;
+          case '4':
+            item['answer'] = answerType(i.type, data.isPregnancy || '');
+            break;
+          default:
+            break;
+        }
+        return item;
+      });
+      if (data.questionnaireResponseId) {
+        APIsArray.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
+            functionName: 'patchQuestionnaireResponse',
+            questionnaireResponseId: data.questionnaireResponseId,
+            questionnaireResponseParams: {
+              item: items,
+            },
+          }),
+        );
+      } else {
+        APIsArray.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
+            functionName: 'createQuestionnaireResponse',
+            functionParams: {
+              questionnaireResponse: {
+                questionnaire: data.questionnaire.id,
+                status: 'completed',
+                patient: patient.id,
+                encounter: encounter.id,
+                authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                source: patient.id,
+                item: items,
+              },
+            },
+          }),
+        );
+      }
+      const cloneEncounter = { ...encounter };
+      cloneEncounter['examinationCode'] = data.examinationCode;
+      cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
+      cloneEncounter['priority'] = data.isUrgent;
+      await FHIR('Encounter', 'doWork', {
+        functionName: 'updateEncounter',
+        functionParams: {
+          encounterId: encounter.id,
+          encounter: cloneEncounter,
+        },
+      });
 
       //Creating new conditions for backgroundDiseases
       if (data.background_diseases === 'There are diseases') {
@@ -460,7 +455,7 @@ const MedicalAdmission = ({
             defaultChipLabelFunction={medicalAdmissionChipLabel}
           />
           <ChronicMedication
-            defaultRenderOptionFunction={medicalAdmissionRenderOption}
+            // defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
           />
           <SaveForm

@@ -94,6 +94,7 @@ const ChronicMedication = ({
           // helperErrorText={
           //   'The visit reason performed during the visit must be selected'
           // }
+          virtual
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
         />
