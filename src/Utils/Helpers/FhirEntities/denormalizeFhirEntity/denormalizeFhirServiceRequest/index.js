@@ -5,11 +5,7 @@
  * remark not yet completed since never tested or used.
  */
 
-const denormalizeFhirServiceRequest = ({
-  serviceRequest,
-  valueSetRequests,
-  valueSetDetails,
-}) => {
+const denormalizeFhirServiceRequest = ({ serviceRequest }) => {
   if (!serviceRequest) return;
 
   const denormalizedServiceRequest = {
@@ -49,31 +45,25 @@ const denormalizeFhirServiceRequest = ({
     patientInstruction: serviceRequest.patientInstruction,
   };
 
-  if (valueSetRequests) {
-    denormalizedServiceRequest.code = {
+  denormalizedServiceRequest.code = {
+    coding: [
+      {
+        system: `http://clinikal/valueset/${serviceRequest.test_treatment}`,
+        code: serviceRequest.test_treatment,
+      },
+    ],
+  };
+
+  denormalizedServiceRequest.orderDetail = [
+    {
       coding: [
         {
-          system: `http://clinikal/valueset/${serviceRequest.test_treatment}`,
-          code: serviceRequest.test_treatment,
+          system: `http://clinikal/valueset/details_${serviceRequest.test_treatment}`,
+          code: serviceRequest.test_treatment_type,
         },
       ],
-      text: valueSetRequests[serviceRequest.test_treatment],
-    };
-  }
-
-  if (valueSetDetails) {
-    denormalizedServiceRequest.orderDetail = [
-      {
-        coding: [
-          {
-            system: `http://clinikal/valueset/details_${serviceRequest.test_treatment}`,
-            code: serviceRequest.test_treatment_type,
-          },
-        ],
-        text: valueSetDetails[serviceRequest.test_treatment_type],
-      },
-    ];
-  }
+    },
+  ];
 
   if (serviceRequest.reasonCode && serviceRequest.reasonCode.length > 0) {
     const reasonCodes = [];

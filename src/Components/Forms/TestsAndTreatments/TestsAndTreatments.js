@@ -54,6 +54,8 @@ const TestsAndTreatments = ({
   formatDate,
   languageDirection,
   currentUser,
+  functionToRunOnTabChange,
+  validationFunction,
 }) => {
   const { t } = useTranslation();
   const [
@@ -100,7 +102,16 @@ const TestsAndTreatments = ({
     }
     return saveThis;
   }
-  const saveIndicatorsOnSubmit = async () => {
+  React.useEffect(() => {
+    // validationFunction.current = isRequiredValidation;
+    functionToRunOnTabChange.current = saveIndicatorsOnSubmit;
+    return () => {
+      functionToRunOnTabChange.current = () => [];
+      // validationFunction.current = () => true;
+    };
+  }, []);
+
+  const saveIndicatorsOnSubmit = () => {
     let FHIRAsyncCalls = [];
     if (checkWheterToSaveIndicators(constantIndicators)) {
       const denormelizedConstantObservation = denormalizeFhirObservation({
@@ -164,9 +175,10 @@ const TestsAndTreatments = ({
       );
     }
     if (FHIRAsyncCalls.length > 0) {
-      const fhirClinikalCallsAfterAwait = await Promise.all(FHIRAsyncCalls);
+      //const fhirClinikalCallsAfterAwait = await Promise.all(FHIRAsyncCalls);
       setSaveFormClicked(saveFormClicked + 1);
     }
+    return FHIRAsyncCalls;
   };
 
   useEffect(() => {
@@ -341,6 +353,7 @@ const TestsAndTreatments = ({
 
           <InstructionsForTreatment
             saveIndicatorsOnSubmit={saveIndicatorsOnSubmit}
+            validationFunction={validationFunction}
           />
         </React.Fragment>
       ) : null}

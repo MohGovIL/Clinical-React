@@ -8,6 +8,7 @@ import { store } from 'index';
 import { FHIR } from 'Utils/Services/FHIR';
 import { useHistory } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+import Grid from '@material-ui/core/Grid';
 
 /**
  * @author Idan Gigi idangi@matrix.co.il
@@ -43,28 +44,36 @@ const SaveForm = ({ statuses, encounter, onSubmit, validationFunction }) => {
   };
 
   const onClickHandler = async () => {
-    if (validationFunction(getValues({ nest: true }))) {
-      await Promise.all(onSubmit(getValues({ nest: true })));
-      updateEncounter();
+    try {
+      if (validationFunction(getValues({ nest: true }))) {
+        await Promise.all(onSubmit(getValues({ nest: true })));
+        updateEncounter();
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return (
     <StyledSaveForm>
-      <Content statuses={statuses} />
-      <CenterButton>
-        <StyledButton
-          color='primary'
-          variant='contained'
-          // type='submit'
-          letterSpacing={'0.1'}
-          onClick={onClickHandler}
-          disabled={
-            !selectedStatus ? true : permission === 'view' ? true : false
-          }>
-          {t('Save & Close')}
-        </StyledButton>
-      </CenterButton>
+      <Grid container spacing={4}>
+        <Content statuses={statuses} />
+        <Grid item xs={3}>
+          <CenterButton>
+            <StyledButton
+              color='primary'
+              variant='contained'
+              // type='submit'
+              letterSpacing={'0.1'}
+              onClick={onClickHandler}
+              disabled={
+                !selectedStatus ? true : permission === 'view' ? true : false
+              }>
+              {t('Save & Close')}
+            </StyledButton>
+          </CenterButton>
+        </Grid>
+      </Grid>
     </StyledSaveForm>
   );
 };

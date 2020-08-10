@@ -17,6 +17,7 @@ import { FHIR } from '../../../../Utils/Services/FHIR';
 import denormalizeFhirServiceRequest from '../../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
 import { getValueSetLists } from '../../../../Utils/Helpers/getValueSetArray';
 import moment from 'moment';
+import SaveForm from '../../GeneralComponents/SaveForm';
 
 /**
  *
@@ -31,6 +32,7 @@ const InstructionsForTreatment = ({
   setSaveFunction,
   saveIndicatorsOnSubmit,
   currentUser,
+  validationFunction,
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -38,67 +40,73 @@ const InstructionsForTreatment = ({
       Instruction: [],
     },
   });
+
   const { handleSubmit, setValue, watch, getValues } = methods;
-  const saveServiceRequestData = async (data) => {
-    const test_and_treatments_list = await getValueSetLists(
-      ['tests_and_treatments'],
-      true,
-    );
-    data.Instruction.map(async (value, index) => {
-      const { Instruction } = getValues({ nest: true });
-
-      const test_treatment_type_list = await getValueSetLists(
-        [`details_${value.test_treatment}`],
+  const saveServiceRequestData = (data) => {
+    const savedServiceRequest = [];
+    try {
+      /*  const test_and_treatments_list = await getValueSetLists(
+        ['tests_and_treatments'],
         true,
-      );
-      const serviceRequest = {
-        id: value.serviceReqID,
-        encounter: encounter.id,
-        patient: patient.id,
-        reasonCode: encounter.examinationCode,
-        reasonReferenceDocId: null, //EM-84
-        note: value.test_treatment_remark,
-        patientInstruction: value.instructions,
-        serviceReqID: value.serviceReqID,
-        status: value.test_treatment_status,
-        test_treatment: value.test_treatment,
-        test_treatment_type: value.test_treatment_type,
-      };
+      );*/
+      data.Instruction.map((value, index) => {
+        const { Instruction } = getValues({ nest: true });
 
-      if (value.test_treatment_status === 'done') {
-        serviceRequest.occurrence = moment()
-          .utc()
-          .format('YYYY-MM-DDTHH:mm:ss[Z]');
-        serviceRequest.practitioner = currentUser.id;
-      }
+        /* const test_treatment_type_list = await getValueSetLists(
+          [`details_${value.test_treatment}`],
+          true,
+        );*/
+        const serviceRequest = {
+          id: value.serviceReqID,
+          encounter: encounter.id,
+          patient: patient.id,
+          reasonCode: encounter.examinationCode,
+          reasonReferenceDocId: null, //EM-84
+          note: value.test_treatment_remark,
+          patientInstruction: value.instructions,
+          serviceReqID: value.serviceReqID,
+          status: value.test_treatment_status,
+          test_treatment: value.test_treatment,
+          test_treatment_type: value.test_treatment_type,
+        };
 
-      if (value.serviceReqID !== '') {
-        serviceRequest.authoredOn = moment()
-          .utc()
-          .format('YYYY-MM-DDTHH:mm:ss[Z]');
-        serviceRequest.requester = currentUser.id;
-      }
+        if (value.test_treatment_status === 'done') {
+          serviceRequest.occurrence = moment()
+            .utc()
+            .format('YYYY-MM-DDTHH:mm:ss[Z]');
+          serviceRequest.practitioner = currentUser.id;
+        }
 
-      const serviceRequestDataToSave = denormalizeFhirServiceRequest({
-        serviceRequest: serviceRequest,
-        valueSetRequests: test_and_treatments_list,
-        valueSetDetails: test_treatment_type_list,
+        if (value.serviceReqID !== '') {
+          serviceRequest.authoredOn = moment()
+            .utc()
+            .format('YYYY-MM-DDTHH:mm:ss[Z]');
+          serviceRequest.requester = currentUser.id;
+        }
+
+        const serviceRequestDataToSave = denormalizeFhirServiceRequest({
+          serviceRequest: serviceRequest,
+          /* valueSetRequests: test_and_treatments_list,
+          valueSetDetails: test_treatment_type_list,*/
+        });
+
+        savedServiceRequest.push(
+          FHIR('ServiceRequests', 'doWork', {
+            functionName: serviceRequestDataToSave.id
+              ? 'updateServiceRequest'
+              : 'createNewServiceRequest',
+            functionParams: {
+              id: serviceRequestDataToSave.id,
+              data: serviceRequestDataToSave,
+            },
+          }),
+        );
+
+        //console.log(`save this - ${JSON.stringify(serviceRequestDataToSave)}`);
       });
-
-      const savedServiceRequest = await FHIR('ServiceRequests', 'doWork', {
-        functionName: serviceRequestDataToSave.id
-          ? 'updateServiceRequest'
-          : 'createNewServiceRequest',
-        functionParams: {
-          id: serviceRequestDataToSave.id,
-          data: serviceRequestDataToSave,
-        },
-      });
-      console.log(`save this - ${JSON.stringify(serviceRequestDataToSave)}`);
-    });
-
-    //console.log(test_and_treatments_list);
-    /*const test_and_treatments_list = await getValueSetLists([
+      return savedServiceRequest;
+      //console.log(test_and_treatments_list);
+      /*const test_and_treatments_list = await getValueSetLists([
       'tests_and_treatments',
     ]);
     data.Instruction.map(async (value, index) => {
@@ -119,12 +127,16 @@ const InstructionsForTreatment = ({
         }),
       );
     });*/
+    } catch (err) {}
   };
   const onSubmit = (data) => {
     //  console.log('data', JSON.stringify(data));
     // console.log(isRequiredValidation(data));
-    saveIndicatorsOnSubmit();
-    saveServiceRequestData(data);
+    const indicatorsFHIRArray = saveIndicatorsOnSubmit();
+    const serviceRequestFHIRArray = saveServiceRequestData(data);
+    const returnThis = [...indicatorsFHIRArray, ...serviceRequestFHIRArray];
+    console.log(returnThis);
+    return returnThis;
   };
   const [defaultContext, setDefaultContext] = useState('');
   const [serviceRequests, setServiceRequests] = useState('');
@@ -201,7 +213,7 @@ const InstructionsForTreatment = ({
   };
   const isRequiredValidation = (data) => {
     let clean = true;
-    if (!data['Instruction']) {
+    if (!data && !data['Instruction']) {
       return clean;
     }
     for (
@@ -270,6 +282,20 @@ const InstructionsForTreatment = ({
       }
     })();
   }, []);
+
+  React.useEffect(() => {
+    validationFunction.current = isRequiredValidation;
+
+    return () => {
+      validationFunction.current = () => true;
+    };
+  }, []);
+
+  let statuses = [
+    { label: 'Waiting for nurse', value: 'waiting_for_nurse' },
+    { label: 'Waiting for doctor', value: 'waiting_for_doctor' },
+    { label: 'Waiting for xray', value: 'waiting_for_xray' },
+  ];
   return (
     <FormContext {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -281,11 +307,17 @@ const InstructionsForTreatment = ({
           requiredErrors={requiredErrors}
           handlePopUpProps={handlePopUpProps}
         />
-        <Grid container spacing={4}>
-          <SaveTestAndTreatments
+        <Grid container spacing={1}>
+          <SaveForm
+            statuses={statuses}
+            encounter={encounter}
+            validationFunction={isRequiredValidation}
+            onSubmit={onSubmit}
+          />
+          {/*<SaveTestAndTreatments
             setSaveFunction={setSaveFunction}
             permission={permission}
-          />
+          />*/}
         </Grid>
       </form>
     </FormContext>
