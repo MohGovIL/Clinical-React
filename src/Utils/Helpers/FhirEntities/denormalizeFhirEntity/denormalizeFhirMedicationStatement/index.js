@@ -31,7 +31,9 @@ const denormalizeFhirMedicationStatement = (medicationStatement) => {
           };
           break;
         case 'patient':
-          denormalizedFhirMedicationStatement['subject'] = `Patient/${element}`;
+          denormalizedFhirMedicationStatement['subject'] = {
+            reference: `Patient/${element}`,
+          };
           break;
         case 'effectivePeriodStart':
           effectivePeriod['start'] = element;
@@ -43,7 +45,9 @@ const denormalizeFhirMedicationStatement = (medicationStatement) => {
           denormalizedFhirMedicationStatement['dateAsserted'] = element;
           break;
         case 'informationSource':
-          denormalizedFhirMedicationStatement['informationSource'] = element;
+          denormalizedFhirMedicationStatement['informationSource'] = {
+            reference: element,
+          };
           break;
         case 'note':
           denormalizedFhirMedicationStatement['note'] = [

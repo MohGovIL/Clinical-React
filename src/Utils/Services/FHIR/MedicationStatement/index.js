@@ -4,6 +4,7 @@
  */
 
 import { CRUDOperations } from '../CRUDOperations';
+import denormalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirMedicationStatement';
 
 const MedicationStatementState = {
   doWork: (parameters = null) => {
@@ -27,11 +28,25 @@ const MedicationStatementState = {
       return false;
     }
   },
+  createMedicationStatement: (params) => {
+    if (!params.medicationStatement)
+      throw new Error('Empty medicationStatement');
+    const denormalizedFhirMedicationStatement = denormalizeFhirMedicationStatement(
+      params.medicationStatement,
+    );
+
+    return CRUDOperations(
+      'create',
+      `${params.url}`,
+      denormalizedFhirMedicationStatement,
+    );
+  },
 };
 
 export default function MedicationStatement(action = null, params = null) {
   if (action) {
-    const transformer = MedicationStatementState[action] ?? MedicationStatementState.__default__;
+    const transformer =
+      MedicationStatementState[action] ?? MedicationStatementState.__default__;
     return transformer(params);
   }
 }

@@ -353,26 +353,26 @@ const MedicalAdmission = ({
       // });
 
       //Creating new conditions for backgroundDiseases
-      // if (data.background_diseases === 'There are diseases') {
-      //   data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
-      //     APIsArray.push(
-      //       FHIR('Condition', 'doWork', {
-      //         functionParams: {
-      //           condition: {
-      //             categorySystem:
-      //               'http://clinikal/condition/category/medical_problem',
-      //             codeSystem: 'http://clinikal/diagnosis/type/MOH_ICD10',
-      //             codeCode: backgroundDisease,
-      //             patient: patient.id,
-      //             recorder: store.getState().login.userID,
-      //             clinicalStatus: 'active',
-      //           },
-      //         },
-      //         functionName: 'createCondition',
-      //       }),
-      //     );
-      //   });
-      // }
+      if (data.background_diseases === 'There are diseases') {
+        data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
+          APIsArray.push(
+            FHIR('Condition', 'doWork', {
+              functionParams: {
+                condition: {
+                  categorySystem:
+                    'http://clinikal/condition/category/medical_problem',
+                  codeSystem: 'http://clinikal/diagnosis/type/MOH_ICD10',
+                  codeCode: backgroundDisease,
+                  patient: patient.id,
+                  recorder: store.getState().login.userID,
+                  clinicalStatus: 'active',
+                },
+              },
+              functionName: 'createCondition',
+            }),
+          );
+        });
+      }
 
       //Creating new conditions for sensitivities
       if (data.sensitivities === 'Known') {
@@ -389,6 +389,26 @@ const MedicalAdmission = ({
                   patient: patient.id,
                   recorder: store.getState().login.userID,
                   clinicalStatus: 'active',
+                },
+              },
+            }),
+          );
+        });
+      }
+      // Creating a new medicationStatement
+      if (data.medication === 'Exist') {
+        data.chronicMedicationCodes.forEach((medication) => {
+          APIsArray.push(
+            FHIR('MedicationStatement', 'doWork', {
+              functionName: 'createMedicationStatement',
+              functionParams: {
+                medicationStatement: {
+                  status: 'active',
+                  patient: patient.id,
+                  informationSource: store.getState().login.userID,
+                  medicationCodeableConceptCode: medication,
+                  medicationCodeableConceptSystem:
+                    'http://clinikal/valueset/drugs_list',
                 },
               },
             }),
