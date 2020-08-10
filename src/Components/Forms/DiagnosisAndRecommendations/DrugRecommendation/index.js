@@ -325,9 +325,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
           return (
             <React.Fragment key={item.id}>
               <Controller
-<<<<<<< HEAD
                 disabled={permission === 'view' ? true : false}
-=======
                 as={
                   <StyledAutoComplete
                     blurOnSelect
@@ -354,7 +352,6 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                   />
                 }
                 onChange={([, data]) => data}
->>>>>>> 6c957e5626767c27ef53488822ec7971c184c304
                 name={`drugRecommendation[${index}].drugName`}
                 control={control}
                 defaultValue={item.drugName}
