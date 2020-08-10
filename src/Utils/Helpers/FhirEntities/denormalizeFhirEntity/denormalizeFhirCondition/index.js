@@ -5,6 +5,7 @@ const denormalizeFhirCondition = (condition) => {
   const denormalizedFhirCondition = {};
   const stage = [{}];
   const code = { coding: [{}] };
+  const category = [{ coding: [{}] }];
 
   for (const conditionKey in condition) {
     if (condition.hasOwnProperty(conditionKey)) {
@@ -32,27 +33,17 @@ const denormalizeFhirCondition = (condition) => {
           break;
 
         case 'categoryCode':
-          denormalizedFhirCondition['category'] = {
-            coding: [
-              {
-                system: condition.categorySystem,
-                code: element,
-              },
-            ],
-          };
+          category[0].coding[0]['code'] = element;
+          break;
+        case 'categorySystem':
+          category[0].coding[0]['system'] = element;
           break;
         case 'codeCode':
-          code.coding[0]['code'] = {
-            code: element,
-          };
+          code.coding[0]['code'] = element;
           break;
-
         case 'codeSystem':
-          code.coding[0]['system'] = {
-            system: element,
-          };
+          code.coding[0]['system'] = element;
           break;
-
         case 'title':
           stage[0]['summary'] = {
             text: element,
@@ -102,6 +93,10 @@ const denormalizeFhirCondition = (condition) => {
 
   if (Object.keys(code.coding[0]).length)
     denormalizedFhirCondition['code'] = code;
+
+  if (Object.keys(category[0].coding[0]).length)
+    denormalizedFhirCondition['category'] = category;
+
   return denormalizedFhirCondition;
 };
 

@@ -352,23 +352,45 @@ const MedicalAdmission = ({
       //   },
       // });
 
-      //Creating new conditions for sensitivity
-      if (data.background_diseases === 'There are diseases') {
-        data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
+      //Creating new conditions for backgroundDiseases
+      // if (data.background_diseases === 'There are diseases') {
+      //   data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
+      //     APIsArray.push(
+      //       FHIR('Condition', 'doWork', {
+      //         functionParams: {
+      //           condition: {
+      //             categorySystem:
+      //               'http://clinikal/condition/category/medical_problem',
+      //             codeSystem: 'http://clinikal/diagnosis/type/MOH_ICD10',
+      //             codeCode: backgroundDisease,
+      //             patient: patient.id,
+      //             recorder: store.getState().login.userID,
+      //             clinicalStatus: 'active',
+      //           },
+      //         },
+      //         functionName: 'createCondition',
+      //       }),
+      //     );
+      //   });
+      // }
+
+      //Creating new conditions for sensitivities
+      if (data.sensitivities === 'Known') {
+        data.sensitivitiesCodes.forEach((sensitivities) => {
           APIsArray.push(
             FHIR('Condition', 'doWork', {
+              functionName: 'createCondition',
               functionParams: {
                 condition: {
                   categorySystem:
-                    'http://clinikal/condition/category/medical_problem',
+                    'http://clinikal/condition/category/sensitive',
                   codeSystem: 'http://clinikal/diagnosis/type/MOH_ICD10',
-                  codeCode: backgroundDisease,
+                  codeCode: sensitivities,
                   patient: patient.id,
                   recorder: store.getState().login.userID,
                   clinicalStatus: 'active',
                 },
               },
-              functionName: 'createCondition',
             }),
           );
         });
