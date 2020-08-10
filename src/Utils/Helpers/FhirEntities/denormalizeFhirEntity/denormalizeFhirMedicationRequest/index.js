@@ -1,6 +1,6 @@
 /**
  * @author Idan Gigi idangi@matrix.co.il
- * @param {object} medicationRequest - needs to be a normalized medicationRequest 
+ * @param {object} medicationRequest - needs to be a normalized medicationRequest
  */
 
 const denormalizeFhirMedicationRequest = (medicationRequest) => {
@@ -99,7 +99,7 @@ const denormalizeFhirMedicationRequest = (medicationRequest) => {
             route['coding'] = [
               {
                 system: medicationRequest['routeSystem'],
-                coding: element,
+                code: element,
               },
             ];
             break;

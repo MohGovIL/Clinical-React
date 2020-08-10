@@ -4,13 +4,15 @@ import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import { Grid, MenuItem } from '@material-ui/core';
+import { Grid, MenuItem, Typography } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
-import { Delete } from '@material-ui/icons';
+import { Delete, KeyboardArrowDown } from '@material-ui/icons';
 import * as moment from 'moment';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationRequest';
+import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/VirtualizedListbox';
+import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoComplete';
 
 const DrugRecommendation = ({ encounterId, formatDate }) => {
   const { t } = useTranslation();
@@ -64,12 +66,11 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
   const instructionsForTheDrug = t('Instructions for the drug');
 
   const [drugsData, setDrugsData] = useState({
-    drugsList: [],
+    drugList: [],
     drugForm: [],
     drugRoute: [],
     drugIntervals: [],
   });
-
   const fetchDrugsData = React.useCallback(async () => {
     const APIsArray = [
       FHIR('ValueSet', 'doWork', {
@@ -93,7 +94,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
       FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',
         functionParams: {
-          id: 'drug_intervals',
+          id: 'drug_interval',
         },
       }),
     ];
@@ -115,7 +116,6 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
           drugsData[2].status === 200
             ? drugsData[2].data.expansion.contains
             : [],
-        // drugIntervals,
         drugIntervals:
           drugsData[3].status === 200
             ? drugsData[3].data.expansion.contains
@@ -137,10 +137,10 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
         },
       });
       // I could just do res.status === 204 for no content but I'm not sure that it's implemented in all of the entities
+      const medicationUniqData = {};
       if (res.status === 200 && res.data.total) {
         // medicationUniqData
         // [index]: medicationId
-        const medicationUniqData = {};
         res.data.entry.forEach((medicationRequest, medicationRequestIndex) => {
           if (medicationRequest.resource) {
             const normalizedFhirMedicationRequest = normalizeFhirMedicationRequest(
@@ -182,9 +182,14 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                 {
                   [`drugRecommendation[${
                     medicationRequestIndex - 1
-                  }].drugName`]:
-                    normalizedFhirMedicationRequest.medicationCodeableConceptCode ||
-                    '',
+                  }].drugName`]: {
+                    code:
+                      normalizedFhirMedicationRequest.medicationCodeableConceptCode ||
+                      '',
+                    display:
+                      normalizedFhirMedicationRequest.medicationCodeableConceptDisplay ||
+                      '',
+                  },
                 },
                 {
                   [`drugRecommendation[${
@@ -251,8 +256,8 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
               normalizedFhirMedicationRequest.id;
           }
         });
-        setValue({ medicationRequest: medicationUniqData });
       }
+      setValue({ medicationRequest: medicationUniqData });
     } catch (error) {
       console.log(error);
     }
@@ -320,20 +325,39 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
           return (
             <React.Fragment key={item.id}>
               <Controller
+<<<<<<< HEAD
                 disabled={permission === 'view' ? true : false}
+=======
+                as={
+                  <StyledAutoComplete
+                    blurOnSelect
+                    disableClearable
+                    selectOnFocus
+                    ListboxComponent={VirtualizedListboxComponent}
+                    options={drugsData.drugList}
+                    getOptionSelected={(option, value) => {
+                      return option.code === value.code;
+                    }}
+                    getOptionLabel={(option) => option.display || ''}
+                    renderOption={(option) => (
+                      <Typography noWrap>{option.display}</Typography>
+                    )}
+                    popupIcon={<KeyboardArrowDown />}
+                    renderInput={(params) => (
+                      <CustomizedTextField
+                        iconColor='#1976d2'
+                        width='30%'
+                        {...params}
+                        label={t('Drug Name')}
+                      />
+                    )}
+                  />
+                }
+                onChange={([, data]) => data}
+>>>>>>> 6c957e5626767c27ef53488822ec7971c184c304
                 name={`drugRecommendation[${index}].drugName`}
                 control={control}
-                onChange={([event]) => event.target.value}
                 defaultValue={item.drugName}
-                as={
-                  <CustomizedTextField
-                    iconColor='#1976d2'
-                    width='30%'
-                    select
-                    label={t('Drug Name')}>
-                    {returnMenuItem('drugList')}
-                  </CustomizedTextField>
-                }
               />
               <Grid container direction='row' justify='space-between'>
                 <CustomizedTextField
