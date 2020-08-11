@@ -12,7 +12,7 @@
  * @returns Fields of the main form Component.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import Grid from '@material-ui/core/Grid';
 import TestTreatment from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatment';
@@ -59,6 +59,7 @@ const Fields = ({
   requiredErrors,
   setRequiredErrors,
 }) => {
+  const [practitioners, setPreactitioners] = useState([]);
   const { control, watch, register, setValue } = useFormContext();
   const { fields, insert, prepend, append, remove } = useFieldArray({
     control,
@@ -66,6 +67,7 @@ const Fields = ({
   });
   useEffect(() => {
     (async () => {
+      let practitionersTemp = [];
       if (
         serviceRequests &&
         serviceRequests !== '' &&
@@ -80,6 +82,7 @@ const Fields = ({
             value.resource.resourceType === 'ServiceRequest'
           ) {
             const serviceReq = normalizeFhirServiceRequest(value.resource);
+
             fieldsArray.push(createDataFromRecord({ serviceReq }));
 
             /*
@@ -91,9 +94,28 @@ const Fields = ({
               serviceReq.status === 'active' ? 'not_done' : 'done',
             test_treatment_remark: serviceReq.note,
           });*/
+          } else if (
+            value &&
+            value.resource &&
+            value.resource.resourceType &&
+            value.resource.resourceType === 'Practitioner'
+          ) {
+            const user = normalizeFhirUser(value.resource);
+
+            practitionersTemp[user.id] = user.name.join(' ');
+            setPreactitioners(practitionersTemp);
           }
         });
         const fieldsArrayTemp = await Promise.all(fieldsArray);
+        fieldsArrayTemp.map((index, value) => {
+          setRequiredErrors((prevState) => {
+            const cloneState = [...prevState];
+            cloneState.unshift({
+              test_treatment_type: '',
+            });
+            return cloneState;
+          });
+        });
         append(fieldsArrayTemp);
       }
     })();
@@ -101,6 +123,10 @@ const Fields = ({
 
   const createDataFromRecord = async ({ serviceReq }) => {
     serviceReq = {
+      occurrence:
+        serviceReq.status === 'active'
+          ? serviceReq.authoredOn
+          : serviceReq.occurrence,
       performer_or_requester:
         serviceReq.status === 'active'
           ? serviceReq.requester
@@ -118,6 +144,7 @@ const Fields = ({
   const appendInsertData = async ({ serviceReq }) => {
     if (!serviceReq) {
       serviceReq = {};
+      serviceReq.occurrence = '';
       serviceReq.performer_or_requester = '';
       serviceReq.instructionCode = '';
       serviceReq.orderDetailCode = '';
@@ -128,6 +155,10 @@ const Fields = ({
     }
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
+        occurrence:
+          serviceReq.status === 'active'
+            ? serviceReq.authoredOn
+            : serviceReq.occurrence,
         performer_or_requester:
           serviceReq.status === 'active'
             ? serviceReq.requester
@@ -142,6 +173,10 @@ const Fields = ({
       });
     } else {
       await append({
+        occurrence:
+          serviceReq.status === 'active'
+            ? serviceReq.authoredOn
+            : serviceReq.occurrence,
         performer_or_requester:
           serviceReq.status === 'active'
             ? serviceReq.requester
@@ -174,6 +209,7 @@ const Fields = ({
     //2) if it is the first record do append otherwise do insert this is basically prepend
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
+        occurrence: '',
         performer_or_requester: '',
         test_treatment: '',
         test_treatment_type: '',
@@ -184,6 +220,7 @@ const Fields = ({
       });
     } else {
       await append({
+        occurrence: '',
         performer_or_requester: '',
         test_treatment: '',
         test_treatment_type: '',
@@ -197,6 +234,7 @@ const Fields = ({
     watch();
   };
   const { t } = useTranslation();
+
   return (
     <>
       <StyledConstantHeaders>
@@ -216,15 +254,16 @@ const Fields = ({
                 <StyledCardDetails>
                   <StyledCardContent>
                     <StyledTypographyName component='h5' variant='h5'>
-                      {edit ? user.name.toString() : ''}
+                      {/*{edit ? user.name.toString() : ''}*/}
+                      {item.performer_or_requester
+                        ? practitioners[item.performer_or_requester]
+                        : user.name.toString()}
                     </StyledTypographyName>
                     <StyledTypographyHour variant='subtitle1' color='primary'>
                       {' '}
-                      {edit
-                        ? moment
-                            .utc(encounter.extensionStatusUpdateDate)
-                            .format('LT')
-                        : ''}{' '}
+                      {item.performer_or_requester
+                        ? moment(item.occurrence).utc().format('LT')
+                        : moment().format('LT')}
                     </StyledTypographyHour>
                   </StyledCardContent>
                   <StyledCardName></StyledCardName>
@@ -267,7 +306,7 @@ const Fields = ({
 
                   <Grid item xs={12}>
                     <TestTreatMentStatus
-                      requiredErrors={requiredErrors}
+                      /*  requiredErrors={requiredErrors}*/
                       index={index}
                       item={item}
                     />

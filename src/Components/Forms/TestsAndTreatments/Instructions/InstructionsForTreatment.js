@@ -33,6 +33,9 @@ const InstructionsForTreatment = ({
   saveIndicatorsOnSubmit,
   currentUser,
   validationFunction,
+  functionToRunOnTabChange,
+  constantIndicators,
+  variantIndicatorsNew,
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -42,7 +45,9 @@ const InstructionsForTreatment = ({
   });
 
   const { handleSubmit, setValue, watch, getValues } = methods;
-  const saveServiceRequestData = (data) => {
+  const saveServiceRequestData = () => {
+    const data = getValues({ nest: true });
+
     const savedServiceRequest = [];
     try {
       /*  const test_and_treatments_list = await getValueSetLists(
@@ -50,8 +55,6 @@ const InstructionsForTreatment = ({
         true,
       );*/
       data.Instruction.map((value, index) => {
-        const { Instruction } = getValues({ nest: true });
-
         /* const test_treatment_type_list = await getValueSetLists(
           [`details_${value.test_treatment}`],
           true,
@@ -65,21 +68,21 @@ const InstructionsForTreatment = ({
           note: value.test_treatment_remark,
           patientInstruction: value.instructions,
           serviceReqID: value.serviceReqID,
-          status: value.test_treatment_status,
+          status: value.test_treatment_status ? 'done' : 'not_done',
           test_treatment: value.test_treatment,
           test_treatment_type: value.test_treatment_type,
         };
 
-        if (value.test_treatment_status === 'done') {
+        if (value.test_treatment_status) {
           serviceRequest.occurrence = moment()
-            .utc()
+            //.utc()
             .format('YYYY-MM-DDTHH:mm:ss[Z]');
-          serviceRequest.practitioner = currentUser.id;
+          serviceRequest.performer = currentUser.id;
         }
 
         if (value.serviceReqID !== '') {
           serviceRequest.authoredOn = moment()
-            .utc()
+            /* .utc()*/
             .format('YYYY-MM-DDTHH:mm:ss[Z]');
           serviceRequest.requester = currentUser.id;
         }
@@ -104,7 +107,7 @@ const InstructionsForTreatment = ({
 
         //console.log(`save this - ${JSON.stringify(serviceRequestDataToSave)}`);
       });
-      return savedServiceRequest;
+
       //console.log(test_and_treatments_list);
       /*const test_and_treatments_list = await getValueSetLists([
       'tests_and_treatments',
@@ -128,6 +131,7 @@ const InstructionsForTreatment = ({
       );
     });*/
     } catch (err) {}
+    return savedServiceRequest;
   };
   const onSubmit = (data) => {
     //  console.log('data', JSON.stringify(data));
@@ -211,31 +215,33 @@ const InstructionsForTreatment = ({
       },
     },*/
   };
-  const isRequiredValidation = (data) => {
+  const isRequiredValidation = () => {
+    const data = getValues({ nest: true });
     let clean = true;
-    if (!data && !data['Instruction']) {
-      return clean;
+
+    if (!data || (data && !data['Instruction'])) {
+      return true;
     }
     for (
       let instructionIndex = 0;
-      instructionIndex < requiredErrors.length;
+      instructionIndex < data['Instruction'].length;
       instructionIndex++
     ) {
       for (const fieldKey in requiredFields) {
         if (requiredFields.hasOwnProperty(fieldKey)) {
           const field = requiredFields[fieldKey];
-          if (
-            !data ||
-            !data['Instruction'] ||
-            !data['Instruction'][instructionIndex] ||
-            data['Instruction'][instructionIndex][field.name] === undefined
-          )
-            continue;
 
           let answer = field.required(
             data['Instruction'][instructionIndex][field.name],
           );
-          if (answer) {
+          if (!(field.name in data['Instruction'][instructionIndex]))
+            return true;
+
+          if (
+            answer &&
+            data['Instruction'][instructionIndex][field.name] &&
+            data['Instruction'][instructionIndex][field.name] !== ''
+          ) {
             setRequiredErrors((prevState) => {
               const cloneState = [...prevState];
               cloneState[instructionIndex][field.name] = '';
@@ -290,7 +296,14 @@ const InstructionsForTreatment = ({
       validationFunction.current = () => true;
     };
   }, []);
-
+  React.useEffect(() => {
+    // validationFunction.current = isRequiredValidation;
+    functionToRunOnTabChange.current = onSubmit;
+    return () => {
+      functionToRunOnTabChange.current = () => [];
+      // validationFunction.current = () => true;
+    };
+  }, [constantIndicators, variantIndicatorsNew, getValues({ nest: true })]);
   let statuses = [
     { label: 'Waiting for nurse', value: 'waiting_for_nurse' },
     { label: 'Waiting for doctor', value: 'waiting_for_doctor' },

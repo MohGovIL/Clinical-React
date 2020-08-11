@@ -84,12 +84,12 @@ const denormalizeFhirServiceRequest = ({ serviceRequest }) => {
   if (serviceRequest.authoredOn)
     denormalizedServiceRequest.authoredOn = serviceRequest.authoredOn;
   if (serviceRequest.requester)
-    denormalizedServiceRequest.reference = {
+    denormalizedServiceRequest.requester = {
       reference: `Practitioner/${serviceRequest.requester}`,
     };
   if (serviceRequest.performer)
     denormalizedServiceRequest.performer = [
-      { reference: `Practitioner/${serviceRequest.practitioner}` },
+      { reference: `Practitioner/${serviceRequest.performer}` },
     ];
 
   return denormalizedServiceRequest;

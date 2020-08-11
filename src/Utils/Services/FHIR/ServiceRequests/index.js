@@ -37,7 +37,7 @@ const ServiceRequests = {
     let sort = params._sort;
     let include = params._include;
     if (Array.isArray(params._include)) {
-      include = params._include.join('&include=');
+      include = params._include.join('&_include=');
     }
 
     return CRUDOperations(

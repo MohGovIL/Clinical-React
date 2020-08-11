@@ -64,7 +64,6 @@ const TestsAndTreatments = ({
   ] = useState(false);
   const [clinicIndicators, setClinicIndicators] = useState(null);
   const [saveFormClicked, setSaveFormClicked] = useState(0);
-
   const [constantIndicators, setConstantIndicators] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -98,18 +97,11 @@ const TestsAndTreatments = ({
 
     let saveThis = false;
     for (const observed in indicators) {
-      if (indicators[observed].value !== '') return true;
+      if (indicators[observed] && indicators[observed].value !== '')
+        return true;
     }
     return saveThis;
   }
-  React.useEffect(() => {
-    // validationFunction.current = isRequiredValidation;
-    functionToRunOnTabChange.current = saveIndicatorsOnSubmit;
-    return () => {
-      functionToRunOnTabChange.current = () => [];
-      // validationFunction.current = () => true;
-    };
-  }, []);
 
   const saveIndicatorsOnSubmit = () => {
     let FHIRAsyncCalls = [];
@@ -141,16 +133,23 @@ const TestsAndTreatments = ({
       );
     }
 
-    if (checkWheterToSaveIndicators(variantIndicatorsNew[0])) {
+    let checkVariantIndicators = { ...variantIndicatorsNew[0] };
+    delete checkVariantIndicators.userName;
+
+    if (checkWheterToSaveIndicators(checkVariantIndicators)) {
       const explodeMultiIndicators = explodeMultipleIndicators(
-        variantIndicatorsNew[0],
+        checkVariantIndicators,
         'Systolic blood pressure/Diastolic blood pressure',
         '/',
       );
-      explodeMultiIndicators['Saturation']['value'] = parseInt(
-        explodeMultiIndicators['Saturation']['value'],
-      );
-
+      if (
+        explodeMultiIndicators['Saturation'] &&
+        explodeMultiIndicators['Saturation']['value']
+      ) {
+        explodeMultiIndicators['Saturation']['value'] = parseInt(
+          explodeMultiIndicators['Saturation']['value'],
+        );
+      }
       const denormelizedVariantIndicatorsNew = denormalizeFhirObservation({
         component: explodeMultiIndicators,
         status: 'amended',
@@ -174,10 +173,10 @@ const TestsAndTreatments = ({
         }),
       );
     }
-    if (FHIRAsyncCalls.length > 0) {
+    /* if (FHIRAsyncCalls.length > 0) {
       //const fhirClinikalCallsAfterAwait = await Promise.all(FHIRAsyncCalls);
       setSaveFormClicked(saveFormClicked + 1);
-    }
+    }*/
     return FHIRAsyncCalls;
   };
 
@@ -323,7 +322,7 @@ const TestsAndTreatments = ({
         console.log(err);
       }
     })();
-  }, [saveFormClicked]);
+  }, []);
 
   return (
     <StyledTestsAndTreatments dir={languageDirection}>
@@ -352,8 +351,11 @@ const TestsAndTreatments = ({
           />
 
           <InstructionsForTreatment
+            constantIndicators={constantIndicators}
+            variantIndicatorsNew={variantIndicatorsNew}
             saveIndicatorsOnSubmit={saveIndicatorsOnSubmit}
             validationFunction={validationFunction}
+            functionToRunOnTabChange={functionToRunOnTabChange}
           />
         </React.Fragment>
       ) : null}
