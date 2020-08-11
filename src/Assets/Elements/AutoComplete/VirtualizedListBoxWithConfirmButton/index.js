@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useMediaQuery, useTheme } from '@material-ui/core';
 import { VariableSizeList } from 'react-window';
-
+import { useSelector } from 'react-redux';
 const LISTBOX_PADDING = 8; // px
 
 function useResetCache(data) {
@@ -34,7 +34,8 @@ function renderRow(props) {
 }
 
 const InnerElementType = ({ children }) => {
-  return <ul style={{ width: 'unset' }}>{children}</ul>;
+  const direction = useSelector((state) => state.settings.lang_dir);
+  return <ul style={{ width: 'unset', direction }}>{children}</ul>;
 };
 
 const VirtualizedListBoxWithConfirmButton = React.forwardRef(

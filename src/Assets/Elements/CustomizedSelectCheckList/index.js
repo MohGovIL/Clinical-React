@@ -155,6 +155,7 @@ const CustomizedSelectCheckList = ({
             ? defaultRenderOptionFunction(option, state)
             : defaultRenderOption(option, state)
         }
+        // TODO check why using virtual makes the list go ltr from rtl
         ListboxComponent={
           virtual ? VirtualizedListBoxWithConfirmButton : ListboxComponent
         }

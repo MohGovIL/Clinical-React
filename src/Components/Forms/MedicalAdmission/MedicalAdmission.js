@@ -275,9 +275,9 @@ const MedicalAdmission = ({
 
   const onSubmit = async (data) => {
     if (!data) getValues({ nest: true });
-    console.log(data);
-    console.log(isRequiredValidation(data));
-    // return;
+    // console.log(data);
+    // console.log(isRequiredValidation(data));
+    if (!isRequiredValidation(data)) return;
     try {
       const APIsArray = [];
       const items = data.questionnaire.item.map((i) => {
