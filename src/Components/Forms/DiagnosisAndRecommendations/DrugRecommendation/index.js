@@ -325,6 +325,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
           return (
             <React.Fragment key={item.id}>
               <Controller
+                disabled={permission === 'view' ? true : false}
                 as={
                   <StyledAutoComplete
                     blurOnSelect
@@ -512,20 +513,22 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
               </Grid>
               <Grid container direction='row' justify='flex-end'>
                 <Delete
-                  color='primary'
+                  color={permission === 'view' ? 'disabled' : 'primary'}
                   onClick={async () => {
+                    // Since there is no disabled option for icons I check the permission inside the function
+                    if (permission !== 'write') return;
                     const { medicationRequest } = getValues({ nest: true });
-                    if (medicationRequest[index]) {
+                    console.log(medicationRequest);
+                    if (medicationRequest && medicationRequest[index]) {
                       await FHIR('MedicationRequest', 'doWork', {
                         functionName: 'deleteMedicationRequest',
                         functionParams: {
                           _id: medicationRequest[index],
                         },
                       });
+                      delete medicationRequest[index];
+                      setValue('medicationRequest', medicationRequest);
                     }
-                    delete medicationRequest[index];
-                    setValue('medicationRequest', medicationRequest);
-
                     setRequiredErrors((prevState) => {
                       const cloneState = [...prevState];
                       cloneState.splice(index, 1);
@@ -535,7 +538,13 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                   }}
                   style={{ cursor: 'pointer' }}
                 />
-                <span style={{ cursor: 'pointer' }}>{t('Delete drug')}</span>
+                <span
+                  style={{
+                    cursor: 'pointer',
+                    color: `${permission !== 'write' && 'rgba(0, 0, 0, 0.26)'}`,
+                  }}>
+                  {t('Delete drug')}
+                </span>
               </Grid>
             </React.Fragment>
           );
