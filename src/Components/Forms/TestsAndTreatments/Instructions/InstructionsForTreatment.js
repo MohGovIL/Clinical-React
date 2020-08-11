@@ -18,6 +18,9 @@ import denormalizeFhirServiceRequest from '../../../../Utils/Helpers/FhirEntitie
 import { getValueSetLists } from '../../../../Utils/Helpers/getValueSetArray';
 import moment from 'moment';
 import SaveForm from '../../GeneralComponents/SaveForm';
+import { store } from '../../../../index';
+import { baseRoutePath } from '../../../../Utils/Helpers/baseRoutePath';
+import { useHistory } from 'react-router-dom';
 
 /**
  *
@@ -308,11 +311,35 @@ const InstructionsForTreatment = ({
     { label: 'Waiting for doctor', value: 'waiting_for_doctor' },
     { label: 'Waiting for xray', value: 'waiting_for_xray' },
   ];
+  const history = useHistory();
+  const updateEncounter = async ({
+    encounter,
+    selectedStatus,
+    practitioner,
+  }) => {
+    try {
+      const cloneEncounter = { ...encounter };
+      cloneEncounter.extensionSecondaryStatus = selectedStatus;
+      cloneEncounter.status = 'in-progress';
+      cloneEncounter.practitioner = store.getState().login.userID;
+
+      await FHIR('Encounter', 'doWork', {
+        functionName: 'updateEncounter',
+        functionParams: {
+          encounterId: encounter.id,
+          encounter: cloneEncounter,
+        },
+      });
+      history.push(`${baseRoutePath()}/generic/patientTracking`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <FormContext {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <PopUpFormTemplates {...popUpProps} />
-
         <Fields
           serviceRequests={serviceRequests}
           setRequiredErrors={setRequiredErrors}

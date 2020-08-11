@@ -55,7 +55,7 @@ const normalizeFhirServiceRequest = (ServiceRequest) => {
   const authoredOn = ServiceRequest.authoredOn;
   const status = ServiceRequest.status;
   const intent = ServiceRequest.intent;
-  const note = ServiceRequest.note[0].text;
+  const note = ServiceRequest.note && ServiceRequest.note[0].text;
   const performer =
     ServiceRequest.performer &&
     ServiceRequest.performer[0].reference.split('/')[1];

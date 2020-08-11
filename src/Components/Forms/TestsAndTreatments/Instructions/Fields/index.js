@@ -280,13 +280,13 @@ const Fields = ({
                     hidden
                     name={`Instruction[${index}].serviceReqID`}
                     defaultValue={item.serviceReqID}
-                    /*onChange={([event]) => {
+                    onChange={([event]) => {
                       setValue(
                         `Instruction[${index}].serviceReqID`,
                         event.target.value,
                       );
                       return event.target.value;
-                    }}*/
+                    }}
                     as={<input />}
                   />
                   <Grid item xs={3}>
