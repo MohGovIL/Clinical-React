@@ -62,7 +62,7 @@ const normalizeFhirServiceRequest = (ServiceRequest) => {
   const occurrence = ServiceRequest.occurrenceDateTime;
   const reasonReferenceDocId =
     ServiceRequest.reasonReference &&
-    ServiceRequest.reasonReference[0].reference;
+    ServiceRequest.reasonReference[0].reference.split('/')[1];
 
   return {
     id: id,

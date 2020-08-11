@@ -64,7 +64,7 @@ const InstructionsForTreatment = ({
           encounter: encounter.id,
           patient: patient.id,
           reasonCode: encounter.examinationCode,
-          reasonReferenceDocId: null, //EM-84
+          reasonReferenceDocId: value.reasonReferenceDocId, //EM-84
           note: value.test_treatment_remark,
           patientInstruction: value.instructions,
           serviceReqID: value.serviceReqID,
@@ -234,8 +234,7 @@ const InstructionsForTreatment = ({
           let answer = field.required(
             data['Instruction'][instructionIndex][field.name],
           );
-          if (!(field.name in data['Instruction'][instructionIndex]))
-            return true;
+          if (!(field.name in data['Instruction'][instructionIndex])) continue;
 
           if (
             answer &&
@@ -295,7 +294,7 @@ const InstructionsForTreatment = ({
     return () => {
       validationFunction.current = () => true;
     };
-  }, []);
+  }, [constantIndicators, variantIndicatorsNew, getValues({ nest: true })]);
   React.useEffect(() => {
     // validationFunction.current = isRequiredValidation;
     functionToRunOnTabChange.current = onSubmit;

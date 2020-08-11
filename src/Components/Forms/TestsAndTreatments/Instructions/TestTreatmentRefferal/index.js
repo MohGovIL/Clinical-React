@@ -28,7 +28,8 @@ const TestTreatmentReferral = ({
   const { Instruction } = getValues({ nest: true });
   const { t } = useTranslation();
   const test_treatment =
-    Instruction && Instruction[index] && Instruction[index].test_treatment;
+    (Instruction && Instruction[index] && Instruction[index].test_treatment) ||
+    item.test_treatment;
 
   useEffect(() => {}, [test_treatment]);
   return test_treatment === 'x_ray' &&

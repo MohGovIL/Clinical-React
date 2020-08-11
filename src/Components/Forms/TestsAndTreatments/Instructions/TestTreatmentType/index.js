@@ -81,6 +81,7 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
     <Controller
       onChange={([event]) => {
         requiredErrors[index].test_treatment_type = false;
+        watch(`Instruction`);
         return event.target.value;
       }}
       name={`Instruction[${index}].test_treatment_type`}
