@@ -138,6 +138,7 @@ const Fields = ({
         serviceReq.status === 'active' ? 'not_done' : 'done',
       test_treatment_remark: serviceReq.note,
       serviceReqID: serviceReq.id,
+      reason_referance_doc_id: serviceReq.reasonReferenceDocId,
     };
     return serviceReq;
   };
@@ -152,6 +153,7 @@ const Fields = ({
       serviceReq.status = 'not_done';
       serviceReq.note = '';
       serviceReq.serviceReqID = '';
+      serviceReq.reason_referance_doc_id = '';
     }
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
@@ -170,6 +172,7 @@ const Fields = ({
           serviceReq.status === 'active' ? 'not_done' : 'done',
         test_treatment_remark: serviceReq.note,
         serviceReqID: serviceReq.id,
+        reason_referance_doc_id: serviceReq.reasonReferenceDocId,
       });
     } else {
       await append({
@@ -188,6 +191,7 @@ const Fields = ({
           serviceReq.status === 'active' ? 'not_done' : 'done',
         test_treatment_remark: serviceReq.note,
         serviceReqID: serviceReq.id,
+        reason_referance_doc_id: serviceReq.reasonReferenceDocId,
       });
     }
   };
@@ -217,6 +221,7 @@ const Fields = ({
         test_treatment_status: false,
         test_treatment_remark: '',
         serviceReqID: '',
+        reason_referance_doc_id: '',
       });
     } else {
       await append({
@@ -228,6 +233,7 @@ const Fields = ({
         test_treatment_status: false,
         test_treatment_remark: '',
         serviceReqID: '',
+        reason_referance_doc_id: '',
       });
     }
     //3)render all the elements to the screen  with watch
