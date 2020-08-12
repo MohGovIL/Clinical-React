@@ -31,7 +31,6 @@ import { thickenTheData } from 'Components/Forms/TestsAndTreatments/Helpers/Data
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
 import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instructions/InstructionsForTreatment';
-import SaveTestAndTreatments from 'Components/Forms/TestsAndTreatments/Instructions/SaveTestAndTreatments';
 import denormalizeFhirObservation from '../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';
 import moment from 'moment';
 import { explodeMultipleIndicators } from './Helpers/FunctionHelpers';
@@ -356,6 +355,7 @@ const TestsAndTreatments = ({
             saveIndicatorsOnSubmit={saveIndicatorsOnSubmit}
             validationFunction={validationFunction}
             functionToRunOnTabChange={functionToRunOnTabChange}
+            permission={permission}
           />
         </React.Fragment>
       ) : null}

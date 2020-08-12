@@ -72,6 +72,9 @@ const TestTreatment = ({ index, item }) => {
         watch(`Instruction`);
         return event.target.value;
       }}
+      InputProps={{
+        readOnly: item.locked,
+      }}
       as={
         <CustomizedTextField
           select

@@ -11,14 +11,14 @@ import Fields from 'Components/Forms/TestsAndTreatments/Instructions/Fields';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import SaveTestAndTreatments from './SaveTestAndTreatments';
+
 import Grid from '@material-ui/core/Grid';
 import { FHIR } from '../../../../Utils/Services/FHIR';
 import denormalizeFhirServiceRequest from '../../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
-import { getValueSetLists } from '../../../../Utils/Helpers/getValueSetArray';
+
 import moment from 'moment';
 import SaveForm from '../../GeneralComponents/SaveForm';
-import { store } from '../../../../index';
+
 import { baseRoutePath } from '../../../../Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 
@@ -32,7 +32,6 @@ const InstructionsForTreatment = ({
   encounter,
   patient,
   permission,
-  setSaveFunction,
   saveIndicatorsOnSubmit,
   currentUser,
   validationFunction,
@@ -107,32 +106,7 @@ const InstructionsForTreatment = ({
             },
           }),
         );
-
-        //console.log(`save this - ${JSON.stringify(serviceRequestDataToSave)}`);
       });
-
-      //console.log(test_and_treatments_list);
-      /*const test_and_treatments_list = await getValueSetLists([
-      'tests_and_treatments',
-    ]);
-    data.Instruction.map(async (value, index) => {
-      console.log(`index:${index} , value:${value}`);
-
-      let test_treatment_type_list = null;
-      if (value.test_treatment_type) {
-        test_treatment_type_list = await getValueSetLists([
-          value.test_treatment_type,
-        ]);
-      }
-
-      console.log(
-        denormalizeFhirServiceRequest({
-          serviceRequest: value,
-          valueSetRequest: test_and_treatments_list['tests_and_treatments'],
-          valueSetDetails: test_treatment_type_list[0],
-        }),
-      );
-    });*/
     } catch (err) {}
     return savedServiceRequest;
   };
@@ -358,6 +332,7 @@ const InstructionsForTreatment = ({
           setRequiredErrors={setRequiredErrors}
           requiredErrors={requiredErrors}
           handlePopUpProps={handlePopUpProps}
+          permission={permission}
         />
         <Grid container spacing={1}>
           <SaveForm
@@ -367,10 +342,6 @@ const InstructionsForTreatment = ({
             onSubmit={onSubmit}
             updateEncounterExtension={updateEncounterExtension}
           />
-          {/*<SaveTestAndTreatments
-            setSaveFunction={setSaveFunction}
-            permission={permission}
-          />*/}
         </Grid>
       </form>
     </FormContext>

@@ -47,6 +47,9 @@ const TestTreatmentInstructions = ({ index, item, handlePopUpProps }) => {
           name={`Instruction[${index}].instructions`}
           control={control}
           defaultValue={item.instructions}
+          InputProps={{
+            readOnly: item.locked,
+          }}
           as={
             <CustomizedTextField
               InputLabelProps={{
@@ -69,7 +72,7 @@ const TestTreatmentInstructions = ({ index, item, handlePopUpProps }) => {
       <Grid item xs={2}>
         <StyledSelectTemplateButton
           margin={'30px 30px'}
-          disabled={test_treatment ? false : true}
+          disabled={test_treatment && !item.locked ? false : true}
           onClick={() => {
             console.log(test_treatment);
             handlePopUpProps(

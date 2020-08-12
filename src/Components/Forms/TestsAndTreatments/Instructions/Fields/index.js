@@ -40,6 +40,7 @@ import TestTreatMentStatus from 'Components/Forms/TestsAndTreatments/Instruction
 import TestTreatmentRemark from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentRemark';
 import denormalizeFhirServiceRequest from '../../../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
 import normalizeFhirServiceRequest from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
+import isAllowed from '../../../../../Utils/Helpers/isAllowed';
 
 /**
  *
@@ -58,6 +59,7 @@ const Fields = ({
   handlePopUpProps,
   requiredErrors,
   setRequiredErrors,
+  permission,
 }) => {
   const [practitioners, setPreactitioners] = useState([]);
   const { control, watch, register, setValue } = useFormContext();
@@ -83,7 +85,9 @@ const Fields = ({
           ) {
             const serviceReq = normalizeFhirServiceRequest(value.resource);
 
-            fieldsArray.push(createDataFromRecord({ serviceReq }));
+            fieldsArray.push(
+              createDataFromRecord({ serviceReq, locked: true }),
+            );
 
             /*
           insert(parseInt(0, 10), {
@@ -121,7 +125,7 @@ const Fields = ({
     })();
   }, [serviceRequests]);
 
-  const createDataFromRecord = async ({ serviceReq }) => {
+  const createDataFromRecord = async ({ serviceReq, locked }) => {
     serviceReq = {
       occurrence:
         serviceReq.status === 'active'
@@ -139,6 +143,7 @@ const Fields = ({
       test_treatment_remark: serviceReq.note,
       serviceReqID: serviceReq.id,
       reason_referance_doc_id: serviceReq.reasonReferenceDocId,
+      locked: locked,
     };
     return serviceReq;
   };
@@ -196,7 +201,7 @@ const Fields = ({
     }
   };
   let user = normalizeFhirUser(currentUser);
-  const edit = true;
+  const edit = permission ? true : false;
 
   const addNewInstruction = async () => {
     //prepend has a bug in hookform soI used it like this :
@@ -222,6 +227,7 @@ const Fields = ({
         test_treatment_remark: '',
         serviceReqID: '',
         reason_referance_doc_id: '',
+        locked: false,
       });
     } else {
       await append({
@@ -234,6 +240,7 @@ const Fields = ({
         test_treatment_remark: '',
         serviceReqID: '',
         reason_referance_doc_id: '',
+        locked: false,
       });
     }
     //3)render all the elements to the screen  with watch
@@ -260,16 +267,14 @@ const Fields = ({
                 <StyledCardDetails>
                   <StyledCardContent>
                     <StyledTypographyName component='h5' variant='h5'>
-                      {/*{edit ? user.name.toString() : ''}*/}
-                      {item.performer_or_requester
+                      {item.locked
                         ? practitioners[item.performer_or_requester]
                         : user.name.toString()}
                     </StyledTypographyName>
                     <StyledTypographyHour variant='subtitle1' color='primary'>
-                      {' '}
-                      {item.performer_or_requester
+                      {permission === 'write' || item.locked
                         ? moment(item.occurrence).utc().format('LT')
-                        : moment().format('LT')}
+                        : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>
                   <StyledCardName></StyledCardName>
@@ -315,6 +320,7 @@ const Fields = ({
                       /*  requiredErrors={requiredErrors}*/
                       index={index}
                       item={item}
+                      permission={permission}
                     />
                   </Grid>
                   <Grid item xs={12}>

@@ -37,6 +37,9 @@ const TestTreatmentRemark = ({ index, item }) => {
           Instruction[index] &&
           Instruction[index].test_treatment_remark)*/
       }
+      InputProps={{
+        readOnly: item.locked,
+      }}
       as={<CustomizedTextField multiline width={'85%'} label={t('remark')} />}
     />
   );

@@ -99,6 +99,9 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
           ? requiredErrors[index].test_treatment_type
           : ''
       }
+      InputProps={{
+        readOnly: item.locked,
+      }}
       as={
         <CustomizedTextField
           iconColor='#1976d2'

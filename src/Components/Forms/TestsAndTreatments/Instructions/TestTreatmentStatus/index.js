@@ -8,7 +8,7 @@
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 
 /**
  *
@@ -16,7 +16,7 @@ import { useFormContext } from 'react-hook-form';
  * @param requiredErrors
  * @returns UI Field of the main form.
  */
-const TestTreatMentStatus = ({ index, requiredErrors, item }) => {
+const TestTreatMentStatus = ({ index, requiredErrors, item, permission }) => {
   const { t } = useTranslation();
   const { control, register, setValue, getValues, watch } = useFormContext();
 
@@ -29,7 +29,7 @@ const TestTreatMentStatus = ({ index, requiredErrors, item }) => {
     return event.target.checked;
   };
 
-  return (
+  return !item.locked || permission ? (
     <>
       <span>
         <b>{t('Status')}</b>
@@ -40,7 +40,7 @@ const TestTreatMentStatus = ({ index, requiredErrors, item }) => {
         onChange={handleChange}
         name={`Instruction[${index}].test_treatment_status`}
         control={control}
-        label_1={'Past Due'}
+        label_1={'Yet To be done'}
         label_2={'Performed'}
         marginLeft={'70px'}
         marginRight={'70px'}
@@ -53,6 +53,6 @@ const TestTreatMentStatus = ({ index, requiredErrors, item }) => {
         }*/
       />
     </>
-  );
+  ) : null;
 };
 export default TestTreatMentStatus;
