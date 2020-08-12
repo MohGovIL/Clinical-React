@@ -11,7 +11,31 @@ const convertArrayToObject = (array, key) => {
     };
   }, initialValue);
 };
+export const getValueSetFromLists = async (value, turnToObj) => {
+  let detailsObj = [];
 
+  if (value && value && value.status && value.status === 200) {
+    let counter = 0;
+    value.data.expansion.contains.map((data) => {
+      const dataNormalized = normalizeFhirValueSet(data);
+
+      detailsObj.push({
+        title: dataNormalized.name
+          ? dataNormalized.name
+          : dataNormalized.display
+          ? dataNormalized.display
+          : '',
+        code: dataNormalized.code,
+      });
+    });
+    counter++;
+  }
+
+  if (turnToObj) {
+    detailsObj = convertArrayToObject(detailsObj, 'code');
+  }
+  return detailsObj;
+};
 export const getValueSetLists = async (valueSetNames, turnToObj) => {
   let list = [];
   let detailsObj = [];

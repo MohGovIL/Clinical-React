@@ -38,9 +38,9 @@ import { useTranslation } from 'react-i18next';
 import TestTreatmentReferral from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentRefferal';
 import TestTreatMentStatus from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentStatus';
 import TestTreatmentRemark from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentRemark';
-import denormalizeFhirServiceRequest from '../../../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
-import normalizeFhirServiceRequest from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
-import isAllowed from '../../../../../Utils/Helpers/isAllowed';
+import normalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
+import { Delete } from '@material-ui/icons';
+import { FHIR } from 'Utils/Services/FHIR';
 
 /**
  *
@@ -62,7 +62,7 @@ const Fields = ({
   permission,
 }) => {
   const [practitioners, setPreactitioners] = useState([]);
-  const { control, watch, register, setValue } = useFormContext();
+  const { control, watch, register, setValue, getValues } = useFormContext();
   const { fields, insert, prepend, append, remove } = useFieldArray({
     control,
     name: 'Instruction',
@@ -88,16 +88,6 @@ const Fields = ({
             fieldsArray.push(
               createDataFromRecord({ serviceReq, locked: true }),
             );
-
-            /*
-          insert(parseInt(0, 10), {
-            test_treatment: serviceReq.instructionCode,
-            test_treatment_type: serviceReq.orderDetailCode,
-            instructions: serviceReq.patientInstruction,
-            test_treatment_status:
-              serviceReq.status === 'active' ? 'not_done' : 'done',
-            test_treatment_remark: serviceReq.note,
-          });*/
           } else if (
             value &&
             value.resource &&
@@ -272,7 +262,7 @@ const Fields = ({
                         : user.name.toString()}
                     </StyledTypographyName>
                     <StyledTypographyHour variant='subtitle1' color='primary'>
-                      {permission === 'write' || item.locked
+                      {item.locked
                         ? moment(item.occurrence).utc().format('LT')
                         : ''}
                     </StyledTypographyHour>
@@ -326,6 +316,52 @@ const Fields = ({
                   <Grid item xs={12}>
                     <TestTreatmentRemark index={index} item={item} />
                   </Grid>
+                  {!item.locked ? (
+                    <Grid container direction='row' justify='flex-end'>
+                      <Delete
+                        color={permission === 'view' ? 'disabled' : 'primary'}
+                        onClick={async () => {
+                          // Since there is no disabled option for icons I check the permission inside the function
+                          if (permission !== 'write') return;
+                          const { Instruction } = getValues({
+                            nest: true,
+                          });
+                          //console.log(Instruction);
+                          if (
+                            Instruction &&
+                            Instruction[index] &&
+                            Instruction[index].serviceReqID &&
+                            Instruction[index].serviceReqID !== ''
+                          ) {
+                            await FHIR('ServiceRequests', 'doWork', {
+                              functionName: 'deleteServiceRequest',
+                              functionParams: {
+                                _id: Instruction[index].serviceReqID,
+                              },
+                            });
+                            delete Instruction[index];
+                            setValue('medicationRequest', Instruction);
+                          }
+                          setRequiredErrors((prevState) => {
+                            const cloneState = [...prevState];
+                            cloneState.splice(index, 1);
+                            return cloneState;
+                          });
+                          remove(index);
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <span
+                        style={{
+                          cursor: 'pointer',
+                          color: `${
+                            permission !== 'write' && 'rgba(0, 0, 0, 0.26)'
+                          }`,
+                        }}>
+                        {t('Delete Instruction')}
+                      </span>
+                    </Grid>
+                  ) : null}
                 </Grid>
               </StyledCardRoot>
             </div>

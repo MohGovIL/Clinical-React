@@ -28,7 +28,7 @@ const ServiceRequests = {
     return CRUDOperations('update', `${params.url}/${params.id}`, params.data);
   },
   deleteServiceRequest: (params) => {
-    //Todo in the future
+    return CRUDOperations('delete', `${params.url}/${params._id}`);
   },
   getServiceRequests: (params) => {
     let patient = params.patient;

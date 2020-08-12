@@ -8,7 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { Card } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
+
 export const StyledConstantTextField = styled(TextField)`
   width: 104px;
   height: 56px;
@@ -143,7 +143,8 @@ export const StyledTreatmentInstructionsButton = styled(Button)`
 
 export const StyledCardRoot = styled(Card)`
   display: flex;
-  padding: 10px;
+  padding: 27px;
+  box-shadow: 0 1px 12px 3px rgba(151, 151, 152, 0.09);
 `;
 
 export const StyledCardDetails = styled.div`
@@ -238,6 +239,10 @@ export const StyledSubHeader = styled.p`
   letter-spacing: normal;
   text-align: right;
   color: #000b40;
+`;
+
+export const StyledHiddenDiv = styled.div`
+  display: ${(props) => (props.dontDisplay ? 'none' : '')};
 `;
 
 export const StyledHeader = styled.p`

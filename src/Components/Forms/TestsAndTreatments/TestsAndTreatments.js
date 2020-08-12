@@ -31,9 +31,9 @@ import { thickenTheData } from 'Components/Forms/TestsAndTreatments/Helpers/Data
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
 import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instructions/InstructionsForTreatment';
-import denormalizeFhirObservation from '../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';
+import denormalizeFhirObservation from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';
 import moment from 'moment';
-import { explodeMultipleIndicators } from './Helpers/FunctionHelpers';
+import { explodeMultipleIndicators } from 'Components/Forms/TestsAndTreatments/Helpers/FunctionHelpers.js';
 
 /**
  *
@@ -172,10 +172,7 @@ const TestsAndTreatments = ({
         }),
       );
     }
-    /* if (FHIRAsyncCalls.length > 0) {
-      //const fhirClinikalCallsAfterAwait = await Promise.all(FHIRAsyncCalls);
-      setSaveFormClicked(saveFormClicked + 1);
-    }*/
+
     return FHIRAsyncCalls;
   };
 

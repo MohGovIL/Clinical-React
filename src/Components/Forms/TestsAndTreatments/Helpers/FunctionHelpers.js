@@ -4,7 +4,7 @@
  * as requested like : padding a number with zero.
  */
 
-import { StyledVariantTextField } from '../Style';
+import { StyledVariantTextField } from 'Components/Forms/TestsAndTreatments/Style.js';
 import FormattedInputs from 'Assets/Elements/MaskedControllers/FormattedInputs/FormattedInputs';
 
 /**

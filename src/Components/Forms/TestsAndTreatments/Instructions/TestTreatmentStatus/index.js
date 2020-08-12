@@ -9,6 +9,7 @@ import StyledSwitch from 'Assets/Elements/StyledSwitch';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller, useFormContext } from 'react-hook-form';
+import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
 
 /**
  *
@@ -29,7 +30,7 @@ const TestTreatMentStatus = ({ index, requiredErrors, item, permission }) => {
     return event.target.checked;
   };
 
-  return !item.locked || permission ? (
+  return !item.locked || permission === 'write' ? (
     <>
       <span>
         <b>{t('Status')}</b>
@@ -46,12 +47,19 @@ const TestTreatMentStatus = ({ index, requiredErrors, item, permission }) => {
         marginRight={'70px'}
         width={'200px'}
         margin={'10px 14px'}
-        /*  error={requiredErrors[index].test_treatment_status ? true : false}
-        helperText={
-          requiredErrors[index].test_treatment_status &&
-          `  ${t('Please Select')}  : ${t('Performed')} `
-        }*/
       />
+      {item.locked && permission !== 'write' ? (
+        <TestTreatmentLockedText
+          label={t('Status')}
+          dontBreakRow={true}
+          name={`Instruction[${index}].test_treatment`}
+          value={
+            item.test_treatment_status === 'done'
+              ? t('Performed')
+              : t('Yet To be done')
+          }
+        />
+      ) : null}
     </>
   ) : null;
 };
