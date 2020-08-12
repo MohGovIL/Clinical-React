@@ -262,6 +262,42 @@ const InstructionsForTreatment = ({
     }
     return clean;
   };
+  const updateEncounterExtension = async (
+    encounter,
+    selectedStatus,
+    practitioner,
+  ) => {
+    try {
+      if (!selectedStatus) return;
+      const cloneEncounter = { ...encounter };
+      switch (selectedStatus) {
+        case 'waiting_for_nurse':
+          cloneEncounter.status = 'in-progress';
+          break;
+        case 'waiting_for_doctor':
+          cloneEncounter.status =
+            cloneEncounter.status === 'arrived' ? 'triaged' : 'in_progress';
+
+          break;
+        case 'waiting_for_xray':
+          cloneEncounter.status = 'in-progress';
+          break;
+      }
+      cloneEncounter.extensionSecondaryStatus = selectedStatus;
+      cloneEncounter.practitioner = practitioner;
+
+      await FHIR('Encounter', 'doWork', {
+        functionName: 'updateEncounter',
+        functionParams: {
+          encounterId: encounter.id,
+          encounter: cloneEncounter,
+        },
+      });
+      history.push(`${baseRoutePath()}/generic/patientTracking`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   //http://localhost/apis/fhir/v4/ServiceRequest?patient=1&encounter=1&_include=ServiceRequest:performer
   useEffect(() => {
     (async () => {
@@ -312,29 +348,6 @@ const InstructionsForTreatment = ({
     { label: 'Waiting for xray', value: 'waiting_for_xray' },
   ];
   const history = useHistory();
-  const updateEncounter = async ({
-    encounter,
-    selectedStatus,
-    practitioner,
-  }) => {
-    try {
-      const cloneEncounter = { ...encounter };
-      cloneEncounter.extensionSecondaryStatus = selectedStatus;
-      cloneEncounter.status = 'in-progress';
-      cloneEncounter.practitioner = store.getState().login.userID;
-
-      await FHIR('Encounter', 'doWork', {
-        functionName: 'updateEncounter',
-        functionParams: {
-          encounterId: encounter.id,
-          encounter: cloneEncounter,
-        },
-      });
-      history.push(`${baseRoutePath()}/generic/patientTracking`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <FormContext {...methods}>
@@ -352,6 +365,7 @@ const InstructionsForTreatment = ({
             encounter={encounter}
             validationFunction={isRequiredValidation}
             onSubmit={onSubmit}
+            updateEncounterExtension={updateEncounterExtension}
           />
           {/*<SaveTestAndTreatments
             setSaveFunction={setSaveFunction}

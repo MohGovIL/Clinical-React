@@ -15,33 +15,42 @@ import Grid from '@material-ui/core/Grid';
  * @param { [{value: string, label: string}] } statuses
  * @description The data from this component will be inside the data object as 'nextStatus' in the onSubmitHandler
  */
-const SaveForm = ({ statuses, encounter, onSubmit, validationFunction }) => {
+const SaveForm = ({
+  statuses,
+  encounter,
+  onSubmit,
+  validationFunction,
+  updateEncounterExtension,
+}) => {
   const { t } = useTranslation();
   const { permission, watch, getValues } = useFormContext();
 
   const history = useHistory();
 
   const selectedStatus = watch('nextStatus');
+  const practitioner = store.getState().login.userID;
+  const updateEncounter = !updateEncounterExtension
+    ? async () => {
+        try {
+          const cloneEncounter = { ...encounter };
+          cloneEncounter.extensionSecondaryStatus = selectedStatus;
+          cloneEncounter.status = 'in-progress';
+          cloneEncounter.practitioner = practitioner;
 
-  const updateEncounter = async () => {
-    try {
-      const cloneEncounter = { ...encounter };
-      cloneEncounter.extensionSecondaryStatus = selectedStatus;
-      cloneEncounter.status = 'in-progress';
-      cloneEncounter.practitioner = store.getState().login.userID;
-
-      await FHIR('Encounter', 'doWork', {
-        functionName: 'updateEncounter',
-        functionParams: {
-          encounterId: encounter.id,
-          encounter: cloneEncounter,
-        },
-      });
-      history.push(`${baseRoutePath()}/generic/patientTracking`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+          await FHIR('Encounter', 'doWork', {
+            functionName: 'updateEncounter',
+            functionParams: {
+              encounterId: encounter.id,
+              encounter: cloneEncounter,
+            },
+          });
+          history.push(`${baseRoutePath()}/generic/patientTracking`);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    : async () =>
+        updateEncounterExtension(encounter, watch('nextStatus'), practitioner);
 
   const onClickHandler = async () => {
     try {

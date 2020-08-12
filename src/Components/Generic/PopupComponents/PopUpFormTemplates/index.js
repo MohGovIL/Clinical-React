@@ -89,7 +89,7 @@ const PopUpFormTemplates = ({
         const templatesServerData = [];
         let response = await getFormTemplates(
           encounter.serviceTypeCode,
-          encounter.examinationCode.toString(),
+          encounter.examinationCode && encounter.examinationCode.toString(),
           formID,
           formFields,
         );
