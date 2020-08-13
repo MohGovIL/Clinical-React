@@ -258,7 +258,7 @@ const Fields = ({
             <div key={item.id}>
               <StyledCardRoot>
                 <StyledCardDetails>
-                  <StyledCardContent>
+                  <StyledCardContent languageDirection={languageDirection}>
                     <StyledTypographyName component='h5' variant='h5'>
                       {item.locked
                         ? practitioners[item.performer_or_requester]
@@ -298,7 +298,7 @@ const Fields = ({
                     />
                   </Grid>
                   <Grid item xs={2}></Grid>
-                  <Grid item xs={2}>
+                  <Grid item xs={4}>
                     <TestTreatmentReferral index={index} item={item} />
                   </Grid>
 

@@ -159,8 +159,12 @@ export const StyledCardDetails = styled.div`
 
 export const StyledCardContent = styled(CardContent)`
   flex: 1 0 auto;
-  border-left: 1px solid #d4cfcf;
-  margin-left: 22px;
+  border-left: ${(props) =>
+    props.languageDirection === 'rtl' ? '1px solid #d4cfcf;' : ''};
+  margin-left: ${(props) => (props.languageDirection === 'rtl' ? '22px' : '')};
+  border-right: ${(props) =>
+    props.languageDirection === 'ltr' ? '1px solid #d4cfcf;' : ''};
+  margin-right: ${(props) => (props.languageDirection === 'ltr' ? '22px' : '')};
   width: 20%;
   margin-top: 23px;
 `;
@@ -198,7 +202,7 @@ export const StyledTypographyName = styled(Typography)`
 
 export const StyledInstructions = styled.div``;
 export const StyledIconedButton = styled(Button)`
-  width: 150px;
+  width: auto;
   height: 40px;
   border-radius: 0px 23.5px 23.5px 0px;
   background-color: #eaf7ff;
@@ -206,7 +210,7 @@ export const StyledIconedButton = styled(Button)`
   right: 32%;
 
   p {
-    width: 89px;
+    width: auto;
     height: 20px;
     font-size: 16px;
     font-weight: normal;
