@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Controller, useFormContext } from 'react-hook-form';
 import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
 import { StyledHiddenDiv } from '../../Style';
+import { connect } from 'react-redux';
 
 /**
  *
@@ -18,7 +19,13 @@ import { StyledHiddenDiv } from '../../Style';
  * @param requiredErrors
  * @returns UI Field of the main form.
  */
-const TestTreatMentStatus = ({ index, requiredErrors, item, permission }) => {
+const TestTreatMentStatus = ({
+  languageDirection,
+  index,
+  requiredErrors,
+  item,
+  permission,
+}) => {
   const { t } = useTranslation();
   const { control, register, setValue, getValues, watch } = useFormContext();
 
@@ -55,7 +62,7 @@ const TestTreatMentStatus = ({ index, requiredErrors, item, permission }) => {
           label_2={'Performed'}
           marginLeft={'70px'}
           marginRight={'70px'}
-          width={'300px'}
+          width={languageDirection == 'rtl' ? '200px' : '300px'}
           margin={'10px 14px'}
         />
       </StyledHiddenDiv>
@@ -74,4 +81,10 @@ const TestTreatMentStatus = ({ index, requiredErrors, item, permission }) => {
     </>
   );
 };
-export default TestTreatMentStatus;
+
+const mapStateToProps = (state) => {
+  return {
+    languageDirection: state.settings.lang_dir,
+  };
+};
+export default connect(mapStateToProps, null)(TestTreatMentStatus);
