@@ -122,14 +122,19 @@ export const StyledTable = styled(Table)`
 `;
 
 export const StyledTreatmentInstructionsButton = styled(Button)`
-  width: 148px;
+  /*width: 200px;*/
   height: 32px;
   border-radius: 25px;
   border: solid 1px #002398;
-  float: left;
+  /*float: left;*/
+  width: auto;
+  height: 32px;
+  border-radius: 25px;
+  border: solid 1px #002398;
+  float: ${(props) => (props.languageDirection === 'rtl' ? 'left' : 'right')};
   span {
-    width: 110px;
-    height: 22px;
+    /* width: 110px;
+    height: 22px;*/
     font-size: 16px;
     font-weight: normal;
     font-stretch: normal;

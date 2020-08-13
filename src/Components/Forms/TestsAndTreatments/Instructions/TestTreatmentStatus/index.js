@@ -6,10 +6,11 @@
  */
 
 import StyledSwitch from 'Assets/Elements/StyledSwitch';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller, useFormContext } from 'react-hook-form';
 import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
+import { StyledHiddenDiv } from '../../Style';
 
 /**
  *
@@ -27,27 +28,37 @@ const TestTreatMentStatus = ({ index, requiredErrors, item, permission }) => {
       `Instruction[${index}].test_treatment_status`,
       event.target.checked,
     );
+    register(`Instruction[${index}].test_treatment_status`);
+    setChecked(event.target.checked);
     return event.target.checked;
   };
 
-  return !item.locked || permission === 'write' ? (
+  const [checked, setChecked] = useState(
+    item.test_treatment_status === 'done' ? true : false,
+  );
+  useEffect(() => {
+    console.log(item.test_treatment_status);
+  }, [item.test_treatment_status]);
+  return (
     <>
-      <span>
-        <b>{t('Status')}</b>
-      </span>
-      <StyledSwitch
-        checked={item.test_treatment_status === 'done' ? true : false}
-        register={register}
-        onChange={handleChange}
-        name={`Instruction[${index}].test_treatment_status`}
-        control={control}
-        label_1={'Yet To be done'}
-        label_2={'Performed'}
-        marginLeft={'70px'}
-        marginRight={'70px'}
-        width={'200px'}
-        margin={'10px 14px'}
-      />
+      <StyledHiddenDiv dontDisplay={item.locked && permission !== 'write'}>
+        <span>
+          <b>{t('Status')}</b>
+        </span>
+        <StyledSwitch
+          checked={checked}
+          register={register}
+          onChange={handleChange}
+          name={`Instruction[${index}].test_treatment_status`}
+          control={control}
+          label_1={'Yet To be done'}
+          label_2={'Performed'}
+          marginLeft={'70px'}
+          marginRight={'70px'}
+          width={'300px'}
+          margin={'10px 14px'}
+        />
+      </StyledHiddenDiv>
       {item.locked && permission !== 'write' ? (
         <TestTreatmentLockedText
           label={t('Status')}
@@ -61,6 +72,6 @@ const TestTreatMentStatus = ({ index, requiredErrors, item, permission }) => {
         />
       ) : null}
     </>
-  ) : null;
+  );
 };
 export default TestTreatMentStatus;

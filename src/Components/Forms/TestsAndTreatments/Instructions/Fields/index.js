@@ -60,6 +60,7 @@ const Fields = ({
   requiredErrors,
   setRequiredErrors,
   permission,
+  languageDirection,
 }) => {
   const [practitioners, setPreactitioners] = useState([]);
   const { control, watch, register, setValue, getValues } = useFormContext();
@@ -243,7 +244,9 @@ const Fields = ({
       <StyledConstantHeaders>
         {t('Instructions for treatment')}
       </StyledConstantHeaders>
-      <StyledTreatmentInstructionsButton onClick={addNewInstruction}>
+      <StyledTreatmentInstructionsButton
+        languageDirection={languageDirection}
+        onClick={addNewInstruction}>
         <img alt='plus icon' src={PLUS} />
         {t('Instructions for treatment')}
       </StyledTreatmentInstructionsButton>
