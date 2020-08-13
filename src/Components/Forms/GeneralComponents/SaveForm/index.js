@@ -66,7 +66,10 @@ const SaveForm = ({
   return (
     <StyledSaveForm>
       <Grid container spacing={4}>
-        <Content statuses={statuses} />
+        <Content
+          statuses={statuses}
+          currentStatus={encounter.extensionSecondaryStatus}
+        />
         <Grid item xs={3}>
           <CenterButton>
             <StyledButton

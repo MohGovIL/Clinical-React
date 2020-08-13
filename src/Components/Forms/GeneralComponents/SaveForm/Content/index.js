@@ -4,7 +4,7 @@ import StyledContent, { StyledHeader, StyledSubHeader } from './Style';
 import { RadioGroup, FormControlLabel, Radio, Grid } from '@material-ui/core';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-const Content = ({ statuses }) => {
+const Content = ({ statuses, currentStatus }) => {
   const { permission, setValue, register, unregister } = useFormContext();
 
   useEffect(() => {
@@ -57,7 +57,11 @@ const Content = ({ statuses }) => {
                 <Radio
                   style={{ paddingRight: statusIndex === 0 && '0' }}
                   color='primary'
-                  disabled={permission === 'view' ? true : false}
+                  disabled={
+                    permission === 'view' || currentStatus === status.value
+                      ? true
+                      : false
+                  }
                 />
               }
             />
