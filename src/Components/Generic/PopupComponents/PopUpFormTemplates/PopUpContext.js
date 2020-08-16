@@ -18,6 +18,7 @@ const PopUpContext = ({
   handleCloseOperation,
   setTemplateWasSaved,
   name,
+  languageDirection,
 }) => {
   const { t } = useTranslation();
   const textAreaRef = useRef(null);
@@ -37,9 +38,17 @@ const PopUpContext = ({
   };
   return (
     <React.Fragment>
-      <CustomizedPaperHeader>{t('Edit field content')}</CustomizedPaperHeader>
-      <CustomizedPaper>
+      <CustomizedPaperHeader
+        languageDirection={languageDirection}
+        dir={languageDirection}>
+        {t('Edit field content')}
+      </CustomizedPaperHeader>
+      <CustomizedPaper
+        languageDirection={languageDirection}
+        dir={languageDirection}>
         <StyledContextTextArea
+          languageDirection={languageDirection}
+          dir={languageDirection}
           rowsMax={40}
           value={context}
           onChange={handleChange}
@@ -49,6 +58,8 @@ const PopUpContext = ({
 
       <CustomizedPaperFooter>
         <StyledSaveButton
+          languageDirection={languageDirection}
+          dir={languageDirection}
           variant={'contained'}
           color={'primary'}
           fontWeight={'bold'}

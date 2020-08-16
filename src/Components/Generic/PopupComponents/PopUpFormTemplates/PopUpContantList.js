@@ -18,6 +18,7 @@ import {
   CustomizedPaper,
   CustomizedPaperFooter,
   CustomizedPaperHeader,
+  StyledSaveButton,
 } from 'Components/Generic/PopupComponents/PopUpFormTemplates/Style';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -146,12 +147,20 @@ const PopUpContantList = ({
 
   return (
     <React.Fragment>
-      <CustomizedPaperHeader languageDirection={languageDirection}>
+      <CustomizedPaperHeader
+        dir={languageDirection}
+        languageDirection={languageDirection}>
         {t('Select template')}
       </CustomizedPaperHeader>
-      <CustomizedPaper>
-        <SearchTemplates>
+      <CustomizedPaper
+        languageDirection={languageDirection}
+        dir={languageDirection}>
+        <SearchTemplates
+          languageDirection={languageDirection}
+          dir={languageDirection}>
           <input
+            dir={languageDirection}
+            languageDirection={languageDirection}
             onChange={onChangeHandler}
             value={searchThis}
             placeholder={t('Search template')}
@@ -165,21 +174,29 @@ const PopUpContantList = ({
         searchInsideTemplates &&
         searchInsideTemplates.length > 0 ? (
           <StyledCheckAll
+            languageDirection={languageDirection}
             dir={languageDirection}
             onClick={handleSelectAllToggle}>
             <Checkbox
+              languageDirection={languageDirection}
               checked={checkAll}
               tabIndex={-1}
               disableRipple
               color={'primary'}
             />
-            <StyledCheckAllLabel>{t('Check All')}</StyledCheckAllLabel>
+            <StyledCheckAllLabel
+              languageDirection={languageDirection}
+              dir={languageDirection}>
+              {t('Check All')}
+            </StyledCheckAllLabel>
           </StyledCheckAll>
         ) : null}
         {templates ? (
           <CustomizedPaperBlocked
+            languageDirection={languageDirection}
             dir={languageDirection == 'rtl' ? 'ltr' : 'rtl'}>
             <StyledList
+              languageDirection={languageDirection}
               dir={languageDirection}
               dense
               component='div'
@@ -188,13 +205,18 @@ const PopUpContantList = ({
                 const labelId = `transfer-list-all-item-${index}-label`;
                 return (
                   <StyledListItem
+                    languageDirection={languageDirection}
                     alignItems='flex-start'
                     key={index}
                     role='listitem'
                     button
                     onClick={handleToggle}>
-                    <ListItemIcon>
+                    <ListItemIcon
+                      dir={languageDirection}
+                      languageDirection={languageDirection}>
                       <Checkbox
+                        languageDirection={languageDirection}
+                        dir={languageDirection}
                         checked={
                           intersection(checked, labelId.trim()).length > 0
                         }
@@ -205,6 +227,8 @@ const PopUpContantList = ({
                       />
                     </ListItemIcon>
                     <StyledListItemText
+                      languageDirection={languageDirection}
+                      dir={languageDirection}
                       id={labelId}
                       primary={`${t(value.title)}`}
                     />
@@ -216,13 +240,22 @@ const PopUpContantList = ({
           </CustomizedPaperBlocked>
         ) : null}
       </CustomizedPaper>
-      <CustomizedPaperFooter>
-        <Grid container spacing={6} onClick={cleanSelection}>
-          <StyledGridChoosen item xs={6}>{`${checked.length} ${t(
-            'Selected',
-          )}`}</StyledGridChoosen>
-          <StyledGridClean item xs={6}>
-            <Icon img={trash} />
+      <CustomizedPaperFooter
+        languageDirection={languageDirection}
+        dir={languageDirection}>
+        <Grid
+          dir={languageDirection}
+          languageDirection={languageDirection}
+          container
+          spacing={6}
+          onClick={cleanSelection}>
+          <StyledGridChoosen
+            languageDirection={languageDirection}
+            dir={languageDirection}
+            item
+            xs={6}>{`${checked.length} ${t('Selected')}`}</StyledGridChoosen>
+          <StyledGridClean languageDirection={languageDirection} item xs={6}>
+            <Icon img={trash} dir={languageDirection} />
             {t('Clean selection')}
           </StyledGridClean>
         </Grid>
