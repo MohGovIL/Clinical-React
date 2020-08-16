@@ -74,8 +74,9 @@ const FormsContainer = ({ tabs, dir }) => {
       const shouldBeArray = functionToRunOnTabChange.current();
       if (Array.isArray(shouldBeArray)) {
         await Promise.all(shouldBeArray);
-        setValue(newValue);
       }
+      await shouldBeArray;
+      setValue(newValue);
     }
   };
   if (tabs && tabs.data) {

@@ -162,6 +162,10 @@ const MedicalAdmission = ({
     name: '',
   });
 
+  
+
+  const [questionnaireResponseItems, setQuestionnaireResponseItems] = useState([]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -188,9 +192,10 @@ const MedicalAdmission = ({
           normalizedFhirQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
             questionnaireResponse.data.entry[1].resource,
           );
-          // setNormalizedQuestionnaireResponse(
-          //   normalizedFhirQuestionnaireResponse,
-          // );
+
+          setQuestionnaireResponseItems(
+            normalizedFhirQuestionnaireResponse.items,
+          );
         }
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaire' });
@@ -222,7 +227,7 @@ const MedicalAdmission = ({
   }, []);
 
   //Radio buttons for pregnancy
-  const pregnancyRadioList = [t('No'), t('Yes')];
+  const pregnancyRadioList = ['No', 'Yes'];
 
   const medicalAdmissionRenderOption = (option, state) => {
     return (
@@ -274,7 +279,7 @@ const MedicalAdmission = ({
   };
 
   const onSubmit = async (data) => {
-    if (!data) getValues({ nest: true });
+    if (!data) data = getValues({ nest: true });
     // console.log(data);
     // console.log(isRequiredValidation(data));
     if (!isRequiredValidation(data)) return;
@@ -339,13 +344,15 @@ const MedicalAdmission = ({
       cloneEncounter['examinationCode'] = data.examinationCode;
       cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
       cloneEncounter['priority'] = data.isUrgent;
-      await FHIR('Encounter', 'doWork', {
-        functionName: 'updateEncounter',
-        functionParams: {
-          encounterId: encounter.id,
-          encounter: cloneEncounter,
-        },
-      });
+      APIsArray.push(
+        FHIR('Encounter', 'doWork', {
+          functionName: 'updateEncounter',
+          functionParams: {
+            encounterId: encounter.id,
+            encounter: cloneEncounter,
+          },
+        }),
+      );
 
       //Creating new conditions for backgroundDiseases
       if (data.background_diseases === 'There are diseases') {
@@ -434,7 +441,11 @@ const MedicalAdmission = ({
             disableHeaders={false}
             disableButtonIsUrgent={false}
           />
-          <UrgentAndInsulation requiredUrgent requiredInsulation />
+          <UrgentAndInsulation
+            requiredUrgent
+            requiredInsulation
+            items={questionnaireResponseItems}
+          />
           <NursingAnamnesis />
           {/*need to make a new component for radio select*/}
           {(patient.gender === 'female' || patient.gender === 'other') && (
