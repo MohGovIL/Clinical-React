@@ -8,13 +8,22 @@ import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntit
 import { useFormContext } from 'react-hook-form';
 import { FormHelperText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
 
 const BackgroundDiseases = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister, watch, requiredErrors } = useFormContext();
+  const {
+    register,
+    unregister,
+    watch,
+    requiredErrors,
+    patientId,
+    setValue,
+  } = useFormContext();
   const radioName = 'background_diseases';
   const backgroundDiseasesToggleValue = watch(radioName);
 
@@ -27,10 +36,47 @@ const BackgroundDiseases = ({
 
   const backgroundDisRadioList = ['Usually healthy', 'There are diseases'];
 
+  const [selectedList, setSelectedList] = useState([]);
+
   useEffect(() => {
     register({ name: 'backgroundDiseasesCodes' });
-    return () => unregister(['backgroundDiseasesCodes']);
-  }, [register, unregister]);
+    register({ name: 'backgroundDiseasesIds' });
+    (async () => {
+      const conditions = await FHIR('Condition', 'doWork', {
+        functionName: 'getConditionListByParams',
+        functionParams: {
+          category: 'medical_problem',
+          subject: patientId,
+        },
+      });
+      if (conditions.data.total) {
+        const conditionCodes = [];
+        const conditionIds = [];
+        conditions.data.entry.forEach((condition) => {
+          if (condition.resource) {
+            const normalizedCondition = normalizeFhirCondition(
+              condition.resource,
+            );
+            conditionCodes.push({
+              reasonCode: { name: normalizedCondition.codeCode },
+              serviceType: {
+                code: '',
+              },
+            });
+            conditionIds.push(normalizedCondition.id);
+          }
+        });
+        // setSensitivitiesList(conditionCodes);
+        setSelectedList(conditionCodes);
+        setValue([
+          { background_diseases: 'There are diseases' },
+          { backgroundDiseasesIds: conditionIds },
+        ]);
+      }
+    })();
+    return () =>
+      unregister(['backgroundDiseasesCodes', 'backgroundDiseasesIds']);
+  }, [register, unregister, patientId, setValue]);
 
   useEffect(() => {
     let active = true;
@@ -82,6 +128,7 @@ const BackgroundDiseases = ({
       </FormHelperText>
       {backgroundDiseasesToggleValue === 'There are diseases' && (
         <CustomizedSelectCheckList
+          selectedList={selectedList}
           selectCheckList={backgroundDiseasesList}
           loadingCheckList={loadingBackgroundDiseasesList}
           servicesTypeOpen={servicesTypeOpen}

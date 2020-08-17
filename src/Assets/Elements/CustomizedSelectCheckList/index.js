@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyledChip } from 'Components/Generic/PatientAdmission/PatientDetailsBlock/Style';
 import {
   Checkbox,
@@ -34,11 +34,21 @@ const CustomizedSelectCheckList = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
   virtual,
+  selectedList,
 }) => {
   const { t } = useTranslation();
   const { requiredErrors, setValue } = useFormContext();
-
+  
   const [selectedServicesType, setSelectedServicesType] = useState([]);
+
+  useEffect(() => {
+    setSelectedServicesType(selectedList);
+    setValue(
+      valueSetCode,
+      selectedList.map((item) => item.reasonCode.code),
+    );
+  }, [setValue, valueSetCode, selectedList]);
+
   const [pendingValue, setPendingValue] = useState([]);
   const selectTestRef = React.useRef();
   // Requested service - select examination - functions / useEffect

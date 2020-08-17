@@ -63,8 +63,8 @@ const NursingAnamnesis = () => {
             onClick={() =>
               handlePopUpProps(
                 nursingDetails,
-                'nursing_anamnesis', //to change
-                'medical_admission', //to change
+                'nursing_anamnesis',
+                'medical_admission',
                 callBack,
                 'nursingDetails',
               )

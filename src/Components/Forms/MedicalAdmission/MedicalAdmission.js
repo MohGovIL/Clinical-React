@@ -162,9 +162,9 @@ const MedicalAdmission = ({
     name: '',
   });
 
-  
-
-  const [questionnaireResponseItems, setQuestionnaireResponseItems] = useState([]);
+  const [questionnaireResponseItems, setQuestionnaireResponseItems] = useState(
+    [],
+  );
 
   useEffect(() => {
     (async () => {
@@ -354,6 +354,70 @@ const MedicalAdmission = ({
         }),
       );
 
+      //Creating new conditions for sensitivities
+      if (data.sensitivities === 'Known') {
+        data.sensitivitiesCodes.forEach((sensitivities) => {
+          if (
+            data.sensitiveConditionsIds &&
+            Object.keys(data.sensitiveConditionsIds.length)
+          ) {
+            if (!data.sensitiveConditionsIds[sensitivities]) {
+              APIsArray.push(
+                FHIR('Condition', 'doWork', {
+                  functionName: 'createCondition',
+                  functionParams: {
+                    condition: {
+                      categorySystem:
+                        'http://clinikal/condition/category/sensitive',
+                      codeSystem:
+                        'http://clinikal/diagnosis/type/sensitivities',
+                      codeCode: sensitivities,
+                      patient: patient.id,
+                      recorder: store.getState().login.userID,
+                      clinicalStatus: 'active',
+                    },
+                  },
+                }),
+              );
+            }
+          } else {
+            APIsArray.push(
+              FHIR('Condition', 'doWork', {
+                functionName: 'createCondition',
+                functionParams: {
+                  condition: {
+                    categorySystem:
+                      'http://clinikal/condition/category/sensitive',
+                    codeSystem: 'http://clinikal/diagnosis/type/sensitivities',
+                    codeCode: sensitivities,
+                    patient: patient.id,
+                    recorder: store.getState().login.userID,
+                    clinicalStatus: 'active',
+                  },
+                },
+              }),
+            );
+          }
+        });
+      }
+      // else {
+      //   if (data.sensitiveConditionsIds && Object.keys(data.sensitiveConditionsIds).length) {
+      //     for (const codeKey in data.sensitiveConditionsIds) {
+      //       if (data.sensitiveConditionsIds.hasOwnProperty(codeKey)) {
+      //         const item = data.sensitiveConditionsIds[codeKey];
+      //         APIsArray.push(
+      //           FHIR('Condition', 'doWork', {
+      //             functionName: 'deleteCondition',
+      //             functionParams: {
+      //               conditionId: item.id,
+      //             },
+      //           }),
+      //         );
+      //       }
+      //     }
+      //   }
+      // }
+
       //Creating new conditions for backgroundDiseases
       if (data.background_diseases === 'There are diseases') {
         data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
@@ -363,7 +427,7 @@ const MedicalAdmission = ({
                 condition: {
                   categorySystem:
                     'http://clinikal/condition/category/medical_problem',
-                  codeSystem: 'http://clinikal/diagnosis/type/MOH_ICD10',
+                  codeSystem: 'http://clinikal/diagnosis/type/bk_diseases',
                   codeCode: backgroundDisease,
                   patient: patient.id,
                   recorder: store.getState().login.userID,
@@ -374,29 +438,10 @@ const MedicalAdmission = ({
             }),
           );
         });
+      } else {
+        // Need to delete not implemented
       }
 
-      //Creating new conditions for sensitivities
-      if (data.sensitivities === 'Known') {
-        data.sensitivitiesCodes.forEach((sensitivities) => {
-          APIsArray.push(
-            FHIR('Condition', 'doWork', {
-              functionName: 'createCondition',
-              functionParams: {
-                condition: {
-                  categorySystem:
-                    'http://clinikal/condition/category/sensitive',
-                  codeSystem: 'http://clinikal/diagnosis/type/MOH_ICD10',
-                  codeCode: sensitivities,
-                  patient: patient.id,
-                  recorder: store.getState().login.userID,
-                  clinicalStatus: 'active',
-                },
-              },
-            }),
-          );
-        });
-      }
       // Creating a new medicationStatement
       if (data.medication === 'Exist') {
         data.chronicMedicationCodes.forEach((medication) => {
@@ -429,7 +474,8 @@ const MedicalAdmission = ({
       <FormContext
         {...methods}
         requiredErrors={requiredErrors}
-        setPopUpProps={setPopUpProps}>
+        setPopUpProps={setPopUpProps}
+        patientId={patient.id}>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
           <VisitDetails
             reasonCodeDetails={encounter.extensionReasonCodeDetails}

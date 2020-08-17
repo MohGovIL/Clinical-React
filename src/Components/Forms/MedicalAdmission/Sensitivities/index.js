@@ -8,18 +8,29 @@ import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntit
 import { useFormContext } from 'react-hook-form';
 import { FormHelperText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
 
 const Sensitivities = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister, watch, requiredErrors } = useFormContext();
+  const {
+    register,
+    unregister,
+    watch,
+    requiredErrors,
+    patientId,
+    setValue,
+  } = useFormContext();
 
   const direction = useSelector((state) => state.settings.lang_dir);
   const radioName = 'sensitivities';
 
   const sensitivityToggleValue = watch(radioName);
+
+  const [selectedList, setSelectedList] = useState([]);
 
   const [sensitivitiesList, setSensitivitiesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
@@ -30,8 +41,49 @@ const Sensitivities = ({
 
   useEffect(() => {
     register({ name: 'sensitivitiesCodes' });
-    return () => unregister(['sensitivitiesCodes']);
-  }, [register, unregister]);
+    register({ name: 'sensitiveConditionsIds' });
+    (async () => {
+      const conditions = await FHIR('Condition', 'doWork', {
+        functionName: 'getConditionListByParams',
+        functionParams: {
+          category: 'sensitive',
+          subject: patientId,
+        },
+      });
+      if (conditions.data.total) {
+        const conditionCodes = [];
+        const conditionIds = {};
+        conditions.data.entry.forEach((condition) => {
+          if (condition.resource) {
+            const normalizedCondition = normalizeFhirCondition(
+              condition.resource,
+            );
+            conditionCodes.push({
+              reasonCode: {
+                name: normalizedCondition.codeCode,
+                code: normalizedCondition.codeCode,
+              },
+              serviceType: {
+                code: '',
+                name: ''
+              },
+            });
+            conditionIds[normalizedCondition.codeCode] = {
+              id: normalizedCondition.id,
+              code: normalizedCondition.codeCode,
+            };
+          }
+        });
+        // setSensitivitiesList(conditionCodes);
+        setSelectedList(conditionCodes);
+        setValue([
+          { sensitivities: 'Known' },
+          { sensitiveConditionsIds: conditionIds },
+        ]);
+      }
+    })();
+    return () => unregister(['sensitivitiesCodes', 'sensitiveConditionsIds']);
+  }, [register, unregister, patientId, setValue]);
 
   useEffect(() => {
     let active = true;
@@ -84,6 +136,7 @@ const Sensitivities = ({
       </FormHelperText>
       {sensitivityToggleValue === 'Known' && (
         <CustomizedSelectCheckList
+          selectedList={selectedList}
           selectCheckList={sensitivitiesList}
           loadingCheckList={loadingSensitivitiesList}
           servicesTypeOpen={servicesTypeOpen}
