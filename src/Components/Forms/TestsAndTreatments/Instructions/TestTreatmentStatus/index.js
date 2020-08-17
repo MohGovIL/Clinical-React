@@ -44,7 +44,7 @@ const TestTreatMentStatus = ({
     item.test_treatment_status === 'done' ? true : false,
   );
   useEffect(() => {
-    console.log(item.test_treatment_status);
+    /*console.log(item.test_treatment_status);*/
   }, [item.test_treatment_status]);
   return (
     <>

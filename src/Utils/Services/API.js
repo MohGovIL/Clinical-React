@@ -1,5 +1,11 @@
 import { tokenInstanceGenerator } from 'Utils/Services/AxiosWithTokenInstance';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
+import { store } from '../../index';
+import { FHIR } from './FHIR';
+import normalizeFhirDocumentReference from '../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
+import { combineBase_64 } from '../Helpers/combineBase_64';
+import { calculateFileSize } from '../Helpers/calculateFileSize';
+import { decodeBase_64IntoBlob } from '../Helpers/decodeBase_64IntoBlob';
 
 /**
  * @author Idan Gigi idangi@matrix.co.il
@@ -56,4 +62,25 @@ export const getFormTemplates = (
       `apis/api/templates/search?service-type=${serviceType}&reason-code=${reasonCode}&form=${formID}&form-field=${formField}`,
     );
   return null;
+};
+
+export const getLetterAPIListOfParams = (city) => {
+  //GET /api/letters/list
+  return city && apiTokenInstance().get(`apis/api/letters/list`);
+};
+export const createLetter = ({
+  letter_type,
+  encounter,
+  patient,
+  owner,
+  facility,
+  id,
+}) => {
+  return apiTokenInstance().post(`apis/api/letters/letter_${letter_type}`, {
+    encounter: encounter,
+    patient: patient,
+    owner: owner,
+    facility: facility,
+    id: id,
+  });
 };
