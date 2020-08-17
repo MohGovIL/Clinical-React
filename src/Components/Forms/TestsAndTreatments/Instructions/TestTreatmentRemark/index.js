@@ -9,35 +9,49 @@ import { Controller, useFormContext } from 'react-hook-form';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
+import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
 
 /**
  *
  * @param index
  * @returns UI Field of the main form.
  */
-const TestTreatmentRemark = ({ index }) => {
+const TestTreatmentRemark = ({ index, item }) => {
   const { t } = useTranslation();
   const { control, watch, getValues, setValue } = useFormContext();
   const { Instruction } = getValues({ nest: true });
 
   return (
-    <Controller
-      onChange={([event]) => {
-        setValue(
-          `Instruction[${index}].test_treatment_remark`,
-          event.target.checked,
-        );
-        return event.target.value;
-      }}
-      name={`Instruction[${index}].test_treatment_remark`}
-      control={control}
-      defaultValue={
-        Instruction &&
-        Instruction[index] &&
-        Instruction[index].test_treatment_remark
-      }
-      as={<CustomizedTextField multiline width={'85%'} label={t('remark')} />}
-    />
+    <>
+      <StyledHiddenDiv dontDisplay={item.locked}>
+        <Controller
+          onChange={([event]) => {
+            setValue(
+              `Instruction[${index}].test_treatment_remark`,
+              event.target.checked,
+            );
+            return event.target.value;
+          }}
+          name={`Instruction[${index}].test_treatment_remark`}
+          control={control}
+          defaultValue={item.test_treatment_remark}
+          InputProps={{
+            readOnly: item.locked,
+          }}
+          as={
+            <CustomizedTextField multiline width={'85%'} label={t('remark')} />
+          }
+        />
+      </StyledHiddenDiv>
+      {item.locked ? (
+        <TestTreatmentLockedText
+          label={t('remark')}
+          value={item.test_treatment_remark}
+          name={`Instruction[${index}].test_treatment`}
+        />
+      ) : null}
+    </>
   );
 };
 export default TestTreatmentRemark;
