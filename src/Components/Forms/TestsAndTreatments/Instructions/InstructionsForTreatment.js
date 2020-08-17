@@ -13,13 +13,13 @@ import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 import Grid from '@material-ui/core/Grid';
-import { FHIR } from '../../../../Utils/Services/FHIR';
-import denormalizeFhirServiceRequest from '../../../../Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
+import { FHIR } from 'Utils/Services/FHIR';
+import denormalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
 
 import moment from 'moment';
-import SaveForm from '../../GeneralComponents/SaveForm';
+import SaveForm from 'Components/Forms/GeneralComponents/SaveForm/index';
 
-import { baseRoutePath } from '../../../../Utils/Helpers/baseRoutePath';
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 
 /**

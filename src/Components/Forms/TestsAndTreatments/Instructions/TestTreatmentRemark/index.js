@@ -10,7 +10,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
-import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style.js';
+import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
 
 /**
  *

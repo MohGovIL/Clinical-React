@@ -18,7 +18,7 @@ import {
   getValueSetFromLists,
   getValueSetLists,
 } from 'Utils/Helpers/getValueSetArray';
-import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style.js';
+import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
 
 /**
  *

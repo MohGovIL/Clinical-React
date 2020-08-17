@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import Grid from '@material-ui/core/Grid';
 import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
-import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style.js';
+import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
 
 /**
  *

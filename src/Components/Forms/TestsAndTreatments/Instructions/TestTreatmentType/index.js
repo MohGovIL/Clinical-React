@@ -14,7 +14,7 @@ import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntit
 import { useTranslation } from 'react-i18next';
 import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
 import { getValueSetFromLists } from 'Utils/Helpers/getValueSetArray';
-import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style.js';
+import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
 
 /**
  *

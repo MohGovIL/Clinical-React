@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller, useFormContext } from 'react-hook-form';
 import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
-import { StyledHiddenDiv } from '../../Style';
+import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
 import { connect } from 'react-redux';
 
 /**
