@@ -51,22 +51,28 @@ const BackgroundDiseases = ({
       });
       if (conditions.data.total) {
         const conditionCodes = [];
-        const conditionIds = [];
+        const conditionIds = {};
         conditions.data.entry.forEach((condition) => {
           if (condition.resource) {
             const normalizedCondition = normalizeFhirCondition(
               condition.resource,
             );
             conditionCodes.push({
-              reasonCode: { name: normalizedCondition.codeCode },
+              reasonCode: {
+                name: normalizedCondition.codeCode,
+                code: normalizedCondition.codeCode,
+              },
               serviceType: {
                 code: '',
+                name: ''
               },
             });
-            conditionIds.push(normalizedCondition.id);
+            conditionIds[normalizedCondition.codeCode] = {
+              id: normalizedCondition.id,
+              code: normalizedCondition.codeCode,
+            };
           }
         });
-        // setSensitivitiesList(conditionCodes);
         setSelectedList(conditionCodes);
         setValue([
           { background_diseases: 'There are diseases' },

@@ -359,7 +359,7 @@ const MedicalAdmission = ({
         data.sensitivitiesCodes.forEach((sensitivities) => {
           if (
             data.sensitiveConditionsIds &&
-            Object.keys(data.sensitiveConditionsIds.length)
+            Object.keys(data.sensitiveConditionsIds).length
           ) {
             if (!data.sensitiveConditionsIds[sensitivities]) {
               APIsArray.push(
@@ -400,46 +400,51 @@ const MedicalAdmission = ({
           }
         });
       }
-      // else {
-      //   if (data.sensitiveConditionsIds && Object.keys(data.sensitiveConditionsIds).length) {
-      //     for (const codeKey in data.sensitiveConditionsIds) {
-      //       if (data.sensitiveConditionsIds.hasOwnProperty(codeKey)) {
-      //         const item = data.sensitiveConditionsIds[codeKey];
-      //         APIsArray.push(
-      //           FHIR('Condition', 'doWork', {
-      //             functionName: 'deleteCondition',
-      //             functionParams: {
-      //               conditionId: item.id,
-      //             },
-      //           }),
-      //         );
-      //       }
-      //     }
-      //   }
-      // }
 
       //Creating new conditions for backgroundDiseases
       if (data.background_diseases === 'There are diseases') {
         data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
-          APIsArray.push(
-            FHIR('Condition', 'doWork', {
-              functionParams: {
-                condition: {
-                  categorySystem:
-                    'http://clinikal/condition/category/medical_problem',
-                  codeSystem: 'http://clinikal/diagnosis/type/bk_diseases',
-                  codeCode: backgroundDisease,
-                  patient: patient.id,
-                  recorder: store.getState().login.userID,
-                  clinicalStatus: 'active',
+          if (
+            data.backgroundDiseasesIds &&
+            Object.keys(data.backgroundDiseasesIds).length
+          ) {
+            if (!data.backgroundDiseasesIds[backgroundDisease]) {
+              APIsArray.push(
+                FHIR('Condition', 'doWork', {
+                  functionParams: {
+                    condition: {
+                      categorySystem:
+                        'http://clinikal/condition/category/medical_problem',
+                      codeSystem: 'http://clinikal/diagnosis/type/bk_diseases',
+                      codeCode: backgroundDisease,
+                      patient: patient.id,
+                      recorder: store.getState().login.userID,
+                      clinicalStatus: 'active',
+                    },
+                  },
+                  functionName: 'createCondition',
+                }),
+              );
+            }
+          } else {
+            APIsArray.push(
+              FHIR('Condition', 'doWork', {
+                functionParams: {
+                  condition: {
+                    categorySystem:
+                      'http://clinikal/condition/category/medical_problem',
+                    codeSystem: 'http://clinikal/diagnosis/type/bk_diseases',
+                    codeCode: backgroundDisease,
+                    patient: patient.id,
+                    recorder: store.getState().login.userID,
+                    clinicalStatus: 'active',
+                  },
                 },
-              },
-              functionName: 'createCondition',
-            }),
-          );
+                functionName: 'createCondition',
+              }),
+            );
+          }
         });
-      } else {
-        // Need to delete not implemented
       }
 
       // Creating a new medicationStatement
@@ -477,6 +482,13 @@ const MedicalAdmission = ({
         setPopUpProps={setPopUpProps}
         patientId={patient.id}>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
+          <input
+            type='button'
+            value='click'
+            onClick={() => {
+              console.log(getValues({ nest: true }));
+            }}
+          />
           <VisitDetails
             reasonCodeDetails={encounter.extensionReasonCodeDetails}
             examination={encounter.examination}

@@ -74,7 +74,6 @@ const Sensitivities = ({
             };
           }
         });
-        // setSensitivitiesList(conditionCodes);
         setSelectedList(conditionCodes);
         setValue([
           { sensitivities: 'Known' },
