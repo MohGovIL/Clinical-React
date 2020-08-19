@@ -129,8 +129,9 @@ const TestTreatmentReferral = ({
         />
 
         <StyledIconedButton
+          disabled={reason_referance_doc_id === undefined}
           onClick={
-            !(reason_referance_doc_id && encounter.status === 'completed') &&
+            /* !(reason_referance_doc_id && encounter.status === 'completed') &&*/
             item.locked === false
               ? createNewLetter
               : () => getLetterIfExists(reason_referance_doc_id)
