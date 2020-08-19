@@ -64,8 +64,9 @@ const denormalizeFhirEncounter = (encounter) => {
           };
           break;
         case 'examinationCode':
-          denormalizedEncounter['reasonCode'] = encounter[encounterKey].map(
-            (reasonCode) => {
+          denormalizedEncounter['reasonCode'] =
+            encounter[encounterKey] &&
+            encounter[encounterKey].map((reasonCode) => {
               return {
                 coding: [
                   {
@@ -73,8 +74,7 @@ const denormalizeFhirEncounter = (encounter) => {
                   },
                 ],
               };
-            },
-          );
+            });
           break;
         case 'extensionReasonCodeDetails':
           extensions.push({

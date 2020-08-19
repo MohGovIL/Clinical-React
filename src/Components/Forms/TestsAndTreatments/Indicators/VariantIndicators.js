@@ -17,6 +17,7 @@ import Paper from '@material-ui/core/Paper';
 import TableCell from '@material-ui/core/TableCell';
 
 const VariantIndicators = ({ variantIndicators }) => {
+  let rowCounter = 0;
   const { t } = useTranslation();
   if (!variantIndicators) {
     return null;
@@ -31,6 +32,7 @@ const VariantIndicators = ({ variantIndicators }) => {
                   return (
                     <StyledVarientIndicatorsTR key={`variant_tr_${index}`}>
                       {Object.entries(tr).map(([index, value]) => {
+                        rowCounter++;
                         return value && value.componentType !== undefined ? (
                           <TableCell key={index}>
                             <value.componentType
@@ -39,7 +41,7 @@ const VariantIndicators = ({ variantIndicators }) => {
                               mask={value.mask}
                               disabled={value.disabled}
                               onChange={value.handleOnChange}
-                              id={value.id}
+                              id={value.id + '_' + rowCounter}
                               label={t(value.label)}
                               value={
                                 value.disabled && value.value === ''

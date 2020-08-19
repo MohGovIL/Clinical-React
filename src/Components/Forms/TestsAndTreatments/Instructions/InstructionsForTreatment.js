@@ -5,31 +5,122 @@
  * @returns the main form Component.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormContext, useForm } from 'react-hook-form';
 import Fields from 'Components/Forms/TestsAndTreatments/Instructions/Fields';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
+import Grid from '@material-ui/core/Grid';
+import { FHIR } from 'Utils/Services/FHIR';
+import denormalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirServiceRequest';
+
+import moment from 'moment';
+import SaveForm from 'Components/Forms/GeneralComponents/SaveForm/index';
+
+import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+import { useHistory } from 'react-router-dom';
+
 /**
  *
  * @param encounter
  * @returns   UI main form.
  */
-const InstructionsForTreatment = ({ encounter }) => {
+
+const InstructionsForTreatment = ({
+  encounter,
+  patient,
+  permission,
+  saveIndicatorsOnSubmit,
+  currentUser,
+  validationFunction,
+  functionToRunOnTabChange,
+  constantIndicators,
+  variantIndicatorsNew,
+}) => {
   const methods = useForm({
     mode: 'onBlur',
     defaultValues: {
       Instruction: [],
     },
   });
-  const { handleSubmit, setValue } = methods;
+
+  const { handleSubmit, setValue, watch, getValues } = methods;
+  const saveServiceRequestData = () => {
+    const data = getValues({ nest: true });
+
+    const savedServiceRequest = [];
+    try {
+      /*  const test_and_treatments_list = await getValueSetLists(
+        ['tests_and_treatments'],
+        true,
+      );*/
+      data.Instruction.map((value, index) => {
+        /* const test_treatment_type_list = await getValueSetLists(
+          [`details_${value.test_treatment}`],
+          true,
+        );*/
+        const serviceRequest = {
+          id: value.serviceReqID,
+          encounter: encounter.id,
+          patient: patient.id,
+          reasonCode: encounter.examinationCode,
+          reasonReferenceDocId: value.reasonReferenceDocId, //EM-84
+          note: value.test_treatment_remark,
+          patientInstruction: value.instructions,
+          serviceReqID: value.serviceReqID,
+          status: value.test_treatment_status ? 'done' : 'not_done',
+          test_treatment: value.test_treatment,
+          test_treatment_type: value.test_treatment_type,
+        };
+
+        if (value.test_treatment_status) {
+          serviceRequest.occurrence = moment()
+            //.utc()
+            .format('YYYY-MM-DDTHH:mm:ss[Z]');
+          serviceRequest.performer = currentUser.id;
+        }
+
+        if (value.serviceReqID !== '') {
+          serviceRequest.authoredOn = moment()
+            /* .utc()*/
+            .format('YYYY-MM-DDTHH:mm:ss[Z]');
+          serviceRequest.requester = currentUser.id;
+        }
+
+        const serviceRequestDataToSave = denormalizeFhirServiceRequest({
+          serviceRequest: serviceRequest,
+          /* valueSetRequests: test_and_treatments_list,
+          valueSetDetails: test_treatment_type_list,*/
+        });
+
+        savedServiceRequest.push(
+          FHIR('ServiceRequests', 'doWork', {
+            functionName: serviceRequestDataToSave.id
+              ? 'updateServiceRequest'
+              : 'createNewServiceRequest',
+            functionParams: {
+              id: serviceRequestDataToSave.id,
+              data: serviceRequestDataToSave,
+            },
+          }),
+        );
+      });
+    } catch (err) {}
+    return savedServiceRequest;
+  };
   const onSubmit = (data) => {
-    console.log('data', JSON.stringify(data));
-    console.log(isRequiredValidation(data));
+    //  console.log('data', JSON.stringify(data));
+    // console.log(isRequiredValidation(data));
+    const indicatorsFHIRArray = saveIndicatorsOnSubmit();
+    const serviceRequestFHIRArray = saveServiceRequestData(data);
+    const returnThis = [...indicatorsFHIRArray, ...serviceRequestFHIRArray];
+    console.log(returnThis);
+    return returnThis;
   };
   const [defaultContext, setDefaultContext] = useState('');
+  const [serviceRequests, setServiceRequests] = useState('');
   const { t } = useTranslation();
   const callBack = (data, name) => {
     setDefaultContext(data);
@@ -82,7 +173,7 @@ const InstructionsForTreatment = ({ encounter }) => {
   const [requiredErrors, setRequiredErrors] = useState([
     {
       test_treatment_type: '',
-      test_treatment_status: '',
+      /*  test_treatment_status: '',*/
     },
   ]);
 
@@ -94,38 +185,39 @@ const InstructionsForTreatment = ({ encounter }) => {
         return data !== '';
       },
     },
-    test_treatment_status: {
+    /*   test_treatment_status: {
       name: 'test_treatment_status',
       required: function (data) {
         return data !== false || data === '';
       },
-    },
+    },*/
   };
-  const isRequiredValidation = (data) => {
+  const isRequiredValidation = () => {
+    const data = getValues({ nest: true });
     let clean = true;
-    if (!data['Instruction']) {
-      return clean;
+
+    if (!data || (data && !data['Instruction'])) {
+      return true;
     }
     for (
       let instructionIndex = 0;
-      instructionIndex < requiredErrors.length;
+      instructionIndex < data['Instruction'].length;
       instructionIndex++
     ) {
       for (const fieldKey in requiredFields) {
         if (requiredFields.hasOwnProperty(fieldKey)) {
           const field = requiredFields[fieldKey];
-          if (
-            !data ||
-            !data['Instruction'] ||
-            !data['Instruction'][instructionIndex] ||
-            data['Instruction'][instructionIndex][field.name] === undefined
-          )
-            continue;
 
           let answer = field.required(
             data['Instruction'][instructionIndex][field.name],
           );
-          if (answer) {
+          if (!(field.name in data['Instruction'][instructionIndex])) continue;
+
+          if (
+            answer &&
+            data['Instruction'][instructionIndex][field.name] &&
+            data['Instruction'][instructionIndex][field.name] !== ''
+          ) {
             setRequiredErrors((prevState) => {
               const cloneState = [...prevState];
               cloneState[instructionIndex][field.name] = '';
@@ -144,19 +236,113 @@ const InstructionsForTreatment = ({ encounter }) => {
     }
     return clean;
   };
+  const updateEncounterExtension = async (
+    encounter,
+    selectedStatus,
+    practitioner,
+  ) => {
+    try {
+      if (!selectedStatus) return;
+      const cloneEncounter = { ...encounter };
+      switch (selectedStatus) {
+        case 'waiting_for_nurse':
+          cloneEncounter.status = 'in-progress';
+          break;
+        case 'waiting_for_doctor':
+          cloneEncounter.status =
+            cloneEncounter.status === 'arrived' ? 'triaged' : 'in_progress';
+
+          break;
+        case 'waiting_for_xray':
+          cloneEncounter.status = 'in-progress';
+          break;
+      }
+      cloneEncounter.extensionSecondaryStatus = selectedStatus;
+      cloneEncounter.practitioner = practitioner;
+
+      await FHIR('Encounter', 'doWork', {
+        functionName: 'updateEncounter',
+        functionParams: {
+          encounterId: encounter.id,
+          encounter: cloneEncounter,
+        },
+      });
+      history.push(`${baseRoutePath()}/generic/patientTracking`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //http://localhost/apis/fhir/v4/ServiceRequest?patient=1&encounter=1&_include=ServiceRequest:performer
+  useEffect(() => {
+    (async () => {
+      let fhirClinikalCalls = null;
+      try {
+        const fhirClinikalCallsAfterAwait = await FHIR(
+          'ServiceRequests',
+          'doWork',
+          {
+            functionName: 'getServiceRequests',
+            functionParams: {
+              patient: patient.id,
+              encounter: encounter.id,
+              _sort: '-authored',
+              _include: [
+                'ServiceRequest:requester',
+                'ServiceRequest:performer',
+              ],
+            },
+          },
+        );
+        if (fhirClinikalCallsAfterAwait['status'] === 200)
+          setServiceRequests(fhirClinikalCallsAfterAwait['data']);
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  }, []);
+
+  React.useEffect(() => {
+    validationFunction.current = isRequiredValidation;
+
+    return () => {
+      validationFunction.current = () => true;
+    };
+  }, [constantIndicators, variantIndicatorsNew, getValues({ nest: true })]);
+  React.useEffect(() => {
+    // validationFunction.current = isRequiredValidation;
+    functionToRunOnTabChange.current = onSubmit;
+    return () => {
+      functionToRunOnTabChange.current = () => [];
+      // validationFunction.current = () => true;
+    };
+  }, [constantIndicators, variantIndicatorsNew, getValues({ nest: true })]);
+  let statuses = [
+    { label: 'Waiting for nurse', value: 'waiting_for_nurse' },
+    { label: 'Waiting for doctor', value: 'waiting_for_doctor' },
+    { label: 'Waiting for xray', value: 'waiting_for_xray' },
+  ];
+  const history = useHistory();
 
   return (
     <FormContext {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <PopUpFormTemplates {...popUpProps} />
-
         <Fields
+          serviceRequests={serviceRequests}
           setRequiredErrors={setRequiredErrors}
           requiredErrors={requiredErrors}
           handlePopUpProps={handlePopUpProps}
+          permission={permission}
         />
-
-        <input type='submit' />
+        <Grid container spacing={1}>
+          <SaveForm
+            statuses={statuses}
+            encounter={encounter}
+            validationFunction={isRequiredValidation}
+            onSubmit={onSubmit}
+            updateEncounterExtension={updateEncounterExtension}
+          />
+        </Grid>
       </form>
     </FormContext>
   );

@@ -8,7 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { Card } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
+
 export const StyledConstantTextField = styled(TextField)`
   width: 104px;
   height: 56px;
@@ -122,14 +122,19 @@ export const StyledTable = styled(Table)`
 `;
 
 export const StyledTreatmentInstructionsButton = styled(Button)`
-  width: 148px;
+  /*width: 200px;*/
   height: 32px;
   border-radius: 25px;
   border: solid 1px #002398;
-  float: left;
+  /*float: left;*/
+  width: auto;
+  height: 32px;
+  border-radius: 25px;
+  border: solid 1px #002398;
+  float: ${(props) => (props.languageDirection === 'rtl' ? 'left' : 'right')};
   span {
-    width: 110px;
-    height: 22px;
+    /* width: 110px;
+    height: 22px;*/
     font-size: 16px;
     font-weight: normal;
     font-stretch: normal;
@@ -143,7 +148,8 @@ export const StyledTreatmentInstructionsButton = styled(Button)`
 
 export const StyledCardRoot = styled(Card)`
   display: flex;
-  padding: 10px;
+  padding: 27px;
+  box-shadow: 0 1px 12px 3px rgba(151, 151, 152, 0.09);
 `;
 
 export const StyledCardDetails = styled.div`
@@ -153,8 +159,12 @@ export const StyledCardDetails = styled.div`
 
 export const StyledCardContent = styled(CardContent)`
   flex: 1 0 auto;
-  border-left: 1px solid #d4cfcf;
-  margin-left: 22px;
+  border-left: ${(props) =>
+    props.languageDirection === 'rtl' ? '1px solid #d4cfcf;' : ''};
+  margin-left: ${(props) => (props.languageDirection === 'rtl' ? '22px' : '')};
+  border-right: ${(props) =>
+    props.languageDirection === 'ltr' ? '1px solid #d4cfcf;' : ''};
+  margin-right: ${(props) => (props.languageDirection === 'ltr' ? '22px' : '')};
   width: 20%;
   margin-top: 23px;
 `;
@@ -175,7 +185,9 @@ export const StyledTypographyHour = styled(Typography)`
   line-height: normal;
   letter-spacing: 0.7px;
   text-align: center;
-  color: #076ce9;
+  h6 {
+    color: #076ce9;
+  }
 `;
 export const StyledTypographyName = styled(Typography)`
   font-size: 16px;
@@ -190,7 +202,7 @@ export const StyledTypographyName = styled(Typography)`
 
 export const StyledInstructions = styled.div``;
 export const StyledIconedButton = styled(Button)`
-  width: 150px;
+  width: auto;
   height: 40px;
   border-radius: 0px 23.5px 23.5px 0px;
   background-color: #eaf7ff;
@@ -198,7 +210,7 @@ export const StyledIconedButton = styled(Button)`
   right: 32%;
 
   p {
-    width: 89px;
+    width: auto;
     height: 20px;
     font-size: 16px;
     font-weight: normal;
@@ -222,4 +234,35 @@ export const StyledIconedButton = styled(Button)`
     height: 17px;
     margin: 8px 8px;
   }
+`;
+
+export const StyledSubHeader = styled.p`
+  width: 346px;
+  height: 22px;
+
+  font-size: 16px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: right;
+  color: #000b40;
+`;
+
+export const StyledHiddenDiv = styled.div`
+  display: ${(props) => (props.dontDisplay ? 'none' : '')};
+`;
+
+export const StyledHeader = styled.p`
+  width: 347px;
+  height: 33px;
+  font-size: 24px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: right;
+  color: #000b40;
 `;

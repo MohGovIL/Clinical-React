@@ -8,6 +8,8 @@ import { store } from 'index';
 import { FHIR } from 'Utils/Services/FHIR';
 import { useHistory } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+import Grid from '@material-ui/core/Grid';
+
 /**
  * @author Idan Gigi idangi@matrix.co.il
  * @param { [{value: string, label: string}] } statuses
@@ -19,6 +21,7 @@ const SaveForm = ({
   encounter,
   onSubmit,
   validationFunction,
+  updateEncounterExtension,
 }) => {
   const { t } = useTranslation();
   const { permission, watch, getValues } = useFormContext();
@@ -26,34 +29,37 @@ const SaveForm = ({
   const history = useHistory();
   let selectedStatus = '';
   if (statuses) selectedStatus = watch('nextStatus');
+  const practitioner = store.getState().login.userID;
+  const updateEncounter = !updateEncounterExtension
+    ? async () => {
+        try {
+          const cloneEncounter = { ...encounter };
+          cloneEncounter.extensionSecondaryStatus = selectedStatus;
+          cloneEncounter.status = mainStatus;
+          cloneEncounter.practitioner = practitioner;
 
-  const updateEncounter = async () => {
-    try {
-      const cloneEncounter = { ...encounter };
-      cloneEncounter.extensionSecondaryStatus = selectedStatus;
-      cloneEncounter.status = mainStatus;
-      cloneEncounter.practitioner = store.getState().login.userID;
-
-      await FHIR('Encounter', 'doWork', {
-        functionName: 'updateEncounter',
-        functionParams: {
-          encounterId: encounter.id,
-          encounter: cloneEncounter,
-        },
-      });
-      history.push(`${baseRoutePath()}/generic/patientTracking`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+          await FHIR('Encounter', 'doWork', {
+            functionName: 'updateEncounter',
+            functionParams: {
+              encounterId: encounter.id,
+              encounter: cloneEncounter,
+            },
+          });
+          history.push(`${baseRoutePath()}/generic/patientTracking`);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    : async () =>
+        updateEncounterExtension(encounter, watch('nextStatus'), practitioner);
 
   const onClickHandler = async () => {
     try {
       if (validationFunction(getValues({ nest: true })) || true) {
-        const onSubmitPromises = onSubmit(getValues({ nest: true }))
+        const onSubmitPromises = onSubmit(getValues({ nest: true }));
 
-        if(Array.isArray(onSubmitPromises)) {
-        await Promise.all(onSubmitPromises);
+        if (Array.isArray(onSubmitPromises)) {
+          await Promise.all(onSubmitPromises);
         }
         await onSubmitPromises;
         updateEncounter();
@@ -64,27 +70,36 @@ const SaveForm = ({
   };
 
   return (
-    <StyledSaveForm direction={statuses ? 'row' : 'row-reverse'}>
-      {statuses ? <Content statuses={statuses} /> : null}
-      <CenterButton>
-        <StyledButton
-          color='primary'
-          variant='contained'
-          type='button'
-          letterSpacing={'0.1'}
-          onClick={onClickHandler}
-          disabled={
-            !statuses
-              ? false
-              : !selectedStatus
-              ? true
-              : permission === 'view'
-              ? true
-              : false
-          }>
-          {t('Save & Close')}
-        </StyledButton>
-      </CenterButton>
+    <StyledSaveForm >
+      <Grid container spacing={4}>
+        {statuses ? (
+          <Content
+            statuses={statuses}
+            currentStatus={encounter.extensionSecondaryStatus}
+          />
+        ) : null}
+        <Grid item xs={3}>
+          <CenterButton>
+            <StyledButton
+              color='primary'
+              variant='contained'
+              type='button'
+              letterSpacing={'0.1'}
+              onClick={onClickHandler}
+              disabled={
+                !statuses
+                  ? false
+                  : !selectedStatus
+                  ? true
+                  : permission === 'view'
+                  ? true
+                  : false
+              }>
+              {t('Save & Close')}
+            </StyledButton>
+          </CenterButton>
+        </Grid>
+      </Grid>
     </StyledSaveForm>
   );
 };

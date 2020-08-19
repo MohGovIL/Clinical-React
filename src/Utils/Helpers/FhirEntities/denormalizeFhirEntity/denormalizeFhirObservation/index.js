@@ -10,16 +10,14 @@ const denormalizeFhirObservation = (observation) => {
   denormalizedObservation['component'] = [];
 
   const extensions = [];
+  denormalizedObservation['resourceType'] = 'Observation';
   for (const observationKey in observation) {
     if (observation.hasOwnProperty(observationKey)) {
-      //  observation[observationKey];
       switch (observationKey) {
-        case 'resourceType':
-          denormalizedObservation['resourceType'] = 'Observation';
         case 'status':
           denormalizedObservation['status'] = observation[observationKey];
           break;
-        case 'patient':
+        case 'subject':
           denormalizedObservation['subject'] = {
             reference: `Patient/${observation[observationKey]}`,
           };
@@ -34,8 +32,8 @@ const denormalizeFhirObservation = (observation) => {
             {
               coding: [
                 {
-                  system: observation.categorySystem,
-                  code: observation[observationKey],
+                  system: observation.category.system,
+                  code: observation.category.code,
                 },
               ],
               text: observation.categoryText,
@@ -59,15 +57,19 @@ const denormalizeFhirObservation = (observation) => {
           };
           break;
         case 'component':
-          observation[observationKey].map((observed, key) => {
-            denormalizedObservation['component'].push({
-              valueQuantity: {
-                value: observed.value,
-                system: 'http://loinc.org',
-                code: observed.code,
-              },
-            });
-          });
+          for (const observed in observation[observationKey]) {
+            if (observation[observationKey][observed].code) {
+              denormalizedObservation['component'].push({
+                valueQuantity: {
+                  value: observation[observationKey][observed].value
+                    ? observation[observationKey][observed].value
+                    : 0,
+                  system: 'http://loinc.org',
+                  code: observation[observationKey][observed].code,
+                },
+              });
+            }
+          }
 
           break;
         default:
