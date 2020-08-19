@@ -21,7 +21,6 @@ function TabPanel(props) {
       {value === index ? (
         <Box p={3}>
           <div dir={dir}>{children}</div>
-          {/*<Typography>{children}</Typography>*/}
         </Box>
       ) : null}
     </div>
