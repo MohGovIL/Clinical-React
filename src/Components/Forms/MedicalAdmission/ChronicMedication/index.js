@@ -8,13 +8,22 @@ import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntit
 import { useFormContext } from 'react-hook-form';
 import { FormHelperText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationStatement';
 
 const ChronicMedication = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
 }) => {
   const { t } = useTranslation();
-  const { register, unregister, watch, requiredErrors } = useFormContext();
+  const {
+    register,
+    unregister,
+    watch,
+    requiredErrors,
+    patientId,
+    setValue,
+  } = useFormContext();
 
   const direction = useSelector((state) => state.settings.lang_dir);
   const radioName = 'medication';
@@ -28,10 +37,57 @@ const ChronicMedication = ({
   //Radio buttons for medication details
   const medicationRadioList = ["Doesn't exist", 'Exist'];
 
+  const [selectedList, setSelectedList] = useState([]);
+
   useEffect(() => {
     register({ name: 'chronicMedicationCodes' });
-    return () => unregister(['chronicMedicationCodes']);
-  }, [register, unregister]);
+    register({ name: 'chronicMedicationIds' });
+    (async () => {
+      const medicationStatement = await FHIR('MedicationStatement', 'doWork', {
+        functionName: 'getMedicationStatementListByParams',
+        functionParams: {
+          patient: patientId,
+          status: 'active',
+          category: 'medication',
+        },
+      });
+      if (medicationStatement.data.total) {
+        const medicationCodes = [];
+        const medicationIds = {};
+        medicationStatement.data.entry.forEach((medication) => {
+          if (medication.resource) {
+            const normalizedMedicationStatement = normalizeFhirMedicationStatement(
+              medication.resource,
+            );
+            medicationCodes.push({
+              reasonCode: {
+                name:
+                  normalizedMedicationStatement.medicationCodeableConceptText,
+                code:
+                  normalizedMedicationStatement.medicationCodeableConceptCode,
+              },
+              serviceType: {
+                code: '',
+                name: '',
+              },
+            });
+            medicationIds[
+              normalizedMedicationStatement.medicationCodeableConceptCode
+            ] = {
+              id: normalizedMedicationStatement.id,
+              code: normalizedMedicationStatement.medicationCodeableConceptCode,
+            };
+          }
+        });
+        setSelectedList(medicationCodes);
+        setValue([
+          { medication: 'Exist' },
+          { chronicMedicationIds: medicationIds },
+        ]);
+      }
+    })();
+    return () => unregister(['chronicMedicationCodes', 'chronicMedicationIds']);
+  }, [register, unregister, patientId, setValue]);
 
   useEffect(() => {
     let active = true;
@@ -85,6 +141,7 @@ const ChronicMedication = ({
       </FormHelperText>
       {medicationToggleButton === 'Exist' && (
         <CustomizedSelectCheckList
+          selectedList={selectedList}
           selectCheckList={chronicMedicationList}
           loadingCheckList={loadingChronicMedicationList}
           servicesTypeOpen={servicesTypeOpen}

@@ -11,6 +11,7 @@ const normalizeFhirMedicationStatement = (medicationStatement) => {
   let categoryText = '';
   let medicationCodeableConceptCode = '';
   let medicationCodeableConceptSystem = '';
+  let medicationCodeableConceptText = '';
   let patient = '';
   let effectivePeriodStart = '';
   let effectivePeriodEnd = '';
@@ -27,6 +28,10 @@ const normalizeFhirMedicationStatement = (medicationStatement) => {
       categoryCode = medicationStatement.category.coding[0].code || '';
       categorySystem = medicationStatement.category.coding[0].system || '';
     }
+  }
+
+  if(medicationStatement.medicationCodeableConcept && medicationStatement.medicationCodeableConcept.text) {
+    medicationCodeableConceptText = medicationStatement.medicationCodeableConcept.text;
   }
 
   if (
@@ -66,6 +71,7 @@ const normalizeFhirMedicationStatement = (medicationStatement) => {
     categoryText,
     medicationCodeableConceptCode,
     medicationCodeableConceptSystem,
+    medicationCodeableConceptText,
     patient,
     effectivePeriodStart,
     effectivePeriodEnd,

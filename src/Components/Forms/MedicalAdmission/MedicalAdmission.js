@@ -9,7 +9,6 @@ import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import NursingAnamnesis from './NursingAnamnesis';
 import { FHIR } from 'Utils/Services/FHIR';
-import { StyledButton } from 'Assets/Elements/StyledButton';
 import UrgentAndInsulation from './UrgentAndInsulation';
 import Sensitivities from './Sensitivities';
 import BackgroundDiseases from './BackgroundDiseases';
@@ -217,14 +216,14 @@ const MedicalAdmission = ({
     return () => unregister(['isPregnancy']);
   }, [register, unregister]);
 
-  useEffect(() => {
-    validationFunction.current = isRequiredValidation;
-    functionToRunOnTabChange.current = onSubmit;
-    return () => {
-      functionToRunOnTabChange.current = () => [];
-      validationFunction.current = () => true;
-    };
-  }, []);
+  // useEffect(() => {
+  //   validationFunction.current = isRequiredValidation;
+  //   functionToRunOnTabChange.current = onSubmit;
+  //   return () => {
+  //     functionToRunOnTabChange.current = () => [];
+  //     validationFunction.current = () => true;
+  //   };
+  // }, []);
 
   //Radio buttons for pregnancy
   const pregnancyRadioList = ['No', 'Yes'];
@@ -280,8 +279,6 @@ const MedicalAdmission = ({
 
   const onSubmit = async (data) => {
     if (!data) data = getValues({ nest: true });
-    // console.log(data);
-    // console.log(isRequiredValidation(data));
     if (!isRequiredValidation(data)) return;
     try {
       const APIsArray = [];
@@ -344,6 +341,7 @@ const MedicalAdmission = ({
       cloneEncounter['examinationCode'] = data.examinationCode;
       cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
       cloneEncounter['priority'] = data.isUrgent;
+      cloneEncounter['extensionReasonCodeDetails'] = data.reasonForReferralDetails;
       APIsArray.push(
         FHIR('Encounter', 'doWork', {
           functionName: 'updateEncounter',
@@ -450,21 +448,48 @@ const MedicalAdmission = ({
       // Creating a new medicationStatement
       if (data.medication === 'Exist') {
         data.chronicMedicationCodes.forEach((medication) => {
-          APIsArray.push(
-            FHIR('MedicationStatement', 'doWork', {
-              functionName: 'createMedicationStatement',
-              functionParams: {
-                medicationStatement: {
-                  status: 'active',
-                  patient: patient.id,
-                  informationSource: store.getState().login.userID,
-                  medicationCodeableConceptCode: medication,
-                  medicationCodeableConceptSystem:
-                    'http://clinikal/valueset/drugs_list',
+          if (
+            data.chronicMedicationIds &&
+            Object.keys(data.chronicMedicationIds).length
+          ) {
+            if (!data.chronicMedicationIds[medication]) {
+              APIsArray.push(
+                FHIR('MedicationStatement', 'doWork', {
+                  functionName: 'createMedicationStatement',
+                  functionParams: {
+                    medicationStatement: {
+                      categorySystem:
+                        'http://clinikal/medicationStatement/category/medication',
+                      status: 'active',
+                      patient: patient.id,
+                      informationSource: store.getState().login.userID,
+                      medicationCodeableConceptCode: medication,
+                      medicationCodeableConceptSystem:
+                        'http://clinikal/valueset/drugs_list',
+                    },
+                  },
+                }),
+              );
+            }
+          } else {
+            APIsArray.push(
+              FHIR('MedicationStatement', 'doWork', {
+                functionName: 'createMedicationStatement',
+                functionParams: {
+                  medicationStatement: {
+                    categorySystem:
+                      'http://clinikal/medicationStatement/category/medication',
+                    status: 'active',
+                    patient: patient.id,
+                    informationSource: store.getState().login.userID,
+                    medicationCodeableConceptCode: medication,
+                    medicationCodeableConceptSystem:
+                      'http://clinikal/valueset/drugs_list',
+                  },
                 },
-              },
-            }),
-          );
+              }),
+            );
+          }
         });
       }
       return APIsArray;
@@ -482,13 +507,6 @@ const MedicalAdmission = ({
         setPopUpProps={setPopUpProps}
         patientId={patient.id}>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
-          <input
-            type='button'
-            value='click'
-            onClick={() => {
-              console.log(getValues({ nest: true }));
-            }}
-          />
           <VisitDetails
             reasonCodeDetails={encounter.extensionReasonCodeDetails}
             examination={encounter.examination}

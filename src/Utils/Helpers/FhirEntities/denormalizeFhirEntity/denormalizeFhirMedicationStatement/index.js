@@ -1,6 +1,6 @@
 const denormalizeFhirMedicationStatement = (medicationStatement) => {
   const denormalizedFhirMedicationStatement = {};
-  const category = {};
+  const category = { coding: [{}] };
   const effectivePeriod = {};
   for (const medicationStatementKey in medicationStatement) {
     if (medicationStatement.hasOwnProperty(medicationStatementKey)) {
@@ -10,12 +10,10 @@ const denormalizeFhirMedicationStatement = (medicationStatement) => {
           denormalizedFhirMedicationStatement['status'] = element;
           break;
         case 'categoryCode':
-          category['coding'] = [
-            {
-              code: element,
-              system: medicationStatement.categorySystem,
-            },
-          ];
+          category.coding[0]['code'] = element;
+          break;
+        case 'categorySystem':
+          category.coding[0]['system'] = element;
           break;
         case 'categoryText':
           category['text'] = element;

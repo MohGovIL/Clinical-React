@@ -59,7 +59,7 @@ const BackgroundDiseases = ({
             );
             conditionCodes.push({
               reasonCode: {
-                name: normalizedCondition.codeCode,
+                name: normalizedCondition.codeText,
                 code: normalizedCondition.codeCode,
               },
               serviceType: {

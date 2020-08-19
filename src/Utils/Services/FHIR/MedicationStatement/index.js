@@ -15,14 +15,14 @@ const MedicationStatementState = {
   },
 
   getMedicationStatementListByParams: (params) => {
-    if (
-      params.patient > 0 &&
-      params.category.length > 0 &&
-      params.status.length > 0
-    ) {
+    if (params.patient) {
       return CRUDOperations(
         'search',
-        `${params.url}?patient=${params.patient}&category=clinikal/medicationStatement/category/${params.category}&status=${params.status}`,
+        `${params.url}?patient=${params.patient}${
+          params.category
+            ? `&category=clinikal/medicationStatement/category/${params.category}`
+            : ''
+        }${params.status ? `&status=${params.status}` : ''}`,
       );
     } else {
       return false;

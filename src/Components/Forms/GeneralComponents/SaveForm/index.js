@@ -50,9 +50,13 @@ const SaveForm = ({
   const onClickHandler = async () => {
     try {
       if (validationFunction(getValues({ nest: true })) || true) {
-        await Promise.all(onSubmit(getValues({ nest: true })));
-        // updateEncounter();
-        console.log(getValues({ nest: true }));
+        const onSubmitPromises = onSubmit(getValues({ nest: true }))
+
+        if(Array.isArray(onSubmitPromises)) {
+        await Promise.all(onSubmitPromises);
+        }
+        await onSubmitPromises;
+        updateEncounter();
       }
     } catch (error) {
       console.log(error);

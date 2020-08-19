@@ -42,6 +42,7 @@ const CustomizedSelectCheckList = ({
   const [selectedServicesType, setSelectedServicesType] = useState([]);
 
   useEffect(() => {
+    if(!selectedList) return;
     setSelectedServicesType(selectedList);
     setValue(
       valueSetCode,
@@ -156,7 +157,7 @@ const CustomizedSelectCheckList = ({
         value={pendingValue}
         onChange={selectCheckListOnChangeHandler}
         getOptionSelected={(option, value) =>
-          option.reasonCode.name === value.reasonCode.name
+          option.reasonCode.code === value.reasonCode.code
         }
         disableCloseOnSelect
         renderTags={() => null}
