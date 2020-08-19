@@ -68,7 +68,7 @@ export const getLetterAPIListOfParams = (city) => {
   //GET /api/letters/list
   return city && apiTokenInstance().get(`apis/api/letters/list`);
 };
-export const createLetter = ({
+export const createLetter = async ({
   letter_type,
   encounter,
   patient,
@@ -76,11 +76,16 @@ export const createLetter = ({
   facility,
   id,
 }) => {
+  if (id && id > 0) {
+    const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
+      functionName: 'deleteDocumentReference',
+      documentReferenceId: id,
+    });
+  }
   return apiTokenInstance().post(`apis/api/letters/letter_${letter_type}`, {
     encounter: encounter,
     patient: patient,
     owner: owner,
     facility: facility,
-    id: id,
   });
 };

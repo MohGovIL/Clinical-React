@@ -95,7 +95,9 @@ const TestTreatmentReferral = ({
     }
   };
   const getLetterIfExists = async (id) => {
-    alert('createLetterIfExists : ' + id);
+    /*
+    console.log("Manufacturing of document with id :"+ id)
+    */
     if (!id) return;
     const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
       functionName: 'readDocumentReference',
