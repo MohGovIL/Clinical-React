@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import { useTranslation } from 'react-i18next';
-import StyledSaveForm, { CenterButton } from './Style';
+import { CenterButton } from './Style';
 import Content from './Content';
 import { useFormContext } from 'react-hook-form';
 import { store } from 'index';
@@ -70,8 +70,7 @@ const SaveForm = ({
   };
 
   return (
-    <StyledSaveForm >
-      <Grid container spacing={4}>
+      <Grid container spacing={4} direction={statuses ? 'row' : 'row-reverse'}>
         {statuses ? (
           <Content
             statuses={statuses}
@@ -100,7 +99,6 @@ const SaveForm = ({
           </CenterButton>
         </Grid>
       </Grid>
-    </StyledSaveForm>
   );
 };
 
