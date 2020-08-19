@@ -15,6 +15,7 @@ const StyledSwitch = ({
   width,
   helperText,
   error,
+  disabled,
 }) => {
   const { t } = useTranslation();
 
@@ -33,6 +34,7 @@ const StyledSwitch = ({
         margin={margin}
         width={width}>
         <input
+          disabled={disabled}
           name={name || null}
           ref={register || null}
           type='checkbox'

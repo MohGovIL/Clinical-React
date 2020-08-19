@@ -46,6 +46,7 @@ const VisitDetails = ({
     requiredErrors,
     setValue,
     unregister,
+    permission,
   } = useFormContext();
 
   const [selectedServicesType, setSelectedServicesType] = useState([]);
@@ -247,6 +248,7 @@ const VisitDetails = ({
         ) : null}
         {/* Requested service - select test */}
         <StyledAutoComplete
+          disabled={permission === 'write' ? false : true}
           filterOptions={filterOptions}
           multiple
           noOptionsText={t('No Results')}
@@ -327,6 +329,7 @@ const VisitDetails = ({
         <Grid container direction='row' wrap='wrap'>
           {selectedServicesType.map((selected, selectedIndex) => (
             <StyledChip
+              disabled={permission === 'write' ? false : true}
               deleteIcon={<Close fontSize='small' />}
               onDelete={chipOnDeleteHandler(selectedIndex)}
               key={selectedIndex}
@@ -342,6 +345,7 @@ const VisitDetails = ({
           defaultValue={reasonCodeDetails}
           as={
             <CustomizedTextField
+              disabled={permission === 'write' ? false : true}
               width={'70%'}
               label={t('Reason for referral details')}
             />

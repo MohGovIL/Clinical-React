@@ -54,12 +54,12 @@ const NursingAnamnesis = () => {
             InputLabelProps={{
               shrink: medicalAdmission['nursingDetails'] ? true : false,
             }}
-            disabled={permission === 'view' ? true : false}
+            disabled={permission === 'write' ? false : true}
           />
         </Grid>
         <Grid item xs={2}>
           <StyledSelectTemplateButton
-            disabled={permission === 'view' ? true : false}
+            disabled={permission === 'write' ? false : true}
             onClick={() =>
               handlePopUpProps(
                 nursingDetails,

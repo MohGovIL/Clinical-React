@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items }) => {
   const { t } = useTranslation();
 
-  const { register, watch, setValue, control } = useFormContext();
+  const { register, watch, setValue, control, permission } = useFormContext();
 
   const watchisInsulationInstruction = watch('isInsulationInstruction');
   // const watchisUrgent = watch('questionnaireResponseItems');
@@ -85,6 +85,7 @@ const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items }) => {
           </span>
           {/* Requested service - switch */}
           <StyledSwitch
+            disabled={permission === 'write' ? false : true}
             name='isUrgent'
             register={register}
             label_1={'No'}
@@ -108,6 +109,7 @@ const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items }) => {
           </span>
           {/* Requested service - switch */}
           <StyledSwitch
+            disabled={permission === 'write' ? false : true}
             name='isInsulationInstruction'
             register={register}
             label_1={'No'}
@@ -123,6 +125,7 @@ const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items }) => {
             name='insulationInstruction'
             as={
               <CustomizedTextField
+                disabled={permission === 'write' ? false : true}
                 width={'70%'}
                 label={t('Insulation instruction')}
               />

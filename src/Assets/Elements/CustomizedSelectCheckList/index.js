@@ -37,12 +37,12 @@ const CustomizedSelectCheckList = ({
   selectedList,
 }) => {
   const { t } = useTranslation();
-  const { requiredErrors, setValue } = useFormContext();
-  
+  const { requiredErrors, setValue, permission } = useFormContext();
+
   const [selectedServicesType, setSelectedServicesType] = useState([]);
 
   useEffect(() => {
-    if(!selectedList) return;
+    if (!selectedList) return;
     setSelectedServicesType(selectedList);
     setValue(
       valueSetCode,
@@ -146,6 +146,7 @@ const CustomizedSelectCheckList = ({
   return (
     <React.Fragment>
       <StyledAutocomplete
+        disabled={permission === 'write' ? false : true}
         filterOptions={filterOptions}
         multiple
         noOptionsText={t('No Results')}
@@ -212,6 +213,7 @@ const CustomizedSelectCheckList = ({
       <Grid container direction='row' wrap='wrap'>
         {selectedServicesType.map((selected, selectedIndex) => (
           <StyledChip
+            disabled={permission === 'write' ? false : true}
             deleteIcon={<Close fontSize='small' />}
             onDelete={chipOnDeleteHandler(selectedIndex)}
             key={selectedIndex}
