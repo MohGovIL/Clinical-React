@@ -299,7 +299,12 @@ const Fields = ({
                   </Grid>
                   <Grid item xs={2}></Grid>
                   <Grid item xs={4}>
-                    <TestTreatmentReferral index={index} item={item} />
+                    <TestTreatmentReferral
+                      setRequiredErrors={setRequiredErrors}
+                      requiredErrors={requiredErrors}
+                      index={index}
+                      item={item}
+                    />
                   </Grid>
 
                   <TestTreatmentInstructions

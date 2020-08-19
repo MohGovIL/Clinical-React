@@ -38,6 +38,7 @@ const InstructionsForTreatment = ({
   functionToRunOnTabChange,
   constantIndicators,
   variantIndicatorsNew,
+  languageDirection,
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -66,7 +67,7 @@ const InstructionsForTreatment = ({
           encounter: encounter.id,
           patient: patient.id,
           reasonCode: encounter.examinationCode,
-          reasonReferenceDocId: value.reasonReferenceDocId, //EM-84
+          reasonReferenceDocId: value.reason_referance_doc_id, //EM-84
           note: value.test_treatment_remark,
           patientInstruction: value.instructions,
           serviceReqID: value.serviceReqID,

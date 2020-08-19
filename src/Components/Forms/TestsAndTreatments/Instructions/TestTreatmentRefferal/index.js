@@ -19,6 +19,8 @@ import { store } from 'index';
 import { createLetter } from 'Utils/Services/API';
 import { decodeBase_64IntoBlob } from '../../../../../Utils/Helpers/decodeBase_64IntoBlob';
 import Grid from '@material-ui/core/Grid';
+import { FHIR } from '../../../../../Utils/Services/FHIR';
+import normalizeFhirDocumentReference from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 
 /**
  *
@@ -33,6 +35,8 @@ const TestTreatmentReferral = ({
   languageDirection,
   patient,
   currentUser,
+  requiredErrors,
+  setRequiredErrors,
 }) => {
   const { control, watch, getValues, setValue } = useFormContext();
   const { Instruction } = getValues({ nest: true });
@@ -47,9 +51,20 @@ const TestTreatmentReferral = ({
       Instruction[index] &&
       Instruction[index].reason_referance_doc_id) ||
     item.reason_referance_doc_id;
-  const getLetterIfExists = async () => {
+  const createNewLetter = async () => {
+    const { Instruction } = getValues({ nest: true });
+
     try {
-      const { Instruction } = getValues({ nest: true });
+      if (!Instruction[index].test_treatment_type) {
+        requiredErrors[index].test_treatment_type = true;
+        setRequiredErrors((prevState) => {
+          const cloneState = [...prevState];
+          cloneState[index]['test_treatment_type'] = t('Value is required');
+          return cloneState;
+        });
+        return;
+      }
+
       let facility = store.getState().settings.facility;
       let owner = currentUser && currentUser.id;
 
@@ -60,6 +75,7 @@ const TestTreatmentReferral = ({
         owner: owner,
         facility: facility,
         id: Instruction[index].reason_referance_doc_id,
+        x_ray_type: Instruction[index].test_treatment_type,
       });
 
       if (xRayDoc.status === 200) {
@@ -78,14 +94,31 @@ const TestTreatmentReferral = ({
       console.log(error);
     }
   };
-  const createLetterIfExists = () => {
-    alert('createLetterIfExists');
+  const getLetterIfExists = async (id) => {
+    alert('createLetterIfExists : ' + id);
+    if (!id) return;
+    const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
+      functionName: 'readDocumentReference',
+      functionParams: {
+        doc_id: id,
+      },
+    });
+    if (documentReferenceData.status === 200) {
+      let documentReferenceDataReturned = normalizeFhirDocumentReference(
+        documentReferenceData.data,
+      );
+      openDocumentInANewWindow({
+        data: documentReferenceDataReturned.data,
+        contentType: documentReferenceDataReturned.contentType,
+        name: `x_ray_patient_${patient}.pdf`,
+      });
+    }
     /*setValue(`Instruction[${index}].reason_referance_doc_id`,xRayDoc)*/
   };
   useEffect(() => {}, [test_treatment]);
   return (
     test_treatment === 'x_ray' && (
-      <StyledHiddenDiv dontDisplay={item.locked}>
+      <>
         <Controller
           hidden
           name={`Instruction[${index}].reason_referance_doc_id`}
@@ -95,9 +128,10 @@ const TestTreatmentReferral = ({
 
         <StyledIconedButton
           onClick={
-            !(item.reason_referance_doc_id && encounter.status === 'completed')
-              ? getLetterIfExists
-              : createLetterIfExists
+            !(reason_referance_doc_id && encounter.status === 'completed') &&
+            item.locked === false
+              ? createNewLetter
+              : () => getLetterIfExists(reason_referance_doc_id)
           }
           /* name={`Instruction[${index}].test_treatment_referral`}*/
         >
@@ -106,7 +140,7 @@ const TestTreatmentReferral = ({
           </div>
           <p>{t('Referral for x-ray')}</p>
         </StyledIconedButton>
-      </StyledHiddenDiv>
+      </>
     )
   );
 };
