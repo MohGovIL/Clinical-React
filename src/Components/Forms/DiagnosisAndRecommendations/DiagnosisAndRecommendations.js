@@ -373,9 +373,9 @@ const DiagnosisAndRecommendations = ({
     name: '',
   });
   const statuses = [
-    { label: 'Waiting for nurse', value: 'waiting_for_nurse' },
-    { label: 'Waiting for doctor', value: 'waiting_for_doctor' },
-    { label: 'Waiting for release', value: 'waiting_for_release' },
+    { label: 'Transfer to nurse', value: 'waiting_for_nurse' },
+    { label: 'Transfer to doctor', value: 'waiting_for_doctor' },
+    { label: 'Transfer to release', value: 'waiting_for_release' },
   ];
   const permissionHandler = React.useCallback(() => {
     let clonePermission = permission;
