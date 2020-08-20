@@ -21,6 +21,7 @@ import SaveForm from 'Components/Forms/GeneralComponents/SaveForm/index';
 
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
+import normalizeFhirServiceRequest from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
 
 /**
  *
@@ -48,6 +49,34 @@ const InstructionsForTreatment = ({
   });
 
   const { handleSubmit, setValue, watch, getValues } = methods;
+
+  function wasSomethingChanged(serviceRequest, serviceRequests) {
+    let returnThis = true;
+    serviceRequests.entry.map((val, index) => {
+      if (val.resource && val.resource.resourceType === 'ServiceRequest') {
+        const serviceReqFromFHIR = normalizeFhirServiceRequest(val.resource);
+        let status =
+          serviceRequest.status === 'not_done' ? 'active' : 'completed';
+        if (serviceReqFromFHIR.id === serviceRequest.id) {
+          if (
+            serviceReqFromFHIR.instructionCode ===
+              serviceRequest.test_treatment &&
+            serviceReqFromFHIR.orderDetailCode ===
+              serviceRequest.test_treatment_type &&
+            serviceReqFromFHIR.patientInstruction ===
+              serviceRequest.patientInstruction &&
+            serviceReqFromFHIR.status === status &&
+            serviceReqFromFHIR.note === serviceRequest.note &&
+            serviceReqFromFHIR.reasonReferenceDocId ===
+              serviceRequest.reasonReferenceDocId
+          )
+            returnThis = false;
+        }
+      }
+    });
+    return returnThis;
+  }
+
   const saveServiceRequestData = () => {
     const data = getValues({ nest: true });
 
@@ -75,15 +104,20 @@ const InstructionsForTreatment = ({
           test_treatment: value.test_treatment,
           test_treatment_type: value.test_treatment_type,
         };
+        //check whether to save this request or not ....
+        const diffExists = wasSomethingChanged(serviceRequest, serviceRequests);
+        if (!diffExists) return;
 
-        if (value.test_treatment_status) {
+        if (serviceRequest.status === 'done') {
+          serviceRequest.authoredOn = value.occurrence;
+          serviceRequest.requester = value.performer_or_requester;
           serviceRequest.occurrence = moment()
             //.utc()
             .format('YYYY-MM-DDTHH:mm:ss[Z]');
           serviceRequest.performer = currentUser.id;
         }
 
-        if (value.serviceReqID !== '') {
+        if (value.serviceReqID === '') {
           serviceRequest.authoredOn = moment()
             /* .utc()*/
             .format('YYYY-MM-DDTHH:mm:ss[Z]');
@@ -286,7 +320,7 @@ const InstructionsForTreatment = ({
             functionParams: {
               patient: patient.id,
               encounter: encounter.id,
-              _sort: '-authored',
+              _sort: '-authored', //,-occurrence', cannot do it yet
               _include: [
                 'ServiceRequest:requester',
                 'ServiceRequest:performer',
