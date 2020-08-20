@@ -17,10 +17,8 @@ import { connect } from 'react-redux';
 import openDocumentInANewWindow from 'Utils/Helpers/openDocumentInANewWindow';
 import { store } from 'index';
 import { createLetter } from 'Utils/Services/API';
-import { decodeBase_64IntoBlob } from '../../../../../Utils/Helpers/decodeBase_64IntoBlob';
-import Grid from '@material-ui/core/Grid';
-import { FHIR } from '../../../../../Utils/Services/FHIR';
-import normalizeFhirDocumentReference from '../../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 
 /**
  *

@@ -21,7 +21,7 @@ import SaveForm from 'Components/Forms/GeneralComponents/SaveForm/index';
 
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
-import normalizeFhirServiceRequest from '../../../../Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
+import normalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
 
 /**
  *
