@@ -74,6 +74,8 @@ export const createLetter = async ({
   patient,
   owner,
   facility,
+  x_ray_type,
+  name_of_letter,
   id,
 }) => {
   if (id && id > 0) {
@@ -87,5 +89,7 @@ export const createLetter = async ({
     patient: patient,
     owner: owner,
     facility: facility,
+    x_ray_type: x_ray_type,
+    name_of_letter: name_of_letter,
   });
 };

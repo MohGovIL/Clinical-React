@@ -74,6 +74,7 @@ const TestTreatmentReferral = ({
         facility: facility,
         id: Instruction[index].reason_referance_doc_id,
         x_ray_type: Instruction[index].test_treatment_type,
+        name_of_letter: 'Referral for X-ray',
       });
 
       if (xRayDoc.status === 200) {
