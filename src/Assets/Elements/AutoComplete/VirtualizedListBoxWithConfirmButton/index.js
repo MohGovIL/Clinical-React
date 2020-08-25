@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import CustomizedButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
 import { useMediaQuery, useTheme } from '@material-ui/core';
 import { VariableSizeList } from 'react-window';
-
+import { useSelector } from 'react-redux';
 const LISTBOX_PADDING = 8; // px
 
 function useResetCache(data) {
@@ -32,12 +34,29 @@ function renderRow(props) {
 }
 
 const InnerElementType = ({ children }) => {
-  return <ul style={{ width: 'unset' }}>{children}</ul>;
+  const direction = useSelector((state) => state.settings.lang_dir);
+  return <ul style={{ width: 'unset', direction }}>{children}</ul>;
 };
 
-export const VirtualizedListboxComponent = React.forwardRef(
+const VirtualizedListBoxWithConfirmButton = React.forwardRef(
   function ListboxComponent(props, ref) {
-    const { children, ...other } = props;
+    const {
+      setOpen,
+      pendingValue,
+      setSelectedServicesType,
+      setValue,
+      children,
+      ...other
+    } = props;
+    const { t } = useTranslation();
+    const onConfirmHandler = () => {
+      setSelectedServicesType((prevState) => {
+        setValue(pendingValue);
+        return pendingValue;
+      });
+      setOpen(false);
+    };
+
     const itemData = React.Children.toArray(children);
     const theme = useTheme();
     const smUp = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
@@ -52,9 +71,16 @@ export const VirtualizedListboxComponent = React.forwardRef(
     };
 
     const gridRef = useResetCache(itemCount);
-
     return (
-      <div ref={ref}>
+      <div
+        style={{
+          position: 'relative',
+          //   maxHeight: '300px',
+          //   overflowY: 'scroll',
+          //   marginBottom: '64px',
+        }}
+        ref={ref}
+        {...other}>
         <OuterElementContext.Provider value={other}>
           <VariableSizeList
             itemData={itemData}
@@ -69,7 +95,34 @@ export const VirtualizedListboxComponent = React.forwardRef(
             {renderRow}
           </VariableSizeList>
         </OuterElementContext.Provider>
+        {/* {children} */}
+        <div
+          style={{
+            position: 'fixed',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: '64px',
+            left: '0',
+            bottom: '0',
+            backgroundColor: '#ffffff',
+            width: 'calc(100% - 15px - 15px)',
+            padding: '0 15px 0 15px',
+          }}>
+          <span>
+            {`${t('Is selected')}
+            ${pendingValue.length} `}
+          </span>
+          <CustomizedButton
+            label={t('OK')}
+            variant='contained'
+            color='primary'
+            onClickHandler={onConfirmHandler}
+          />
+        </div>
       </div>
     );
   },
 );
+
+export default VirtualizedListBoxWithConfirmButton;

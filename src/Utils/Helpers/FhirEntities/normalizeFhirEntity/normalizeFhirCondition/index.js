@@ -17,6 +17,7 @@ const normalizeFhirCondition = (condition) => {
   let categoryCode = '';
   let categorySystem = '';
   let codeCode = '';
+  let codeText = '';
   let codeSystem = '';
   let title = '';
   let stageTypeCode = '';
@@ -46,6 +47,7 @@ const normalizeFhirCondition = (condition) => {
   }
 
   if (condition.code && Object.keys(condition.code).length > 0) {
+    codeText = condition.code.text || '';
     if (condition.code.coding && condition.code.coding.length) {
       codeCode = condition.code.coding[0].code;
       codeSystem = condition.code.coding[0].system;
@@ -65,7 +67,7 @@ const normalizeFhirCondition = (condition) => {
       stageTypeSystem = condition.stage[0].type.coding[0].system;
 
       if (condition.stage[0].type.text) {
-        stageTypeText = condition.stage[0].type;
+        stageTypeText = condition.stage[0].type.text;
       }
     }
   }
@@ -85,6 +87,7 @@ const normalizeFhirCondition = (condition) => {
     categorySystem,
     clinicalStatus,
     codeCode,
+    codeText,
     codeSystem,
     patient,
     recorder,

@@ -6,6 +6,10 @@ import { StyleBackgroundDiseases } from './Style';
 import { getValueSet } from 'Utils/Services/FhirAPI';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useFormContext } from 'react-hook-form';
+import { FormHelperText } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import { FHIR } from 'Utils/Services/FHIR';
+import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
 
 const BackgroundDiseases = ({
   defaultRenderOptionFunction,
@@ -15,27 +19,70 @@ const BackgroundDiseases = ({
   const {
     register,
     unregister,
+    watch,
+    requiredErrors,
+    patientId,
+    setValue,
   } = useFormContext();
-  const [backgroundDisChanged, setBackgroundDisChanged] = useState(false);
+  const radioName = 'background_diseases';
+  const backgroundDiseasesToggleValue = watch(radioName);
+
+  const direction = useSelector((state) => state.settings.lang_dir);
 
   const [backgroundDiseasesList, setBackgroundDiseasesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
-  const loadingBackgroundDiseasesList = servicesTypeOpen && backgroundDiseasesList.length === 0;
+  const loadingBackgroundDiseasesList =
+    servicesTypeOpen && backgroundDiseasesList.length === 0;
 
-  const backgroundDisRadioList = [
-    t('Usually healthy'),
-    t('There are diseases'),
-  ];
+  const backgroundDisRadioList = ['Usually healthy', 'There are diseases'];
 
-  const backgroundDisHandlerRadio = (value) => {
-    console.log('backgroundDis: ' + value);
-    setBackgroundDisChanged(value);
-  };
+  const [selectedList, setSelectedList] = useState([]);
 
   useEffect(() => {
     register({ name: 'backgroundDiseasesCodes' });
-    return () => unregister(['backgroundDiseasesCodes']);
-  }, [register, unregister]);
+    register({ name: 'backgroundDiseasesIds' });
+    (async () => {
+      const conditions = await FHIR('Condition', 'doWork', {
+        functionName: 'getConditionListByParams',
+        functionParams: {
+          category: 'medical_problem',
+          subject: patientId,
+        },
+      });
+      if (conditions.data.total) {
+        const conditionCodes = [];
+        const conditionIds = {};
+        conditions.data.entry.forEach((condition) => {
+          if (condition.resource) {
+            const normalizedCondition = normalizeFhirCondition(
+              condition.resource,
+            );
+            conditionCodes.push({
+              reasonCode: {
+                name: normalizedCondition.codeText,
+                code: normalizedCondition.codeCode,
+              },
+              serviceType: {
+                code: '',
+                name: ''
+              },
+            });
+            conditionIds[normalizedCondition.codeCode] = {
+              id: normalizedCondition.id,
+              code: normalizedCondition.codeCode,
+            };
+          }
+        });
+        setSelectedList(conditionCodes);
+        setValue([
+          { background_diseases: 'There are diseases' },
+          { backgroundDiseasesIds: conditionIds },
+        ]);
+      }
+    })();
+    return () =>
+      unregister(['backgroundDiseasesCodes', 'backgroundDiseasesIds']);
+  }, [register, unregister, patientId, setValue]);
 
   useEffect(() => {
     let active = true;
@@ -50,7 +97,7 @@ const BackgroundDiseases = ({
         if (active) {
           const options = [];
           const servicesTypeObj = {};
-          const allReasonsCode = await Promise.all(
+          await Promise.all(
             sensitivitiesResponse.data.expansion.contains.map((sensitive) => {
               const normalizedSensitiveSet = normalizeFhirValueSet(sensitive);
               const optionObj = {};
@@ -77,20 +124,24 @@ const BackgroundDiseases = ({
     <StyleBackgroundDiseases>
       <RadioGroupChoice
         gridLabel={t('Background diseases')}
-        radioName={'background_diseases'}
+        radioName={radioName}
         listValues={backgroundDisRadioList}
-        trueValue={t('There are diseases')}
-        callBackFunction={backgroundDisHandlerRadio}
       />
-      {backgroundDisChanged && (
+      <FormHelperText
+        style={{ textAlign: `${direction === 'rtl' ? 'right' : 'left'}` }}
+        error={requiredErrors[radioName] ? true : false}>
+        {requiredErrors[radioName] || ' '}
+      </FormHelperText>
+      {backgroundDiseasesToggleValue === 'There are diseases' && (
         <CustomizedSelectCheckList
+          selectedList={selectedList}
           selectCheckList={backgroundDiseasesList}
           loadingCheckList={loadingBackgroundDiseasesList}
           servicesTypeOpen={servicesTypeOpen}
           setServicesTypeOpen={setServicesTypeOpen}
           valueSetCode={'backgroundDiseasesCodes'}
           labelInputText={'Diseases details'}
-          helperErrorText={'Some error text'}
+          // helperErrorText={'Some error text'}
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
         />
