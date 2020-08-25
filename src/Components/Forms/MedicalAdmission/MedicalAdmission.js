@@ -216,14 +216,14 @@ const MedicalAdmission = ({
     return () => unregister(['isPregnancy']);
   }, [register, unregister]);
 
-  // useEffect(() => {
-  //   validationFunction.current = isRequiredValidation;
-  //   functionToRunOnTabChange.current = onSubmit;
-  //   return () => {
-  //     functionToRunOnTabChange.current = () => [];
-  //     validationFunction.current = () => true;
-  //   };
-  // }, []);
+  useEffect(() => {
+    validationFunction.current = isRequiredValidation;
+    functionToRunOnTabChange.current = onSubmit;
+    return () => {
+      functionToRunOnTabChange.current = () => [];
+      validationFunction.current = () => true;
+    };
+  }, []);
 
   //Radio buttons for pregnancy
   const pregnancyRadioList = ['No', 'Yes'];
