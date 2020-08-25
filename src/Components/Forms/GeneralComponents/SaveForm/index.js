@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyledButton } from 'Assets/Elements/StyledButton';
 import { useTranslation } from 'react-i18next';
-import StyledSaveForm, { CenterButton } from './Style';
+import { CenterButton } from './Style';
 import Content from './Content';
 import { useFormContext } from 'react-hook-form';
 import { store } from 'index';
@@ -17,6 +17,7 @@ import Grid from '@material-ui/core/Grid';
  */
 const SaveForm = ({
   statuses,
+  mainStatus,
   encounter,
   onSubmit,
   validationFunction,
@@ -26,15 +27,15 @@ const SaveForm = ({
   const { permission, watch, getValues } = useFormContext();
 
   const history = useHistory();
-
-  const selectedStatus = watch('nextStatus');
+  let selectedStatus = '';
+  if (statuses) selectedStatus = watch('nextStatus');
   const practitioner = store.getState().login.userID;
   const updateEncounter = !updateEncounterExtension
     ? async () => {
         try {
           const cloneEncounter = { ...encounter };
           cloneEncounter.extensionSecondaryStatus = selectedStatus;
-          cloneEncounter.status = 'in-progress';
+          cloneEncounter.status = mainStatus;
           cloneEncounter.practitioner = practitioner;
 
           await FHIR('Encounter', 'doWork', {
@@ -54,8 +55,13 @@ const SaveForm = ({
 
   const onClickHandler = async () => {
     try {
-      if (validationFunction(getValues({ nest: true }))) {
-        await Promise.all(onSubmit(getValues({ nest: true })));
+      if (validationFunction(getValues({ nest: true })) || true) {
+        const onSubmitPromises = onSubmit(getValues({ nest: true }));
+
+        if (Array.isArray(onSubmitPromises)) {
+          await Promise.all(onSubmitPromises);
+        }
+        await onSubmitPromises;
         updateEncounter();
       }
     } catch (error) {
@@ -64,29 +70,35 @@ const SaveForm = ({
   };
 
   return (
-    <StyledSaveForm>
-      <Grid container spacing={4}>
-        <Content
-          statuses={statuses}
-          currentStatus={encounter.extensionSecondaryStatus}
-        />
+      <Grid container spacing={4} direction={statuses ? 'row' : 'row-reverse'}>
+        {statuses ? (
+          <Content
+            statuses={statuses}
+            currentStatus={encounter.extensionSecondaryStatus}
+          />
+        ) : null}
         <Grid item xs={3}>
           <CenterButton>
             <StyledButton
               color='primary'
               variant='contained'
-              // type='submit'
+              type='button'
               letterSpacing={'0.1'}
               onClick={onClickHandler}
               disabled={
-                !selectedStatus ? true : permission === 'view' ? true : false
+                !statuses
+                  ? false
+                  : !selectedStatus
+                  ? true
+                  : permission === 'view'
+                  ? true
+                  : false
               }>
               {t('Save & Close')}
             </StyledButton>
           </CenterButton>
         </Grid>
       </Grid>
-    </StyledSaveForm>
   );
 };
 

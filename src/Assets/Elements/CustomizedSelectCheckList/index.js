@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import {
-  StyledChip,
-} from 'Components/Generic/PatientAdmission/PatientDetailsBlock/Style';
+import React, { useState, useEffect } from 'react';
+import { StyledChip } from 'Components/Generic/PatientAdmission/PatientDetailsBlock/Style';
 import {
   Checkbox,
   CircularProgress,
   Grid,
   InputAdornment,
   ListItemText,
+  Typography,
 } from '@material-ui/core';
 import {
   CheckBox,
@@ -17,6 +16,7 @@ import {
   ExpandMore,
 } from '@material-ui/icons';
 import ListboxComponent from 'Components/Generic/PatientAdmission/PatientDetailsBlock/ListboxComponent';
+import VirtualizedListBoxWithConfirmButton from 'Assets/Elements/AutoComplete/VirtualizedListBoxWithConfirmButton';
 import CustomizedTextField from '../CustomizedTextField';
 import { useTranslation } from 'react-i18next';
 import matchSorter from 'match-sorter';
@@ -33,19 +33,23 @@ const CustomizedSelectCheckList = ({
   valueSetCode,
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
+  virtual,
+  selectedList,
 }) => {
   const { t } = useTranslation();
-  const {
-    register,
-    control,
-    requiredErrors,
-    setValue,
-    unregister,
-    reset,
-    getValues,
-  } = useFormContext();
-
+  const { requiredErrors, setValue } = useFormContext();
+  
   const [selectedServicesType, setSelectedServicesType] = useState([]);
+
+  useEffect(() => {
+    if(!selectedList) return;
+    setSelectedServicesType(selectedList);
+    setValue(
+      valueSetCode,
+      selectedList.map((item) => item.reasonCode.code),
+    );
+  }, [setValue, valueSetCode, selectedList]);
+
   const [pendingValue, setPendingValue] = useState([]);
   const selectTestRef = React.useRef();
   // Requested service - select examination - functions / useEffect
@@ -111,17 +115,20 @@ const CustomizedSelectCheckList = ({
           </Grid>
           {option.reasonCode && option.reasonCode.code && (
             <Grid item xs={3}>
-              <ListItemText>{option.reasonCode.code}</ListItemText>
+              <Typography noWrap>{option.reasonCode.code}</Typography>
+              {/* <ListItemText>{option.reasonCode.code}</ListItemText> */}
             </Grid>
           )}
           {option.serviceType && option.serviceType.name && (
             <Grid item xs={3}>
-              <ListItemText primary={t(option.serviceType.name)} />
+              <Typography noWrap>{option.serviceType.name}</Typography>
+              {/* <ListItemText primary={t(option.serviceType.name)} /> */}
             </Grid>
           )}
           {option.reasonCode && option.reasonCode.name && (
             <Grid item xs={3}>
-              <ListItemText primary={t(option.reasonCode.name)} />
+              <Typography noWrap>{option.reasonCode.name}</Typography>
+              {/* <ListItemText primary={t(option.reasonCode.name)} /> */}
             </Grid>
           )}
         </Grid>
@@ -150,7 +157,7 @@ const CustomizedSelectCheckList = ({
         value={pendingValue}
         onChange={selectCheckListOnChangeHandler}
         getOptionSelected={(option, value) =>
-          option.reasonCode.name === value.reasonCode.name
+          option.reasonCode.code === value.reasonCode.code
         }
         disableCloseOnSelect
         renderTags={() => null}
@@ -159,7 +166,10 @@ const CustomizedSelectCheckList = ({
             ? defaultRenderOptionFunction(option, state)
             : defaultRenderOption(option, state)
         }
-        ListboxComponent={ListboxComponent}
+        // TODO check why using virtual makes the list go ltr from rtl
+        ListboxComponent={
+          virtual ? VirtualizedListBoxWithConfirmButton : ListboxComponent
+        }
         ListboxProps={{
           pendingValue: pendingValue,
           setSelectedServicesType: setSelectedServicesType,
@@ -174,10 +184,11 @@ const CustomizedSelectCheckList = ({
             inputRef={(e) => {
               selectTestRef.current = e;
             }}
-            error={requiredErrors.selectTest ? true : false}
+            error={requiredErrors[valueSetCode] ? true : false}
             helperText={
-              requiredErrors.selectTest && helperErrorText && t(helperErrorText)
+              // requiredErrors[valueSetCode] && helperErrorText && t(helperErrorText)
               // t('The visit reason performed during the visit must be selected')
+              requiredErrors[valueSetCode] || ''
             }
             {...params}
             label={`${t(labelInputText)} *`}

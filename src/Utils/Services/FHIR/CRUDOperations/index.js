@@ -43,7 +43,12 @@ const CRUDOperationsCalls = {
   },
   __default__: null,
 };
-
+/**
+ *
+ * @param {string} action create | delete | update | patch | read | search
+ * @param {string} url
+ * @param {object} data
+ */
 export function CRUDOperations(action, url, data) {
   let fhirTokenInstance = () =>
     tokenInstanceGenerator(ApiTokens.FHIR.tokenName);

@@ -4,6 +4,7 @@
  */
 
 import { CRUDOperations } from '../CRUDOperations';
+import denormalizeFhirCondition from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirCondition';
 
 const ConditionStates = {
   doWork: (parameters = null) => {
@@ -14,18 +15,35 @@ const ConditionStates = {
   },
 
   getConditionListByParams: (params) => {
-    if (
-      params.subject > 0 &&
-      params.category.length > 0 &&
-      params.status.length > 0
-    ) {
+    if (params.subject > 0 && params.category.length > 0) {
       return CRUDOperations(
         'search',
-        `${params.url}?subject=${params.subject}&category=clinikal/condition/category/${params.category}&clinical-status=${params.status}`,
+        `${params.url}?subject=${
+          params.subject
+        }&category=clinikal/condition/category/${params.category}${
+          params.status ? `&clinical-status=${params.status}` : ''
+        }`,
       );
     } else {
       return false;
     }
+  },
+  createCondition: (params) => {
+    if (params.condition) {
+      const denormalizedFhirCondition = denormalizeFhirCondition(
+        params.condition,
+      );
+      return CRUDOperations(
+        'create',
+        `${params.url}`,
+        denormalizedFhirCondition,
+      );
+    } else {
+      throw new Error('condition is empty');
+    }
+  },
+  deleteCondition: (params) => {
+    return CRUDOperations('delete', `${params.url}/${params.conditionId}`)
   },
 };
 

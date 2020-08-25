@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import LazyLoadComponentsToArray from '../../../../Utils/Helpers/lazyLoadComponentsToArray';
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, dir, ...other } = props;
 
   return (
     <div
@@ -20,8 +20,7 @@ function TabPanel(props) {
       {...other}>
       {value === index ? (
         <Box p={3}>
-          <div>{children}</div>
-          {/*<Typography>{children}</Typography>*/}
+          <div dir={dir}>{children}</div>
         </Box>
       ) : null}
     </div>
@@ -74,8 +73,9 @@ const FormsContainer = ({ tabs, dir }) => {
       const shouldBeArray = functionToRunOnTabChange.current();
       if (Array.isArray(shouldBeArray)) {
         await Promise.all(shouldBeArray);
-        setValue(newValue);
       }
+      await shouldBeArray;
+      setValue(newValue);
     }
   };
   if (tabs && tabs.data) {

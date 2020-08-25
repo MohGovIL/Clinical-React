@@ -407,6 +407,7 @@ const DiagnosisAndRecommendations = ({
           <SaveForm
             statuses={statuses}
             encounter={encounter}
+            mainStatus={'in-progress'}
             validationFunction={isRequiredValidation}
             onSubmit={onSubmit}
           />
