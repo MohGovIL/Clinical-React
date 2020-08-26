@@ -5,7 +5,8 @@ import { StyledRoundButton } from 'Components/Generic/PopupComponents/PopUpFormT
 import { useTranslation } from 'react-i18next';
 import PopUpContantList from 'Components/Generic/PopupComponents/PopUpFormTemplates/PopUpContantList';
 import PopUpContext from 'Components/Generic/PopupComponents/PopUpFormTemplates/PopUpContext';
-import l from 'Assets/Images/left.png';
+import leftIcon from 'Assets/Images/left.png';
+import rightIcon from 'Assets/Images/right.png';
 import Icon from 'Assets/Elements/Header/Search/Icon';
 
 const MainPopUpFormTemplate = ({
@@ -68,7 +69,10 @@ const MainPopUpFormTemplate = ({
           color={'primary'}
           fontWeight={'bold'}
           onClick={handleTransferOfContent}>
-          <Icon alt='transfer content icon' img={l} />
+          <Icon
+            alt='transfer content icon'
+            img={languageDirection === 'rtl' ? leftIcon : rightIcon}
+          />
         </StyledRoundButton>
       ) : null}
       <Grid item xs={6}>

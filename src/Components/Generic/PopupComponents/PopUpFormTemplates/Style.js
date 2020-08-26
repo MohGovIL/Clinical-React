@@ -61,7 +61,7 @@ export const StyledListItemText = styled(ListItemText)`
     props.languageDirection === 'ltr' ? 'left' : 'right'};
 `;
 export const StyledCheckAll = styled.div`
-  margin: 89px 63px;
+  margin: 89px 59px;
   position: absolute;
 `;
 export const SearchTemplates = styled.div`
@@ -72,7 +72,9 @@ export const SearchTemplates = styled.div`
   border-radius: 23px;
   border: solid 1px rgba(0, 11, 64, 0.4);
   background-color: #ffffff;
-  margin-right: 43px;
+  margin-right: ${(props) =>
+    props.languageDirection === 'ltr' ? '0' : '43px'};
+  margin-left: ${(props) => (props.languageDirection === 'ltr' ? '43px' : '0')};
   border-radius: 23px;
   border: solid 1px rgba(0, 11, 64, 0.4);
   margin-top: 40px;
@@ -99,7 +101,9 @@ export const StyledListItem = styled(ListItem)`
   border-radius: 10px;
   box-shadow: 0 0 10px 8px rgba(152, 151, 151, 0.05);
   background-color: #ffffff;
-  margin-right: 43px;
+  margin-right: ${(props) =>
+    props.languageDirection === 'ltr' ? '0' : '43px'};
+  margin-left: ${(props) => (props.languageDirection === 'ltr' ? '43px' : '0')};
   margin-bottom: 10px;
 `;
 export const StyledList = styled(List)`
@@ -128,7 +132,7 @@ export const StyledRoundButton = styled(Button)`
 `;
 
 export const StyledSaveButton = styled(Button)`
-  width: 127px;
+  width: auto;
   height: 32px;
   border-radius: 25px;
   background-color: #002398;
@@ -141,9 +145,10 @@ export const StyledSaveButton = styled(Button)`
   -moz-letter-spacing: normal;
   -ms-letter-spacing: normal;
   letter-spacing: normal;
-  text-align: center;
+  text-align: ${(props) =>
+    props.languageDirection === 'ltr' ? 'left' : 'right'};
   color: #ffffff;
-  float: left;
+  float: ${(props) => (props.languageDirection === 'ltr' ? 'right' : 'left')};
   top: 26px;
 `;
 
@@ -156,7 +161,8 @@ export const StyledCheckAllLabel = styled.span`
   font-style: normal;
   line-height: normal;
   letter-spacing: normal;
-  text-align: right;
+  text-align: ${(props) =>
+    props.languageDirection === 'ltr' ? 'left' : 'right'};
   color: #000662;
 `;
 
@@ -171,11 +177,17 @@ export const StyledGridClean = styled.span`
 
   color: #000755;
   margin-top: 55px;
-  margin-right: 182px;
+  margin-right: ${(props) =>
+    props.languageDirection === 'ltr' ? '0' : '182px'};
+  margin-left: ${(props) =>
+    props.languageDirection === 'ltr' ? '182px' : '0'};
+
   img {
     object-fit: contain;
-    margin-right: -24px;
-    margin-left: -4px;
+    margin-right: ${(props) =>
+      props.languageDirection === 'ltr' ? '4px' : '-24px'};
+    margin-left: ${(props) =>
+      props.languageDirection === 'ltr' ? '-24px' : '-4px'};
     margin-top: 0px;
     position: absolute;
   }
@@ -191,7 +203,10 @@ export const StyledGridChoosen = styled.span`
 
   color: #000b40;
   margin-top: 55px;
-  margin-right: 90px;
+  margin-right: ${(props) =>
+    props.languageDirection === 'ltr' ? '60px' : '30px'};
+  margin-left: ${(props) =>
+    props.languageDirection === 'ltr' ? '30px' : '60px'};
 `;
 export const StyledContextTextArea = styled(TextareaAutosize)`
   height: 554px !important;
@@ -212,7 +227,8 @@ export const StyledContextTextArea = styled(TextareaAutosize)`
   -moz-letter-spacing: normal;
   -ms-letter-spacing: normal;
   letter-spacing: normal;
-  text-align: right;
+  text-align: ${(props) =>
+    props.languageDirection === 'ltr' ? 'left' : 'right'};
   color: #000b40;
   :focus {
     outline: none;
