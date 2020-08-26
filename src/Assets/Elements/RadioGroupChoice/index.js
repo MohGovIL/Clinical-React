@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 const RadioGroupChoice = ({ gridLabel, listValues, radioName }) => {
   const { t } = useTranslation();
 
-  const { control } = useFormContext();
+  const { control, permission } = useFormContext();
 
   return (
     <StyledRadioGroup>
@@ -41,6 +41,7 @@ const RadioGroupChoice = ({ gridLabel, listValues, radioName }) => {
                     <Grid item xs={3} key={indexValue}>
                       <FormLabel component='legend'>
                         <FormControlLabel
+                          disabled={permission === 'write' ? false : true}
                           label={t(value)}
                           value={value}
                           control={
