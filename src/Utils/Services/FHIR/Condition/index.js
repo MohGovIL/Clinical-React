@@ -5,6 +5,7 @@
 
 import { CRUDOperations } from '../CRUDOperations';
 import denormalizeFhirCondition from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirCondition';
+import moment from "moment";
 
 const ConditionStates = {
   doWork: (parameters = null) => {
@@ -30,6 +31,7 @@ const ConditionStates = {
   },
   createCondition: (params) => {
     if (params.condition) {
+      params.condition.recordedDate = moment().format('YYYY-MM-DDTHH:mm:ss[Z]');
       const denormalizedFhirCondition = denormalizeFhirCondition(
         params.condition,
       );
