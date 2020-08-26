@@ -459,6 +459,7 @@ const PatientDetailsBlock = ({
         <FormContext
           {...methods}
           requiredErrors={requiredErrors}
+          permission={'write'}
           isCommitmentForm={configuration.clinikal_pa_commitment_form}>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             <EscortPatient
@@ -480,6 +481,8 @@ const PatientDetailsBlock = ({
               serviceType={encounterData.serviceType}
               serviceTypeCode={encounterData.serviceTypeCode}
               priority={encounterData.priority}
+              disableHeaders={false}
+              disableButtonIsUrgent={false}
             />
             <Payment
               pid={patientData.id}
