@@ -9,6 +9,7 @@ import { FHIR } from 'Utils/Services/FHIR';
 import { useHistory } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import Grid from '@material-ui/core/Grid';
+import Fields from '../../TestsAndTreatments/Instructions/Fields';
 
 /**
  * @author Idan Gigi idangi@matrix.co.il
@@ -22,9 +23,15 @@ const SaveForm = ({
   onSubmit,
   validationFunction,
   updateEncounterExtension,
+  permission,
 }) => {
   const { t } = useTranslation();
-  const { permission, watch, getValues } = useFormContext();
+
+  const { watch, getValues } = useFormContext();
+  if (!permission) {
+    let q = useFormContext();
+    permission = q.permission;
+  }
 
   const history = useHistory();
   let selectedStatus = '';
@@ -111,7 +118,7 @@ const SaveForm = ({
             //     ? false
             //     : true
             // }
-            >
+          >
             {t('Save & Close')}
           </StyledButton>
         </CenterButton>
