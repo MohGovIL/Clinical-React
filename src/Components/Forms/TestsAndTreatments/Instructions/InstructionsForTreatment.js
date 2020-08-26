@@ -376,6 +376,7 @@ const InstructionsForTreatment = ({
             validationFunction={isRequiredValidation}
             onSubmit={onSubmit}
             updateEncounterExtension={updateEncounterExtension}
+            permission={permission}
           />
         </Grid>
       </form>

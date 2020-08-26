@@ -8,6 +8,7 @@ import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
 import { getFormTemplates } from 'Utils/Services/API';
 import MainPopUpFormTemplate from 'Components/Generic/PopupComponents/PopUpFormTemplates/MainPopUpFormTemplate';
 import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
+import { CustomizedPaperHeader } from './Style';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return (
@@ -117,9 +118,10 @@ const PopUpFormTemplates = ({
   return templates ? (
     <React.Fragment>
       <CustomizedPopup
+        languageDirection={languageDirection}
         title={
           t(formFieldsTitle) +
-          (languageDirection === 'rtl' ? ' > ' : ' < ') +
+          (languageDirection === 'rtl' ? ' < ' : ' > ') +
           parseMultipleExaminations(
             encounter.serviceType,
             encounter.examination,
@@ -131,10 +133,10 @@ const PopUpFormTemplates = ({
         dialog_props={dialog_props}
         content_dividers={false}>
         <MainPopUpFormTemplate
+          languageDirection={languageDirection}
           handleCloseOperation={handleCloseOperation}
           context={context}
           setContext={setContext}
-          defaultContext={defaultContext}
           setDefaultContext={setDefaultContext}
           name={name}
           setTemplatesTextReturned={setTemplatesTextReturned}
@@ -142,6 +144,7 @@ const PopUpFormTemplates = ({
           templates={templates}></MainPopUpFormTemplate>
       </CustomizedPopup>
       <PopUpOnExit
+        languageDirection={languageDirection}
         isOpen={popupCloseOpen}
         isClose={handleSavePopupClose}
         returnFunction={handleJustClosePopupClose}

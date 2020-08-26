@@ -65,7 +65,7 @@ const Sensitivities = ({
               },
               serviceType: {
                 code: '',
-                name: ''
+                name: '',
               },
             });
             conditionIds[normalizedCondition.codeCode] = {

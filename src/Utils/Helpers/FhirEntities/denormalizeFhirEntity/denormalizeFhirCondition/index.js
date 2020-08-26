@@ -82,6 +82,8 @@ const denormalizeFhirCondition = (condition) => {
             },
           ];
           break;
+        case 'recordedDate':
+          denormalizedFhirCondition['recordedDate'] =  condition.recordedDate;
 
         default:
           break;

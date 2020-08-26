@@ -4,9 +4,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 
 export const StyledMuiDialogTitle = styled(MuiDialogTitle)`
   background-color: #ddecff !important;
-
   .MuiTypography-root {
     color: #000b40;
+    width: 90%;
   }
 
   .MuiIconButton-root {

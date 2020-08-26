@@ -9,6 +9,7 @@ import { FHIR } from 'Utils/Services/FHIR';
 import { useHistory } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import Grid from '@material-ui/core/Grid';
+import Fields from '../../TestsAndTreatments/Instructions/Fields';
 
 /**
  * @author Idan Gigi idangi@matrix.co.il
@@ -22,9 +23,15 @@ const SaveForm = ({
   onSubmit,
   validationFunction,
   updateEncounterExtension,
+  permission,
 }) => {
   const { t } = useTranslation();
-  const { permission, watch, getValues } = useFormContext();
+
+  const { watch, getValues } = useFormContext();
+  if (!permission) {
+    let q = useFormContext();
+    permission = q.permission;
+  }
 
   const history = useHistory();
   let selectedStatus = '';
@@ -69,36 +76,54 @@ const SaveForm = ({
     }
   };
 
+  const isDisabled = () => {
+    let clonePermission = true;
+    if (!statuses) {
+      clonePermission = false;
+    }
+    if (!selectedStatus) {
+      clonePermission = true;
+    }
+    if (permission === 'write') {
+      clonePermission = false;
+    } else {
+      clonePermission = true;
+    }
+    return clonePermission;
+  };
+
   return (
-      <Grid container spacing={4} direction={statuses ? 'row' : 'row-reverse'}>
-        {statuses ? (
-          <Content
-            statuses={statuses}
-            currentStatus={encounter.extensionSecondaryStatus}
-          />
-        ) : null}
-        <Grid item xs={3}>
-          <CenterButton>
-            <StyledButton
-              color='primary'
-              variant='contained'
-              type='button'
-              letterSpacing={'0.1'}
-              onClick={onClickHandler}
-              disabled={
-                !statuses
-                  ? false
-                  : !selectedStatus
-                  ? true
-                  : permission === 'view'
-                  ? true
-                  : false
-              }>
-              {t('Save & Close')}
-            </StyledButton>
-          </CenterButton>
-        </Grid>
+    <Grid container spacing={4} direction={statuses ? 'row' : 'row-reverse'}>
+      {statuses ? (
+        <Content
+          statuses={statuses}
+          currentStatus={encounter.extensionSecondaryStatus}
+        />
+      ) : null}
+      <Grid item xs={3}>
+        <CenterButton>
+          <StyledButton
+            color='primary'
+            variant='contained'
+            type='button'
+            letterSpacing={'0.1'}
+            onClick={onClickHandler}
+            disabled={isDisabled()}
+            // disabled={
+            //   !statuses
+            //     ? false
+            //     : !selectedStatus
+            //     ? true
+            //     : permission === 'write'
+            //     ? false
+            //     : true
+            // }
+          >
+            {t('Save & Close')}
+          </StyledButton>
+        </CenterButton>
       </Grid>
+    </Grid>
   );
 };
 
