@@ -77,6 +77,8 @@ export const createLetter = async ({
   x_ray_type,
   name_of_letter,
   id,
+  instructions,
+  remark,
 }) => {
   if (id && id > 0) {
     const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
@@ -91,5 +93,7 @@ export const createLetter = async ({
     facility: facility,
     x_ray_type: x_ray_type,
     name_of_letter: name_of_letter,
+    instructions: instructions,
+    remark: remark,
   });
 };

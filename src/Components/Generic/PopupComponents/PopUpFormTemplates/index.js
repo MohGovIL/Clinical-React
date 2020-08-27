@@ -133,6 +133,7 @@ const PopUpFormTemplates = ({
         dialog_props={dialog_props}
         content_dividers={false}>
         <MainPopUpFormTemplate
+          defaultContext={defaultContext}
           languageDirection={languageDirection}
           handleCloseOperation={handleCloseOperation}
           context={context}
