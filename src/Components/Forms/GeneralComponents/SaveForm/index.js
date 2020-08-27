@@ -28,8 +28,9 @@ const SaveForm = ({
   const { t } = useTranslation();
 
   const { watch, getValues } = useFormContext();
+  let q = useFormContext();
+
   if (!permission) {
-    let q = useFormContext();
     permission = q.permission;
   }
 
