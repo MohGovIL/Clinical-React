@@ -4,9 +4,13 @@ import StyledContent, { StyledHeader, StyledSubHeader } from './Style';
 import { RadioGroup, FormControlLabel, Radio, Grid } from '@material-ui/core';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-const Content = ({ statuses, currentStatus }) => {
-  const { permission, setValue, register, unregister } = useFormContext();
+const Content = ({ statuses, currentStatus, permission }) => {
+  const { setValue, register, unregister } = useFormContext();
+  let q = useFormContext();
 
+  if (!permission) {
+    permission = q.permission;
+  }
   useEffect(() => {
     register({ name: 'nextStatus' });
     return () => {

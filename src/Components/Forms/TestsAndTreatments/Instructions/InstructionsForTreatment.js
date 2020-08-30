@@ -48,6 +48,8 @@ const InstructionsForTreatment = ({
 
   const { handleSubmit, setValue, watch, getValues } = methods;
   const saveServiceRequestData = () => {
+    if (permission !== 'write') return []; //empty request;
+
     const data = getValues({ nest: true });
 
     const savedServiceRequest = [];

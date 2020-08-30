@@ -103,6 +103,10 @@ const TestsAndTreatments = ({
   }
 
   const saveIndicatorsOnSubmit = () => {
+    if (permission !== 'write') {
+      return []; //return empty async calls
+    }
+
     let FHIRAsyncCalls = [];
     if (checkWheterToSaveIndicators(constantIndicators)) {
       const denormelizedConstantObservation = denormalizeFhirObservation({

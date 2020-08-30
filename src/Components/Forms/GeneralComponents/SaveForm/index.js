@@ -97,6 +97,7 @@ const SaveForm = ({
     <Grid container spacing={4} direction={statuses ? 'row' : 'row-reverse'}>
       {statuses ? (
         <Content
+          permission={permission}
           statuses={statuses}
           currentStatus={encounter.extensionSecondaryStatus}
         />
