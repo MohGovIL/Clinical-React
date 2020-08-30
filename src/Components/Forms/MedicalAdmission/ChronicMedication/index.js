@@ -130,7 +130,7 @@ const ChronicMedication = ({
   return (
     <StyleChronicMedication>
       <RadioGroupChoice
-        gridLabel={t('Chronic medications')}
+        gridLabel={`* ${t('Chronic medications')}`}
         radioName={radioName}
         listValues={medicationRadioList}
       />
