@@ -274,19 +274,21 @@ const TestsAndTreatments = ({
               : clinicIndicators.data['constant'],
           constantIndicators,
           setConstantIndicators,
-          disabled: encounter.status === 'finished',
+          disabled: encounter.status === 'finished' || permission !== 'write',
         });
 
         setConstantIndicators(normalizedConstantObservation);
 
-        let normalizedVarientNewObservation = thickenTheData({
-          indicators: clinicIndicators,
-          variantIndicatorsNew: variantNewState,
-          setVariantIndicatorsNew,
-          normalizedVariantObservation: [],
-        });
+        if (permission === 'write') {
+          let normalizedVarientNewObservation = thickenTheData({
+            indicators: clinicIndicators,
+            variantIndicatorsNew: variantNewState,
+            setVariantIndicatorsNew,
+            normalizedVariantObservation: [],
+          });
 
-        setVariantIndicatorsNew([normalizedVarientNewObservation]);
+          setVariantIndicatorsNew([normalizedVarientNewObservation]);
+        }
 
         let normalizedVariantObservationTemp = [];
 
@@ -309,6 +311,7 @@ const TestsAndTreatments = ({
               setVariantIndicators,
               normalizedVariantObservation:
                 value && value['observation'] ? value['observation'] : null,
+              disabled: true,
             }),
           );
         });
