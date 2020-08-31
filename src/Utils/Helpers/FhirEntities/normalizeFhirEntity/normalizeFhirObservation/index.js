@@ -32,13 +32,7 @@ const normalizeFhirObservation = (observation, indicators, performers) => {
       : null;
   const performerName =
     performerID && performers[performerID]
-      ? `${
-          performers[performerID][0].name ? performers[performerID][0].name : ''
-        } ${
-          performers[performerID][0].family
-            ? performers[performerID][0].family
-            : ''
-        }`
+      ? `${performers[performerID][0]}`
       : null;
   const patient = observation.subject
     ? observation.subject.reference.split('/')[1]

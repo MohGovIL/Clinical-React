@@ -238,7 +238,8 @@ const TestsAndTreatments = ({
             entry.resource &&
             entry.resource.resourceType === 'Practitioner'
           ) {
-            performers[entry.resource.id] = entry.resource.name;
+            let user = normalizeFhirUser(entry.resource);
+            performers[entry.resource.id] = user.name;
           }
         });
 
@@ -328,7 +329,7 @@ const TestsAndTreatments = ({
   }, []);
 
   return (
-    <StyledTestsAndTreatments dir={languageDirection}>
+    <StyledTestsAndTreatments>
       {constantIndicators && clinicIndicators ? (
         <ConstantIndicators constantIndicators={constantIndicators} />
       ) : null}
