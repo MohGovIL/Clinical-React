@@ -278,7 +278,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     return drugsData[name].map((form, formIndex) => {
       return (
         <MenuItem value={form.code} key={form.code + formIndex}>
-          {form.display}
+          {t(form.display)}
         </MenuItem>
       );
     });
