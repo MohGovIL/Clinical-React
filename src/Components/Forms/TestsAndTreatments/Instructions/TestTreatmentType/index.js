@@ -7,15 +7,23 @@
 
 import { Controller, useFormContext } from 'react-hook-form';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import MenuItem from '@material-ui/core/MenuItem';
 import React, { useEffect, useState } from 'react';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useTranslation } from 'react-i18next';
 import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
-import { getValueSetFromLists } from 'Utils/Helpers/getValueSetArray';
-import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
 
+import {
+  StyledHiddenDiv,
+  StyledTypographyList,
+} from 'Components/Forms/TestsAndTreatments/Style';
+
+import { KeyboardArrowDown } from '@material-ui/icons';
+import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoComplete';
+import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/VirtualizedListbox';
+import { connect } from 'react-redux';
+
+import Popper from '@material-ui/core/Popper';
 /**
  *
  * @param item
@@ -23,7 +31,12 @@ import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
  * @param requiredErrors
  * @returns UI Field of the main form.
  */
-const TestTreatmentType = ({ item, index, requiredErrors }) => {
+const TestTreatmentType = ({
+  item,
+  index,
+  requiredErrors,
+  languageDirection,
+}) => {
   const { watch, control, getValues, setValue } = useFormContext();
   const { t } = useTranslation();
 
@@ -51,6 +64,7 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
   useEffect(() => {
     (async () => {
       if (!test_treatment) return;
+      setCurrentTestTreatmentsInstructionsDetails([]);
       let listsDetails = [];
       listsDetails.push(
         FHIR('ValueSet', 'doWork', {
@@ -63,12 +77,14 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
 
       const listsDetailsAfterAwait = await Promise.all(listsDetails);
 
-      const test_and_treatments_type_list = await getValueSetFromLists(
+      /* const test_and_treatments_type_list = await getValueSetFromLists(
         listsDetailsAfterAwait[0],
         true,
-      );
+      );*/
       setCollectedTestAndTreatmentsTypeFromFhirObject(
-        test_and_treatments_type_list,
+        listsDetailsAfterAwait[0].status === 200
+          ? listsDetailsAfterAwait[0].data.expansion.contains
+          : [],
       );
 
       let detailsObj = [];
@@ -90,7 +106,11 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
       setCurrentTitle(listsDetailsAfterAwait[0].data.title);
     })();
   }, [test_treatment]);
-
+  const popperWidthFixer = function (props) {
+    return (
+      <Popper {...props} style={{ width: '50%' }} placement='bottom-start' />
+    );
+  };
   return (
     <>
       <StyledHiddenDiv dontDisplay={item.locked}>
@@ -99,10 +119,10 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
         currentTestTreatmentsInstructionsDetails &&
         currentTestTreatmentsInstructionsDetails.length > 0 ? (
           <Controller
-            onChange={([event]) => {
+            onChange={([event, data]) => {
               requiredErrors[index].test_treatment_type = false;
               watch(`Instruction`);
-              return event.target.value;
+              return data;
             }}
             name={`Instruction[${index}].test_treatment_type`}
             control={control}
@@ -123,21 +143,32 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
               readOnly: item.locked,
             }}
             as={
-              <CustomizedTextField
-                iconColor='#1976d2'
-                width='100%'
-                select
-                label={t(currentTitle)}>
-                {currentTestTreatmentsInstructionsDetails.map(
-                  (value, index) => {
-                    return (
-                      <MenuItem key={index} value={value.code}>
-                        {t(value.title)}
-                      </MenuItem>
-                    );
-                  },
+              <StyledAutoComplete
+                PopperComponent={popperWidthFixer}
+                blurOnSelect
+                disableClearable
+                selectOnFocus
+                ListboxComponent={VirtualizedListboxComponent}
+                options={collectedTestAndTreatmentsTypeFromFhirObject}
+                getOptionSelected={(option, value) => {
+                  return option.code === value.code;
+                }}
+                getOptionLabel={(option) => t(option.display) || ''}
+                renderOption={(option) => (
+                  <StyledTypographyList noWrap>
+                    {t(option.display)}
+                  </StyledTypographyList>
                 )}
-              </CustomizedTextField>
+                popupIcon={<KeyboardArrowDown />}
+                renderInput={(params) => (
+                  <CustomizedTextField
+                    iconColor='#1976d2'
+                    width='100%'
+                    {...params}
+                    label={t(currentTitle)}
+                  />
+                )}
+              />
             }
           />
         ) : null}
@@ -159,4 +190,10 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
     </>
   );
 };
-export default TestTreatmentType;
+
+const mapStateToProps = (state) => {
+  return {
+    languageDirection: state.settings.lang_dir,
+  };
+};
+export default connect(mapStateToProps, null)(TestTreatmentType);

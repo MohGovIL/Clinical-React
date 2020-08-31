@@ -47,7 +47,10 @@ export const VirtualizedListboxComponent = React.forwardRef(
     const getHeight = () => {
       if (itemCount > 8) {
         return 8 * itemSize;
+      } else {
+        return itemSize * itemCount;
       }
+
       return itemData.map(itemSize).reduce((a, b) => a + b, 0);
     };
 

@@ -266,3 +266,5 @@ export const StyledHeader = styled.p`
   text-align: right;
   color: #000b40;
 `;
+
+export const StyledTypographyList = styled(Typography)``;
