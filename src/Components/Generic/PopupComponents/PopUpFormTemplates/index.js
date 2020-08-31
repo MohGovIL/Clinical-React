@@ -54,9 +54,10 @@ const PopUpFormTemplates = ({
       handlePopupClose();
     } else {
       if (
-        defaultContext &&
-        context &&
-        defaultContext.trim() !== context.trim()
+        defaultContext === '' ||
+        (defaultContext !== '' &&
+          context &&
+          defaultContext.trim() !== context.trim())
       ) {
         setPopupCloseOpen(true);
       } else {
@@ -132,6 +133,7 @@ const PopUpFormTemplates = ({
         dialog_props={dialog_props}
         content_dividers={false}>
         <MainPopUpFormTemplate
+          defaultContext={defaultContext}
           languageDirection={languageDirection}
           handleCloseOperation={handleCloseOperation}
           context={context}

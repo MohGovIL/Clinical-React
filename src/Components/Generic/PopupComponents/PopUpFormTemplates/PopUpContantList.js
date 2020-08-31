@@ -160,7 +160,6 @@ const PopUpContantList = ({
           dir={languageDirection}>
           <input
             dir={languageDirection}
-            languageDirection={languageDirection}
             onChange={onChangeHandler}
             value={searchThis}
             placeholder={t('Search template')}
