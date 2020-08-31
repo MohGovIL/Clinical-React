@@ -19,7 +19,6 @@ import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/norma
 import moment from 'moment';
 import SaveForm from '../GeneralComponents/SaveForm';
 import { store } from 'index';
-import isAllowed from 'Utils/Helpers/isAllowed';
 
 const MedicalAdmission = ({
   patient,
@@ -503,7 +502,6 @@ const MedicalAdmission = ({
   const permissionHandler = React.useCallback(() => {
     let clonePermission = permission;
     if (encounter.status === 'finished') clonePermission = 'view';
-    clonePermission = isAllowed('medical_admission_form');
     return clonePermission;
   }, [encounter.status, permission]);
 
