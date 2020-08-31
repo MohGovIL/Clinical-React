@@ -308,16 +308,29 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                 });
                 return cloneState;
               });
-              insert(parseInt(0, 10), {
-                drugName: '',
-                quantity: '',
-                drugForm: '',
-                drugRoute: '',
-                intervals: '',
-                duration: '',
-                toDate: '',
-                instructionsForTheDrug: '',
-              });
+              if (fields.length) {
+                insert(parseInt(0, 10), {
+                  drugName: '',
+                  quantity: '',
+                  drugForm: '',
+                  drugRoute: '',
+                  intervals: '',
+                  duration: '',
+                  toDate: '',
+                  instructionsForTheDrug: '',
+                });
+              } else {
+                append({
+                  drugName: '',
+                  quantity: '',
+                  drugForm: '',
+                  drugRoute: '',
+                  intervals: '',
+                  duration: '',
+                  toDate: '',
+                  instructionsForTheDrug: '',
+                });
+              }
             }}>{` + ${t('Add Drug')}`}</StyledSelectTemplateButton>
         </Grid>
         <StyledDivider />
@@ -455,7 +468,6 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                       );
                     }
                   }}
-                  defaultValue={item.duration}
                   as={
                     <CustomizedTextField
                       disabled={checkIsDisabled('drugName', index)}
@@ -518,7 +530,6 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                     // Since there is no disabled option for icons I check the permission inside the function
                     if (permission !== 'write') return;
                     const { medicationRequest } = getValues({ nest: true });
-                    console.log(medicationRequest);
                     if (medicationRequest && medicationRequest[index]) {
                       await FHIR('MedicationRequest', 'doWork', {
                         functionName: 'deleteMedicationRequest',
@@ -529,12 +540,12 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                       delete medicationRequest[index];
                       setValue('medicationRequest', medicationRequest);
                     }
+                    remove(index);
                     setRequiredErrors((prevState) => {
                       const cloneState = [...prevState];
                       cloneState.splice(index, 1);
                       return cloneState;
                     });
-                    remove(index);
                   }}
                   style={{ cursor: 'pointer' }}
                 />
