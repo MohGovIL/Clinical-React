@@ -89,7 +89,7 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
       setCurrentTestTreatmentsInstructionsDetails(detailsObj);
       setCurrentTitle(listsDetailsAfterAwait[0].data.title);
     })();
-  }, [test_treatment]);
+  }, [test_treatment, requiredErrors]);
 
   return (
     <>
