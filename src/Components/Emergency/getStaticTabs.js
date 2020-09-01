@@ -29,6 +29,7 @@ export const emergencyTabs = [
     sort: '-priority,status-update-date,service-type',
     statuses: ['triaged'],
     extendedStatuses: ['waiting_for_doctor'],
+    valueSet: 'encounter_secondary_statuses',
     activeAction: encounterActiveFunction,
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataWaitingForDoctorTableRows,
