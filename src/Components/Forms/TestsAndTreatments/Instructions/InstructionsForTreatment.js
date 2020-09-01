@@ -102,7 +102,7 @@ const InstructionsForTreatment = ({
           serviceReqID: value.serviceReqID,
           status: value.test_treatment_status ? 'done' : 'not_done',
           test_treatment: value.test_treatment,
-          test_treatment_type: value.test_treatment_type,
+          test_treatment_type: value.test_treatment_type.code,
         };
         //check whether to save this request or not ....
         const diffExists = wasSomethingChanged(serviceRequest, serviceRequests);
@@ -206,10 +206,10 @@ const InstructionsForTreatment = ({
   };
   let edit = encounter.status === 'finished' ? false : true; // is this form in edit mode or in view mode
   const [requiredErrors, setRequiredErrors] = useState([
-    {
+    /*  {
       test_treatment_type: '',
-      /*  test_treatment_status: '',*/
-    },
+      /!*  test_treatment_status: '',*!/
+    },*/
   ]);
 
   const requiredFields = {

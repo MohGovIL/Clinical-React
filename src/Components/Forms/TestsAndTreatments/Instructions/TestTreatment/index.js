@@ -26,7 +26,7 @@ import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
  * @param item
  * @returns UI Field of the main form.
  */
-const TestTreatment = ({ index, item }) => {
+const TestTreatment = ({ index, item, setRequiredErrors }) => {
   //console.log(`item from testTreatment ${index} - ${JSON.stringify(item)}`);
   const { control, watch, setValue } = useFormContext();
 
@@ -88,6 +88,11 @@ const TestTreatment = ({ index, item }) => {
               `Instruction[${index}].test_treatment`,
               event.target.value,
             );
+            setRequiredErrors((prevState) => {
+              const cloneState = [...prevState];
+              cloneState[index].test_treatment_type = '';
+              return cloneState;
+            });
             watch(`Instruction`);
             return event.target.value;
           }}

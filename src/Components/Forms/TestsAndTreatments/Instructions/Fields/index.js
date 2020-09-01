@@ -300,7 +300,11 @@ const Fields = ({
                     as={<input />}
                   />
                   <Grid item xs={3}>
-                    <TestTreatment index={index} item={item} />
+                    <TestTreatment
+                      setRequiredErrors={setRequiredErrors}
+                      index={index}
+                      item={item}
+                    />
                   </Grid>
                   <Grid item xs={3}>
                     <TestTreatmentType

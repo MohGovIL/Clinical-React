@@ -24,6 +24,7 @@ import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/Virtua
 import { connect } from 'react-redux';
 
 import Popper from '@material-ui/core/Popper';
+import { StyledErr } from '../../../../../Assets/Elements/StyledSwitch/Style';
 /**
  *
  * @param item
@@ -64,7 +65,6 @@ const TestTreatmentType = ({
   useEffect(() => {
     (async () => {
       if (!test_treatment) return;
-      setCurrentTestTreatmentsInstructionsDetails([]);
       let listsDetails = [];
       listsDetails.push(
         FHIR('ValueSet', 'doWork', {
@@ -107,6 +107,14 @@ const TestTreatmentType = ({
       <Popper {...props} style={{ width: '50%' }} placement='bottom-start' />
     );
   };
+
+  const search = (nameKey, myArray) => {
+    for (let i = 0; i < myArray.length; i++) {
+      if (myArray[i].code === nameKey) {
+        return myArray[i].display;
+      }
+    }
+  };
   return (
     <>
       <StyledHiddenDiv dontDisplay={item.locked}>
@@ -118,26 +126,11 @@ const TestTreatmentType = ({
             onChange={([event, data]) => {
               requiredErrors[index].test_treatment_type = false;
               watch(`Instruction`);
-              return data;
+              return data.code;
             }}
             name={`Instruction[${index}].test_treatment_type`}
             control={control}
             defaultValue={item.test_treatment_type} //needed unless you want a uncontrolled controlled issue on your hands
-            error={
-              requiredErrors[index] &&
-              requiredErrors[index].test_treatment_type &&
-              requiredErrors[index].test_treatment_type.length
-                ? true
-                : false
-            }
-            helperText={
-              requiredErrors[index] && requiredErrors[index].test_treatment_type
-                ? requiredErrors[index].test_treatment_type
-                : ''
-            }
-            InputProps={{
-              readOnly: item.locked,
-            }}
             as={
               <StyledAutoComplete
                 PopperComponent={popperWidthFixer}
@@ -162,6 +155,19 @@ const TestTreatmentType = ({
                     width='100%'
                     {...params}
                     label={t(currentTitle)}
+                    error={
+                      requiredErrors[index] &&
+                      requiredErrors[index].test_treatment_type &&
+                      requiredErrors[index].test_treatment_type.length
+                        ? true
+                        : false
+                    }
+                    helperText={
+                      requiredErrors[index] &&
+                      requiredErrors[index].test_treatment_type
+                        ? requiredErrors[index].test_treatment_type
+                        : ''
+                    }
                   />
                 )}
               />
@@ -176,9 +182,10 @@ const TestTreatmentType = ({
           value={
             collectedTestAndTreatmentsTypeFromFhirObject &&
             t(
-              collectedTestAndTreatmentsTypeFromFhirObject[
-                item.test_treatment_type
-              ],
+              search(
+                item.test_treatment_type,
+                collectedTestAndTreatmentsTypeFromFhirObject,
+              ),
             )
           }
         />
