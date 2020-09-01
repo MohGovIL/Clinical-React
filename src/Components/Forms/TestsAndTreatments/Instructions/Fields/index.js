@@ -311,6 +311,7 @@ const Fields = ({
                       requiredErrors={requiredErrors}
                       index={index}
                       item={item}
+                      setRequiredErrors={setRequiredErrors}
                     />
                   </Grid>
                   <Grid item xs={2}></Grid>

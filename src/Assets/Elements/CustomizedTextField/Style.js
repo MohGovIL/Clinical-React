@@ -8,6 +8,7 @@ const StyledTextField = styled(TextField)`
   margin: 24px 0 24px 0;
   transform-origin: ${(props) =>
     props.direction === 'rtl' ? 'top right' : 'top left'};
+
   .MuiInputBase-root {
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {

@@ -15,6 +15,7 @@ import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers
 
 import {
   StyledHiddenDiv,
+  StyledPopper,
   StyledTypographyList,
 } from 'Components/Forms/TestsAndTreatments/Style';
 
@@ -25,6 +26,7 @@ import { connect } from 'react-redux';
 
 import Popper from '@material-ui/core/Popper';
 import { StyledErr } from '../../../../../Assets/Elements/StyledSwitch/Style';
+
 /**
  *
  * @param item
@@ -37,8 +39,9 @@ const TestTreatmentType = ({
   index,
   requiredErrors,
   languageDirection,
+  setRequiredErrors,
 }) => {
-  const { watch, control, getValues, setValue } = useFormContext();
+  const { watch, control, getValues, setValue, register } = useFormContext();
   const { t } = useTranslation();
 
   const { Instruction } = getValues({ nest: true });
@@ -62,9 +65,14 @@ const TestTreatmentType = ({
     setCurrentTestTreatmentsInstructionsDetails,
   ] = useState([]);
   const [currentTitle, setCurrentTitle] = useState('');
+  const [popperWidth, setPopperWidth] = useState('125px');
+  const [languageDirectionByType, setLanguageDirectionByType] = useState(
+    languageDirection,
+  );
   useEffect(() => {
     (async () => {
       if (!test_treatment) return;
+      setCurrentTestTreatmentsInstructionsDetails([]);
       let listsDetails = [];
       listsDetails.push(
         FHIR('ValueSet', 'doWork', {
@@ -97,14 +105,41 @@ const TestTreatmentType = ({
             code: dataNormalized.code,
           });
         });
-
       setCurrentTestTreatmentsInstructionsDetails(detailsObj);
       setCurrentTitle(listsDetailsAfterAwait[0].data.title);
+      setPopperWidth(
+        test_treatment === 'x_ray'
+          ? '125px'
+          : test_treatment === 'providing_medicine'
+          ? '50%'
+          : '125px',
+      );
+      setLanguageDirectionByType(
+        test_treatment === 'x_ray' && languageDirection === 'ltr'
+          ? 'ltr'
+          : test_treatment === 'providing_medicine'
+          ? 'ltr'
+          : 'rtl',
+      );
     })();
-  }, [test_treatment, requiredErrors]);
+  }, [test_treatment]);
   const popperWidthFixer = function (props) {
     return (
-      <Popper {...props} style={{ width: '50%' }} placement='bottom-start' />
+      <StyledPopper
+        direction={languageDirectionByType}
+        {...props}
+        modifiers={{
+          setWidth: {
+            enabled: true,
+            order: 840,
+            fn(data) {
+              data.offsets.popper.width = data.styles.width = popperWidth;
+              return data;
+            },
+          },
+        }}
+        placement='bottom-start'
+      />
     );
   };
 
@@ -126,7 +161,7 @@ const TestTreatmentType = ({
             onChange={([event, data]) => {
               requiredErrors[index].test_treatment_type = false;
               watch(`Instruction`);
-              return data.code;
+              return data;
             }}
             name={`Instruction[${index}].test_treatment_type`}
             control={control}
@@ -140,6 +175,7 @@ const TestTreatmentType = ({
                 ListboxComponent={VirtualizedListboxComponent}
                 options={collectedTestAndTreatmentsTypeFromFhirObject}
                 getOptionSelected={(option, value) => {
+                  if (value === '' || value.code === '') return;
                   return option.code === value.code;
                 }}
                 getOptionLabel={(option) => t(option.display) || ''}
@@ -152,7 +188,7 @@ const TestTreatmentType = ({
                 renderInput={(params) => (
                   <CustomizedTextField
                     iconColor='#1976d2'
-                    width='100%'
+                    fullWidth
                     {...params}
                     label={t(currentTitle)}
                     error={

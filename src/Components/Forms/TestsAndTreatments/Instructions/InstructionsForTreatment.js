@@ -102,7 +102,8 @@ const InstructionsForTreatment = ({
           serviceReqID: value.serviceReqID,
           status: value.test_treatment_status ? 'done' : 'not_done',
           test_treatment: value.test_treatment,
-          test_treatment_type: value.test_treatment_type.code,
+          test_treatment_type:
+            value.test_treatment_type && value.test_treatment_type.code,
         };
         //check whether to save this request or not ....
         const diffExists = wasSomethingChanged(serviceRequest, serviceRequests);
@@ -246,7 +247,14 @@ const InstructionsForTreatment = ({
           let answer = field.required(
             data['Instruction'][instructionIndex][field.name],
           );
-          if (!(field.name in data['Instruction'][instructionIndex])) continue;
+          if (
+            !(field.name in data['Instruction'][instructionIndex]) ||
+            (field.name in data['Instruction'][instructionIndex] &&
+              data['Instruction'][instructionIndex].test_treatment !==
+                'providing_medicine' &&
+              data['Instruction'][instructionIndex].test_treatment !== 'x_ray')
+          )
+            continue;
 
           if (
             answer &&

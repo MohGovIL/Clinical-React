@@ -8,6 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { Card } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import Popper from '@material-ui/core/Popper';
 
 export const StyledConstantTextField = styled(TextField)`
   width: 104px;
@@ -268,3 +269,9 @@ export const StyledHeader = styled.p`
 `;
 
 export const StyledTypographyList = styled(Typography)``;
+export const StyledPopper = styled(Popper)`
+  ul {
+    direction: ${(props) =>
+      props.direction ? `${props.direction} !important` : 'ltr'};
+  }
+`;
