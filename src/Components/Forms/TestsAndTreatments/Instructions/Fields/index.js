@@ -245,7 +245,8 @@ const Fields = ({
         {t('Instructions for treatment')}
       </StyledConstantHeaders>
       <StyledTreatmentInstructionsButton
-        languagedirection={languageDirection}
+        disabled={permission !== 'Write'}
+        languageDirection={languageDirection}
         onClick={addNewInstruction}>
         <img alt='plus icon' src={PLUS} />
         {t('Instructions for treatment')}

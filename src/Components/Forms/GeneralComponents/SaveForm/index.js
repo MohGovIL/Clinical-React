@@ -23,16 +23,10 @@ const SaveForm = ({
   onSubmit,
   validationFunction,
   updateEncounterExtension,
-  permission,
 }) => {
   const { t } = useTranslation();
 
-  const { watch, getValues } = useFormContext();
-  let q = useFormContext();
-
-  if (!permission) {
-    permission = q.permission;
-  }
+  const { permission, watch, getValues } = useFormContext();
 
   const history = useHistory();
   let selectedStatus = '';
