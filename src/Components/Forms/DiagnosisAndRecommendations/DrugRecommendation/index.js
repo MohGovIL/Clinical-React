@@ -38,7 +38,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     setValue(name, data);
   };
 
-  const handlePopUpProps = (title, fields, id, callBack, name) => {
+  const handlePopUpProps = (title, fields, id, callBack, name, index, nestedValue) => {
     setPopUpProps((prevState) => {
       return {
         ...prevState,
@@ -48,6 +48,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
+        defaultContext: drugRecommendation[index][nestedValue]
       };
     });
   };
@@ -506,6 +507,8 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                       'tests_treatments',
                       callBack,
                       `drugRecommendation[${index}].instructionsForTheDrug`,
+                      index,
+                      'instructionsForTheDrug',
                     )
                   }>
                   {t('Select template')}
