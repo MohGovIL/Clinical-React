@@ -11,6 +11,7 @@ export const setPatientDataWaitingForDoctorTableRows = function (
   options,
   history,
   mode,
+  secOptions
 ) {
   let result = [];
   let rows = [];
@@ -78,7 +79,7 @@ export const setPatientDataWaitingForDoctorTableRows = function (
             padding: 'default',
             defaultValue:
               encounter.extensionSecondaryStatus || encounter.status,
-            options,
+            options: encounter.extensionSecondaryStatus ? secOptions : options,
             align: 'center',
             background_color: '#eaf7ff',
             icon_color: '#076ce9',
