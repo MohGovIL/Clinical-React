@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Button, Menu, MenuItem } from '@material-ui/core';
 
 export const StyledDiv = styled.div`
+  white-space: nowrap;
   display: flex;
   flex-direction: row;
   justify-content: center;
