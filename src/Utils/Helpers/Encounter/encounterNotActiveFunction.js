@@ -12,7 +12,7 @@ export const encounterNotActiveFunction = async function (
         functionName: 'getEncountersWithPatients',
         functionParams: {
           summary: true,
-          date: this.isDateDisabled ? '' : selectFilter.filter_date,
+          date: selectFilter.filter_date,
           organization: selectFilter.filter_organization,
           serviceType: selectFilter.filter_service_type,
           statuses: this.statuses,
