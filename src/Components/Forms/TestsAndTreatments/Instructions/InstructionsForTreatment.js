@@ -103,7 +103,12 @@ const InstructionsForTreatment = ({
           status: value.test_treatment_status ? 'done' : 'not_done',
           test_treatment: value.test_treatment,
           test_treatment_type:
-            value.test_treatment_type && value.test_treatment_type.code,
+            value.test_treatment_type &&
+            typeof value.test_treatment_type !== 'object'
+              ? value.test_treatment_type
+              : value.test_treatment_type && value.test_treatment_type.code
+              ? value.test_treatment_type.code
+              : undefined,
         };
         //check whether to save this request or not ....
         const diffExists = wasSomethingChanged(serviceRequest, serviceRequests);
