@@ -259,13 +259,25 @@ const Fields = ({
             <div key={item.id}>
               <StyledCardRoot>
                 <StyledCardDetails>
-                  <StyledCardContent languageDirection={languageDirection}>
+                  <StyledCardContent languagedirection={languageDirection}>
                     <StyledTypographyName component='h5' variant='h5'>
+                      <Controller
+                        hidden
+                        name={`Instruction[${index}].performer_or_requester`}
+                        defaultValue={item.performer_or_requester}
+                        as={<input />}
+                      />
                       {item.locked
                         ? practitioners[item.performer_or_requester]
                         : user.name.toString()}
                     </StyledTypographyName>
                     <StyledTypographyHour variant='subtitle1' color='primary'>
+                      <Controller
+                        hidden
+                        name={`Instruction[${index}].occurrence`}
+                        defaultValue={item.occurrence}
+                        as={<input />}
+                      />
                       {item.locked
                         ? moment(item.occurrence).utc().format('LT')
                         : ''}
@@ -300,7 +312,12 @@ const Fields = ({
                   </Grid>
                   <Grid item xs={2}></Grid>
                   <Grid item xs={4}>
-                    <TestTreatmentReferral index={index} item={item} />
+                    <TestTreatmentReferral
+                      setRequiredErrors={setRequiredErrors}
+                      requiredErrors={requiredErrors}
+                      index={index}
+                      item={item}
+                    />
                   </Grid>
 
                   <TestTreatmentInstructions

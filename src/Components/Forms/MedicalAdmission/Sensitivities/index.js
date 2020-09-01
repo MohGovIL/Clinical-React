@@ -123,7 +123,7 @@ const Sensitivities = ({
   return (
     <StyledSensitivities>
       <RadioGroupChoice
-        gridLabel={t('Sensitivities')}
+        gridLabel={`* ${t('Sensitivities')}`}
         radioName={radioName}
         listValues={sensitivitiesRadioList}
         // customRef={focus}

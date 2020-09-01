@@ -131,7 +131,7 @@ export const StyledTreatmentInstructionsButton = styled(Button)`
   height: 32px;
   border-radius: 25px;
   border: solid 1px #002398;
-  float: ${(props) => (props.languageDirection === 'rtl' ? 'left' : 'right')};
+  float: ${(props) => (props.languagedirection === 'rtl' ? 'left' : 'right')};
   span {
     /* width: 110px;
     height: 22px;*/
@@ -161,10 +161,10 @@ export const StyledCardContent = styled(CardContent)`
   flex: 1 0 auto;
   border-left: ${(props) =>
     props.languageDirection === 'rtl' ? '1px solid #d4cfcf;' : ''};
-  margin-left: ${(props) => (props.languageDirection === 'rtl' ? '22px' : '')};
+  margin-left: ${(props) => (props.languagedirection === 'rtl' ? '22px' : '')};
   border-right: ${(props) =>
     props.languageDirection === 'ltr' ? '1px solid #d4cfcf;' : ''};
-  margin-right: ${(props) => (props.languageDirection === 'ltr' ? '22px' : '')};
+  margin-right: ${(props) => (props.languagedirection === 'ltr' ? '22px' : '')};
   width: 20%;
   margin-top: 23px;
 `;
