@@ -21,6 +21,7 @@ import Documents from './Documents';
 import Grid from '@material-ui/core/Grid';
 import moment from 'moment';
 import { FHIR } from 'Utils/Services/FHIR';
+import { store } from 'index';
 // import { DevTool } from 'react-hook-form-devtools';
 
 const PatientDetailsBlock = ({
@@ -210,6 +211,7 @@ const PatientDetailsBlock = ({
                   status: 'completed',
                   patient: patientData.id,
                   encounter: encounterData.id,
+                  author: store.getState().login.userID,
                   authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
                   source: patientData.id,
                   item,
