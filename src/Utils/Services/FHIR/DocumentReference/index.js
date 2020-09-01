@@ -15,6 +15,12 @@ const DocumentReferenceStates = {
     parameters.url = componentFhirURL;
     return DocumentReferenceStates[parameters.functionName](parameters);
   },
+  readDocumentReference: (params) => {
+    return CRUDOperations(
+      'read',
+      `${params.url}/${params.functionParams.doc_id}`,
+    );
+  },
   getDocumentReference: (params) => {
     let searchString = '';
     let searchParamsIndex = 0;

@@ -15,7 +15,6 @@ import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
 import * as moment from 'moment';
 import { store } from 'index';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
-import isAllowed from 'Utils/Helpers/isAllowed';
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -380,7 +379,6 @@ const DiagnosisAndRecommendations = ({
   const permissionHandler = React.useCallback(() => {
     let clonePermission = permission;
     if (encounter.status === 'finished') clonePermission = 'view';
-    clonePermission = isAllowed('diagnosis_and_recommendations_form');
     return clonePermission;
   }, [encounter.status, permission]);
 

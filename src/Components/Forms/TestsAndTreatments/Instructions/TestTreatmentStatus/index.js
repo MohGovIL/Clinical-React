@@ -44,11 +44,15 @@ const TestTreatMentStatus = ({
     item.test_treatment_status === 'done' ? true : false,
   );
   useEffect(() => {
-    console.log(item.test_treatment_status);
+    /*console.log(item.test_treatment_status);*/
   }, [item.test_treatment_status]);
   return (
     <>
-      <StyledHiddenDiv dontDisplay={item.locked && permission !== 'write'}>
+      <StyledHiddenDiv
+        dontDisplay={
+          item.locked &&
+          (permission !== 'write' || item.test_treatment_status === 'done')
+        }>
         <span>
           <b>{t('Status')}</b>
         </span>
@@ -66,7 +70,8 @@ const TestTreatMentStatus = ({
           margin={'10px 14px'}
         />
       </StyledHiddenDiv>
-      {item.locked && permission !== 'write' ? (
+      {item.locked &&
+      (permission !== 'write' || item.test_treatment_status === 'done') ? (
         <TestTreatmentLockedText
           label={t('Status')}
           dontBreakRow={true}

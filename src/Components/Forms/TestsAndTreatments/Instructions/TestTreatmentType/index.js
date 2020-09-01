@@ -77,10 +77,6 @@ const TestTreatmentType = ({
 
       const listsDetailsAfterAwait = await Promise.all(listsDetails);
 
-      /* const test_and_treatments_type_list = await getValueSetFromLists(
-        listsDetailsAfterAwait[0],
-        true,
-      );*/
       setCollectedTestAndTreatmentsTypeFromFhirObject(
         listsDetailsAfterAwait[0].status === 200
           ? listsDetailsAfterAwait[0].data.expansion.contains
@@ -105,7 +101,7 @@ const TestTreatmentType = ({
       setCurrentTestTreatmentsInstructionsDetails(detailsObj);
       setCurrentTitle(listsDetailsAfterAwait[0].data.title);
     })();
-  }, [test_treatment]);
+  }, [test_treatment, requiredErrors]);
   const popperWidthFixer = function (props) {
     return (
       <Popper {...props} style={{ width: '50%' }} placement='bottom-start' />
