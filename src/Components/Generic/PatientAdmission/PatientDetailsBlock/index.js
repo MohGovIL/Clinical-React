@@ -300,7 +300,7 @@ const PatientDetailsBlock = ({
             patient: patientData.id,
             contentType: referral_64Obj.type,
             data: referral_64Obj.data,
-            categoryCode: '2',
+            categoryCode: '3',
             url: data.Referral.name,
           };
 
@@ -341,7 +341,7 @@ const PatientDetailsBlock = ({
             patient: patientData.id,
             contentType: additional_64Obj.type,
             data: additional_64Obj.data,
-            categoryCode: '2',
+            categoryCode: '6',
             url: data.additionalDocumentFile_64.name,
           };
 
