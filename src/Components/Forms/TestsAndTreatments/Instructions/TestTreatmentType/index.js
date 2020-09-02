@@ -24,9 +24,6 @@ import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoCompl
 import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/VirtualizedListbox';
 import { connect } from 'react-redux';
 
-import Popper from '@material-ui/core/Popper';
-import { StyledErr } from '../../../../../Assets/Elements/StyledSwitch/Style';
-
 /**
  *
  * @param item
@@ -38,7 +35,7 @@ const TestTreatmentType = ({
   item,
   index,
   requiredErrors,
-  languageDirection,
+  language_direction,
   setRequiredErrors,
 }) => {
   const { watch, control, getValues, setValue, register } = useFormContext();
@@ -67,7 +64,7 @@ const TestTreatmentType = ({
   const [currentTitle, setCurrentTitle] = useState('');
   const [popperWidth, setPopperWidth] = useState('125px');
   const [languageDirectionByType, setLanguageDirectionByType] = useState(
-    languageDirection,
+    language_direction,
   );
   useEffect(() => {
     (async () => {
@@ -115,7 +112,7 @@ const TestTreatmentType = ({
           : '125px',
       );
       setLanguageDirectionByType(
-        test_treatment === 'x_ray' && languageDirection === 'ltr'
+        test_treatment === 'x_ray' && language_direction === 'ltr'
           ? 'ltr'
           : test_treatment === 'providing_medicine'
           ? 'ltr'
@@ -232,7 +229,7 @@ const TestTreatmentType = ({
 
 const mapStateToProps = (state) => {
   return {
-    languageDirection: state.settings.lang_dir,
+    language_direction: state.settings.lang_dir,
   };
 };
 export default connect(mapStateToProps, null)(TestTreatmentType);

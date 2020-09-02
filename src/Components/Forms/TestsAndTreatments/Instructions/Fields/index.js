@@ -60,7 +60,7 @@ const Fields = ({
   requiredErrors,
   setRequiredErrors,
   permission,
-  languageDirection,
+  language_direction,
 }) => {
   const [practitioners, setPreactitioners] = useState([]);
   const { control, watch, register, setValue, getValues } = useFormContext();
@@ -117,7 +117,7 @@ const Fields = ({
   }, [serviceRequests]);
 
   const createDataFromRecord = async ({ serviceReq, locked }) => {
-    serviceReq = {
+    let serviceReqTemp = {
       occurrence:
         serviceReq.status === 'active'
           ? serviceReq.authoredOn
@@ -136,7 +136,7 @@ const Fields = ({
       reason_referance_doc_id: serviceReq.reasonReferenceDocId,
       locked: locked,
     };
-    return serviceReq;
+    return serviceReqTemp;
   };
   const appendInsertData = async ({ serviceReq }) => {
     if (!serviceReq) {
@@ -214,7 +214,7 @@ const Fields = ({
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
-        test_treatment_status: false,
+        test_treatment_status: 'not_done',
         test_treatment_remark: '',
         serviceReqID: '',
         reason_referance_doc_id: '',
@@ -227,7 +227,7 @@ const Fields = ({
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
-        test_treatment_status: false,
+        test_treatment_status: 'not_done',
         test_treatment_remark: '',
         serviceReqID: '',
         reason_referance_doc_id: '',
@@ -245,8 +245,8 @@ const Fields = ({
         {t('Instructions for treatment')}
       </StyledConstantHeaders>
       <StyledTreatmentInstructionsButton
-        disabled={permission !== 'Write'}
-        languageDirection={languageDirection}
+        disabled={permission !== 'write'}
+        language_direction={language_direction}
         onClick={addNewInstruction}>
         <img alt='plus icon' src={PLUS} />
         {t('Instructions for treatment')}
@@ -259,7 +259,7 @@ const Fields = ({
             <div key={item.id}>
               <StyledCardRoot>
                 <StyledCardDetails>
-                  <StyledCardContent languagedirection={languageDirection}>
+                  <StyledCardContent language_direction={language_direction}>
                     <StyledTypographyName component='h5' variant='h5'>
                       <Controller
                         hidden
@@ -401,13 +401,13 @@ const Fields = ({
 /**
  *
  * @param state
- * @returns {{formatDate: any, currentUser: {}, languageDirection: any, patient: {}, encounter: {}}}
+ * @returns {{formatDate: any, currentUser: {}, language_direction: any, patient: {}, encounter: {}}}
  */
 const mapStateToProps = (state) => {
   return {
     patient: state.active.activePatient,
     encounter: state.active.activeEncounter,
-    languageDirection: state.settings.lang_dir,
+    language_direction: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     currentUser: state.active.activeUser,
   };

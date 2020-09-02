@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
  * @returns UI Field of the main form.
  */
 const TestTreatMentStatus = ({
-  languageDirection,
+  language_direction,
   index,
   requiredErrors,
   item,
@@ -33,63 +33,97 @@ const TestTreatMentStatus = ({
     //requiredErrors[index].test_treatment_status = false;
     setValue(
       `Instruction[${index}].test_treatment_status`,
-      event.target.checked,
+      event[0].target.checked,
     );
     register(`Instruction[${index}].test_treatment_status`);
-    setChecked(event.target.checked);
-    return event.target.checked;
+    setChecked(event[0].target.checked);
+    let { Instruction } = getValues({ nest: true });
+    console.log(Instruction);
+    watch();
+    return event[0].target.checked;
   };
 
   const [checked, setChecked] = useState(
-    item.test_treatment_status === 'done' ? true : false,
+    item.test_treatment_status === 'done' ||
+      item.test_treatment_status === 'true'
+      ? true
+      : false,
   );
   useEffect(() => {
-    /*console.log(item.test_treatment_status);*/
+    /* console.log(item.test_treatment_status);*/
   }, [item.test_treatment_status]);
   return (
     <>
-      <StyledHiddenDiv
-        dontDisplay={
-          item.locked &&
-          (permission !== 'write' || item.test_treatment_status === 'done')
-        }>
-        <span>
-          <b>{t('Status')}</b>
-        </span>
-        <StyledSwitch
-          checked={checked}
-          register={register}
-          onChange={handleChange}
-          name={`Instruction[${index}].test_treatment_status`}
-          control={control}
-          label_1={'Yet To be done'}
-          label_2={'Performed'}
-          marginLeft={'70px'}
-          marginRight={'70px'}
-          width={languageDirection == 'rtl' ? '200px' : '300px'}
-          margin={'10px 14px'}
-        />
-      </StyledHiddenDiv>
-      {item.locked &&
-      (permission !== 'write' || item.test_treatment_status === 'done') ? (
-        <TestTreatmentLockedText
-          label={t('Status')}
-          dontBreakRow={true}
-          name={`Instruction[${index}].test_treatment`}
-          value={
-            item.test_treatment_status === 'done'
-              ? t('Performed')
-              : t('Yet To be done')
-          }
-        />
-      ) : null}
+      {!(
+        item.locked &&
+        (permission !== 'write' ||
+          item.test_treatment_status === 'done' ||
+          item.test_treatment_status === 'true')
+      ) ? (
+        <>
+          <span>
+            <b>{t('Status')}</b>
+          </span>
+          <Controller
+            name={`Instruction[${index}].test_treatment_status`}
+            defaultChecked={item.test_treatment_status}
+            onChange={handleChange}
+            as={
+              <StyledSwitch
+                disabled={false}
+                checked={
+                  checked ||
+                  item.test_treatment_status === 'done' ||
+                  item.test_treatment_status === 'true'
+                    ? true
+                    : false
+                }
+                control={control}
+                label_1={'Yet To be done'}
+                label_2={'Performed'}
+                marginLeft={'70px'}
+                marginRight={'70px'}
+                width={language_direction == 'rtl' ? '200px' : '300px'}
+                margin={'10px 14px'}
+              />
+            }
+          />
+        </>
+      ) : (
+        <>
+          <StyledHiddenDiv dontDisplay={true}>
+            <Controller
+              name={`Instruction[${index}].test_treatment_status`}
+              defaultValue={item.test_treatment_status}
+              as={<input />}
+            />
+          </StyledHiddenDiv>
+          <TestTreatmentLockedText
+            label={t('Status')}
+            dontBreakRow={true}
+            name={`Instruction[${index}].test_treatment`}
+            value={
+              item.test_treatment_status === 'done' ||
+              item.test_treatment_status === 'true'
+                ? t('Performed')
+                : t('Yet To be done')
+            }
+          />
+        </>
+      )}
+      {/* {item.locked &&
+      (permission !== 'write' ||
+        item.test_treatment_status === 'done' ||
+        item.test_treatment_status === 'true') ? (
+
+      ) : null}*/}
     </>
   );
 };
 
 const mapStateToProps = (state) => {
   return {
-    languageDirection: state.settings.lang_dir,
+    language_direction: state.settings.lang_dir,
   };
 };
 export default connect(mapStateToProps, null)(TestTreatMentStatus);
