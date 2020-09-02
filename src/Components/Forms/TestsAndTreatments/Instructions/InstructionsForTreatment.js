@@ -78,6 +78,8 @@ const InstructionsForTreatment = ({
   }
 
   const saveServiceRequestData = () => {
+    if (permission !== 'write') return []; //empty request;
+
     const data = getValues({ nest: true });
 
     const savedServiceRequest = [];
@@ -372,7 +374,7 @@ const InstructionsForTreatment = ({
   const history = useHistory();
 
   return (
-    <FormContext {...methods}>
+    <FormContext {...methods} permission={permission}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <PopUpFormTemplates {...popUpProps} />
         <Fields
@@ -389,7 +391,6 @@ const InstructionsForTreatment = ({
             validationFunction={isRequiredValidation}
             onSubmit={onSubmit}
             updateEncounterExtension={updateEncounterExtension}
-            permission={permission}
           />
         </Grid>
       </form>

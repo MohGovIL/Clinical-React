@@ -103,6 +103,10 @@ const TestsAndTreatments = ({
   }
 
   const saveIndicatorsOnSubmit = () => {
+    if (permission !== 'write') {
+      return []; //return empty async calls
+    }
+
     let FHIRAsyncCalls = [];
     if (checkWheterToSaveIndicators(constantIndicators)) {
       const denormelizedConstantObservation = denormalizeFhirObservation({
@@ -234,7 +238,8 @@ const TestsAndTreatments = ({
             entry.resource &&
             entry.resource.resourceType === 'Practitioner'
           ) {
-            performers[entry.resource.id] = entry.resource.name;
+            let user = normalizeFhirUser(entry.resource);
+            performers[entry.resource.id] = user.name;
           }
         });
 
@@ -274,19 +279,21 @@ const TestsAndTreatments = ({
               : clinicIndicators.data['constant'],
           constantIndicators,
           setConstantIndicators,
-          disabled: encounter.status === 'finished',
+          disabled: encounter.status === 'finished' || permission !== 'write',
         });
 
         setConstantIndicators(normalizedConstantObservation);
 
-        let normalizedVarientNewObservation = thickenTheData({
-          indicators: clinicIndicators,
-          variantIndicatorsNew: variantNewState,
-          setVariantIndicatorsNew,
-          normalizedVariantObservation: [],
-        });
+        if (permission === 'write') {
+          let normalizedVarientNewObservation = thickenTheData({
+            indicators: clinicIndicators,
+            variantIndicatorsNew: variantNewState,
+            setVariantIndicatorsNew,
+            normalizedVariantObservation: [],
+          });
 
-        setVariantIndicatorsNew([normalizedVarientNewObservation]);
+          setVariantIndicatorsNew([normalizedVarientNewObservation]);
+        }
 
         let normalizedVariantObservationTemp = [];
 
@@ -309,6 +316,7 @@ const TestsAndTreatments = ({
               setVariantIndicators,
               normalizedVariantObservation:
                 value && value['observation'] ? value['observation'] : null,
+              disabled: true,
             }),
           );
         });
@@ -321,7 +329,7 @@ const TestsAndTreatments = ({
   }, []);
 
   return (
-    <StyledTestsAndTreatments dir={languageDirection}>
+    <StyledTestsAndTreatments>
       {constantIndicators && clinicIndicators ? (
         <ConstantIndicators constantIndicators={constantIndicators} />
       ) : null}

@@ -38,7 +38,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     setValue(name, data);
   };
 
-  const handlePopUpProps = (title, fields, id, callBack, name) => {
+  const handlePopUpProps = (title, fields, id, callBack, name, index, nestedValue) => {
     setPopUpProps((prevState) => {
       return {
         ...prevState,
@@ -48,6 +48,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
+        defaultContext: drugRecommendation[index][nestedValue]
       };
     });
   };
@@ -278,7 +279,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     return drugsData[name].map((form, formIndex) => {
       return (
         <MenuItem value={form.code} key={form.code + formIndex}>
-          {form.display}
+          {t(form.display)}
         </MenuItem>
       );
     });
@@ -308,16 +309,29 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                 });
                 return cloneState;
               });
-              insert(parseInt(0, 10), {
-                drugName: '',
-                quantity: '',
-                drugForm: '',
-                drugRoute: '',
-                intervals: '',
-                duration: '',
-                toDate: '',
-                instructionsForTheDrug: '',
-              });
+              if (fields.length) {
+                insert(parseInt(0, 10), {
+                  drugName: '',
+                  quantity: '',
+                  drugForm: '',
+                  drugRoute: '',
+                  intervals: '',
+                  duration: '',
+                  toDate: '',
+                  instructionsForTheDrug: '',
+                });
+              } else {
+                append({
+                  drugName: '',
+                  quantity: '',
+                  drugForm: '',
+                  drugRoute: '',
+                  intervals: '',
+                  duration: '',
+                  toDate: '',
+                  instructionsForTheDrug: '',
+                });
+              }
             }}>{` + ${t('Add Drug')}`}</StyledSelectTemplateButton>
         </Grid>
         <StyledDivider />
@@ -455,7 +469,6 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                       );
                     }
                   }}
-                  defaultValue={item.duration}
                   as={
                     <CustomizedTextField
                       disabled={checkIsDisabled('drugName', index)}
@@ -506,6 +519,8 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                       'tests_treatments',
                       callBack,
                       `drugRecommendation[${index}].instructionsForTheDrug`,
+                      index,
+                      'instructionsForTheDrug',
                     )
                   }>
                   {t('Select template')}
@@ -518,7 +533,6 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                     // Since there is no disabled option for icons I check the permission inside the function
                     if (permission !== 'write') return;
                     const { medicationRequest } = getValues({ nest: true });
-                    console.log(medicationRequest);
                     if (medicationRequest && medicationRequest[index]) {
                       await FHIR('MedicationRequest', 'doWork', {
                         functionName: 'deleteMedicationRequest',
@@ -529,12 +543,12 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                       delete medicationRequest[index];
                       setValue('medicationRequest', medicationRequest);
                     }
+                    remove(index);
                     setRequiredErrors((prevState) => {
                       const cloneState = [...prevState];
                       cloneState.splice(index, 1);
                       return cloneState;
                     });
-                    remove(index);
                   }}
                   style={{ cursor: 'pointer' }}
                 />

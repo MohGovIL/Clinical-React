@@ -64,7 +64,7 @@ const BackgroundDiseases = ({
               },
               serviceType: {
                 code: '',
-                name: ''
+                name: '',
               },
             });
             conditionIds[normalizedCondition.codeCode] = {
@@ -123,7 +123,7 @@ const BackgroundDiseases = ({
   return (
     <StyleBackgroundDiseases>
       <RadioGroupChoice
-        gridLabel={t('Background diseases')}
+        gridLabel={`* ${t('Background diseases')}`}
         radioName={radioName}
         listValues={backgroundDisRadioList}
       />
