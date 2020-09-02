@@ -34,6 +34,7 @@ const RecommendationsOnRelease = () => {
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
+        defaultContext: instructionsForFurtherTreatment
       };
     });
   };
