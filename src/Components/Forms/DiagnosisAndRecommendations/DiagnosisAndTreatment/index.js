@@ -16,6 +16,7 @@ const DiagnosisAndTreatment = () => {
     setValue,
     register,
     watch,
+    getValues,
     questionnaireResponse,
   } = useFormContext();
 
@@ -35,7 +36,7 @@ const DiagnosisAndTreatment = () => {
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
-        defaultContext: diagnosisAndTreatmentFields[name],
+        defaultContext: getValues({nest: true})[name],
       };
     });
   };
