@@ -8,6 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { Card } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import Popper from '@material-ui/core/Popper';
 
 export const StyledConstantTextField = styled(TextField)`
   width: 104px;
@@ -131,7 +132,7 @@ export const StyledTreatmentInstructionsButton = styled(Button)`
   height: 32px;
   border-radius: 25px;
   border: solid 1px #002398;
-  float: ${(props) => (props.languagedirection === 'rtl' ? 'left' : 'right')};
+  float: ${(props) => (props.language_direction === 'rtl' ? 'left' : 'right')};
   span {
     /* width: 110px;
     height: 22px;*/
@@ -160,11 +161,12 @@ export const StyledCardDetails = styled.div`
 export const StyledCardContent = styled(CardContent)`
   flex: 1 0 auto;
   border-left: ${(props) =>
-    props.languageDirection === 'rtl' ? '1px solid #d4cfcf;' : ''};
-  margin-left: ${(props) => (props.languagedirection === 'rtl' ? '22px' : '')};
+    props.language_direction === 'rtl' ? '1px solid #d4cfcf;' : ''};
+  margin-left: ${(props) => (props.language_direction === 'rtl' ? '22px' : '')};
   border-right: ${(props) =>
-    props.languageDirection === 'ltr' ? '1px solid #d4cfcf;' : ''};
-  margin-right: ${(props) => (props.languagedirection === 'ltr' ? '22px' : '')};
+    props.language_direction === 'ltr' ? '1px solid #d4cfcf;' : ''};
+  margin-right: ${(props) =>
+    props.language_direction === 'ltr' ? '22px' : ''};
   width: 20%;
   margin-top: 23px;
 `;
@@ -265,4 +267,12 @@ export const StyledHeader = styled.p`
   letter-spacing: normal;
   text-align: right;
   color: #000b40;
+`;
+
+export const StyledTypographyList = styled(Typography)``;
+export const StyledPopper = styled(Popper)`
+  ul {
+    direction: ${(props) =>
+      props.direction ? `${props.direction} !important` : 'ltr'};
+  }
 `;

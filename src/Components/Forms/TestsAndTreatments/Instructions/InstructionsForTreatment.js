@@ -39,7 +39,7 @@ const InstructionsForTreatment = ({
   functionToRunOnTabChange,
   constantIndicators,
   variantIndicatorsNew,
-  languageDirection,
+  language_direction,
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -55,9 +55,10 @@ const InstructionsForTreatment = ({
     serviceRequests.entry.map((val, index) => {
       if (val.resource && val.resource.resourceType === 'ServiceRequest') {
         const serviceReqFromFHIR = normalizeFhirServiceRequest(val.resource);
-        let status =
-          serviceRequest.status === 'not_done' ? 'active' : 'completed';
+
         if (serviceReqFromFHIR.id === serviceRequest.id) {
+          let status =
+            serviceRequest.status === 'not_done' ? 'active' : 'completed';
           if (
             serviceReqFromFHIR.instructionCode ===
               serviceRequest.test_treatment &&
@@ -80,7 +81,7 @@ const InstructionsForTreatment = ({
   const saveServiceRequestData = () => {
     if (permission !== 'write') return []; //empty request;
 
-    const data = getValues({ nest: true });
+    const { Instruction } = getValues({ nest: true });
 
     const savedServiceRequest = [];
     try {
@@ -88,7 +89,7 @@ const InstructionsForTreatment = ({
         ['tests_and_treatments'],
         true,
       );*/
-      data.Instruction.map((value, index) => {
+      Instruction.map((value, index) => {
         /* const test_treatment_type_list = await getValueSetLists(
           [`details_${value.test_treatment}`],
           true,
@@ -102,9 +103,19 @@ const InstructionsForTreatment = ({
           note: value.test_treatment_remark,
           patientInstruction: value.instructions,
           serviceReqID: value.serviceReqID,
-          status: value.test_treatment_status ? 'done' : 'not_done',
+          status:
+            value.test_treatment_status ||
+            value.test_treatment_status === 'true'
+              ? 'done'
+              : 'not_done',
           test_treatment: value.test_treatment,
-          test_treatment_type: value.test_treatment_type,
+          test_treatment_type:
+            value.test_treatment_type &&
+            typeof value.test_treatment_type !== 'object'
+              ? value.test_treatment_type
+              : value.test_treatment_type && value.test_treatment_type.code
+              ? value.test_treatment_type.code
+              : undefined,
         };
         //check whether to save this request or not ....
         const diffExists = wasSomethingChanged(serviceRequest, serviceRequests);
@@ -208,10 +219,10 @@ const InstructionsForTreatment = ({
   };
   let edit = encounter.status === 'finished' ? false : true; // is this form in edit mode or in view mode
   const [requiredErrors, setRequiredErrors] = useState([
-    {
+    /*  {
       test_treatment_type: '',
-      /*  test_treatment_status: '',*/
-    },
+      /!*  test_treatment_status: '',*!/
+    },*/
   ]);
 
   const requiredFields = {
@@ -248,7 +259,14 @@ const InstructionsForTreatment = ({
           let answer = field.required(
             data['Instruction'][instructionIndex][field.name],
           );
-          if (!(field.name in data['Instruction'][instructionIndex])) continue;
+          if (
+            !(field.name in data['Instruction'][instructionIndex]) ||
+            (field.name in data['Instruction'][instructionIndex] &&
+              data['Instruction'][instructionIndex].test_treatment !==
+                'providing_medicine' &&
+              data['Instruction'][instructionIndex].test_treatment !== 'x_ray')
+          )
+            continue;
 
           if (
             answer &&
@@ -389,7 +407,7 @@ const mapStateToProps = (state) => {
   return {
     patient: state.active.activePatient,
     encounter: state.active.activeEncounter,
-    languageDirection: state.settings.lang_dir,
+    language_direction: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
     currentUser: state.active.activeUser,

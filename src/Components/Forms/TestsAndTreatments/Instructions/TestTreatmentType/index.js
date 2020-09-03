@@ -7,14 +7,22 @@
 
 import { Controller, useFormContext } from 'react-hook-form';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import MenuItem from '@material-ui/core/MenuItem';
 import React, { useEffect, useState } from 'react';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useTranslation } from 'react-i18next';
 import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
-import { getValueSetFromLists } from 'Utils/Helpers/getValueSetArray';
-import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
+
+import {
+  StyledHiddenDiv,
+  StyledPopper,
+  StyledTypographyList,
+} from 'Components/Forms/TestsAndTreatments/Style';
+
+import { KeyboardArrowDown } from '@material-ui/icons';
+import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoComplete';
+import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/VirtualizedListbox';
+import { connect } from 'react-redux';
 
 /**
  *
@@ -23,8 +31,14 @@ import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
  * @param requiredErrors
  * @returns UI Field of the main form.
  */
-const TestTreatmentType = ({ item, index, requiredErrors }) => {
-  const { watch, control, getValues, setValue } = useFormContext();
+const TestTreatmentType = ({
+  item,
+  index,
+  requiredErrors,
+  language_direction,
+  setRequiredErrors,
+}) => {
+  const { watch, control, getValues, setValue, register } = useFormContext();
   const { t } = useTranslation();
 
   const { Instruction } = getValues({ nest: true });
@@ -48,9 +62,14 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
     setCurrentTestTreatmentsInstructionsDetails,
   ] = useState([]);
   const [currentTitle, setCurrentTitle] = useState('');
+  const [popperWidth, setPopperWidth] = useState('125px');
+  const [languageDirectionByType, setLanguageDirectionByType] = useState(
+    language_direction,
+  );
   useEffect(() => {
     (async () => {
       if (!test_treatment) return;
+      setCurrentTestTreatmentsInstructionsDetails([]);
       let listsDetails = [];
       listsDetails.push(
         FHIR('ValueSet', 'doWork', {
@@ -63,12 +82,10 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
 
       const listsDetailsAfterAwait = await Promise.all(listsDetails);
 
-      const test_and_treatments_type_list = await getValueSetFromLists(
-        listsDetailsAfterAwait[0],
-        true,
-      );
       setCollectedTestAndTreatmentsTypeFromFhirObject(
-        test_and_treatments_type_list,
+        listsDetailsAfterAwait[0].status === 200
+          ? listsDetailsAfterAwait[0].data.expansion.contains
+          : [],
       );
 
       let detailsObj = [];
@@ -85,12 +102,51 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
             code: dataNormalized.code,
           });
         });
-
       setCurrentTestTreatmentsInstructionsDetails(detailsObj);
       setCurrentTitle(listsDetailsAfterAwait[0].data.title);
+      setPopperWidth(
+        test_treatment === 'x_ray'
+          ? '125px'
+          : test_treatment === 'providing_medicine'
+          ? '50%'
+          : '125px',
+      );
+      setLanguageDirectionByType(
+        test_treatment === 'x_ray' && language_direction === 'ltr'
+          ? 'ltr'
+          : test_treatment === 'providing_medicine'
+          ? 'ltr'
+          : 'rtl',
+      );
     })();
-  }, [test_treatment, requiredErrors]);
+  }, [test_treatment]);
+  const popperWidthFixer = function (props) {
+    return (
+      <StyledPopper
+        direction={languageDirectionByType}
+        {...props}
+        modifiers={{
+          setWidth: {
+            enabled: true,
+            order: 840,
+            fn(data) {
+              data.offsets.popper.width = data.styles.width = popperWidth;
+              return data;
+            },
+          },
+        }}
+        placement='bottom-start'
+      />
+    );
+  };
 
+  const search = (nameKey, myArray) => {
+    for (let i = 0; i < myArray.length; i++) {
+      if (myArray[i].code === nameKey) {
+        return myArray[i].display;
+      }
+    }
+  };
   return (
     <>
       <StyledHiddenDiv dontDisplay={item.locked}>
@@ -99,45 +155,55 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
         currentTestTreatmentsInstructionsDetails &&
         currentTestTreatmentsInstructionsDetails.length > 0 ? (
           <Controller
-            onChange={([event]) => {
+            onChange={([event, data]) => {
               requiredErrors[index].test_treatment_type = false;
               watch(`Instruction`);
-              return event.target.value;
+              return data;
             }}
             name={`Instruction[${index}].test_treatment_type`}
             control={control}
             defaultValue={item.test_treatment_type} //needed unless you want a uncontrolled controlled issue on your hands
-            error={
-              requiredErrors[index] &&
-              requiredErrors[index].test_treatment_type &&
-              requiredErrors[index].test_treatment_type.length
-                ? true
-                : false
-            }
-            helperText={
-              requiredErrors[index] && requiredErrors[index].test_treatment_type
-                ? requiredErrors[index].test_treatment_type
-                : ''
-            }
-            InputProps={{
-              readOnly: item.locked,
-            }}
             as={
-              <CustomizedTextField
-                iconColor='#1976d2'
-                width='100%'
-                select
-                label={t(currentTitle)}>
-                {currentTestTreatmentsInstructionsDetails.map(
-                  (value, index) => {
-                    return (
-                      <MenuItem key={index} value={value.code}>
-                        {t(value.title)}
-                      </MenuItem>
-                    );
-                  },
+              <StyledAutoComplete
+                PopperComponent={popperWidthFixer}
+                blurOnSelect
+                disableClearable
+                selectOnFocus
+                ListboxComponent={VirtualizedListboxComponent}
+                options={collectedTestAndTreatmentsTypeFromFhirObject}
+                getOptionSelected={(option, value) => {
+                  if (value === '' || value.code === '') return;
+                  return option.code === value.code;
+                }}
+                getOptionLabel={(option) => t(option.display) || ''}
+                renderOption={(option) => (
+                  <StyledTypographyList noWrap>
+                    {t(option.display)}
+                  </StyledTypographyList>
                 )}
-              </CustomizedTextField>
+                popupIcon={<KeyboardArrowDown />}
+                renderInput={(params) => (
+                  <CustomizedTextField
+                    iconColor='#1976d2'
+                    fullWidth
+                    {...params}
+                    label={t(currentTitle)}
+                    error={
+                      requiredErrors[index] &&
+                      requiredErrors[index].test_treatment_type &&
+                      requiredErrors[index].test_treatment_type.length
+                        ? true
+                        : false
+                    }
+                    helperText={
+                      requiredErrors[index] &&
+                      requiredErrors[index].test_treatment_type
+                        ? requiredErrors[index].test_treatment_type
+                        : ''
+                    }
+                  />
+                )}
+              />
             }
           />
         ) : null}
@@ -149,9 +215,10 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
           value={
             collectedTestAndTreatmentsTypeFromFhirObject &&
             t(
-              collectedTestAndTreatmentsTypeFromFhirObject[
-                item.test_treatment_type
-              ],
+              search(
+                item.test_treatment_type,
+                collectedTestAndTreatmentsTypeFromFhirObject,
+              ),
             )
           }
         />
@@ -159,4 +226,10 @@ const TestTreatmentType = ({ item, index, requiredErrors }) => {
     </>
   );
 };
-export default TestTreatmentType;
+
+const mapStateToProps = (state) => {
+  return {
+    language_direction: state.settings.lang_dir,
+  };
+};
+export default connect(mapStateToProps, null)(TestTreatmentType);

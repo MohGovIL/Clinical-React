@@ -9,4 +9,7 @@ export const StyledAutoComplete = styled(Autocomplete)`
     right: unset;
     left: 0;
   }
+  .MuiAutocomplete-input {
+    flex-grow: 0.8;
+  }
 `;

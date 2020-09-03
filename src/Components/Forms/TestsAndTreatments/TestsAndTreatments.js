@@ -4,7 +4,7 @@
            {object} encounter,
            {object} permission,
            {object} formatDate,
-           {object} languageDirection,
+           {object} language_direction,
            {object} verticalName,
            {object} currentUser,
  * @purpose TestsAndTreatments -  will be the main component which will draw all other components -
@@ -41,7 +41,7 @@ import { explodeMultipleIndicators } from 'Components/Forms/TestsAndTreatments/H
  * @param encounter
  * @param permission
  * @param formatDate
- * @param languageDirection
+ * @param language_direction
  * @param currentUser
  * @returns {*}
  * @constructor
@@ -51,7 +51,7 @@ const TestsAndTreatments = ({
   encounter,
   permission,
   formatDate,
-  languageDirection,
+  language_direction,
   currentUser,
   functionToRunOnTabChange,
   validationFunction,
@@ -370,13 +370,13 @@ const TestsAndTreatments = ({
 /**
  *
  * @param state
- * @returns {{formatDate: any, currentUser: {}, languageDirection: any, patient: {}, encounter: {}}}
+ * @returns {{formatDate: any, currentUser: {}, language_direction: any, patient: {}, encounter: {}}}
  */
 const mapStateToProps = (state) => {
   return {
     patient: state.active.activePatient,
     encounter: state.active.activeEncounter,
-    languageDirection: state.settings.lang_dir,
+    language_direction: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     currentUser: state.active.activeUser,
   };

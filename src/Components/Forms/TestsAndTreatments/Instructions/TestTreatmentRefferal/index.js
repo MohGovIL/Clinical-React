@@ -30,7 +30,7 @@ const TestTreatmentReferral = ({
   index,
   item,
   encounter,
-  languageDirection,
+  language_direction,
   patient,
   currentUser,
   requiredErrors,
@@ -153,7 +153,7 @@ const mapStateToProps = (state) => {
   return {
     patient: state.active.activePatient,
     encounter: state.active.activeEncounter,
-    languageDirection: state.settings.lang_dir,
+    language_direction: state.settings.lang_dir,
     currentUser: state.active.activeUser,
   };
 };
