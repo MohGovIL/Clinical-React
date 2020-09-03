@@ -38,7 +38,15 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
     setValue(name, data);
   };
 
-  const handlePopUpProps = (title, fields, id, callBack, name, index, nestedValue) => {
+  const handlePopUpProps = (
+    title,
+    fields,
+    id,
+    callBack,
+    name,
+    index,
+    nestedValue,
+  ) => {
     setPopUpProps((prevState) => {
       return {
         ...prevState,
@@ -48,7 +56,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
-        defaultContext: drugRecommendation[index][nestedValue]
+        defaultContext: drugRecommendation[index][nestedValue],
       };
     });
   };
@@ -371,19 +379,35 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
                 defaultValue={item.drugName}
               />
               <Grid container direction='row' justify='space-between'>
-                <CustomizedTextField
+                <Controller
+                  control={control}
                   defaultValue={item.quantity}
                   name={`drugRecommendation[${index}].quantity`}
-                  inputRef={register()}
-                  label={`${t('Quantity')} *`}
-                  width='30%'
-                  type='number'
-                  disabled={checkIsDisabled('drugName', index)}
-                  inputProps={{
-                    min: '1',
-                  }}
                   error={requiredErrors[index].quantity.length ? true : false}
                   helperText={requiredErrors[index].quantity}
+                  onChange={([event]) => {
+                    const value = event.target.value;
+                    console.log(value);
+                    if (value) {
+                      const isNumber = /^[0-9]/;
+                      if (isNumber.test(value[value.length - 1])) {
+                        if (value > 0) {
+                          return value;
+                        } else {
+                          return '';
+                        }
+                      }
+                    }
+                    return '';
+                  }}
+                  as={
+                    <CustomizedTextField
+                      defaultValue={item.quantity}
+                      label={`${t('Quantity')} *`}
+                      width='30%'
+                      disabled={checkIsDisabled('drugName', index)}
+                    />
+                  }
                 />
                 <Controller
                   control={control}
