@@ -145,6 +145,7 @@ const Sensitivities = ({
           // helperErrorText={'Some error text'}
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
+          sortByTranslation
         />
       )}
     </StyledSensitivities>
