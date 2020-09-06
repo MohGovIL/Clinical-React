@@ -5,6 +5,7 @@
 
 import { CRUDOperations } from '../CRUDOperations';
 import denormalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirMedicationStatement';
+import moment from "moment";
 
 const MedicationStatementState = {
   doWork: (parameters = null) => {
@@ -31,6 +32,7 @@ const MedicationStatementState = {
   createMedicationStatement: (params) => {
     if (!params.medicationStatement)
       throw new Error('Empty medicationStatement');
+    params.medicationStatement.dateAsserted = moment().format('YYYY-MM-DDTHH:mm:ss[Z]');
     const denormalizedFhirMedicationStatement = denormalizeFhirMedicationStatement(
       params.medicationStatement,
     );
