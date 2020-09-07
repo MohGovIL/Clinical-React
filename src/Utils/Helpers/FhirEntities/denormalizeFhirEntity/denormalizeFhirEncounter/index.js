@@ -58,6 +58,11 @@ const denormalizeFhirEncounter = (encounter) => {
             },
           ];
           break;
+        case 'serviceProvider':
+          denormalizedEncounter['serviceProvider'] = {
+            reference: `Organization/${encounter[encounterKey]}`,
+          };
+          break;
         case 'startTime':
           denormalizedEncounter['period'] = {
             start: encounter[encounterKey],
