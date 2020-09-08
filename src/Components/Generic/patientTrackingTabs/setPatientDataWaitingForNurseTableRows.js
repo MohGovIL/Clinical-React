@@ -83,7 +83,7 @@ export const setPatientDataWaitingForNurseTableRows = function (
             background_color: '#eaf7ff',
             icon_color: '#076ce9',
             langDirection: 'rtl',
-            mode: this.mode,
+            mode: 'view',
           });
           break;
         case 'Cell phone':

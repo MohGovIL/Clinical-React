@@ -3,6 +3,7 @@ import 'moment/locale/he';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 import { FHIR } from 'Utils/Services/FHIR';
+import { store } from 'index';
 
 // ממתינים לשחרור
 
@@ -75,7 +76,11 @@ export const setPatientDataWaitingForReleaseTableRows = function (
                   functionParams: {
                     encountersId: encounter.id,
                     encounterPatchParams: {
+                      extensionSecondaryStatus: '', // there isn't secondary status for finish
+                      extensionSecondaryStatusIndex: encounter.extensionSecondaryStatusIndex,
                       status: code,
+                      practitioner: store.getState().login.userID,
+                      practitionerIndex: encounter.practitionerIndex,
                     },
                   },
                 });

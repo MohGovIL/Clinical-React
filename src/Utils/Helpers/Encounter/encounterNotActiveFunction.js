@@ -5,19 +5,26 @@ export const encounterNotActiveFunction = async function (
   selectFilter,
 ) {
   try {
+    const searchParameters = {
+      summary: true,
+      organization: selectFilter.filter_organization,
+      serviceType: selectFilter.filter_service_type,
+      statuses: this.statuses,
+      extendedStatuses: this.extendedStatuses,
+    }
+    if (!this.isDateDisabled) {
+      if (this.searchDateColumn) {
+        searchParameters[this.searchDateColumn] = selectFilter.filter_date;
+      } else {
+        searchParameters['date'] = selectFilter.filter_date;
+      }
+    }
     const encountersWithPatientsSummaryCount = await FHIR(
       'Encounter',
       'doWork',
       {
         functionName: 'getEncountersWithPatients',
-        functionParams: {
-          summary: true,
-          date: this.isDateDisabled ? '' : selectFilter.filter_date,
-          organization: selectFilter.filter_organization,
-          serviceType: selectFilter.filter_service_type,
-          statuses: this.statuses,
-          extendedStatuses: this.extendedStatuses,
-        },
+        functionParams:searchParameters
       },
     );
     setTabs((prevTabs) => {
