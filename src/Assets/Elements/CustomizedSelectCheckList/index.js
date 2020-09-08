@@ -35,9 +35,19 @@ const CustomizedSelectCheckList = ({
   defaultChipLabelFunction,
   virtual,
   selectedList,
+  sortByTranslation,
 }) => {
   const { t } = useTranslation();
+  
   const { requiredErrors, setValue, permission } = useFormContext();
+
+  if (sortByTranslation && selectCheckList) {
+    selectCheckList = selectCheckList.sort((a, b) => {
+      if (t(a.reasonCode.name) < t(b.reasonCode.name)) return -1;
+      if (t(a.reasonCode.name) > t(b.reasonCode.name)) return 1;
+      return 0;
+    });
+  }
 
   const [selectedServicesType, setSelectedServicesType] = useState([]);
 
