@@ -76,5 +76,6 @@ export const emergencyTabs = [
     notActiveAction: encounterNotActiveFunction,
     tableFunction: setPatientDataFinishedVisitTableRows,
     isDateDisabled: false,
+    searchDateColumn: 'statusUpdateDate'
   },
 ];

@@ -11,17 +11,24 @@ export const encounterActiveFunction = async function (
   selectFilter,
 ) {
   try {
+    const searchParameters = {
+      summary: false,
+      organization: selectFilter.filter_organization,
+      serviceType: selectFilter.filter_service_type,
+      statuses: this.statuses,
+      sortParams: this.sort,
+      extendedStatuses: this.extendedStatuses,
+    }
+    if (!this.isDateDisabled) {
+      if (this.searchDateColumn) {
+        searchParameters[this.searchDateColumn] = selectFilter.filter_date;
+      } else {
+        searchParameters['date'] = selectFilter.filter_date;
+      }
+    }
     const encountersWithPatients = await FHIR('Encounter', 'doWork', {
       functionName: 'getEncountersWithPatients',
-      functionParams: {
-        summary: false,
-        date: this.isDateDisabled ? '' : selectFilter.filter_date,
-        organization: selectFilter.filter_organization,
-        serviceType: selectFilter.filter_service_type,
-        statuses: this.statuses,
-        sortParams: this.sort,
-        extendedStatuses: this.extendedStatuses,
-      },
+      functionParams:searchParameters
     });
 
     const [patients, encounters] = normalizeFhirEncountersWithPatients(
