@@ -115,7 +115,8 @@ export const setPatientDataFinishedVisitTableRows = function (
             background_color: '#eaf7ff',
             icon_color: '#076ce9',
             langDirection: 'rtl',
-            mode: this.mode,
+            //encounter can reopen only in the closed day
+            mode: moment(encounter.extensionStatusUpdateDate).isBefore(moment().startOf('day')) ? 'view' : this.mode,
           });
           break;
         case 'Cell phone':
