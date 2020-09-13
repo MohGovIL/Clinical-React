@@ -83,24 +83,10 @@ export const setPatientDataFinishedVisitTableRows = function (
                     encounter: cloneEncounter,
                   },
                 });
-               /* const answer = await FHIR('Encounter', 'doWork', {
-                  functionName: 'patchEncounter',
-                  functionParams: {
-                    encountersId: encounter.id,
-                    encounterPatchParams: {
-                      extensionSecondaryStatus: code,
-                      extensionSecondaryStatusIndex:
-                        encounter.extensionSecondaryStatusIndex,
-                      status: 'in-progress',
-                      practitioner: store.getState().login.userID,
-                      practitionerIndex: encounter.practitionerIndex,
-                    },
-                  },
-                });*/
                 if (answer.status === 200) {
                   return true;
                 } else {
-                  return true;
+                  return false;
                 }
               } catch (err) {
                 console.log(err);
