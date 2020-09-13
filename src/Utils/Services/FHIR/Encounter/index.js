@@ -134,6 +134,7 @@ const EncounterStates = {
     let serviceType = params.serviceType;
     let statuses = params.statuses;
     let extendedStatuses = params.extendedStatuses;
+    let statusUpdateDate = params.statusUpdateDate;
     let statusesString = '';
     if (extendedStatuses) {
       for (let status of extendedStatuses) {
@@ -157,7 +158,7 @@ const EncounterStates = {
     return CRUDOperations(
       'search',
       `${params.url}?${summaryStat}${statusesString ? statusesString : ''}${
-        date ? `&date=eq${date}` : ''
+        date ? `&date=eq${date}` : ''}${statusUpdateDate ? `&status-update-date=eq${statusUpdateDate}` : ''
       }${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${
         serviceType ? `&service-type=${serviceType}` : ''
       }${summary ? `&_summary=count` : ''}${

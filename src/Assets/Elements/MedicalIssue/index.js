@@ -40,7 +40,7 @@ const MedicalIssue = ({ title, items }) => {
             </Grid>
           </Grid>
         ) : (
-          <StyledTypography>{t('UNknown')}</StyledTypography>
+          <StyledTypography>{t('Not known')}</StyledTypography>
         )}
       </StyledContentBlock>
     </StyledDiv>

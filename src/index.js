@@ -14,6 +14,7 @@ import ActiveDataReducer from 'Store/Reducers/ActiveDataReducer';
 import 'material-icons-font/material-icons-font.css';
 import thunk from 'redux-thunk';
 
+
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const rootReducer = combineReducers({
   login: loginReducer,

@@ -37,7 +37,7 @@ const Sensitivities = ({
   const loadingSensitivitiesList =
     servicesTypeOpen && sensitivitiesList.length === 0;
 
-  const sensitivitiesRadioList = ['UNknown', 'Known'];
+  const sensitivitiesRadioList = ['Not known', 'Known'];
 
   useEffect(() => {
     register({ name: 'sensitivitiesCodes' });
@@ -145,6 +145,7 @@ const Sensitivities = ({
           // helperErrorText={'Some error text'}
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
+          sortByTranslation
         />
       )}
     </StyledSensitivities>

@@ -71,7 +71,7 @@ const MedicalAdmission = ({
       sensitivitiesCodes: {
         name: 'sensitivitiesCodes',
         required: function (data) {
-          if (data.sensitivities === '' || data.sensitivities === 'UNknown') {
+          if (data.sensitivities === '' || data.sensitivities === 'Not known') {
             return true;
           }
           return data[this.name] && data[this.name].length > 0;
@@ -351,6 +351,7 @@ const MedicalAdmission = ({
                 status: 'completed',
                 patient: patient.id,
                 encounter: encounter.id,
+                author: store.getState().login.userID,
                 authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
                 source: patient.id,
                 item: items,
@@ -395,7 +396,7 @@ const MedicalAdmission = ({
                       codeCode: sensitivities,
                       patient: patient.id,
                       recorder: store.getState().login.userID,
-                      clinicalStatus: 'active',
+                      clinicalStatus: 1,
                     },
                   },
                 }),
@@ -413,7 +414,7 @@ const MedicalAdmission = ({
                     codeCode: sensitivities,
                     patient: patient.id,
                     recorder: store.getState().login.userID,
-                    clinicalStatus: 'active',
+                    clinicalStatus: 1,
                   },
                 },
               }),
@@ -440,7 +441,7 @@ const MedicalAdmission = ({
                       codeCode: backgroundDisease,
                       patient: patient.id,
                       recorder: store.getState().login.userID,
-                      clinicalStatus: 'active',
+                      clinicalStatus: 1,
                     },
                   },
                   functionName: 'createCondition',
@@ -458,7 +459,7 @@ const MedicalAdmission = ({
                     codeCode: backgroundDisease,
                     patient: patient.id,
                     recorder: store.getState().login.userID,
-                    clinicalStatus: 'active',
+                    clinicalStatus: 1,
                   },
                 },
                 functionName: 'createCondition',

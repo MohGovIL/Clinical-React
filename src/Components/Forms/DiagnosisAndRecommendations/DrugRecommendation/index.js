@@ -142,7 +142,7 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
       const res = await FHIR('MedicationRequest', 'doWork', {
         functionName: 'getMedicationRequest',
         functionParams: {
-          encounterId: encounterId,
+          encounter: encounterId,
         },
       });
       // I could just do res.status === 204 for no content but I'm not sure that it's implemented in all of the entities

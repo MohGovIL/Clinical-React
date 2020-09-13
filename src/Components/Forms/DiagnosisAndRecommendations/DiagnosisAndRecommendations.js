@@ -270,6 +270,7 @@ const DiagnosisAndRecommendations = ({
                 status: 'completed',
                 patient: patient.id,
                 encounter: encounter.id,
+                author: store.getState().login.userID,
                 authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
                 source: patient.id,
                 item: items,

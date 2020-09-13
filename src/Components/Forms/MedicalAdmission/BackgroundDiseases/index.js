@@ -144,6 +144,7 @@ const BackgroundDiseases = ({
           // helperErrorText={'Some error text'}
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
+          sortByTranslation
         />
       )}
     </StyleBackgroundDiseases>

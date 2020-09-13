@@ -87,8 +87,8 @@ const TestTreatmentReferral = ({
         );
         openDocumentInANewWindow({
           data: xRayDocData.base64_data,
-          contentType: 'application/pdf',
-          name: `x_ray_patient_${patient}.pdf`,
+          contentType: xRayDocData.mimetype,
+          name: xRayDocData.file_name,
         });
       }
     } catch (error) {

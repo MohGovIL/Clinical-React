@@ -71,7 +71,19 @@ export const setPatientDataFinishedVisitTableRows = function (
           row.push({
             async onChange(code) {
               try {
+                const cloneEncounter = { ...encounter };
+                cloneEncounter.extensionSecondaryStatus = code;
+                cloneEncounter.status = 'in-progress';
+                cloneEncounter.practitioner = store.getState().login.userID;
+
                 const answer = await FHIR('Encounter', 'doWork', {
+                  functionName: 'updateEncounter',
+                  functionParams: {
+                    encounterId: encounter.id,
+                    encounter: cloneEncounter,
+                  },
+                });
+               /* const answer = await FHIR('Encounter', 'doWork', {
                   functionName: 'patchEncounter',
                   functionParams: {
                     encountersId: encounter.id,
@@ -84,7 +96,7 @@ export const setPatientDataFinishedVisitTableRows = function (
                       practitionerIndex: encounter.practitionerIndex,
                     },
                   },
-                });
+                });*/
                 if (answer.status === 200) {
                   return true;
                 } else {
@@ -98,15 +110,13 @@ export const setPatientDataFinishedVisitTableRows = function (
             text_color: '#076ce9',
             padding: 'default',
             defaultValue: encounter.status,
-            options:
-              encounter.extensionSecondaryStatus && secOptions.length
-                ? secOptions
-                : options,
+            options: secOptions,
             align: 'center',
             background_color: '#eaf7ff',
             icon_color: '#076ce9',
             langDirection: 'rtl',
-            mode: this.mode,
+            //encounter can reopen only in the closed day
+            mode: moment(encounter.extensionStatusUpdateDate).isBefore(moment().startOf('day')) ? 'view' : this.mode,
           });
           break;
         case 'Cell phone':
