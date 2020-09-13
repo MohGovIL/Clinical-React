@@ -37,7 +37,7 @@ const Sensitivities = ({
   const loadingSensitivitiesList =
     servicesTypeOpen && sensitivitiesList.length === 0;
 
-  const sensitivitiesRadioList = ['UNknown', 'Known'];
+  const sensitivitiesRadioList = ['Not known', 'Known'];
 
   useEffect(() => {
     register({ name: 'sensitivitiesCodes' });

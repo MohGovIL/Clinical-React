@@ -71,7 +71,7 @@ const MedicalAdmission = ({
       sensitivitiesCodes: {
         name: 'sensitivitiesCodes',
         required: function (data) {
-          if (data.sensitivities === '' || data.sensitivities === 'UNknown') {
+          if (data.sensitivities === '' || data.sensitivities === 'Not known') {
             return true;
           }
           return data[this.name] && data[this.name].length > 0;

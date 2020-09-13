@@ -904,7 +904,7 @@ const PopupCreateNewPatient = ({
                   id='standard-identifierType'
                   name='identifierType'
                   value={patientIdType}
-                  label={t('ID type')}
+                  label={t('ID Type')}
                   required
                   select
                   onChange={handleIdTypeChange}
