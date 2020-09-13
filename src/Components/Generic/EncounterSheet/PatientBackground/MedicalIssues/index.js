@@ -52,7 +52,7 @@ const MedicalIssues = ({ patient }) => {
           functionParams: {
             category: 'medical_problem',
             subject: patient.id,
-            status: '1',
+            status: 'active',
           },
         });
         if (

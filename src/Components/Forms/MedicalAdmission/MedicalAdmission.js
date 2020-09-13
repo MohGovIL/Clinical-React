@@ -303,7 +303,28 @@ const MedicalAdmission = ({
             item['answer'] = answerType(i.type, data.nursingDetails);
             break;
           case '4':
-            item['answer'] = answerType(i.type, data.isPregnancy || '');
+            item['answer'] = answerType(
+              i.type,
+              data.isPregnancy === 'Yes' ? true : false,
+            );
+            break;
+          case '5':
+            item['answer'] = answerType(
+              i.type,
+              data.sensitivities === 'Known' ? true : false,
+            );
+            break;
+          case '6':
+            item['answer'] = answerType(
+              i.type,
+              data.background_diseases === 'There are diseases' ? true : false,
+            );
+            break;
+          case '7':
+            item['answer'] = answerType(
+              i.type,
+              data.medication === 'Exist' ? true : false,
+            );
             break;
           default:
             break;
@@ -342,7 +363,8 @@ const MedicalAdmission = ({
       cloneEncounter['examinationCode'] = data.examinationCode;
       cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
       cloneEncounter['priority'] = data.isUrgent;
-      cloneEncounter['extensionReasonCodeDetails'] = data.reasonForReferralDetails;
+      cloneEncounter['extensionReasonCodeDetails'] =
+        data.reasonForReferralDetails;
       APIsArray.push(
         FHIR('Encounter', 'doWork', {
           functionName: 'updateEncounter',
@@ -513,8 +535,7 @@ const MedicalAdmission = ({
         requiredErrors={requiredErrors}
         setPopUpProps={setPopUpProps}
         patientId={patient.id}
-        permission={permissionHandler()}
-        >
+        permission={permissionHandler()}>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
           <VisitDetails
             reasonCodeDetails={encounter.extensionReasonCodeDetails}
