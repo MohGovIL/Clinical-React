@@ -158,10 +158,12 @@ const EncounterStates = {
     return CRUDOperations(
       'search',
       `${params.url}?${summaryStat}${statusesString ? statusesString : ''}${
-        date ? `&date=eq${date}` : ''}${statusUpdateDate ? `&status-update-date=eq${statusUpdateDate}` : ''
-      }${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${
-        serviceType ? `&service-type=${serviceType}` : ''
-      }${summary ? `&_summary=count` : ''}${
+        date ? `&date=eq${date}` : ''
+      }${statusUpdateDate ? `&status-update-date=eq${statusUpdateDate}` : ''}${
+        serviceProvider ? `&service-provider=${serviceProvider}` : ''
+      }${serviceType ? `&service-type=${serviceType}` : ''}${
+        summary ? `&_summary=count` : ''
+      }${
         params.sortParams && summary === false
           ? `&_sort=${params.sortParams}`
           : ''
