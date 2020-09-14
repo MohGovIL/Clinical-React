@@ -1,7 +1,7 @@
-import moment from 'moment';
-import 'moment/locale/he';
+
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
+import  { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
 
 // ממתינים לרופא\ה
 
@@ -111,7 +111,7 @@ export const setPatientDataWaitingForDoctorTableRows = function (
           row.push({
             padding: 'default',
             align: 'center',
-            label: moment.utc(encounter.extensionStatusUpdateDate).format('LT'),
+            label: formatTime(encounter.extensionStatusUpdateDate),
           });
           break;
         default:

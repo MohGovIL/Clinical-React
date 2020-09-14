@@ -1,5 +1,4 @@
-import moment from 'moment';
-import 'moment/locale/he';
+import { formatTime } from 'Utils/Helpers/Datetime/formatDate';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 
@@ -109,7 +108,7 @@ export const setPatientDataWaitingForExaminationTableRows = (
           row.push({
             padding: 'default',
             align: 'center',
-            label: moment.utc(encounter.startTime).format('LT'),
+            label: formatTime(encounter.startTime),
           });
           break;
         default:

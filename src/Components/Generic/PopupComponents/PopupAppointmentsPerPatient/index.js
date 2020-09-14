@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 import Slide from '@material-ui/core/Slide';
 import AppointmentsAndEncountersTables from './AppointmentsAndEncountersTables';
+import {connect} from "react-redux";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return (
@@ -21,6 +22,8 @@ const PopAppointmentsPerPatient = ({
   authorizationACO,
   gotToPatientAdmission,
   patient,
+  languageDirection,
+  formatDate
 }) => {
   const { t } = useTranslation();
 
@@ -71,6 +74,7 @@ const PopAppointmentsPerPatient = ({
           encounterStatuses={encounterStatuses}
           authorizationACO={authorizationACO}
           patient={patient}
+          formatDate={formatDate}
           gotToPatientAdmission={
             gotToPatientAdmission
           }></AppointmentsAndEncountersTables>
@@ -79,4 +83,11 @@ const PopAppointmentsPerPatient = ({
   ) : null;
 };
 
-export default PopAppointmentsPerPatient;
+const mapStateToProps = (state) => {
+    return {
+        languageDirection: state.settings.lang_dir,
+        formatDate: state.settings.format_date,
+    };
+};
+
+export default connect(mapStateToProps, null)(PopAppointmentsPerPatient);

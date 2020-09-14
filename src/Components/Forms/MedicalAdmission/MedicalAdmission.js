@@ -16,9 +16,10 @@ import ChronicMedication from './ChronicMedication';
 import { Checkbox, Grid, ListItemText } from '@material-ui/core';
 import { CheckBox, CheckBoxOutlineBlankOutlined } from '@material-ui/icons';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
-import moment from 'moment';
 import SaveForm from '../GeneralComponents/SaveForm';
 import { store } from 'index';
+import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
+
 
 const MedicalAdmission = ({
   patient,
@@ -331,7 +332,7 @@ const MedicalAdmission = ({
                 patient: patient.id,
                 encounter: encounter.id,
                 author: store.getState().login.userID,
-                authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                authored: fhirFormatDateTime(),
                 source: patient.id,
                 item: items,
               },

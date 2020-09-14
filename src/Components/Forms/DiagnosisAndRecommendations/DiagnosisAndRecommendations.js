@@ -15,6 +15,8 @@ import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
 import * as moment from 'moment';
 import { store } from 'index';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
+import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
+
 const DiagnosisAndRecommendations = ({
   patient,
   encounter,
@@ -271,7 +273,7 @@ const DiagnosisAndRecommendations = ({
                 patient: patient.id,
                 encounter: encounter.id,
                 author: store.getState().login.userID,
-                authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                authored: fhirFormatDateTime(),
                 source: patient.id,
                 item: items,
               },
@@ -309,9 +311,7 @@ const DiagnosisAndRecommendations = ({
               drug.toDate,
               formatDate,
             ).format('YYYY-MM-DD');
-            medicationRequest['authoredOn'] = moment().format(
-              'YYYY-MM-DDTHH:mm:ss[Z]',
-            );
+            medicationRequest['authoredOn'] = fhirFormatDateTime();
 
             if (data.medicationRequest && data.medicationRequest[drugIndex]) {
               APIsArray.push(

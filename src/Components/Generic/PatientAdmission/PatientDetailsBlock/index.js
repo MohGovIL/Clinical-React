@@ -20,6 +20,7 @@ import Payment from './Payment';
 import Documents from './Documents';
 import Grid from '@material-ui/core/Grid';
 import moment from 'moment';
+import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
 // import { DevTool } from 'react-hook-form-devtools';
@@ -213,7 +214,7 @@ const PatientDetailsBlock = ({
                   patient: patientData.id,
                   encounter: encounterData.id,
                   author: store.getState().login.userID,
-                  authored: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+                  authored: fhirFormatDateTime(),
                   source: patientData.id,
                   item,
                 },
