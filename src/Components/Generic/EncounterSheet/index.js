@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import HeaderPatient from 'Assets/Elements/HeaderPatient';
-import * as Moment from 'moment';
+import moment, * as Moment from 'moment';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
 import { useTranslation } from 'react-i18next';
-import firstRouteMapper from 'Utils/Helpers/firstRouteMapper';
 import StyledEncounterSheet from './Style';
 import PatientDataBlock from './PatientDataBlock';
 import PatientBackground from './PatientBackground';
 import EncounterForms from './EncounterForms';
 import { FHIR } from 'Utils/Services/FHIR';
-import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
+import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 
 const EncounterSheet = ({
   patient,
@@ -45,6 +44,35 @@ const EncounterSheet = ({
     history.push(`/${verticalName}/PatientTracking`);
   };
 
+  const [prevEncounter, setPrevEncounter] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const FHIRPrevEncounter = await FHIR('Encounter', 'doWork', {
+          functionName: 'getNextPrevEncounterPerPatient',
+          functionParams: {
+            statusUpdateDate: moment(
+              encounter.extensionStatusUpdateDate,
+            ).format('YYYY-MM-DD'),
+            patient: patient.id,
+            prev: true,
+          },
+        });
+
+        if (FHIRPrevEncounter.data.total) {
+          const { data } = FHIRPrevEncounter;
+          const normalizedPrevEncounter = normalizeFhirEncounter(
+            data.entry[1].resource,
+          );
+          setPrevEncounter(normalizedPrevEncounter);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [encounter.extensionStatusUpdateDate, patient.id]);
+
   return (
     <React.Fragment>
       <HeaderPatient
@@ -60,12 +88,14 @@ const EncounterSheet = ({
           languageDirection={languageDirection}
         />
         <PatientBackground
+          prevEncounter={prevEncounter}
           encounter={encounter}
           patient={patient}
           formatDate={formatDate}
           languageDirection={languageDirection}
         />
         <EncounterForms
+          prevEncounter={prevEncounter}
           encounter={encounter}
           patient={patient}
           formatDate={formatDate}
