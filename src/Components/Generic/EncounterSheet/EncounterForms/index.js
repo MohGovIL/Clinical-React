@@ -8,6 +8,7 @@ const EncounterForms = ({
   patient,
   languageDirection,
   formatDate,
+  prevEncounterId
 }) => {
   const [formsPerSheet, setFormsPerSheet] = React.useState();
 

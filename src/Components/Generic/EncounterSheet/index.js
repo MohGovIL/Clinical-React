@@ -44,7 +44,7 @@ const EncounterSheet = ({
     history.push(`/${verticalName}/PatientTracking`);
   };
 
-  const [prevEncounter, setPrevEncounter] = useState(null);
+  const [prevEncounterId, setPrevEncounterId] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -65,7 +65,7 @@ const EncounterSheet = ({
           const normalizedPrevEncounter = normalizeFhirEncounter(
             data.entry[1].resource,
           );
-          setPrevEncounter(normalizedPrevEncounter);
+          setPrevEncounterId(normalizedPrevEncounter.id);
         }
       } catch (error) {
         console.log(error);
@@ -88,14 +88,14 @@ const EncounterSheet = ({
           languageDirection={languageDirection}
         />
         <PatientBackground
-          prevEncounter={prevEncounter}
+          prevEncounterId={prevEncounterId}
           encounter={encounter}
           patient={patient}
           formatDate={formatDate}
           languageDirection={languageDirection}
         />
         <EncounterForms
-          prevEncounter={prevEncounter}
+          prevEncounterId={prevEncounterId}
           encounter={encounter}
           patient={patient}
           formatDate={formatDate}
