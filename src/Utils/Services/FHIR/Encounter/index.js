@@ -49,7 +49,7 @@ const EncounterStates = {
         priority: {
           coding: [
             {
-              code: 0,
+              code: 1,
             },
           ],
         },

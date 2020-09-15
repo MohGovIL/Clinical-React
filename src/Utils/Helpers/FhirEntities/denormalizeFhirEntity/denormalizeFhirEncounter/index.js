@@ -27,7 +27,7 @@ const denormalizeFhirEncounter = (encounter) => {
           denormalizedEncounter['priority'] = {
             coding: [
               {
-                code: encounter[encounterKey] + 1,
+                code: encounter[encounterKey],
               },
             ],
           };
