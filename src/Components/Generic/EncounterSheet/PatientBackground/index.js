@@ -16,7 +16,7 @@ const PatientBackground = ({
   patient,
   languageDirection,
   formatDate,
-  prevEncounterId
+  prevEncounterId,
 }) => {
   const { t } = useTranslation();
   const handleEitanClick = () => {
@@ -137,7 +137,11 @@ const PatientBackground = ({
         prevEncounters={prevEncounters}
         handleCreateData={handleCreateData}
       />
-      <MedicalIssues patient={patient}  />
+      <MedicalIssues
+        patientId={patient.id}
+        encounterId={encounter.id}
+        prevEncounterId={prevEncounterId}
+      />
     </StyledPatientBackground>
   );
 };

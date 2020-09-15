@@ -9,122 +9,196 @@ import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 import normalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeMedicationStatement';
 import MedicalIssue from 'Assets/Elements/MedicalIssue';
 import { useTranslation } from 'react-i18next';
+import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 
-const MedicalIssues = ({ patient }) => {
+const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
   const { t } = useTranslation();
 
-  const [listAllergy, setAllergyList] = useState([]);
-  const [listMedicalProblem, setMedicalProblem] = useState([]);
-  const [listMedicationStatement, setMedicationStatement] = useState([]);
+  const [patientSensitivities, setPatientSensitivities] = useState([]);
+  const [patientBackgroundDiseases, setPatientBackgroundDiseases] = useState(
+    [],
+  );
+  const [patientChronicMedications, setPatientChronicMedications] = useState(
+    [],
+  );
 
   const [medicalProblemIsUpdated, setMedicalProblemIsUpdated] = useState(0); //for online update
+
   useEffect(() => {
-    (async () => {
+    const getMedicalIssues = async () => {
       try {
-        const listAllergyResult = await FHIR('Condition', 'doWork', {
-          functionName: 'getConditionListByParams',
+        const sensitivitiesLinkId = '5';
+        const backgroundDiseasesLinkId = '6';
+        const chronicMedicationLinkId = '7';
+
+        const questionnaireResponseArray = [];
+
+        const q = await FHIR('Questionnaire', 'doWork', {
+          functionName: 'getQuestionnaire',
           functionParams: {
-            category: 'allergy',
-            subject: patient.id,
-            status: '1',
+            QuestionnaireName: 'medical_admission_questionnaire',
           },
         });
-        if (listAllergyResult.data && listAllergyResult.data.total > 0) {
-          let normalizedlistAllergy = [];
-          // eslint-disable-next-line
-          listAllergyResult.data.entry.map((res, id) => {
-            if (res.resource && res.resource.resourceType === 'Condition') {
-              let allergy = normalizeFhirCondition(res.resource);
-              normalizedlistAllergy.push(allergy);
-            }
-          });
-          setAllergyList(normalizedlistAllergy);
-        }
-      } catch (e) {
-        console.log('Error: ' + e);
-      }
-    })();
-
-    (async () => {
-      try {
-        const listMedicalProblemResult = await FHIR('Condition', 'doWork', {
-          functionName: 'getConditionListByParams',
-          functionParams: {
-            category: 'medical_problem',
-            subject: patient.id,
-            status: 'active',
-          },
-        });
-        if (
-          listMedicalProblemResult.data &&
-          listMedicalProblemResult.data.total > 0
-        ) {
-          let normalizedListMedicalProblem = [];
-          // eslint-disable-next-line
-          listMedicalProblemResult.data.entry.map((res, id) => {
-            if (res.resource && res.resource.resourceType === 'Condition') {
-              let medicalProblem = normalizeFhirCondition(res.resource);
-              normalizedListMedicalProblem.push(medicalProblem);
-            }
-          });
-          setMedicalProblem(normalizedListMedicalProblem);
-        }
-      } catch (e) {
-        console.log('Error: ' + e);
-      }
-    })();
-
-    //Load Medical Issues - chronic medication list
-    (async () => {
-      try {
-        const listMedicationStatementResult = await FHIR(
-          'MedicationStatement',
-          'doWork',
-          {
-            functionName: 'getMedicationStatementListByParams',
+        questionnaireResponseArray.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
+            functionName: 'getQuestionnaireResponse',
             functionParams: {
-              category: 'medication',
-              patient: patient.id,
-              status: 'active',
+              encounterId,
+              patientId,
+              questionnaireId: q.data.entry[1].resource.id,
             },
-          },
+          }),
         );
-        if (
-          listMedicationStatementResult.data &&
-          listMedicationStatementResult.data.total > 0
-        ) {
-          let normalizedListMedicationStatement = [];
-          // eslint-disable-next-line
-          listMedicationStatementResult.data.entry.map((res, id) => {
-            if (
-              res.resource &&
-              res.resource.resourceType === 'MedicationStatement'
-            ) {
-              let medicationStatement = normalizeFhirMedicationStatement(
-                res.resource,
-              );
-              normalizedListMedicationStatement.push(medicationStatement);
-            }
-          });
-          setMedicationStatement(normalizedListMedicationStatement);
+        if (prevEncounterId) {
+          questionnaireResponseArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'getQuestionnaireResponse',
+              functionParams: {
+                encounterId: prevEncounterId,
+                patientId,
+                questionnaireId: q.data.entry[1].resource.id,
+              },
+            }),
+          );
         }
-      } catch (e) {
-        console.log('Error: ' + e);
+        const responses = await Promise.all(questionnaireResponseArray);
+
+        if (responses[0].data.total) {
+          // There is curr encounter response
+
+          const qr = normalizeFhirQuestionnaireResponse(
+            responses[0].data.entry[1].resource,
+          );
+          const isSensetive = Boolean(
+            +qr.item.find((i) => i.linkId === sensitivitiesLinkId)['answer'][0][
+              'valueBoolean'
+            ],
+          );
+
+          const isBackgroundDiseases = Boolean(
+            +qr.item.find((i) => i.linkId === backgroundDiseasesLinkId)[
+              'answer'
+            ][0]['valueBoolean'],
+          );
+
+          const isChronicMedication = Boolean(
+            +qr.item.find((i) => i.linkId === chronicMedicationLinkId)[
+              'answer'
+            ][0]['valueBoolean'],
+          );
+        } else {
+          // There is no curr encounter response
+          if (prevEncounterId && responses[1].data.total) {
+            // There is a prev encounter response
+            setPrevResponse(
+              normalizeFhirQuestionnaireResponse(
+                responses[1].data.entry[1].resource,
+              ),
+            );
+          } else {
+            // There is no curr and no prev encounter response
+          }
+        }
+
+        // const ALL_MEDICAL_ISSUES = [];
+        // ALL_MEDICAL_ISSUES.push(
+        //   FHIR('Condition', 'doWork', {
+        //     functionName: 'getConditionListByParams',
+        //     functionParams: {
+        //       category: 'sensitive',
+        //       subject: patientId,
+        //       status: 'active',
+        //     },
+        //   }),
+        // );
+        // ALL_MEDICAL_ISSUES.push(
+        //   FHIR('Condition', 'doWork', {
+        //     functionName: 'getConditionListByParams',
+        //     functionParams: {
+        //       category: 'medical_problem',
+        //       subject: patientId,
+        //       status: 'active',
+        //     },
+        //   }),
+        // );
+        // ALL_MEDICAL_ISSUES.push(
+        //   FHIR('MedicationStatement', 'doWork', {
+        //     functionName: 'getMedicationStatementListByParams',
+        //     functionParams: {
+        //       category: 'medication',
+        //       patient: patientId,
+        //       status: 'active',
+        //     },
+        //   }),
+        // );
+        // const [
+        //   sensitivities,
+        //   backgroundDiseases,
+        //   chronicMedication,
+        // ] = await Promise.all(ALL_MEDICAL_ISSUES);
+
+        // if (sensitivities.data.total) {
+        //   const normalizedSensitivities = [];
+        //   sensitivities.data.entry.forEach((sensitivity) => {
+        //     if (sensitivity.resource) {
+        //       normalizedSensitivities.push(normalizeFhirCondition(sensitivity));
+        //     }
+        //   });
+        //   setPatientSensitivities(normalizedSensitivities);
+        // }
+
+        // if (backgroundDiseases.data.total) {
+        //   const normalizedBackgroundDiseases = [];
+        //   backgroundDiseases.data.entry.forEach((disease) => {
+        //     if (disease.resource) {
+        //       normalizedBackgroundDiseases.push(
+        //         normalizeFhirCondition(disease),
+        //       );
+        //     }
+        //   });
+        //   setPatientBackgroundDiseases(normalizedBackgroundDiseases);
+        // }
+
+        // if (chronicMedication.data.total) {
+        //   const normalizedChronicMedication = [];
+        //   chronicMedication.data.entry.forEach((medication) => {
+        //     if (medication.resource) {
+        //       normalizedChronicMedication.push(
+        //         normalizeFhirMedicationStatement(medication),
+        //       );
+        //     }
+        //   });
+        //   setPatientChronicMedications(normalizedChronicMedication);
+        // }
+      } catch (error) {
+        console.log(error);
       }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [medicalProblemIsUpdated]);
+    };
+    getMedicalIssues();
+  }, [patientId, encounterId, prevEncounterId]);
 
   return (
     <React.Fragment>
-      <MedicalIssue title={t('Sensitivities')} items={listAllergy} />
       <MedicalIssue
-        title={t('Background diseases')}
-        items={listMedicalProblem}
+        linkId={'5'}
+        items={patientSensitivities}
+        prevResponse={prevResponse}
+        currResponse={currResponse}
+        title={t('Sensitivities')}
       />
       <MedicalIssue
+        linkId={'6'}
+        items={patientBackgroundDiseases}
+        prevResponse={prevResponse}
+        currResponse={currResponse}
+        title={t('Background diseases')}
+      />
+      <MedicalIssue
+        linkId={'7'}
+        items={patientChronicMedications}
+        prevResponse={prevResponse}
+        currResponse={currResponse}
         title={t('Chronic medications')}
-        items={listMedicationStatement}
       />
     </React.Fragment>
   );
