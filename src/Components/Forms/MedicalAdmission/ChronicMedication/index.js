@@ -45,47 +45,73 @@ const ChronicMedication = ({
     register({ name: 'chronicMedicationCodes' });
     register({ name: 'chronicMedicationIds' });
     (async () => {
-      const medicationStatement = await FHIR('MedicationStatement', 'doWork', {
-        functionName: 'getMedicationStatementListByParams',
-        functionParams: {
-          patient: patientId,
-          status: 'active',
-          category: 'medication',
-        },
-      });
-      if (medicationStatement.data.total) {
-        const medicationCodes = [];
-        const medicationIds = {};
-        medicationStatement.data.entry.forEach((medication) => {
-          if (medication.resource) {
-            const normalizedMedicationStatement = normalizeFhirMedicationStatement(
-              medication.resource,
-            );
-            medicationCodes.push({
-              reasonCode: {
-                name:
-                  normalizedMedicationStatement.medicationCodeableConceptText,
-                code:
-                  normalizedMedicationStatement.medicationCodeableConceptCode,
+      const chronicMedicationLinkId = '7';
+      if (currEncounterResponse.length || prevEncounterResponse.length) {
+        let isChronicDisease = 'noResponse';
+        if (currEncounterResponse.length) {
+          isChronicDisease = Boolean(
+            +currEncounterResponse.find(
+              (i) => i.linkId === chronicMedicationLinkId,
+            )['answer'][0]['valueBoolean'],
+          );
+        } else if (prevEncounterResponse.length) {
+          isChronicDisease = Boolean(
+            +prevEncounterResponse.find(
+              (i) => i.linkId === chronicMedicationLinkId,
+            )['answer'][0]['valueBoolean'],
+          );
+        }
+        if (isChronicDisease === true) {
+          const medicationStatement = await FHIR(
+            'MedicationStatement',
+            'doWork',
+            {
+              functionName: 'getMedicationStatementListByParams',
+              functionParams: {
+                patient: patientId,
+                status: 'active',
+                category: 'medication',
               },
-              serviceType: {
-                code: '',
-                name: '',
-              },
+            },
+          );
+          if (medicationStatement.data.total) {
+            const medicationCodes = [];
+            const medicationIds = {};
+            medicationStatement.data.entry.forEach((medication) => {
+              if (medication.resource) {
+                const normalizedMedicationStatement = normalizeFhirMedicationStatement(
+                  medication.resource,
+                );
+                medicationCodes.push({
+                  reasonCode: {
+                    name:
+                      normalizedMedicationStatement.medicationCodeableConceptText,
+                    code:
+                      normalizedMedicationStatement.medicationCodeableConceptCode,
+                  },
+                  serviceType: {
+                    code: '',
+                    name: '',
+                  },
+                });
+                medicationIds[
+                  normalizedMedicationStatement.medicationCodeableConceptCode
+                ] = {
+                  id: normalizedMedicationStatement.id,
+                  code:
+                    normalizedMedicationStatement.medicationCodeableConceptCode,
+                };
+              }
             });
-            medicationIds[
-              normalizedMedicationStatement.medicationCodeableConceptCode
-            ] = {
-              id: normalizedMedicationStatement.id,
-              code: normalizedMedicationStatement.medicationCodeableConceptCode,
-            };
+            setSelectedList(medicationCodes);
+            setValue([
+              { medication: 'Exist' },
+              { chronicMedicationIds: medicationIds },
+            ]);
           }
-        });
-        setSelectedList(medicationCodes);
-        setValue([
-          { medication: 'Exist' },
-          { chronicMedicationIds: medicationIds },
-        ]);
+        } else if (isChronicDisease === false) {
+          setValue([{ medication: "Doesn't exist" }]);
+        }
       }
     })();
     return () => unregister(['chronicMedicationCodes', 'chronicMedicationIds']);
