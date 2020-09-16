@@ -46,7 +46,7 @@ const Sensitivities = ({
     register({ name: 'sensitiveConditionsIds' });
     (async () => {
       const sensitivitiesLinkId = '5';
-      if (currEncounterResponse || prevEncounterResponse.length) {
+      if (currEncounterResponse.length || prevEncounterResponse.length) {
         let isSensitive = 'noResponse';
         if (currEncounterResponse.length) {
           isSensitive = Boolean(
