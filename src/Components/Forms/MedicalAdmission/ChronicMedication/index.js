@@ -25,6 +25,7 @@ const ChronicMedication = ({
     setValue,
     currEncounterResponse,
     prevEncounterResponse,
+    getValues,
   } = useFormContext();
 
   const direction = useSelector((state) => state.settings.lang_dir);
@@ -40,6 +41,28 @@ const ChronicMedication = ({
   const medicationRadioList = ["Doesn't exist", 'Exist'];
 
   const [selectedList, setSelectedList] = useState([]);
+
+  const onDeleteChipHandler = async (chip) => {
+    try {
+      const {
+        reasonCode: { code },
+      } = chip;
+      const { chronicMedicationIds } = getValues({ nest: true });
+      if (chronicMedicationIds[code]) {
+        await FHIR('MedicationStatement', 'doWork', {
+          functionName: 'patchMedicationStatement',
+          functionParams: {
+            medicationStatementId: chronicMedicationIds[code].id,
+            patchParams: {
+              status: 'inactive',
+            },
+          },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     register({ name: 'chronicMedicationCodes' });
@@ -189,6 +212,7 @@ const ChronicMedication = ({
           virtual
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
+          onDeleteChip={onDeleteChipHandler}
         />
       )}
     </StyleChronicMedication>

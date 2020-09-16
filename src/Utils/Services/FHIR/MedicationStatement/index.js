@@ -5,7 +5,7 @@
 
 import { CRUDOperations } from '../CRUDOperations';
 import denormalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirMedicationStatement';
-import moment from "moment";
+import moment from 'moment';
 
 const MedicationStatementState = {
   doWork: (parameters = null) => {
@@ -14,7 +14,30 @@ const MedicationStatementState = {
     paramsToCRUD.url = componentFhirURL;
     return MedicationStatementState[parameters.functionName](paramsToCRUD);
   },
+  patchMedicationStatement: (params) => {
+    const { url, medicationStatementId, patchParams } = params;
+    if (Object.keys(patchParams).length && medicationStatementId) {
+      const patchArr = [];
+      for (const patchKey in patchParams) {
+        if (patchParams.hasOwnProperty(patchKey)) {
+          const element = patchParams[patchKey];
+          switch (patchKey) {
+            case 'status':
+              patchArr.push({
+                op: 'replace',
+                path: '/status',
+                value: element,
+              });
+              break;
 
+            default:
+              break;
+          }
+        }
+      }
+      CRUDOperations('patch', `${url}/${medicationStatementId}`, patchArr);
+    }
+  },
   getMedicationStatementListByParams: (params) => {
     if (params.patient) {
       return CRUDOperations(
@@ -32,7 +55,9 @@ const MedicationStatementState = {
   createMedicationStatement: (params) => {
     if (!params.medicationStatement)
       throw new Error('Empty medicationStatement');
-    params.medicationStatement.dateAsserted = moment().format('YYYY-MM-DDTHH:mm:ss[Z]');
+    params.medicationStatement.dateAsserted = moment().format(
+      'YYYY-MM-DDTHH:mm:ss[Z]',
+    );
     const denormalizedFhirMedicationStatement = denormalizeFhirMedicationStatement(
       params.medicationStatement,
     );
