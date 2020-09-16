@@ -5,12 +5,13 @@ import {
   StyledEncounterTicket,
   StyledFadeElement,
 } from 'Components/Generic/EncounterSheet/PatientBackground/Style';
-import moment from 'moment';
 import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
 import StyledExaminationStatusesWithIcons from 'Components/Generic/EncounterSheet/PatientBackground/StyledExaminationStatusesWithIcons';
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { formatShortDate, formatTime, currentDate }  from 'Utils/Helpers/Datetime/formatDate';
+
 
 const EncounterTicket = ({
   hide,
@@ -37,12 +38,12 @@ const EncounterTicket = ({
           <StyledEncountersTicketsCurrent dir={languageDirection} key={key}>
             <StyledCurrentExaminationHeader>
               <div>
-                {moment.utc().format('YYYY-MM-DD') ===
-                moment.utc(encounterToParse.startTime).format('YYYY-MM-DD')
+                {currentDate('YYYY-MM-DD') ===
+                formatShortDate(encounterToParse.startTime, 'YYYY-MM-DD')
                   ? t('Today') +
                     ' - ' +
-                    moment.utc(encounterToParse.startTime).format('HH:MM')
-                  : moment.utc(encounterToParse.startTime).format(formatDate)}
+                    formatTime(encounterToParse.startTime, 'HH:MM')
+                  : formatShortDate(encounterToParse.startTime, formatDate)}
               </div>
               <span
                 title={parseMultipleExaminations(
@@ -80,12 +81,12 @@ const EncounterTicket = ({
             key={key}>
             <StyledCurrentExaminationHeader>
               <div>
-                {moment.utc().format('YYYY-MM-DD') ===
-                moment.utc(encounterToParse.startTime).format('YYYY-MM-DD')
+                {currentDate('YYYY-MM-DD') ===
+                formatShortDate(encounterToParse.startTime, 'YYYY-MM-DD')
                   ? t('Today') +
                     ' - ' +
-                    moment.utc(encounterToParse.startTime).format('HH:MM')
-                  : moment.utc(encounterToParse.startTime).format(formatDate)}
+                    formatTime(encounterToParse.startTime, 'HH:MM')
+                  : formatShortDate(encounterToParse.startTime, formatDate)}
               </div>
               <span
                 title={parseMultipleExaminations(

@@ -1,7 +1,7 @@
-import moment from 'moment';
-import 'moment/locale/he';
+
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from './tableHeaders';
+import { formatTime } from 'Utils/Helpers/Datetime/formatDate';
 
 // סיימו טיפול
 
@@ -109,7 +109,7 @@ export const setPatientDataFinishedTableRows = (
           row.push({
             padding: 'default',
             align: 'center',
-            label: moment.utc(encounter.startTime).format('LT'),
+            label: formatTime(encounter.startTime),
           });
           break;
         default:

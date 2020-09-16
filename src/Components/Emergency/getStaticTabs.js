@@ -17,8 +17,9 @@ export const emergencyTabs = [
     tableFunction: setPatientDataWaitingForNurseTableRows,
     sort: '-priority,status-update-date,service-type',
     statuses: ['arrived'],
-    extendedStatuses: ['waiting-for-nurse'],
+    extendedStatuses: ['waiting_for_nurse'],
     isDateDisabled: true,
+    valueSet: 'encounter_secondary_statuses'
   },
   {
     tabName: 'Waiting for doctor',

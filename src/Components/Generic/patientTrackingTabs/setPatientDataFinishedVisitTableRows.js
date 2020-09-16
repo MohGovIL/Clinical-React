@@ -1,9 +1,9 @@
 import moment from 'moment';
-import 'moment/locale/he';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
+import { formatTime } from 'Utils/Helpers/Datetime/formatDate';
 
 // סיימו ביקור
 
@@ -129,7 +129,7 @@ export const setPatientDataFinishedVisitTableRows = function (
           row.push({
             padding: 'default',
             align: 'center',
-            label: moment.utc(encounter.extensionStatusUpdateDate).format('LT'),
+            label: formatTime(encounter.extensionStatusUpdateDate),
           });
           break;
         default:

@@ -6,10 +6,10 @@
  *                   Dror Golan - drorgo@matrix.co.il
  */
 
-import moment from 'moment';
 import { CRUDOperations } from '../CRUDOperations';
 import { store } from '../../../../index';
 import denormalizeFhirEncounter from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirEncounter';
+import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
 
 const EncounterStates = {
   doWork: (parameters) => {
@@ -41,7 +41,7 @@ const EncounterStates = {
         },
         status: 'planned',
         period: {
-          start: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          start: fhirFormatDateTime(),
         },
         subject: {
           reference: `Patient/${params.patient.id}`,
@@ -49,7 +49,7 @@ const EncounterStates = {
         priority: {
           coding: [
             {
-              code: 0,
+              code: 1,
             },
           ],
         },
@@ -109,7 +109,7 @@ const EncounterStates = {
           },
         ],
         period: {
-          start: moment().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          start: fhirFormatDateTime(),
         },
         serviceProvider: {
           reference: `Organization/${params.facility}`,
