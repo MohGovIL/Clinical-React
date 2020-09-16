@@ -47,6 +47,7 @@ const BackgroundDiseases = ({
         functionParams: {
           category: 'medical_problem',
           subject: patientId,
+          status: 'active',
         },
       });
       if (conditions.data.total) {

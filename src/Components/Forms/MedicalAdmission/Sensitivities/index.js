@@ -48,6 +48,7 @@ const Sensitivities = ({
         functionParams: {
           category: 'sensitive',
           subject: patientId,
+          status: 'active',
         },
       });
       if (conditions.data.total) {
