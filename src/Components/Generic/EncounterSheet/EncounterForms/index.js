@@ -8,7 +8,7 @@ const EncounterForms = ({
   patient,
   languageDirection,
   formatDate,
-  prevEncounterId
+  prevEncounterId,
 }) => {
   const [formsPerSheet, setFormsPerSheet] = React.useState();
 
@@ -28,7 +28,11 @@ const EncounterForms = ({
   return (
     <StyledPatientFiles>
       {formsPerSheet ? (
-        <FormsContainer dir={languageDirection} tabs={formsPerSheet} />
+        <FormsContainer
+          dir={languageDirection}
+          tabs={formsPerSheet}
+          prevEncounterId={prevEncounterId}
+        />
       ) : null}
     </StyledPatientFiles>
   );

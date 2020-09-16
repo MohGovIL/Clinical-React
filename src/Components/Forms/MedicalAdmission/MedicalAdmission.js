@@ -30,6 +30,7 @@ const MedicalAdmission = ({
   permission,
   validationFunction,
   functionToRunOnTabChange,
+  prevEncounterId,
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -165,6 +166,7 @@ const MedicalAdmission = ({
   const [questionnaireResponseItems, setQuestionnaireResponseItems] = useState(
     [],
   );
+  const [prevEncounterResponse, setPrevEncounterResponse] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -176,25 +178,50 @@ const MedicalAdmission = ({
             QuestionnaireName: 'medical_admission_questionnaire',
           },
         });
-        const questionnaireResponse = await FHIR(
-          'QuestionnaireResponse',
-          'doWork',
-          {
+        const questionnaireResponseArr = [];
+        questionnaireResponseArr.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
             functionName: 'getQuestionnaireResponse',
             functionParams: {
               encounterId: encounter.id,
               patientId: patient.id,
               questionnaireId: q.data.entry[1].resource.id,
             },
-          },
+          }),
         );
-        if (questionnaireResponse.data.total) {
+        if (prevEncounterId) {
+          questionnaireResponseArr.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'getQuestionnaireResponse',
+              functionParams: {
+                encounterId: prevEncounterId,
+                patientId: patient.id,
+                questionnaireId: q.data.entry[1].resource.id,
+              },
+            }),
+          );
+        }
+        const qrResponse = await Promise.all(questionnaireResponseArr);
+
+        if (qrResponse[0].data.total) {
+          // Set that curr response is available
           normalizedFhirQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
-            questionnaireResponse.data.entry[1].resource,
+            qrResponse[0].data.entry[1].resource,
           );
 
           setQuestionnaireResponseItems(
             normalizedFhirQuestionnaireResponse.items,
+          );
+        } else if (
+          prevEncounterId &&
+          qrResponse[1] &&
+          qrResponse[1].data.total
+        ) {
+          // if there is prev response
+          setPrevEncounterResponse(
+            normalizeFhirQuestionnaireResponse(
+              qrResponse[1].data.entry[1].resource,
+            ).items,
           );
         }
         const Questionnaire = q.data.entry[1].resource;
@@ -210,7 +237,14 @@ const MedicalAdmission = ({
     })();
 
     return () => unregister(['questionnaire', 'questionnaireResponseId']);
-  }, [register, setValue, unregister, encounter.id, patient.id]);
+  }, [
+    register,
+    setValue,
+    unregister,
+    encounter.id,
+    patient.id,
+    prevEncounterId,
+  ]);
 
   useEffect(() => {
     register({ name: 'isPregnancy' });
@@ -533,6 +567,8 @@ const MedicalAdmission = ({
       <PopUpFormTemplates {...popUpProps} />
       <FormContext
         {...methods}
+        currEncounterResponse={questionnaireResponseItems}
+        prevEncounterResponse={prevEncounterResponse}
         requiredErrors={requiredErrors}
         setPopUpProps={setPopUpProps}
         patientId={patient.id}

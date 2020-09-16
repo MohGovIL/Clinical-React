@@ -40,7 +40,7 @@ function allyProps(index) {
   };
 }
 /*[{"component":"MedicalAdmissionForm","form_name":"Medical Admission","order":"1","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Tests and Treatments","order":"2","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Diagnosis and Recommendations","order":"3","permission":"write"}]*/
-const FormsContainer = ({ tabs, dir }) => {
+const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
   const { t } = useTranslation();
 
   const [value, setValue] = React.useState(0);
@@ -112,6 +112,7 @@ const FormsContainer = ({ tabs, dir }) => {
             dir={dir}>
             <Suspense fallback={<span>Loading...</span>}>
               <FormComponent
+                prevEncounterId={prevEncounterId}
                 functionToRunOnTabChange={functionToRunOnTabChange}
                 validationFunction={validationFunctionToRun}
                 permission={tab.permission}
