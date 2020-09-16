@@ -115,7 +115,14 @@ const ChronicMedication = ({
       }
     })();
     return () => unregister(['chronicMedicationCodes', 'chronicMedicationIds']);
-  }, [register, unregister, patientId, setValue]);
+  }, [
+    register,
+    unregister,
+    patientId,
+    setValue,
+    currEncounterResponse,
+    prevEncounterResponse,
+  ]);
 
   useEffect(() => {
     let active = true;
