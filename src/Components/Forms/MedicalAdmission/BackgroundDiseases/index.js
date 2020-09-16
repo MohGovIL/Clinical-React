@@ -23,6 +23,8 @@ const BackgroundDiseases = ({
     requiredErrors,
     patientId,
     setValue,
+    currEncounterResponse,
+    prevEncounterResponse,
   } = useFormContext();
   const radioName = 'background_diseases';
   const backgroundDiseasesToggleValue = watch(radioName);

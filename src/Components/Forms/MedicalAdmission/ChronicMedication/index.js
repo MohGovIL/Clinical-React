@@ -23,6 +23,8 @@ const ChronicMedication = ({
     requiredErrors,
     patientId,
     setValue,
+    currEncounterResponse,
+    prevEncounterResponse,
   } = useFormContext();
 
   const direction = useSelector((state) => state.settings.lang_dir);

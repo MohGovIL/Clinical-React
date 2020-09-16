@@ -23,6 +23,8 @@ const Sensitivities = ({
     requiredErrors,
     patientId,
     setValue,
+    currEncounterResponse,
+    prevEncounterResponse,
   } = useFormContext();
 
   const direction = useSelector((state) => state.settings.lang_dir);
@@ -43,47 +45,75 @@ const Sensitivities = ({
     register({ name: 'sensitivitiesCodes' });
     register({ name: 'sensitiveConditionsIds' });
     (async () => {
-      const conditions = await FHIR('Condition', 'doWork', {
-        functionName: 'getConditionListByParams',
-        functionParams: {
-          category: 'sensitive',
-          subject: patientId,
-          status: 'active',
-        },
-      });
-      if (conditions.data.total) {
-        const conditionCodes = [];
-        const conditionIds = {};
-        conditions.data.entry.forEach((condition) => {
-          if (condition.resource) {
-            const normalizedCondition = normalizeFhirCondition(
-              condition.resource,
-            );
-            conditionCodes.push({
-              reasonCode: {
-                name: normalizedCondition.codeText,
-                code: normalizedCondition.codeCode,
-              },
-              serviceType: {
-                code: '',
-                name: '',
-              },
+      const sensitivitiesLinkId = '5';
+      if (currEncounterResponse || prevEncounterResponse.length) {
+        let isSensitive = 'noResponse';
+        if (currEncounterResponse.length) {
+          isSensitive = Boolean(
+            +currEncounterResponse.find(
+              (i) => i.linkId === sensitivitiesLinkId,
+            )['answer'][0]['valueBoolean'],
+          );
+        } else if (prevEncounterResponse.length) {
+          isSensitive = Boolean(
+            +prevEncounterResponse.find(
+              (i) => i.linkId === sensitivitiesLinkId,
+            )['answer'][0]['valueBoolean'],
+          );
+        }
+        if (isSensitive === true) {
+          const conditions = await FHIR('Condition', 'doWork', {
+            functionName: 'getConditionListByParams',
+            functionParams: {
+              category: 'sensitive',
+              subject: patientId,
+              status: 'active',
+            },
+          });
+          if (conditions.data.total) {
+            const conditionCodes = [];
+            const conditionIds = {};
+            conditions.data.entry.forEach((condition) => {
+              if (condition.resource) {
+                const normalizedCondition = normalizeFhirCondition(
+                  condition.resource,
+                );
+                conditionCodes.push({
+                  reasonCode: {
+                    name: normalizedCondition.codeText,
+                    code: normalizedCondition.codeCode,
+                  },
+                  serviceType: {
+                    code: '',
+                    name: '',
+                  },
+                });
+                conditionIds[normalizedCondition.codeCode] = {
+                  id: normalizedCondition.id,
+                  code: normalizedCondition.codeCode,
+                };
+              }
             });
-            conditionIds[normalizedCondition.codeCode] = {
-              id: normalizedCondition.id,
-              code: normalizedCondition.codeCode,
-            };
+            setSelectedList(conditionCodes);
+            setValue([
+              { sensitivities: 'Known' },
+              { sensitiveConditionsIds: conditionIds },
+            ]);
           }
-        });
-        setSelectedList(conditionCodes);
-        setValue([
-          { sensitivities: 'Known' },
-          { sensitiveConditionsIds: conditionIds },
-        ]);
+        } else if (isSensitive === false) {
+          setValue([{ sensitivities: 'Not known' }]);
+        }
       }
     })();
     return () => unregister(['sensitivitiesCodes', 'sensitiveConditionsIds']);
-  }, [register, unregister, patientId, setValue]);
+  }, [
+    register,
+    unregister,
+    patientId,
+    setValue,
+    currEncounterResponse,
+    prevEncounterResponse,
+  ]);
 
   useEffect(() => {
     let active = true;
