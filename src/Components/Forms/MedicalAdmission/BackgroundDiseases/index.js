@@ -25,6 +25,7 @@ const BackgroundDiseases = ({
     setValue,
     currEncounterResponse,
     prevEncounterResponse,
+    getValues,
   } = useFormContext();
   const radioName = 'background_diseases';
   const backgroundDiseasesToggleValue = watch(radioName);
@@ -39,6 +40,28 @@ const BackgroundDiseases = ({
   const backgroundDisRadioList = ['Usually healthy', 'There are diseases'];
 
   const [selectedList, setSelectedList] = useState([]);
+
+  const onDeleteChipHandler = async (chip) => {
+    try {
+      const {
+        reasonCode: { code },
+      } = chip;
+      const { backgroundDiseasesIds } = getValues({ nest: true });
+      if (backgroundDiseasesIds[code]) {
+        await FHIR('Condition', 'doWork', {
+          functionName: 'patchCondition',
+          functionParams: {
+            conditionId: backgroundDiseasesIds[code].id,
+            patchParams: {
+              clinicalStatus: 'inactive',
+            },
+          },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     register({ name: 'backgroundDiseasesCodes' });
@@ -180,6 +203,7 @@ const BackgroundDiseases = ({
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
           sortByTranslation
+          onDeleteChip={onDeleteChipHandler}
         />
       )}
     </StyleBackgroundDiseases>

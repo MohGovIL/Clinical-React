@@ -25,6 +25,7 @@ const Sensitivities = ({
     setValue,
     currEncounterResponse,
     prevEncounterResponse,
+    getValues,
   } = useFormContext();
 
   const direction = useSelector((state) => state.settings.lang_dir);
@@ -40,6 +41,28 @@ const Sensitivities = ({
     servicesTypeOpen && sensitivitiesList.length === 0;
 
   const sensitivitiesRadioList = ['Not known', 'Known'];
+
+  const onDeleteChipHandler = async (chip) => {
+    try {
+      const {
+        reasonCode: { code },
+      } = chip;
+      const { sensitiveConditionsIds } = getValues({ nest: true });
+      if (sensitiveConditionsIds[code]) {
+        await FHIR('Condition', 'doWork', {
+          functionName: 'patchCondition',
+          functionParams: {
+            conditionId: sensitiveConditionsIds[code].id,
+            patchParams: {
+              clinicalStatus: 'inactive',
+            },
+          },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     register({ name: 'sensitivitiesCodes' });
@@ -177,6 +200,7 @@ const Sensitivities = ({
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
           sortByTranslation
+          onDeleteChip={onDeleteChipHandler}
         />
       )}
     </StyledSensitivities>

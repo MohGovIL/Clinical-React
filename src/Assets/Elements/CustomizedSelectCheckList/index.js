@@ -36,9 +36,10 @@ const CustomizedSelectCheckList = ({
   virtual,
   selectedList,
   sortByTranslation,
+  onDeleteChip,
 }) => {
   const { t } = useTranslation();
-  
+
   const { requiredErrors, setValue, permission } = useFormContext();
 
   if (sortByTranslation && selectCheckList) {
@@ -103,6 +104,9 @@ const CustomizedSelectCheckList = ({
     });
   };
   const chipOnDeleteHandler = (chipToDeleteIndex) => () => {
+    if (onDeleteChip) {
+      onDeleteChip(selectedServicesType[chipToDeleteIndex]);
+    }
     const filteredSelectedServicesType = selectedServicesType.filter(
       (_, selectedIndex) => chipToDeleteIndex !== selectedIndex,
     );

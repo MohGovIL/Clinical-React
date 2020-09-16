@@ -5,7 +5,7 @@
 
 import { CRUDOperations } from '../CRUDOperations';
 import denormalizeFhirCondition from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirCondition';
-import moment from "moment";
+import moment from 'moment';
 
 const ConditionStates = {
   doWork: (parameters = null) => {
@@ -14,7 +14,29 @@ const ConditionStates = {
     paramsToCRUD.url = componentFhirURL;
     return ConditionStates[parameters.functionName](paramsToCRUD);
   },
-
+  patchCondition: (params) => {
+    const { url, conditionId, patchParams } = params;
+    if (Object.keys(patchParams).length) {
+      const patchArr = [];
+      for (const patchKey in patchParams) {
+        if (patchParams.hasOwnProperty(patchKey)) {
+          const element = patchParams[patchKey];
+          switch (patchKey) {
+            case 'clinicalStatus':
+              patchArr.push({
+                op: 'replace',
+                path: '/clinicalStatus/coding/0/code',
+                value: element,
+              });
+              break;
+            default:
+              break;
+          }
+        }
+      }
+      return CRUDOperations('patch', `${url}/${conditionId}`, patchArr);
+    }
+  },
   getConditionListByParams: (params) => {
     if (params.subject > 0 && params.category.length > 0) {
       return CRUDOperations(
@@ -45,7 +67,7 @@ const ConditionStates = {
     }
   },
   deleteCondition: (params) => {
-    return CRUDOperations('delete', `${params.url}/${params.conditionId}`)
+    return CRUDOperations('delete', `${params.url}/${params.conditionId}`);
   },
 };
 
