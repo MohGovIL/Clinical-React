@@ -514,7 +514,7 @@ const PopupCreateNewPatient = ({
   };
 
   const createNewEncounterForCurrentPatient = (patient_id, patient_data) => {
-    let currentDate = fhirFormatDate;
+    let currentDate = fhirFormatDate();
     (async () => {
       try {
         let patient_identifier =
