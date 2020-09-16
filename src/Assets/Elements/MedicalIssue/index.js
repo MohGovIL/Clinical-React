@@ -27,20 +27,20 @@ const MedicalIssue = ({ title, items, currResponse, prevResponse, linkId }) => {
       </StyledTitleTypography>
       <Divider />
       <StyledContentBlock>
-        {items.length ? (
+        {items === null ? (
+          <StyledTypography>{t('Not known')}</StyledTypography>
+        ) : items.length ? (
           <Grid container spacing={2}>
             <Grid item>
               <Grid container spacing={2}>
                 {items.map((issue, index) => (
                   <Grid item key={index}>
-                    <StyledChip color='primary' label={t(issue.title)} />
+                    <StyledChip color='primary' label={t(issue)} />
                   </Grid>
                 ))}
               </Grid>
             </Grid>
           </Grid>
-        ) : currResponse || prevResponse ? (
-          <StyledTypography>{t('Not known')}</StyledTypography>
         ) : null}
       </StyledContentBlock>
     </StyledDiv>
