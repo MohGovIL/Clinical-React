@@ -46,17 +46,19 @@ const BackgroundDiseases = ({
       const {
         reasonCode: { code },
       } = chip;
-      const { backgroundDiseasesIds } = getValues({ nest: true });
-      if (backgroundDiseasesIds[code]) {
-        await FHIR('Condition', 'doWork', {
-          functionName: 'patchCondition',
-          functionParams: {
-            conditionId: backgroundDiseasesIds[code].id,
-            patchParams: {
-              clinicalStatus: 'inactive',
+      if (currEncounterResponse.length) {
+        const { backgroundDiseasesIds } = getValues({ nest: true });
+        if (backgroundDiseasesIds[code]) {
+          await FHIR('Condition', 'doWork', {
+            functionName: 'patchCondition',
+            functionParams: {
+              conditionId: backgroundDiseasesIds[code].id,
+              patchParams: {
+                clinicalStatus: 'inactive',
+              },
             },
-          },
-        });
+          });
+        }
       }
     } catch (error) {
       console.log(error);

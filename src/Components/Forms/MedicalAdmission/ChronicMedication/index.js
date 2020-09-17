@@ -47,17 +47,19 @@ const ChronicMedication = ({
       const {
         reasonCode: { code },
       } = chip;
-      const { chronicMedicationIds } = getValues({ nest: true });
-      if (chronicMedicationIds[code]) {
-        await FHIR('MedicationStatement', 'doWork', {
-          functionName: 'patchMedicationStatement',
-          functionParams: {
-            medicationStatementId: chronicMedicationIds[code].id,
-            patchParams: {
-              status: 'inactive',
+      if (currEncounterResponse.length) {
+        const { chronicMedicationIds } = getValues({ nest: true });
+        if (chronicMedicationIds[code]) {
+          await FHIR('MedicationStatement', 'doWork', {
+            functionName: 'patchMedicationStatement',
+            functionParams: {
+              medicationStatementId: chronicMedicationIds[code].id,
+              patchParams: {
+                status: 'inactive',
+              },
             },
-          },
-        });
+          });
+        }
       }
     } catch (error) {
       console.log(error);

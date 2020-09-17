@@ -47,17 +47,19 @@ const Sensitivities = ({
       const {
         reasonCode: { code },
       } = chip;
-      const { sensitiveConditionsIds } = getValues({ nest: true });
-      if (sensitiveConditionsIds[code]) {
-        await FHIR('Condition', 'doWork', {
-          functionName: 'patchCondition',
-          functionParams: {
-            conditionId: sensitiveConditionsIds[code].id,
-            patchParams: {
-              clinicalStatus: 'inactive',
+      if (currEncounterResponse.length) {
+        const { sensitiveConditionsIds } = getValues({ nest: true });
+        if (sensitiveConditionsIds[code]) {
+          await FHIR('Condition', 'doWork', {
+            functionName: 'patchCondition',
+            functionParams: {
+              conditionId: sensitiveConditionsIds[code].id,
+              patchParams: {
+                clinicalStatus: 'inactive',
+              },
             },
-          },
-        });
+          });
+        }
       }
     } catch (error) {
       console.log(error);

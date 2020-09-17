@@ -457,6 +457,31 @@ const MedicalAdmission = ({
             );
           }
         });
+      } else {
+        if (
+          data.sensitivitiesCodes &&
+          data.sensitivitiesCodes.length &&
+          data.sensitiveConditionsIds &&
+          Object.keys(data.sensitiveConditionsIds).length &&
+          questionnaireResponseItems.length
+        ) {
+          data.sensitivitiesCodes.forEach((code) => {
+            if (data.sensitiveConditionsIds[code]) {
+              APIsArray.push(
+                FHIR('Condition', 'doWork', {
+                  functionName: 'patchCondition',
+                  functionParams: {
+                    conditionId: data.sensitiveConditionsIds[code].id,
+                    patchParams: {
+                      clinicalStatus: 'inactive',
+                      encounter: encounter.id,
+                    },
+                  },
+                }),
+              );
+            }
+          });
+        }
       }
 
       //Creating new conditions for backgroundDiseases
@@ -505,6 +530,31 @@ const MedicalAdmission = ({
             );
           }
         });
+      } else {
+        if (
+          data.backgroundDiseasesCodes &&
+          data.backgroundDiseasesCodes.length &&
+          data.backgroundDiseasesIds &&
+          Object.keys(data.backgroundDiseasesIds).length &&
+          questionnaireResponseItems.length
+        ) {
+          data.backgroundDiseasesCodes.forEach((code) => {
+            if (data.backgroundDiseasesIds[code]) {
+              APIsArray.push(
+                FHIR('Condition', 'doWork', {
+                  functionName: 'patchCondition',
+                  functionParams: {
+                    conditionId: data.backgroundDiseasesIds[code].id,
+                    patchParams: {
+                      clinicalStatus: 'inactive',
+                      encounter: encounter.id,
+                    },
+                  },
+                }),
+              );
+            }
+          });
+        }
       }
 
       // Creating a new medicationStatement
@@ -555,6 +605,29 @@ const MedicalAdmission = ({
             );
           }
         });
+      } else {
+        if (
+          data.chronicMedicationCodes &&
+          data.chronicMedicationCodes.length &&
+          data.chronicMedicationIds &&
+          Object.keys(data.chronicMedicationIds).length &&
+          questionnaireResponseItems.length
+        ) {
+          data.chronicMedicationCodes.forEach((code) => {
+            if (data.chronicMedicationIds[code]) {
+              FHIR('MedicationStatement', 'doWork', {
+                functionName: 'patchMedicationStatement',
+                functionParams: {
+                  medicationStatementId: data.chronicMedicationIds[code].id,
+                  patchParams: {
+                    status: 'inactive',
+                    encounter: encounter.id,
+                  },
+                },
+              });
+            }
+          });
+        }
       }
       return APIsArray;
     } catch (error) {
