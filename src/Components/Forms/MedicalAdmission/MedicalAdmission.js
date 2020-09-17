@@ -423,6 +423,7 @@ const MedicalAdmission = ({
                   functionName: 'createCondition',
                   functionParams: {
                     condition: {
+                      encounter: encounter.id,
                       categorySystem:
                         'http://clinikal/condition/category/sensitive',
                       codeSystem:
@@ -449,6 +450,7 @@ const MedicalAdmission = ({
                     patient: patient.id,
                     recorder: store.getState().login.userID,
                     clinicalStatus: 1,
+                    encounter: encounter.id,
                   },
                 },
               }),
@@ -476,6 +478,7 @@ const MedicalAdmission = ({
                       patient: patient.id,
                       recorder: store.getState().login.userID,
                       clinicalStatus: 1,
+                      encounter: encounter.id,
                     },
                   },
                   functionName: 'createCondition',
@@ -494,6 +497,7 @@ const MedicalAdmission = ({
                     patient: patient.id,
                     recorder: store.getState().login.userID,
                     clinicalStatus: 1,
+                    encounter: encounter.id,
                   },
                 },
                 functionName: 'createCondition',
@@ -524,6 +528,7 @@ const MedicalAdmission = ({
                       medicationCodeableConceptCode: medication,
                       medicationCodeableConceptSystem:
                         'http://clinikal/valueset/drugs_list',
+                      encounter: encounter.id,
                     },
                   },
                 }),
@@ -543,6 +548,7 @@ const MedicalAdmission = ({
                     medicationCodeableConceptCode: medication,
                     medicationCodeableConceptSystem:
                       'http://clinikal/valueset/drugs_list',
+                    encounter: encounter.id,
                   },
                 },
               }),
