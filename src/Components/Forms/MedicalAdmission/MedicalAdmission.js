@@ -417,7 +417,11 @@ const MedicalAdmission = ({
             data.sensitiveConditionsIds &&
             Object.keys(data.sensitiveConditionsIds).length
           ) {
-            if (!data.sensitiveConditionsIds[sensitivities]) {
+            if (
+              !data.sensitiveConditionsIds[sensitivities] ||
+              (data.sensitiveConditionsIds[sensitivities] &&
+                !questionnaireResponseItems.length)
+            ) {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionName: 'createCondition',
@@ -491,7 +495,11 @@ const MedicalAdmission = ({
             data.backgroundDiseasesIds &&
             Object.keys(data.backgroundDiseasesIds).length
           ) {
-            if (!data.backgroundDiseasesIds[backgroundDisease]) {
+            if (
+              !data.backgroundDiseasesIds[backgroundDisease] ||
+              (data.backgroundDiseasesIds[backgroundDisease] &&
+                !questionnaireResponseItems.length)
+            ) {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionParams: {
@@ -564,7 +572,11 @@ const MedicalAdmission = ({
             data.chronicMedicationIds &&
             Object.keys(data.chronicMedicationIds).length
           ) {
-            if (!data.chronicMedicationIds[medication]) {
+            if (
+              !data.chronicMedicationIds[medication] ||
+              (data.backgroundDiseasesIds[medication] &&
+                !questionnaireResponseItems.length)
+            ) {
               APIsArray.push(
                 FHIR('MedicationStatement', 'doWork', {
                   functionName: 'createMedicationStatement',
