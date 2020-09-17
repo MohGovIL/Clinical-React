@@ -219,6 +219,7 @@ const Fields = ({
         serviceReqID: '',
         reason_referance_doc_id: '',
         locked: false,
+        test_treatment_title: '',
       });
     } else {
       await append({
@@ -232,6 +233,7 @@ const Fields = ({
         serviceReqID: '',
         reason_referance_doc_id: '',
         locked: false,
+        test_treatment_title: '',
       });
     }
     //3)render all the elements to the screen  with watch
@@ -301,6 +303,13 @@ const Fields = ({
                     as={<input />}
                   />
                   <Grid item xs={3}>
+                    <Controller
+                      hidden
+                      name={`Instruction[${index}].test_treatment_title`}
+                      defaultValue={item.test_treatment_title}
+                      as={<input />}
+                    />
+
                     <TestTreatment
                       setRequiredErrors={setRequiredErrors}
                       index={index}
