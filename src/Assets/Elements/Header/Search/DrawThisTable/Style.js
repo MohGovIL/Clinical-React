@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import {
   ExpansionPanelDetails,
   ExpansionPanelSummary,
+  TableCell,
 } from '@material-ui/core';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import GenderIcon from 'Assets/Elements/CustomizedTable/CustomizedTablePersonalInformationCell/GenderIcon';
@@ -376,4 +377,8 @@ export const StyledLabelTableButton = styled.label`
 
 export const StyledEmptyDiv = styled.label`
   width: 108px;
+`;
+
+export const StyledTDCell = styled(TableCell)`
+  padding: 10px;
 `;

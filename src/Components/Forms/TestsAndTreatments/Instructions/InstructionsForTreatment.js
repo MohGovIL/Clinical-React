@@ -281,7 +281,7 @@ const InstructionsForTreatment = ({
           } else {
             setRequiredErrors((prevState) => {
               const cloneState = [...prevState];
-              cloneState[instructionIndex][field.name] = t('Value is required');
+              cloneState[instructionIndex][field.name] = t('A value must be entered in the field'); // PC-1557
               return cloneState;
             });
             clean = false;

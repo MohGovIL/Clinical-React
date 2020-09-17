@@ -1,7 +1,7 @@
 import React from 'react';
 import TitleValueComponent from 'Assets/Elements/Header/Search/DrawThisTable/TitleValueComponent';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import {
   StyledHeaderTableAppointment,
   StyledHrefButton,
@@ -9,6 +9,7 @@ import {
   StyledLabelStatusAppointment,
   StyledLabelTableButton,
   StyledTableTextCell,
+  StyledTDCell,
 } from 'Assets/Elements/Header/Search/DrawThisTable/Style';
 import moment from 'moment';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
@@ -16,7 +17,7 @@ import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
+
 import TableContainer from '@material-ui/core/TableContainer';
 import Paper from '@material-ui/core/Paper';
 import TableBody from '@material-ui/core/TableBody';
@@ -24,6 +25,8 @@ import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
 import { useHistory } from 'react-router-dom';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
+import { store } from 'index';
+import { createSummaryLetter } from '../../../../Utils/Helpers/Letters/createSummaryLetter';
 
 const AppointmentsAndEncountersTables = ({
   patientId,
@@ -34,6 +37,11 @@ const AppointmentsAndEncountersTables = ({
   encounterStatuses,
   gotToPatientAdmission,
   authorizationACO,
+  patient,
+  encounter,
+  language_direction,
+  currentUser,
+  facility,
 }) => {
   const history = useHistory();
   const hideAppointments = useSelector(
@@ -76,6 +84,8 @@ const AppointmentsAndEncountersTables = ({
       ? moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY HH:mm')
       : moment().utc().format('DD/MM/YYYY');
   };
+  const [docID, setDoc] = React.useState(-1);
+
   const [showAllPastEncounter, setShowAllPastEncounter] = React.useState(false);
   let [pastEncounterCounter, setPastEncounterCounter] = React.useState(2);
 
@@ -175,6 +185,15 @@ const AppointmentsAndEncountersTables = ({
     });
   }
 
+  const createLetterFromData = async ({ encounter }) => {
+    let docId = await createSummaryLetter({
+      encounter,
+      patientId,
+      currentUser,
+      facility,
+    });
+    setDoc(docId);
+  };
   function handleCreateAppointment(patient) {
     return undefined;
   }
@@ -191,11 +210,15 @@ const AppointmentsAndEncountersTables = ({
           <Table aria-label='simple table'>
             <TableHead>
               <TableRow>
-                <TableCell align='right'>{t("Encounter's hour")}</TableCell>
-                <TableCell align='right'>{t('Reason for refferal')}</TableCell>
-                <TableCell align='center'>{t('Status')}</TableCell>
-                <TableCell align='right'></TableCell>
-                <TableCell align='right'></TableCell>
+                <StyledTDCell align='right'>
+                  {t("Encounter's hour")}
+                </StyledTDCell>
+                <StyledTDCell align='right'>
+                  {t('Reason for refferal')}
+                </StyledTDCell>
+                <StyledTDCell align='center'>{t('Status')}</StyledTDCell>
+                <StyledTDCell align='right'></StyledTDCell>
+                <StyledTDCell align='right'></StyledTDCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -203,13 +226,13 @@ const AppointmentsAndEncountersTables = ({
                 normalizedCurEncounters.map((encounter, encounterID) => {
                   return (
                     <TableRow key={encounterID}>
-                      <TableCell align='right' omponent='td' scope='row'>
+                      <StyledTDCell align='right' omponent='td' scope='row'>
                         <StyledTableTextCell>
                           {' '}
                           {moment.utc(encounter.startTime).format('HH:mm')}{' '}
                         </StyledTableTextCell>
-                      </TableCell>
-                      <TableCell align='right'>
+                      </StyledTDCell>
+                      <StyledTDCell align='right'>
                         <StyledTableTextCell
                           title={parseMultipleExaminations(
                             encounter.serviceType,
@@ -222,8 +245,8 @@ const AppointmentsAndEncountersTables = ({
                             t,
                           )}
                         </StyledTableTextCell>
-                      </TableCell>
-                      <TableCell align='center'>
+                      </StyledTDCell>
+                      <StyledTDCell align='center'>
                         <StyledLabelStatusAppointment>
                           <TitleValueComponent
                             name={
@@ -233,8 +256,8 @@ const AppointmentsAndEncountersTables = ({
                             }
                           />
                         </StyledLabelStatusAppointment>
-                      </TableCell>
-                      <TableCell align='right'>
+                      </StyledTDCell>
+                      <StyledTDCell align='right'>
                         <StyledHrefTableButton
                           disabled={
                             authorizationACO.encounterSheet !== 'view' &&
@@ -249,8 +272,8 @@ const AppointmentsAndEncountersTables = ({
                           }>
                           {t('navigate to encounter sheet')}
                         </StyledHrefTableButton>
-                      </TableCell>
-                      <TableCell align='right'>
+                      </StyledTDCell>
+                      <StyledTDCell align='right'>
                         <StyledHrefTableButton
                           disabled={
                             authorizationACO.patientAdmission !== 'view' &&
@@ -269,19 +292,19 @@ const AppointmentsAndEncountersTables = ({
                           }>
                           {t('Admission form')}
                         </StyledHrefTableButton>
-                      </TableCell>
+                      </StyledTDCell>
                     </TableRow>
                   );
                 })
               ) : (
                 <TableRow key={'encounters_no_past_rows'}>
-                  <TableCell
+                  <StyledTDCell
                     colSpan='5'
                     align='center'
                     omponent='td'
                     scope='row'>
                     {t('No data found for display')}
-                  </TableCell>
+                  </StyledTDCell>
                 </TableRow>
               )}
             </TableBody>
@@ -311,14 +334,16 @@ const AppointmentsAndEncountersTables = ({
             <Table aria-label='simple table'>
               <TableHead>
                 <TableRow>
-                  <TableCell align='right'>{t('Appointment time')}</TableCell>
-                  <TableCell align='right'>
+                  <StyledTDCell align='right'>
+                    {t('Appointment time')}
+                  </StyledTDCell>
+                  <StyledTDCell align='right'>
                     {t('Reason for refferal')}
-                  </TableCell>
-                  <TableCell align='center'>{t('Status')}</TableCell>
-                  <TableCell align='right'></TableCell>
-                  <TableCell align='right'></TableCell>
-                  <TableCell align='right'></TableCell>
+                  </StyledTDCell>
+                  <StyledTDCell align='center'>{t('Status')}</StyledTDCell>
+                  <StyledTDCell align='right'></StyledTDCell>
+                  <StyledTDCell align='right'></StyledTDCell>
+                  <StyledTDCell align='right'></StyledTDCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -329,7 +354,10 @@ const AppointmentsAndEncountersTables = ({
                       if (--futureAppointmentsCounter >= 0)
                         return (
                           <TableRow key={appointmentID}>
-                            <TableCell align='right' omponent='td' scope='row'>
+                            <StyledTDCell
+                              align='right'
+                              omponent='td'
+                              scope='row'>
                               <StyledTableTextCell>
                                 {' '}
                                 {curDate ===
@@ -343,16 +371,16 @@ const AppointmentsAndEncountersTables = ({
                                       .utc(appointment.startTime)
                                       .format('DD/MM/YYYY HH:mm')}{' '}
                               </StyledTableTextCell>
-                            </TableCell>
-                            <TableCell align='right'>
+                            </StyledTDCell>
+                            <StyledTDCell align='right'>
                               <StyledTableTextCell
                                 title={parseMultipleExaminations(
                                   appointment.serviceType,
                                   appointment.examination,
                                   t,
                                 )}></StyledTableTextCell>
-                            </TableCell>
-                            <TableCell align='center'>
+                            </StyledTDCell>
+                            <StyledTDCell align='center'>
                               <StyledLabelStatusAppointment>
                                 <TitleValueComponent
                                   name={
@@ -366,8 +394,8 @@ const AppointmentsAndEncountersTables = ({
                                   }
                                 />
                               </StyledLabelStatusAppointment>
-                            </TableCell>
-                            <TableCell align='right'>
+                            </StyledTDCell>
+                            <StyledTDCell align='right'>
                               <StyledHrefTableButton
                                 disabled={
                                   authorizationACO.appointmentDetails !==
@@ -381,8 +409,8 @@ const AppointmentsAndEncountersTables = ({
                                 href='#contained-buttons'>
                                 {t('Appointment details')}
                               </StyledHrefTableButton>
-                            </TableCell>
-                            <TableCell align='right'>
+                            </StyledTDCell>
+                            <StyledTDCell align='right'>
                               <StyledHrefTableButton
                                 disabled={
                                   authorizationACO.cancelAppointment !==
@@ -395,20 +423,20 @@ const AppointmentsAndEncountersTables = ({
                                 href='#contained-buttons'>
                                 {t('Cancel appointment')}
                               </StyledHrefTableButton>
-                            </TableCell>
+                            </StyledTDCell>
                           </TableRow>
                         );
                     },
                   )
                 ) : (
                   <TableRow key={'encounters_no_past_rows'}>
-                    <TableCell
+                    <StyledTDCell
                       colSpan='6'
                       align='center'
                       omponent='td'
                       scope='row'>
                       {t('No data found for display')}
-                    </TableCell>
+                    </StyledTDCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -443,11 +471,13 @@ const AppointmentsAndEncountersTables = ({
           <Table aria-label='simple table'>
             <TableHead>
               <TableRow>
-                <TableCell align='right'>{t('Date')}</TableCell>
-                <TableCell align='right'>{t('Reason for refferal')}</TableCell>
-                <TableCell align='center'>{t('Status')}</TableCell>
-                <TableCell align='right'></TableCell>
-                <TableCell align='right'></TableCell>
+                <StyledTDCell align='right'>{t('Date')}</StyledTDCell>
+                <StyledTDCell align='right'>
+                  {t('Reason for refferal')}
+                </StyledTDCell>
+                <StyledTDCell align='center'>{t('Status')}</StyledTDCell>
+                <StyledTDCell align='right'></StyledTDCell>
+                <StyledTDCell align='right'></StyledTDCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -458,15 +488,15 @@ const AppointmentsAndEncountersTables = ({
                   if (--pastEncounterCounter >= 0) {
                     return (
                       <TableRow key={encounterID}>
-                        <TableCell align='right' omponent='td' scope='row'>
+                        <StyledTDCell align='right' omponent='td' scope='row'>
                           <StyledTableTextCell>
                             {' '}
                             {moment
                               .utc(encounter.startTime)
                               .format('DD/MM/YYYY')}{' '}
                           </StyledTableTextCell>
-                        </TableCell>
-                        <TableCell align='right'>
+                        </StyledTDCell>
+                        <StyledTDCell align='right'>
                           <StyledTableTextCell
                             title={parseMultipleExaminations(
                               encounter.serviceType,
@@ -479,8 +509,8 @@ const AppointmentsAndEncountersTables = ({
                               t,
                             )}
                           </StyledTableTextCell>
-                        </TableCell>
-                        <TableCell align='center'>
+                        </StyledTDCell>
+                        <StyledTDCell align='center'>
                           <StyledLabelStatusAppointment>
                             <TitleValueComponent
                               name={
@@ -490,8 +520,8 @@ const AppointmentsAndEncountersTables = ({
                               }
                             />
                           </StyledLabelStatusAppointment>
-                        </TableCell>
-                        <TableCell align='right'>
+                        </StyledTDCell>
+                        <StyledTDCell align='right'>
                           <StyledHrefTableButton
                             disabled={
                               authorizationACO.encounterSheet !== 'view' &&
@@ -503,37 +533,48 @@ const AppointmentsAndEncountersTables = ({
                             href='#contained-buttons'>
                             {t('Encounter sheet')}
                           </StyledHrefTableButton>
-                        </TableCell>
-                        <TableCell align='right'>
-                          {encounter.status === 'finished' ? (
-                            <StyledHrefTableButton
-                              disabled={
-                                authorizationACO.summaryLetter !== 'view' &&
-                                authorizationACO.summaryLetter !== 'write'
-                              }
-                              size={'large'}
-                              variant='outlined'
-                              color='primary'
-                              href='#contained-buttons'>
-                              {t('Summary letter')}
-                            </StyledHrefTableButton>
+                        </StyledTDCell>
+                        <StyledTDCell align='right'>
+                          {encounter.status === 'finished' ||
+                          encounter.status === 'waiting_for_release' ? (
+                            <>
+                              <input
+                                type={'hidden'}
+                                value={docID}
+                                id='doc_id'
+                              />
+                              <StyledHrefTableButton
+                                disabled={
+                                  authorizationACO.summaryLetter !== 'view' &&
+                                  authorizationACO.summaryLetter !== 'write'
+                                }
+                                onClick={() =>
+                                  createLetterFromData({ encounter: encounter })
+                                }
+                                size={'large'}
+                                variant='outlined'
+                                color='primary'
+                                href='#contained-buttons'>
+                                {t('Summary letter')}
+                              </StyledHrefTableButton>
+                            </>
                           ) : (
                             ''
                           )}
-                        </TableCell>
+                        </StyledTDCell>
                       </TableRow>
                     );
                   }
                 })
               ) : (
                 <TableRow key={'encounters_no_past_rows'}>
-                  <TableCell
+                  <StyledTDCell
                     colSpan='5'
                     align='center'
                     omponent='td'
                     scope='row'>
                     {t('No data found for display')}
-                  </TableCell>
+                  </StyledTDCell>
                 </TableRow>
               )}
             </TableBody>
@@ -560,4 +601,13 @@ const AppointmentsAndEncountersTables = ({
   );
 };
 
-export default AppointmentsAndEncountersTables;
+const mapStateToProps = (state) => {
+  return {
+    patient: state.active.activePatient,
+    encounter: state.active.activeEncounter,
+    language_direction: state.settings.lang_dir,
+    currentUser: state.active.activeUser,
+    facility: store.getState().settings.facility,
+  };
+};
+export default connect(mapStateToProps, null)(AppointmentsAndEncountersTables);
