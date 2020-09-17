@@ -18,6 +18,7 @@ const normalizeFhirMedicationStatement = (medicationStatement) => {
   let dateAsserted = medicationStatement.dateAsserted || '';
   let informationSource = '';
   let note = '';
+  let encounter = '';
 
   if (medicationStatement.category) {
     categoryText = medicationStatement.category.text || '';
@@ -30,8 +31,12 @@ const normalizeFhirMedicationStatement = (medicationStatement) => {
     }
   }
 
-  if(medicationStatement.medicationCodeableConcept && medicationStatement.medicationCodeableConcept.text) {
-    medicationCodeableConceptText = medicationStatement.medicationCodeableConcept.text;
+  if (
+    medicationStatement.medicationCodeableConcept &&
+    medicationStatement.medicationCodeableConcept.text
+  ) {
+    medicationCodeableConceptText =
+      medicationStatement.medicationCodeableConcept.text;
   }
 
   if (
@@ -63,6 +68,10 @@ const normalizeFhirMedicationStatement = (medicationStatement) => {
     note = medicationStatement.note[0].text || '';
   }
 
+  if (medicationStatement.context && medicationStatement.context.reference) {
+    encounter = medicationStatement.context.reference.split('/')[1] || '';
+  }
+
   return {
     id,
     status,
@@ -78,6 +87,7 @@ const normalizeFhirMedicationStatement = (medicationStatement) => {
     dateAsserted,
     informationSource,
     note,
+    encounter,
   };
 };
 

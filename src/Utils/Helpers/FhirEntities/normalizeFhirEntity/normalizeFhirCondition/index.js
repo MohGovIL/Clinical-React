@@ -26,6 +26,7 @@ const normalizeFhirCondition = (condition) => {
   let evidenceCode = '';
   let evidenceSystem = '';
   let note = '';
+  let encounter = '';
 
   if (
     condition.clinicalStatus &&
@@ -81,6 +82,9 @@ const normalizeFhirCondition = (condition) => {
     note = condition.note[0].text;
   }
 
+  if (condition.encounter && condition.encounter.reference) {
+    encounter = condition.encounter.reference.split('/')[1] || '';
+  }
   return {
     id: condition.id,
     categoryCode,
@@ -98,6 +102,7 @@ const normalizeFhirCondition = (condition) => {
     evidenceCode,
     evidenceSystem,
     note,
+    encounter,
   };
 };
 
