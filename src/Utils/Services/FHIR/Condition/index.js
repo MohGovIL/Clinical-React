@@ -45,7 +45,7 @@ const ConditionStates = {
           params.subject
         }&category=clinikal/condition/category/${params.category}${
           params.status ? `&clinical-status=${params.status}` : ''
-        }`,
+        }${params.encounter ? `&encounter=${params.encounter}` : ''}`,
       );
     } else {
       return false;

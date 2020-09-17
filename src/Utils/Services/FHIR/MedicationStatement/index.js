@@ -29,7 +29,13 @@ const MedicationStatementState = {
                 value: element,
               });
               break;
-
+            case 'encounter':
+              patchArr.push({
+                op: 'replace',
+                path: '/context/reference',
+                value: `Encounter/${element}`,
+              });
+              break;
             default:
               break;
           }
