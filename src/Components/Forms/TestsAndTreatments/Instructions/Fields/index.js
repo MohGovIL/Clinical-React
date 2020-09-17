@@ -30,7 +30,6 @@ import {
   StyledTypographyName,
 } from 'Components/Forms/TestsAndTreatments/Style';
 import TestTreatmentType from 'Components/Forms/TestsAndTreatments/Instructions/TestTreatmentType';
-import * as moment from 'moment';
 import { connect } from 'react-redux';
 import normalizeFhirUser from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirUser';
 import PLUS from 'Assets/Images/plus.png';
@@ -41,6 +40,8 @@ import TestTreatmentRemark from 'Components/Forms/TestsAndTreatments/Instruction
 import normalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
 import { Delete } from '@material-ui/icons';
 import { FHIR } from 'Utils/Services/FHIR';
+import { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+
 
 /**
  *
@@ -281,7 +282,7 @@ const Fields = ({
                         as={<input />}
                       />
                       {item.locked
-                        ? moment(item.occurrence).utc().format('LT')
+                        ? formatTime(item.occurrence)
                         : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>

@@ -11,7 +11,6 @@ import {
   StyledTableTextCell,
   StyledTDCell,
 } from 'Assets/Elements/Header/Search/DrawThisTable/Style';
-import moment from 'moment';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import Table from '@material-ui/core/Table';
@@ -25,8 +24,15 @@ import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
 import { useHistory } from 'react-router-dom';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
+import {
+  formatDateTime,
+  formatShortDate,
+  formatTime,
+  currentDate,
+} from 'Utils/Helpers/Datetime/formatDate';
+
 import { store } from 'index';
-import { createSummaryLetter } from '../../../../Utils/Helpers/Letters/createSummaryLetter';
+import { createSummaryLetter } from 'Utils/Helpers/Letters/createSummaryLetter';
 
 const AppointmentsAndEncountersTables = ({
   patientId,
@@ -37,6 +43,7 @@ const AppointmentsAndEncountersTables = ({
   encounterStatuses,
   gotToPatientAdmission,
   authorizationACO,
+  formatDate,
   patient,
   encounter,
   language_direction,
@@ -69,20 +76,19 @@ const AppointmentsAndEncountersTables = ({
     ? normalizeFhirEncounter(prevEncountersEntry)
     : null;
   const patientData = patientId;
-  const curDate = moment().utc().format('DD/MM/YYYY');
+  const curDate = currentDate(formatDate);
   let normalizedCurEncounters = [];
   let normalizedNextAppointments = [];
   let normalizedPrevEncounters = [];
   // eslint-disable-next-line
   const getAppointmentWithTimeOrNot = (nextAppointmentEntry) => {
     let isThisAppToday =
-      moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY') ===
-      moment().utc().format('DD/MM/YYYY')
+      formatShortDate(nextAppointmentEntry.startTime, formatDate) === curDate
         ? true
         : false;
     return isThisAppToday
-      ? moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY HH:mm')
-      : moment().utc().format('DD/MM/YYYY');
+      ? formatDateTime(nextAppointmentEntry.startTime, formatDate)
+      : curDate;
   };
   const [docID, setDoc] = React.useState(-1);
 
@@ -229,7 +235,7 @@ const AppointmentsAndEncountersTables = ({
                       <StyledTDCell align='right' omponent='td' scope='row'>
                         <StyledTableTextCell>
                           {' '}
-                          {moment.utc(encounter.startTime).format('HH:mm')}{' '}
+                          {formatTime(encounter.startTime)}{' '}
                         </StyledTableTextCell>
                       </StyledTDCell>
                       <StyledTDCell align='right'>
@@ -361,15 +367,14 @@ const AppointmentsAndEncountersTables = ({
                               <StyledTableTextCell>
                                 {' '}
                                 {curDate ===
-                                moment
-                                  .utc(appointment.startTime)
-                                  .format('DD/MM/YYYY')
-                                  ? `${t('today')} - ${moment
-                                      .utc(appointment.startTime)
-                                      .format('HH:mm')}`
-                                  : moment
-                                      .utc(appointment.startTime)
-                                      .format('DD/MM/YYYY HH:mm')}{' '}
+                                formatShortDate(
+                                  appointment.startTime,
+                                  formatDate,
+                                )
+                                  ? `${t('today')} - ${formatTime(
+                                      appointment.startTime,
+                                    )}`
+                                  : formatDateTime(appointment.startTime)}{' '}
                               </StyledTableTextCell>
                             </StyledTDCell>
                             <StyledTDCell align='right'>
@@ -491,9 +496,10 @@ const AppointmentsAndEncountersTables = ({
                         <StyledTDCell align='right' omponent='td' scope='row'>
                           <StyledTableTextCell>
                             {' '}
-                            {moment
-                              .utc(encounter.startTime)
-                              .format('DD/MM/YYYY')}{' '}
+                            {formatShortDate(
+                              encounter.startTime,
+                              formatDate,
+                            )}{' '}
                           </StyledTableTextCell>
                         </StyledTDCell>
                         <StyledTDCell align='right'>

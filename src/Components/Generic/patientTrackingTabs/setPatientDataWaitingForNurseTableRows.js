@@ -1,5 +1,4 @@
-import moment from 'moment';
-import 'moment/locale/he';
+import  { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 
@@ -11,6 +10,7 @@ export const setPatientDataWaitingForNurseTableRows = function (
   options,
   history,
   mode,
+  secOptions
 ) {
   let result = [];
   let rows = [];
@@ -77,8 +77,8 @@ export const setPatientDataWaitingForNurseTableRows = function (
             text_color: '#076ce9',
             padding: 'default',
             defaultValue:
-              encounter.extensionSecondaryStatus || encounter.status,
-            options,
+                encounter.extensionSecondaryStatus || encounter.status,
+            options: encounter.extensionSecondaryStatus ? secOptions : options,
             align: 'center',
             background_color: '#eaf7ff',
             icon_color: '#076ce9',
@@ -110,7 +110,7 @@ export const setPatientDataWaitingForNurseTableRows = function (
           row.push({
             padding: 'default',
             align: 'center',
-            label: moment.utc(encounter.extensionStatusUpdateDate).format('LT'),
+            label: formatTime(encounter.extensionStatusUpdateDate),
           });
           break;
         default:

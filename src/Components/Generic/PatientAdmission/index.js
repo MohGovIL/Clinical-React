@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import HeaderPatient from 'Assets/Elements/HeaderPatient';
 import { useTranslation } from 'react-i18next';
-import * as Moment from 'moment';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import PatientDataBlock from './PatientDataBlock';
 import PatientDetailsBlock from './PatientDetailsBlock';
@@ -11,6 +10,8 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
 import { FHIR } from 'Utils/Services/FHIR';
 import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
+import { formatShortDate }  from 'Utils/Helpers/Datetime/formatDate';
+
 
 const PatientAdmission = ({
   patient,
@@ -52,7 +53,7 @@ const PatientAdmission = ({
         patient.lastName +
         ' ' +
         (!isTabletMode ? t('Encounter date') + ': ' : '') +
-        Moment(Moment.now()).format(formatDate),
+        formatShortDate(encounter.startTime,formatDate),
       separator: false,
       url: '#',
     },

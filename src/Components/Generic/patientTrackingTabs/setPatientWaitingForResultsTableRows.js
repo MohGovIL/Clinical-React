@@ -1,5 +1,4 @@
-import moment from 'moment';
-import 'moment/locale/he';
+import  { formatShortDate }  from 'Utils/Helpers/Datetime/formatDate';
 import { store } from 'index';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from './tableHeaders';
@@ -109,9 +108,7 @@ export const setPatientDataWaitingForResultsTableRows = (
           row.push({
             padding: 'default',
             align: 'center',
-            label: moment
-              .utc(encounter.startTime)
-              .format(store.getState().settings.format_date),
+            label: formatShortDate(encounter.startTime,store.getState().settings.format_date),
           });
           break;
         default:
