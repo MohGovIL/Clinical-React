@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import ChipWithImage from 'Assets/Elements/StyledChip';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
+import Loader from 'Assets/Elements/Loader';
 //import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
 import { calculateFileSize } from 'Utils/Helpers/calculateFileSize';
 import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
@@ -50,6 +51,7 @@ const PatientDataBlock = ({
   const [additionalDocumentBlob, setAdditionalDocumentBlob] = useState('');
   //const [additionalDocumentFile_64, setAdditionalDocumentFile_64] = useState('');
   const [admissionFormButton, setAdmissionForm] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const authorizationACO = {
     patientAdmission: isAllowed('patient_admission'),
@@ -143,6 +145,9 @@ const PatientDataBlock = ({
             }
           }
           setDocuments(documentsArray);
+          setLoading(false);
+        } else {
+          setLoading(false);
         }
       })();
     }
@@ -183,7 +188,9 @@ const PatientDataBlock = ({
   };
 
   return (
+      loading ? (<StyledPatientDataBlock><Loader /></StyledPatientDataBlock>) : (
     <StyledPatientDataBlock>
+
       <StyledAvatarIdBlock>
         <AvatarIdBlock
           edit_mode={0}
@@ -299,6 +306,7 @@ const PatientDataBlock = ({
         <CustomizedTableButton height='32px' {...admissionFormButton} />
       </StyledAdmissionFormButton>
     </StyledPatientDataBlock>
+)
   );
 };
 

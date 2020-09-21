@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { FormLabel } from '@material-ui/core';
 
-export const StyledPatientDataBlock = styled.div`
+export const StyledPatientDataBlock = styled.div` 
   display: flex;
   flex-basis: 17%;
   max-width: 17%;

@@ -24,6 +24,7 @@ const PatientBackground = ({
 
   const [prevEncounters, setPrevEncounters] = React.useState([]);
   const currentDate = moment().utc().format('YYYY-MM-DD');
+  const [loading, setLoading] = useState(true);
   const handleCreateData = async (reload) => {
     if (reload) {
       setPrevEncounters([]);
