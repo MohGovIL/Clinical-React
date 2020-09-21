@@ -15,7 +15,29 @@ const ConditionStates = {
     paramsToCRUD.url = componentFhirURL;
     return ConditionStates[parameters.functionName](paramsToCRUD);
   },
-
+  patchCondition: (params) => {
+    const { url, conditionId, patchParams } = params;
+    if (Object.keys(patchParams).length) {
+      const patchArr = [];
+      for (const patchKey in patchParams) {
+        if (patchParams.hasOwnProperty(patchKey)) {
+          const element = patchParams[patchKey];
+          switch (patchKey) {
+            case 'clinicalStatus':
+              patchArr.push({
+                op: 'replace',
+                path: '/clinicalStatus/coding/0/code',
+                value: element,
+              });
+              break;
+            default:
+              break;
+          }
+        }
+      }
+      return CRUDOperations('patch', `${url}/${conditionId}`, patchArr);
+    }
+  },
   getConditionListByParams: (params) => {
     if (params.subject > 0 && params.category.length > 0) {
       return CRUDOperations(
@@ -24,7 +46,7 @@ const ConditionStates = {
           params.subject
         }&category=clinikal/condition/category/${params.category}${
           params.status ? `&clinical-status=${params.status}` : ''
-        }`,
+        }${params.encounter ? `&encounter=${params.encounter}` : ''}`,
       );
     } else {
       return false;
@@ -46,7 +68,7 @@ const ConditionStates = {
     }
   },
   deleteCondition: (params) => {
-    return CRUDOperations('delete', `${params.url}/${params.conditionId}`)
+    return CRUDOperations('delete', `${params.url}/${params.conditionId}`);
   },
 };
 

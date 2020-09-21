@@ -158,10 +158,12 @@ const EncounterStates = {
     return CRUDOperations(
       'search',
       `${params.url}?${summaryStat}${statusesString ? statusesString : ''}${
-        date ? `&date=eq${date}` : ''}${statusUpdateDate ? `&status-update-date=eq${statusUpdateDate}` : ''
-      }${serviceProvider ? `&service-provider=${serviceProvider}` : ''}${
-        serviceType ? `&service-type=${serviceType}` : ''
-      }${summary ? `&_summary=count` : ''}${
+        date ? `&date=eq${date}` : ''
+      }${statusUpdateDate ? `&status-update-date=eq${statusUpdateDate}` : ''}${
+        serviceProvider ? `&service-provider=${serviceProvider}` : ''
+      }${serviceType ? `&service-type=${serviceType}` : ''}${
+        summary ? `&_summary=count` : ''
+      }${
         params.sortParams && summary === false
           ? `&_sort=${params.sortParams}`
           : ''
@@ -196,21 +198,24 @@ const EncounterStates = {
       }`,
       equal = params.equal;
 
+    const statusUpdateDate = params.statusUpdateDate;
+    const dateType = date ? 'date' : 'status-update-date';
+
     try {
       if (prev) {
         //return fhirTokenInstance().get(`${fhirBasePath}/Encounter?date=le${date}&_count=1&_sort=-date&patient=${patient}`);
         return CRUDOperations(
           'search',
-          `${url}?date=${
-            equal ? 'le' : 'lt'
-          }${date}&_count=1&${specialOrder}&patient=${patient}`,
+          `${url}?${dateType}=${equal ? 'le' : 'lt'}${
+            date || statusUpdateDate
+          }&_count=1&${specialOrder}&patient=${patient}`,
         );
       } else {
         return CRUDOperations(
           'search',
-          `${url}?date=${
-            equal ? 'ge' : 'gt'
-          }${date}&_count=1&${specialOrder}&patient=${patient}`,
+          `${url}?${dateType}=${equal ? 'ge' : 'gt'}${
+            date || statusUpdateDate
+          }&_count=1&${specialOrder}&patient=${patient}`,
         );
       }
     } catch (err) {

@@ -31,6 +31,7 @@ const MedicalAdmission = ({
   permission,
   validationFunction,
   functionToRunOnTabChange,
+  prevEncounterId,
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -166,6 +167,7 @@ const MedicalAdmission = ({
   const [questionnaireResponseItems, setQuestionnaireResponseItems] = useState(
     [],
   );
+  const [prevEncounterResponse, setPrevEncounterResponse] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -177,25 +179,50 @@ const MedicalAdmission = ({
             QuestionnaireName: 'medical_admission_questionnaire',
           },
         });
-        const questionnaireResponse = await FHIR(
-          'QuestionnaireResponse',
-          'doWork',
-          {
+        const questionnaireResponseArr = [];
+        questionnaireResponseArr.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
             functionName: 'getQuestionnaireResponse',
             functionParams: {
               encounterId: encounter.id,
               patientId: patient.id,
               questionnaireId: q.data.entry[1].resource.id,
             },
-          },
+          }),
         );
-        if (questionnaireResponse.data.total) {
+        if (prevEncounterId) {
+          questionnaireResponseArr.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'getQuestionnaireResponse',
+              functionParams: {
+                encounterId: prevEncounterId,
+                patientId: patient.id,
+                questionnaireId: q.data.entry[1].resource.id,
+              },
+            }),
+          );
+        }
+        const qrResponse = await Promise.all(questionnaireResponseArr);
+
+        if (qrResponse[0].data.total) {
+          // Set that curr response is available
           normalizedFhirQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
-            questionnaireResponse.data.entry[1].resource,
+            qrResponse[0].data.entry[1].resource,
           );
 
           setQuestionnaireResponseItems(
             normalizedFhirQuestionnaireResponse.items,
+          );
+        } else if (
+          prevEncounterId &&
+          qrResponse[1] &&
+          qrResponse[1].data.total
+        ) {
+          // if there is prev response
+          setPrevEncounterResponse(
+            normalizeFhirQuestionnaireResponse(
+              qrResponse[1].data.entry[1].resource,
+            ).items,
           );
         }
         const Questionnaire = q.data.entry[1].resource;
@@ -211,7 +238,14 @@ const MedicalAdmission = ({
     })();
 
     return () => unregister(['questionnaire', 'questionnaireResponseId']);
-  }, [register, setValue, unregister, encounter.id, patient.id]);
+  }, [
+    register,
+    setValue,
+    unregister,
+    encounter.id,
+    patient.id,
+    prevEncounterId,
+  ]);
 
   useEffect(() => {
     register({ name: 'isPregnancy' });
@@ -304,7 +338,28 @@ const MedicalAdmission = ({
             item['answer'] = answerType(i.type, data.nursingDetails);
             break;
           case '4':
-            item['answer'] = answerType(i.type, data.isPregnancy || '');
+            item['answer'] = answerType(
+              i.type,
+              data.isPregnancy === 'Yes' ? true : false,
+            );
+            break;
+          case '5':
+            item['answer'] = answerType(
+              i.type,
+              data.sensitivities === 'Known' ? true : false,
+            );
+            break;
+          case '6':
+            item['answer'] = answerType(
+              i.type,
+              data.background_diseases === 'There are diseases' ? true : false,
+            );
+            break;
+          case '7':
+            item['answer'] = answerType(
+              i.type,
+              data.medication === 'Exist' ? true : false,
+            );
             break;
           default:
             break;
@@ -344,7 +399,8 @@ const MedicalAdmission = ({
       cloneEncounter['examinationCode'] = data.examinationCode;
       cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
       cloneEncounter['priority'] = data.isUrgent;
-      cloneEncounter['extensionReasonCodeDetails'] = data.reasonForReferralDetails;
+      cloneEncounter['extensionReasonCodeDetails'] =
+        data.reasonForReferralDetails;
       APIsArray.push(
         FHIR('Encounter', 'doWork', {
           functionName: 'updateEncounter',
@@ -362,12 +418,17 @@ const MedicalAdmission = ({
             data.sensitiveConditionsIds &&
             Object.keys(data.sensitiveConditionsIds).length
           ) {
-            if (!data.sensitiveConditionsIds[sensitivities]) {
+            if (
+              !data.sensitiveConditionsIds[sensitivities] ||
+              (data.sensitiveConditionsIds[sensitivities] &&
+                !questionnaireResponseItems.length)
+            ) {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionName: 'createCondition',
                   functionParams: {
                     condition: {
+                      encounter: encounter.id,
                       categorySystem:
                         'http://clinikal/condition/category/sensitive',
                       codeSystem:
@@ -394,12 +455,38 @@ const MedicalAdmission = ({
                     patient: patient.id,
                     recorder: store.getState().login.userID,
                     clinicalStatus: 1,
+                    encounter: encounter.id,
                   },
                 },
               }),
             );
           }
         });
+      } else {
+        if (
+          data.sensitivitiesCodes &&
+          data.sensitivitiesCodes.length &&
+          data.sensitiveConditionsIds &&
+          Object.keys(data.sensitiveConditionsIds).length &&
+          questionnaireResponseItems.length
+        ) {
+          data.sensitivitiesCodes.forEach((code) => {
+            if (data.sensitiveConditionsIds[code]) {
+              APIsArray.push(
+                FHIR('Condition', 'doWork', {
+                  functionName: 'patchCondition',
+                  functionParams: {
+                    conditionId: data.sensitiveConditionsIds[code].id,
+                    patchParams: {
+                      clinicalStatus: 'inactive',
+                      encounter: encounter.id,
+                    },
+                  },
+                }),
+              );
+            }
+          });
+        }
       }
 
       //Creating new conditions for backgroundDiseases
@@ -409,7 +496,11 @@ const MedicalAdmission = ({
             data.backgroundDiseasesIds &&
             Object.keys(data.backgroundDiseasesIds).length
           ) {
-            if (!data.backgroundDiseasesIds[backgroundDisease]) {
+            if (
+              !data.backgroundDiseasesIds[backgroundDisease] ||
+              (data.backgroundDiseasesIds[backgroundDisease] &&
+                !questionnaireResponseItems.length)
+            ) {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionParams: {
@@ -421,6 +512,7 @@ const MedicalAdmission = ({
                       patient: patient.id,
                       recorder: store.getState().login.userID,
                       clinicalStatus: 1,
+                      encounter: encounter.id,
                     },
                   },
                   functionName: 'createCondition',
@@ -439,6 +531,7 @@ const MedicalAdmission = ({
                     patient: patient.id,
                     recorder: store.getState().login.userID,
                     clinicalStatus: 1,
+                    encounter: encounter.id,
                   },
                 },
                 functionName: 'createCondition',
@@ -446,6 +539,31 @@ const MedicalAdmission = ({
             );
           }
         });
+      } else {
+        if (
+          data.backgroundDiseasesCodes &&
+          data.backgroundDiseasesCodes.length &&
+          data.backgroundDiseasesIds &&
+          Object.keys(data.backgroundDiseasesIds).length &&
+          questionnaireResponseItems.length
+        ) {
+          data.backgroundDiseasesCodes.forEach((code) => {
+            if (data.backgroundDiseasesIds[code]) {
+              APIsArray.push(
+                FHIR('Condition', 'doWork', {
+                  functionName: 'patchCondition',
+                  functionParams: {
+                    conditionId: data.backgroundDiseasesIds[code].id,
+                    patchParams: {
+                      clinicalStatus: 'inactive',
+                      encounter: encounter.id,
+                    },
+                  },
+                }),
+              );
+            }
+          });
+        }
       }
 
       // Creating a new medicationStatement
@@ -455,7 +573,11 @@ const MedicalAdmission = ({
             data.chronicMedicationIds &&
             Object.keys(data.chronicMedicationIds).length
           ) {
-            if (!data.chronicMedicationIds[medication]) {
+            if (
+              !data.chronicMedicationIds[medication] ||
+              (data.backgroundDiseasesIds[medication] &&
+                !questionnaireResponseItems.length)
+            ) {
               APIsArray.push(
                 FHIR('MedicationStatement', 'doWork', {
                   functionName: 'createMedicationStatement',
@@ -469,6 +591,7 @@ const MedicalAdmission = ({
                       medicationCodeableConceptCode: medication,
                       medicationCodeableConceptSystem:
                         'http://clinikal/valueset/drugs_list',
+                      encounter: encounter.id,
                     },
                   },
                 }),
@@ -488,12 +611,36 @@ const MedicalAdmission = ({
                     medicationCodeableConceptCode: medication,
                     medicationCodeableConceptSystem:
                       'http://clinikal/valueset/drugs_list',
+                    encounter: encounter.id,
                   },
                 },
               }),
             );
           }
         });
+      } else {
+        if (
+          data.chronicMedicationCodes &&
+          data.chronicMedicationCodes.length &&
+          data.chronicMedicationIds &&
+          Object.keys(data.chronicMedicationIds).length &&
+          questionnaireResponseItems.length
+        ) {
+          data.chronicMedicationCodes.forEach((code) => {
+            if (data.chronicMedicationIds[code]) {
+              FHIR('MedicationStatement', 'doWork', {
+                functionName: 'patchMedicationStatement',
+                functionParams: {
+                  medicationStatementId: data.chronicMedicationIds[code].id,
+                  patchParams: {
+                    status: 'inactive',
+                    encounter: encounter.id,
+                  },
+                },
+              });
+            }
+          });
+        }
       }
       return APIsArray;
     } catch (error) {
@@ -512,11 +659,12 @@ const MedicalAdmission = ({
       <PopUpFormTemplates {...popUpProps} />
       <FormContext
         {...methods}
+        currEncounterResponse={questionnaireResponseItems}
+        prevEncounterResponse={prevEncounterResponse}
         requiredErrors={requiredErrors}
         setPopUpProps={setPopUpProps}
         patientId={patient.id}
-        permission={permissionHandler()}
-        >
+        permission={permissionHandler()}>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
           <VisitDetails
             reasonCodeDetails={encounter.extensionReasonCodeDetails}

@@ -54,6 +54,11 @@ const denormalizeFhirMedicationStatement = (medicationStatement) => {
             },
           ];
           break;
+        case 'encounter':
+          denormalizedFhirMedicationStatement['context'] = {
+            reference: `Encounter/${element}`,
+          };
+          break;
         default:
           break;
       }
