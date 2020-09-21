@@ -1,6 +1,5 @@
 import { updateAppointmentStatus } from 'Utils/Services/FhirAPI';
 import moment from 'moment';
-import 'moment/locale/he';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import { store } from 'index';
 import { updateAppointmentAction } from 'Store/Actions/FhirActions/fhirActions';
@@ -8,6 +7,7 @@ import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 import { FHIR } from 'Utils/Services/FHIR';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 import { getTableHeaders } from './tableHeaders';
+import { formatTime } from 'Utils/Helpers/Datetime/formatDate';
 
 // מוזמנים
 export const setPatientDataInvitedTableRows = (
@@ -159,7 +159,7 @@ export const setPatientDataInvitedTableRows = (
           row.push({
             padding: 'default',
             align: 'center',
-            label: moment.utc(appointment.startTime).format('LT'),
+            label: formatTime(appointment.startTime),
           });
           break;
         default:

@@ -250,7 +250,7 @@ const PatientDataBlock = ({
                   <CustomizedDatePicker
                     PickerProps={{
                       id: 'standard-birthDate',
-                      format: 'DD/MM/YYYY',
+                      format: formatDate,
                       name: 'birthDate',
                       required: true,
                       disableToolbar: false,

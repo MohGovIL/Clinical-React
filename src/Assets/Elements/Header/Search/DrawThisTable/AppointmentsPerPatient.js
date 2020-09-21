@@ -1,14 +1,13 @@
 import React from 'react';
 import TitleValueComponent from './TitleValueComponent';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import {connect, useSelector} from 'react-redux';
 import {
   StyledBox,
   StyledLabelAppointment,
   StyledLabelStatusAppointment,
   StyledLinkWithIconComponent,
 } from './Style';
-import moment from 'moment';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import LinkComponentWithIcon from 'Assets/Elements/Header/Search/DrawThisTable/LinkComponentWithIcon';
@@ -16,6 +15,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { useHistory } from 'react-router-dom';
+import { currentDate, formatShortDate, formatTime }  from 'Utils/Helpers/Datetime/formatDate';
 
 const AppointmentsPerPatient = ({
   nextAppointment,
@@ -27,6 +27,8 @@ const AppointmentsPerPatient = ({
   gotToPatientAdmission,
   patient,
   hideAppointments,
+  formatDate,
+  languageDirection
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -48,15 +50,13 @@ const AppointmentsPerPatient = ({
   let normalizedCurEncounters = [];
   const getAppointmentWithTimeOrNot = (nextAppointmentEntry) => {
     let isThisAppToday =
-      moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY') ===
-      moment().utc().format('DD/MM/YYYY')
+      formatShortDate(nextAppointmentEntry.startTime,formatDate) ===
+      currentDate(formatDate)
         ? true
         : false;
     return isThisAppToday
-      ? `${t('Today')} ${moment
-          .utc(nextAppointmentEntry.startTime)
-          .format('HH:mm')}`
-      : moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY');
+      ? `${t('Today')} ${formatTime(nextAppointmentEntry.startTime)}`
+      : formatDate(nextAppointmentEntry.startTime, formatDate);
   };
   if (curEncounter.data && curEncounter.data.total > 0) {
     let entry = curEncounter.data.entry;
@@ -76,7 +76,7 @@ const AppointmentsPerPatient = ({
   const onClickEncounterSheetHandler = (encounter) => {
     goToEncounterSheet(encounter, patient, history);
   };
-  const languageDirection = useSelector((state) => state.settings.lang_dir);
+
   return (
     <React.Fragment>
       <StyledBox>
@@ -179,9 +179,7 @@ const AppointmentsPerPatient = ({
               <StyledLabelAppointment direction={languageDirection}>
                 <TitleValueComponent
                   name={t('Previous encounter')}
-                  value={moment
-                    .utc(normalizedPrevEncounter.startTime)
-                    .format('DD/MM/YYYY')}
+                  value={formatShortDate(normalizedPrevEncounter.startTime, formatDate)}
                   seperator={true}
                 />
               </StyledLabelAppointment>
@@ -230,4 +228,12 @@ const AppointmentsPerPatient = ({
   );
 };
 
-export default AppointmentsPerPatient;
+const mapStateToProps = (state) => {
+  return {
+    languageDirection: state.settings.lang_dir,
+    formatDate: state.settings.format_date,
+  };
+};
+
+
+export default connect(mapStateToProps, null)(AppointmentsPerPatient);

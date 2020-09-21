@@ -32,6 +32,7 @@ import { getOnlyNumbersRegexPattern } from 'Utils/Helpers/validation/patterns';
 import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
 import normalizeFhirPatient from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
+import { fhirFormatDate }  from 'Utils/Helpers/Datetime/formatDate';
 
 const PopupCreateNewPatient = ({
   popupOpen,
@@ -168,9 +169,7 @@ const PopupCreateNewPatient = ({
       } else {
         (() => {
           try {
-            patient.birthDate = Moment(patient.birthDate, formatDate).format(
-              'YYYY-MM-DD',
-            );
+            patient.birthDate = fhirFormatDate(patient.birthDate, formatDate);
             FHIR('Patient', 'doWork', {
               functionName: 'createPatient',
               functionParams: {
@@ -515,7 +514,7 @@ const PopupCreateNewPatient = ({
   };
 
   const createNewEncounterForCurrentPatient = (patient_id, patient_data) => {
-    let currentDate = moment().format('YYYY-MM-DD');
+    let currentDate = fhirFormatDate();
     (async () => {
       try {
         let patient_identifier =

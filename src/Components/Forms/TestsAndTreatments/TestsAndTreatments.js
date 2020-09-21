@@ -32,8 +32,8 @@ import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirObservation from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirObservation';
 import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instructions/InstructionsForTreatment';
 import denormalizeFhirObservation from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';
-import moment from 'moment';
 import { explodeMultipleIndicators } from 'Components/Forms/TestsAndTreatments/Helpers/FunctionHelpers.js';
+import { fhirFormatDateTime, formatTime }  from 'Utils/Helpers/Datetime/formatDate';
 
 /**
  *
@@ -114,7 +114,7 @@ const TestsAndTreatments = ({
         status: 'amended',
         subject: Number(patient.id),
         encounter: Number(encounter.id),
-        issued: moment().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
+        issued: fhirFormatDateTime(),
         performer: userDetails.id,
         category: {
           code: 'exam',
@@ -158,7 +158,7 @@ const TestsAndTreatments = ({
         status: 'amended',
         subject: Number(patient.id),
         encounter: Number(encounter.id),
-        issued: moment().utc().format('YYYY-MM-DDTHH:mm:ss[Z]'), //Moment(Moment.now()).format(formatDate),
+        issued: fhirFormatDateTime(),
         performer: userDetails.id,
         category: {
           code: 'vital-signs',
@@ -303,7 +303,7 @@ const TestsAndTreatments = ({
             let userName = {
               userName: {
                 name: value.performerName && value.performerName.toString(),
-                loggedHour: Moment(value.issued).format('HH:mm'),
+                loggedHour: formatTime(value.issued),
               },
             };
             value['observation'] = { ...userName, ...value.observation };

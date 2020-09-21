@@ -10,7 +10,6 @@ import {
   StyledLabelTableButton,
   StyledTableTextCell,
 } from 'Assets/Elements/Header/Search/DrawThisTable/Style';
-import moment from 'moment';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import Table from '@material-ui/core/Table';
@@ -24,6 +23,8 @@ import { StyledIconValueComponent } from 'Assets/Elements/Header/Search/Style';
 import { useHistory } from 'react-router-dom';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import parseMultipleExaminations from 'Utils/Helpers/parseMultipleExaminations';
+import { formatDateTime, formatShortDate, formatTime, currentDate}  from 'Utils/Helpers/Datetime/formatDate';
+
 
 const AppointmentsAndEncountersTables = ({
   patientId,
@@ -34,6 +35,7 @@ const AppointmentsAndEncountersTables = ({
   encounterStatuses,
   gotToPatientAdmission,
   authorizationACO,
+  formatDate
 }) => {
   const history = useHistory();
   const hideAppointments = useSelector(
@@ -61,20 +63,20 @@ const AppointmentsAndEncountersTables = ({
     ? normalizeFhirEncounter(prevEncountersEntry)
     : null;
   const patientData = patientId;
-  const curDate = moment().utc().format('DD/MM/YYYY');
+  const curDate = currentDate(formatDate);
   let normalizedCurEncounters = [];
   let normalizedNextAppointments = [];
   let normalizedPrevEncounters = [];
   // eslint-disable-next-line
   const getAppointmentWithTimeOrNot = (nextAppointmentEntry) => {
     let isThisAppToday =
-      moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY') ===
-      moment().utc().format('DD/MM/YYYY')
+        formatShortDate(nextAppointmentEntry.startTime, formatDate) ===
+      curDate
         ? true
         : false;
     return isThisAppToday
-      ? moment.utc(nextAppointmentEntry.startTime).format('DD/MM/YYYY HH:mm')
-      : moment().utc().format('DD/MM/YYYY');
+      ? formatDateTime(nextAppointmentEntry.startTime,formatDate)
+      : curDate;
   };
   const [showAllPastEncounter, setShowAllPastEncounter] = React.useState(false);
   let [pastEncounterCounter, setPastEncounterCounter] = React.useState(2);
@@ -206,7 +208,7 @@ const AppointmentsAndEncountersTables = ({
                       <TableCell align='right' omponent='td' scope='row'>
                         <StyledTableTextCell>
                           {' '}
-                          {moment.utc(encounter.startTime).format('HH:mm')}{' '}
+                          {formatTime(encounter.startTime)}{' '}
                         </StyledTableTextCell>
                       </TableCell>
                       <TableCell align='right'>
@@ -333,15 +335,9 @@ const AppointmentsAndEncountersTables = ({
                               <StyledTableTextCell>
                                 {' '}
                                 {curDate ===
-                                moment
-                                  .utc(appointment.startTime)
-                                  .format('DD/MM/YYYY')
-                                  ? `${t('today')} - ${moment
-                                      .utc(appointment.startTime)
-                                      .format('HH:mm')}`
-                                  : moment
-                                      .utc(appointment.startTime)
-                                      .format('DD/MM/YYYY HH:mm')}{' '}
+                                formatShortDate(appointment.startTime, formatDate)
+                                  ? `${t('today')} - ${formatTime(appointment.startTime)}`
+                                  : formatDateTime(appointment.startTime)}{' '}
                               </StyledTableTextCell>
                             </TableCell>
                             <TableCell align='right'>
@@ -461,9 +457,7 @@ const AppointmentsAndEncountersTables = ({
                         <TableCell align='right' omponent='td' scope='row'>
                           <StyledTableTextCell>
                             {' '}
-                            {moment
-                              .utc(encounter.startTime)
-                              .format('DD/MM/YYYY')}{' '}
+                            {formatShortDate(encounter.startTime, formatDate)}{' '}
                           </StyledTableTextCell>
                         </TableCell>
                         <TableCell align='right'>
