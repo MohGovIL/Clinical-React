@@ -23,6 +23,9 @@ const ChronicMedication = ({
     requiredErrors,
     patientId,
     setValue,
+    currEncounterResponse,
+    prevEncounterResponse,
+    getValues,
   } = useFormContext();
 
   const direction = useSelector((state) => state.settings.lang_dir);
@@ -39,55 +42,112 @@ const ChronicMedication = ({
 
   const [selectedList, setSelectedList] = useState([]);
 
+  const onDeleteChipHandler = async (chip) => {
+    try {
+      const {
+        reasonCode: { code },
+      } = chip;
+      if (currEncounterResponse.length) {
+        const { chronicMedicationIds } = getValues({ nest: true });
+        if (chronicMedicationIds[code]) {
+          await FHIR('MedicationStatement', 'doWork', {
+            functionName: 'patchMedicationStatement',
+            functionParams: {
+              medicationStatementId: chronicMedicationIds[code].id,
+              patchParams: {
+                status: 'inactive',
+              },
+            },
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     register({ name: 'chronicMedicationCodes' });
     register({ name: 'chronicMedicationIds' });
     (async () => {
-      const medicationStatement = await FHIR('MedicationStatement', 'doWork', {
-        functionName: 'getMedicationStatementListByParams',
-        functionParams: {
-          patient: patientId,
-          status: 'active',
-          category: 'medication',
-        },
-      });
-      if (medicationStatement.data.total) {
-        const medicationCodes = [];
-        const medicationIds = {};
-        medicationStatement.data.entry.forEach((medication) => {
-          if (medication.resource) {
-            const normalizedMedicationStatement = normalizeFhirMedicationStatement(
-              medication.resource,
-            );
-            medicationCodes.push({
-              reasonCode: {
-                name:
-                  normalizedMedicationStatement.medicationCodeableConceptText,
-                code:
-                  normalizedMedicationStatement.medicationCodeableConceptCode,
+      const chronicMedicationLinkId = '7';
+      if (currEncounterResponse.length || prevEncounterResponse.length) {
+        let isChronicDisease = 'noResponse';
+        if (currEncounterResponse.length) {
+          isChronicDisease = Boolean(
+            +currEncounterResponse.find(
+              (i) => i.linkId === chronicMedicationLinkId,
+            )['answer'][0]['valueBoolean'],
+          );
+        } else if (prevEncounterResponse.length) {
+          isChronicDisease = Boolean(
+            +prevEncounterResponse.find(
+              (i) => i.linkId === chronicMedicationLinkId,
+            )['answer'][0]['valueBoolean'],
+          );
+        }
+        if (isChronicDisease === true) {
+          const medicationStatement = await FHIR(
+            'MedicationStatement',
+            'doWork',
+            {
+              functionName: 'getMedicationStatementListByParams',
+              functionParams: {
+                patient: patientId,
+                status: 'active',
+                category: 'medication',
               },
-              serviceType: {
-                code: '',
-                name: '',
-              },
+            },
+          );
+          if (medicationStatement.data.total) {
+            const medicationCodes = [];
+            const medicationIds = {};
+            medicationStatement.data.entry.forEach((medication) => {
+              if (medication.resource) {
+                const normalizedMedicationStatement = normalizeFhirMedicationStatement(
+                  medication.resource,
+                );
+                medicationCodes.push({
+                  reasonCode: {
+                    name:
+                      normalizedMedicationStatement.medicationCodeableConceptText,
+                    code:
+                      normalizedMedicationStatement.medicationCodeableConceptCode,
+                  },
+                  serviceType: {
+                    code: '',
+                    name: '',
+                  },
+                });
+                medicationIds[
+                  normalizedMedicationStatement.medicationCodeableConceptCode
+                ] = {
+                  id: normalizedMedicationStatement.id,
+                  code:
+                    normalizedMedicationStatement.medicationCodeableConceptCode,
+                };
+              }
             });
-            medicationIds[
-              normalizedMedicationStatement.medicationCodeableConceptCode
-            ] = {
-              id: normalizedMedicationStatement.id,
-              code: normalizedMedicationStatement.medicationCodeableConceptCode,
-            };
+            setSelectedList(medicationCodes);
+            setValue([
+              { medication: 'Exist' },
+              { chronicMedicationIds: medicationIds },
+            ]);
           }
-        });
-        setSelectedList(medicationCodes);
-        setValue([
-          { medication: 'Exist' },
-          { chronicMedicationIds: medicationIds },
-        ]);
+        } else if (isChronicDisease === false) {
+          setValue([{ medication: "Doesn't exist" }]);
+        }
       }
     })();
     return () => unregister(['chronicMedicationCodes', 'chronicMedicationIds']);
-  }, [register, unregister, patientId, setValue]);
+  }, [
+    register,
+    unregister,
+    patientId,
+    setValue,
+    currEncounterResponse,
+    prevEncounterResponse,
+  ]);
 
   useEffect(() => {
     let active = true;
@@ -154,6 +214,7 @@ const ChronicMedication = ({
           virtual
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
+          onDeleteChip={onDeleteChipHandler}
         />
       )}
     </StyleChronicMedication>

@@ -4,7 +4,7 @@
  * @constructor
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Divider from '@material-ui/core/Divider';
 import {
@@ -17,7 +17,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Grid } from '@material-ui/core';
 
-const MedicalIssue = ({ title, items }) => {
+const MedicalIssue = ({ title, items, currResponse, prevResponse, linkId }) => {
   const { t } = useTranslation();
 
   return (
@@ -27,21 +27,21 @@ const MedicalIssue = ({ title, items }) => {
       </StyledTitleTypography>
       <Divider />
       <StyledContentBlock>
-        {items && Object.keys(items).length > 0 ? (
+        {items === null ? (
+          <StyledTypography>{t('Not known')}</StyledTypography>
+        ) : items.length ? (
           <Grid container spacing={2}>
             <Grid item>
               <Grid container spacing={2}>
                 {items.map((issue, index) => (
                   <Grid item key={index}>
-                    <StyledChip color='primary' label={t(issue.title)} />
+                    <StyledChip color='primary' label={t(issue)} />
                   </Grid>
                 ))}
               </Grid>
             </Grid>
           </Grid>
-        ) : (
-          <StyledTypography>{t('Not known')}</StyledTypography>
-        )}
+        ) : null}
       </StyledContentBlock>
     </StyledDiv>
   );

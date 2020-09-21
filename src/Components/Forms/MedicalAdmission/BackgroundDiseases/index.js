@@ -23,6 +23,9 @@ const BackgroundDiseases = ({
     requiredErrors,
     patientId,
     setValue,
+    currEncounterResponse,
+    prevEncounterResponse,
+    getValues,
   } = useFormContext();
   const radioName = 'background_diseases';
   const backgroundDiseasesToggleValue = watch(radioName);
@@ -38,51 +41,108 @@ const BackgroundDiseases = ({
 
   const [selectedList, setSelectedList] = useState([]);
 
+  const onDeleteChipHandler = async (chip) => {
+    try {
+      const {
+        reasonCode: { code },
+      } = chip;
+      if (currEncounterResponse.length) {
+        const { backgroundDiseasesIds } = getValues({ nest: true });
+        if (backgroundDiseasesIds[code]) {
+          await FHIR('Condition', 'doWork', {
+            functionName: 'patchCondition',
+            functionParams: {
+              conditionId: backgroundDiseasesIds[code].id,
+              patchParams: {
+                clinicalStatus: 'inactive',
+              },
+            },
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     register({ name: 'backgroundDiseasesCodes' });
     register({ name: 'backgroundDiseasesIds' });
     (async () => {
-      const conditions = await FHIR('Condition', 'doWork', {
-        functionName: 'getConditionListByParams',
-        functionParams: {
-          category: 'medical_problem',
-          subject: patientId,
-        },
-      });
-      if (conditions.data.total) {
-        const conditionCodes = [];
-        const conditionIds = {};
-        conditions.data.entry.forEach((condition) => {
-          if (condition.resource) {
-            const normalizedCondition = normalizeFhirCondition(
-              condition.resource,
-            );
-            conditionCodes.push({
-              reasonCode: {
-                name: normalizedCondition.codeText,
-                code: normalizedCondition.codeCode,
-              },
-              serviceType: {
-                code: '',
-                name: '',
-              },
+      const backgroundDiseasesLinkId = '6';
+      if (currEncounterResponse.length || prevEncounterResponse.length) {
+        let isBackgroundDiseases = 'noResponse';
+        if (currEncounterResponse.length) {
+          isBackgroundDiseases = Boolean(
+            +currEncounterResponse.find(
+              (i) => i.linkId === backgroundDiseasesLinkId,
+            )['answer'][0]['valueBoolean'],
+          );
+        } else if (prevEncounterResponse.length) {
+          isBackgroundDiseases = Boolean(
+            +prevEncounterResponse.find(
+              (i) => i.linkId === backgroundDiseasesLinkId,
+            )['answer'][0]['valueBoolean'],
+          );
+        }
+        if (isBackgroundDiseases === true) {
+          const conditions = await FHIR('Condition', 'doWork', {
+            functionName: 'getConditionListByParams',
+            functionParams: {
+              category: 'medical_problem',
+              subject: patientId,
+              status: 'active',
+            },
+          });
+          if (conditions.data.total) {
+            const conditionCodes = [];
+            const conditionIds = {};
+            conditions.data.entry.forEach((condition) => {
+              if (condition.resource) {
+                const normalizedCondition = normalizeFhirCondition(
+                  condition.resource,
+                );
+                conditionCodes.push({
+                  reasonCode: {
+                    name: normalizedCondition.codeText,
+                    code: normalizedCondition.codeCode,
+                  },
+                  serviceType: {
+                    code: '',
+                    name: '',
+                  },
+                });
+                conditionIds[normalizedCondition.codeCode] = {
+                  id: normalizedCondition.id,
+                  code: normalizedCondition.codeCode,
+                };
+              }
             });
-            conditionIds[normalizedCondition.codeCode] = {
-              id: normalizedCondition.id,
-              code: normalizedCondition.codeCode,
-            };
+            setSelectedList(conditionCodes);
+            setValue([
+              { background_diseases: 'There are diseases' },
+              { backgroundDiseasesIds: conditionIds },
+            ]);
           }
-        });
-        setSelectedList(conditionCodes);
-        setValue([
-          { background_diseases: 'There are diseases' },
-          { backgroundDiseasesIds: conditionIds },
-        ]);
+        } else if (isBackgroundDiseases === false) {
+          setValue([
+            {
+              background_diseases: 'Usually healthy',
+            },
+          ]);
+        }
       }
     })();
     return () =>
       unregister(['backgroundDiseasesCodes', 'backgroundDiseasesIds']);
-  }, [register, unregister, patientId, setValue]);
+  }, [
+    register,
+    unregister,
+    patientId,
+    setValue,
+    currEncounterResponse,
+    prevEncounterResponse,
+  ]);
 
   useEffect(() => {
     let active = true;
@@ -145,6 +205,7 @@ const BackgroundDiseases = ({
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
           sortByTranslation
+          onDeleteChip={onDeleteChipHandler}
         />
       )}
     </StyleBackgroundDiseases>

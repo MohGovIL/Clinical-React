@@ -15,7 +15,36 @@ const MedicationStatementState = {
     paramsToCRUD.url = componentFhirURL;
     return MedicationStatementState[parameters.functionName](paramsToCRUD);
   },
-
+  patchMedicationStatement: (params) => {
+    const { url, medicationStatementId, patchParams } = params;
+    if (Object.keys(patchParams).length && medicationStatementId) {
+      const patchArr = [];
+      for (const patchKey in patchParams) {
+        if (patchParams.hasOwnProperty(patchKey)) {
+          const element = patchParams[patchKey];
+          switch (patchKey) {
+            case 'status':
+              patchArr.push({
+                op: 'replace',
+                path: '/status',
+                value: element,
+              });
+              break;
+            case 'encounter':
+              patchArr.push({
+                op: 'replace',
+                path: '/context/reference',
+                value: `Encounter/${element}`,
+              });
+              break;
+            default:
+              break;
+          }
+        }
+      }
+      CRUDOperations('patch', `${url}/${medicationStatementId}`, patchArr);
+    }
+  },
   getMedicationStatementListByParams: (params) => {
     if (params.patient) {
       return CRUDOperations(

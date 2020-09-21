@@ -83,8 +83,13 @@ const denormalizeFhirCondition = (condition) => {
           ];
           break;
         case 'recordedDate':
-          denormalizedFhirCondition['recordedDate'] =  condition.recordedDate;
-
+          denormalizedFhirCondition['recordedDate'] = condition.recordedDate;
+          break;
+        case 'encounter':
+          denormalizedFhirCondition['encounter'] = {
+            reference: `Encounter/${element}`,
+          };
+          break;
         default:
           break;
       }

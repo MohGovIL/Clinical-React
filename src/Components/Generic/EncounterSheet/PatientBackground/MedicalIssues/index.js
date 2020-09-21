@@ -6,125 +6,248 @@
 import React, { useEffect, useState } from 'react';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
-import normalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeMedicationStatement';
+import normalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationStatement';
 import MedicalIssue from 'Assets/Elements/MedicalIssue';
 import { useTranslation } from 'react-i18next';
+import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 
-const MedicalIssues = ({ patient }) => {
+const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
   const { t } = useTranslation();
 
-  const [listAllergy, setAllergyList] = useState([]);
-  const [listMedicalProblem, setMedicalProblem] = useState([]);
-  const [listMedicationStatement, setMedicationStatement] = useState([]);
+  const [patientSensitivities, setPatientSensitivities] = useState([]);
+  const [patientBackgroundDiseases, setPatientBackgroundDiseases] = useState(
+    [],
+  );
+  const [patientChronicMedications, setPatientChronicMedications] = useState(
+    [],
+  );
 
   const [medicalProblemIsUpdated, setMedicalProblemIsUpdated] = useState(0); //for online update
+
+  const sensitivitiesLinkId = '5';
+  const backgroundDiseasesLinkId = '6';
+  const chronicMedicationLinkId = '7';
+
+  const extractItems = (normalizedQr) => {
+    const isSensitive = Boolean(
+      +normalizedQr.items.find((i) => i.linkId === sensitivitiesLinkId)[
+        'answer'
+      ][0]['valueBoolean'],
+    );
+
+    const isBackgroundDiseases = Boolean(
+      +normalizedQr.items.find((i) => i.linkId === backgroundDiseasesLinkId)[
+        'answer'
+      ][0]['valueBoolean'],
+    );
+
+    const isChronicMedication = Boolean(
+      +normalizedQr.items.find((i) => i.linkId === chronicMedicationLinkId)[
+        'answer'
+      ][0]['valueBoolean'],
+    );
+    return [isSensitive, isBackgroundDiseases, isChronicMedication];
+  };
+
   useEffect(() => {
-    (async () => {
+    const getMedicalIssues = async () => {
       try {
-        const listAllergyResult = await FHIR('Condition', 'doWork', {
-          functionName: 'getConditionListByParams',
+        const questionnaireResponseArray = [];
+
+        const q = await FHIR('Questionnaire', 'doWork', {
+          functionName: 'getQuestionnaire',
           functionParams: {
-            category: 'allergy',
-            subject: patient.id,
-            status: '1',
+            QuestionnaireName: 'medical_admission_questionnaire',
           },
         });
-        if (listAllergyResult.data && listAllergyResult.data.total > 0) {
-          let normalizedlistAllergy = [];
-          // eslint-disable-next-line
-          listAllergyResult.data.entry.map((res, id) => {
-            if (res.resource && res.resource.resourceType === 'Condition') {
-              let allergy = normalizeFhirCondition(res.resource);
-              normalizedlistAllergy.push(allergy);
-            }
-          });
-          setAllergyList(normalizedlistAllergy);
-        }
-      } catch (e) {
-        console.log('Error: ' + e);
-      }
-    })();
-
-    (async () => {
-      try {
-        const listMedicalProblemResult = await FHIR('Condition', 'doWork', {
-          functionName: 'getConditionListByParams',
-          functionParams: {
-            category: 'medical_problem',
-            subject: patient.id,
-            status: '1',
-          },
-        });
-        if (
-          listMedicalProblemResult.data &&
-          listMedicalProblemResult.data.total > 0
-        ) {
-          let normalizedListMedicalProblem = [];
-          // eslint-disable-next-line
-          listMedicalProblemResult.data.entry.map((res, id) => {
-            if (res.resource && res.resource.resourceType === 'Condition') {
-              let medicalProblem = normalizeFhirCondition(res.resource);
-              normalizedListMedicalProblem.push(medicalProblem);
-            }
-          });
-          setMedicalProblem(normalizedListMedicalProblem);
-        }
-      } catch (e) {
-        console.log('Error: ' + e);
-      }
-    })();
-
-    //Load Medical Issues - chronic medication list
-    (async () => {
-      try {
-        const listMedicationStatementResult = await FHIR(
-          'MedicationStatement',
-          'doWork',
-          {
-            functionName: 'getMedicationStatementListByParams',
+        questionnaireResponseArray.push(
+          FHIR('QuestionnaireResponse', 'doWork', {
+            functionName: 'getQuestionnaireResponse',
             functionParams: {
-              category: 'medication',
-              patient: patient.id,
-              status: 'active',
+              encounterId,
+              patientId,
+              questionnaireId: q.data.entry[1].resource.id,
             },
-          },
+          }),
         );
-        if (
-          listMedicationStatementResult.data &&
-          listMedicationStatementResult.data.total > 0
-        ) {
-          let normalizedListMedicationStatement = [];
-          // eslint-disable-next-line
-          listMedicationStatementResult.data.entry.map((res, id) => {
-            if (
-              res.resource &&
-              res.resource.resourceType === 'MedicationStatement'
-            ) {
-              let medicationStatement = normalizeFhirMedicationStatement(
-                res.resource,
-              );
-              normalizedListMedicationStatement.push(medicationStatement);
-            }
-          });
-          setMedicationStatement(normalizedListMedicationStatement);
+        if (prevEncounterId) {
+          questionnaireResponseArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'getQuestionnaireResponse',
+              functionParams: {
+                encounterId: prevEncounterId,
+                patientId,
+                questionnaireId: q.data.entry[1].resource.id,
+              },
+            }),
+          );
         }
-      } catch (e) {
-        console.log('Error: ' + e);
+        const responses = await Promise.all(questionnaireResponseArray);
+
+        if (responses[0].data.total) {
+          // There is curr encounter response
+          const currQr = normalizeFhirQuestionnaireResponse(
+            responses[0].data.entry[1].resource,
+          );
+          const [
+            sensitive,
+            backgroundDiseases,
+            chronicMedication,
+          ] = extractItems(currQr);
+          if (sensitive) {
+            const sensitives = await FHIR('Condition', 'doWork', {
+              functionName: 'getConditionListByParams',
+              functionParams: {
+                category: 'sensitive',
+                subject: patientId,
+                status: 'active',
+              },
+            });
+            const sensitivesArr = [];
+            sensitives.data.entry.forEach((sens) => {
+              if (sens.resource) {
+                sensitivesArr.push(
+                  normalizeFhirCondition(sens.resource)['codeText'],
+                );
+              }
+            });
+            setPatientSensitivities(sensitivesArr);
+          } else {
+            setPatientSensitivities(null);
+          }
+          if (backgroundDiseases) {
+            const background = await FHIR('Condition', 'doWork', {
+              functionName: 'getConditionListByParams',
+              functionParams: {
+                category: 'medical_problem',
+                subject: patientId,
+                status: 'active',
+              },
+            });
+            const backgroundArr = [];
+            background.data.entry.forEach((back) => {
+              if (back.resource) {
+                backgroundArr.push(
+                  normalizeFhirCondition(back.resource)['codeText'],
+                );
+              }
+            });
+            setPatientBackgroundDiseases(backgroundArr);
+          } else {
+            setPatientBackgroundDiseases(null);
+          }
+          if (chronicMedication) {
+            const chronic = await FHIR('MedicationStatement', 'doWork', {
+              functionName: 'getMedicationStatementListByParams',
+              functionParams: {
+                category: 'medication',
+                patient: patientId,
+                status: 'active',
+              },
+            });
+            const chronicArr = [];
+            chronic.data.entry.forEach((chro) => {
+              if (chro.resource) {
+                chronicArr.push(
+                  normalizeFhirMedicationStatement(chro.resource)[
+                    'medicationCodeableConceptText'
+                  ],
+                );
+              }
+            });
+            setPatientChronicMedications(chronicArr);
+          } else {
+            setPatientChronicMedications(null);
+          }
+        } else if (prevEncounterId && responses[1] && responses[1].data.total) {
+          // There is a prev encounter response
+          const prevQr = normalizeFhirQuestionnaireResponse(
+            responses[1].data.entry[1].resource,
+          );
+          const [
+            sensitive,
+            backgroundDiseases,
+            chronicMedication,
+          ] = extractItems(prevQr);
+          if (sensitive) {
+            const sensitives = await FHIR('Condition', 'doWork', {
+              functionName: 'getConditionListByParams',
+              functionParams: {
+                category: 'sensitive',
+                subject: patientId,
+                status: 'active',
+              },
+            });
+            const sensitivesArr = [];
+            sensitives.data.entry.forEach((sens) => {
+              if (sens.resource) {
+                sensitivesArr.push(normalizeFhirCondition(sens.resource));
+              }
+            });
+            setPatientSensitivities(sensitivesArr);
+          } else {
+            setPatientSensitivities(null);
+          }
+          if (backgroundDiseases) {
+            const background = await FHIR('Condition', 'doWork', {
+              functionName: 'getConditionListByParams',
+              functionParams: {
+                category: 'medical_problem',
+                subject: patientId,
+                status: 'active',
+              },
+            });
+            const backgroundArr = [];
+            background.data.entry.forEach((back) => {
+              if (back.resource) {
+                backgroundArr.push(normalizeFhirCondition(back.resource));
+              }
+            });
+            setPatientBackgroundDiseases(backgroundArr);
+          } else {
+            setPatientBackgroundDiseases(null);
+          }
+          if (chronicMedication) {
+            const chronic = await FHIR('MedicationStatement', 'doWork', {
+              functionName: 'getMedicationStatementListByParams',
+              functionParams: {
+                category: 'medication',
+                patient: patientId,
+                status: 'active',
+              },
+            });
+            const chronicArr = [];
+            chronic.data.entry.forEach((chro) => {
+              if (chro.resource) {
+                chronicArr.push(
+                  normalizeFhirMedicationStatement(chro.resource),
+                );
+              }
+            });
+            setPatientChronicMedications(chronicArr);
+          } else {
+            setPatientChronicMedications(null);
+          }
+        } else {
+          // There is no curr and no prev encounter response
+        }
+      } catch (error) {
+        console.log(error);
       }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [medicalProblemIsUpdated]);
+    };
+    getMedicalIssues();
+  }, [patientId, encounterId, prevEncounterId]);
 
   return (
     <React.Fragment>
-      <MedicalIssue title={t('Sensitivities')} items={listAllergy} />
+      <MedicalIssue items={patientSensitivities} title={t('Sensitivities')} />
       <MedicalIssue
+        items={patientBackgroundDiseases}
         title={t('Background diseases')}
-        items={listMedicalProblem}
       />
       <MedicalIssue
+        items={patientChronicMedications}
         title={t('Chronic medications')}
-        items={listMedicationStatement}
       />
     </React.Fragment>
   );
