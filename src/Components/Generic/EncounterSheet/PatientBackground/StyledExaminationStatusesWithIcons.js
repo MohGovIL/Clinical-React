@@ -41,7 +41,6 @@ const StyledExaminationStatusesWithIcons = ({
       facility,
     });
     setDoc(docId);
-    store.dispatch(setEncounterAndPatient(encounterData, patient));
   };
 
   return (
