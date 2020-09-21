@@ -13,7 +13,7 @@ import { store } from 'index';
 import { connect } from 'react-redux';
 import List from '@material-ui/core/List';
 import openDocumentInANewWindow from 'Utils/Helpers/openDocumentInANewWindow';
-import { createSummaryLetter } from '../../../../Utils/Helpers/Letters/createSummaryLetter';
+import { createSummaryLetter } from 'Utils/Helpers/Letters/createSummaryLetter';
 
 const StyledExaminationStatusesWithIcons = ({
   encounterData,
