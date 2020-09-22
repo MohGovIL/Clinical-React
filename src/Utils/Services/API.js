@@ -1,14 +1,10 @@
 import { tokenInstanceGenerator } from 'Utils/Services/AxiosWithTokenInstance';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
-import { store } from '../../index';
 import { FHIR } from './FHIR';
-import normalizeFhirDocumentReference from '../Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
-import { combineBase_64 } from '../Helpers/combineBase_64';
-import { calculateFileSize } from '../Helpers/calculateFileSize';
-import { decodeBase_64IntoBlob } from '../Helpers/decodeBase_64IntoBlob';
 
 /**
  * @author Idan Gigi idangi@matrix.co.il
+ *         Dror Golan idangi@matrix.co.il
  * @fileOverview Where all the apis that uses the normal api Token
  */
 
@@ -68,32 +64,17 @@ export const getLetterAPIListOfParams = (city) => {
   //GET /api/letters/list
   return city && apiTokenInstance().get(`apis/api/letters/list`);
 };
-export const createLetter = async ({
-  letter_type,
-  encounter,
-  patient,
-  owner,
-  facility,
-  x_ray_type,
-  name_of_letter,
-  id,
-  instructions,
-  remark,
-}) => {
-  if (id && id > 0) {
+
+export const createLetter = async ({ ...props }) => {
+  if (props.id && props.id > 0) {
     const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
       functionName: 'deleteDocumentReference',
-      documentReferenceId: id,
+      documentReferenceId: props.id,
     });
   }
-  return apiTokenInstance().post(`apis/api/letters/letter_${letter_type}`, {
-    encounter: encounter,
-    patient: patient,
-    owner: owner,
-    facility: facility,
-    x_ray_type: x_ray_type,
-    name_of_letter: name_of_letter,
-    instructions: instructions,
-    remark: remark,
-  });
+
+  return apiTokenInstance().post(
+    `apis/api/letters/${props.letter_type}`,
+    props,
+  );
 };

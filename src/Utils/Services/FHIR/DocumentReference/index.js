@@ -18,7 +18,7 @@ const DocumentReferenceStates = {
   readDocumentReference: (params) => {
     return CRUDOperations(
       'read',
-      `${params.url}/${params.functionParams.doc_id}`,
+      `${params.url}/${params.functionParams.documentReferenceId}`,
     );
   },
   getDocumentReference: (params) => {

@@ -77,7 +77,7 @@ const TestTreatmentInstructions = ({ index, item, handlePopUpProps }) => {
             onClick={() => {
               console.log(test_treatment);
               handlePopUpProps(
-                t('X-Ray recommendations'),
+                t(Instruction[index].test_treatment_title),
                 `templates_${test_treatment}`, //to change
                 'tests_and_treatments', //to change
                 callBack,

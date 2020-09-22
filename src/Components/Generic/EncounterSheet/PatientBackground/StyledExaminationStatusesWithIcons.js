@@ -13,12 +13,15 @@ import { store } from 'index';
 import { connect } from 'react-redux';
 import List from '@material-ui/core/List';
 import openDocumentInANewWindow from 'Utils/Helpers/openDocumentInANewWindow';
+import { createSummaryLetter } from 'Utils/Helpers/Letters/createSummaryLetter';
 
 const StyledExaminationStatusesWithIcons = ({
   encounterData,
   encounterSheet,
   patient,
   handleCreateData,
+  currentUser,
+  facility,
 }) => {
   const { t } = useTranslation();
   const MedicalFileClick = (doc) => {
@@ -28,6 +31,16 @@ const StyledExaminationStatusesWithIcons = ({
     //If we wish to reload all the info again - multiple users ? then run
     // handleCreateData(true);
     store.dispatch(setEncounterAndPatient(encounterData, patient));
+  };
+  const [docID, setDoc] = React.useState(-1);
+  const createLetter = async () => {
+    let docId = await createSummaryLetter({
+      encounter: encounterData,
+      patientId: patient.id,
+      currentUser,
+      facility,
+    });
+    setDoc(docId);
   };
 
   return (
@@ -39,33 +52,21 @@ const StyledExaminationStatusesWithIcons = ({
           <img alt={'Camera'} src={Camera} />
           <span>{t('Encounter sheet')}</span>
         </StyledCameraIcon>
-        {encounterData.documents && encounterData.documents.length > 0 ? (
-          <List>
-            {encounterData.documents.map((doc, docIndex) => {
-              return (
-                <StyledListItem key={docIndex}>
-                  <StyledMedicalFileIcon
-                    canClickMedical={true}
-                    onClick={() => MedicalFileClick(doc)}>
-                    <img alt={'MedicalFile'} src={MedicalFile} />
-                    <span>{t('Summary letter')}</span>
-                  </StyledMedicalFileIcon>
-
-                  <br />
-                </StyledListItem>
-              );
-            })}
-          </List>
-        ) : (
-          <List>
-            <StyledListItem>
-              <StyledMedicalFileIcon canClickMedical={false}>
-                <img alt={'MedicalFile'} src={MedicalFile} />
-                <span>{t('Summary letter')}</span>
-              </StyledMedicalFileIcon>
-            </StyledListItem>
-          </List>
-        )}
+        <List>
+          {/*<input value={docID} />
+            <input value={encounterData.status} />*/}
+          <StyledListItem>
+            <StyledMedicalFileIcon
+              onClick={createLetter}
+              canClickMedical={
+                encounterData.status === 'finished' ||
+                encounterData.status === 'waiting_for_release'
+              }>
+              <img alt={'MedicalFile'} src={MedicalFile} />
+              <span>{t('Summary letter')}</span>
+            </StyledMedicalFileIcon>
+          </StyledListItem>
+        </List>
       </StyledIconContainer>
     </React.Fragment>
   );
@@ -77,6 +78,8 @@ const mapStateToProps = (state) => {
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
+    currentUser: state.active.activeUser,
+    facility: store.getState().settings.facility,
   };
 };
 export default connect(

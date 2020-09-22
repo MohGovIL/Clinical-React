@@ -67,7 +67,7 @@ const TestTreatmentReferral = ({
       let owner = currentUser && currentUser.id;
 
       const xRayDoc = await createLetter({
-        letter_type: 'x_ray',
+        letter_type: 'letter_x_ray',
         encounter: encounter && encounter.id,
         patient: patient && patient.id,
         owner: owner,
@@ -103,7 +103,7 @@ const TestTreatmentReferral = ({
     const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
       functionName: 'readDocumentReference',
       functionParams: {
-        doc_id: id,
+        documentReferenceId: id,
       },
     });
     if (documentReferenceData.status === 200) {

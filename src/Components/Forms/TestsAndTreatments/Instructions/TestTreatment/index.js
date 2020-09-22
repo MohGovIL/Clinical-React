@@ -88,6 +88,10 @@ const TestTreatment = ({ index, item, setRequiredErrors }) => {
               `Instruction[${index}].test_treatment`,
               event.target.value,
             );
+            setValue(
+              `Instruction[${index}].test_treatment_title`,
+              collectedTestAndTreatmentsFromFhirObject[event.target.value],
+            );
             setRequiredErrors((prevState) => {
               const cloneState = [...prevState];
               cloneState[index].test_treatment_type = '';
