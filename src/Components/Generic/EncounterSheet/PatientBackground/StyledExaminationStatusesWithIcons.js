@@ -60,7 +60,7 @@ const StyledExaminationStatusesWithIcons = ({
               onClick={createLetter}
               canClickMedical={
                 encounterData.status === 'finished' ||
-                encounterData.status === 'waiting_for_release'
+                encounterData.extensionSecondaryStatus === 'waiting_for_release'
               }>
               <img alt={'MedicalFile'} src={MedicalFile} />
               <span>{t('Summary letter')}</span>
