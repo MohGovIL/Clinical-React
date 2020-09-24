@@ -4,10 +4,13 @@ import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHea
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
 import CustomizedPopup from '../../../Assets/Elements/CustomizedPopup';
-import React from 'react';
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { text } from '@storybook/addon-knobs';
 import PopUpFormTemplates from '../PopupComponents/PopUpFormTemplates';
 import { createPortal } from 'react-dom';
+import CustomizedPopupStandAlone from '../../../Assets/Elements/CustomizedPopupStandAlone';
+import { Typography } from '@material-ui/core';
 
 // ממתינים לשחרור
 
@@ -18,8 +21,6 @@ export const setPatientDataWaitingForReleaseTableRows = function (
   history,
   mode,
   secOptions,
-  setIsPopUpOpen,
-  setIsOnCloseNoLetterFunction,
 ) {
   let result = [];
   let rows = [];
@@ -33,7 +34,11 @@ export const setPatientDataWaitingForReleaseTableRows = function (
     'messages',
     'encounterSheet',
   ];
-  const changeStatus = async (encounter, code) => {
+  const destroyReactNoLetterPopUp = () => {
+    let NoLetterPopUp = document.getElementById('NoLetterPopUp');
+    ReactDOM.unmountComponentAtNode(NoLetterPopUp);
+  };
+  const changeStatus = async ({ encounter, code }) => {
     if (!encounter && !code) return;
 
     const answer = await FHIR('Encounter', 'doWork', {
@@ -51,6 +56,7 @@ export const setPatientDataWaitingForReleaseTableRows = function (
       },
     });
     if (answer.status === 200) {
+      destroyReactNoLetterPopUp();
       return true;
     }
   };
@@ -113,14 +119,44 @@ export const setPatientDataWaitingForReleaseTableRows = function (
                   documentReferenceData.data &&
                   documentReferenceData.data.total < 1
                 ) {
-                  //  let answer = window.confirm("There is no summary letter would you like to continue");
-                  //   if(answer) {
-                  //      changeStatus(encounter, code);
-                  //   }
-                  setIsOnCloseNoLetterFunction((encounter, code) => {
-                    changeStatus(encounter, code);
-                  });
-                  setIsPopUpOpen(true);
+                  let NoLetterPopUp = document.getElementById('NoLetterPopUp');
+                  if (!NoLetterPopUp) {
+                    const d = document.createElement('div');
+                    d.id = 'NoLetterPopUp';
+                    let main = document.getElementById('root').appendChild(d);
+                  }
+                  let buttons = [
+                    {
+                      color: 'primary',
+                      label: 'Yes',
+                      variant: 'outlined',
+                      onClickHandler: () => changeStatus({ encounter, code }),
+                    },
+                    {
+                      color: 'primary',
+                      label: 'No',
+                      variant: 'contained',
+                      onClickHandler: destroyReactNoLetterPopUp,
+                    },
+                  ];
+                  ReactDOM.render(
+                    <CustomizedPopupStandAlone
+                      props={{
+                        AlertMessage: '',
+                        disableBackdropClick: '',
+                        dialogMaxWidth: 'xl',
+                        content_dividers: false,
+                        bottomButtons: buttons,
+                        message:
+                          'Please note that a letter summarizing the visit has not yet been issued. Do you want to end the visit without producing a letter?',
+                        title: 'System notification',
+                      }}
+                      isOpen={true}
+                      onClose={
+                        destroyReactNoLetterPopUp
+                      }></CustomizedPopupStandAlone>,
+                    document.getElementById('NoLetterPopUp'),
+                  );
                 } else {
                   changeStatus(encounter, code);
                 }

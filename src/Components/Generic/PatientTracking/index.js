@@ -32,10 +32,6 @@ const PatientTracking = ({
   const { t } = useTranslation();
   // Set the popUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-  const [isPopUpOpenNoLetter, setIsPopUpOpenNoLetter] = useState(false);
-  const [onCloseNoLetterFunction, setIsOnCloseNoLetterFunction] = useState(
-    null,
-  );
 
   const source = useRef(null);
 
@@ -160,15 +156,13 @@ const PatientTracking = ({
         if (tab.isDateDisabled !== undefined) {
           setFilterDateDisabledAction(tab.isDateDisabled);
         }
-        tab.activeAction({
+        tab.activeAction(
           setTable,
           setTabs,
           history,
           selectFilter,
           setIsPopUpOpen,
-          setIsPopUpOpenNoLetter,
-          setIsOnCloseNoLetterFunction,
-        });
+        );
       } else {
         if (!onlyActive) {
           tab.notActiveAction(setTabs, selectFilter);
@@ -215,9 +209,6 @@ const PatientTracking = ({
   const onClosePopUpHandler = () => {
     setIsPopUpOpen(false);
   };
-  const onClosePopUpNoLetterHandler = () => {
-    setIsPopUpOpenNoLetter(false);
-  };
   return (
     <React.Fragment>
       <CustomizedPopup
@@ -226,28 +217,6 @@ const PatientTracking = ({
         title={t('System notification')}>
         {t(
           'The patient admission process has been started by another user and is yet to be finished',
-        )}
-      </CustomizedPopup>
-      <CustomizedPopup
-        isOpen={isPopUpOpenNoLetter}
-        onClose={onClosePopUpNoLetterHandler}
-        title={t('System notification')}
-        bottomButtons={[
-          {
-            color: 'primary',
-            label: 'Continue',
-            variant: 'outlined',
-            onClickHandler: onCloseNoLetterFunction,
-          },
-          {
-            color: 'primary',
-            label: 'Dismiss',
-            variant: 'contained',
-            onClickHandler: onClosePopUpNoLetterHandler,
-          },
-        ]}>
-        {t(
-          'There is no summary letter available. would you like to checkout the patient without creating summary letter.',
         )}
       </CustomizedPopup>
       <Header Items={menuItems} />

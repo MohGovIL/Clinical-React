@@ -1,10 +1,10 @@
 /**
- * @author Yuriy Gershem yuriyge@matrix.co.il
+ * @author Dror Golan drorgo@matrix.co.il
  * @returns {*}
  * @constructor
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dialog,
   Typography,
@@ -12,19 +12,25 @@ import {
   IconButton,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import { StyledMuiDialogTitle, StyledDialogActions } from './Style';
-import { connect } from 'react-redux';
+import {
+  StyledMuiDialogTitle,
+  StyledDialogActions,
+  StyledTypography,
+} from './Style';
 import CustomizedTableButton from '../CustomizedTable/CustomizedTableButton';
 import Alert from '@material-ui/lab/Alert';
+import { useTranslation } from 'react-i18next';
+import { store } from 'index';
 
-const CustomizedPopup = ({
+const CustomizedPopupStandAlone = ({
   children,
   isOpen,
   onClose,
-  languageDirection,
   props,
   dialog_props,
 }) => {
+  const languageDirection = store.getState().settings.lang_dir;
+  const { t } = useTranslation();
   return (
     <div>
       <Dialog
@@ -42,7 +48,7 @@ const CustomizedPopup = ({
         <StyledMuiDialogTitle
           disableTypography
           language_direction={languageDirection}>
-          <Typography variant='h6'>{props.title}</Typography>
+          <Typography variant='h6'>{t(props.title)}</Typography>
           {onClose ? (
             <IconButton aria-label='close' onClick={onClose}>
               <CloseIcon />
@@ -55,9 +61,13 @@ const CustomizedPopup = ({
         </DialogContent>
         {props.AlertMessage && props.AlertMessage.show && (
           <Alert severity={props.AlertMessage.severity}>
-            {props.AlertMessage.message}
+            {t(props.AlertMessage.message)}
           </Alert>
         )}
+        <StyledTypography gutterBottom>
+          {t(props.message)}
+          <br />
+        </StyledTypography>
         <StyledDialogActions>
           {props.bottomButtons &&
             props.bottomButtons.map((button, buttonIndex) => {
@@ -69,10 +79,4 @@ const CustomizedPopup = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    languageDirection: state.settings.lang_dir,
-    props: ownProps,
-  };
-};
-export default connect(mapStateToProps, null)(CustomizedPopup);
+export default CustomizedPopupStandAlone;

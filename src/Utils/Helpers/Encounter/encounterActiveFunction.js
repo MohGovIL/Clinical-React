@@ -4,14 +4,12 @@ import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntit
 import { setEncounterWithPatientsAction } from 'Store/Actions/FhirActions/fhirActions';
 import { store } from 'index';
 
-export const encounterActiveFunction = async function ({
+export const encounterActiveFunction = async function (
   setTable,
   setTabs,
   history,
   selectFilter,
-  setIsPopUpOpenNoLetter,
-  setIsOnCloseNoLetterFunction,
-}) {
+) {
   try {
     const searchParameters = {
       summary: false,
@@ -89,8 +87,6 @@ export const encounterActiveFunction = async function ({
       history,
       this.mode,
       secOptions,
-      setIsPopUpOpenNoLetter,
-      setIsOnCloseNoLetterFunction,
     );
 
     setTable(table);
