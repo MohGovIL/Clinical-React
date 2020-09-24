@@ -25,7 +25,7 @@ const CustomizedPopup = ({
   props,
   dialog_props,
 }) => {
-  useEffect({}, [props.bottomButtons]);
+  useEffect(() => {}, [props.bottomButtons]);
   return (
     <div>
       <Dialog
