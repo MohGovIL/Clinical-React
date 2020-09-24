@@ -4,7 +4,7 @@
  * @constructor
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dialog,
   Typography,
@@ -25,6 +25,7 @@ const CustomizedPopup = ({
   props,
   dialog_props,
 }) => {
+  useEffect({}, [props.bottomButtons]);
   return (
     <div>
       <Dialog

@@ -1,8 +1,13 @@
-import  { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { formatTime } from 'Utils/Helpers/Datetime/formatDate';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
+import CustomizedPopup from '../../../Assets/Elements/CustomizedPopup';
+import React from 'react';
+import { text } from '@storybook/addon-knobs';
+import PopUpFormTemplates from '../PopupComponents/PopUpFormTemplates';
+import { createPortal } from 'react-dom';
 
 // ממתינים לשחרור
 
@@ -13,6 +18,8 @@ export const setPatientDataWaitingForReleaseTableRows = function (
   history,
   mode,
   secOptions,
+  setIsPopUpOpen,
+  setIsOnCloseNoLetterFunction,
 ) {
   let result = [];
   let rows = [];
@@ -26,6 +33,28 @@ export const setPatientDataWaitingForReleaseTableRows = function (
     'messages',
     'encounterSheet',
   ];
+  const changeStatus = async (encounter, code) => {
+    if (!encounter && !code) return;
+
+    const answer = await FHIR('Encounter', 'doWork', {
+      functionName: 'patchEncounter',
+      functionParams: {
+        encountersId: encounter.id,
+        encounterPatchParams: {
+          extensionSecondaryStatus: '', // there isn't secondary status for finish
+          extensionSecondaryStatusIndex:
+            encounter.extensionSecondaryStatusIndex,
+          status: code,
+          practitioner: store.getState().login.userID,
+          practitionerIndex: encounter.practitionerIndex,
+        },
+      },
+    });
+    if (answer.status === 200) {
+      return true;
+    }
+  };
+
   const tableHeaders = getTableHeaders(tableHeadersId);
   for (let [encountersId, encounter] of Object.entries(encounters)) {
     let row = [];
@@ -70,22 +99,32 @@ export const setPatientDataWaitingForReleaseTableRows = function (
           row.push({
             async onChange(code) {
               try {
-                const answer = await FHIR('Encounter', 'doWork', {
-                  functionName: 'patchEncounter',
-                  functionParams: {
-                    encountersId: encounter.id,
-                    encounterPatchParams: {
-                      extensionSecondaryStatus: '', // there isn't secondary status for finish
-                      extensionSecondaryStatusIndex: encounter.extensionSecondaryStatusIndex,
-                      status: code,
-                      practitioner: store.getState().login.userID,
-                      practitionerIndex: encounter.practitionerIndex,
-                    },
+                const documentReferenceData = await FHIR(
+                  'DocumentReference',
+                  'doWork',
+                  {
+                    functionName: 'getDocumentReference',
+                    searchParams: { category: 5, encounter: encounter.id },
                   },
-                });
-                if (answer.status === 200) {
-                  return true;
+                );
+                documentReferenceData.data.total = 0;
+                if (
+                  documentReferenceData &&
+                  documentReferenceData.data &&
+                  documentReferenceData.data.total < 1
+                ) {
+                  //  let answer = window.confirm("There is no summary letter would you like to continue");
+                  //   if(answer) {
+                  //      changeStatus(encounter, code);
+                  //   }
+                  setIsOnCloseNoLetterFunction((encounter, code) => {
+                    changeStatus(encounter, code);
+                  });
+                  setIsPopUpOpen(true);
+                } else {
+                  changeStatus(encounter, code);
                 }
+
                 return false;
               } catch (err) {
                 console.log(err);

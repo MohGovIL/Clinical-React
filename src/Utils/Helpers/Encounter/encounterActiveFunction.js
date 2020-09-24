@@ -4,12 +4,14 @@ import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntit
 import { setEncounterWithPatientsAction } from 'Store/Actions/FhirActions/fhirActions';
 import { store } from 'index';
 
-export const encounterActiveFunction = async function (
+export const encounterActiveFunction = async function ({
   setTable,
   setTabs,
   history,
   selectFilter,
-) {
+  setIsPopUpOpenNoLetter,
+  setIsOnCloseNoLetterFunction,
+}) {
   try {
     const searchParameters = {
       summary: false,
@@ -18,7 +20,7 @@ export const encounterActiveFunction = async function (
       statuses: this.statuses,
       sortParams: this.sort,
       extendedStatuses: this.extendedStatuses,
-    }
+    };
     if (!this.isDateDisabled) {
       if (this.searchDateColumn) {
         searchParameters[this.searchDateColumn] = selectFilter.filter_date;
@@ -28,7 +30,7 @@ export const encounterActiveFunction = async function (
     }
     const encountersWithPatients = await FHIR('Encounter', 'doWork', {
       functionName: 'getEncountersWithPatients',
-      functionParams:searchParameters
+      functionParams: searchParameters,
     });
 
     const [patients, encounters] = normalizeFhirEncountersWithPatients(
@@ -87,6 +89,8 @@ export const encounterActiveFunction = async function (
       history,
       this.mode,
       secOptions,
+      setIsPopUpOpenNoLetter,
+      setIsOnCloseNoLetterFunction,
     );
 
     setTable(table);

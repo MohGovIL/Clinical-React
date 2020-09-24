@@ -32,6 +32,10 @@ const PatientTracking = ({
   const { t } = useTranslation();
   // Set the popUp
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+  const [isPopUpOpenNoLetter, setIsPopUpOpenNoLetter] = useState(false);
+  const [onCloseNoLetterFunction, setIsOnCloseNoLetterFunction] = useState(
+    null,
+  );
 
   const source = useRef(null);
 
@@ -124,7 +128,6 @@ const PatientTracking = ({
   const prevFilterBoxValue = useRef(0);
 
   const refreshPatientTracking = (onlyActive = false) => {
-
     // Checking if this is the first render since this dependencies array
     // in this useEffect is getting set in a child component
     if (!selectFilter.STATUS && !selectFilter.filter_organization) {
@@ -157,13 +160,15 @@ const PatientTracking = ({
         if (tab.isDateDisabled !== undefined) {
           setFilterDateDisabledAction(tab.isDateDisabled);
         }
-        tab.activeAction(
-            setTable,
-            setTabs,
-            history,
-            selectFilter,
-            setIsPopUpOpen,
-        );
+        tab.activeAction({
+          setTable,
+          setTabs,
+          history,
+          selectFilter,
+          setIsPopUpOpen,
+          setIsPopUpOpenNoLetter,
+          setIsOnCloseNoLetterFunction,
+        });
       } else {
         if (!onlyActive) {
           tab.notActiveAction(setTabs, selectFilter);
@@ -175,10 +180,10 @@ const PatientTracking = ({
       setTabs(staticTabs);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }
+  };
 
   useEffect(() => {
-      refreshPatientTracking()
+    refreshPatientTracking();
   }, [
     selectFilter.filter_date,
     selectFilter.filter_service_type,
@@ -188,11 +193,8 @@ const PatientTracking = ({
 
   //refresh only selected tab
   useEffect(() => {
-    refreshPatientTracking(true)
-  }, [
-    selectFilter.statusFilterBoxValue,
-  ]);
-
+    refreshPatientTracking(true);
+  }, [selectFilter.statusFilterBoxValue]);
 
   //Gets the menu items
   useEffect(() => {
@@ -213,6 +215,9 @@ const PatientTracking = ({
   const onClosePopUpHandler = () => {
     setIsPopUpOpen(false);
   };
+  const onClosePopUpNoLetterHandler = () => {
+    setIsPopUpOpenNoLetter(false);
+  };
   return (
     <React.Fragment>
       <CustomizedPopup
@@ -221,6 +226,28 @@ const PatientTracking = ({
         title={t('System notification')}>
         {t(
           'The patient admission process has been started by another user and is yet to be finished',
+        )}
+      </CustomizedPopup>
+      <CustomizedPopup
+        isOpen={isPopUpOpenNoLetter}
+        onClose={onClosePopUpNoLetterHandler}
+        title={t('System notification')}
+        bottomButtons={[
+          {
+            color: 'primary',
+            label: 'Continue',
+            variant: 'outlined',
+            onClickHandler: onCloseNoLetterFunction,
+          },
+          {
+            color: 'primary',
+            label: 'Dismiss',
+            variant: 'contained',
+            onClickHandler: onClosePopUpNoLetterHandler,
+          },
+        ]}>
+        {t(
+          'There is no summary letter available. would you like to checkout the patient without creating summary letter.',
         )}
       </CustomizedPopup>
       <Header Items={menuItems} />
