@@ -11,6 +11,10 @@ import PopUpFormTemplates from '../PopupComponents/PopUpFormTemplates';
 import { createPortal } from 'react-dom';
 import CustomizedPopupStandAlone from '../../../Assets/Elements/CustomizedPopupStandAlone';
 import { Typography } from '@material-ui/core';
+import {
+  destroyReactNoLetterPopUp,
+  showCustomizedPopUp,
+} from '../../../Utils/Helpers/showCustomizedPopUp';
 
 // ממתינים לשחרור
 
@@ -34,10 +38,7 @@ export const setPatientDataWaitingForReleaseTableRows = function (
     'messages',
     'encounterSheet',
   ];
-  const destroyReactNoLetterPopUp = () => {
-    let NoLetterPopUp = document.getElementById('NoLetterPopUp');
-    ReactDOM.unmountComponentAtNode(NoLetterPopUp);
-  };
+
   const changeStatus = async ({ encounter, code }) => {
     if (!encounter && !code) return;
 
@@ -119,17 +120,11 @@ export const setPatientDataWaitingForReleaseTableRows = function (
                   documentReferenceData.data &&
                   documentReferenceData.data.total < 1
                 ) {
-                  let NoLetterPopUp = document.getElementById('NoLetterPopUp');
-                  if (!NoLetterPopUp) {
-                    const d = document.createElement('div');
-                    d.id = 'NoLetterPopUp';
-                    let main = document.getElementById('root').appendChild(d);
-                  }
-                  let buttons = [
+                  let buttonArr = [
                     {
                       color: 'primary',
                       label: 'Yes',
-                      variant: 'outlined',
+                      variant: 'contained',
                       onClickHandler: () => changeStatus({ encounter, code }),
                     },
                     {
@@ -139,26 +134,15 @@ export const setPatientDataWaitingForReleaseTableRows = function (
                       onClickHandler: destroyReactNoLetterPopUp,
                     },
                   ];
-                  ReactDOM.render(
-                    <CustomizedPopupStandAlone
-                      props={{
-                        AlertMessage: '',
-                        disableBackdropClick: '',
-                        dialogMaxWidth: 'xl',
-                        content_dividers: false,
-                        bottomButtons: buttons,
-                        message:
-                          'Please note that a letter summarizing the visit has not yet been issued. Do you want to end the visit without producing a letter?',
-                        title: 'System notification',
-                      }}
-                      isOpen={true}
-                      onClose={
-                        destroyReactNoLetterPopUp
-                      }></CustomizedPopupStandAlone>,
-                    document.getElementById('NoLetterPopUp'),
-                  );
+                  showCustomizedPopUp({
+                    title: 'System notification',
+                    message:
+                      'Please note that a letter summarizing the visit has not yet been issued. Do you want to end the visit without producing a letter?',
+                    buttonsArr: buttonArr,
+                  });
                 } else {
                   changeStatus(encounter, code);
+                  return true;
                 }
 
                 return false;
