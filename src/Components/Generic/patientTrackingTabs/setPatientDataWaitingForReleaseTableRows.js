@@ -114,7 +114,7 @@ export const setPatientDataWaitingForReleaseTableRows = function (
                     searchParams: { category: 5, encounter: encounter.id },
                   },
                 );
-                documentReferenceData.data.total = 0;
+
                 if (
                   documentReferenceData &&
                   documentReferenceData.data &&
