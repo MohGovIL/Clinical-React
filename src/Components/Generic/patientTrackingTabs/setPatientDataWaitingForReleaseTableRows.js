@@ -3,20 +3,13 @@ import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
-import CustomizedPopup from '../../../Assets/Elements/CustomizedPopup';
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
-import { text } from '@storybook/addon-knobs';
-import PopUpFormTemplates from '../PopupComponents/PopUpFormTemplates';
-import { createPortal } from 'react-dom';
-import CustomizedPopupStandAlone from '../../../Assets/Elements/CustomizedPopupStandAlone';
-import { Typography } from '@material-ui/core';
 import {
   destroyReactNoLetterPopUp,
   showCustomizedPopUp,
-} from '../../../Utils/Helpers/showCustomizedPopUp';
+} from 'Utils/Helpers/showCustomizedPopUp';
 
-// ממתינים לשחרור
+//Waiting for release
 
 export const setPatientDataWaitingForReleaseTableRows = function (
   patients,

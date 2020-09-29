@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import CustomizedPopupStandAlone from '../../Assets/Elements/CustomizedPopupStandAlone';
+import CustomizedPopupStandAlone from 'Assets/Elements/CustomizedPopupStandAlone';
 import React from 'react';
 export const destroyReactNoLetterPopUp = () => {
   let NoLetterPopUp = document.getElementById('NoLetterPopUp');
