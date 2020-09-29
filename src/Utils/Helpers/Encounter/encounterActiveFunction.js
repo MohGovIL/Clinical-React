@@ -18,7 +18,7 @@ export const encounterActiveFunction = async function (
       statuses: this.statuses,
       sortParams: this.sort,
       extendedStatuses: this.extendedStatuses,
-    }
+    };
     if (!this.isDateDisabled) {
       if (this.searchDateColumn) {
         searchParameters[this.searchDateColumn] = selectFilter.filter_date;
@@ -28,7 +28,7 @@ export const encounterActiveFunction = async function (
     }
     const encountersWithPatients = await FHIR('Encounter', 'doWork', {
       functionName: 'getEncountersWithPatients',
-      functionParams:searchParameters
+      functionParams: searchParameters,
     });
 
     const [patients, encounters] = normalizeFhirEncountersWithPatients(

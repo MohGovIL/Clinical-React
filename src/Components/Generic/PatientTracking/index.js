@@ -124,7 +124,6 @@ const PatientTracking = ({
   const prevFilterBoxValue = useRef(0);
 
   const refreshPatientTracking = (onlyActive = false) => {
-
     // Checking if this is the first render since this dependencies array
     // in this useEffect is getting set in a child component
     if (!selectFilter.STATUS && !selectFilter.filter_organization) {
@@ -158,11 +157,11 @@ const PatientTracking = ({
           setFilterDateDisabledAction(tab.isDateDisabled);
         }
         tab.activeAction(
-            setTable,
-            setTabs,
-            history,
-            selectFilter,
-            setIsPopUpOpen,
+          setTable,
+          setTabs,
+          history,
+          selectFilter,
+          setIsPopUpOpen,
         );
       } else {
         if (!onlyActive) {
@@ -175,10 +174,10 @@ const PatientTracking = ({
       setTabs(staticTabs);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }
+  };
 
   useEffect(() => {
-      refreshPatientTracking()
+    refreshPatientTracking();
   }, [
     selectFilter.filter_date,
     selectFilter.filter_service_type,
@@ -188,11 +187,8 @@ const PatientTracking = ({
 
   //refresh only selected tab
   useEffect(() => {
-    refreshPatientTracking(true)
-  }, [
-    selectFilter.statusFilterBoxValue,
-  ]);
-
+    refreshPatientTracking(true);
+  }, [selectFilter.statusFilterBoxValue]);
 
   //Gets the menu items
   useEffect(() => {

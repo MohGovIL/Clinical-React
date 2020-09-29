@@ -1,10 +1,15 @@
-import  { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { formatTime } from 'Utils/Helpers/Datetime/formatDate';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
+import React, { useState } from 'react';
+import {
+  destroyReactNoLetterPopUp,
+  showCustomizedPopUp,
+} from 'Utils/Helpers/showCustomizedPopUp';
 
-// ממתינים לשחרור
+//Waiting for release
 
 export const setPatientDataWaitingForReleaseTableRows = function (
   patients,
@@ -26,6 +31,30 @@ export const setPatientDataWaitingForReleaseTableRows = function (
     'messages',
     'encounterSheet',
   ];
+
+  const changeStatus = async ({ encounter, code }) => {
+    if (!encounter && !code) return;
+
+    const answer = await FHIR('Encounter', 'doWork', {
+      functionName: 'patchEncounter',
+      functionParams: {
+        encountersId: encounter.id,
+        encounterPatchParams: {
+          extensionSecondaryStatus: '', // there isn't secondary status for finish
+          extensionSecondaryStatusIndex:
+            encounter.extensionSecondaryStatusIndex,
+          status: code,
+          practitioner: store.getState().login.userID,
+          practitionerIndex: encounter.practitionerIndex,
+        },
+      },
+    });
+    if (answer.status === 200) {
+      destroyReactNoLetterPopUp();
+      return true;
+    }
+  };
+
   const tableHeaders = getTableHeaders(tableHeadersId);
   for (let [encountersId, encounter] of Object.entries(encounters)) {
     let row = [];
@@ -70,22 +99,45 @@ export const setPatientDataWaitingForReleaseTableRows = function (
           row.push({
             async onChange(code) {
               try {
-                const answer = await FHIR('Encounter', 'doWork', {
-                  functionName: 'patchEncounter',
-                  functionParams: {
-                    encountersId: encounter.id,
-                    encounterPatchParams: {
-                      extensionSecondaryStatus: '', // there isn't secondary status for finish
-                      extensionSecondaryStatusIndex: encounter.extensionSecondaryStatusIndex,
-                      status: code,
-                      practitioner: store.getState().login.userID,
-                      practitionerIndex: encounter.practitionerIndex,
-                    },
+                const documentReferenceData = await FHIR(
+                  'DocumentReference',
+                  'doWork',
+                  {
+                    functionName: 'getDocumentReference',
+                    searchParams: { category: 5, encounter: encounter.id },
                   },
-                });
-                if (answer.status === 200) {
+                );
+
+                if (
+                  documentReferenceData &&
+                  documentReferenceData.data &&
+                  documentReferenceData.data.total < 1
+                ) {
+                  let buttonArr = [
+                    {
+                      color: 'primary',
+                      label: 'Yes',
+                      variant: 'contained',
+                      onClickHandler: () => changeStatus({ encounter, code }),
+                    },
+                    {
+                      color: 'primary',
+                      label: 'No',
+                      variant: 'contained',
+                      onClickHandler: destroyReactNoLetterPopUp,
+                    },
+                  ];
+                  showCustomizedPopUp({
+                    title: 'System notification',
+                    message:
+                      'Please note that a letter summarizing the visit has not yet been issued. Do you want to end the visit without producing a letter?',
+                    buttonsArr: buttonArr,
+                  });
+                } else {
+                  changeStatus(encounter, code);
                   return true;
                 }
+
                 return false;
               } catch (err) {
                 console.log(err);
