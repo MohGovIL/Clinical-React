@@ -6,12 +6,13 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import GenericRoute from 'Components/Routes/GenericRoute';
 import { Switch, Route } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+import Loader from 'Assets/Elements/Loader/loginLoader';
 // import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 
 const InitApp = ({ lang_id, lang_code, languageDirection }) => {
   return (
     <React.Fragment>
-      <Suspense fallback={<CircularProgress />}>
+      <Suspense fallback={<Loader/>}>
         <GlobalStyle
           lang_id={lang_id}
           language_direction={languageDirection}

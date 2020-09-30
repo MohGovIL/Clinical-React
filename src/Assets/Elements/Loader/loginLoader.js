@@ -2,11 +2,13 @@ import React from 'react';
 import { StyledSVG, StyleLoaderBox } from './style';
 import { useTranslation } from 'react-i18next';
 
-const Loader = ({ opacity = false }) => {
-  const { t } = useTranslation();
-
+/*
+ * Temporary component for login loader, until the translations do not return from server
+ *
+ * */
+const LoginLoader = () => {
   return (
-    <StyleLoaderBox opacity={opacity}>
+    <StyleLoaderBox>
       <StyledSVG
         xmlns='http://www.w3.org/2000/svg'
         width='189'
@@ -43,9 +45,9 @@ const Loader = ({ opacity = false }) => {
           </g>
         </g>
       </StyledSVG>
-      <h3>{t('Please wait')}...</h3>
+      <h3>אנא המתן...</h3>
     </StyleLoaderBox>
   );
 };
 
-export default Loader;
+export default LoginLoader;

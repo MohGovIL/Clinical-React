@@ -1,7 +1,7 @@
 //DiagnosisAndRecommendations
 
 import { connect } from 'react-redux';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import DiagnosisAndTreatment from './DiagnosisAndTreatment';
 import RecommendationsOnRelease from './RecommendationsOnRelease ';
 import DecisionOnRelease from './DecisionOnRelease';
@@ -26,6 +26,7 @@ const DiagnosisAndRecommendations = ({
   permission,
   functionToRunOnTabChange,
   validationFunction,
+  setLoading
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -48,6 +49,31 @@ const DiagnosisAndRecommendations = ({
   const { handleSubmit, setValue, register, unregister, getValues } = methods;
 
   const { t } = useTranslation();
+
+
+  const [loadingStatus, setLoadingStatus] = useState({
+    'questionnaireResponse': false,
+    'drugRecommendation':false,
+  });
+  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
+
+  useEffect(() => {
+
+    for (const val in loadingStatus) {
+      if (!loadingStatus[val]) return;
+    }
+    setLoading(false);
+  }, [loadingStatus]);
+
+  const handleLoading = (componentName) => {
+
+    setLoadingStatus((prev) => {
+      const cloneLoadingStatus = { ...prev }
+      cloneLoadingStatus[componentName] = true;
+      return cloneLoadingStatus
+    });
+  }
+
 
   const answerType = (type, data) => {
     if (type === 'string') {
@@ -109,8 +135,10 @@ const DiagnosisAndRecommendations = ({
           { questionnaire: Questionnaire },
           { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
         ]);
+        handleLoading('questionnaireResponse');
       } catch (error) {
         console.log(error);
+        handleLoading('questionnaireResponse');
       }
     })();
 
@@ -207,6 +235,7 @@ const DiagnosisAndRecommendations = ({
   };
 
   const onSubmit = (data) => {
+    setdisabledOnSubmit(true);
     if (!data) data = getValues({ nest: true });
     try {
       const APIsArray = [];
@@ -401,6 +430,7 @@ const DiagnosisAndRecommendations = ({
           <DrugRecommendation
             encounterId={encounter.id}
             formatDate={formatDate}
+            handleLoading={handleLoading}
           />
           <DecisionOnRelease />
           <SaveForm
@@ -409,6 +439,8 @@ const DiagnosisAndRecommendations = ({
             mainStatus={'in-progress'}
             validationFunction={isRequiredValidation}
             onSubmit={onSubmit}
+            disabledOnSubmit={disabledOnSubmit}
+            setLoading={setLoading}
           />
         </form>
       </FormContext>

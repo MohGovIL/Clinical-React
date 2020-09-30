@@ -32,8 +32,7 @@ const MedicalAdmission = ({
   validationFunction,
   functionToRunOnTabChange,
   prevEncounterId,
-  setLoading,
-  setSaveLoading
+  setLoading
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -74,7 +73,6 @@ const MedicalAdmission = ({
   const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
 
   useEffect(() => {
-console.log(loadingStatus)
     for (const val in loadingStatus) {
       if (!loadingStatus[val]) return;
     }
@@ -243,7 +241,9 @@ console.log(loadingStatus)
           setQuestionnaireResponseItems(
             normalizedFhirQuestionnaireResponse.items,
           );
-          handleLoading('questionnaireResponse');
+          register({ name: 'currentQuestionnaireItems' });
+          setValue([{currentQuestionnaireItems:normalizedFhirQuestionnaireResponse.items}])
+
         } else if (
           prevEncounterId &&
           qrResponse[1] &&
@@ -255,7 +255,7 @@ console.log(loadingStatus)
               qrResponse[1].data.entry[1].resource,
             ).items,
           );
-          handleLoading('questionnaireResponse');
+
         }
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaire' });
@@ -457,7 +457,7 @@ console.log(loadingStatus)
           },
         }),
       );
-
+      console.log(data);
       //Creating new conditions for sensitivities
       if (data.sensitivities === 'Known') {
         data.sensitivitiesCodes.forEach((sensitivities) => {
@@ -468,7 +468,7 @@ console.log(loadingStatus)
             if (
               !data.sensitiveConditionsIds[sensitivities] ||
               (data.sensitiveConditionsIds[sensitivities] &&
-                !questionnaireResponseItems.length)
+                !data.currentQuestionnaireItems.length)
             ) {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
@@ -483,7 +483,7 @@ console.log(loadingStatus)
                       codeCode: sensitivities,
                       patient: patient.id,
                       recorder: store.getState().login.userID,
-                      clinicalStatus: 1,
+                      clinicalStatus: 'active',
                     },
                   },
                 }),
@@ -501,7 +501,7 @@ console.log(loadingStatus)
                     codeCode: sensitivities,
                     patient: patient.id,
                     recorder: store.getState().login.userID,
-                    clinicalStatus: 1,
+                    clinicalStatus: 'active',
                     encounter: encounter.id,
                   },
                 },
@@ -515,7 +515,7 @@ console.log(loadingStatus)
           data.sensitivitiesCodes.length &&
           data.sensitiveConditionsIds &&
           Object.keys(data.sensitiveConditionsIds).length &&
-          questionnaireResponseItems.length
+            data.currentQuestionnaireItems.length
         ) {
           data.sensitivitiesCodes.forEach((code) => {
             if (data.sensitiveConditionsIds[code]) {
@@ -546,7 +546,7 @@ console.log(loadingStatus)
             if (
               !data.backgroundDiseasesIds[backgroundDisease] ||
               (data.backgroundDiseasesIds[backgroundDisease] &&
-                !questionnaireResponseItems.length)
+                !data.currentQuestionnaireItems.length)
             ) {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
@@ -558,7 +558,7 @@ console.log(loadingStatus)
                       codeCode: backgroundDisease,
                       patient: patient.id,
                       recorder: store.getState().login.userID,
-                      clinicalStatus: 1,
+                      clinicalStatus: 'active',
                       encounter: encounter.id,
                     },
                   },
@@ -577,7 +577,7 @@ console.log(loadingStatus)
                     codeCode: backgroundDisease,
                     patient: patient.id,
                     recorder: store.getState().login.userID,
-                    clinicalStatus: 1,
+                    clinicalStatus: 'active',
                     encounter: encounter.id,
                   },
                 },
@@ -592,7 +592,7 @@ console.log(loadingStatus)
           data.backgroundDiseasesCodes.length &&
           data.backgroundDiseasesIds &&
           Object.keys(data.backgroundDiseasesIds).length &&
-          questionnaireResponseItems.length
+            data.currentQuestionnaireItems.length
         ) {
           data.backgroundDiseasesCodes.forEach((code) => {
             if (data.backgroundDiseasesIds[code]) {
@@ -623,7 +623,7 @@ console.log(loadingStatus)
             if (
               !data.chronicMedicationIds[medication] ||
               (data.backgroundDiseasesIds[medication] &&
-                !questionnaireResponseItems.length)
+                !data.currentQuestionnaireItems.length)
             ) {
               APIsArray.push(
                 FHIR('MedicationStatement', 'doWork', {
@@ -671,7 +671,7 @@ console.log(loadingStatus)
           data.chronicMedicationCodes.length &&
           data.chronicMedicationIds &&
           Object.keys(data.chronicMedicationIds).length &&
-          questionnaireResponseItems.length
+            data.currentQuestionnaireItems.length
         ) {
           data.chronicMedicationCodes.forEach((code) => {
             if (data.chronicMedicationIds[code]) {
@@ -761,6 +761,7 @@ console.log(loadingStatus)
             onSubmit={onSubmit}
             validationFunction={isRequiredValidation}
             disabledOnSubmit={disabledOnSubmit}
+            setLoading={setLoading}
           />
         </StyledForm>
       </FormContext>

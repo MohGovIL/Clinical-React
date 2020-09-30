@@ -14,7 +14,7 @@ import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalize
 import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/VirtualizedListbox';
 import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoComplete';
 
-const DrugRecommendation = ({ encounterId, formatDate }) => {
+const DrugRecommendation = ({ encounterId, formatDate, handleLoading}) => {
   const { t } = useTranslation();
   const {
     control,
@@ -265,8 +265,10 @@ const DrugRecommendation = ({ encounterId, formatDate }) => {
               normalizedFhirMedicationRequest.id;
           }
         });
+        handleLoading('drugRecommendation');
       }
       setValue({ medicationRequest: medicationUniqData });
+      handleLoading('drugRecommendation');
     } catch (error) {
       console.log(error);
     }

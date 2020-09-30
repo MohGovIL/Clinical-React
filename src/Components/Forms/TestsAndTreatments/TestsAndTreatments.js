@@ -389,6 +389,7 @@ const TestsAndTreatments = ({
             functionToRunOnTabChange={functionToRunOnTabChange}
             permission={permission}
             handleLoading={handleLoading}
+            setLoading={setLoading}
           />
         </React.Fragment>
       ) : null}

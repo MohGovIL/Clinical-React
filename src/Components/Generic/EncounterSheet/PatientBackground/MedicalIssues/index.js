@@ -244,6 +244,9 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
           }
         } else {
           // There is no curr and no prev encounter response
+          handleLoading('chronicMedications');
+          handleLoading('backgroundDiseases');
+          handleLoading('sensitivities');
         }
       } catch (error) {
         console.log(error);

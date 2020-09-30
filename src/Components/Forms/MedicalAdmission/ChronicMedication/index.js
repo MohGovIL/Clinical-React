@@ -140,6 +140,8 @@ const ChronicMedication = ({
           setValue([{ medication: "Doesn't exist" }]);
           handleLoading('medication');
         }
+      } else {
+        handleLoading('medication');
       }
     })();
     return () => unregister(['chronicMedicationCodes', 'chronicMedicationIds']);

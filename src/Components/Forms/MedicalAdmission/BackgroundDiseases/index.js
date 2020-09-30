@@ -134,6 +134,8 @@ const BackgroundDiseases = ({
           ]);
           handleLoading('backgroundDiseases');
         }
+      } else {
+        handleLoading('backgroundDiseases');
       }
     })();
     return () =>

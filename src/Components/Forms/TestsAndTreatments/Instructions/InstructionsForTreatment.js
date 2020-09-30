@@ -40,7 +40,8 @@ const InstructionsForTreatment = ({
   constantIndicators,
   variantIndicatorsNew,
   language_direction,
-  handleLoading
+  handleLoading,
+  setLoading
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -399,6 +400,7 @@ const InstructionsForTreatment = ({
             onSubmit={onSubmit}
             updateEncounterExtension={updateEncounterExtension}
             disabledOnSubmit={disabledOnSubmit}
+            setLoading={setLoading}
           />
         </Grid>
       </form>

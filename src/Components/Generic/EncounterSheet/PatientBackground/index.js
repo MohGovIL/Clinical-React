@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 import Encounters from 'Components/Generic/EncounterSheet/PatientBackground/Encounters';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 import MedicalIssues from './MedicalIssues';
-import LoadingList from 'Utils/Helpers/loadingCompletion';
 import Loader from 'Assets/Elements/Loader';
 
 const PatientBackground = ({

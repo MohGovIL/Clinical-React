@@ -131,6 +131,8 @@ const Sensitivities = ({
           setValue([{ sensitivities: 'Not known' }]);
           handleLoading('sensitivities');
         }
+      } else {
+        handleLoading('sensitivities');
       }
     })();
     return () => unregister(['sensitivitiesCodes', 'sensitiveConditionsIds']);
