@@ -5,7 +5,7 @@ import Search from './Search';
 import HeaderIcon from './HeaderIcon';
 import VerticalLine from './VerticalLine';
 import notifications from 'Assets/Images/notifications.png';
-import Logo from 'Assets/Images/Logo Area.png';
+import Logo from 'Assets/Images/logo.svg';
 import { connect } from 'react-redux';
 import { logoutAction } from 'Store/Actions/LoginActions/LoginActions';
 import { useTranslation } from 'react-i18next';
