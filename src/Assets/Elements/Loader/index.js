@@ -1,9 +1,13 @@
 import React from 'react';
 import { StyledSVG, StyleLoaderBox } from './style';
+import {useTranslation} from "react-i18next";
 
-const Loader = () => {
+const Loader = ({opacity = false}) => {
+
+  const { t } = useTranslation();
+
   return (
-    <StyleLoaderBox>
+    <StyleLoaderBox opacity={opacity} >
       <StyledSVG
         xmlns='http://www.w3.org/2000/svg'
         width='189'

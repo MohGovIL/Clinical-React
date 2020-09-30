@@ -23,6 +23,7 @@ const SaveForm = ({
   onSubmit,
   validationFunction,
   updateEncounterExtension,
+  disabledOnSubmit = false
 }) => {
   const { t } = useTranslation();
 
@@ -84,6 +85,9 @@ const SaveForm = ({
     } else {
       clonePermission = true;
     }
+    if (disabledOnSubmit) {
+      clonePermission = true
+    }
     return clonePermission;
   };
 
@@ -104,15 +108,6 @@ const SaveForm = ({
             letterSpacing={'0.1'}
             onClick={onClickHandler}
             disabled={isDisabled()}
-            // disabled={
-            //   !statuses
-            //     ? false
-            //     : !selectedStatus
-            //     ? true
-            //     : permission === 'write'
-            //     ? false
-            //     : true
-            // }
           >
             {t('Save & Close')}
           </StyledButton>

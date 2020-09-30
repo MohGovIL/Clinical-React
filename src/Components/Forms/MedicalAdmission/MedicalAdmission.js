@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import VisitDetails from 'Components/Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
 import { FormContext, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { StyledForm, StyledRadioGroupChoice } from './Style';
+import { StyledForm, StyledRadioGroupChoice, StyledMedicalAdmission } from './Style';
 import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import NursingAnamnesis from './NursingAnamnesis';
@@ -32,6 +32,8 @@ const MedicalAdmission = ({
   validationFunction,
   functionToRunOnTabChange,
   prevEncounterId,
+  setLoading,
+  setSaveLoading
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -61,6 +63,32 @@ const MedicalAdmission = ({
   //   chronicMedicationCodes: '',
   //   medication: '',
   // });
+
+
+  const [loadingStatus, setLoadingStatus] = useState({
+    'questionnaireResponse': false,
+    'sensitivities':false,
+    'medication':false,
+    'backgroundDiseases':false
+  });
+  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
+
+  useEffect(() => {
+console.log(loadingStatus)
+    for (const val in loadingStatus) {
+      if (!loadingStatus[val]) return;
+    }
+    setLoading(false);
+  }, [loadingStatus]);
+
+  const handleLoading = (componentName) => {
+
+    setLoadingStatus((prev) => {
+      const cloneLoadingStatus = { ...prev }
+      cloneLoadingStatus[componentName] = true;
+      return cloneLoadingStatus
+    });
+  }
 
   const requiredFields = React.useMemo(() => {
     return {
@@ -169,6 +197,8 @@ const MedicalAdmission = ({
   );
   const [prevEncounterResponse, setPrevEncounterResponse] = useState([]);
 
+
+
   useEffect(() => {
     (async () => {
       try {
@@ -213,6 +243,7 @@ const MedicalAdmission = ({
           setQuestionnaireResponseItems(
             normalizedFhirQuestionnaireResponse.items,
           );
+          handleLoading('questionnaireResponse');
         } else if (
           prevEncounterId &&
           qrResponse[1] &&
@@ -224,6 +255,7 @@ const MedicalAdmission = ({
               qrResponse[1].data.entry[1].resource,
             ).items,
           );
+          handleLoading('questionnaireResponse');
         }
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaire' });
@@ -232,6 +264,7 @@ const MedicalAdmission = ({
           { questionnaire: Questionnaire },
           { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
         ]);
+        handleLoading('questionnaireResponse');
       } catch (error) {
         console.log(error);
       }
@@ -259,6 +292,7 @@ const MedicalAdmission = ({
       functionToRunOnTabChange.current = () => [];
       validationFunction.current = () => true;
     };
+    stopSavingProcess();
   }, []);
 
   //Radio buttons for pregnancy
@@ -313,9 +347,22 @@ const MedicalAdmission = ({
     }
   };
 
+  const savingProcess = () => {
+ //   setLoading(true);
+  //  setSaveLoading(() => {return true});
+    setdisabledOnSubmit(true);
+  }
+
+  const stopSavingProcess = () => {
+ //   setLoading(false);
+  //  setSaveLoading(false);
+    setdisabledOnSubmit(false);
+  }
+
   const onSubmit = async (data) => {
     if (!data) data = getValues({ nest: true });
     if (!isRequiredValidation(data)) return;
+    savingProcess();
     try {
       const APIsArray = [];
       const items = data.questionnaire.item.map((i) => {
@@ -644,6 +691,7 @@ const MedicalAdmission = ({
       }
       return APIsArray;
     } catch (error) {
+      stopSavingProcess();
       console.log(error);
     }
   };
@@ -655,7 +703,7 @@ const MedicalAdmission = ({
   }, [encounter.status, permission]);
 
   return (
-    <React.Fragment>
+    <StyledMedicalAdmission>
       <PopUpFormTemplates {...popUpProps} />
       <FormContext
         {...methods}
@@ -695,24 +743,28 @@ const MedicalAdmission = ({
           <Sensitivities
             defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
+            handleLoading={handleLoading}
           />
           <BackgroundDiseases
             defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
+            handleLoading={handleLoading}
           />
           <ChronicMedication
             // defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
+            handleLoading={handleLoading}
           />
           <SaveForm
             encounter={encounter}
             mainStatus={'triaged'}
             onSubmit={onSubmit}
             validationFunction={isRequiredValidation}
+            disabledOnSubmit={disabledOnSubmit}
           />
         </StyledForm>
       </FormContext>
-    </React.Fragment>
+    </StyledMedicalAdmission>
   );
 };
 

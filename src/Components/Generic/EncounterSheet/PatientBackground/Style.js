@@ -5,6 +5,7 @@ import Fade from '@material-ui/core/Fade';
 import ListItem from '@material-ui/core/ListItem';
 
 const StyledPatientBackground = styled.div`
+  position: relative;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;

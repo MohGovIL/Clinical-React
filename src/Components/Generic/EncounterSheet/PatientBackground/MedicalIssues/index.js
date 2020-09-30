@@ -11,7 +11,7 @@ import MedicalIssue from 'Assets/Elements/MedicalIssue';
 import { useTranslation } from 'react-i18next';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 
-const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
+const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading }) => {
   const { t } = useTranslation();
 
   const [patientSensitivities, setPatientSensitivities] = useState([]);
@@ -50,6 +50,8 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
   };
 
   useEffect(() => {
+
+    handleLoading('sensitivities');
     const getMedicalIssues = async () => {
       try {
         const questionnaireResponseArray = [];
@@ -112,8 +114,10 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
               }
             });
             setPatientSensitivities(sensitivesArr);
+            handleLoading('sensitivities');
           } else {
             setPatientSensitivities(null);
+            handleLoading('sensitivities');
           }
           if (backgroundDiseases) {
             const background = await FHIR('Condition', 'doWork', {
@@ -133,8 +137,10 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
               }
             });
             setPatientBackgroundDiseases(backgroundArr);
+            handleLoading('backgroundDiseases');
           } else {
             setPatientBackgroundDiseases(null);
+            handleLoading('backgroundDiseases');
           }
           if (chronicMedication) {
             const chronic = await FHIR('MedicationStatement', 'doWork', {
@@ -156,8 +162,10 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
               }
             });
             setPatientChronicMedications(chronicArr);
+            handleLoading('chronicMedications');
           } else {
             setPatientChronicMedications(null);
+            handleLoading('chronicMedications');
           }
         } else if (prevEncounterId && responses[1] && responses[1].data.total) {
           // There is a prev encounter response
@@ -185,8 +193,10 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
               }
             });
             setPatientSensitivities(sensitivesArr);
+            handleLoading('sensitivities');
           } else {
             setPatientSensitivities(null);
+            handleLoading('sensitivities');
           }
           if (backgroundDiseases) {
             const background = await FHIR('Condition', 'doWork', {
@@ -204,8 +214,10 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
               }
             });
             setPatientBackgroundDiseases(backgroundArr);
+            handleLoading('backgroundDiseases');
           } else {
             setPatientBackgroundDiseases(null);
+            handleLoading('backgroundDiseases');
           }
           if (chronicMedication) {
             const chronic = await FHIR('MedicationStatement', 'doWork', {
@@ -225,8 +237,10 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId }) => {
               }
             });
             setPatientChronicMedications(chronicArr);
+            handleLoading('chronicMedications');
           } else {
             setPatientChronicMedications(null);
+            handleLoading('chronicMedications');
           }
         } else {
           // There is no curr and no prev encounter response

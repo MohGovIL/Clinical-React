@@ -40,6 +40,7 @@ const InstructionsForTreatment = ({
   constantIndicators,
   variantIndicatorsNew,
   language_direction,
+  handleLoading
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -47,6 +48,8 @@ const InstructionsForTreatment = ({
       Instruction: [],
     },
   });
+
+  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
 
   const { handleSubmit, setValue, watch, getValues } = methods;
 
@@ -157,6 +160,7 @@ const InstructionsForTreatment = ({
   const onSubmit = (data) => {
     //  console.log('data', JSON.stringify(data));
     // console.log(isRequiredValidation(data));
+    setdisabledOnSubmit(true)
     const indicatorsFHIRArray = saveIndicatorsOnSubmit();
     const serviceRequestFHIRArray = saveServiceRequestData(data);
     const returnThis = [...indicatorsFHIRArray, ...serviceRequestFHIRArray];
@@ -346,7 +350,9 @@ const InstructionsForTreatment = ({
         );
         if (fhirClinikalCallsAfterAwait['status'] === 200)
           setServiceRequests(fhirClinikalCallsAfterAwait['data']);
+        handleLoading('serviceRequest')
       } catch (err) {
+        handleLoading('serviceRequest')
         console.log(err);
       }
     })();
@@ -392,6 +398,7 @@ const InstructionsForTreatment = ({
             validationFunction={isRequiredValidation}
             onSubmit={onSubmit}
             updateEncounterExtension={updateEncounterExtension}
+            disabledOnSubmit={disabledOnSubmit}
           />
         </Grid>
       </form>

@@ -14,6 +14,7 @@ import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 const BackgroundDiseases = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
+  handleLoading
 }) => {
   const { t } = useTranslation();
   const {
@@ -123,6 +124,7 @@ const BackgroundDiseases = ({
               { background_diseases: 'There are diseases' },
               { backgroundDiseasesIds: conditionIds },
             ]);
+            handleLoading('backgroundDiseases');
           }
         } else if (isBackgroundDiseases === false) {
           setValue([
@@ -130,6 +132,7 @@ const BackgroundDiseases = ({
               background_diseases: 'Usually healthy',
             },
           ]);
+          handleLoading('backgroundDiseases');
         }
       }
     })();

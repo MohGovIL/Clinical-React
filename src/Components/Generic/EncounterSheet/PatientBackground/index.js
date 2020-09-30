@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next';
 import Encounters from 'Components/Generic/EncounterSheet/PatientBackground/Encounters';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 import MedicalIssues from './MedicalIssues';
+import LoadingList from 'Utils/Helpers/loadingCompletion';
+import Loader from 'Assets/Elements/Loader';
 
 const PatientBackground = ({
   encounter,
@@ -25,7 +27,31 @@ const PatientBackground = ({
 
   const [prevEncounters, setPrevEncounters] = React.useState([]);
   const currentDate = moment().utc().format('YYYY-MM-DD');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = React.useState(true);
+  const [loadingStatus, setLoadingStatus] = React.useState({
+    'encounters': false,
+    'sensitivities':false,
+    'backgroundDiseases':false,
+    'chronicMedications':false
+  });
+
+  useEffect(() => {
+
+    for (const val in loadingStatus) {
+      if (!loadingStatus[val]) return;
+    }
+    setLoading(false);
+  }, [loadingStatus]);
+
+  const handleLoading = (componentName) => {
+
+    setLoadingStatus((prev) => {
+      const cloneLoadingStatus = { ...prev }
+      cloneLoadingStatus[componentName] = true;
+      return cloneLoadingStatus
+    });
+  }
+
   const handleCreateData = async (reload) => {
     if (reload) {
       setPrevEncounters([]);
@@ -95,7 +121,10 @@ const PatientBackground = ({
                 oldEncountersArr[id]['documents'].push(data);
               }
             }
+            handleLoading('encounters');
           }
+        } else {
+          handleLoading('encounters');
         }
       }
 
@@ -109,11 +138,16 @@ const PatientBackground = ({
       if (prevEncounters.length === 0) {
         setPrevEncounters(oldEncountersArr);
       }
+    } else {
+      handleLoading('encounters');
     }
   };
   useEffect(() => {
     if (prevEncounters.length === 0) handleCreateData();
+    //loadingHandler.init(['encounters','sensitivities','backgroundDiseases','chronicMedications']);
   }, []);
+
+
 
   return (
     <StyledPatientBackground dir={languageDirection}>
@@ -142,8 +176,11 @@ const PatientBackground = ({
         patientId={patient.id}
         encounterId={encounter.id}
         prevEncounterId={prevEncounterId}
+        handleLoading={handleLoading}
       />
+      {loading && <Loader />}
     </StyledPatientBackground>
+
   );
 };
 

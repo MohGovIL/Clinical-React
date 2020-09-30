@@ -55,6 +55,7 @@ const TestsAndTreatments = ({
   currentUser,
   functionToRunOnTabChange,
   validationFunction,
+  setLoading
 }) => {
   const { t } = useTranslation();
   const [
@@ -70,6 +71,31 @@ const TestsAndTreatments = ({
       Weight: null,
     },
   );
+
+  const [loadingStatus, setLoadingStatus] = useState({
+    'observation': false,
+    'serviceRequest':false
+  });
+  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
+
+  useEffect(() => {
+    console.log(loadingStatus)
+    for (const val in loadingStatus) {
+      if (!loadingStatus[val]) return;
+    }
+    setLoading(false);
+  }, [loadingStatus]);
+
+  const handleLoading = (componentName) => {
+
+    setLoadingStatus((prev) => {
+      const cloneLoadingStatus = { ...prev }
+      cloneLoadingStatus[componentName] = true;
+      return cloneLoadingStatus
+    });
+  }
+
+
   const userDetails = normalizeFhirUser(currentUser);
   const [variantIndicators, setVariantIndicators] = useState(null);
   const variantNewState = [
@@ -322,6 +348,7 @@ const TestsAndTreatments = ({
         });
 
         setVariantIndicators(normalizedVariantObservationTemp);
+        handleLoading('observation');
       } catch (err) {
         console.log(err);
       }
@@ -361,6 +388,7 @@ const TestsAndTreatments = ({
             validationFunction={validationFunction}
             functionToRunOnTabChange={functionToRunOnTabChange}
             permission={permission}
+            handleLoading={handleLoading}
           />
         </React.Fragment>
       ) : null}

@@ -188,7 +188,6 @@ const PatientDataBlock = ({
   };
 
   return (
-      loading ? (<StyledPatientDataBlock><Loader /></StyledPatientDataBlock>) : (
     <StyledPatientDataBlock>
 
       <StyledAvatarIdBlock>
@@ -305,8 +304,8 @@ const PatientDataBlock = ({
       <StyledAdmissionFormButton>
         <CustomizedTableButton height='32px' {...admissionFormButton} />
       </StyledAdmissionFormButton>
+      {loading && <Loader />}
     </StyledPatientDataBlock>
-)
   );
 };
 
