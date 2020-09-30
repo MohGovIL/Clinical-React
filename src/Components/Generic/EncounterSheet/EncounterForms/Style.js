@@ -21,6 +21,7 @@ const StyledPatientFiles = styled.div`
 export default StyledPatientFiles;
 
 export const StyledTabContainer = styled.div`
+  position: relative;
   background-color: #ffffff;
   width: 100%;
   header {

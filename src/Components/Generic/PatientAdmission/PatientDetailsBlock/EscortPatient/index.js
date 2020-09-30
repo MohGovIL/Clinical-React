@@ -15,6 +15,7 @@ const EscortPatient = ({
   isArrivalWay,
   relatedPersonId,
   encounterArrivalWay,
+  handleLoading
 }) => {
   const {
     errors,
@@ -69,6 +70,9 @@ const EscortPatient = ({
             escortMobilePhone: normalizedRelatedPerson.mobilePhone,
             escortName: normalizedRelatedPerson.name,
           });
+          handleLoading('escort');
+        } else {
+          handleLoading('escort');
         }
       } catch (error) {
         console.log(error);

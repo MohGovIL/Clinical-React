@@ -9,7 +9,7 @@ import { FHIR } from 'Utils/Services/FHIR';
 import { useHistory } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import Grid from '@material-ui/core/Grid';
-import Fields from '../../TestsAndTreatments/Instructions/Fields';
+
 
 /**
  * @author Idan Gigi idangi@matrix.co.il
@@ -23,6 +23,8 @@ const SaveForm = ({
   onSubmit,
   validationFunction,
   updateEncounterExtension,
+  disabledOnSubmit = false,
+  setLoading
 }) => {
   const { t } = useTranslation();
 
@@ -58,6 +60,7 @@ const SaveForm = ({
   const onClickHandler = async () => {
     try {
       if (validationFunction(getValues({ nest: true })) || true) {
+        setLoading(true);
         const onSubmitPromises = onSubmit(getValues({ nest: true }));
 
         if (Array.isArray(onSubmitPromises)) {
@@ -84,6 +87,9 @@ const SaveForm = ({
     } else {
       clonePermission = true;
     }
+    if (disabledOnSubmit) {
+      clonePermission = true
+    }
     return clonePermission;
   };
 
@@ -104,15 +110,6 @@ const SaveForm = ({
             letterSpacing={'0.1'}
             onClick={onClickHandler}
             disabled={isDisabled()}
-            // disabled={
-            //   !statuses
-            //     ? false
-            //     : !selectedStatus
-            //     ? true
-            //     : permission === 'write'
-            //     ? false
-            //     : true
-            // }
           >
             {t('Save & Close')}
           </StyledButton>

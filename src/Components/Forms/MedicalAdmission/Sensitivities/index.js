@@ -14,6 +14,7 @@ import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEnti
 const Sensitivities = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
+  handleLoading
 }) => {
   const { t } = useTranslation();
   const {
@@ -124,10 +125,14 @@ const Sensitivities = ({
               { sensitivities: 'Known' },
               { sensitiveConditionsIds: conditionIds },
             ]);
+            handleLoading('sensitivities');
           }
         } else if (isSensitive === false) {
           setValue([{ sensitivities: 'Not known' }]);
+          handleLoading('sensitivities');
         }
+      } else {
+        handleLoading('sensitivities');
       }
     })();
     return () => unregister(['sensitivitiesCodes', 'sensitiveConditionsIds']);

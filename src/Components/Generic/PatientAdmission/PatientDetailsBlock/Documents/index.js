@@ -14,7 +14,7 @@ import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
 import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
-const Documents = ({ eid, pid }) => {
+const Documents = ({ eid, pid, handleLoading }) => {
   const { t } = useTranslation();
   const { setValue, register, unregister, isCommitmentForm } = useFormContext();
 
@@ -253,6 +253,9 @@ const Documents = ({ eid, pid }) => {
           }
         }
         setDocuments(documentsArray);
+        handleLoading('documents');
+      } else {
+        handleLoading('documents');
       }
     })();
     return () => {

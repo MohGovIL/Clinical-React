@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import VisitDetails from 'Components/Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
 import { FormContext, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { StyledForm, StyledRadioGroupChoice } from './Style';
+import { StyledForm, StyledRadioGroupChoice, StyledMedicalAdmission } from './Style';
 import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import NursingAnamnesis from './NursingAnamnesis';
@@ -32,6 +32,7 @@ const MedicalAdmission = ({
   validationFunction,
   functionToRunOnTabChange,
   prevEncounterId,
+  setLoading
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -61,6 +62,35 @@ const MedicalAdmission = ({
   //   chronicMedicationCodes: '',
   //   medication: '',
   // });
+
+  /*
+  * setLoading - hide/show loader
+  * loadingStatus - stores the status of the loading of the component in the screen
+  * handleLoading update the status of the loading
+  * */
+  const [loadingStatus, setLoadingStatus] = useState({
+    'questionnaireResponse': false,
+    'sensitivities':false,
+    'medication':false,
+    'backgroundDiseases':false
+  });
+  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
+
+  useEffect(() => {
+    for (const val in loadingStatus) {
+      if (!loadingStatus[val]) return;
+    }
+    setLoading(false);
+  }, [loadingStatus]);
+
+  const handleLoading = (componentName) => {
+
+    setLoadingStatus((prev) => {
+      const cloneLoadingStatus = { ...prev }
+      cloneLoadingStatus[componentName] = true;
+      return cloneLoadingStatus
+    });
+  }
 
   const requiredFields = React.useMemo(() => {
     return {
@@ -169,6 +199,8 @@ const MedicalAdmission = ({
   );
   const [prevEncounterResponse, setPrevEncounterResponse] = useState([]);
 
+
+
   useEffect(() => {
     (async () => {
       try {
@@ -213,6 +245,9 @@ const MedicalAdmission = ({
           setQuestionnaireResponseItems(
             normalizedFhirQuestionnaireResponse.items,
           );
+          register({ name: 'currentQuestionnaireItems' });
+          setValue([{currentQuestionnaireItems:normalizedFhirQuestionnaireResponse.items}])
+
         } else if (
           prevEncounterId &&
           qrResponse[1] &&
@@ -224,6 +259,7 @@ const MedicalAdmission = ({
               qrResponse[1].data.entry[1].resource,
             ).items,
           );
+
         }
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaire' });
@@ -232,6 +268,7 @@ const MedicalAdmission = ({
           { questionnaire: Questionnaire },
           { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
         ]);
+        handleLoading('questionnaireResponse');
       } catch (error) {
         console.log(error);
       }
@@ -259,6 +296,7 @@ const MedicalAdmission = ({
       functionToRunOnTabChange.current = () => [];
       validationFunction.current = () => true;
     };
+    stopSavingProcess();
   }, []);
 
   //Radio buttons for pregnancy
@@ -313,9 +351,22 @@ const MedicalAdmission = ({
     }
   };
 
+  const savingProcess = () => {
+ //   setLoading(true);
+  //  setSaveLoading(() => {return true});
+    setdisabledOnSubmit(true);
+  }
+
+  const stopSavingProcess = () => {
+ //   setLoading(false);
+  //  setSaveLoading(false);
+    setdisabledOnSubmit(false);
+  }
+
   const onSubmit = async (data) => {
     if (!data) data = getValues({ nest: true });
     if (!isRequiredValidation(data)) return;
+    savingProcess();
     try {
       const APIsArray = [];
       const items = data.questionnaire.item.map((i) => {
@@ -410,7 +461,7 @@ const MedicalAdmission = ({
           },
         }),
       );
-
+      console.log(data);
       //Creating new conditions for sensitivities
       if (data.sensitivities === 'Known') {
         data.sensitivitiesCodes.forEach((sensitivities) => {
@@ -421,7 +472,7 @@ const MedicalAdmission = ({
             if (
               !data.sensitiveConditionsIds[sensitivities] ||
               (data.sensitiveConditionsIds[sensitivities] &&
-                !questionnaireResponseItems.length)
+                !data.currentQuestionnaireItems.length)
             ) {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
@@ -436,7 +487,7 @@ const MedicalAdmission = ({
                       codeCode: sensitivities,
                       patient: patient.id,
                       recorder: store.getState().login.userID,
-                      clinicalStatus: 1,
+                      clinicalStatus: 'active',
                     },
                   },
                 }),
@@ -454,7 +505,7 @@ const MedicalAdmission = ({
                     codeCode: sensitivities,
                     patient: patient.id,
                     recorder: store.getState().login.userID,
-                    clinicalStatus: 1,
+                    clinicalStatus: 'active',
                     encounter: encounter.id,
                   },
                 },
@@ -468,7 +519,7 @@ const MedicalAdmission = ({
           data.sensitivitiesCodes.length &&
           data.sensitiveConditionsIds &&
           Object.keys(data.sensitiveConditionsIds).length &&
-          questionnaireResponseItems.length
+            data.currentQuestionnaireItems.length
         ) {
           data.sensitivitiesCodes.forEach((code) => {
             if (data.sensitiveConditionsIds[code]) {
@@ -499,7 +550,7 @@ const MedicalAdmission = ({
             if (
               !data.backgroundDiseasesIds[backgroundDisease] ||
               (data.backgroundDiseasesIds[backgroundDisease] &&
-                !questionnaireResponseItems.length)
+                !data.currentQuestionnaireItems.length)
             ) {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
@@ -511,7 +562,7 @@ const MedicalAdmission = ({
                       codeCode: backgroundDisease,
                       patient: patient.id,
                       recorder: store.getState().login.userID,
-                      clinicalStatus: 1,
+                      clinicalStatus: 'active',
                       encounter: encounter.id,
                     },
                   },
@@ -530,7 +581,7 @@ const MedicalAdmission = ({
                     codeCode: backgroundDisease,
                     patient: patient.id,
                     recorder: store.getState().login.userID,
-                    clinicalStatus: 1,
+                    clinicalStatus: 'active',
                     encounter: encounter.id,
                   },
                 },
@@ -545,7 +596,7 @@ const MedicalAdmission = ({
           data.backgroundDiseasesCodes.length &&
           data.backgroundDiseasesIds &&
           Object.keys(data.backgroundDiseasesIds).length &&
-          questionnaireResponseItems.length
+            data.currentQuestionnaireItems.length
         ) {
           data.backgroundDiseasesCodes.forEach((code) => {
             if (data.backgroundDiseasesIds[code]) {
@@ -576,7 +627,7 @@ const MedicalAdmission = ({
             if (
               !data.chronicMedicationIds[medication] ||
               (data.backgroundDiseasesIds[medication] &&
-                !questionnaireResponseItems.length)
+                !data.currentQuestionnaireItems.length)
             ) {
               APIsArray.push(
                 FHIR('MedicationStatement', 'doWork', {
@@ -624,7 +675,7 @@ const MedicalAdmission = ({
           data.chronicMedicationCodes.length &&
           data.chronicMedicationIds &&
           Object.keys(data.chronicMedicationIds).length &&
-          questionnaireResponseItems.length
+            data.currentQuestionnaireItems.length
         ) {
           data.chronicMedicationCodes.forEach((code) => {
             if (data.chronicMedicationIds[code]) {
@@ -644,6 +695,7 @@ const MedicalAdmission = ({
       }
       return APIsArray;
     } catch (error) {
+      stopSavingProcess();
       console.log(error);
     }
   };
@@ -655,7 +707,7 @@ const MedicalAdmission = ({
   }, [encounter.status, permission]);
 
   return (
-    <React.Fragment>
+    <StyledMedicalAdmission>
       <PopUpFormTemplates {...popUpProps} />
       <FormContext
         {...methods}
@@ -695,24 +747,29 @@ const MedicalAdmission = ({
           <Sensitivities
             defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
+            handleLoading={handleLoading}
           />
           <BackgroundDiseases
             defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
+            handleLoading={handleLoading}
           />
           <ChronicMedication
             // defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
+            handleLoading={handleLoading}
           />
           <SaveForm
             encounter={encounter}
             mainStatus={'triaged'}
             onSubmit={onSubmit}
             validationFunction={isRequiredValidation}
+            disabledOnSubmit={disabledOnSubmit}
+            setLoading={setLoading}
           />
         </StyledForm>
       </FormContext>
-    </React.Fragment>
+    </StyledMedicalAdmission>
   );
 };
 

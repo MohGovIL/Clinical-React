@@ -25,7 +25,7 @@ const CustomizedTableButton = ({
       variant={variant}
       color={color}
       onClick={onClickHandler}
-      backGroundColor={backGroundColor}
+      backgroundcolor={backGroundColor}
       disabled={mode === 'view'}
       width={width}
       height={height}

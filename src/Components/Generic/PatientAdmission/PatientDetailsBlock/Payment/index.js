@@ -18,7 +18,7 @@ import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeF
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 
-const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
+const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading }) => {
   const { t } = useTranslation();
 
   const {
@@ -243,10 +243,16 @@ const Payment = ({ pid, eid, formatDate, managingOrganization }) => {
                 //   });
               }
             }
+            handleLoading('payment');
+          } else {
+            handleLoading('payment');
           }
+        } else {
+          handleLoading('payment');
         }
       } catch (error) {
         console.log(error);
+        handleLoading('payment');
       }
     })();
     return () => {

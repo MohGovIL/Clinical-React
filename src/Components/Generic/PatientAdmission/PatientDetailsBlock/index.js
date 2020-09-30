@@ -23,6 +23,7 @@ import moment from 'moment';
 import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
+import Loader from 'Assets/Elements/Loader';
 // import { DevTool } from 'react-hook-form-devtools';
 
 const PatientDetailsBlock = ({
@@ -47,6 +48,38 @@ const PatientDetailsBlock = ({
   useEffect(() => {
     setIsDirty(dirty);
   }, [dirty, setIsDirty]);
+
+  /*
+  * setLoading - hide/show loader
+  * loadingStatus - stores the status of the loading of the component in the screen
+  * handleLoading update the status of the loading
+  * */
+  const [loading, setLoading] = useState(true);
+  const [loadingStatus, setLoadingStatus] = useState({
+    'payment': false,
+    'documents':false,
+    'escort':false,
+  });
+
+  useEffect(() => {
+
+    for (const val in loadingStatus) {
+      if (!loadingStatus[val]) return;
+    }
+    setLoading(false);
+  }, [loadingStatus]);
+
+  const handleLoading = (componentName) => {
+
+    setLoadingStatus((prev) => {
+      const cloneLoadingStatus = { ...prev }
+      cloneLoadingStatus[componentName] = true;
+      return cloneLoadingStatus
+    });
+  }
+
+
+
   //Sending the form
   const [requiredErrors, setRequiredErrors] = useState({
     selectTest: '',
@@ -61,6 +94,7 @@ const PatientDetailsBlock = ({
     try {
       const clear = isRequiredValidation(data);
       if (clear) {
+        setLoading(true);
         const APIsArray = [];
         //Updating patient
         let patientPatchParams = {};
@@ -422,6 +456,7 @@ const PatientDetailsBlock = ({
     },
   };
 
+
   const isRequiredValidation = (data) => {
     console.log(data);
     let clean = true;
@@ -459,7 +494,7 @@ const PatientDetailsBlock = ({
   };
   return (
     <React.Fragment>
-      <StyledPatientDetails edit={edit_mode}>
+      <StyledPatientDetails edit={edit_mode} loading={loading}>
         <FormContext
           {...methods}
           requiredErrors={requiredErrors}
@@ -470,6 +505,7 @@ const PatientDetailsBlock = ({
               relatedPersonId={encounterData.relatedPerson}
               isArrivalWay={configuration.clinikal_pa_arrival_way}
               encounterArrivalWay={encounterData.extensionArrivalWay}
+              handleLoading={handleLoading}
             />
             <ContactInformation
               city={patientData.city}
@@ -493,8 +529,9 @@ const PatientDetailsBlock = ({
               eid={encounterData.id}
               formatDate={formatDate}
               managingOrganization={patientData.managingOrganization}
+              handleLoading={handleLoading}
             />
-            <Documents eid={encounterData.id} pid={patientData.id} />
+            <Documents eid={encounterData.id} pid={patientData.id} handleLoading={handleLoading} />
             <StyledFormGroup>
               <Grid container direction='row' justify='flex-end'>
                 <Grid item lg={3} sm={4}>
@@ -502,6 +539,7 @@ const PatientDetailsBlock = ({
                     color='primary'
                     variant='contained'
                     type='submit'
+                    disabled={loading}
                     letterSpacing={'0.1'}>
                     {t('Save & Close')}
                   </StyledButton>
@@ -523,6 +561,7 @@ const PatientDetailsBlock = ({
           </StyledForm>
         </FormContext>
         {/* <DevTool control={control} /> */}
+        {loading ? <Loader /> : null}
       </StyledPatientDetails>
     </React.Fragment>
   );

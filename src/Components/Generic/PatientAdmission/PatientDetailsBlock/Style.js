@@ -33,6 +33,7 @@ export const StyledForm = styled.form`
 `;
 
 export const StyledPatientDetails = styled.div`
+  position: relative;
   display: flex;
   flex-basis: 70%;
   box-shadow: 0 1px 10px 0 rgba(152, 151, 151, 0.3);
@@ -43,7 +44,7 @@ export const StyledPatientDetails = styled.div`
   z-index: ${(props) => (props.edit ? '0' : '2')};
   height: calc(100vh - 88px - 32px);
   margin: 120px 38px 0 38px;
-  overflow-y: scroll;
+  overflow-y: ${(props) => (!props.loading ? 'scroll' : 'hidden')};
   @media (min-width: ${devicesValue.desktop}px) {
     flex-basis: 50%;
   }

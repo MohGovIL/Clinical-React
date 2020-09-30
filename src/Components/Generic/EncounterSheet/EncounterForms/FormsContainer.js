@@ -1,4 +1,4 @@
-import React, { Component, Suspense, useEffect } from 'react';
+import React, {Component, Suspense, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -6,7 +6,9 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import { StyledTabContainer } from './Style';
 import { useTranslation } from 'react-i18next';
-import LazyLoadComponentsToArray from '../../../../Utils/Helpers/lazyLoadComponentsToArray';
+import LazyLoadComponentsToArray from 'Utils/Helpers/lazyLoadComponentsToArray';
+import Loader from 'Assets/Elements/Loader';
+import {StyledMedicalAdmission} from "../../../Forms/MedicalAdmission/Style";
 
 function TabPanel(props) {
   const { children, value, index, dir, ...other } = props;
@@ -44,6 +46,9 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
   const { t } = useTranslation();
 
   const [value, setValue] = React.useState(0);
+  const [loading, setLoading] = useState(true);
+  const [saveLoading, setSaveLoading] = useState(false);
+
   let formComponents = [];
 
   // Instruction for how to work with validations this tab forms
@@ -69,6 +74,7 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
   const functionToRunOnTabChange = React.useRef(() => []);
 
   const handleChange = async (event, newValue) => {
+    setLoading(true);
     if (validationFunctionToRun.current()) {
       const shouldBeArray = functionToRunOnTabChange.current();
       if (Array.isArray(shouldBeArray)) {
@@ -116,6 +122,8 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
                 functionToRunOnTabChange={functionToRunOnTabChange}
                 validationFunction={validationFunctionToRun}
                 permission={tab.permission}
+                setLoading={setLoading}
+                setSaveLoading={setSaveLoading}
               />
             </Suspense>
           </TabPanel>
@@ -128,6 +136,7 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
           />
         );
       })}
+      {loading && <Loader opacity={saveLoading} />}
     </StyledTabContainer>
   );
 };

@@ -11,4 +11,6 @@ export const StyledRadioGroupChoice = styled.div`
 
 export const StyledForm = styled.form``;
 
-
+export const StyledMedicalAdmission = styled.div`
+  position: relative;
+`;
