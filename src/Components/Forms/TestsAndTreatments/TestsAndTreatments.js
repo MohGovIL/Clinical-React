@@ -72,11 +72,15 @@ const TestsAndTreatments = ({
     },
   );
 
+  /*
+  * setLoading - hide/show loader
+  * loadingStatus - stores the status of the loading of the component in the screen
+  * handleLoading update the status of the loading
+  * */
   const [loadingStatus, setLoadingStatus] = useState({
     'observation': false,
     'serviceRequest':false
   });
-  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
 
   useEffect(() => {
     console.log(loadingStatus)

@@ -26,6 +26,12 @@ const PatientBackground = ({
 
   const [prevEncounters, setPrevEncounters] = React.useState([]);
   const currentDate = moment().utc().format('YYYY-MM-DD');
+
+  /*
+  * setLoading - hide/show loader
+  * loadingStatus - stores the status of the loading of the component in the screen
+  * handleLoading update the status of the loading
+  * */
   const [loading, setLoading] = React.useState(true);
   const [loadingStatus, setLoadingStatus] = React.useState({
     'encounters': false,
