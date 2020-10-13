@@ -7,6 +7,7 @@ import GenericRoute from 'Components/Routes/GenericRoute';
 import { Switch, Route } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import Loader from 'Assets/Elements/Loader/loginLoader';
+import ToastMessage from "Assets/Elements/ToastMessage";
 // import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 
 const InitApp = ({ lang_id, lang_code, languageDirection }) => {
@@ -33,6 +34,7 @@ const InitApp = ({ lang_id, lang_code, languageDirection }) => {
           />
         </Switch>
       </Suspense>
+      <ToastMessage  language_direction={languageDirection}/>
     </React.Fragment>
   );
 };

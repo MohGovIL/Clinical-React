@@ -8,7 +8,8 @@ import { StyledTabContainer } from './Style';
 import { useTranslation } from 'react-i18next';
 import LazyLoadComponentsToArray from 'Utils/Helpers/lazyLoadComponentsToArray';
 import Loader from 'Assets/Elements/Loader';
-import {StyledMedicalAdmission} from "../../../Forms/MedicalAdmission/Style";
+import { store } from 'index';
+import { showSnackbar } from "Store/Actions/UiActions/ToastActions.js";
 
 function TabPanel(props) {
   const { children, value, index, dir, ...other } = props;
@@ -79,6 +80,7 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
       const shouldBeArray = functionToRunOnTabChange.current();
       if (Array.isArray(shouldBeArray)) {
         await Promise.all(shouldBeArray);
+        store.dispatch(showSnackbar(t('The form has saved successfully'), 'check'));
       }
       await shouldBeArray;
       setValue(newValue);

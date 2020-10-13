@@ -16,7 +16,7 @@ export const StyleLoaderBox = styled.div`
   display: inline-block;
   justify-content: center;
   align-items: center;
-  z-index: 99999999999;
+  z-index: 1300;
   text-align: center;
   background: ${(props) => (props.opacity ? 'rgba(0, 0, 0, 0.4)' : 'white')};
 `;

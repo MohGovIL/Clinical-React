@@ -1,6 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
+import { store } from 'index';
+import { showSnackbar } from "Store/Actions/UiActions/ToastActions.js";
+
 const PopUpOnExit = ({
   returnFunction,
   exitWithOutSavingFunction,
@@ -8,6 +11,11 @@ const PopUpOnExit = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+
+  const exitFunction = () =>{
+      exitWithOutSavingFunction();
+      store.dispatch(showSnackbar(t('The changes has not saved'), 'error'));
+  }
 
   return (
     <CustomizedPopup
@@ -25,7 +33,7 @@ const PopUpOnExit = ({
           color: 'primary',
           label: 'Exit without saving',
           variant: 'contained',
-          onClickHandler: exitWithOutSavingFunction,
+          onClickHandler: exitFunction,
         },
       ]}>
       {t(

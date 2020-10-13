@@ -6,6 +6,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { store } from 'index';
 import { FormContext, useForm } from 'react-hook-form';
 import Fields from 'Components/Forms/TestsAndTreatments/Instructions/Fields';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
@@ -22,6 +23,7 @@ import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import normalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
 import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { showSnackbar } from "Store/Actions/UiActions/ToastActions.js";
 
 /**
  *
@@ -323,6 +325,7 @@ const InstructionsForTreatment = ({
           encounter: cloneEncounter,
         },
       });
+      store.dispatch(showSnackbar(t('The encounter sheet has saved successfully'), 'check'));
       history.push(`${baseRoutePath()}/generic/patientTracking`);
     } catch (error) {
       console.log(error);
