@@ -11,8 +11,10 @@ import SettingsReducer from 'Store/Reducers/SettingsReducer';
 import FiltersReducer from 'Store/Reducers/FiltersReducer';
 import FhirDataReducer from 'Store/Reducers/FhirDataReducer';
 import ActiveDataReducer from 'Store/Reducers/ActiveDataReducer';
+import UiReducer from "Store/Reducers/UiReducer";
 import 'material-icons-font/material-icons-font.css';
 import thunk from 'redux-thunk';
+
 
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -23,6 +25,7 @@ const rootReducer = combineReducers({
   filters: FiltersReducer,
   fhirData: FhirDataReducer,
   active: ActiveDataReducer,
+  ui: UiReducer
 });
 //Added export so I can use it in story book hopefully. Months later it worked :D. It is also used for to dispatch redux actions outside react component
 export const store = createStore(

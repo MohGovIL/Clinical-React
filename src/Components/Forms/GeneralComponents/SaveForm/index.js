@@ -9,6 +9,7 @@ import { FHIR } from 'Utils/Services/FHIR';
 import { useHistory } from 'react-router-dom';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import Grid from '@material-ui/core/Grid';
+import { showSnackbar } from "Store/Actions/UiActions/ToastActions.js";
 
 
 /**
@@ -49,6 +50,7 @@ const SaveForm = ({
               encounter: cloneEncounter,
             },
           });
+          store.dispatch(showSnackbar(t('The encounter sheet has saved successfully'), 'check'));
           history.push(`${baseRoutePath()}/generic/patientTracking`);
         } catch (error) {
           console.log(error);

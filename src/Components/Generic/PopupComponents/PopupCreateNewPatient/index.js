@@ -24,7 +24,7 @@ import { emptyArrayAll } from 'Utils/Helpers/emptyArray';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { FHIR } from 'Utils/Services/FHIR';
 import moment from 'moment';
-import { store } from '../../../../index';
+import { store } from 'index';
 import normalizeFhirAppointment from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirAppointment';
 import { useHistory } from 'react-router-dom';
 import { validateLuhnAlgorithm } from 'Utils/Helpers/validation/validateLuhnAlgorithm';
@@ -33,6 +33,8 @@ import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
 import normalizeFhirPatient from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirPatient';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 import { fhirFormatDate }  from 'Utils/Helpers/Datetime/formatDate';
+import { showSnackbar } from "Store/Actions/UiActions/ToastActions.js";
+
 
 const PopupCreateNewPatient = ({
   popupOpen,
@@ -44,7 +46,6 @@ const PopupCreateNewPatient = ({
   hideAppointment,
 }) => {
   const { t } = useTranslation();
-
   const [idTypesList, setIdTypesList] = useState([]);
   const [genderList, setGenderList] = useState([]);
   const [kupatHolimList, setKupatHolimList] = useState([]);
@@ -178,15 +179,10 @@ const PopupCreateNewPatient = ({
             })
               .then((saved_patient) => {
                 setFormButtonSave('view');
-                setAlertDuringSave({
-                  ...alertDuringSave,
-                  message: t('Saved successfully'),
-                  severity: 'success',
-                  show: true,
-                });
 
                 if (afterSaveAction === 'normalSave') {
-                  setTimeout(clearPopupCreateNewPatient, 750);
+                  clearPopupCreateNewPatient();
+                  store.dispatch(showSnackbar(t('The patient was successfully admitted'), 'check'));
                 } else if (afterSaveAction === 'newEncounterForNewPatient') {
                   let new_patient = normalizeFhirPatient(saved_patient.data);
                   createNewEncounterForCurrentPatient(
@@ -196,12 +192,7 @@ const PopupCreateNewPatient = ({
                 }
               })
               .catch((error) => {
-                setAlertDuringSave({
-                  ...alertDuringSave,
-                  message: t('Error during create a new patient!'),
-                  severity: 'error',
-                  show: true,
-                });
+                  console.error('Error during create a new patient!');
               });
           } catch (e) {}
         })();
