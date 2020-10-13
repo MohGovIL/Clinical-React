@@ -14,7 +14,7 @@ const PopUpOnExit = ({
 
   const exitFunction = () =>{
       exitWithOutSavingFunction();
-      store.dispatch(showSnackbar(t('The changes has not saved')), 'error');
+      store.dispatch(showSnackbar(t('The changes has not saved'), 'error'));
   }
 
   return (

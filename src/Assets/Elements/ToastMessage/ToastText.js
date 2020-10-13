@@ -9,6 +9,10 @@ const ToastText = ({ message, icon }) => {
     top: '5px'
   };
 
+  const msgStyle = {
+    fontSize: '18px'
+  }
+
   const iconComponent = (icon) => {
     switch(icon) {
       case 'check':
@@ -21,7 +25,7 @@ const ToastText = ({ message, icon }) => {
   }
 
   return(
-    <React.Fragment><i style={iconStyle}>{iconComponent(icon)}</i> <span>{message}</span></React.Fragment>
+    <React.Fragment><i style={iconStyle}>{iconComponent(icon)}</i> <span style={msgStyle}>{message}</span></React.Fragment>
   )
 
 }
