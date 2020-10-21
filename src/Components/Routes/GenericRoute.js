@@ -6,6 +6,8 @@ import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 import EncounterSheet from 'Components/Generic/EncounterSheet';
 import PatientAdmission from 'Components/Generic/PatientAdmission';
 import PatientTracking from 'Components/Generic/PatientTracking';
+import PopUpSessionTimeout from "Assets/Elements/PopUpSessionTimeout"
+
 const GenericRoute = ({ isAuth }) => {
   return (
     <Switch>
@@ -28,6 +30,7 @@ const GenericRoute = ({ isAuth }) => {
         isAuth={isAuth}
       />
     </Switch>
+
   );
 };
 

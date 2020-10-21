@@ -119,3 +119,31 @@ export const loginAction = (username, password, history) => {
     }
   };
 };
+
+
+export const restoreSessionAction = (username, password, history) => {
+  return async (dispatch) => {
+    dispatch(loginStartAction());
+    try {
+      let tokenData;
+      if (stateLessOrNot()) {
+        const [api, fhir] = await loginPromise(username, password);
+        document.cookie = `${ApiTokens.API.tokenName}=${api.data.access_token};`;
+        document.cookie = `${ApiTokens.FHIR.tokenName}=${fhir.data.access_token}`;
+      }else {
+        tokenData = await loginPromise(username, password);
+        document.cookie = `${ApiTokens.CSRF.tokenName}=${tokenData.data.csrf_token}`;
+      }
+    } catch (err) {
+      dispatch(loginFailedAction());
+      /*Optional solution dispatch logoutAction and add the 'else' below to logoutAction
+            (not really necessary cuz Auth is false and PrivateRoute got it covered)
+            */
+      if (!stateLessOrNot()) {
+        window.location = `${basePath()}interface/logout.php`;
+      } else {
+        history.push('/');
+      }
+    }
+  };
+};
