@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import HeaderPatient from 'Assets/Elements/HeaderPatient';
-import moment, * as Moment from 'moment';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { devicesValue } from 'Assets/Themes/BreakPoints';
-import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 import StyledEncounterSheet from './Style';
 import PatientDataBlock from './PatientDataBlock';
 import PatientBackground from './PatientBackground';
@@ -20,30 +16,6 @@ const EncounterSheet = ({
   history,
   verticalName,
 }) => {
-  const { t } = useTranslation();
-
-  const isTabletMode = useMediaQuery(
-    `(max-width: ${devicesValue.tabletPortrait}px)`,
-  );
-  const allBreadcrumbs = [
-    {
-      text: t('Encounter sheet'),
-      separator: 'NavigateNextIcon',
-      url: '#',
-    },
-    {
-      text: `${patient.firstName} ${patient.lastName} ${
-        !isTabletMode ? `${t('Encounter date')}: ` : ''
-      } ${Moment(encounter.startTime).format(formatDate)}`,
-      separator: false,
-      url: '#',
-    },
-  ];
-
-  const handleCloseClick = () => {
-    history.push(`/${verticalName}/PatientTracking`);
-  };
-
   const [prevEncounterId, setPrevEncounterId] = useState(null);
 
   useEffect(() => {
@@ -75,11 +47,6 @@ const EncounterSheet = ({
 
   return (
     <React.Fragment>
-      <HeaderPatient
-        breadcrumbs={allBreadcrumbs}
-        languageDirection={languageDirection}
-        onCloseClick={handleCloseClick}
-      />
       <StyledEncounterSheet>
         <PatientDataBlock
           encounter={encounter}
@@ -100,6 +67,7 @@ const EncounterSheet = ({
           patient={patient}
           formatDate={formatDate}
           languageDirection={languageDirection}
+          verticalName={verticalName}
         />
       </StyledEncounterSheet>
     </React.Fragment>
