@@ -31,6 +31,7 @@ const MedicalAdmission = ({
   permission,
   validationFunction,
   functionToRunOnTabChange,
+  isSomethingWasChanged,
   prevEncounterId,
   setLoading
 }) => {
@@ -41,6 +42,38 @@ const MedicalAdmission = ({
   });
 
   const { handleSubmit, register, setValue, unregister, getValues } = methods;
+
+  const [initValueObj, setInitValueObj] = useState({})
+
+  const initValue = (arrayValues) => {
+
+    setInitValueObj((prev) => {
+      const initValues = { ...prev }
+      arrayValues.forEach((val) => {
+          for(const index in val) {
+            if (!initValues.hasOwnProperty(index)) {
+              initValues[index] = val[index];
+            }
+          }
+      })
+      console.log(initValues);
+      return initValues;
+    });
+    setValue(arrayValues);
+    console.log(getValues())
+  }
+
+  const isFormDirty = () => {
+    const currentValues = getValues({ nest: true });
+    console.log(initValueObj)
+    for(const index in initValueObj) {
+      if (JSON.stringify(initValueObj[index]) !== JSON.stringify(currentValues[index]) ) {
+        console.log(`changed - ${index}`)
+        return true
+      }
+    }
+    return false;
+  }
 
   const [requiredErrors, setRequiredErrors] = useState({
     examinationCode: '',
@@ -154,6 +187,7 @@ const MedicalAdmission = ({
   const isRequiredValidation = (data) => {
     let clean = true;
     if (!data) data = getValues({ nest: true });
+    console.log(data);
     const cloneRequiredErrors = { ...requiredErrors };
     for (const fieldKey in requiredFields) {
       if (requiredFields.hasOwnProperty(fieldKey)) {
@@ -246,7 +280,7 @@ const MedicalAdmission = ({
             normalizedFhirQuestionnaireResponse.items,
           );
           register({ name: 'currentQuestionnaireItems' });
-          setValue([{currentQuestionnaireItems:normalizedFhirQuestionnaireResponse.items}])
+          initValue([{currentQuestionnaireItems:normalizedFhirQuestionnaireResponse.items}])
 
         } else if (
           prevEncounterId &&
@@ -264,7 +298,7 @@ const MedicalAdmission = ({
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaire' });
         register({ name: 'questionnaireResponseId' });
-        setValue([
+        initValue([
           { questionnaire: Questionnaire },
           { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
         ]);
@@ -292,9 +326,11 @@ const MedicalAdmission = ({
   useEffect(() => {
     validationFunction.current = isRequiredValidation;
     functionToRunOnTabChange.current = onSubmit;
+    isSomethingWasChanged.current = isFormDirty;
     return () => {
       functionToRunOnTabChange.current = () => [];
       validationFunction.current = () => true;
+      isSomethingWasChanged.current = () => false;
     };
     stopSavingProcess();
   }, []);
@@ -708,6 +744,7 @@ const MedicalAdmission = ({
 
   return (
     <StyledMedicalAdmission>
+      <button onClick={isFormDirty}>check</button>
       <PopUpFormTemplates {...popUpProps} />
       <FormContext
         {...methods}
@@ -727,13 +764,15 @@ const MedicalAdmission = ({
             priority={encounter.priority}
             disableHeaders={false}
             disableButtonIsUrgent={false}
+            initValueFunction={initValue}
           />
           <UrgentAndInsulation
             requiredUrgent
             requiredInsulation
             items={questionnaireResponseItems}
+            initValueFunction={initValue}
           />
-          <NursingAnamnesis />
+          <NursingAnamnesis initValueFunction={initValue} />
           {/*need to make a new component for radio select*/}
           {(patient.gender === 'female' || patient.gender === 'other') && (
             <StyledRadioGroupChoice>
@@ -748,16 +787,19 @@ const MedicalAdmission = ({
             defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
             handleLoading={handleLoading}
+            initValueFunction={initValue}
           />
           <BackgroundDiseases
             defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
             handleLoading={handleLoading}
+            initValueFunction={initValue}
           />
           <ChronicMedication
             // defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
             handleLoading={handleLoading}
+            initValueFunction={initValue}
           />
           <SaveForm
             encounter={encounter}

@@ -40,7 +40,7 @@ const PatientDetailsBlock = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
-  const { handleSubmit, formState } = methods;
+  const { handleSubmit, formState, setValue } = methods;
   // Giving the patientAdmission if the form is dirty
   // meaning that there has been changes in the form
   const { dirty } = formState;
@@ -523,6 +523,7 @@ const PatientDetailsBlock = ({
               priority={encounterData.priority}
               disableHeaders={false}
               disableButtonIsUrgent={false}
+              initValueFunction={setValue}
             />
             <Payment
               pid={patientData.id}

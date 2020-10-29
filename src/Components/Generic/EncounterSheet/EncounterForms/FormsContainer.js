@@ -72,6 +72,7 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
   // Sorry for this long description. Hopefully it will be easy to understand.
 
   const validationFunctionToRun = React.useRef(() => true);
+  const isSomethingWasChanged = React.useRef(() => false);
   const functionToRunOnTabChange = React.useRef(() => []);
 
   const handleChange = async (event, newValue) => {
@@ -123,6 +124,7 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
                 prevEncounterId={prevEncounterId}
                 functionToRunOnTabChange={functionToRunOnTabChange}
                 validationFunction={validationFunctionToRun}
+                isSomethingWasChanged={isSomethingWasChanged}
                 permission={tab.permission}
                 setLoading={setLoading}
                 setSaveLoading={setSaveLoading}
