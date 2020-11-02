@@ -74,9 +74,26 @@ const MedicalAdmission = ({
   * */
   const isFormDirty = () => {
     const currentValues = getValues({ nest: true });
+
+    const emptyInFirst = [
+      'sensitivities',
+      'medication',
+      'background_diseases',
+      'isPregnancy'
+    ];
+    for (const elem of emptyInFirst) {
+      if (
+        typeof currentValues[elem] !== 'undefined' &&
+        currentValues[elem].length > 0 &&
+        typeof initValueObj[elem] === 'undefined'
+      ) {
+        return true;
+      }
+    }
+
     for (const index in initValueObj) {
       if (
-        (typeof initValueObj[index] === "undefined" && currentValues[index].length > 0)
+        (typeof initValueObj[index] === "undefined" && (typeof initValueObj[index] !== "undefined" && currentValues[index].length > 0))
         || (typeof initValueObj[index] !== "undefined" && JSON.stringify(initValueObj[index]) !== JSON.stringify(currentValues[index]))
       ) {
         console.log(`changed - ${index}`);
