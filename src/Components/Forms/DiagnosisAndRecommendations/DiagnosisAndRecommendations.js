@@ -115,6 +115,7 @@ const DiagnosisAndRecommendations = ({
   };
 
   useEffect(() => {
+    //set new isFormDirty function in the ref from the pppparent  EncounterForms/index.js
     isSomethingWasChanged.current = isFormDirty;
   }, [initValueObj]);
 
