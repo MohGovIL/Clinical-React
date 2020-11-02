@@ -8,7 +8,7 @@ import { Grid } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext } from 'react-hook-form';
 
-const DiagnosisAndTreatment = () => {
+const DiagnosisAndTreatment = ({ initValueFunction }) => {
   const { t } = useTranslation();
   const {
     permission,
@@ -36,7 +36,7 @@ const DiagnosisAndTreatment = () => {
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
-        defaultContext: getValues({nest: true})[name],
+        defaultContext: getValues({ nest: true })[name],
       };
     });
   };
@@ -50,13 +50,19 @@ const DiagnosisAndTreatment = () => {
         if (item.answer) {
           switch (item.linkId) {
             case '1':
-              setValue('findingsDetails', item.answer[0].valueString);
+              initValueFunction([
+                { findingsDetails: item.answer[0].valueString },
+              ]);
               break;
             case '2':
-              setValue('diagnosisDetails', item.answer[0].valueString);
+              initValueFunction([
+                { diagnosisDetails: item.answer[0].valueString },
+              ]);
               break;
             case '3':
-              setValue('treatmentDetails', item.answer[0].valueString);
+              initValueFunction([
+                { treatmentDetails: item.answer[0].valueString },
+              ]);
               break;
             default:
               break;

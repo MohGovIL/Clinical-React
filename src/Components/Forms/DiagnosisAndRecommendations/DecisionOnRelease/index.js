@@ -6,7 +6,7 @@ import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { useFormContext, Controller } from 'react-hook-form';
 import { StyledDivider } from '../Style';
-const RecommendationsOnRelease = () => {
+const RecommendationsOnRelease = ({ initValueFunction }) => {
   const { t } = useTranslation();
   const {
     register,
@@ -39,14 +39,16 @@ const RecommendationsOnRelease = () => {
           switch (item.linkId) {
             case '5':
               setDecision(item.answer[0].valueString);
-              setValue('decision', item.answer[0].valueString);
+              initValueFunction([{ decision: item.answer[0].valueString }]);
               break;
             case '6':
               setEvacuationWay(item.answer[0].valueString);
-              setValue('evacuationWay', item.answer[0].valueString);
+              initValueFunction([
+                { evacuationWay: item.answer[0].valueString },
+              ]);
               break;
             case '7':
-              setValue('numberOfDays', item.answer[0].valueString);
+              initValueFunction([{ numberOfDays: item.answer[0].valueString }]);
               break;
             default:
               break;

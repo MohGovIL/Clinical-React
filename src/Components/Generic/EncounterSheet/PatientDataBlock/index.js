@@ -23,12 +23,14 @@ import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 import Grid from '@material-ui/core/Grid';
 import { useHistory } from 'react-router-dom';
 import isAllowed from 'Utils/Helpers/isAllowed';
+import {onExitStandAlone} from 'Assets/Elements/PopUpOnExit/OnExitStandAlone';
 
 const PatientDataBlock = ({
   encounter,
   patient,
   languageDirection,
   formatDate,
+  isSomethingWasChanged
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -160,9 +162,15 @@ const PatientDataBlock = ({
         label: t('To admission form'),
         variant: 'text',
         color: 'primary',
-        onClickHandler: () =>
-          gotToPatientAdmission(encounter, patient, history), //user function
-      });
+        onClickHandler: () => {
+          if (isSomethingWasChanged.current()) {
+            //need to create custom popup because if the popup is part of the component the lazy load form rerender when the popup open
+            onExitStandAlone(() => gotToPatientAdmission(encounter, patient, history))
+          } else {
+             gotToPatientAdmission(encounter, patient, history) //user function
+          }
+        }
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encounter, patient]);

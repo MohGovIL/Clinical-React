@@ -14,7 +14,12 @@ import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalize
 import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/VirtualizedListbox';
 import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoComplete';
 
-const DrugRecommendation = ({ encounterId, formatDate, handleLoading}) => {
+const DrugRecommendation = ({
+  encounterId,
+  formatDate,
+  handleLoading,
+  initValueFunction,
+}) => {
   const { t } = useTranslation();
   const {
     control,
@@ -150,6 +155,7 @@ const DrugRecommendation = ({ encounterId, formatDate, handleLoading}) => {
       if (res.status === 200 && res.data.total) {
         // medicationUniqData
         // [index]: medicationId
+        let initData = [];
         res.data.entry.forEach((medicationRequest, medicationRequestIndex) => {
           if (medicationRequest.resource) {
             const normalizedFhirMedicationRequest = normalizeFhirMedicationRequest(
@@ -242,6 +248,9 @@ const DrugRecommendation = ({ encounterId, formatDate, handleLoading}) => {
                     normalizedFhirMedicationRequest.note || '',
                 },
               ]);
+              initData.push(
+                formStructure(normalizedFhirMedicationRequest, duration),
+              );
             } else {
               append({
                 drugName:
@@ -259,15 +268,27 @@ const DrugRecommendation = ({ encounterId, formatDate, handleLoading}) => {
                 instructionsForTheDrug:
                   normalizedFhirMedicationRequest.note || '',
               });
+              initData.push(
+                formStructure(normalizedFhirMedicationRequest, duration),
+              );
             }
 
             medicationUniqData[medicationRequestIndex - 1] =
               normalizedFhirMedicationRequest.id;
+          } else {
           }
         });
+        initValueFunction(
+          [
+            {
+              drugRecommendation: initData,
+            },
+          ],
+          false,
+        );
         handleLoading('drugRecommendation');
       }
-      setValue({ medicationRequest: medicationUniqData });
+      initValueFunction([{ medicationRequest: medicationUniqData }]);
       handleLoading('drugRecommendation');
     } catch (error) {
       console.log(error);
@@ -277,6 +298,30 @@ const DrugRecommendation = ({ encounterId, formatDate, handleLoading}) => {
       unregister('medicationRequest');
     };
   }, [encounterId, register, setValue, formatDate, unregister]);
+
+  // only for init data for track changes
+  const formStructure = (normalizedFhirMedicationRequest, duration) => {
+    return {
+      toDate:
+        moment(
+          normalizedFhirMedicationRequest.timingRepeatEnd,
+          'YYYY-MM-DD',
+        ).format(formatDate) || '',
+      instructionsForTheDrug: normalizedFhirMedicationRequest.note || '',
+      drugName: {
+        code:
+          normalizedFhirMedicationRequest.medicationCodeableConceptCode || '',
+        display:
+          normalizedFhirMedicationRequest.medicationCodeableConceptDisplay ||
+          '',
+      },
+      quantity: normalizedFhirMedicationRequest.doseQuantity || '',
+      drugForm: normalizedFhirMedicationRequest.methodCode || '',
+      drugRoute: normalizedFhirMedicationRequest.routeCode || '',
+      intervals: normalizedFhirMedicationRequest.timingCode || '',
+      duration,
+    };
+  };
 
   useEffect(() => {
     fetchDrugsData();

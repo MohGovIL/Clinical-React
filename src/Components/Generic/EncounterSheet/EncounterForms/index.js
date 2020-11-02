@@ -2,13 +2,15 @@ import React from 'react';
 import StyledPatientFiles from './Style';
 import { getForms } from 'Utils/Services/API';
 import FormsContainer from './FormsContainer';
-import PopUpOnExit from 'Assets/Elements/PopUpOnExit';
 import HeaderPatient from 'Assets/Elements/HeaderPatient';
 import { useHistory } from 'react-router-dom';
 import { devicesValue } from 'Assets/Themes/BreakPoints';
 import { useMediaQuery } from '@material-ui/core';
 import * as Moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import {onExitStandAlone} from 'Assets/Elements/PopUpOnExit/OnExitStandAlone'
+
+
 const EncounterForms = ({
   encounter,
   patient,
@@ -16,8 +18,8 @@ const EncounterForms = ({
   formatDate,
   prevEncounterId,
   verticalName,
+  isSomethingWasChanged
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
   const [formsPerSheet, setFormsPerSheet] = React.useState();
   const { t } = useTranslation();
   const history = useHistory();
@@ -40,8 +42,15 @@ const EncounterForms = ({
     },
   ];
 
+
+
   const handleCloseClick = () => {
-    setIsOpen(true);
+    if(isSomethingWasChanged.current()) {
+      //need to create custom popup because if the popup is part of the component the lazy load form rerender when the popup open
+      onExitStandAlone(() => history.push(`/${verticalName}/PatientTracking`))
+    } else {
+      history.push(`/${verticalName}/PatientTracking`)
+    }
   };
 
   React.useEffect(() => {
@@ -59,15 +68,6 @@ const EncounterForms = ({
   }, [encounter.serviceTypeCode, encounter.examinationCode]);
   return (
     <>
-      <PopUpOnExit
-        isOpen={isOpen}
-        exitWithOutSavingFunction={() =>
-          history.push(`/${verticalName}/PatientTracking`)
-        }
-        returnFunction={() => {
-          setIsOpen(false);
-        }}
-      />
       <HeaderPatient
         breadcrumbs={allBreadcrumbs}
         languageDirection={languageDirection}
@@ -79,6 +79,7 @@ const EncounterForms = ({
             dir={languageDirection}
             tabs={formsPerSheet}
             prevEncounterId={prevEncounterId}
+            isSomethingWasChanged={isSomethingWasChanged}
           />
         ) : null}
       </StyledPatientFiles>

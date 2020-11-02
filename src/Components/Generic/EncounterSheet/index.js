@@ -17,7 +17,7 @@ const EncounterSheet = ({
   verticalName,
 }) => {
   const [prevEncounterId, setPrevEncounterId] = useState(null);
-
+  const isSomethingWasChanged = React.useRef(() => false);
   useEffect(() => {
     (async () => {
       try {
@@ -53,6 +53,7 @@ const EncounterSheet = ({
           patient={patient}
           formatDate={formatDate}
           languageDirection={languageDirection}
+          isSomethingWasChanged={isSomethingWasChanged}
         />
         <PatientBackground
           prevEncounterId={prevEncounterId}
@@ -68,6 +69,7 @@ const EncounterSheet = ({
           formatDate={formatDate}
           languageDirection={languageDirection}
           verticalName={verticalName}
+          isSomethingWasChanged={isSomethingWasChanged}
         />
       </StyledEncounterSheet>
     </React.Fragment>

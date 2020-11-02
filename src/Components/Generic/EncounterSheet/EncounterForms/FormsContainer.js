@@ -43,7 +43,7 @@ function allyProps(index) {
   };
 }
 /*[{"component":"MedicalAdmissionForm","form_name":"Medical Admission","order":"1","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Tests and Treatments","order":"2","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Diagnosis and Recommendations","order":"3","permission":"write"}]*/
-const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
+const FormsContainer = ({ tabs, dir, prevEncounterId, isSomethingWasChanged }) => {
   const { t } = useTranslation();
 
   const [value, setValue] = React.useState(0);
@@ -72,14 +72,13 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
   // Sorry for this long description. Hopefully it will be easy to understand.
 
   const validationFunctionToRun = React.useRef(() => true);
-  const isSomethingWasChanged = React.useRef(() => false);
   const functionToRunOnTabChange = React.useRef(() => []);
 
   const handleChange = async (event, newValue) => {
-    setLoading(true);
     if (validationFunctionToRun.current()) {
+      setLoading(true);
       const shouldBeArray = functionToRunOnTabChange.current();
-      if (Array.isArray(shouldBeArray)) {
+      if (Array.isArray(shouldBeArray) && shouldBeArray.length > 0) {
         await Promise.all(shouldBeArray);
         store.dispatch(showSnackbar(t('The form has saved successfully'), 'check'));
       }

@@ -4,7 +4,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import VisitDetails from 'Components/Generic/PatientAdmission/PatientDetailsBlock/VisitDetails';
 import { FormContext, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { StyledForm, StyledRadioGroupChoice, StyledMedicalAdmission } from './Style';
+import {
+  StyledForm,
+  StyledRadioGroupChoice,
+  StyledMedicalAdmission,
+} from './Style';
 import RadioGroupChoice from 'Assets/Elements/RadioGroupChoice';
 import PopUpFormTemplates from 'Components/Generic/PopupComponents/PopUpFormTemplates';
 import NursingAnamnesis from './NursingAnamnesis';
@@ -18,8 +22,7 @@ import { CheckBox, CheckBoxOutlineBlankOutlined } from '@material-ui/icons';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 import SaveForm from '../GeneralComponents/SaveForm';
 import { store } from 'index';
-import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
-
+import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 
 const MedicalAdmission = ({
   patient,
@@ -33,7 +36,7 @@ const MedicalAdmission = ({
   functionToRunOnTabChange,
   isSomethingWasChanged,
   prevEncounterId,
-  setLoading
+  setLoading,
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -43,37 +46,53 @@ const MedicalAdmission = ({
 
   const { handleSubmit, register, setValue, unregister, getValues } = methods;
 
-  const [initValueObj, setInitValueObj] = useState({})
+  /*
+  * <FORM DIRTY FUNCTIONS>
+  * */
+  const [initValueObj, setInitValueObj] = useState({});
 
+  /*
+  * Save all the init value in the state than call to setValue
+  * */
   const initValue = (arrayValues) => {
-
     setInitValueObj((prev) => {
-      const initValues = { ...prev }
+      const initValues = { ...prev };
       arrayValues.forEach((val) => {
-          for(const index in val) {
-            if (!initValues.hasOwnProperty(index)) {
-              initValues[index] = val[index];
-            }
+        for (const index in val) {
+          if (!initValues.hasOwnProperty(index)) {
+            initValues[index] = val[index];
           }
-      })
-      console.log(initValues);
+        }
+      });
       return initValues;
     });
     setValue(arrayValues);
-    console.log(getValues())
-  }
+  };
 
+  /*
+  * compare initValueObj with currentValues and find changes
+  * */
   const isFormDirty = () => {
     const currentValues = getValues({ nest: true });
-    console.log(initValueObj)
-    for(const index in initValueObj) {
-      if (JSON.stringify(initValueObj[index]) !== JSON.stringify(currentValues[index]) ) {
-        console.log(`changed - ${index}`)
-        return true
+    for (const index in initValueObj) {
+      if (
+        (typeof initValueObj[index] === "undefined" && currentValues[index].length > 0)
+        || (typeof initValueObj[index] !== "undefined" && JSON.stringify(initValueObj[index]) !== JSON.stringify(currentValues[index]))
+      ) {
+        console.log(`changed - ${index}`);
+        return true;
       }
     }
     return false;
-  }
+  };
+
+  useEffect(() => {
+    isSomethingWasChanged.current = isFormDirty;
+  }, [initValueObj]);
+
+  /*
+ * </END FORM DIRTY FUNCTIONS>
+ * */
 
   const [requiredErrors, setRequiredErrors] = useState({
     examinationCode: '',
@@ -97,17 +116,17 @@ const MedicalAdmission = ({
   // });
 
   /*
-  * setLoading - hide/show loader
-  * loadingStatus - stores the status of the loading of the component in the screen
-  * handleLoading update the status of the loading
-  * */
+   * setLoading - hide/show loader
+   * loadingStatus - stores the status of the loading of the component in the screen
+   * handleLoading update the status of the loading
+   * */
   const [loadingStatus, setLoadingStatus] = useState({
-    'questionnaireResponse': false,
-    'sensitivities':false,
-    'medication':false,
-    'backgroundDiseases':false
+    questionnaireResponse: false,
+    sensitivities: false,
+    medication: false,
+    backgroundDiseases: false,
   });
-  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
+  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false);
 
   useEffect(() => {
     for (const val in loadingStatus) {
@@ -117,13 +136,12 @@ const MedicalAdmission = ({
   }, [loadingStatus]);
 
   const handleLoading = (componentName) => {
-
     setLoadingStatus((prev) => {
-      const cloneLoadingStatus = { ...prev }
+      const cloneLoadingStatus = { ...prev };
       cloneLoadingStatus[componentName] = true;
-      return cloneLoadingStatus
+      return cloneLoadingStatus;
     });
-  }
+  };
 
   const requiredFields = React.useMemo(() => {
     return {
@@ -233,10 +251,11 @@ const MedicalAdmission = ({
   );
   const [prevEncounterResponse, setPrevEncounterResponse] = useState([]);
 
-
-
   useEffect(() => {
     (async () => {
+      initValue([
+        { reasonForReferralDetails: encounter.extensionReasonCodeDetails },
+      ])
       try {
         let normalizedFhirQuestionnaireResponse = {};
         const q = await FHIR('Questionnaire', 'doWork', {
@@ -280,8 +299,12 @@ const MedicalAdmission = ({
             normalizedFhirQuestionnaireResponse.items,
           );
           register({ name: 'currentQuestionnaireItems' });
-          initValue([{currentQuestionnaireItems:normalizedFhirQuestionnaireResponse.items}])
-
+          initValue([
+            {
+              currentQuestionnaireItems:
+                normalizedFhirQuestionnaireResponse.items,
+            },
+          ]);
         } else if (
           prevEncounterId &&
           qrResponse[1] &&
@@ -293,7 +316,6 @@ const MedicalAdmission = ({
               qrResponse[1].data.entry[1].resource,
             ).items,
           );
-
         }
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaire' });
@@ -326,7 +348,6 @@ const MedicalAdmission = ({
   useEffect(() => {
     validationFunction.current = isRequiredValidation;
     functionToRunOnTabChange.current = onSubmit;
-    isSomethingWasChanged.current = isFormDirty;
     return () => {
       functionToRunOnTabChange.current = () => [];
       validationFunction.current = () => true;
@@ -388,184 +409,161 @@ const MedicalAdmission = ({
   };
 
   const savingProcess = () => {
- //   setLoading(true);
-  //  setSaveLoading(() => {return true});
+    //   setLoading(true);
+    //  setSaveLoading(() => {return true});
     setdisabledOnSubmit(true);
-  }
+  };
 
   const stopSavingProcess = () => {
- //   setLoading(false);
-  //  setSaveLoading(false);
+    //   setLoading(false);
+    //  setSaveLoading(false);
     setdisabledOnSubmit(false);
-  }
+  };
 
   const onSubmit = async (data) => {
     if (!data) data = getValues({ nest: true });
     if (!isRequiredValidation(data)) return;
     savingProcess();
-    try {
-      const APIsArray = [];
-      const items = data.questionnaire.item.map((i) => {
-        const item = {
-          linkId: i.linkId,
-          text: i.text,
-        };
-        switch (i.linkId) {
-          case '1':
-            item['answer'] = answerType(i.type, data.isInsulationInstruction);
+    if (isFormDirty()) {
+      try {
+        const APIsArray = [];
+        const items = data.questionnaire.item.map((i) => {
+          const item = {
+            linkId: i.linkId,
+            text: i.text,
+          };
+          switch (i.linkId) {
+            case '1':
+              item['answer'] = answerType(i.type, data.isInsulationInstruction);
 
-            break;
-          case '2':
-            item['answer'] = answerType(
-              i.type,
-              data.insulationInstruction || '',
-            );
-            break;
-          case '3':
-            item['answer'] = answerType(i.type, data.nursingDetails);
-            break;
-          case '4':
-            item['answer'] = answerType(
-              i.type,
-              data.isPregnancy === 'Yes' ? true : false,
-            );
-            break;
-          case '5':
-            item['answer'] = answerType(
-              i.type,
-              data.sensitivities === 'Known' ? true : false,
-            );
-            break;
-          case '6':
-            item['answer'] = answerType(
-              i.type,
-              data.background_diseases === 'There are diseases' ? true : false,
-            );
-            break;
-          case '7':
-            item['answer'] = answerType(
-              i.type,
-              data.medication === 'Exist' ? true : false,
-            );
-            break;
-          default:
-            break;
-        }
-        return item;
-      });
-      if (data.questionnaireResponseId) {
-        APIsArray.push(
-          FHIR('QuestionnaireResponse', 'doWork', {
-            functionName: 'patchQuestionnaireResponse',
-            questionnaireResponseId: data.questionnaireResponseId,
-            questionnaireResponseParams: {
-              item: items,
-            },
-          }),
-        );
-      } else {
-        APIsArray.push(
-          FHIR('QuestionnaireResponse', 'doWork', {
-            functionName: 'createQuestionnaireResponse',
-            functionParams: {
-              questionnaireResponse: {
-                questionnaire: data.questionnaire.id,
-                status: 'completed',
-                patient: patient.id,
-                encounter: encounter.id,
-                author: store.getState().login.userID,
-                authored: fhirFormatDateTime(),
-                source: patient.id,
+              break;
+            case '2':
+              item['answer'] = answerType(
+                i.type,
+                data.insulationInstruction || '',
+              );
+              break;
+            case '3':
+              item['answer'] = answerType(i.type, data.nursingDetails);
+              break;
+            case '4':
+              item['answer'] = answerType(
+                i.type,
+                data.isPregnancy === 'Yes' ? true : false,
+              );
+              break;
+            case '5':
+              item['answer'] = answerType(
+                i.type,
+                data.sensitivities === 'Known' ? true : false,
+              );
+              break;
+            case '6':
+              item['answer'] = answerType(
+                i.type,
+                data.background_diseases === 'There are diseases' ? true : false,
+              );
+              break;
+            case '7':
+              item['answer'] = answerType(
+                i.type,
+                data.medication === 'Exist' ? true : false,
+              );
+              break;
+            default:
+              break;
+          }
+          return item;
+        });
+        if (data.questionnaireResponseId) {
+          APIsArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'patchQuestionnaireResponse',
+              questionnaireResponseId: data.questionnaireResponseId,
+              questionnaireResponseParams: {
                 item: items,
               },
+            }),
+          );
+        } else {
+          APIsArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'createQuestionnaireResponse',
+              functionParams: {
+                questionnaireResponse: {
+                  questionnaire: data.questionnaire.id,
+                  status: 'completed',
+                  patient: patient.id,
+                  encounter: encounter.id,
+                  author: store.getState().login.userID,
+                  authored: fhirFormatDateTime(),
+                  source: patient.id,
+                  item: items,
+                },
+              },
+            }),
+          );
+        }
+        const cloneEncounter = {...encounter};
+        cloneEncounter['examinationCode'] = data.examinationCode;
+        cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
+        cloneEncounter['priority'] = data.isUrgent;
+        cloneEncounter['extensionReasonCodeDetails'] =
+          data.reasonForReferralDetails;
+        APIsArray.push(
+          FHIR('Encounter', 'doWork', {
+            functionName: 'updateEncounter',
+            functionParams: {
+              encounterId: encounter.id,
+              encounter: cloneEncounter,
             },
           }),
         );
-      }
-      const cloneEncounter = { ...encounter };
-      cloneEncounter['examinationCode'] = data.examinationCode;
-      cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
-      cloneEncounter['priority'] = data.isUrgent;
-      cloneEncounter['extensionReasonCodeDetails'] =
-        data.reasonForReferralDetails;
-      APIsArray.push(
-        FHIR('Encounter', 'doWork', {
-          functionName: 'updateEncounter',
-          functionParams: {
-            encounterId: encounter.id,
-            encounter: cloneEncounter,
-          },
-        }),
-      );
-      console.log(data);
-      //Creating new conditions for sensitivities
-      if (data.sensitivities === 'Known') {
-        data.sensitivitiesCodes.forEach((sensitivities) => {
-          if (
-            data.sensitiveConditionsIds &&
-            Object.keys(data.sensitiveConditionsIds).length
-          ) {
+        console.log(data);
+        //Creating new conditions for sensitivities
+        if (data.sensitivities === 'Known') {
+          data.sensitivitiesCodes.forEach((sensitivities) => {
             if (
-              !data.sensitiveConditionsIds[sensitivities] ||
-              (data.sensitiveConditionsIds[sensitivities] &&
-                !data.currentQuestionnaireItems.length)
+              data.sensitiveConditionsIds &&
+              Object.keys(data.sensitiveConditionsIds).length
             ) {
+              if (
+                !data.sensitiveConditionsIds[sensitivities] ||
+                (data.sensitiveConditionsIds[sensitivities] &&
+                  !data.currentQuestionnaireItems.length)
+              ) {
+                APIsArray.push(
+                  FHIR('Condition', 'doWork', {
+                    functionName: 'createCondition',
+                    functionParams: {
+                      condition: {
+                        encounter: encounter.id,
+                        categorySystem:
+                          'http://clinikal/condition/category/sensitive',
+                        codeSystem:
+                          'http://clinikal/diagnosis/type/sensitivities',
+                        codeCode: sensitivities,
+                        patient: patient.id,
+                        recorder: store.getState().login.userID,
+                        clinicalStatus: 'active',
+                      },
+                    },
+                  }),
+                );
+              }
+            } else {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionName: 'createCondition',
                   functionParams: {
                     condition: {
-                      encounter: encounter.id,
                       categorySystem:
                         'http://clinikal/condition/category/sensitive',
-                      codeSystem:
-                        'http://clinikal/diagnosis/type/sensitivities',
+                      codeSystem: 'http://clinikal/diagnosis/type/sensitivities',
                       codeCode: sensitivities,
                       patient: patient.id,
                       recorder: store.getState().login.userID,
                       clinicalStatus: 'active',
-                    },
-                  },
-                }),
-              );
-            }
-          } else {
-            APIsArray.push(
-              FHIR('Condition', 'doWork', {
-                functionName: 'createCondition',
-                functionParams: {
-                  condition: {
-                    categorySystem:
-                      'http://clinikal/condition/category/sensitive',
-                    codeSystem: 'http://clinikal/diagnosis/type/sensitivities',
-                    codeCode: sensitivities,
-                    patient: patient.id,
-                    recorder: store.getState().login.userID,
-                    clinicalStatus: 'active',
-                    encounter: encounter.id,
-                  },
-                },
-              }),
-            );
-          }
-        });
-      } else {
-        if (
-          data.sensitivitiesCodes &&
-          data.sensitivitiesCodes.length &&
-          data.sensitiveConditionsIds &&
-          Object.keys(data.sensitiveConditionsIds).length &&
-            data.currentQuestionnaireItems.length
-        ) {
-          data.sensitivitiesCodes.forEach((code) => {
-            if (data.sensitiveConditionsIds[code]) {
-              APIsArray.push(
-                FHIR('Condition', 'doWork', {
-                  functionName: 'patchCondition',
-                  functionParams: {
-                    conditionId: data.sensitiveConditionsIds[code].id,
-                    patchParams: {
-                      clinicalStatus: 'inactive',
                       encounter: encounter.id,
                     },
                   },
@@ -573,21 +571,64 @@ const MedicalAdmission = ({
               );
             }
           });
-        }
-      }
-
-      //Creating new conditions for backgroundDiseases
-      if (data.background_diseases === 'There are diseases') {
-        data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
+        } else {
           if (
-            data.backgroundDiseasesIds &&
-            Object.keys(data.backgroundDiseasesIds).length
+            data.sensitivitiesCodes &&
+            data.sensitivitiesCodes.length &&
+            data.sensitiveConditionsIds &&
+            Object.keys(data.sensitiveConditionsIds).length &&
+            data.currentQuestionnaireItems.length
           ) {
+            data.sensitivitiesCodes.forEach((code) => {
+              if (data.sensitiveConditionsIds[code]) {
+                APIsArray.push(
+                  FHIR('Condition', 'doWork', {
+                    functionName: 'patchCondition',
+                    functionParams: {
+                      conditionId: data.sensitiveConditionsIds[code].id,
+                      patchParams: {
+                        clinicalStatus: 'inactive',
+                        encounter: encounter.id,
+                      },
+                    },
+                  }),
+                );
+              }
+            });
+          }
+        }
+
+        //Creating new conditions for backgroundDiseases
+        if (data.background_diseases === 'There are diseases') {
+          data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
             if (
-              !data.backgroundDiseasesIds[backgroundDisease] ||
-              (data.backgroundDiseasesIds[backgroundDisease] &&
-                !data.currentQuestionnaireItems.length)
+              data.backgroundDiseasesIds &&
+              Object.keys(data.backgroundDiseasesIds).length
             ) {
+              if (
+                !data.backgroundDiseasesIds[backgroundDisease] ||
+                (data.backgroundDiseasesIds[backgroundDisease] &&
+                  !data.currentQuestionnaireItems.length)
+              ) {
+                APIsArray.push(
+                  FHIR('Condition', 'doWork', {
+                    functionParams: {
+                      condition: {
+                        categorySystem:
+                          'http://clinikal/condition/category/medical_problem',
+                        codeSystem: 'http://clinikal/diagnosis/type/bk_diseases',
+                        codeCode: backgroundDisease,
+                        patient: patient.id,
+                        recorder: store.getState().login.userID,
+                        clinicalStatus: 'active',
+                        encounter: encounter.id,
+                      },
+                    },
+                    functionName: 'createCondition',
+                  }),
+                );
+              }
+            } else {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionParams: {
@@ -606,65 +647,66 @@ const MedicalAdmission = ({
                 }),
               );
             }
-          } else {
-            APIsArray.push(
-              FHIR('Condition', 'doWork', {
-                functionParams: {
-                  condition: {
-                    categorySystem:
-                      'http://clinikal/condition/category/medical_problem',
-                    codeSystem: 'http://clinikal/diagnosis/type/bk_diseases',
-                    codeCode: backgroundDisease,
-                    patient: patient.id,
-                    recorder: store.getState().login.userID,
-                    clinicalStatus: 'active',
-                    encounter: encounter.id,
-                  },
-                },
-                functionName: 'createCondition',
-              }),
-            );
-          }
-        });
-      } else {
-        if (
-          data.backgroundDiseasesCodes &&
-          data.backgroundDiseasesCodes.length &&
-          data.backgroundDiseasesIds &&
-          Object.keys(data.backgroundDiseasesIds).length &&
-            data.currentQuestionnaireItems.length
-        ) {
-          data.backgroundDiseasesCodes.forEach((code) => {
-            if (data.backgroundDiseasesIds[code]) {
-              APIsArray.push(
-                FHIR('Condition', 'doWork', {
-                  functionName: 'patchCondition',
-                  functionParams: {
-                    conditionId: data.backgroundDiseasesIds[code].id,
-                    patchParams: {
-                      clinicalStatus: 'inactive',
-                      encounter: encounter.id,
-                    },
-                  },
-                }),
-              );
-            }
           });
-        }
-      }
-
-      // Creating a new medicationStatement
-      if (data.medication === 'Exist') {
-        data.chronicMedicationCodes.forEach((medication) => {
+        } else {
           if (
-            data.chronicMedicationIds &&
-            Object.keys(data.chronicMedicationIds).length
+            data.backgroundDiseasesCodes &&
+            data.backgroundDiseasesCodes.length &&
+            data.backgroundDiseasesIds &&
+            Object.keys(data.backgroundDiseasesIds).length &&
+            data.currentQuestionnaireItems.length
           ) {
+            data.backgroundDiseasesCodes.forEach((code) => {
+              if (data.backgroundDiseasesIds[code]) {
+                APIsArray.push(
+                  FHIR('Condition', 'doWork', {
+                    functionName: 'patchCondition',
+                    functionParams: {
+                      conditionId: data.backgroundDiseasesIds[code].id,
+                      patchParams: {
+                        clinicalStatus: 'inactive',
+                        encounter: encounter.id,
+                      },
+                    },
+                  }),
+                );
+              }
+            });
+          }
+        }
+
+        // Creating a new medicationStatement
+        if (data.medication === 'Exist') {
+          data.chronicMedicationCodes.forEach((medication) => {
             if (
-              !data.chronicMedicationIds[medication] ||
-              (data.backgroundDiseasesIds[medication] &&
-                !data.currentQuestionnaireItems.length)
+              data.chronicMedicationIds &&
+              Object.keys(data.chronicMedicationIds).length
             ) {
+              if (
+                !data.chronicMedicationIds[medication] ||
+                (data.backgroundDiseasesIds[medication] &&
+                  !data.currentQuestionnaireItems.length)
+              ) {
+                APIsArray.push(
+                  FHIR('MedicationStatement', 'doWork', {
+                    functionName: 'createMedicationStatement',
+                    functionParams: {
+                      medicationStatement: {
+                        categorySystem:
+                          'http://clinikal/medicationStatement/category/medication',
+                        status: 'active',
+                        patient: patient.id,
+                        informationSource: store.getState().login.userID,
+                        medicationCodeableConceptCode: medication,
+                        medicationCodeableConceptSystem:
+                          'http://clinikal/valueset/drugs_list',
+                        encounter: encounter.id,
+                      },
+                    },
+                  }),
+                );
+              }
+            } else {
               APIsArray.push(
                 FHIR('MedicationStatement', 'doWork', {
                   functionName: 'createMedicationStatement',
@@ -684,56 +726,38 @@ const MedicalAdmission = ({
                 }),
               );
             }
-          } else {
-            APIsArray.push(
-              FHIR('MedicationStatement', 'doWork', {
-                functionName: 'createMedicationStatement',
-                functionParams: {
-                  medicationStatement: {
-                    categorySystem:
-                      'http://clinikal/medicationStatement/category/medication',
-                    status: 'active',
-                    patient: patient.id,
-                    informationSource: store.getState().login.userID,
-                    medicationCodeableConceptCode: medication,
-                    medicationCodeableConceptSystem:
-                      'http://clinikal/valueset/drugs_list',
-                    encounter: encounter.id,
-                  },
-                },
-              }),
-            );
-          }
-        });
-      } else {
-        if (
-          data.chronicMedicationCodes &&
-          data.chronicMedicationCodes.length &&
-          data.chronicMedicationIds &&
-          Object.keys(data.chronicMedicationIds).length &&
-            data.currentQuestionnaireItems.length
-        ) {
-          data.chronicMedicationCodes.forEach((code) => {
-            if (data.chronicMedicationIds[code]) {
-              FHIR('MedicationStatement', 'doWork', {
-                functionName: 'patchMedicationStatement',
-                functionParams: {
-                  medicationStatementId: data.chronicMedicationIds[code].id,
-                  patchParams: {
-                    status: 'inactive',
-                    encounter: encounter.id,
-                  },
-                },
-              });
-            }
           });
+        } else {
+          if (
+            data.chronicMedicationCodes &&
+            data.chronicMedicationCodes.length &&
+            data.chronicMedicationIds &&
+            Object.keys(data.chronicMedicationIds).length &&
+            data.currentQuestionnaireItems.length
+          ) {
+            data.chronicMedicationCodes.forEach((code) => {
+              if (data.chronicMedicationIds[code]) {
+                FHIR('MedicationStatement', 'doWork', {
+                  functionName: 'patchMedicationStatement',
+                  functionParams: {
+                    medicationStatementId: data.chronicMedicationIds[code].id,
+                    patchParams: {
+                      status: 'inactive',
+                      encounter: encounter.id,
+                    },
+                  },
+                });
+              }
+            });
+          }
         }
+        return APIsArray;
+      } catch (error) {
+        stopSavingProcess();
+        console.log(error);
       }
-      return APIsArray;
-    } catch (error) {
-      stopSavingProcess();
-      console.log(error);
     }
+
   };
 
   const permissionHandler = React.useCallback(() => {
@@ -744,7 +768,6 @@ const MedicalAdmission = ({
 
   return (
     <StyledMedicalAdmission>
-      <button onClick={isFormDirty}>check</button>
       <PopUpFormTemplates {...popUpProps} />
       <FormContext
         {...methods}
