@@ -3,7 +3,7 @@
 import { connect } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import DiagnosisAndTreatment from './DiagnosisAndTreatment';
-import RecommendationsOnRelease from './RecommendationsOnRelease ';
+import RecommendationsOnRelease from './RecommendationsOnRelease';
 import DecisionOnRelease from './DecisionOnRelease';
 import DrugRecommendation from './DrugRecommendation';
 import StyledDiagnosisAndRecommendations from './Style';
