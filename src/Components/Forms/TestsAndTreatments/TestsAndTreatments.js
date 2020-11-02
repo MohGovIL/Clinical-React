@@ -54,6 +54,7 @@ const TestsAndTreatments = ({
   language_direction,
   currentUser,
   functionToRunOnTabChange,
+  isSomethingWasChanged,
   validationFunction,
   setLoading
 }) => {
@@ -71,6 +72,9 @@ const TestsAndTreatments = ({
       Weight: null,
     },
   );
+
+  const [formDirty, setFormDirty] = useState(false);
+
 
   /*
   * setLoading - hide/show loader
@@ -362,7 +366,10 @@ const TestsAndTreatments = ({
   return (
     <StyledTestsAndTreatments>
       {constantIndicators && clinicIndicators ? (
-        <ConstantIndicators constantIndicators={constantIndicators} />
+        <ConstantIndicators
+          constantIndicators={constantIndicators}
+          setFormDirty={setFormDirty}
+        />
       ) : null}
       {clinicIndicators && (variantIndicators || variantIndicatorsNew) ? (
         <React.Fragment>
@@ -383,6 +390,7 @@ const TestsAndTreatments = ({
                 ? variantIndicatorsNew
                 : null
             }
+            setFormDirty={setFormDirty}
           />
 
           <InstructionsForTreatment
@@ -394,6 +402,8 @@ const TestsAndTreatments = ({
             permission={permission}
             handleLoading={handleLoading}
             setLoading={setLoading}
+            isSomethingWasChanged={isSomethingWasChanged}
+            formDirty={formDirty}
           />
         </React.Fragment>
       ) : null}

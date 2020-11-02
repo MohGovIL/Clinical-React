@@ -36,6 +36,7 @@ export default function FormattedInputs({
   value,
   id,
   onChange,
+  onKeyUp,
   label,
   mask,
   name,
@@ -44,6 +45,7 @@ export default function FormattedInputs({
     componenttype,
     value,
     onChange,
+    onKeyUp,
     id,
     label,
     mask,
@@ -60,6 +62,7 @@ export default function FormattedInputs({
               dir={'ltr'}
               value={value}
               onChange={onChange}
+              onKeyUp={onKeyUp}
               name={`textmask-${label}-${id}`}
               id={`formatted-text-mask-input-${label}-${id}`}
               aria-describedby={mask}
@@ -78,6 +81,7 @@ export default function FormattedInputs({
             label={label}
             value={value && value.replace(mask, '')}
             onChange={onChange}
+            onKeyUp={onKeyUp}
             name={name}
             id={`formatted-numberformat-input-${label}-${id}`}
             InputProps={{
@@ -98,6 +102,7 @@ export default function FormattedInputs({
     value,
     id,
     onChange,
+    onKeyUp,
     label,
     name,
   });

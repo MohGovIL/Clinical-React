@@ -14,7 +14,8 @@ import normalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/normali
 const ChronicMedication = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
-  handleLoading
+  handleLoading,
+  initValueFunction
 }) => {
   const { t } = useTranslation();
   const {
@@ -130,14 +131,14 @@ const ChronicMedication = ({
               }
             });
             setSelectedList(medicationCodes);
-            setValue([
+            initValueFunction([
               { medication: 'Exist' },
               { chronicMedicationIds: medicationIds },
             ]);
             handleLoading('medication');
           }
         } else if (isChronicDisease === false) {
-          setValue([{ medication: "Doesn't exist" }]);
+          initValueFunction([{ medication: "Doesn't exist" }]);
           handleLoading('medication');
         }
       } else {

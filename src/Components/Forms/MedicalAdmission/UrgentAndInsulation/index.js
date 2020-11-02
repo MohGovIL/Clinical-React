@@ -6,7 +6,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { StyledInsulation, StyledIsUrgent } from './Style';
 import { useTranslation } from 'react-i18next';
 
-const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items }) => {
+const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items, initValueFunction }) => {
   const { t } = useTranslation();
 
   const { register, watch, setValue, control, permission } = useFormContext();
@@ -56,7 +56,7 @@ const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items }) => {
       }
     });
     setInsulationInstructionState(itemsObj[2]);
-    setValue([
+    initValueFunction([
       {
         isInsulationInstruction: itemsObj[1],
       },

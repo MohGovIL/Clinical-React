@@ -7,7 +7,7 @@ import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import { StyledDivider } from '../Style';
 import { useFormContext } from 'react-hook-form';
-const RecommendationsOnRelease = () => {
+const RecommendationsOnRelease = ({ initValueFunction }) => {
   const { t } = useTranslation();
   const {
     permission,
@@ -34,7 +34,7 @@ const RecommendationsOnRelease = () => {
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
-        defaultContext: instructionsForFurtherTreatment
+        defaultContext: instructionsForFurtherTreatment,
       };
     });
   };
@@ -47,10 +47,11 @@ const RecommendationsOnRelease = () => {
         if (item.answer) {
           switch (item.linkId) {
             case '4':
-              setValue(
-                'instructionsForFurtherTreatment',
-                item.answer[0].valueString,
-              );
+              initValueFunction([
+                {
+                  instructionsForFurtherTreatment: item.answer[0].valueString,
+                },
+              ]);
               break;
             default:
               break;

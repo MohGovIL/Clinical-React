@@ -1,9 +1,9 @@
 //DiagnosisAndRecommendations
 
 import { connect } from 'react-redux';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import DiagnosisAndTreatment from './DiagnosisAndTreatment';
-import RecommendationsOnRelease from './RecommendationsOnRelease ';
+import RecommendationsOnRelease from './RecommendationsOnRelease';
 import DecisionOnRelease from './DecisionOnRelease';
 import DrugRecommendation from './DrugRecommendation';
 import StyledDiagnosisAndRecommendations from './Style';
@@ -15,7 +15,7 @@ import SaveForm from 'Components/Forms/GeneralComponents/SaveForm';
 import * as moment from 'moment';
 import { store } from 'index';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
-import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 
 const DiagnosisAndRecommendations = ({
   patient,
@@ -26,7 +26,8 @@ const DiagnosisAndRecommendations = ({
   permission,
   functionToRunOnTabChange,
   validationFunction,
-  setLoading
+  setLoading,
+  isSomethingWasChanged,
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -51,18 +52,89 @@ const DiagnosisAndRecommendations = ({
   const { t } = useTranslation();
 
   /*
-  * setLoading - hide/show loader
-  * loadingStatus - stores the status of the loading of the component in the screen
-  * handleLoading update the status of the loading
-  * */
-  const [loadingStatus, setLoadingStatus] = useState({
-    'questionnaireResponse': false,
-    'drugRecommendation':false,
-  });
-  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
+   * <FORM DIRTY FUNCTIONS>
+   * */
+  const [initValueObj, setInitValueObj] = useState({});
+
+  /*
+   * Save all the init value in the state than call to setValue
+   * */
+  const initValue = (arrayValues, setVal = true) => {
+    setInitValueObj((prev) => {
+      const initValues = { ...prev };
+      arrayValues.forEach((val) => {
+        for (const index in val) {
+          if (!initValues.hasOwnProperty(index)) {
+            initValues[index] = val[index];
+          }
+        }
+      });
+      return initValues;
+    });
+    if (setVal) {
+      setValue(arrayValues);
+    }
+  };
+
+  /*
+   * compare initValueObj with currentValues and find changes
+   * */
+  const isFormDirty = () => {
+    const currentValues = getValues({ nest: true });
+    console.log(currentValues);
+    console.log(initValueObj);
+
+    const emptyInFirst = [
+      'diagnosisDetails',
+      'findingsDetails',
+      'instructionsForFurtherTreatment',
+      'treatmentDetails',
+      'evacuationWay',
+      'decision',
+    ];
+    for (const elem of emptyInFirst) {
+      if (
+        typeof currentValues[elem] !== 'undefined' &&
+        currentValues[elem].length > 0 &&
+        typeof initValueObj[elem] === 'undefined'
+      ) {
+        return true;
+      }
+    }
+
+    for (const index in initValueObj) {
+      if (
+        JSON.stringify(initValueObj[index]) !==
+        JSON.stringify(currentValues[index])
+      ) {
+        console.log(`changed - ${index}`);
+        return true;
+      }
+    }
+    return false;
+  };
 
   useEffect(() => {
+    //set new isFormDirty function in the ref from the pppparent  EncounterForms/index.js
+    isSomethingWasChanged.current = isFormDirty;
+  }, [initValueObj]);
 
+  /*
+   * </END FORM DIRTY FUNCTIONS>
+   * */
+
+  /*
+   * setLoading - hide/show loader
+   * loadingStatus - stores the status of the loading of the component in the screen
+   * handleLoading update the status of the loading
+   * */
+  const [loadingStatus, setLoadingStatus] = useState({
+    questionnaireResponse: false,
+    drugRecommendation: false,
+  });
+  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false);
+
+  useEffect(() => {
     for (const val in loadingStatus) {
       if (!loadingStatus[val]) return;
     }
@@ -70,14 +142,12 @@ const DiagnosisAndRecommendations = ({
   }, [loadingStatus]);
 
   const handleLoading = (componentName) => {
-
     setLoadingStatus((prev) => {
-      const cloneLoadingStatus = { ...prev }
+      const cloneLoadingStatus = { ...prev };
       cloneLoadingStatus[componentName] = true;
-      return cloneLoadingStatus
+      return cloneLoadingStatus;
     });
-  }
-
+  };
 
   const answerType = (type, data) => {
     if (type === 'string') {
@@ -135,7 +205,7 @@ const DiagnosisAndRecommendations = ({
         const Questionnaire = q.data.entry[1].resource;
         register({ name: 'questionnaire' });
         register({ name: 'questionnaireResponseId' });
-        setValue([
+        initValue([
           { questionnaire: Questionnaire },
           { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
         ]);
@@ -240,138 +310,141 @@ const DiagnosisAndRecommendations = ({
 
   const onSubmit = (data) => {
     setdisabledOnSubmit(true);
-    if (!data) data = getValues({ nest: true });
-    try {
-      const APIsArray = [];
-      const items = data.questionnaire.item.map((i) => {
-        const item = {
-          linkId: i.linkId,
-          text: i.text,
-        };
-        switch (i.linkId) {
-          case '1':
-            if (data.findingsDetails)
-              item['answer'] = answerType(i.type, data.findingsDetails);
-            break;
-          case '2':
-            if (data.diagnosisDetails)
-              item['answer'] = answerType(i.type, data.diagnosisDetails);
-            break;
-          case '3':
-            if (data.treatmentDetails)
-              item['answer'] = answerType(i.type, data.treatmentDetails);
-            break;
-          case '4':
-            if (data.instructionsForFurtherTreatment)
-              item['answer'] = answerType(
-                i.type,
-                data.instructionsForFurtherTreatment,
-              );
-            break;
-          case '5':
-            if (data.decision)
-              item['answer'] = answerType(i.type, data.decision);
-            break;
-          case '6':
-            if (data.evacuationWay)
-              item['answer'] = answerType(i.type, data.evacuationWay);
-            break;
-          case '7':
-            if (data.numberOfDays)
-              item['answer'] = answerType(i.type, data.numberOfDays);
-            break;
-          default:
-            break;
-        }
-        return item;
-      });
-      if (data.questionnaireResponseId) {
-        APIsArray.push(
-          FHIR('QuestionnaireResponse', 'doWork', {
-            functionName: 'patchQuestionnaireResponse',
-            questionnaireResponseId: data.questionnaireResponseId,
-            questionnaireResponseParams: {
-              item: items,
-            },
-          }),
-        );
-      } else {
-        APIsArray.push(
-          FHIR('QuestionnaireResponse', 'doWork', {
-            functionName: 'createQuestionnaireResponse',
-            functionParams: {
-              questionnaireResponse: {
-                questionnaire: data.questionnaire.id,
-                status: 'completed',
-                patient: patient.id,
-                encounter: encounter.id,
-                author: store.getState().login.userID,
-                authored: fhirFormatDateTime(),
-                source: patient.id,
+    isFormDirty();
+    {
+      if (!data) data = getValues({ nest: true });
+      try {
+        const APIsArray = [];
+        const items = data.questionnaire.item.map((i) => {
+          const item = {
+            linkId: i.linkId,
+            text: i.text,
+          };
+          switch (i.linkId) {
+            case '1':
+              if (data.findingsDetails)
+                item['answer'] = answerType(i.type, data.findingsDetails);
+              break;
+            case '2':
+              if (data.diagnosisDetails)
+                item['answer'] = answerType(i.type, data.diagnosisDetails);
+              break;
+            case '3':
+              if (data.treatmentDetails)
+                item['answer'] = answerType(i.type, data.treatmentDetails);
+              break;
+            case '4':
+              if (data.instructionsForFurtherTreatment)
+                item['answer'] = answerType(
+                  i.type,
+                  data.instructionsForFurtherTreatment,
+                );
+              break;
+            case '5':
+              if (data.decision)
+                item['answer'] = answerType(i.type, data.decision);
+              break;
+            case '6':
+              if (data.evacuationWay)
+                item['answer'] = answerType(i.type, data.evacuationWay);
+              break;
+            case '7':
+              if (data.numberOfDays)
+                item['answer'] = answerType(i.type, data.numberOfDays);
+              break;
+            default:
+              break;
+          }
+          return item;
+        });
+        if (data.questionnaireResponseId) {
+          APIsArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'patchQuestionnaireResponse',
+              questionnaireResponseId: data.questionnaireResponseId,
+              questionnaireResponseParams: {
                 item: items,
               },
-            },
-          }),
-        );
-      }
-      if (data.drugRecommendation && data.drugRecommendation.length) {
-        data.drugRecommendation.forEach((drug, drugIndex) => {
-          if (drug.drugName.code) {
-            // There is a drugName and since we check if all required values are filled so I can add that to the APIsArray
-            const medicationRequest = {};
+            }),
+          );
+        } else {
+          APIsArray.push(
+            FHIR('QuestionnaireResponse', 'doWork', {
+              functionName: 'createQuestionnaireResponse',
+              functionParams: {
+                questionnaireResponse: {
+                  questionnaire: data.questionnaire.id,
+                  status: 'completed',
+                  patient: patient.id,
+                  encounter: encounter.id,
+                  author: store.getState().login.userID,
+                  authored: fhirFormatDateTime(),
+                  source: patient.id,
+                  item: items,
+                },
+              },
+            }),
+          );
+        }
+        if (data.drugRecommendation && data.drugRecommendation.length) {
+          data.drugRecommendation.forEach((drug, drugIndex) => {
+            if (drug.drugName.code) {
+              // There is a drugName and since we check if all required values are filled so I can add that to the APIsArray
+              const medicationRequest = {};
 
-            medicationRequest['status'] = 'active';
-            medicationRequest['patient'] = patient.id;
-            medicationRequest['encounter'] = encounter.id;
-            medicationRequest['requester'] = store.getState().login.userID;
-            medicationRequest['recorder'] = store.getState().login.userID;
-            medicationRequest['note'] = drug.instructionsForTheDrug;
-            medicationRequest['routeCode'] = drug.drugRoute;
-            medicationRequest['medicationCodeableConceptCode'] =
-              drug.drugName.code;
-            medicationRequest['medicationCodeableConceptDisplay'] =
-              drug.drugName.display;
-            medicationRequest['timingCode'] = drug.intervals;
-            medicationRequest['doseQuantity'] = drug.quantity;
-            medicationRequest['methodCode'] = drug.drugForm;
-            medicationRequest['timingRepeatStart'] = moment(
-              drug.toDate,
-              formatDate,
-            )
-              .subtract(drug.duration, 'days')
-              .format('YYYY-MM-DD');
-            medicationRequest['timingRepeatEnd'] = moment(
-              drug.toDate,
-              formatDate,
-            ).format('YYYY-MM-DD');
-            medicationRequest['authoredOn'] = fhirFormatDateTime();
+              medicationRequest['status'] = 'active';
+              medicationRequest['patient'] = patient.id;
+              medicationRequest['encounter'] = encounter.id;
+              medicationRequest['requester'] = store.getState().login.userID;
+              medicationRequest['recorder'] = store.getState().login.userID;
+              medicationRequest['note'] = drug.instructionsForTheDrug;
+              medicationRequest['routeCode'] = drug.drugRoute;
+              medicationRequest['medicationCodeableConceptCode'] =
+                drug.drugName.code;
+              medicationRequest['medicationCodeableConceptDisplay'] =
+                drug.drugName.display;
+              medicationRequest['timingCode'] = drug.intervals;
+              medicationRequest['doseQuantity'] = drug.quantity;
+              medicationRequest['methodCode'] = drug.drugForm;
+              medicationRequest['timingRepeatStart'] = moment(
+                drug.toDate,
+                formatDate,
+              )
+                .subtract(drug.duration, 'days')
+                .format('YYYY-MM-DD');
+              medicationRequest['timingRepeatEnd'] = moment(
+                drug.toDate,
+                formatDate,
+              ).format('YYYY-MM-DD');
+              medicationRequest['authoredOn'] = fhirFormatDateTime();
 
-            if (data.medicationRequest && data.medicationRequest[drugIndex]) {
-              APIsArray.push(
-                FHIR('MedicationRequest', 'doWork', {
-                  functionName: 'updateMedicationRequest',
-                  functionParams: {
-                    medicationRequest,
-                    _id: data.medicationRequest[drugIndex],
-                  },
-                }),
-              );
-            } else {
-              APIsArray.push(
-                FHIR('MedicationRequest', 'doWork', {
-                  functionName: 'createMedicationRequest',
-                  functionParams: {
-                    medicationRequest,
-                  },
-                }),
-              );
+              if (data.medicationRequest && data.medicationRequest[drugIndex]) {
+                APIsArray.push(
+                  FHIR('MedicationRequest', 'doWork', {
+                    functionName: 'updateMedicationRequest',
+                    functionParams: {
+                      medicationRequest,
+                      _id: data.medicationRequest[drugIndex],
+                    },
+                  }),
+                );
+              } else {
+                APIsArray.push(
+                  FHIR('MedicationRequest', 'doWork', {
+                    functionName: 'createMedicationRequest',
+                    functionParams: {
+                      medicationRequest,
+                    },
+                  }),
+                );
+              }
             }
-          }
-        });
+          });
+        }
+        return APIsArray;
+      } catch (error) {
+        console.log(error);
       }
-      return APIsArray;
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -429,14 +502,15 @@ const DiagnosisAndRecommendations = ({
         setRequiredErrors={setRequiredErrors}
         questionnaireResponse={normalizedQuestionnaireResponse}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <DiagnosisAndTreatment />
-          <RecommendationsOnRelease />
+          <DiagnosisAndTreatment initValueFunction={initValue} />
+          <RecommendationsOnRelease initValueFunction={initValue} />
           <DrugRecommendation
             encounterId={encounter.id}
             formatDate={formatDate}
             handleLoading={handleLoading}
+            initValueFunction={initValue}
           />
-          <DecisionOnRelease />
+          <DecisionOnRelease initValueFunction={initValue} />
           <SaveForm
             statuses={statuses}
             encounter={encounter}
@@ -445,6 +519,7 @@ const DiagnosisAndRecommendations = ({
             onSubmit={onSubmit}
             disabledOnSubmit={disabledOnSubmit}
             setLoading={setLoading}
+            initValueFunction={initValue}
           />
         </form>
       </FormContext>

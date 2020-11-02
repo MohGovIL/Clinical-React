@@ -38,6 +38,7 @@ const VisitDetails = ({
   serviceTypeCode,
   priority,
   props,
+  initValueFunction
 }) => {
   const { t } = useTranslation();
   const {
@@ -168,7 +169,7 @@ const VisitDetails = ({
   useEffect(() => {
     register({ name: 'serviceTypeCode' });
     register({ name: 'examinationCode' });
-    setValue([
+    initValueFunction([
       { serviceTypeCode },
       { examinationCode },
       { isUrgent: priority > 1 ? true : false },
