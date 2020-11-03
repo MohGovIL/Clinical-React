@@ -8,6 +8,7 @@ import {
   destroyReactNoLetterPopUp,
   showCustomizedPopUp,
 } from 'Utils/Helpers/showCustomizedPopUp';
+import isAllowed from 'Utils/Helpers/isAllowed';
 
 //Waiting for release
 
@@ -85,7 +86,7 @@ export const setPatientDataWaitingForReleaseTableRows = function (
             onClickHandler() {
               goToEncounterSheet(encounter, patient, history);
             },
-            mode,
+            mode: isAllowed('encounter_sheet') === 'hide' ? 'view' : mode,
           });
           break;
         case 'Messages':

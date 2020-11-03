@@ -1,6 +1,7 @@
-import  { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { formatTime } from 'Utils/Helpers/Datetime/formatDate';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
+import isAllowed from 'Utils/Helpers/isAllowed';
 
 // ממתינים לאח\ות
 
@@ -10,7 +11,7 @@ export const setPatientDataWaitingForNurseTableRows = function (
   options,
   history,
   mode,
-  secOptions
+  secOptions,
 ) {
   let result = [];
   let rows = [];
@@ -54,7 +55,7 @@ export const setPatientDataWaitingForNurseTableRows = function (
             onClickHandler() {
               goToEncounterSheet(encounter, patient, history);
             },
-            mode,
+            mode: isAllowed('encounter_sheet') === 'hide' ? 'view' : mode,
           });
           break;
         case 'Messages':
@@ -77,7 +78,7 @@ export const setPatientDataWaitingForNurseTableRows = function (
             text_color: '#076ce9',
             padding: 'default',
             defaultValue:
-                encounter.extensionSecondaryStatus || encounter.status,
+              encounter.extensionSecondaryStatus || encounter.status,
             options: encounter.extensionSecondaryStatus ? secOptions : options,
             align: 'center',
             background_color: '#eaf7ff',

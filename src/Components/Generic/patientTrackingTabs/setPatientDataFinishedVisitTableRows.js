@@ -4,6 +4,7 @@ import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHea
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
 import { formatTime } from 'Utils/Helpers/Datetime/formatDate';
+import isAllowed from 'Utils/Helpers/isAllowed';
 
 // סיימו ביקור
 
@@ -57,7 +58,7 @@ export const setPatientDataFinishedVisitTableRows = function (
             onClickHandler() {
               goToEncounterSheet(encounter, patient, history);
             },
-            mode,
+            mode: !isAllowed('encounter_sheet') ? 'view' : mode,
           });
           break;
         case 'Messages':
@@ -102,7 +103,11 @@ export const setPatientDataFinishedVisitTableRows = function (
             icon_color: '#076ce9',
             langDirection: 'rtl',
             //encounter can reopen only in the closed day
-            mode: moment(encounter.extensionStatusUpdateDate).isBefore(moment().startOf('day')) ? 'view' : this.mode,
+            mode: moment(encounter.extensionStatusUpdateDate).isBefore(
+              moment().startOf('day'),
+            )
+              ? 'view'
+              : this.mode,
           });
           break;
         case 'Cell phone':
