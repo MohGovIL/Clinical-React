@@ -33,7 +33,7 @@ export const setPatientDataWaitingForReleaseTableRows = function (
     'encounterSheet',
   ];
 
-  const changeStatus = async ({ encounter, code }) => {
+  const changeStatus = async ({ encounter, code, existLetter }) => {
     if (!encounter && !code) return;
 
     const answer = await FHIR('Encounter', 'doWork', {
@@ -51,7 +51,9 @@ export const setPatientDataWaitingForReleaseTableRows = function (
       },
     });
     if (answer.status === 200) {
-      destroyReactNoLetterPopUp();
+      if (!existLetter) {
+        destroyReactNoLetterPopUp();
+      }
       return true;
     }
   };
@@ -119,7 +121,7 @@ export const setPatientDataWaitingForReleaseTableRows = function (
                       color: 'primary',
                       label: 'Yes',
                       variant: 'contained',
-                      onClickHandler: () => changeStatus({ encounter, code }),
+                      onClickHandler: () => changeStatus({ encounter, code, existLetter:false }),
                     },
                     {
                       color: 'primary',
@@ -135,7 +137,7 @@ export const setPatientDataWaitingForReleaseTableRows = function (
                     buttonsArr: buttonArr,
                   });
                 } else {
-                  changeStatus(encounter, code);
+                  changeStatus({encounter, code, existLetter:true});
                   return true;
                 }
 

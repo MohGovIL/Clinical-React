@@ -20,7 +20,7 @@ import Payment from './Payment';
 import Documents from './Documents';
 import Grid from '@material-ui/core/Grid';
 import moment from 'moment';
-import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
 import Loader from 'Assets/Elements/Loader';
@@ -50,19 +50,18 @@ const PatientDetailsBlock = ({
   }, [dirty, setIsDirty]);
 
   /*
-  * setLoading - hide/show loader
-  * loadingStatus - stores the status of the loading of the component in the screen
-  * handleLoading update the status of the loading
-  * */
+   * setLoading - hide/show loader
+   * loadingStatus - stores the status of the loading of the component in the screen
+   * handleLoading update the status of the loading
+   * */
   const [loading, setLoading] = useState(true);
   const [loadingStatus, setLoadingStatus] = useState({
-    'payment': false,
-    'documents':false,
-    'escort':false,
+    payment: false,
+    documents: false,
+    escort: false,
   });
 
   useEffect(() => {
-
     for (const val in loadingStatus) {
       if (!loadingStatus[val]) return;
     }
@@ -70,15 +69,12 @@ const PatientDetailsBlock = ({
   }, [loadingStatus]);
 
   const handleLoading = (componentName) => {
-
     setLoadingStatus((prev) => {
-      const cloneLoadingStatus = { ...prev }
+      const cloneLoadingStatus = { ...prev };
       cloneLoadingStatus[componentName] = true;
-      return cloneLoadingStatus
+      return cloneLoadingStatus;
     });
-  }
-
-
+  };
 
   //Sending the form
   const [requiredErrors, setRequiredErrors] = useState({
@@ -329,68 +325,44 @@ const PatientDetailsBlock = ({
           },
         });
         // TODO: Check if the document came from the server or not if it did don't send it
-        if (data.Referral) {
-          const referral_64Obj = splitBase_64(data.Referral.base_64);
-          const documentReferenceReferral = {
-            encounter: encounterData.id,
-            patient: patientData.id,
-            contentType: referral_64Obj.type,
-            data: referral_64Obj.data,
-            categoryCode: '3',
-            url: data.Referral.name,
-          };
-
-          await FHIR('DocumentReference', 'doWork', {
-            documentReference: documentReferenceReferral,
-            functionName: 'createDocumentReference',
-          });
+        if (data.Referral && data.ReferralChanged) {
+          await saveDocument(data.Referral);
         }
-
         if (
           configuration.clinikal_pa_commitment_form === '1' &&
-          data.Commitment
+          data.Commitment &&
+          data.CommitmentChanged
         ) {
-          const commitment_64Obj = splitBase_64(data.Commitment.base_64);
-          const documentReferenceCommitment = {
-            encounter: encounterData.id,
-            patient: patientData.id,
-            contentType: commitment_64Obj.type,
-            data: commitment_64Obj.data,
-            categoryCode: '2',
-            url: data.Commitment.name,
-          };
-
-          await FHIR('DocumentReference', 'doWork', {
-            documentReference: documentReferenceCommitment,
-            functionName: 'createDocumentReference',
-          });
+          await saveDocument(data.Commitment);
         }
         if (
           data.additionalDocumentFile_64 &&
-          data.additionalDocumentFile_64.length
+          data.additionalDocumentFile_64Changed
         ) {
-          const additional_64Obj = splitBase_64(
-            data.additionalDocumentFile_64.base_64,
-          );
-          const documentReferenceAdditionalDocument = {
-            encounter: encounterData.id,
-            patient: patientData.id,
-            contentType: additional_64Obj.type,
-            data: additional_64Obj.data,
-            categoryCode: '6',
-            url: data.additionalDocumentFile_64.name,
-          };
-
-          await FHIR('DocumentReference', 'doWork', {
-            documentReference: documentReferenceAdditionalDocument,
-            functionName: 'createDocumentReference',
-          });
+          await saveDocument(data.additionalDocumentFile_64);
         }
         history.push(`${baseRoutePath()}/imaging/patientTracking`);
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const saveDocument = async (object) => {
+    const base_commitment_64Obj = splitBase_64(object.base_64);
+    const documentReferenceCommitment = {
+      encounter: encounterData.id,
+      patient: patientData.id,
+      contentType: base_commitment_64Obj.type,
+      data: base_commitment_64Obj.data,
+      categoryCode: '2',
+      url: object.name,
+    };
+
+    await FHIR('DocumentReference', 'doWork', {
+      documentReference: documentReferenceCommitment,
+      functionName: 'createDocumentReference',
+    });
   };
 
   const requiredFields = {
@@ -455,7 +427,6 @@ const PatientDetailsBlock = ({
       },
     },
   };
-
 
   const isRequiredValidation = (data) => {
     console.log(data);
@@ -532,7 +503,11 @@ const PatientDetailsBlock = ({
               managingOrganization={patientData.managingOrganization}
               handleLoading={handleLoading}
             />
-            <Documents eid={encounterData.id} pid={patientData.id} handleLoading={handleLoading} />
+            <Documents
+              eid={encounterData.id}
+              pid={patientData.id}
+              handleLoading={handleLoading}
+            />
             <StyledFormGroup>
               <Grid container direction='row' justify='flex-end'>
                 <Grid item lg={3} sm={4}>
