@@ -99,6 +99,7 @@ const Sensitivities = ({
           });
           if (conditions.data.total) {
             const conditionCodes = [];
+            const conditionInitIds = [];
             const conditionIds = {};
             conditions.data.entry.forEach((condition) => {
               if (condition.resource) {
@@ -119,12 +120,14 @@ const Sensitivities = ({
                   id: normalizedCondition.id,
                   code: normalizedCondition.codeCode,
                 };
+                conditionInitIds.push(normalizedCondition.codeCode)
               }
             });
             setSelectedList(conditionCodes);
             initValueFunction([
               { sensitivities: 'Known' },
               { sensitiveConditionsIds: conditionIds },
+              { sensitivitiesCodes: conditionInitIds },
             ]);
             handleLoading('sensitivities');
           }

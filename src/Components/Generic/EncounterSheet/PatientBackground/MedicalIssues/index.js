@@ -189,7 +189,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
             const sensitivesArr = [];
             sensitives.data.entry.forEach((sens) => {
               if (sens.resource) {
-                sensitivesArr.push(normalizeFhirCondition(sens.resource));
+                sensitivesArr.push(normalizeFhirCondition(sens.resource)['codeText']);
               }
             });
             setPatientSensitivities(sensitivesArr);
@@ -210,7 +210,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
             const backgroundArr = [];
             background.data.entry.forEach((back) => {
               if (back.resource) {
-                backgroundArr.push(normalizeFhirCondition(back.resource));
+                backgroundArr.push(normalizeFhirCondition(back.resource)['codeText']);
               }
             });
             setPatientBackgroundDiseases(backgroundArr);
@@ -232,7 +232,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
             chronic.data.entry.forEach((chro) => {
               if (chro.resource) {
                 chronicArr.push(
-                  normalizeFhirMedicationStatement(chro.resource),
+                  normalizeFhirMedicationStatement(chro.resource)['medicationCodeableConceptText']
                 );
               }
             });

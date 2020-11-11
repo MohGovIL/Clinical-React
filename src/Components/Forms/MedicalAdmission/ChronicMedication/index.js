@@ -10,12 +10,13 @@ import { FormHelperText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationStatement';
+import { multiMedicationsOptions } from 'Assets/Elements/CustomizedSelectCheckList/RenderTemplates/multiMedicationOptions';
 
 const ChronicMedication = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
   handleLoading,
-  initValueFunction
+  initValueFunction,
 }) => {
   const { t } = useTranslation();
   const {
@@ -103,6 +104,7 @@ const ChronicMedication = ({
           );
           if (medicationStatement.data.total) {
             const medicationCodes = [];
+            const medicationInitIds = [];
             const medicationIds = {};
             medicationStatement.data.entry.forEach((medication) => {
               if (medication.resource) {
@@ -128,12 +130,14 @@ const ChronicMedication = ({
                   code:
                     normalizedMedicationStatement.medicationCodeableConceptCode,
                 };
+                medicationInitIds.push(normalizedMedicationStatement.medicationCodeableConceptCode)
               }
             });
             setSelectedList(medicationCodes);
             initValueFunction([
               { medication: 'Exist' },
               { chronicMedicationIds: medicationIds },
+              { chronicMedicationCodes: medicationInitIds },
             ]);
             handleLoading('medication');
           }
@@ -180,6 +184,7 @@ const ChronicMedication = ({
               options.push(optionObj);
             }),
           );
+          console.log(options);
           setChronicMedicationList(options);
           // setChronicMedicationList(myOptions);
         }
@@ -218,7 +223,7 @@ const ChronicMedication = ({
           //   'The visit reason performed during the visit must be selected'
           // }
           virtual
-          defaultRenderOptionFunction={defaultRenderOptionFunction}
+          defaultRenderOptionFunction={multiMedicationsOptions}
           defaultChipLabelFunction={defaultChipLabelFunction}
           onDeleteChip={onDeleteChipHandler}
         />

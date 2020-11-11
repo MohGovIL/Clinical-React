@@ -114,10 +114,6 @@ const DiagnosisAndRecommendations = ({
     return false;
   };
 
-  useEffect(() => {
-    //set new isFormDirty function in the ref from the pppparent  EncounterForms/index.js
-    isSomethingWasChanged.current = isFormDirty;
-  }, [initValueObj]);
 
   /*
    * </END FORM DIRTY FUNCTIONS>
@@ -451,11 +447,13 @@ const DiagnosisAndRecommendations = ({
   React.useEffect(() => {
     validationFunction.current = isRequiredValidation;
     functionToRunOnTabChange.current = onSubmit;
+    isSomethingWasChanged.current = isFormDirty;
     return () => {
+      isSomethingWasChanged.current = false;
       functionToRunOnTabChange.current = () => [];
       validationFunction.current = () => true;
     };
-  }, []);
+  }, [initValueObj]);
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {

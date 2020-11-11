@@ -98,6 +98,7 @@ const BackgroundDiseases = ({
           });
           if (conditions.data.total) {
             const conditionCodes = [];
+            const conditionInitIds = [];
             const conditionIds = {};
             conditions.data.entry.forEach((condition) => {
               if (condition.resource) {
@@ -118,12 +119,14 @@ const BackgroundDiseases = ({
                   id: normalizedCondition.id,
                   code: normalizedCondition.codeCode,
                 };
+                conditionInitIds.push(normalizedCondition.codeCode)
               }
             });
             setSelectedList(conditionCodes);
             initValueFunction([
               { background_diseases: 'There are diseases' },
               { backgroundDiseasesIds: conditionIds },
+              { backgroundDiseasesCodes: conditionInitIds },
             ]);
             handleLoading('backgroundDiseases');
           }
