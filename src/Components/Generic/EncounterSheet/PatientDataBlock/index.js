@@ -89,7 +89,6 @@ const PatientDataBlock = ({
           {
             functionName: 'getDocumentReference',
             searchParams: {
-              _summary: true,
               encounter: encounter.id,
               patient: patient.id,
             },

@@ -67,7 +67,8 @@ const VirtualizedListBoxWithConfirmButton = React.forwardRef(
       if (itemCount > 8) {
         return 8 * itemSize;
       }
-      return itemData.map(itemSize).reduce((a, b) => a + b, 0);
+      return (itemData.length * itemSize) + (2 * itemSize); //minimum size
+      //return itemData.map(itemSize).reduce((a, b) => a + b, 0);
     };
 
     const gridRef = useResetCache(itemCount);

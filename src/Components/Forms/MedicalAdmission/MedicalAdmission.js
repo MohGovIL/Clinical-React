@@ -23,6 +23,7 @@ import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/norma
 import SaveForm from '../GeneralComponents/SaveForm';
 import { store } from 'index';
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
+import Loader from "../../../Assets/Elements/Loader";
 
 const MedicalAdmission = ({
   patient,
@@ -36,7 +37,6 @@ const MedicalAdmission = ({
   functionToRunOnTabChange,
   isSomethingWasChanged,
   prevEncounterId,
-  setLoading,
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -50,6 +50,7 @@ const MedicalAdmission = ({
   * <FORM DIRTY FUNCTIONS>
   * */
   const [initValueObj, setInitValueObj] = useState({});
+  const [loading, setLoading] = useState(true);
 
   /*
   * Save all the init value in the state than call to setValue
@@ -74,7 +75,6 @@ const MedicalAdmission = ({
   * */
   const isFormDirty = () => {
     const currentValues = getValues({ nest: true });
-
     const emptyInFirst = [
       'sensitivities',
       'medication',
@@ -103,10 +103,6 @@ const MedicalAdmission = ({
     return false;
   };
 
-  useEffect(() => {
-    //set new isFormDirty function in the ref from the pppparent  EncounterForms/index.js
-    isSomethingWasChanged.current = isFormDirty;
-  }, [initValueObj]);
 
   /*
  * </END FORM DIRTY FUNCTIONS>
@@ -366,13 +362,14 @@ const MedicalAdmission = ({
   useEffect(() => {
     validationFunction.current = isRequiredValidation;
     functionToRunOnTabChange.current = onSubmit;
+    isSomethingWasChanged.current = isFormDirty;
     return () => {
-      functionToRunOnTabChange.current = () => [];
+      functionToRunOnTabChange.current = false;
       validationFunction.current = () => true;
       isSomethingWasChanged.current = () => false;
     };
     stopSavingProcess();
-  }, []);
+  }, [initValueObj]);
 
   //Radio buttons for pregnancy
   const pregnancyRadioList = ['No', 'Yes'];
@@ -438,11 +435,15 @@ const MedicalAdmission = ({
     setdisabledOnSubmit(false);
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     if (!data) data = getValues({ nest: true });
-    if (!isRequiredValidation(data)) return;
+    if (!isRequiredValidation(data)) return false;
+    // in the first form of the encounter need to save the form and connect the medical issue from prev encounter in current.
+    // the questionnaireResponseId is undefined in the first
+    const firstEncForm = typeof initValueObj['questionnaireResponseId'] === 'undefined'? true : false;
+    console.log(`first = ${firstEncForm}`)
     savingProcess();
-    if (isFormDirty()) {
+    if (isFormDirty() || firstEncForm) {
       try {
         const APIsArray = [];
         const items = data.questionnaire.item.map((i) => {
@@ -537,52 +538,29 @@ const MedicalAdmission = ({
             },
           }),
         );
-        console.log(data);
         //Creating new conditions for sensitivities
         if (data.sensitivities === 'Known') {
           data.sensitivitiesCodes.forEach((sensitivities) => {
             if (
-              data.sensitiveConditionsIds &&
-              Object.keys(data.sensitiveConditionsIds).length
+              firstEncForm || (typeof data.sensitiveConditionsIds === "undefined") || //first sensitive
+              (!data.sensitiveConditionsIds[sensitivities] || //additional sensitive
+              (data.sensitiveConditionsIds[sensitivities] &&
+                !data.currentQuestionnaireItems.length))
             ) {
-              if (
-                !data.sensitiveConditionsIds[sensitivities] ||
-                (data.sensitiveConditionsIds[sensitivities] &&
-                  !data.currentQuestionnaireItems.length)
-              ) {
-                APIsArray.push(
-                  FHIR('Condition', 'doWork', {
-                    functionName: 'createCondition',
-                    functionParams: {
-                      condition: {
-                        encounter: encounter.id,
-                        categorySystem:
-                          'http://clinikal/condition/category/sensitive',
-                        codeSystem:
-                          'http://clinikal/diagnosis/type/sensitivities',
-                        codeCode: sensitivities,
-                        patient: patient.id,
-                        recorder: store.getState().login.userID,
-                        clinicalStatus: 'active',
-                      },
-                    },
-                  }),
-                );
-              }
-            } else {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionName: 'createCondition',
                   functionParams: {
                     condition: {
+                      encounter: encounter.id,
                       categorySystem:
                         'http://clinikal/condition/category/sensitive',
-                      codeSystem: 'http://clinikal/diagnosis/type/sensitivities',
+                      codeSystem:
+                        'http://clinikal/diagnosis/type/sensitivities',
                       codeCode: sensitivities,
                       patient: patient.id,
                       recorder: store.getState().login.userID,
                       clinicalStatus: 'active',
-                      encounter: encounter.id,
                     },
                   },
                 }),
@@ -620,33 +598,11 @@ const MedicalAdmission = ({
         if (data.background_diseases === 'There are diseases') {
           data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
             if (
-              data.backgroundDiseasesIds &&
-              Object.keys(data.backgroundDiseasesIds).length
+              firstEncForm || (typeof data.backgroundDiseasesIds === "undefined") || ( //first disease
+              !data.backgroundDiseasesIds[backgroundDisease] || // additional disease
+              (data.backgroundDiseasesIds[backgroundDisease] &&
+                !data.currentQuestionnaireItems.length) )
             ) {
-              if (
-                !data.backgroundDiseasesIds[backgroundDisease] ||
-                (data.backgroundDiseasesIds[backgroundDisease] &&
-                  !data.currentQuestionnaireItems.length)
-              ) {
-                APIsArray.push(
-                  FHIR('Condition', 'doWork', {
-                    functionParams: {
-                      condition: {
-                        categorySystem:
-                          'http://clinikal/condition/category/medical_problem',
-                        codeSystem: 'http://clinikal/diagnosis/type/bk_diseases',
-                        codeCode: backgroundDisease,
-                        patient: patient.id,
-                        recorder: store.getState().login.userID,
-                        clinicalStatus: 'active',
-                        encounter: encounter.id,
-                      },
-                    },
-                    functionName: 'createCondition',
-                  }),
-                );
-              }
-            } else {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionParams: {
@@ -696,35 +652,14 @@ const MedicalAdmission = ({
         // Creating a new medicationStatement
         if (data.medication === 'Exist') {
           data.chronicMedicationCodes.forEach((medication) => {
+
             if (
-              data.chronicMedicationIds &&
-              Object.keys(data.chronicMedicationIds).length
+              firstEncForm || (typeof data.chronicMedicationIds === "undefined") || ( // first medicine
+              !data.chronicMedicationIds[medication] || //additional medicine
+              (data.backgroundDiseasesIds[medication] &&
+                !data.currentQuestionnaireItems.length)
+              )
             ) {
-              if (
-                !data.chronicMedicationIds[medication] ||
-                (data.backgroundDiseasesIds[medication] &&
-                  !data.currentQuestionnaireItems.length)
-              ) {
-                APIsArray.push(
-                  FHIR('MedicationStatement', 'doWork', {
-                    functionName: 'createMedicationStatement',
-                    functionParams: {
-                      medicationStatement: {
-                        categorySystem:
-                          'http://clinikal/medicationStatement/category/medication',
-                        status: 'active',
-                        patient: patient.id,
-                        informationSource: store.getState().login.userID,
-                        medicationCodeableConceptCode: medication,
-                        medicationCodeableConceptSystem:
-                          'http://clinikal/valueset/drugs_list',
-                        encounter: encounter.id,
-                      },
-                    },
-                  }),
-                );
-              }
-            } else {
               APIsArray.push(
                 FHIR('MedicationStatement', 'doWork', {
                   functionName: 'createMedicationStatement',
@@ -769,11 +704,14 @@ const MedicalAdmission = ({
             });
           }
         }
+        console.log(APIsArray);
         return APIsArray;
       } catch (error) {
         stopSavingProcess();
         console.log(error);
       }
+    } else {
+      return false;
     }
 
   };
@@ -837,7 +775,6 @@ const MedicalAdmission = ({
             initValueFunction={initValue}
           />
           <ChronicMedication
-            // defaultRenderOptionFunction={medicalAdmissionRenderOption}
             defaultChipLabelFunction={medicalAdmissionChipLabel}
             handleLoading={handleLoading}
             initValueFunction={initValue}
@@ -852,6 +789,7 @@ const MedicalAdmission = ({
           />
         </StyledForm>
       </FormContext>
+      {loading && <Loader />}
     </StyledMedicalAdmission>
   );
 };

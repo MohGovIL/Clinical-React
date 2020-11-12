@@ -44,6 +44,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
   const FILES_OBJ = { type: 'MB', valueInBytes: 1000000, maxSize: 2, fix: 1 };
   // Files scan - functions
   async function onChangeFileHandler(ref, setState, fileName) {
+
     const files = ref.current.files;
     const [BoolAnswer, SizeInMB] = calculateFileSize(
       files[files.length - 1].size,
@@ -51,30 +52,34 @@ const Documents = ({ eid, pid, handleLoading }) => {
       FILES_OBJ.fix,
       FILES_OBJ.maxSize,
     );
+
     if (!BoolAnswer) {
       const fileObject = {};
       const reader = new FileReader();
       reader.onload = (event) => {
         const objForForm = {
           base_64: event.target.result,
-          name: `${fileName}_${moment().format('L')}_${moment().format(
+          name: `${fileName}_${moment().format('YY-MM-DD')}_${moment().format(
             'HH:mm',
           )}_${files[files.length - 1].name}`,
         };
         if (fileName === 'Referral') {
           setValue('Referral', objForForm);
+          setValue('ReferralChanged', true);
           setReferralFile_64(event.target.result);
         } else if (fileName === 'Commitment') {
           setValue('Commitment', objForForm);
+          setValue('CommitmentChanged', true);
           setCommitmentFile_64(event.target.result);
         } else {
           setValue('additionalDocumentFile_64', objForForm);
+          setValue('additionalDocumentFile_64Changed', true);
           setAdditionalDocumentFile_64(event.target.result);
         }
       };
       reader.readAsDataURL(ref.current.files[0]);
       fileObject['name'] = `${fileName}_${moment().format(
-        'L',
+        'YY-MM-DD',
       )}_${moment().format('HH:mm')}_${files[files.length - 1].name}`;
       fileObject['size'] = SizeInMB;
       setValue(`${fileName}File`, fileObject.name, true);
@@ -84,6 +89,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
     }
   }
   const onClickFileHandler = (event, ref) => {
+
     event.stopPropagation();
     event.preventDefault();
     let refId = ref.current.id;
@@ -180,12 +186,19 @@ const Documents = ({ eid, pid, handleLoading }) => {
   const handlePopUpClose = () => {
     setIsPopUpOpen(false);
   };
+
   useEffect(() => {
+
     if (isCommitmentForm === '1') {
       register({ name: 'Commitment' });
     }
     register({ name: 'Referral' });
     register({ name: 'additionalDocumentFile_64' });
+
+    register({name: 'ReferralChanged' });
+    register({name: 'additionalDocumentFile_64Changed'});
+    register({name: 'CommitmentChanged'});
+
     (async () => {
       const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
         functionName: 'getDocumentReference',
@@ -227,6 +240,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
             const objForForm = {
               base_64,
               name: normalizedFhirDocumentReference.url,
+              id: normalizedFhirDocumentReference.id
             };
             if (normalizedFhirDocumentReference.url.startsWith('Referral')) {
               setValue('Referral', objForForm);
@@ -406,79 +420,60 @@ const Documents = ({ eid, pid, handleLoading }) => {
               )}
             </Grid>
           </Grid>
+
         )}
-        {/* AdditionalDocumentRef */}
-        {numOfAdditionalDocument.map((_, additionalDocumentIndex) => {
-          return (
-            <Grid container alignItems='center' key={additionalDocumentIndex}>
-              <Grid item xs={3}>
-                <CustomizedTextField
-                  width={'70%'}
-                  onChange={onChangeAdditionalDocumentHandler}
-                  label={`${t('Additional document')}`}
-                />
-              </Grid>
-              <Grid item xs={9}>
-                <input
-                  name={nameOfAdditionalDocumentFile || 'Document1'}
-                  ref={(e) => {
-                    additionalDocumentRef.current = e;
-                    register();
+
+          <Grid container alignItems='center'>
+            <Grid item xs={3}>
+              <label htmlFor='Document1'>{`${t('Additional document')}`}</label>
+            </Grid>
+            <Grid item xs={9}>
+              <input
+                name='Document1'
+                ref={(e) => {
+                  additionalDocumentRef.current = e;
+                  register();
+                }}
+                id='Document1'
+                type='file'
+                accept='.pdf,.gpf,.png,.gif,.jpg'
+                onChange={() =>
+                  onChangeFileHandler(
+                    additionalDocumentRef,
+                    setAdditionalDocumentFile,
+                    'Document1',
+                  )
+                }
+              />
+              {Object.values(additionalDocumentFile).length > 0 ? (
+                <ChipWithImage
+                  htmlFor='AdditionalDocument'
+                  label={additionalDocumentFile.name}
+                  size={additionalDocumentFile.size}
+                  onDelete={(event) => {
+                    setPopUpReferenceFile(
+                      '',
+                    );
+                    onDeletePopUp(event);
                   }}
-                  id='AdditionalDocument'
-                  type='file'
-                  accept='.pdf,.gpf,.png,.gif,.jpg'
-                  onChange={() =>
-                    onChangeFileHandler(
-                      additionalDocumentRef,
-                      setAdditionalDocumentFile,
-                      nameOfAdditionalDocumentFile || 'Document1',
-                    )
+                  onClick={(event) =>
+                    onClickFileHandler(event, additionalDocumentRef)
                   }
                 />
-                {Object.values(additionalDocumentFile).length > 0 ? (
-                  <ChipWithImage
-                    htmlFor='AdditionalDocument'
-                    label={additionalDocumentFile.name}
-                    size={additionalDocumentFile.size}
-                    onDelete={(event) => {
-                      setPopUpReferenceFile(
-                        nameOfAdditionalDocumentFile || 'Document1',
-                      );
-                      onDeletePopUp(event);
-                    }}
-                    onClick={(event) =>
-                      onClickFileHandler(event, additionalDocumentRef)
-                    }
-                  />
-                ) : (
-                  <label htmlFor='AdditionalDocument'>
-                    <StyledButton
-                      variant='outlined'
-                      color='primary'
-                      component='span'
-                      size={'large'}
-                      startIcon={<Scanner />}>
-                      {t('Upload document')}
-                    </StyledButton>
-                  </label>
-                )}
-              </Grid>
+              ) : (
+                <label htmlFor='Document1'>
+                  <StyledButton
+                    variant='outlined'
+                    color='primary'
+                    component='span'
+                    size={'large'}
+                    startIcon={<Scanner />}>
+                    {t('Upload document')}
+                  </StyledButton>
+                </label>
+              )}
             </Grid>
-          );
-        })}
-        <Grid container alignItems='center'>
-          <AddCircle
-            style={{ color: '#002398', cursor: 'pointer' }}
-            onClick={onClickAdditionalDocumentHandler}
-          />
-          <Title
-            margin='0 8px 0 8px'
-            bold
-            color={'#002398'}
-            label={'Additional document'}
-          />
-        </Grid>
+          </Grid>
       </StyledFormGroup>
     </React.Fragment>
   );

@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import { store } from 'index';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
+import Loader from "../../../Assets/Elements/Loader";
 
 const DiagnosisAndRecommendations = ({
   patient,
@@ -26,7 +27,6 @@ const DiagnosisAndRecommendations = ({
   permission,
   functionToRunOnTabChange,
   validationFunction,
-  setLoading,
   isSomethingWasChanged,
 }) => {
   const methods = useForm({
@@ -48,7 +48,7 @@ const DiagnosisAndRecommendations = ({
   });
 
   const { handleSubmit, setValue, register, unregister, getValues } = methods;
-
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
 
   /*
@@ -114,10 +114,6 @@ const DiagnosisAndRecommendations = ({
     return false;
   };
 
-  useEffect(() => {
-    //set new isFormDirty function in the ref from the pppparent  EncounterForms/index.js
-    isSomethingWasChanged.current = isFormDirty;
-  }, [initValueObj]);
 
   /*
    * </END FORM DIRTY FUNCTIONS>
@@ -310,8 +306,7 @@ const DiagnosisAndRecommendations = ({
 
   const onSubmit = (data) => {
     setdisabledOnSubmit(true);
-    isFormDirty();
-    {
+    if (isFormDirty()) {
       if (!data) data = getValues({ nest: true });
       try {
         const APIsArray = [];
@@ -445,17 +440,21 @@ const DiagnosisAndRecommendations = ({
       } catch (error) {
         console.log(error);
       }
+    } else {
+      return false;
     }
   };
 
   React.useEffect(() => {
     validationFunction.current = isRequiredValidation;
     functionToRunOnTabChange.current = onSubmit;
+    isSomethingWasChanged.current = isFormDirty;
     return () => {
+      isSomethingWasChanged.current = false;
       functionToRunOnTabChange.current = () => [];
       validationFunction.current = () => true;
     };
-  }, []);
+  }, [initValueObj]);
 
   const handlePopUpClose = () => {
     setPopUpProps((prevState) => {
@@ -523,6 +522,7 @@ const DiagnosisAndRecommendations = ({
           />
         </form>
       </FormContext>
+      {loading && <Loader />}
     </StyledDiagnosisAndRecommendations>
   );
 };

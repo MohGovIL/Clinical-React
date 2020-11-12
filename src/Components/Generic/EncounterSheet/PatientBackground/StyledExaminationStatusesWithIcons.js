@@ -14,6 +14,8 @@ import { connect } from 'react-redux';
 import List from '@material-ui/core/List';
 import openDocumentInANewWindow from 'Utils/Helpers/openDocumentInANewWindow';
 import { createSummaryLetter } from 'Utils/Helpers/Letters/createSummaryLetter';
+import { FHIR } from 'Utils/Services/FHIR';
+import {useEffect} from "react";
 
 const StyledExaminationStatusesWithIcons = ({
   encounterData,
@@ -21,7 +23,7 @@ const StyledExaminationStatusesWithIcons = ({
   patient,
   handleCreateData,
   currentUser,
-  facility,
+  facility
 }) => {
   const { t } = useTranslation();
   const MedicalFileClick = (doc) => {
@@ -33,6 +35,14 @@ const StyledExaminationStatusesWithIcons = ({
     store.dispatch(setEncounterAndPatient(encounterData, patient));
   };
   const [docID, setDoc] = React.useState(-1);
+  const [existLetter, setExistLetter] = React.useState(false);
+
+  useEffect(() => {
+    if (encounterData.status === 'finished') {
+       existSummeryLetter();
+    }
+  },[])
+
   const createLetter = async () => {
     let docId = await createSummaryLetter({
       encounter: encounterData,
@@ -41,6 +51,19 @@ const StyledExaminationStatusesWithIcons = ({
       facility,
     });
     setDoc(docId);
+  };
+
+  const existSummeryLetter = async () => {
+     const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
+      functionName: 'getDocumentReference',
+      searchParams: { category: 5, encounter: encounterData.id },
+    });
+
+    return (documentReferenceData &&
+      documentReferenceData.data &&
+      documentReferenceData.data.total >= 1)
+      ? setExistLetter(true)
+      : false;
   };
 
   return (
@@ -59,7 +82,7 @@ const StyledExaminationStatusesWithIcons = ({
             <StyledMedicalFileIcon
               onClick={createLetter}
               canClickMedical={
-                encounterData.status === 'finished' ||
+                (encounterData.status === 'finished' && existLetter)||
                 encounterData.extensionSecondaryStatus === 'waiting_for_release'
               }>
               <img alt={'MedicalFile'} src={MedicalFile} />
