@@ -76,13 +76,14 @@ const FormsContainer = ({ tabs, dir, prevEncounterId, isSomethingWasChanged }) =
 
   const handleChange = async (event, newValue) => {
     if (validationFunctionToRun.current()) {
-      setLoading(true);
       const shouldBeArray = functionToRunOnTabChange.current();
-      if (Array.isArray(shouldBeArray) && shouldBeArray.length > 0) {
-        await Promise.all(shouldBeArray);
-        store.dispatch(showSnackbar(t('The form has saved successfully'), 'check'));
+      if (shouldBeArray) {
+        if (Array.isArray(shouldBeArray) && shouldBeArray.length > 0) {
+          await Promise.all(shouldBeArray);
+          store.dispatch(showSnackbar(t('The form has saved successfully'), 'check'));
+        }
+       // await shouldBeArray;
       }
-      await shouldBeArray;
       setValue(newValue);
     }
   };
@@ -125,8 +126,7 @@ const FormsContainer = ({ tabs, dir, prevEncounterId, isSomethingWasChanged }) =
                 validationFunction={validationFunctionToRun}
                 isSomethingWasChanged={isSomethingWasChanged}
                 permission={tab.permission}
-                setLoading={setLoading}
-                setSaveLoading={setSaveLoading}
+
               />
             </Suspense>
           </TabPanel>
@@ -139,7 +139,6 @@ const FormsContainer = ({ tabs, dir, prevEncounterId, isSomethingWasChanged }) =
           />
         );
       })}
-      {loading && <Loader opacity={saveLoading} />}
     </StyledTabContainer>
   );
 };

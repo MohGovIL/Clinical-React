@@ -70,7 +70,8 @@ const InstructionsForTreatment = ({
     const { Instruction } = getValues({ nest: true });
     console.log(Instruction);
     console.log(serviceRequests);
-    if (serviceRequests.total !== Instruction.length) return true;
+    if (typeof Instruction === "undefined" && serviceRequests.total === 0) return false;
+    if (serviceRequests.total !== Instruction.length)return true;
     for (var i = 0; i < Instruction.length; i++) {
       const serviceRequest = buildServiceRequestObj(Instruction[i]);
       //check whether to save this request or not ....
@@ -202,12 +203,12 @@ const InstructionsForTreatment = ({
         returnThis.push(...serviceRequestFHIRArray);
       }
       if (returnThis.length === 0) {
-        return [];
+        return false;
       }
       console.log(returnThis);
       return returnThis;
     } else {
-      return [];
+      return false;
     }
   };
 
@@ -429,7 +430,7 @@ const InstructionsForTreatment = ({
   useEffect(() => {
     //set new isFormDirty function in the ref from the pppparent  EncounterForms/index.js
     isSomethingWasChanged.current = isFormDirty;
-  }, [formDirty, serviceRequests]);
+  }, [formDirty, serviceRequests, getValues({ nest: true })]);
 
   let statuses = [
     { label: 'Waiting for nurse', value: 'waiting_for_nurse' },

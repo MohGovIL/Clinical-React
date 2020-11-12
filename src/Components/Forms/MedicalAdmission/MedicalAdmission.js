@@ -23,6 +23,7 @@ import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/norma
 import SaveForm from '../GeneralComponents/SaveForm';
 import { store } from 'index';
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
+import Loader from "../../../Assets/Elements/Loader";
 
 const MedicalAdmission = ({
   patient,
@@ -36,7 +37,6 @@ const MedicalAdmission = ({
   functionToRunOnTabChange,
   isSomethingWasChanged,
   prevEncounterId,
-  setLoading,
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -50,6 +50,7 @@ const MedicalAdmission = ({
   * <FORM DIRTY FUNCTIONS>
   * */
   const [initValueObj, setInitValueObj] = useState({});
+  const [loading, setLoading] = useState(true);
 
   /*
   * Save all the init value in the state than call to setValue
@@ -363,7 +364,7 @@ const MedicalAdmission = ({
     functionToRunOnTabChange.current = onSubmit;
     isSomethingWasChanged.current = isFormDirty;
     return () => {
-      functionToRunOnTabChange.current = () => [];
+      functionToRunOnTabChange.current = false;
       validationFunction.current = () => true;
       isSomethingWasChanged.current = () => false;
     };
@@ -434,9 +435,9 @@ const MedicalAdmission = ({
     setdisabledOnSubmit(false);
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     if (!data) data = getValues({ nest: true });
-    if (!isRequiredValidation(data)) return;
+    if (!isRequiredValidation(data)) return false;
     // in the first form of the encounter need to save the form and connect the medical issue from prev encounter in current.
     // the questionnaireResponseId is undefined in the first
     const firstEncForm = typeof initValueObj['questionnaireResponseId'] === 'undefined'? true : false;
@@ -703,11 +704,14 @@ const MedicalAdmission = ({
             });
           }
         }
+        console.log(APIsArray);
         return APIsArray;
       } catch (error) {
         stopSavingProcess();
         console.log(error);
       }
+    } else {
+      return false;
     }
 
   };
@@ -785,6 +789,7 @@ const MedicalAdmission = ({
           />
         </StyledForm>
       </FormContext>
+      {loading && <Loader />}
     </StyledMedicalAdmission>
   );
 };

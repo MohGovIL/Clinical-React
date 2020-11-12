@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import { store } from 'index';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
+import Loader from "../../../Assets/Elements/Loader";
 
 const DiagnosisAndRecommendations = ({
   patient,
@@ -26,7 +27,6 @@ const DiagnosisAndRecommendations = ({
   permission,
   functionToRunOnTabChange,
   validationFunction,
-  setLoading,
   isSomethingWasChanged,
 }) => {
   const methods = useForm({
@@ -48,7 +48,7 @@ const DiagnosisAndRecommendations = ({
   });
 
   const { handleSubmit, setValue, register, unregister, getValues } = methods;
-
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
 
   /*
@@ -306,8 +306,7 @@ const DiagnosisAndRecommendations = ({
 
   const onSubmit = (data) => {
     setdisabledOnSubmit(true);
-    isFormDirty();
-    {
+    if (isFormDirty()) {
       if (!data) data = getValues({ nest: true });
       try {
         const APIsArray = [];
@@ -441,6 +440,8 @@ const DiagnosisAndRecommendations = ({
       } catch (error) {
         console.log(error);
       }
+    } else {
+      return false;
     }
   };
 
@@ -521,6 +522,7 @@ const DiagnosisAndRecommendations = ({
           />
         </form>
       </FormContext>
+      {loading && <Loader />}
     </StyledDiagnosisAndRecommendations>
   );
 };
