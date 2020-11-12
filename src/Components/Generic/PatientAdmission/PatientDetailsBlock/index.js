@@ -24,6 +24,7 @@ import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 import { FHIR } from 'Utils/Services/FHIR';
 import { store } from 'index';
 import Loader from 'Assets/Elements/Loader';
+import { showSnackbar } from 'Store/Actions/UiActions/ToastActions';
 // import { DevTool } from 'react-hook-form-devtools';
 
 const PatientDetailsBlock = ({
@@ -341,6 +342,9 @@ const PatientDetailsBlock = ({
         ) {
           await saveDocument(data.additionalDocumentFile_64);
         }
+        store.dispatch(
+          showSnackbar(t('The patient was successfully admitted'), 'check'),
+        );
         history.push(`${baseRoutePath()}/imaging/patientTracking`);
       }
     } catch (error) {
