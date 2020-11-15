@@ -15,7 +15,7 @@ import List from '@material-ui/core/List';
 import openDocumentInANewWindow from 'Utils/Helpers/openDocumentInANewWindow';
 import { createSummaryLetter } from 'Utils/Helpers/Letters/createSummaryLetter';
 import { FHIR } from 'Utils/Services/FHIR';
-import {useEffect} from "react";
+import { useEffect } from 'react';
 
 const StyledExaminationStatusesWithIcons = ({
   encounterData,
@@ -23,7 +23,7 @@ const StyledExaminationStatusesWithIcons = ({
   patient,
   handleCreateData,
   currentUser,
-  facility
+  facility,
 }) => {
   const { t } = useTranslation();
   const MedicalFileClick = (doc) => {
@@ -38,10 +38,13 @@ const StyledExaminationStatusesWithIcons = ({
   const [existLetter, setExistLetter] = React.useState(false);
 
   useEffect(() => {
-    if (encounterData.status === 'finished') {
-       existSummeryLetter();
+    if (
+      encounterData.status === 'finished' ||
+      encounterData.extensionSecondaryStatus === 'waiting_for_release'
+    ) {
+      existSummeryLetter();
     }
-  },[])
+  }, []);
 
   const createLetter = async () => {
     let docId = await createSummaryLetter({
@@ -49,20 +52,21 @@ const StyledExaminationStatusesWithIcons = ({
       patientId: patient.id,
       currentUser,
       facility,
+      docID: existLetter,
     });
     setDoc(docId);
   };
 
   const existSummeryLetter = async () => {
-     const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
+    const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
       functionName: 'getDocumentReference',
       searchParams: { category: 5, encounter: encounterData.id },
     });
-
-    return (documentReferenceData &&
+    console.log(documentReferenceData.data.entry[1].resource.id);
+    return documentReferenceData &&
       documentReferenceData.data &&
-      documentReferenceData.data.total >= 1)
-      ? setExistLetter(true)
+      documentReferenceData.data.total >= 1
+      ? setExistLetter(documentReferenceData.data.entry[1].resource.id)
       : false;
   };
 
@@ -82,7 +86,7 @@ const StyledExaminationStatusesWithIcons = ({
             <StyledMedicalFileIcon
               onClick={createLetter}
               canClickMedical={
-                (encounterData.status === 'finished' && existLetter)||
+                (encounterData.status === 'finished' && existLetter) ||
                 encounterData.extensionSecondaryStatus === 'waiting_for_release'
               }>
               <img alt={'MedicalFile'} src={MedicalFile} />
