@@ -586,8 +586,8 @@ const DrugRecommendation = ({
                   onClick={() =>
                     handlePopUpProps(
                       instructionsForTheDrug,
-                      'templates_providing_medicine',
-                      'tests_treatments',
+                      'instructions_drug',
+                      'diagnosis_and_recommendations',
                       callBack,
                       `drugRecommendation[${index}].instructionsForTheDrug`,
                       index,

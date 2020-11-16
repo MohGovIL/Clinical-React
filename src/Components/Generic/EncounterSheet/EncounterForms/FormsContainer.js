@@ -119,7 +119,7 @@ const FormsContainer = ({ tabs, dir, prevEncounterId, isSomethingWasChanged }) =
             value={value}
             index={key}
             dir={dir}>
-            <Suspense fallback={<span>Loading...</span>}>
+            <Suspense fallback={<Loader />}>
               <FormComponent
                 prevEncounterId={prevEncounterId}
                 functionToRunOnTabChange={functionToRunOnTabChange}

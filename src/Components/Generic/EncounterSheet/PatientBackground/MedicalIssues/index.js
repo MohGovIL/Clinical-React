@@ -10,6 +10,7 @@ import normalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/normali
 import MedicalIssue from 'Assets/Elements/MedicalIssue';
 import { useTranslation } from 'react-i18next';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
+import {ParseQuestionnaireResponseBoolean} from "Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem";
 
 const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading }) => {
   const { t } = useTranslation();
@@ -29,23 +30,9 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
   const chronicMedicationLinkId = '7';
 
   const extractItems = (normalizedQr) => {
-    const isSensitive = Boolean(
-      +normalizedQr.items.find((i) => i.linkId === sensitivitiesLinkId)[
-        'answer'
-      ][0]['valueBoolean'],
-    );
-
-    const isBackgroundDiseases = Boolean(
-      +normalizedQr.items.find((i) => i.linkId === backgroundDiseasesLinkId)[
-        'answer'
-      ][0]['valueBoolean'],
-    );
-
-    const isChronicMedication = Boolean(
-      +normalizedQr.items.find((i) => i.linkId === chronicMedicationLinkId)[
-        'answer'
-      ][0]['valueBoolean'],
-    );
+    const isSensitive =  ParseQuestionnaireResponseBoolean(normalizedQr, sensitivitiesLinkId);
+    const isBackgroundDiseases = ParseQuestionnaireResponseBoolean(normalizedQr, backgroundDiseasesLinkId);
+    const isChronicMedication = ParseQuestionnaireResponseBoolean(normalizedQr, chronicMedicationLinkId);
     return [isSensitive, isBackgroundDiseases, isChronicMedication];
   };
 
@@ -103,6 +90,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
                 category: 'sensitive',
                 subject: patientId,
                 status: 'active',
+                encounter:currQr.encounter
               },
             });
             const sensitivesArr = [];
@@ -126,6 +114,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
                 category: 'medical_problem',
                 subject: patientId,
                 status: 'active',
+                encounter:currQr.encounter
               },
             });
             const backgroundArr = [];
@@ -149,6 +138,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
                 category: 'medication',
                 patient: patientId,
                 status: 'active',
+                encounter:currQr.encounter
               },
             });
             const chronicArr = [];
@@ -184,6 +174,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
                 category: 'sensitive',
                 subject: patientId,
                 status: 'active',
+                encounter:prevQr.encounter
               },
             });
             const sensitivesArr = [];
@@ -205,6 +196,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
                 category: 'medical_problem',
                 subject: patientId,
                 status: 'active',
+                encounter:prevQr.encounter
               },
             });
             const backgroundArr = [];
@@ -226,6 +218,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
                 category: 'medication',
                 patient: patientId,
                 status: 'active',
+                encounter:prevQr.encounter
               },
             });
             const chronicArr = [];

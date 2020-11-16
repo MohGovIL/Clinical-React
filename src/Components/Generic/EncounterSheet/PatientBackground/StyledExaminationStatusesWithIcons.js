@@ -62,7 +62,6 @@ const StyledExaminationStatusesWithIcons = ({
       functionName: 'getDocumentReference',
       searchParams: { category: 5, encounter: encounterData.id },
     });
-    console.log(documentReferenceData.data.entry[1].resource.id);
     return documentReferenceData &&
       documentReferenceData.data &&
       documentReferenceData.data.total >= 1

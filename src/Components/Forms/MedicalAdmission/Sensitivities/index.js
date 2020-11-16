@@ -10,6 +10,7 @@ import { FormHelperText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
+import {ParseQuestionnaireResponseBoolean} from "Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem";
 
 const Sensitivities = ({
   defaultRenderOptionFunction,
@@ -49,7 +50,7 @@ const Sensitivities = ({
       const {
         reasonCode: { code },
       } = chip;
-      if (currEncounterResponse.length) {
+      if (currEncounterResponse.items.length) {
         const { sensitiveConditionsIds } = getValues({ nest: true });
         if (sensitiveConditionsIds[code]) {
           await FHIR('Condition', 'doWork', {
@@ -73,20 +74,15 @@ const Sensitivities = ({
     register({ name: 'sensitiveConditionsIds' });
     (async () => {
       const sensitivitiesLinkId = '5';
-      if (currEncounterResponse.length || prevEncounterResponse.length) {
+      if ((typeof currEncounterResponse.items !== "undefined" && currEncounterResponse.items.length) || (typeof prevEncounterResponse.items !== "undefined" && prevEncounterResponse.items.length)) {
         let isSensitive = 'noResponse';
-        if (currEncounterResponse.length) {
-          isSensitive = Boolean(
-            +currEncounterResponse.find(
-              (i) => i.linkId === sensitivitiesLinkId,
-            )['answer'][0]['valueBoolean'],
-          );
-        } else if (prevEncounterResponse.length) {
-          isSensitive = Boolean(
-            +prevEncounterResponse.find(
-              (i) => i.linkId === sensitivitiesLinkId,
-            )['answer'][0]['valueBoolean'],
-          );
+        let encounterId = null;
+        if (typeof currEncounterResponse.items !== "undefined" && currEncounterResponse.items.length) {
+          isSensitive = ParseQuestionnaireResponseBoolean(currEncounterResponse, sensitivitiesLinkId)
+          encounterId = currEncounterResponse.encounter;
+        } else if (typeof prevEncounterResponse.items !== "undefined" && prevEncounterResponse.items.length) {
+          isSensitive = ParseQuestionnaireResponseBoolean(prevEncounterResponse, sensitivitiesLinkId)
+          encounterId = prevEncounterResponse.encounter;
         }
         if (isSensitive === true) {
           const conditions = await FHIR('Condition', 'doWork', {
@@ -95,6 +91,7 @@ const Sensitivities = ({
               category: 'sensitive',
               subject: patientId,
               status: 'active',
+              encounter: encounterId
             },
           });
           if (conditions.data.total) {

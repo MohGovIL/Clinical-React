@@ -179,7 +179,6 @@ const PopupCreateNewPatient = ({
             })
               .then((saved_patient) => {
                 setFormButtonSave('view');
-q
                 if (afterSaveAction === 'normalSave') {
                   clearPopupCreateNewPatient();
                   store.dispatch(showSnackbar(t('The patient was successfully added'), 'check'));

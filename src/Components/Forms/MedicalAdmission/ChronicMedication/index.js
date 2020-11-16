@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationStatement';
 import { multiMedicationsOptions } from 'Assets/Elements/CustomizedSelectCheckList/RenderTemplates/multiMedicationOptions';
+import {ParseQuestionnaireResponseBoolean} from "Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem";
 
 const ChronicMedication = ({
   defaultRenderOptionFunction,
@@ -50,7 +51,7 @@ const ChronicMedication = ({
       const {
         reasonCode: { code },
       } = chip;
-      if (currEncounterResponse.length) {
+      if (currEncounterResponse.items.length) {
         const { chronicMedicationIds } = getValues({ nest: true });
         if (chronicMedicationIds[code]) {
           await FHIR('MedicationStatement', 'doWork', {
@@ -74,20 +75,15 @@ const ChronicMedication = ({
     register({ name: 'chronicMedicationIds' });
     (async () => {
       const chronicMedicationLinkId = '7';
-      if (currEncounterResponse.length || prevEncounterResponse.length) {
+      let encounterId  = null;
+      if ((typeof currEncounterResponse.items !== "undefined" && currEncounterResponse.items.length) || (typeof prevEncounterResponse.items !== "undefined" && prevEncounterResponse.items.length)) {
         let isChronicDisease = 'noResponse';
-        if (currEncounterResponse.length) {
-          isChronicDisease = Boolean(
-            +currEncounterResponse.find(
-              (i) => i.linkId === chronicMedicationLinkId,
-            )['answer'][0]['valueBoolean'],
-          );
-        } else if (prevEncounterResponse.length) {
-          isChronicDisease = Boolean(
-            +prevEncounterResponse.find(
-              (i) => i.linkId === chronicMedicationLinkId,
-            )['answer'][0]['valueBoolean'],
-          );
+        if (typeof currEncounterResponse.items !== "undefined" && currEncounterResponse.items.length) {
+          isChronicDisease = ParseQuestionnaireResponseBoolean(currEncounterResponse, chronicMedicationLinkId);
+          encounterId = currEncounterResponse.encounter;
+        } else if (typeof prevEncounterResponse.items !== "undefined" && prevEncounterResponse.items.length) {
+          isChronicDisease = ParseQuestionnaireResponseBoolean(prevEncounterResponse, chronicMedicationLinkId);
+          encounterId = prevEncounterResponse.encounter;
         }
         if (isChronicDisease === true) {
           const medicationStatement = await FHIR(
@@ -99,6 +95,7 @@ const ChronicMedication = ({
                 patient: patientId,
                 status: 'active',
                 category: 'medication',
+                encounter: encounterId
               },
             },
           );
