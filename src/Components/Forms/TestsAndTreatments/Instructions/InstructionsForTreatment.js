@@ -155,7 +155,7 @@ const InstructionsForTreatment = ({
 
         if (serviceRequest.status === 'done') {
           serviceRequest.authoredOn = value.occurrence;
-          serviceRequest.requester = value.performer_or_requester;
+          //serviceRequest.requester = value.performer_or_requester;
           serviceRequest.occurrence = fhirFormatDateTime();
           serviceRequest.performer = currentUser.id;
         }
