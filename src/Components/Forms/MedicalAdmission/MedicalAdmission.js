@@ -440,7 +440,6 @@ const MedicalAdmission = ({
     if (!isRequiredValidation(data)) return false;
     // in the first form of the encounter need to save the form and connect the medical issue from prev encounter in current.
     // the questionnaireResponseId is undefined in the first
-    debugger;
     const firstEncForm = typeof initValueObj['questionnaireResponseId'] === 'undefined'? true : false;
     console.log(`first = ${firstEncForm}`)
     savingProcess();

@@ -24,6 +24,7 @@ import {
   StyledCardRoot,
   StyledConstantHeaders,
   StyledIconedButton,
+  StyledCardInstruction,
   StyledInstructions,
   StyledTreatmentInstructionsButton,
   StyledTypographyHour,
@@ -255,18 +256,21 @@ const Fields = ({
           return (
             <div key={item.id}>
               <StyledCardRoot>
+                <StyledCardInstruction>
                 <StyledCardDetails>
                   <StyledCardContent language_direction={language_direction}>
                     <StyledTypographyName component='h5' variant='h5'>
                       <Controller
                         hidden
                         name={`Instruction[${index}].requester`}
-                        defaultValue={item.requester}
+                        defaultValue={item.requester === ''
+                      ? user.id
+                      : item.requester}
                         as={<input />}
                       />
-                      {item.locked
-                        ? practitioners[item.requester]
-                        : user.name.toString()}
+                      {item.requester === ''
+                        ? user.name.toString()
+                        : practitioners[item.requester]}
                     </StyledTypographyName>
                     <StyledTypographyHour variant='subtitle1' color='primary'>
                       <Controller
@@ -277,28 +281,6 @@ const Fields = ({
                       />
                       {item.locked
                         ? formatTime(item.authoredOn)
-                        : ''}
-                    </StyledTypographyHour>
-                    <StyledTypographyName component='h5' variant='h5'>
-                      <Controller
-                        hidden
-                        name={`Instruction[${index}].performer`}
-                        defaultValue={item.performer}
-                        as={<input />}
-                      />
-                      {item.locked
-                        ? practitioners[item.performer]
-                        : user.name.toString()}
-                    </StyledTypographyName>
-                    <StyledTypographyHour variant='subtitle1' color='primary'>
-                      <Controller
-                        hidden
-                        name={`Instruction[${index}].occurrence`}
-                        defaultValue={item.occurrence}
-                        as={<input />}
-                      />
-                      {item.locked && item.test_treatment_status === 'done'
-                        ? formatTime(item.occurrence)
                         : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>
@@ -356,7 +338,39 @@ const Fields = ({
                     item={item}
                     handlePopUpProps={handlePopUpProps}
                   />
-
+                </Grid>
+              </StyledCardInstruction>
+                <StyledCardInstruction>
+                <StyledCardDetails>
+                  <StyledCardContent language_direction={language_direction}>
+                    <StyledTypographyName component='h5' variant='h5'>
+                      <Controller
+                        hidden
+                        name={`Instruction[${index}].performer`}
+                        defaultValue={typeof item.performer === "undefined" || item.performer === ''
+                          ? user.id
+                          : item.performer}
+                        as={<input />}
+                      />
+                      {typeof item.performer === "undefined" || item.performer === ''
+                        ? user.name.toString()
+                        : practitioners[item.performer]}
+                    </StyledTypographyName>
+                    <StyledTypographyHour variant='subtitle1' color='primary'>
+                      <Controller
+                        hidden
+                        name={`Instruction[${index}].occurrence`}
+                        defaultValue={item.occurrence}
+                        as={<input />}
+                      />
+                      {item.locked && item.test_treatment_status === 'done'
+                        ? formatTime(item.occurrence)
+                        : ''}
+                    </StyledTypographyHour>
+                  </StyledCardContent>
+                  <StyledCardName></StyledCardName>
+                </StyledCardDetails>
+                <Grid container spacing={4}>
                   <Grid item xs={12}>
                     <TestTreatMentStatus
                       /*  requiredErrors={requiredErrors}*/
@@ -366,7 +380,7 @@ const Fields = ({
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <TestTreatmentRemark index={index} item={item} />
+                    <TestTreatmentRemark index={index} item={item} permission={permission} />
                   </Grid>
                   {!item.locked ? (
                     <Grid container direction='row' justify='flex-end'>
@@ -415,6 +429,7 @@ const Fields = ({
                     </Grid>
                   ) : null}
                 </Grid>
+              </StyledCardInstruction>
               </StyledCardRoot>
             </div>
           );
