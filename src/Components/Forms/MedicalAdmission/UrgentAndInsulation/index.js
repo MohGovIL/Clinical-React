@@ -6,7 +6,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { StyledInsulation, StyledIsUrgent } from './Style';
 import { useTranslation } from 'react-i18next';
 
-const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items, initValueFunction }) => {
+const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items, initValueFunction, priority }) => {
   const { t } = useTranslation();
 
   const { register, watch, setValue, control, permission } = useFormContext();
@@ -15,18 +15,21 @@ const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items, initVa
   // const watchisUrgent = watch('questionnaireResponseItems');
 
   //May be in future, chang avatar circle to red
-  // useEffect(() => {
+   useEffect(() => {
+     initValueFunction([
+       { isUrgent: priority > 1 ? true : false }
+     ]);
   //   console.log('is urgent: ' + watchisUrgent);
-  // }, [watchisUrgent]);
+   }, [priority]);
 
   const [insulationInstructionState, setInsulationInstructionState] = useState(
     '',
   );
 
   useEffect(() => {
-    if (!items.length) return;
+    if (typeof items.items === "undefined" || !items.items.length) return;
     const itemsObj = {};
-    items.forEach((item) => {
+    items.items.forEach((item) => {
       switch (item.linkId) {
         case '1':
           if (item.answer) {

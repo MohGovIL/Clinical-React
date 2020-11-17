@@ -310,13 +310,13 @@ const MedicalAdmission = ({
           );
 
           setQuestionnaireResponseItems(
-            normalizedFhirQuestionnaireResponse.items,
+            normalizedFhirQuestionnaireResponse,
           );
           register({ name: 'currentQuestionnaireItems' });
           initValue([
             {
               currentQuestionnaireItems:
-                normalizedFhirQuestionnaireResponse.items,
+                normalizedFhirQuestionnaireResponse,
             },
           ]);
         } else if (
@@ -328,7 +328,7 @@ const MedicalAdmission = ({
           setPrevEncounterResponse(
             normalizeFhirQuestionnaireResponse(
               qrResponse[1].data.entry[1].resource,
-            ).items,
+            ),
           );
         }
         const Questionnaire = q.data.entry[1].resource;
@@ -440,6 +440,7 @@ const MedicalAdmission = ({
     if (!isRequiredValidation(data)) return false;
     // in the first form of the encounter need to save the form and connect the medical issue from prev encounter in current.
     // the questionnaireResponseId is undefined in the first
+    debugger;
     const firstEncForm = typeof initValueObj['questionnaireResponseId'] === 'undefined'? true : false;
     console.log(`first = ${firstEncForm}`)
     savingProcess();
@@ -526,7 +527,7 @@ const MedicalAdmission = ({
         const cloneEncounter = {...encounter};
         cloneEncounter['examinationCode'] = data.examinationCode;
         cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
-        cloneEncounter['priority'] = data.isUrgent;
+        cloneEncounter['priority'] = data.isUrgent ? 2 : 1;
         cloneEncounter['extensionReasonCodeDetails'] =
           data.reasonForReferralDetails;
         APIsArray.push(
@@ -543,10 +544,8 @@ const MedicalAdmission = ({
           data.sensitivitiesCodes.forEach((sensitivities) => {
             if (
               firstEncForm || (typeof data.sensitiveConditionsIds === "undefined") || //first sensitive
-              (!data.sensitiveConditionsIds[sensitivities] || //additional sensitive
-              (data.sensitiveConditionsIds[sensitivities] &&
-                !data.currentQuestionnaireItems.length))
-            ) {
+              !data.sensitiveConditionsIds[sensitivities] //additional sensitive
+              ) {
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionName: 'createCondition',
@@ -598,11 +597,9 @@ const MedicalAdmission = ({
         if (data.background_diseases === 'There are diseases') {
           data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
             if (
-              firstEncForm || (typeof data.backgroundDiseasesIds === "undefined") || ( //first disease
-              !data.backgroundDiseasesIds[backgroundDisease] || // additional disease
-              (data.backgroundDiseasesIds[backgroundDisease] &&
-                !data.currentQuestionnaireItems.length) )
-            ) {
+              firstEncForm || (typeof data.backgroundDiseasesIds === "undefined") ||  //first disease
+              !data.backgroundDiseasesIds[backgroundDisease] // additional disease
+              ){
               APIsArray.push(
                 FHIR('Condition', 'doWork', {
                   functionParams: {
@@ -654,12 +651,9 @@ const MedicalAdmission = ({
           data.chronicMedicationCodes.forEach((medication) => {
 
             if (
-              firstEncForm || (typeof data.chronicMedicationIds === "undefined") || ( // first medicine
-              !data.chronicMedicationIds[medication] || //additional medicine
-              (data.backgroundDiseasesIds[medication] &&
-                !data.currentQuestionnaireItems.length)
-              )
-            ) {
+              firstEncForm || (typeof data.chronicMedicationIds === "undefined") || // first medicine
+              !data.chronicMedicationIds[medication] //additional medicine
+              ){
               APIsArray.push(
                 FHIR('MedicationStatement', 'doWork', {
                   functionName: 'createMedicationStatement',
@@ -750,6 +744,7 @@ const MedicalAdmission = ({
             requiredInsulation
             items={questionnaireResponseItems}
             initValueFunction={initValue}
+            priority={encounter.priority}
           />
           <NursingAnamnesis initValueFunction={initValue} />
           {/*need to make a new component for radio select*/}
