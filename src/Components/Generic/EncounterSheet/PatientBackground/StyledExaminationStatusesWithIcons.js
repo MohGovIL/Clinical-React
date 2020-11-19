@@ -14,6 +14,8 @@ import { connect } from 'react-redux';
 import List from '@material-ui/core/List';
 import openDocumentInANewWindow from 'Utils/Helpers/openDocumentInANewWindow';
 import { createSummaryLetter } from 'Utils/Helpers/Letters/createSummaryLetter';
+import { FHIR } from 'Utils/Services/FHIR';
+import { useEffect } from 'react';
 
 const StyledExaminationStatusesWithIcons = ({
   encounterData,
@@ -33,14 +35,38 @@ const StyledExaminationStatusesWithIcons = ({
     store.dispatch(setEncounterAndPatient(encounterData, patient));
   };
   const [docID, setDoc] = React.useState(-1);
+  const [existLetter, setExistLetter] = React.useState(false);
+
+  useEffect(() => {
+    if (
+      encounterData.status === 'finished' ||
+      encounterData.extensionSecondaryStatus === 'waiting_for_release'
+    ) {
+      existSummeryLetter();
+    }
+  }, []);
+
   const createLetter = async () => {
     let docId = await createSummaryLetter({
       encounter: encounterData,
       patientId: patient.id,
       currentUser,
       facility,
+      docID: existLetter,
     });
     setDoc(docId);
+  };
+
+  const existSummeryLetter = async () => {
+    const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
+      functionName: 'getDocumentReference',
+      searchParams: { category: 5, encounter: encounterData.id },
+    });
+    return documentReferenceData &&
+      documentReferenceData.data &&
+      documentReferenceData.data.total >= 1
+      ? setExistLetter(documentReferenceData.data.entry[1].resource.id)
+      : false;
   };
 
   return (
@@ -59,7 +85,7 @@ const StyledExaminationStatusesWithIcons = ({
             <StyledMedicalFileIcon
               onClick={createLetter}
               canClickMedical={
-                encounterData.status === 'finished' ||
+                (encounterData.status === 'finished' && existLetter) ||
                 encounterData.extensionSecondaryStatus === 'waiting_for_release'
               }>
               <img alt={'MedicalFile'} src={MedicalFile} />

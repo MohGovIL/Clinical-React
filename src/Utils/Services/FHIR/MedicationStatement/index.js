@@ -5,8 +5,7 @@
 
 import { CRUDOperations } from '../CRUDOperations';
 import denormalizeFhirMedicationStatement from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirMedicationStatement';
-import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
-
+import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 
 const MedicationStatementState = {
   doWork: (parameters = null) => {
@@ -53,7 +52,9 @@ const MedicationStatementState = {
           params.category
             ? `&category=clinikal/medicationStatement/category/${params.category}`
             : ''
-        }${params.status ? `&status=${params.status}` : ''}`,
+        }${params.status ? `&status=${params.status}` : ''}${
+          params.encounter ? `&context=${params.encounter}` : ''
+        }`,
       );
     } else {
       return false;

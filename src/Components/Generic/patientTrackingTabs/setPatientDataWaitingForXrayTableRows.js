@@ -1,7 +1,8 @@
-import  { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { formatTime } from 'Utils/Helpers/Datetime/formatDate';
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 import { FHIR } from 'Utils/Services/FHIR';
+import isAllowed from 'Utils/Helpers/isAllowed';
 
 // ממתינים לצילום
 
@@ -55,7 +56,7 @@ export const setPatientDataWaitingForXrayTableRows = function (
             onClickHandler() {
               goToEncounterSheet(encounter, patient, history);
             },
-            mode,
+            mode: isAllowed('encounter_sheet') === 'hide' ? 'view' : mode,
           });
           break;
         case 'Messages':

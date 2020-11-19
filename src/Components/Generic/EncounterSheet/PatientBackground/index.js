@@ -89,50 +89,6 @@ const PatientBackground = ({
         }
       });
 
-      for (let id = 0; id < oldEncountersArr.length; id++) {
-        const FHIREncounterDocuments = await FHIR(
-          'DocumentReference',
-          'doWork',
-          {
-            functionName: 'getDocumentReference',
-            searchParams: {
-              encounter: oldEncountersArr[id].id,
-              patient: patient.id,
-            },
-          },
-        );
-        if (FHIREncounterDocuments.data.total > 0) {
-          oldEncountersArr[id]['documents'] = [];
-          for (let i = 0; i < FHIREncounterDocuments.data.total + 1; i++) {
-            if (
-              FHIREncounterDocuments.data.entry[i].resource &&
-              FHIREncounterDocuments.data.entry[i].resource.resourceType &&
-              FHIREncounterDocuments.data.entry[i].resource.resourceType ===
-                'DocumentReference'
-            ) {
-              let data = normalizeFhirDocumentReference(
-                FHIREncounterDocuments.data.entry[i].resource,
-              );
-              //meanwhile to block the size of this document letter needed her
-              // and that there is no summary letter category type
-
-              //ToDo:  after this changes please uncomment the following and change
-              //       the search params to search exactly which document category type needed
-              if (
-                data.categoryType ===
-                'PLEASE DELETE THIS IF STATEMENT ROWS AND SEARCH BY CONTENT TYPE'
-              ) {
-                //currently there is only 4 categories but none of them needed here
-                oldEncountersArr[id]['documents'].push(data);
-              }
-            }
-            handleLoading('encounters');
-          }
-        } else {
-          handleLoading('encounters');
-        }
-      }
-
       /* In the future if we like to move the current to top this is the sort that does it :
 
       oldEncountersArr.sort((e1, e2) => {
@@ -142,6 +98,7 @@ const PatientBackground = ({
       */
       if (prevEncounters.length === 0) {
         setPrevEncounters(oldEncountersArr);
+        handleLoading('encounters');
       }
     } else {
       handleLoading('encounters');

@@ -2,6 +2,7 @@
 import { goToEncounterSheet } from 'Utils/Helpers/goTo/goToEncounterSheet';
 import { getTableHeaders } from 'Components/Generic/patientTrackingTabs/tableHeaders';
 import  { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import isAllowed from 'Utils/Helpers/isAllowed';
 
 // ממתינים לרופא\ה
 
@@ -55,7 +56,7 @@ export const setPatientDataWaitingForDoctorTableRows = function (
             onClickHandler() {
               goToEncounterSheet(encounter, patient, history);
             },
-            mode,
+            mode: isAllowed('encounter_sheet') === 'hide' ? 'view' : mode,
           });
           break;
         case 'Messages':

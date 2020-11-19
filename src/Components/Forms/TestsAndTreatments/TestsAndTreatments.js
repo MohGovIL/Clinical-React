@@ -34,6 +34,7 @@ import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instru
 import denormalizeFhirObservation from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';
 import { explodeMultipleIndicators } from 'Components/Forms/TestsAndTreatments/Helpers/FunctionHelpers.js';
 import { fhirFormatDateTime, formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import Loader from "../../../Assets/Elements/Loader";
 
 /**
  *
@@ -55,8 +56,7 @@ const TestsAndTreatments = ({
   currentUser,
   functionToRunOnTabChange,
   isSomethingWasChanged,
-  validationFunction,
-  setLoading
+  validationFunction
 }) => {
   const { t } = useTranslation();
   const [
@@ -65,6 +65,7 @@ const TestsAndTreatments = ({
   ] = useState(false);
   const [clinicIndicators, setClinicIndicators] = useState(null);
   const [saveFormClicked, setSaveFormClicked] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [constantIndicators, setConstantIndicators] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -407,6 +408,7 @@ const TestsAndTreatments = ({
           />
         </React.Fragment>
       ) : null}
+      {loading && <Loader />}
     </StyledTestsAndTreatments>
   );
 };
