@@ -18,9 +18,9 @@ const isNumeric = (n) => {
 };
 
 const fhirTokenInstance = () =>
-  tokenInstanceGenerator(ApiTokens.FHIR.tokenName);
+  tokenInstanceGenerator(ApiTokens.API.tokenName);
 
-const fhirBasePath = 'apis/fhir/v4';
+const fhirBasePath = 'apis/default/fhir/v4';
 
 // const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
 const appointmentsWithPatientsBasePath = (summary) =>

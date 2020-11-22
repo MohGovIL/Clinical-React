@@ -18,12 +18,12 @@ const InitApp = ({ lang_id, lang_code, languageDirection, restoreSessionAction})
 
   const [popupTimeoutIsOpen, setPopupTimeoutIsOpen] = useState(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     let interval =  setInterval(() => {
         if (!isIdle()) {
           restoreSessionAction();
         }
-    },  1000 * 60 * 0.5)
+    },  1000 * 60 * 120)
     return () => clearInterval(interval)
   }, [])
 
@@ -49,7 +49,7 @@ const InitApp = ({ lang_id, lang_code, languageDirection, restoreSessionAction})
     onActive: handleOnActive,
     onAction: handleOnAction,
     debounce: 1000
-  })
+  })*/
 
   return (
     <React.Fragment>
@@ -73,7 +73,7 @@ const InitApp = ({ lang_id, lang_code, languageDirection, restoreSessionAction})
             path={`${baseRoutePath()}/:subRoute/:page`}
           />
         </Switch>
-        <PopUpSessionTimeout isOpen={popupTimeoutIsOpen}/>
+        <PopUpSessionTimeout isOpen={false}/>
       </Suspense>
       <ToastMessage  language_direction={languageDirection}/>
     </React.Fragment>

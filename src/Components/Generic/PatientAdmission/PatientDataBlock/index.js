@@ -395,7 +395,7 @@ const PatientDataBlock = ({
           </form>
         </StyledTextInput>
       </StyledDiv>
-      <PopUpSessionTimeout isOpen={true} onClose={() => {}}/>
+      <PopUpSessionTimeout isOpen={false} onClose={() => {}}/>
     </React.Fragment>
   );
 };
