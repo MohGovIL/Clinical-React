@@ -81,11 +81,15 @@ const InstructionsForTreatment = ({
   };
 
   function wasSomethingChanged(serviceRequest, serviceRequests) {
-    let returnThis = true;
-    serviceRequests.entry.map((val, index) => {
+    if (serviceRequest.serviceReqID === '') return true; //new record
+    for(let index = 0; index < serviceRequests.entry.length; index++) {
+      let val = serviceRequests.entry[index];
+    //serviceRequests.entry.map((val, index) => {
+      let returnThis = false;
       if (val.resource && val.resource.resourceType === 'ServiceRequest') {
         const serviceReqFromFHIR = normalizeFhirServiceRequest(val.resource);
         if (serviceReqFromFHIR.id === serviceRequest.id) {
+          let returnThis = true;
           let status =
             serviceRequest.status === 'not_done' ? 'active' : 'completed';
           if (
@@ -99,12 +103,14 @@ const InstructionsForTreatment = ({
             serviceReqFromFHIR.note === serviceRequest.note &&
             serviceReqFromFHIR.reasonReferenceDocId ===
               serviceRequest.reasonReferenceDocId
-          )
+          ) {
             returnThis = false;
+          }
+          return returnThis;
         }
+        return returnThis;
       }
-    });
-    return returnThis;
+    };
   }
 
   const buildServiceRequestObj = (value) => {
@@ -112,6 +118,7 @@ const InstructionsForTreatment = ({
       id: value.serviceReqID,
       encounter: encounter.id,
       patient: patient.id,
+      requester: value.requester,
       reasonCode: encounter.examinationCode,
       reasonReferenceDocId: value.reason_referance_doc_id, //EM-84
       note: value.test_treatment_remark,
@@ -155,7 +162,7 @@ const InstructionsForTreatment = ({
 
         if (serviceRequest.status === 'done') {
           serviceRequest.authoredOn = value.occurrence;
-          serviceRequest.requester = value.performer_or_requester;
+          serviceRequest.requester = value.requester;
           serviceRequest.occurrence = fhirFormatDateTime();
           serviceRequest.performer = currentUser.id;
         }
