@@ -7,6 +7,7 @@ import {
   sortPatientRulesByNumberSort,
 } from 'Utils/Services/SearchLogic';
 import { normalizeHealthCareServiceValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
+import {OPENEMR_SITE} from 'Utils/Helpers/constants/general';
 
 /**
  * @author Idan Gigi idangi@matrix.co.il
@@ -20,7 +21,7 @@ const isNumeric = (n) => {
 const fhirTokenInstance = () =>
   tokenInstanceGenerator(ApiTokens.API.tokenName);
 
-const fhirBasePath = 'apis/default/fhir/v4';
+const fhirBasePath = `apis/${OPENEMR_SITE}/fhir/v4`;
 
 // const appointmentsWithPatientsBasePath = summary => `${fhirBasePath}/Appointment?_include=Appointment:patient&status:not=arrived&_sort=date`;
 const appointmentsWithPatientsBasePath = (summary) =>

@@ -15,6 +15,7 @@
 
 import { tokenInstanceGenerator } from '../../AxiosWithTokenInstance';
 import { ApiTokens } from '../../ApiTokens';
+import {OPENEMR_SITE} from 'Utils/Helpers/constants/general';
 
 const CRUDOperationsCalls = {
   search: (params, fhirTokenInstance) => {
@@ -52,7 +53,7 @@ const CRUDOperationsCalls = {
 export function CRUDOperations(action, url, data) {
   let fhirTokenInstance = () =>
     tokenInstanceGenerator(ApiTokens.API.tokenName);
-  let fhirBasePath = 'apis/default/fhir/v4';
+  let fhirBasePath = `apis/${OPENEMR_SITE}/fhir/v4`;
   const transformer =
     CRUDOperationsCalls[action] ?? CRUDOperationsCalls.__default__;
   return transformer(fhirBasePath + url, fhirTokenInstance, data);
