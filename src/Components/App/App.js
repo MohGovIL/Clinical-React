@@ -3,6 +3,7 @@ import Routes from 'Components/Routes/Routes';
 import { StylesProvider } from '@material-ui/core/styles';
 
 const App = () => {
+
   return (
     <React.Fragment>
       <StylesProvider injectFirst>

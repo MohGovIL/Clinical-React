@@ -11,7 +11,8 @@ import { stateLessOrNot } from 'Utils/Helpers/StatelessOrNot';
 import { getSettingsAction } from '../SettingsActions/SettingsActions';
 import { basePath } from 'Utils/Helpers/basePath';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
-
+import {convertParamsToUrl} from "Utils/Helpers/CommonFunctions";
+import { getToken } from 'Utils/Helpers/getToken';
 
 export const logoutStartAction = () => {
   return {
@@ -81,7 +82,7 @@ const loginPromise = async (client_id,username, password) => {
       "scope": 'api:oemr api:fhir openid name'
     };
 
-    return loginInstance({'Content-Type': 'application/x-www-form-urlencoded'}).post('oauth2/default/token', objectToQueryString(userObj))
+    return loginInstance({'Content-Type': 'application/x-www-form-urlencoded'}).post('oauth2/default/token', convertParamsToUrl(userObj))
 
   } else {
     return loginInstance.get(
@@ -101,6 +102,7 @@ export const loginAction = (client_id, username, password, history) => {
         /*tokenData = api
         document.cookie = `${ApiTokens.API.tokenName}=${api.data.access_token};`;
         document.cookie = `${ApiTokens.FHIR.tokenName}=${fhir.data.access_token}`;*/
+        document.cookie = `client_id=${client_id}`;
         document.cookie = `accessToken=${connection.data.access_token}`;
         document.cookie = `refreshToken=${connection.data.refresh_token}`;
       }else {
@@ -124,6 +126,23 @@ export const loginAction = (client_id, username, password, history) => {
 };
 
 
+const refreshTokenPromise = async () => {
+  if (stateLessOrNot()) {
+    const userObj = {
+      "grant_type": 'refresh_token',
+      "client_id": getToken('client_id'),
+      "refresh_token": getToken('refresh_token')
+    };
+
+    return loginInstance({'Content-Type': 'application/x-www-form-urlencoded'}).post('oauth2/default/token', convertParamsToUrl(userObj))
+
+  } else {
+    //todo - not support currently
+  }
+};
+
+
+/*
 const objectToQueryString = (obj) => {
   var str = [];
   for (var p in obj)
@@ -131,4 +150,32 @@ const objectToQueryString = (obj) => {
       str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
     }
   return str.join("&");
-}
+}*/
+
+
+export const restoreSessionAction = (history) => {
+  return async (dispatch) => {
+   /* dispatch(loginStartAction());
+    try {
+      let tokenData;
+      if (stateLessOrNot()) {
+        const [api, fhir] = await loginPromise(username, password);
+        document.cookie = `${ApiTokens.API.tokenName}=${api.data.access_token};`;
+        document.cookie = `${ApiTokens.FHIR.tokenName}=${fhir.data.access_token}`;
+      }else {
+        tokenData = await loginPromise(username, password);
+        document.cookie = `${ApiTokens.CSRF.tokenName}=${tokenData.data.csrf_token}`;
+      }
+    } catch (err) {
+      dispatch(loginFailedAction());
+      /!*Optional solution dispatch logoutAction and add the 'else' below to logoutAction
+            (not really necessary cuz Auth is false and PrivateRoute got it covered)
+            *!/
+      if (!stateLessOrNot()) {
+        window.location = `${basePath()}interface/logout.php`;
+      } else {
+        history.push('/');
+      }
+    }*/
+  };
+};

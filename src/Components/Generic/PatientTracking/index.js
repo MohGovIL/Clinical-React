@@ -21,6 +21,7 @@ import { basePath } from 'Utils/Helpers/basePath';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
 import { getToken } from 'Utils/Helpers/getToken';
 import { stateLessOrNot } from 'Utils/Helpers/StatelessOrNot';
+import {OPENEMR_SITE} from 'Utils/Helpers/constants/general';
 
 const PatientTracking = ({
   vertical,
@@ -69,7 +70,7 @@ const PatientTracking = ({
           }
 
           source.current = new EventSourcePolyfill(
-            `${basePath()}apis/api/sse/patients-tracking/check-refresh/${
+            `${basePath()}apis/${OPENEMR_SITE}/api/sse/patients-tracking/check-refresh/${
               selectFilter.filter_organization
                 ? selectFilter.filter_organization
                 : 'ALL'

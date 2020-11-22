@@ -27,6 +27,7 @@ import { setPatientAction } from 'Store/Actions/ActiveActions';
 import { store } from '../../../../index';
 import { emptyArrayAll } from 'Utils/Helpers/emptyArray';
 import AvatarIdBlock from 'Assets/Elements/AvatarIdBlock';
+import PopUpSessionTimeout from "Assets/Elements/PopUpSessionTimeout"
 
 const PatientDataBlock = ({
   appointmentData,
@@ -394,6 +395,7 @@ const PatientDataBlock = ({
           </form>
         </StyledTextInput>
       </StyledDiv>
+      <PopUpSessionTimeout isOpen={false} onClose={() => {}}/>
     </React.Fragment>
   );
 };
