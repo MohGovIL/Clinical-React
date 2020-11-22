@@ -22,8 +22,8 @@ import SaveForm from 'Components/Forms/GeneralComponents/SaveForm/index';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import normalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
-import { fhirFormatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
-import { showSnackbar } from "Store/Actions/UiActions/ToastActions.js";
+import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
+import { showSnackbar } from 'Store/Actions/UiActions/ToastActions.js';
 
 /**
  *
@@ -43,7 +43,9 @@ const InstructionsForTreatment = ({
   variantIndicatorsNew,
   language_direction,
   handleLoading,
-  setLoading
+  setLoading,
+  isSomethingWasChanged,
+  formDirty,
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -52,16 +54,37 @@ const InstructionsForTreatment = ({
     },
   });
 
-  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false)
+  const [disabledOnSubmit, setdisabledOnSubmit] = useState(false);
+  const [defaultContext, setDefaultContext] = useState('');
+  const [serviceRequests, setServiceRequests] = useState([]);
+  const { t } = useTranslation();
+  const history = useHistory();
 
   const { handleSubmit, setValue, watch, getValues } = methods;
+
+  const isFormDirty = () => {
+    // check in indicators section;
+    if (formDirty) return true;
+
+    //check in instructions section
+    const { Instruction } = getValues({ nest: true });
+    console.log(Instruction);
+    console.log(serviceRequests);
+    if (typeof Instruction === "undefined" && serviceRequests.total === 0) return false;
+    if (serviceRequests.total !== Instruction.length)return true;
+    for (var i = 0; i < Instruction.length; i++) {
+      const serviceRequest = buildServiceRequestObj(Instruction[i]);
+      //check whether to save this request or not ....
+      const diffExists = wasSomethingChanged(serviceRequest, serviceRequests);
+      if (diffExists) return true;
+    }
+  };
 
   function wasSomethingChanged(serviceRequest, serviceRequests) {
     let returnThis = true;
     serviceRequests.entry.map((val, index) => {
       if (val.resource && val.resource.resourceType === 'ServiceRequest') {
         const serviceReqFromFHIR = normalizeFhirServiceRequest(val.resource);
-
         if (serviceReqFromFHIR.id === serviceRequest.id) {
           let status =
             serviceRequest.status === 'not_done' ? 'active' : 'completed';
@@ -84,6 +107,31 @@ const InstructionsForTreatment = ({
     return returnThis;
   }
 
+  const buildServiceRequestObj = (value) => {
+    return {
+      id: value.serviceReqID,
+      encounter: encounter.id,
+      patient: patient.id,
+      reasonCode: encounter.examinationCode,
+      reasonReferenceDocId: value.reason_referance_doc_id, //EM-84
+      note: value.test_treatment_remark,
+      patientInstruction: value.instructions,
+      serviceReqID: value.serviceReqID,
+      status:
+        value.test_treatment_status || value.test_treatment_status === 'true'
+          ? 'done'
+          : 'not_done',
+      test_treatment: value.test_treatment,
+      test_treatment_type:
+        value.test_treatment_type &&
+        typeof value.test_treatment_type !== 'object'
+          ? value.test_treatment_type
+          : value.test_treatment_type && value.test_treatment_type.code
+          ? value.test_treatment_type.code
+          : undefined,
+    };
+  };
+
   const saveServiceRequestData = () => {
     if (permission !== 'write') return []; //empty request;
 
@@ -100,29 +148,7 @@ const InstructionsForTreatment = ({
           [`details_${value.test_treatment}`],
           true,
         );*/
-        const serviceRequest = {
-          id: value.serviceReqID,
-          encounter: encounter.id,
-          patient: patient.id,
-          reasonCode: encounter.examinationCode,
-          reasonReferenceDocId: value.reason_referance_doc_id, //EM-84
-          note: value.test_treatment_remark,
-          patientInstruction: value.instructions,
-          serviceReqID: value.serviceReqID,
-          status:
-            value.test_treatment_status ||
-            value.test_treatment_status === 'true'
-              ? 'done'
-              : 'not_done',
-          test_treatment: value.test_treatment,
-          test_treatment_type:
-            value.test_treatment_type &&
-            typeof value.test_treatment_type !== 'object'
-              ? value.test_treatment_type
-              : value.test_treatment_type && value.test_treatment_type.code
-              ? value.test_treatment_type.code
-              : undefined,
-        };
+        const serviceRequest = buildServiceRequestObj(value);
         //check whether to save this request or not ....
         const diffExists = wasSomethingChanged(serviceRequest, serviceRequests);
         if (!diffExists) return;
@@ -157,22 +183,35 @@ const InstructionsForTreatment = ({
           }),
         );
       });
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
     return savedServiceRequest;
   };
   const onSubmit = (data) => {
     //  console.log('data', JSON.stringify(data));
     // console.log(isRequiredValidation(data));
-    setdisabledOnSubmit(true)
-    const indicatorsFHIRArray = saveIndicatorsOnSubmit();
-    const serviceRequestFHIRArray = saveServiceRequestData(data);
-    const returnThis = [...indicatorsFHIRArray, ...serviceRequestFHIRArray];
-    console.log(returnThis);
-    return returnThis;
+    if (isFormDirty()) {
+      setdisabledOnSubmit(true);
+      const indicatorsFHIRArray = saveIndicatorsOnSubmit();
+      const serviceRequestFHIRArray = saveServiceRequestData(data);
+      let returnThis = [];
+      if (indicatorsFHIRArray.length > 0) {
+        returnThis.push(...indicatorsFHIRArray);
+      }
+      if (serviceRequestFHIRArray.length > 0) {
+        returnThis.push(...serviceRequestFHIRArray);
+      }
+      if (returnThis.length === 0) {
+        return false;
+      }
+      console.log(returnThis);
+      return returnThis;
+    } else {
+      return false;
+    }
   };
-  const [defaultContext, setDefaultContext] = useState('');
-  const [serviceRequests, setServiceRequests] = useState('');
-  const { t } = useTranslation();
+
   const callBack = (data, name) => {
     setDefaultContext(data);
     setValue(name, data);
@@ -284,7 +323,9 @@ const InstructionsForTreatment = ({
           } else {
             setRequiredErrors((prevState) => {
               const cloneState = [...prevState];
-              cloneState[instructionIndex][field.name] = t('A value must be entered in the field'); // PC-1557
+              cloneState[instructionIndex][field.name] = t(
+                'A value must be entered in the field',
+              ); // PC-1557
               return cloneState;
             });
             clean = false;
@@ -325,7 +366,9 @@ const InstructionsForTreatment = ({
           encounter: cloneEncounter,
         },
       });
-      store.dispatch(showSnackbar(t('The encounter sheet has saved successfully'), 'check'));
+      store.dispatch(
+        showSnackbar(t('The encounter sheet has saved successfully'), 'check'),
+      );
       history.push(`${baseRoutePath()}/generic/patientTracking`);
     } catch (error) {
       console.log(error);
@@ -354,14 +397,17 @@ const InstructionsForTreatment = ({
         );
         if (fhirClinikalCallsAfterAwait['status'] === 200)
           setServiceRequests(fhirClinikalCallsAfterAwait['data']);
-        handleLoading('serviceRequest')
+        handleLoading('serviceRequest');
       } catch (err) {
-        handleLoading('serviceRequest')
+        handleLoading('serviceRequest');
         console.log(err);
       }
     })();
   }, []);
 
+  /*
+  * update ref in the parent component
+  * */
   React.useEffect(() => {
     validationFunction.current = isRequiredValidation;
 
@@ -370,19 +416,27 @@ const InstructionsForTreatment = ({
     };
   }, [constantIndicators, variantIndicatorsNew, getValues({ nest: true })]);
   React.useEffect(() => {
-    // validationFunction.current = isRequiredValidation;
     functionToRunOnTabChange.current = onSubmit;
     return () => {
       functionToRunOnTabChange.current = () => [];
-      // validationFunction.current = () => true;
     };
-  }, [constantIndicators, variantIndicatorsNew, getValues({ nest: true })]);
+  }, [
+    constantIndicators,
+    variantIndicatorsNew,
+    getValues({ nest: true }),
+    formDirty,
+    serviceRequests,
+  ]);
+  useEffect(() => {
+    //set new isFormDirty function in the ref from the pppparent  EncounterForms/index.js
+    isSomethingWasChanged.current = isFormDirty;
+  }, [formDirty, serviceRequests, getValues({ nest: true })]);
+
   let statuses = [
     { label: 'Waiting for nurse', value: 'waiting_for_nurse' },
     { label: 'Waiting for doctor', value: 'waiting_for_doctor' },
     { label: 'Waiting for xray', value: 'waiting_for_xray' },
   ];
-  const history = useHistory();
 
   return (
     <FormContext {...methods} permission={permission}>

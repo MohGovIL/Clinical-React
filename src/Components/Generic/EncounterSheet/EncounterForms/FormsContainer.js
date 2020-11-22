@@ -43,7 +43,7 @@ function allyProps(index) {
   };
 }
 /*[{"component":"MedicalAdmissionForm","form_name":"Medical Admission","order":"1","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Tests and Treatments","order":"2","permission":"write"},{"component":"MedicalAdmissionForm","form_name":"Diagnosis and Recommendations","order":"3","permission":"write"}]*/
-const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
+const FormsContainer = ({ tabs, dir, prevEncounterId, isSomethingWasChanged }) => {
   const { t } = useTranslation();
 
   const [value, setValue] = React.useState(0);
@@ -75,14 +75,15 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
   const functionToRunOnTabChange = React.useRef(() => []);
 
   const handleChange = async (event, newValue) => {
-    setLoading(true);
     if (validationFunctionToRun.current()) {
       const shouldBeArray = functionToRunOnTabChange.current();
-      if (Array.isArray(shouldBeArray)) {
-        await Promise.all(shouldBeArray);
-        store.dispatch(showSnackbar(t('The form has saved successfully'), 'check'));
+      if (shouldBeArray) {
+        if (Array.isArray(shouldBeArray) && shouldBeArray.length > 0) {
+          await Promise.all(shouldBeArray);
+          store.dispatch(showSnackbar(t('The form has saved successfully'), 'check'));
+        }
+       // await shouldBeArray;
       }
-      await shouldBeArray;
       setValue(newValue);
     }
   };
@@ -118,14 +119,14 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
             value={value}
             index={key}
             dir={dir}>
-            <Suspense fallback={<span>Loading...</span>}>
+            <Suspense fallback={<Loader />}>
               <FormComponent
                 prevEncounterId={prevEncounterId}
                 functionToRunOnTabChange={functionToRunOnTabChange}
                 validationFunction={validationFunctionToRun}
+                isSomethingWasChanged={isSomethingWasChanged}
                 permission={tab.permission}
-                setLoading={setLoading}
-                setSaveLoading={setSaveLoading}
+
               />
             </Suspense>
           </TabPanel>
@@ -138,7 +139,6 @@ const FormsContainer = ({ tabs, dir, prevEncounterId }) => {
           />
         );
       })}
-      {loading && <Loader opacity={saveLoading} />}
     </StyledTabContainer>
   );
 };

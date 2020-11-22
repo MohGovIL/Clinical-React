@@ -46,8 +46,8 @@ const MedicationRequestState = {
     // because then if you want to loop over only functionParams you can't you'll loop on the url as well for no reason
     // Should be refactored in every other FHIR element
     const availableSearchParams = {
-      encounterId: true,
-      patientId: true,
+      encounter: true,
+      patient: true,
       recorder: true,
       requester: true,
       code: true,

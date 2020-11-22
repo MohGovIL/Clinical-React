@@ -16,9 +16,10 @@ import TableBody from '@material-ui/core/TableBody';
 import Paper from '@material-ui/core/Paper';
 import TableCell from '@material-ui/core/TableCell';
 
-const VariantIndicators = ({ variantIndicators }) => {
+const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
   let rowCounter = 0;
   const { t } = useTranslation();
+
   if (!variantIndicators) {
     return null;
   } else {
@@ -41,6 +42,7 @@ const VariantIndicators = ({ variantIndicators }) => {
                               mask={value.mask}
                               disabled={value.disabled}
                               onChange={value.handleOnChange}
+                              onKeyUp={() => setFormDirty(true)}
                               id={value.id + '_' + rowCounter}
                               label={t(value.label)}
                               value={

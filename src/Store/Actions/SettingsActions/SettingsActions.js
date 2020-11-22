@@ -12,6 +12,7 @@ import { geti18n } from 'Utils/Services/i18n';
 import { FHIR } from 'Utils/Services/FHIR';
 import { setUserAction } from 'Store/Actions/ActiveActions';
 import { baseRoutePath } from 'Utils/Helpers/baseRoutePath';
+import {loginSuccessAction} from "../LoginActions/LoginActions";
 
 export const getSettingsStartAction = () => {
   return {
@@ -32,20 +33,23 @@ export const getSettingsFailedAction = () => {
   };
 };
 
-export const getSettingsAction = (history, userID) => {
+export const getSettingsAction = (history, userName) => {
   return async (dispatch) => {
     try {
       dispatch(getSettingsStartAction());
-      const settings = await getGlobalSettings(userID);
-      await geti18n(settings.data.lang_id);
-      dispatch(getSettingsSuccessAction(settings.data));
-
+      const settings = await getGlobalSettings(userName);
+      dispatch(loginSuccessAction(settings.data.user_id));
       const PractitionerData = await FHIR('Practitioner', 'doWork', {
         functionName: 'getPractitioner',
         functionParams: {
-          user: userID,
+          user: settings.data.user_id,
         },
       });
+      await geti18n(settings.data.lang_id);
+      console.log(settings.data)
+      dispatch(getSettingsSuccessAction(settings.data));
+
+
       if (PractitionerData) {
         dispatch(setUserAction(PractitionerData.data));
       }

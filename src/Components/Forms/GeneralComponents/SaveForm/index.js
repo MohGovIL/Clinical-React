@@ -57,11 +57,11 @@ const SaveForm = ({
         }
       }
     : async () =>
-        updateEncounterExtension(encounter, watch('nextStatus'), practitioner);
+        updateEncounterExtension(encounter, selectedStatus, practitioner);
 
   const onClickHandler = async () => {
     try {
-      if (validationFunction(getValues({ nest: true })) || true) {
+      if (validationFunction(getValues({ nest: true }))) {
         setLoading(true);
         const onSubmitPromises = onSubmit(getValues({ nest: true }));
 
@@ -77,22 +77,19 @@ const SaveForm = ({
   };
 
   const isDisabled = () => {
-    let clonePermission = true;
+    if (permission !== 'write') {
+      return  true;
+    }
     if (!statuses) {
-      clonePermission = false;
+      return  false;
     }
     if (!selectedStatus) {
-      clonePermission = true;
-    }
-    if (permission === 'write') {
-      clonePermission = false;
-    } else {
-      clonePermission = true;
+      return true;
     }
     if (disabledOnSubmit) {
-      clonePermission = true
+      return  true
     }
-    return clonePermission;
+    return false;
   };
 
   return (

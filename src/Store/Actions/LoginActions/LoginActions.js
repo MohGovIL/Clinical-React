@@ -66,23 +66,23 @@ export const loginSuccessAction = (userID) => {
   return {
     type: LOGIN_SUCCESS,
     isAuth: true,
-    userID,
+    userID:userID,
   };
 };
 
-const loginPromise = (username, password) => {
+const loginPromise = async (client_id,username, password) => {
   if (stateLessOrNot()) {
     const userObj = {
-      grant_type: 'password',
-      username,
-      password,
-      scope: 'default',
+      "grant_type": 'password',
+      "client_id": client_id,
+      "username":username,
+      "password" : password,
+      "user_role":'users',
+      "scope": 'api:oemr api:fhir openid name'
     };
-    const authPromise = [
-      loginInstance.post('apis/api/auth', userObj),
-      loginInstance.post('apis/fhir/auth', userObj),
-    ];
-    return Promise.all(authPromise);
+
+    return loginInstance({'Content-Type': 'application/x-www-form-urlencoded'}).post('oauth2/default/token', objectToQueryString(userObj))
+
   } else {
     return loginInstance.get(
       'interface/modules/zend_modules/public/clinikal-api/get-csrf-token',
@@ -90,22 +90,25 @@ const loginPromise = (username, password) => {
   }
 };
 
-export const loginAction = (username, password, history) => {
+export const loginAction = (client_id, username, password, history) => {
   return async (dispatch) => {
     dispatch(loginStartAction());
     try {
       let tokenData;
       if (stateLessOrNot()) {
-        const [api, fhir] = await loginPromise(username, password);
-        tokenData = api
+        const connection = await loginPromise(client_id, username, password);
+        console.log(connection);
+        /*tokenData = api
         document.cookie = `${ApiTokens.API.tokenName}=${api.data.access_token};`;
-        document.cookie = `${ApiTokens.FHIR.tokenName}=${fhir.data.access_token}`;
+        document.cookie = `${ApiTokens.FHIR.tokenName}=${fhir.data.access_token}`;*/
+        document.cookie = `accessToken=${connection.data.access_token}`;
+        document.cookie = `refreshToken=${connection.data.refresh_token}`;
       }else {
-        tokenData = await loginPromise(username, password);
+        tokenData = await loginPromise(null, username, password);
         document.cookie = `${ApiTokens.CSRF.tokenName}=${tokenData.data.csrf_token}`;
       }
-      dispatch(loginSuccessAction(tokenData.data?.user_data?.user_id));
-      dispatch(getSettingsAction(history, tokenData.data?.user_data?.user_id));
+      dispatch(getSettingsAction(history, username));
+
     } catch (err) {
       dispatch(loginFailedAction());
       /*Optional solution dispatch logoutAction and add the 'else' below to logoutAction
@@ -119,6 +122,16 @@ export const loginAction = (username, password, history) => {
     }
   };
 };
+
+
+const objectToQueryString = (obj) => {
+  var str = [];
+  for (var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    }
+  return str.join("&");
+}
 
 
 export const restoreSessionAction = (username, password, history) => {

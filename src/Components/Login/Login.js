@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import LoginBG from './LoginBG';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
+import { loginInstance } from 'Utils/Services/AxiosLoginInstance';
 
 const Login = ({ loginAction, history, status }) => {
   const { register, handleSubmit, errors } = useForm({
@@ -29,9 +30,31 @@ const Login = ({ loginAction, history, status }) => {
     submitFocusError: true,
   });
   const { t } = useTranslation();
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [clientId, setClientId] = useState(null);
+
+  useEffect(() => {
+      const userObj = {
+        application_type: 'private',
+        redirect_uris: [`${window.location.protocol}//${window.location.hostname}`],
+        client_name:'clinikal app',
+        token_endpoint_auth_method: 'client_secret_post',
+        contacts: ["me@example.org", "them@example.org"]
+      };
+
+      const response = loginInstance({'Content-Type': 'application/json'}).post('oauth2/default/registration', userObj);
+      response.then((response) => {
+        if (response.data.client_id) {
+          setClientId(response.data.client_id);
+          setButtonDisabled(false);
+        }
+      })
+
+  }, []);
 
   const onSubmit = (data) => {
-    loginAction(data.userName, data.password, history);
+    console.log(clientId)
+    loginAction(clientId,data.userName, data.password, history);
   };
 
   const handleOnDelete = () => {
@@ -43,6 +66,8 @@ const Login = ({ loginAction, history, status }) => {
   useEffect(() => {
     setCloneStatus(status);
   }, [status]);
+
+
 
   useEffect(() => {}, [status]);
   return (
@@ -114,6 +139,7 @@ const Login = ({ loginAction, history, status }) => {
           variant={'contained'}
           color={'primary'}
           fontWeight={'bold'}
+          mode={buttonDisabled ? 'view': 'clicked' }
           other={{
             fullWidth: true,
             type: 'submit',

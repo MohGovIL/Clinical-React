@@ -6,7 +6,7 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import { useTranslation } from 'react-i18next';
 
-const NursingAnamnesis = () => {
+const NursingAnamnesis = (initValueFunction) => {
   const { t } = useTranslation();
 
   const {
@@ -18,7 +18,7 @@ const NursingAnamnesis = () => {
   } = useFormContext();
 
   const callBack = (data, name) => {
-    setValue(name, data);
+    initValueFunction(name, data);
   };
 
   const handlePopUpProps = (title, fields, id, callBack, name) => {

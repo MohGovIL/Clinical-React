@@ -10,11 +10,13 @@ import { FormHelperText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
+import {ParseQuestionnaireResponseBoolean} from "../../../../Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem";
 
 const BackgroundDiseases = ({
   defaultRenderOptionFunction,
   defaultChipLabelFunction,
-  handleLoading
+  handleLoading,
+  initValueFunction
 }) => {
   const { t } = useTranslation();
   const {
@@ -47,7 +49,7 @@ const BackgroundDiseases = ({
       const {
         reasonCode: { code },
       } = chip;
-      if (currEncounterResponse.length) {
+      if (currEncounterResponse.items.length) {
         const { backgroundDiseasesIds } = getValues({ nest: true });
         if (backgroundDiseasesIds[code]) {
           await FHIR('Condition', 'doWork', {
@@ -71,20 +73,15 @@ const BackgroundDiseases = ({
     register({ name: 'backgroundDiseasesIds' });
     (async () => {
       const backgroundDiseasesLinkId = '6';
-      if (currEncounterResponse.length || prevEncounterResponse.length) {
+      let encounterId = null;
+      if ((typeof currEncounterResponse.items !== "undefined" && currEncounterResponse.items.length) || (typeof prevEncounterResponse.items !== "undefined" && prevEncounterResponse.items.length)) {
         let isBackgroundDiseases = 'noResponse';
-        if (currEncounterResponse.length) {
-          isBackgroundDiseases = Boolean(
-            +currEncounterResponse.find(
-              (i) => i.linkId === backgroundDiseasesLinkId,
-            )['answer'][0]['valueBoolean'],
-          );
-        } else if (prevEncounterResponse.length) {
-          isBackgroundDiseases = Boolean(
-            +prevEncounterResponse.find(
-              (i) => i.linkId === backgroundDiseasesLinkId,
-            )['answer'][0]['valueBoolean'],
-          );
+        if (typeof currEncounterResponse.items !== "undefined" && currEncounterResponse.items.length) {
+          isBackgroundDiseases = ParseQuestionnaireResponseBoolean(currEncounterResponse, backgroundDiseasesLinkId);
+          encounterId = currEncounterResponse.encounter;
+        } else if (typeof prevEncounterResponse.items !== "undefined" && prevEncounterResponse.items.length) {
+          isBackgroundDiseases = ParseQuestionnaireResponseBoolean(prevEncounterResponse, backgroundDiseasesLinkId);
+          encounterId = prevEncounterResponse.encounter;
         }
         if (isBackgroundDiseases === true) {
           const conditions = await FHIR('Condition', 'doWork', {
@@ -93,10 +90,12 @@ const BackgroundDiseases = ({
               category: 'medical_problem',
               subject: patientId,
               status: 'active',
+              encounter: encounterId
             },
           });
           if (conditions.data.total) {
             const conditionCodes = [];
+            const conditionInitIds = [];
             const conditionIds = {};
             conditions.data.entry.forEach((condition) => {
               if (condition.resource) {
@@ -117,17 +116,19 @@ const BackgroundDiseases = ({
                   id: normalizedCondition.id,
                   code: normalizedCondition.codeCode,
                 };
+                conditionInitIds.push(normalizedCondition.codeCode)
               }
             });
             setSelectedList(conditionCodes);
-            setValue([
+            initValueFunction([
               { background_diseases: 'There are diseases' },
               { backgroundDiseasesIds: conditionIds },
+              { backgroundDiseasesCodes: conditionInitIds },
             ]);
             handleLoading('backgroundDiseases');
           }
         } else if (isBackgroundDiseases === false) {
-          setValue([
+          initValueFunction([
             {
               background_diseases: 'Usually healthy',
             },

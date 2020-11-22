@@ -11,7 +11,7 @@ import {
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const ConstantIndicators = ({ constantIndicators }) => {
+const ConstantIndicators = ({ constantIndicators, setFormDirty }) => {
   const { t } = useTranslation();
   if (!constantIndicators) {
     return null;
@@ -36,6 +36,7 @@ const ConstantIndicators = ({ constantIndicators }) => {
                 name={value.name}
                 componenttype={value.componenttype}
                 disabled={value.disabled}
+                onKeyUp={() => setFormDirty(true)}
               />
             ) : null;
           })}

@@ -33,6 +33,7 @@ import {
 
 import { store } from 'index';
 import { createSummaryLetter } from 'Utils/Helpers/Letters/createSummaryLetter';
+import {FHIR} from 'Utils/Services/FHIR';
 
 const AppointmentsAndEncountersTables = ({
   patientId,
@@ -94,6 +95,7 @@ const AppointmentsAndEncountersTables = ({
 
   const [showAllPastEncounter, setShowAllPastEncounter] = React.useState(false);
   let [pastEncounterCounter, setPastEncounterCounter] = React.useState(2);
+  const [existLetter, setExistLetter] = React.useState({});
 
   const [
     showAllFutureAppointments,
@@ -122,6 +124,23 @@ const AppointmentsAndEncountersTables = ({
       setShowAllFutureAppointments(true);
       setFutureAppointmentsCounter(nextAppointments.data.total);
     }
+  };
+
+  const existSummeryLetter = async (encounter) => {
+    const documentReferenceData = await FHIR('DocumentReference', 'doWork', {
+      functionName: 'getDocumentReference',
+      searchParams: { category: 5, encounter: encounter.id },
+    });
+
+    return (documentReferenceData &&
+      documentReferenceData.data &&
+      documentReferenceData.data.total >= 1)
+      ? setExistLetter((prev) => {
+        const cloneExist = { ...prev };
+        cloneExist[encounter.id] = true;
+        return cloneExist;
+      })
+      : false;
   };
 
   /*const handleChartClick = () => {
@@ -186,6 +205,10 @@ const AppointmentsAndEncountersTables = ({
         let normalizedPrevEncounterElem = normalizeFhirEncounter(
           response.resource,
         );
+        if (normalizedPrevEncounterElem.status === 'finished') {
+          //check if exist summery letter, if not the button need to be disabled
+          existSummeryLetter(normalizedPrevEncounterElem);
+        }
         normalizedPrevEncounters.push(normalizedPrevEncounterElem);
       }
     });
@@ -541,7 +564,7 @@ const AppointmentsAndEncountersTables = ({
                           </StyledHrefTableButton>
                         </StyledTDCell>
                         <StyledTDCell align='right'>
-                          {encounter.status === 'finished' ||
+                          {encounter.status === 'finished'  ||
                           encounter.status === 'waiting_for_release' ? (
                             <>
                               <input
@@ -551,8 +574,10 @@ const AppointmentsAndEncountersTables = ({
                               />
                               <StyledHrefTableButton
                                 disabled={
+                                  !existLetter[encounter.id] || (
                                   authorizationACO.summaryLetter !== 'view' &&
                                   authorizationACO.summaryLetter !== 'write'
+                                  )
                                 }
                                 onClick={() =>
                                   createLetterFromData({ encounter: encounter })

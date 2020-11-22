@@ -34,6 +34,7 @@ import InstructionsForTreatment from 'Components/Forms/TestsAndTreatments/Instru
 import denormalizeFhirObservation from 'Utils/Helpers/FhirEntities/denormalizeFhirEntity/denormalizeFhirObservation';
 import { explodeMultipleIndicators } from 'Components/Forms/TestsAndTreatments/Helpers/FunctionHelpers.js';
 import { fhirFormatDateTime, formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import Loader from "../../../Assets/Elements/Loader";
 
 /**
  *
@@ -54,8 +55,8 @@ const TestsAndTreatments = ({
   language_direction,
   currentUser,
   functionToRunOnTabChange,
-  validationFunction,
-  setLoading
+  isSomethingWasChanged,
+  validationFunction
 }) => {
   const { t } = useTranslation();
   const [
@@ -64,6 +65,7 @@ const TestsAndTreatments = ({
   ] = useState(false);
   const [clinicIndicators, setClinicIndicators] = useState(null);
   const [saveFormClicked, setSaveFormClicked] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [constantIndicators, setConstantIndicators] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -71,6 +73,9 @@ const TestsAndTreatments = ({
       Weight: null,
     },
   );
+
+  const [formDirty, setFormDirty] = useState(false);
+
 
   /*
   * setLoading - hide/show loader
@@ -362,7 +367,10 @@ const TestsAndTreatments = ({
   return (
     <StyledTestsAndTreatments>
       {constantIndicators && clinicIndicators ? (
-        <ConstantIndicators constantIndicators={constantIndicators} />
+        <ConstantIndicators
+          constantIndicators={constantIndicators}
+          setFormDirty={setFormDirty}
+        />
       ) : null}
       {clinicIndicators && (variantIndicators || variantIndicatorsNew) ? (
         <React.Fragment>
@@ -383,6 +391,7 @@ const TestsAndTreatments = ({
                 ? variantIndicatorsNew
                 : null
             }
+            setFormDirty={setFormDirty}
           />
 
           <InstructionsForTreatment
@@ -394,9 +403,12 @@ const TestsAndTreatments = ({
             permission={permission}
             handleLoading={handleLoading}
             setLoading={setLoading}
+            isSomethingWasChanged={isSomethingWasChanged}
+            formDirty={formDirty}
           />
         </React.Fragment>
       ) : null}
+      {loading && <Loader />}
     </StyledTestsAndTreatments>
   );
 };

@@ -51,8 +51,8 @@ const CRUDOperationsCalls = {
  */
 export function CRUDOperations(action, url, data) {
   let fhirTokenInstance = () =>
-    tokenInstanceGenerator(ApiTokens.FHIR.tokenName);
-  let fhirBasePath = 'apis/fhir/v4';
+    tokenInstanceGenerator(ApiTokens.API.tokenName);
+  let fhirBasePath = 'apis/default/fhir/v4';
   const transformer =
     CRUDOperationsCalls[action] ?? CRUDOperationsCalls.__default__;
   return transformer(fhirBasePath + url, fhirTokenInstance, data);

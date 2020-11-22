@@ -16,24 +16,13 @@ export const tokenInstanceGenerator = (tokenName) => {
   };
 
   if (stateLessOrNot()) {
-    switch (tokenName) {
-      case ApiTokens.API.tokenName:
-        axiosObj['headers'] = {
-          Authorization: `${ApiTokens.API.tokenType} ${getToken(
-            ApiTokens.API.tokenName,
-          )}`,
-        };
-        break;
-      case ApiTokens.FHIR.tokenName:
-        axiosObj['headers'] = {
-          Authorization: `${ApiTokens.FHIR.tokenType} ${getToken(
-            ApiTokens.FHIR.tokenName,
-          )}`,
-        };
-        break;
-      default:
-        break;
-    }
+
+      axiosObj['headers'] = {
+        Authorization: `${ApiTokens.API.tokenType} ${getToken(
+          ApiTokens.API.tokenName,
+        )}`,
+      };
+
   } else {
     axiosObj['headers'] = {
       apicsrftoken: `${getToken(ApiTokens.CSRF.tokenName)}`,

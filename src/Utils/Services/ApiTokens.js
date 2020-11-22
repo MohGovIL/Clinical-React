@@ -5,11 +5,7 @@
  */
 export const ApiTokens = {
   API: {
-    tokenName: 'apiAccessToken',
-    tokenType: 'Bearer',
-  },
-  FHIR: {
-    tokenName: 'fhirAccessToken',
+    tokenName: 'accessToken',
     tokenType: 'Bearer',
   },
   CSRF: {
