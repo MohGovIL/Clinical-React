@@ -147,15 +147,21 @@ export const StyledTreatmentInstructionsButton = styled(Button)`
   }
 `;
 
-export const StyledCardRoot = styled(Card)`
-  display: flex;
+export const StyledCardRoot = styled.div`  
   padding: 27px;
+`;
+export const StyledCardInstruction = styled(Card)`
+  display: flex;
+  padding-bottom: 5px;
   box-shadow: 0 1px 12px 3px rgba(151, 151, 152, 0.09);
 `;
+
+
 
 export const StyledCardDetails = styled.div`
   display: flex;
   flexdirection: column;
+  width: 200px;
 `;
 
 export const StyledCardContent = styled(CardContent)`
@@ -198,7 +204,7 @@ export const StyledTypographyName = styled(Typography)`
   font-style: normal;
   line-height: 1.25;
   letter-spacing: normal;
-  text-align: right;
+  text-align: center;
   color: #000b40;
 `;
 

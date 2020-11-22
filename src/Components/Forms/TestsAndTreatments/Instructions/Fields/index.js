@@ -24,6 +24,7 @@ import {
   StyledCardRoot,
   StyledConstantHeaders,
   StyledIconedButton,
+  StyledCardInstruction,
   StyledInstructions,
   StyledTreatmentInstructionsButton,
   StyledTypographyHour,
@@ -119,14 +120,10 @@ const Fields = ({
 
   const createDataFromRecord = async ({ serviceReq, locked }) => {
     let serviceReqTemp = {
-      occurrence:
-        serviceReq.status === 'active'
-          ? serviceReq.authoredOn
-          : serviceReq.occurrence,
-      performer_or_requester:
-        serviceReq.status === 'active'
-          ? serviceReq.requester
-          : serviceReq.performer,
+      occurrence: serviceReq.occurrence,
+      authoredOn: serviceReq.authoredOn,
+      performer: serviceReq.performer,
+      requester: serviceReq.requester,
       test_treatment: serviceReq.instructionCode,
       test_treatment_type: serviceReq.orderDetailCode,
       instructions: serviceReq.patientInstruction,
@@ -143,7 +140,9 @@ const Fields = ({
     if (!serviceReq) {
       serviceReq = {};
       serviceReq.occurrence = '';
-      serviceReq.performer_or_requester = '';
+      serviceReq.authoredOn = '';
+      serviceReq.performer = '';
+      serviceReq.requester = '';
       serviceReq.instructionCode = '';
       serviceReq.orderDetailCode = '';
       serviceReq.patientInstruction = '';
@@ -154,14 +153,10 @@ const Fields = ({
     }
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
-        occurrence:
-          serviceReq.status === 'active'
-            ? serviceReq.authoredOn
-            : serviceReq.occurrence,
-        performer_or_requester:
-          serviceReq.status === 'active'
-            ? serviceReq.requester
-            : serviceReq.performer,
+        occurrence: serviceReq.occurrence,
+        authoredOn: serviceReq.authoredOn,
+        performer: serviceReq.performer,
+        requester: serviceReq.requester,
         test_treatment: serviceReq.instructionCode,
         test_treatment_type: serviceReq.orderDetailCode,
         instructions: serviceReq.patientInstruction,
@@ -173,14 +168,10 @@ const Fields = ({
       });
     } else {
       await append({
-        occurrence:
-          serviceReq.status === 'active'
-            ? serviceReq.authoredOn
-            : serviceReq.occurrence,
-        performer_or_requester:
-          serviceReq.status === 'active'
-            ? serviceReq.requester
-            : serviceReq.performer,
+        occurrence: serviceReq.occurrence,
+        authoredOn: serviceReq.authoredOn,
+        performer: serviceReq.performer,
+        requester: serviceReq.requester,
         test_treatment: serviceReq.instructionCode,
         test_treatment_type: serviceReq.orderDetailCode,
         instructions: serviceReq.patientInstruction,
@@ -211,7 +202,9 @@ const Fields = ({
     if (fields.length > 0) {
       await insert(parseInt(0, 10), {
         occurrence: '',
-        performer_or_requester: '',
+        authoredOn: '',
+        performer: '',
+        requester: '',
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
@@ -225,7 +218,9 @@ const Fields = ({
     } else {
       await append({
         occurrence: '',
-        performer_or_requester: '',
+        authoredOn: '',
+        performer: '',
+        requester: '',
         test_treatment: '',
         test_treatment_type: '',
         instructions: '',
@@ -261,28 +256,31 @@ const Fields = ({
           return (
             <div key={item.id}>
               <StyledCardRoot>
+                <StyledCardInstruction>
                 <StyledCardDetails>
                   <StyledCardContent language_direction={language_direction}>
                     <StyledTypographyName component='h5' variant='h5'>
                       <Controller
                         hidden
-                        name={`Instruction[${index}].performer_or_requester`}
-                        defaultValue={item.performer_or_requester}
+                        name={`Instruction[${index}].requester`}
+                        defaultValue={item.requester === ''
+                      ? user.id
+                      : item.requester}
                         as={<input />}
                       />
-                      {item.locked
-                        ? practitioners[item.performer_or_requester]
-                        : user.name.toString()}
+                      {item.requester === ''
+                        ? user.name.toString()
+                        : practitioners[item.requester]}
                     </StyledTypographyName>
                     <StyledTypographyHour variant='subtitle1' color='primary'>
                       <Controller
                         hidden
-                        name={`Instruction[${index}].occurrence`}
-                        defaultValue={item.occurrence}
+                        name={`Instruction[${index}].authoredOn`}
+                        defaultValue={item.authoredOn}
                         as={<input />}
                       />
                       {item.locked
-                        ? formatTime(item.occurrence)
+                        ? formatTime(item.authoredOn)
                         : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>
@@ -340,7 +338,39 @@ const Fields = ({
                     item={item}
                     handlePopUpProps={handlePopUpProps}
                   />
-
+                </Grid>
+              </StyledCardInstruction>
+                <StyledCardInstruction>
+                <StyledCardDetails>
+                  <StyledCardContent language_direction={language_direction}>
+                    <StyledTypographyName component='h5' variant='h5'>
+                      <Controller
+                        hidden
+                        name={`Instruction[${index}].performer`}
+                        defaultValue={typeof item.performer === "undefined" || item.performer === ''
+                          ? user.id
+                          : item.performer}
+                        as={<input />}
+                      />
+                      {typeof item.performer === "undefined" || item.performer === ''
+                        ? user.name.toString()
+                        : practitioners[item.performer]}
+                    </StyledTypographyName>
+                    <StyledTypographyHour variant='subtitle1' color='primary'>
+                      <Controller
+                        hidden
+                        name={`Instruction[${index}].occurrence`}
+                        defaultValue={item.occurrence}
+                        as={<input />}
+                      />
+                      {item.locked && item.test_treatment_status === 'done'
+                        ? formatTime(item.occurrence)
+                        : ''}
+                    </StyledTypographyHour>
+                  </StyledCardContent>
+                  <StyledCardName></StyledCardName>
+                </StyledCardDetails>
+                <Grid container spacing={4}>
                   <Grid item xs={12}>
                     <TestTreatMentStatus
                       /*  requiredErrors={requiredErrors}*/
@@ -350,7 +380,7 @@ const Fields = ({
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <TestTreatmentRemark index={index} item={item} />
+                    <TestTreatmentRemark index={index} item={item} permission={permission} />
                   </Grid>
                   {!item.locked ? (
                     <Grid container direction='row' justify='flex-end'>
@@ -399,6 +429,7 @@ const Fields = ({
                     </Grid>
                   ) : null}
                 </Grid>
+              </StyledCardInstruction>
               </StyledCardRoot>
             </div>
           );

@@ -17,14 +17,19 @@ import { StyledHiddenDiv } from 'Components/Forms/TestsAndTreatments/Style';
  * @param index
  * @returns UI Field of the main form.
  */
-const TestTreatmentRemark = ({ index, item }) => {
+const TestTreatmentRemark = ({ index, item, permission}) => {
   const { t } = useTranslation();
   const { control, watch, getValues, setValue } = useFormContext();
   const { Instruction } = getValues({ nest: true });
-
+  const lock = item.locked &&
+    (permission !== 'write' ||
+      item.test_treatment_status === 'done' ||
+      item.test_treatment_status === 'true');
   return (
     <>
-      <StyledHiddenDiv dontDisplay={item.locked}>
+      {!(
+        lock
+      ) ? (
         <Controller
           onChange={([event]) => {
             setValue(
@@ -37,20 +42,27 @@ const TestTreatmentRemark = ({ index, item }) => {
           control={control}
           defaultValue={item.test_treatment_remark}
           InputProps={{
-            readOnly: item.locked,
+            readOnly: lock,
           }}
           as={
             <CustomizedTextField multiline width={'85%'} label={t('remark')} />
           }
         />
-      </StyledHiddenDiv>
-      {item.locked ? (
+      ) : (
+        <>
+        <Controller
+          hidden
+          name={`Instruction[${index}].test_treatment_remark`}
+          defaultValue={item.test_treatment_remark}
+          as={<input />}
+        />
         <TestTreatmentLockedText
           label={t('remark')}
           value={item.test_treatment_remark}
           name={`Instruction[${index}].test_treatment`}
         />
-      ) : null}
+        </>
+      )}
     </>
   );
 };
