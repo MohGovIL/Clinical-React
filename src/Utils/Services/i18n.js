@@ -27,7 +27,7 @@ export const geti18n = (lang_id) => {
       fallbackLng: 'en',
       backend: {
         //loadPath:`${basePath()}/library/ajax/i18n_generator.php`,
-        loadPath: `${basePath()}apis/api/translation/${lang_id}`,
+        loadPath: `${basePath()}apis/default/api/translation/${lang_id}`,
         crossDomain: true, // CHANGED FROM FALSE *********************
         queryStringParams: {
           //   lang_id:7,

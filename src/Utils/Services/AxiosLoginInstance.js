@@ -6,6 +6,14 @@ const baseURL = basePath();
  * @author Idan Gigi idangi@matrix.co.il
  * @returns {AxiosInstance} Axios instance with base URL used for logging in
  */
-export const loginInstance = axios.create({
-  baseURL: baseURL,
-});
+export const loginInstance = (headers = null) => {
+
+  let axiosObj = {
+    baseURL,
+  };
+  if (headers !== null) {
+    axiosObj['headers'] = headers
+  }
+  return  axios.create(axiosObj);
+}
+

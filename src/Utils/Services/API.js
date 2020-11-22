@@ -10,24 +10,24 @@ import { FHIR } from './FHIR';
 
 const apiTokenInstance = () => tokenInstanceGenerator(ApiTokens.API.tokenName);
 
-export const getGlobalSettings = (userID) => {
-  return apiTokenInstance().get(`apis/api/settings/globals/${userID}`);
+export const getGlobalSettings = (userName) => {
+  return apiTokenInstance().get(`apis/default/api/settings/globals/${userName}`);
 };
 
 export const getMenu = (menuName) => {
-  return apiTokenInstance().get(`apis/api/settings/menu/${menuName}`);
+  return apiTokenInstance().get(`apis/default/api/settings/menu/${menuName}`);
 };
 
 export const getCities = () => {
-  return apiTokenInstance().get(`apis/api/lists/cities`);
+  return apiTokenInstance().get(`apis/default/api/lists/cities`);
 };
 
 export const getIndicatorsSettings = () => {
-  return apiTokenInstance().get(`apis/api/indicator-settings`);
+  return apiTokenInstance().get(`apis/default/api/indicator-settings`);
 };
 
 export const getStreets = (city) => {
-  return city && apiTokenInstance().get(`apis/api/lists/streets/${city}`);
+  return city && apiTokenInstance().get(`apis/default/api/lists/streets/${city}`);
 };
 
 export const getForms = (service_type, examination_code) => {
@@ -37,7 +37,7 @@ export const getForms = (service_type, examination_code) => {
   let reason_code = examination_code ? examination_code.toString() : null;
 
   return apiTokenInstance().get(
-    `apis/api/load-forms?${service_type ? 'service_type=' + service_type : ''}${
+    `apis/default/api/load-forms?${service_type ? 'service_type=' + service_type : ''}${
       reason_code && service_type
         ? '&reason_code=' + reason_code
         : reason_code
@@ -55,14 +55,14 @@ export const getFormTemplates = (
 ) => {
   if (serviceType && reasonCode && formID && formField)
     return apiTokenInstance().get(
-      `apis/api/templates/search?service-type=${serviceType}&reason-code=${reasonCode}&form=${formID}&form-field=${formField}`,
+      `apis/default/api/templates/search?service-type=${serviceType}&reason-code=${reasonCode}&form=${formID}&form-field=${formField}`,
     );
   return null;
 };
 
 export const getLetterAPIListOfParams = (city) => {
-  //GET /api/letters/list
-  return city && apiTokenInstance().get(`apis/api/letters/list`);
+  //GET /default/api/letters/list
+  return city && apiTokenInstance().get(`apis/default/api/letters/list`);
 };
 
 export const createLetter = async ({ ...props }) => {
@@ -74,7 +74,7 @@ export const createLetter = async ({ ...props }) => {
   }
 
   return apiTokenInstance().post(
-    `apis/api/letters/${props.letter_type}`,
+    `apis/default/api/letters/${props.letter_type}`,
     props,
   );
 };
