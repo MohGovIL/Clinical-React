@@ -10,46 +10,35 @@ import Loader from 'Assets/Elements/Loader/loginLoader';
 import ToastMessage from "Assets/Elements/ToastMessage";
 import { useIdleTimer } from "react-idle-timer";
 import PopUpSessionTimeout from "Assets/Elements/PopUpSessionTimeout"
-import { restoreSessionAction } from 'Store/Actions/LoginActions/LoginActions';
+import { restoreTokenAction } from 'Store/Actions/LoginActions/LoginActions';
 import * as moment from "moment";
 // import PrivateRoute from 'Components/PrivateRoute/PrivateRoute';
 
-const InitApp = ({ lang_id, lang_code, languageDirection, restoreSessionAction}) => {
+const InitApp = ({ lang_id, lang_code, languageDirection, tokenExpired, restoreTokenAction}) => {
 
   const [popupTimeoutIsOpen, setPopupTimeoutIsOpen] = useState(false);
+  const MINUTES_BEFORE_EXPIRED = 10;
+  const POPUP_TIMEOUT_AFTER_MINUTES = 45;
 
-  /*useEffect(() => {
+  useEffect(() => {
     let interval =  setInterval(() => {
-        if (!isIdle()) {
-          restoreSessionAction();
+        let isInTheLastMinutes = tokenExpired - moment().unix() < MINUTES_BEFORE_EXPIRED * 60
+        if (!isIdle() && isInTheLastMinutes) {
+          restoreTokenAction();
         }
-    },  1000 * 60 * 120)
+    },  1000 * 60 * 5) //refresh token interval - check every 5 minutes
     return () => clearInterval(interval)
-  }, [])
+  }, [tokenExpired])
 
   const handleOnIdle = event => {
-    console.log('user is idle', event)
-    console.log('last active', getLastActiveTime())
     setPopupTimeoutIsOpen(true);
   }
 
-  const handleOnActive = event => {
-    console.log('user is active', event)
-    console.log('time remaining', getRemainingTime())
-    console.log('time remaining', getElapsedTime())
-  }
-
-  const handleOnAction = (e) => {
-    console.log('user did something', e)
-  }
-
-  const { getRemainingTime, getLastActiveTime, getElapsedTime, isIdle } = useIdleTimer({
-    timeout: 1000 * 60 * 1,
+  const { isIdle } = useIdleTimer({
+    timeout: 1000 * 60 * POPUP_TIMEOUT_AFTER_MINUTES,
     onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
     debounce: 1000
-  })*/
+  })
 
   return (
     <React.Fragment>
@@ -73,7 +62,7 @@ const InitApp = ({ lang_id, lang_code, languageDirection, restoreSessionAction})
             path={`${baseRoutePath()}/:subRoute/:page`}
           />
         </Switch>
-        <PopUpSessionTimeout isOpen={false}/>
+        <PopUpSessionTimeout isOpen={popupTimeoutIsOpen} setIsOpen={setPopupTimeoutIsOpen}/>
       </Suspense>
       <ToastMessage  language_direction={languageDirection}/>
     </React.Fragment>
@@ -85,6 +74,7 @@ const mapStateToProps = (state) => {
     lang_id: state.settings.lang_id,
     languageDirection: state.settings.lang_dir,
     lang_code: state.settings.lang_code,
+    tokenExpired: state.login.expired,
   };
 };
-export default connect(mapStateToProps, { restoreSessionAction })(InitApp);
+export default connect(mapStateToProps, { restoreTokenAction })(InitApp);

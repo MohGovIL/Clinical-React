@@ -5,7 +5,10 @@ import {
   LOGOUT_FAILED,
   LOGOUT_START,
   LOGOUT_SUCCESS,
+  LOGIN_EXPIRED
 } from 'Store/Actions/LoginActions/LoginActionTypes';
+import moment from 'moment';
+
 
 const INITIAL_STATE = {
   isAuth: false,
@@ -50,6 +53,11 @@ const loginReducer = (state = INITIAL_STATE, action) => {
         ...state,
         STATUS: action.type,
       };
+    case LOGIN_EXPIRED:
+      return {
+        ...state,
+        expired:moment().add(action.seconds, 'seconds').unix()
+      }
     default:
       return state;
   }
