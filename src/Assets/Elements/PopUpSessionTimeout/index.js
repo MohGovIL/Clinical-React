@@ -56,9 +56,9 @@ const PopUpSessionTimeout = ({
           onClickHandler: logoutAction
         }
       ]}>
-      {`<p>${t('No system usage detected')}!</p>
-        <p>${t('You will be logged out in')} ${timer} ${t('seconds')}.</p>
-         <p>${t('Do you want to stay signed in')}?</p>`}
+      <span>{t('No system usage detected')}!</span><br />
+        <span>{t('You will be logged out in')} {timer} {t('seconds')}.</span><br />
+         <span>{t('Do you want to stay signed in')}?</span><br />
     </CustomizedPopup>
   );
 };

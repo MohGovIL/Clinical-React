@@ -39,7 +39,9 @@ export const logoutAction = () => {
     dispatch(logoutStartAction());
     try {
       for (const token in ApiTokens) {
-        document.cookie = `${ApiTokens[token].tokenName}=''`;
+        document.cookie = '';
+        document.cookie = '';
+        document.cookie = '';
       }
       if (!stateLessOrNot()) {
         window.location = `${basePath()}interface/logout.php`;
@@ -106,7 +108,6 @@ export const loginAction = (client_id, username, password, history) => {
       let tokenData;
       if (stateLessOrNot()) {
         const connection = await loginPromise(client_id, username, password);
-        console.log(connection);
         document.cookie = `clientId=${client_id}`;
         document.cookie = `accessToken=${connection.data.access_token}`;
         document.cookie = `refreshToken=${connection.data.refresh_token}`;

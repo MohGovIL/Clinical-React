@@ -21,7 +21,6 @@ const InitApp = ({ lang_id, lang_code, languageDirection, tokenExpired, restoreT
   const POPUP_TIMEOUT_AFTER_MINUTES = 45;
 
   useEffect(() => {
-    console.log(tokenExpired);
     let interval =  setInterval(() => {
         let isInTheLastMinutes = tokenExpired - moment().unix() < MINUTES_BEFORE_EXPIRED * 60
         if (!isIdle() && isInTheLastMinutes) {
