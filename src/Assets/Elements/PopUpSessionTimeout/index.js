@@ -58,8 +58,7 @@ const PopUpSessionTimeout = ({
       ]}>
       {`<p>${t('No system usage detected')}!</p>
         <p>${t('You will be logged out in')} ${timer} ${t('seconds')}.</p>
-         <p>${t('Do you want to stay signed in')}?</p>`
-      )}
+         <p>${t('Do you want to stay signed in')}?</p>`}
     </CustomizedPopup>
   );
 };
