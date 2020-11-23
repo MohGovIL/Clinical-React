@@ -2,12 +2,14 @@ import React, {useEffect, useState} from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
 import { store } from 'index';
-import { logoutAction } from 'Store/Actions/LoginActions/LoginActions';
+import { logoutAction, restoreTokenAction } from 'Store/Actions/LoginActions/LoginActions';
 import {connect} from "react-redux";
 
 const PopUpSessionTimeout = ({
   isOpen,
-  logoutAction
+  setIsOpen,
+  logoutAction,
+  restoreTokenAction
 }) => {
   const { t } = useTranslation();
   const [timer, setTimer] = useState(60);
@@ -32,12 +34,13 @@ const PopUpSessionTimeout = ({
   });
 
   const restoreSession = () => {
-       return false;
+    restoreTokenAction()
+    setIsOpen(false);
   }
 
   return (
     <CustomizedPopup
-      title={t('Exit without saving')}
+      title={t('System notification')}
       isOpen={isOpen}
       bottomButtons={[
         {
@@ -50,19 +53,17 @@ const PopUpSessionTimeout = ({
           color: 'primary',
           label: t('No, Sign me out'),
           variant: 'contained',
-          onClickHandler: logoutAction,
-        },
+          onClickHandler: logoutAction
+        }
       ]}>
-      {t(
-        `Your session is about to expire!
-        You will be logged out in ${timer} seconds.
-        Do you want to stay signed in?
-        `
+      {`<p>${t('No system usage detected')}!</p>
+        <p>${t('You will be logged out in')} ${timer} ${t('seconds')}.</p>
+         <p>${t('Do you want to stay signed in')}?</p>`
       )}
     </CustomizedPopup>
   );
 };
 
-export default connect(null, { logoutAction })(PopUpSessionTimeout);
+export default connect(null, { logoutAction, restoreTokenAction })(PopUpSessionTimeout);
 
 

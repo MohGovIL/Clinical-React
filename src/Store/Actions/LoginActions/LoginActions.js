@@ -5,6 +5,7 @@ import {
   LOGOUT_FAILED,
   LOGOUT_SUCCESS,
   LOGOUT_START,
+  LOGIN_EXPIRED
 } from './LoginActionTypes';
 import { loginInstance } from 'Utils/Services/AxiosLoginInstance';
 import { stateLessOrNot } from 'Utils/Helpers/StatelessOrNot';
@@ -63,6 +64,13 @@ export const loginFailedAction = () => {
   };
 };
 
+export const loginExpiredAction = (seconds) => {
+  return {
+    type: LOGIN_EXPIRED,
+    seconds: seconds,
+  };
+};
+
 export const loginSuccessAction = (userID) => {
   return {
     type: LOGIN_SUCCESS,
@@ -99,12 +107,10 @@ export const loginAction = (client_id, username, password, history) => {
       if (stateLessOrNot()) {
         const connection = await loginPromise(client_id, username, password);
         console.log(connection);
-        /*tokenData = api
-        document.cookie = `${ApiTokens.API.tokenName}=${api.data.access_token};`;
-        document.cookie = `${ApiTokens.FHIR.tokenName}=${fhir.data.access_token}`;*/
-        document.cookie = `client_id=${client_id}`;
+        document.cookie = `clientId=${client_id}`;
         document.cookie = `accessToken=${connection.data.access_token}`;
         document.cookie = `refreshToken=${connection.data.refresh_token}`;
+        dispatch(loginExpiredAction(connection.data.expires_in));
       }else {
         tokenData = await loginPromise(null, username, password);
         document.cookie = `${ApiTokens.CSRF.tokenName}=${tokenData.data.csrf_token}`;
@@ -130,8 +136,8 @@ const refreshTokenPromise = async () => {
   if (stateLessOrNot()) {
     const userObj = {
       "grant_type": 'refresh_token',
-      "client_id": getToken('client_id'),
-      "refresh_token": getToken('refresh_token')
+      "client_id": getToken('clientId'),
+      "refresh_token": getToken('refreshToken')
     };
 
     return loginInstance({'Content-Type': 'application/x-www-form-urlencoded'}).post('oauth2/default/token', convertParamsToUrl(userObj))
@@ -142,40 +148,22 @@ const refreshTokenPromise = async () => {
 };
 
 
-/*
-const objectToQueryString = (obj) => {
-  var str = [];
-  for (var p in obj)
-    if (obj.hasOwnProperty(p)) {
-      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-    }
-  return str.join("&");
-}*/
-
-
-export const restoreSessionAction = (history) => {
+export const restoreTokenAction = () => {
   return async (dispatch) => {
-   /* dispatch(loginStartAction());
+    //dispatch(loginStartAction());
     try {
-      let tokenData;
       if (stateLessOrNot()) {
-        const [api, fhir] = await loginPromise(username, password);
-        document.cookie = `${ApiTokens.API.tokenName}=${api.data.access_token};`;
-        document.cookie = `${ApiTokens.FHIR.tokenName}=${fhir.data.access_token}`;
+        const connection = await refreshTokenPromise();
+        document.cookie = `accessToken=${connection.data.access_token}`;
+        document.cookie = `refreshToken=${connection.data.refresh_token}`;
+        dispatch(loginExpiredAction(connection.data.expires_in));
       }else {
-        tokenData = await loginPromise(username, password);
-        document.cookie = `${ApiTokens.CSRF.tokenName}=${tokenData.data.csrf_token}`;
+        //todo - not supported
       }
     } catch (err) {
-      dispatch(loginFailedAction());
-      /!*Optional solution dispatch logoutAction and add the 'else' below to logoutAction
-            (not really necessary cuz Auth is false and PrivateRoute got it covered)
-            *!/
-      if (!stateLessOrNot()) {
-        window.location = `${basePath()}interface/logout.php`;
-      } else {
-        history.push('/');
-      }
-    }*/
+
+      logoutAction()
+
+    }
   };
 };
