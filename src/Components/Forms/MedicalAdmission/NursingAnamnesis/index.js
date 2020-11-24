@@ -15,10 +15,11 @@ const NursingAnamnesis = (initValueFunction) => {
     setValue,
     register,
     watch,
+    getValues
   } = useFormContext();
 
   const callBack = (data, name) => {
-    initValueFunction(name, data);
+    setValue(name, data);
   };
 
   const handlePopUpProps = (title, fields, id, callBack, name) => {
@@ -31,6 +32,7 @@ const NursingAnamnesis = (initValueFunction) => {
         formID: id,
         setTemplatesTextReturned: callBack,
         name,
+        defaultContext: getValues({ nest: true })[name],
       };
     });
   };
