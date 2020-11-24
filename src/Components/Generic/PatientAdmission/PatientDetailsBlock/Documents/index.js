@@ -309,7 +309,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
         ]}
         title={t('System notification')}>
         {`${t('You choose to delete the document')} ${t(
-          popUpReferenceFile,
+          popUpReferenceFile === 'Document1' ? '' : popUpReferenceFile
         )} ${t('Do you want to continue?')}`}
       </CustomizedPopup>
       <StyledFormGroup>
@@ -452,7 +452,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
                   size={additionalDocumentFile.size}
                   onDelete={(event) => {
                     setPopUpReferenceFile(
-                      '',
+                      'Document1',
                     );
                     onDeletePopUp(event);
                   }}
