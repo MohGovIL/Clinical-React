@@ -184,7 +184,6 @@ const Fields = ({
     }
   };
   let user = normalizeFhirUser(currentUser);
-  const edit = permission ? true : false;
 
   const addNewInstruction = async () => {
     //prepend has a bug in hookform soI used it like this :

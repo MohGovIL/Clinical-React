@@ -146,15 +146,9 @@ const InstructionsForTreatment = ({
 
     const savedServiceRequest = [];
     try {
-      /*  const test_and_treatments_list = await getValueSetLists(
-        ['tests_and_treatments'],
-        true,
-      );*/
+
       Instruction.map((value, index) => {
-        /* const test_treatment_type_list = await getValueSetLists(
-          [`details_${value.test_treatment}`],
-          true,
-        );*/
+
         const serviceRequest = buildServiceRequestObj(value);
         //check whether to save this request or not ....
         const diffExists = wasSomethingChanged(serviceRequest, serviceRequests);
@@ -198,6 +192,7 @@ const InstructionsForTreatment = ({
   const onSubmit = (data) => {
     //  console.log('data', JSON.stringify(data));
     // console.log(isRequiredValidation(data));
+    if (permission !== 'write') return false;
     if (isFormDirty()) {
       setdisabledOnSubmit(true);
       const indicatorsFHIRArray = saveIndicatorsOnSubmit();

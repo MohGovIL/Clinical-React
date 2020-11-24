@@ -436,6 +436,7 @@ const MedicalAdmission = ({
   };
 
   const onSubmit = (data) => {
+    if (permissionHandler() === 'view') return false;
     if (!data) data = getValues({ nest: true });
     if (!isRequiredValidation(data)) return false;
     // in the first form of the encounter need to save the form and connect the medical issue from prev encounter in current.

@@ -306,6 +306,7 @@ const DiagnosisAndRecommendations = ({
 
   const onSubmit = (data) => {
     setdisabledOnSubmit(true);
+    if (permissionHandler() === 'view') return false;
     if (isFormDirty()) {
       if (!data) data = getValues({ nest: true });
       try {
