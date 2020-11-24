@@ -104,6 +104,12 @@ const TestsAndTreatments = ({
     });
   }
 
+  const permissionHandler = React.useCallback(() => {
+    let clonePermission = permission;
+    if (encounter.status === 'finished') clonePermission = 'view';
+    return clonePermission;
+  }, [encounter.status, permission]);
+
 
   const userDetails = normalizeFhirUser(currentUser);
   const [variantIndicators, setVariantIndicators] = useState(null);
@@ -138,7 +144,7 @@ const TestsAndTreatments = ({
   }
 
   const saveIndicatorsOnSubmit = () => {
-    if (permission !== 'write') {
+    if (permissionHandler() !== 'write') {
       return []; //return empty async calls
     }
 
@@ -314,12 +320,12 @@ const TestsAndTreatments = ({
               : clinicIndicators.data['constant'],
           constantIndicators,
           setConstantIndicators,
-          disabled: encounter.status === 'finished' || permission !== 'write',
+          disabled: permissionHandler() !== 'write',
         });
 
         setConstantIndicators(normalizedConstantObservation);
 
-        if (permission === 'write') {
+        if (permissionHandler() === 'write') {
           let normalizedVarientNewObservation = thickenTheData({
             indicators: clinicIndicators,
             variantIndicatorsNew: variantNewState,
@@ -400,7 +406,7 @@ const TestsAndTreatments = ({
             saveIndicatorsOnSubmit={saveIndicatorsOnSubmit}
             validationFunction={validationFunction}
             functionToRunOnTabChange={functionToRunOnTabChange}
-            permission={permission}
+            permissionHandler={permissionHandler}
             handleLoading={handleLoading}
             setLoading={setLoading}
             isSomethingWasChanged={isSomethingWasChanged}
