@@ -91,6 +91,7 @@ const DiagnosisAndRecommendations = ({
       'treatmentDetails',
       'evacuationWay',
       'decision',
+      'numberOfDays'
     ];
     for (const elem of emptyInFirst) {
       if (

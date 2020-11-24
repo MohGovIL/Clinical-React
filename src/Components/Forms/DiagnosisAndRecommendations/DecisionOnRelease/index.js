@@ -18,6 +18,7 @@ const RecommendationsOnRelease = ({ initValueFunction }) => {
   } = useFormContext();
   const [decision, setDecision] = useState('');
   const [evacuationWay, setEvacuationWay] = useState('');
+  const [numberOfDays, setNumberOfDays] = useState('');
 
   const handleEvacuationWayChange = (event) => {
     setEvacuationWay(event.target.value);
@@ -32,6 +33,7 @@ const RecommendationsOnRelease = ({ initValueFunction }) => {
   useEffect(() => {
     register({ name: 'decision' });
     register({ name: 'evacuationWay' });
+    register({ name: 'numberOfDays' });
     const { items } = questionnaireResponse;
     if (items) {
       items.forEach((item) => {
@@ -48,7 +50,8 @@ const RecommendationsOnRelease = ({ initValueFunction }) => {
               ]);
               break;
             case '7':
-              initValueFunction([{ numberOfDays: item.answer[0].valueString }]);
+              setNumberOfDays(item.answer[0].valueInteger)
+              initValueFunction([{ numberOfDays: item.answer[0].valueInteger }]);
               break;
             default:
               break;
@@ -145,6 +148,7 @@ const RecommendationsOnRelease = ({ initValueFunction }) => {
                 return event.target.value;
               }}
               name='numberOfDays'
+              defaultValue={numberOfDays}
               disabled={permission === 'view' ? true : false}
               as={
                 <CustomizedTextField
