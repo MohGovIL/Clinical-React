@@ -1,9 +1,11 @@
 
 
 export const ParseQuestionnaireResponseBoolean = (normalizedResponse, linkId) => {
+  const item = normalizedResponse.items.find(
+    (i) => i.linkId === linkId,
+  );
+  if (typeof item === "undefined")return undefined;
   return Boolean(
-    +normalizedResponse.items.find(
-      (i) => i.linkId === linkId,
-    )['answer'][0]['valueBoolean'],
+    +item['answer'][0]['valueBoolean'],
   );
 }

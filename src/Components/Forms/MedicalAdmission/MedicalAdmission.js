@@ -24,6 +24,7 @@ import SaveForm from '../GeneralComponents/SaveForm';
 import { store } from 'index';
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 import Loader from "../../../Assets/Elements/Loader";
+import {ParseQuestionnaireResponseBoolean} from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
 
 const MedicalAdmission = ({
   patient,
@@ -51,7 +52,7 @@ const MedicalAdmission = ({
   * */
   const [initValueObj, setInitValueObj] = useState({});
   const [loading, setLoading] = useState(true);
-
+  const pregnancyLinkId = '4';
   /*
   * Save all the init value in the state than call to setValue
   * */
@@ -266,6 +267,12 @@ const MedicalAdmission = ({
   const [prevEncounterResponse, setPrevEncounterResponse] = useState([]);
 
   useEffect(() => {
+    register({ name: 'isPregnancy' });
+    return () => unregister(['isPregnancy']);
+  }, [register, unregister]);
+
+
+  useEffect(() => {
     (async () => {
       initValue([
         { reasonForReferralDetails: encounter.extensionReasonCodeDetails },
@@ -338,6 +345,12 @@ const MedicalAdmission = ({
           { questionnaire: Questionnaire },
           { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
         ]);
+
+        const pregnancyResponse = typeof normalizedFhirQuestionnaireResponse.items !== "undefined" ? ParseQuestionnaireResponseBoolean(normalizedFhirQuestionnaireResponse, pregnancyLinkId) : undefined;
+        if (typeof pregnancyResponse !== "undefined") {
+          initValue([{isPregnancy: pregnancyResponse ? 'Yes' : 'No' }]);
+        }
+
         handleLoading('questionnaireResponse');
       } catch (error) {
         console.log(error);
@@ -353,11 +366,6 @@ const MedicalAdmission = ({
     patient.id,
     prevEncounterId,
   ]);
-
-  useEffect(() => {
-    register({ name: 'isPregnancy' });
-    return () => unregister(['isPregnancy']);
-  }, [register, unregister]);
 
   useEffect(() => {
     validationFunction.current = isRequiredValidation;

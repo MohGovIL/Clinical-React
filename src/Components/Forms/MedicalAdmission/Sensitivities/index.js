@@ -10,7 +10,7 @@ import { FormHelperText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
-import {ParseQuestionnaireResponseBoolean} from "Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem";
+import {ParseQuestionnaireResponseBoolean} from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
 
 const Sensitivities = ({
   defaultRenderOptionFunction,
