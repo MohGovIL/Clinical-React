@@ -100,6 +100,7 @@ const PatientDetailsBlock = ({
             patientPatchParams['city'] = data.addressCity;
           }
           if (data.addressStreet && data.addressStreet.trim()) {
+            console.log(data.addressStreet)
             patientPatchParams['streetName'] = data.addressStreet;
           }
           if (data.addressStreetNumber && data.addressStreetNumber.trim()) {
@@ -488,6 +489,7 @@ const PatientDetailsBlock = ({
               postalCode={patientData.postalCode}
               streetName={patientData.streetName}
               streetNumber={patientData.streetNumber}
+              addressType={patientData.addressType}
             />
             <VisitDetails
               reasonCodeDetails={encounterData.extensionReasonCodeDetails}

@@ -14,6 +14,7 @@ const ContactInformation = ({
   streetNumber,
   city,
   streetName,
+  addressType
 }) => {
   const { t } = useTranslation();
   const {
@@ -45,9 +46,7 @@ const ContactInformation = ({
     };
   }, [setValue, unregister, register]);
 
-  const [contactInformationTabValue, setContactInformationTabValue] = useState(
-    0,
-  );
+  const [contactInformationTabValue, setContactInformationTabValue] = useState(addressType === 'postal' ? 1 : 0);
   const contactInformationTabValueChangeHandler = (event, newValue) => {
     setValue('contactInformationTabValue', newValue);
     triggerValidation(['addressPostalCode', 'POBoxPostalCode']);
@@ -134,8 +133,9 @@ const ContactInformation = ({
           if (Object.keys(streets.data).length) {
             setStreets(
               Object.keys(streets.data).map((streetKey) => {
+                console.log(streetKey)
                 let streetObj = {};
-                streetObj.code = streets.data[streetKey];
+                streetObj.code = streetKey;
                 streetObj.name = t(streets.data[streetKey]);
 
                 return streetObj;
@@ -252,6 +252,7 @@ const ContactInformation = ({
               getOptionSelected={(option, value) => option.code === value.code}
               onChange={(event, newValue) => {
                 if (newValue) {
+                  console.log(newValue)
                   setValue('addressStreet', newValue.code);
                 }
                 setAddressStreet(newValue);
