@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { loginAction } from 'Store/Actions/LoginActions/LoginActions';
 import bg from 'Assets/Images/bg.svg';
-import loginLogo from 'Assets/Images/symbol-logo.svg';
+import loginLogo from 'Assets/Images/logo.svg';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { useTranslation } from 'react-i18next';
 import CustomizedTableButton from 'Assets/Elements/CustomizedTable/CustomizedTableButton';
