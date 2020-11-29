@@ -25,6 +25,7 @@ import { store } from 'index';
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 import Loader from "../../../Assets/Elements/Loader";
 import {ParseQuestionnaireResponseBoolean} from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
+import {setEncounterAction} from 'Store/Actions/ActiveActions';
 
 const MedicalAdmission = ({
   patient,
@@ -45,7 +46,7 @@ const MedicalAdmission = ({
     submitFocusError: true,
   });
 
-  const { handleSubmit, register, setValue, unregister, getValues } = methods;
+  const { handleSubmit, register, setValue, unregister, getValues, watch } = methods;
 
   /*
   * <FORM DIRTY FUNCTIONS>
@@ -53,6 +54,32 @@ const MedicalAdmission = ({
   const [initValueObj, setInitValueObj] = useState({});
   const [loading, setLoading] = useState(true);
   const pregnancyLinkId = '4';
+  //const encounterChanged = watch(['isUrgent', 'reasonForReferralDetails', 'serviceTypeCode', 'examinationCode']);
+
+ /* useEffect(() => {
+    console.log(encounterChanged)
+
+    if(typeof encounterChanged.examinationCode !== "undefined" && typeof encounterChanged.serviceTypeCode !== "undefined" && typeof encounterChanged.isUrgent !== "undefined" && typeof encounterChanged.reasonForReferralDetails !== "undefined") {
+
+      if(encounterChanged.examinationCode !== encounter.examinationCode||
+         encounterChanged.serviceTypeCode !== encounter.serviceTypeCode ||
+        (encounter.priority == 1 && encounterChanged.isUrgent) ||
+        (encounter.priority == 2 && !encounterChanged.isUrgent) ||
+         encounterChanged.reasonForReferralDetails !== encounter.extensionReasonCodeDetails) {
+        console.log(encounter)
+        const cloneEncounter = {...encounter};
+        cloneEncounter['examinationCode'] = encounterChanged.examinationCode;
+        cloneEncounter['serviceTypeCode'] = encounterChanged.serviceTypeCode;
+        cloneEncounter['priority'] = encounterChanged.isUrgent ? 2 : 1;
+        cloneEncounter['extensionReasonCodeDetails'] =
+          encounterChanged.reasonForReferralDetails;
+         store.dispatch(setEncounterAction(cloneEncounter));
+      }
+    }
+
+  }, [encounterChanged]);*/
+
+
   /*
   * Save all the init value in the state than call to setValue
   * */
