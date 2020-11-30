@@ -561,6 +561,8 @@ const MedicalAdmission = ({
             }),
           );
         }
+        console.log(initValueObj)
+        console.log(data)
         //Creating new conditions for sensitivities
         if (data.sensitivities === 'Known') {
           data.sensitivitiesCodes.forEach((sensitivities) => {
@@ -588,6 +590,14 @@ const MedicalAdmission = ({
               );
             }
           });
+          // removed from list (by unchecked)
+          initValueObj.sensitivitiesCodes.forEach((sensitivities) => {
+            if (!data.sensitivitiesCodes.includes(sensitivities)) {
+              APIsArray.push(
+                conditionInactive(initValueObj.sensitiveConditionsIds[sensitivities].id)
+              );
+            }
+          });
         } else {
           if (
             data.sensitivitiesCodes &&
@@ -599,16 +609,7 @@ const MedicalAdmission = ({
             data.sensitivitiesCodes.forEach((code) => {
               if (data.sensitiveConditionsIds[code]) {
                 APIsArray.push(
-                  FHIR('Condition', 'doWork', {
-                    functionName: 'patchCondition',
-                    functionParams: {
-                      conditionId: data.sensitiveConditionsIds[code].id,
-                      patchParams: {
-                        clinicalStatus: 'inactive',
-                        encounter: encounter.id,
-                      },
-                    },
-                  }),
+                  conditionInactive(data.sensitiveConditionsIds[code].id)
                 );
               }
             });
@@ -641,6 +642,14 @@ const MedicalAdmission = ({
               );
             }
           });
+          // removed from list (by unchecked)
+          initValueObj.backgroundDiseasesCodes.forEach((sensitivities) => {
+            if (!data.backgroundDiseasesCodes.includes(sensitivities)) {
+              APIsArray.push(
+                conditionInactive(initValueObj.backgroundDiseasesIds[sensitivities].id)
+              );
+            }
+          });
         } else {
           if (
             data.backgroundDiseasesCodes &&
@@ -652,16 +661,7 @@ const MedicalAdmission = ({
             data.backgroundDiseasesCodes.forEach((code) => {
               if (data.backgroundDiseasesIds[code]) {
                 APIsArray.push(
-                  FHIR('Condition', 'doWork', {
-                    functionName: 'patchCondition',
-                    functionParams: {
-                      conditionId: data.backgroundDiseasesIds[code].id,
-                      patchParams: {
-                        clinicalStatus: 'inactive',
-                        encounter: encounter.id,
-                      },
-                    },
-                  }),
+                  conditionInactive(data.backgroundDiseasesIds[code].id)
                 );
               }
             });
@@ -693,6 +693,14 @@ const MedicalAdmission = ({
                     },
                   },
                 }),
+              );
+            }
+          });
+          // removed from list (by unchecked)
+          initValueObj.chronicMedicationCodes.forEach((medication) => {
+            if (!data.chronicMedicationCodes.includes(medication)) {
+              APIsArray.push(
+                medicationInactive(initValueObj.chronicMedicationIds[medication].id)
               );
             }
           });
@@ -735,6 +743,32 @@ const MedicalAdmission = ({
     }
 
   };
+
+  const conditionInactive = (id) => {
+    return FHIR('Condition', 'doWork', {
+      functionName: 'patchCondition',
+      functionParams: {
+        conditionId: id,
+        patchParams: {
+          clinicalStatus: 'inactive',
+          encounter: encounter.id,
+        },
+      },
+    });
+  }
+
+  const medicationInactive = (id) => {
+    return FHIR('MedicationStatement', 'doWork', {
+      functionName: 'patchMedicationStatement',
+      functionParams: {
+        medicationStatementId: id,
+        patchParams: {
+          status: 'inactive',
+          encounter: encounter.id,
+        },
+      },
+    });
+  }
 
   const permissionHandler = React.useCallback(() => {
     let clonePermission = permission;
