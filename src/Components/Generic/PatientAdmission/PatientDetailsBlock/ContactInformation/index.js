@@ -14,6 +14,8 @@ const ContactInformation = ({
   streetNumber,
   city,
   streetName,
+  addressType,
+  writePermission
 }) => {
   const { t } = useTranslation();
   const {
@@ -45,9 +47,7 @@ const ContactInformation = ({
     };
   }, [setValue, unregister, register]);
 
-  const [contactInformationTabValue, setContactInformationTabValue] = useState(
-    0,
-  );
+  const [contactInformationTabValue, setContactInformationTabValue] = useState(addressType === 'postal' ? 1 : 0);
   const contactInformationTabValueChangeHandler = (event, newValue) => {
     setValue('contactInformationTabValue', newValue);
     triggerValidation(['addressPostalCode', 'POBoxPostalCode']);
@@ -134,8 +134,9 @@ const ContactInformation = ({
           if (Object.keys(streets.data).length) {
             setStreets(
               Object.keys(streets.data).map((streetKey) => {
+                console.log(streetKey)
                 let streetObj = {};
-                streetObj.code = streets.data[streetKey];
+                streetObj.code = streetKey;
                 streetObj.name = t(streets.data[streetKey]);
 
                 return streetObj;
@@ -198,6 +199,7 @@ const ContactInformation = ({
                 setCitiesOpen(false);
               }}
               loading={loadingCities}
+              disabled={!writePermission}
               options={cities}
               value={addressCity}
               onChange={(event, newValue) => {
@@ -249,9 +251,11 @@ const ContactInformation = ({
               onClose={() => setStreetsOpen(false)}
               id='addressStreet'
               value={addressStreet}
+              disabled={!writePermission}
               getOptionSelected={(option, value) => option.code === value.code}
               onChange={(event, newValue) => {
                 if (newValue) {
+                  console.log(newValue)
                   setValue('addressStreet', newValue.code);
                 }
                 setAddressStreet(newValue);
@@ -300,6 +304,7 @@ const ContactInformation = ({
                   label={t('House number')}
                 />
               }
+              disabled={!writePermission}
             />
             {/* Contact Information - address - postal code */}
             <Controller
@@ -319,6 +324,7 @@ const ContactInformation = ({
                   type='number'
                 />
               }
+              disabled={!writePermission}
               rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
               error={errors.addressPostalCode && true}
               helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
@@ -344,6 +350,7 @@ const ContactInformation = ({
               }}
               getOptionSelected={(option, value) => option.code === value.code}
               value={POBoxCity}
+              disabled={!writePermission}
               loading={loadingCities}
               options={cities}
               getOptionLabel={(option) => option.name}
@@ -379,6 +386,7 @@ const ContactInformation = ({
                 onTextBlur(event.target.value, setPOBox);
                 return event.target.value;
               }}
+              disabled={!writePermission}
               as={
                 <CustomizedTextField
                   width={'70%'}
@@ -393,6 +401,7 @@ const ContactInformation = ({
               name={'POBoxPostalCode'}
               key='POBoxPostalCode'
               control={control}
+              disabled={!writePermission}
               onBlur={([event]) => {
                 onTextBlur(event.target.value, setPOBoxPostalCode);
                 return event.target.value;

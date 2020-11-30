@@ -10,7 +10,7 @@ import { FormHelperText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
-import {ParseQuestionnaireResponseBoolean} from "Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem";
+import {ParseQuestionnaireResponseBoolean} from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
 
 const Sensitivities = ({
   defaultRenderOptionFunction,
@@ -44,30 +44,6 @@ const Sensitivities = ({
     servicesTypeOpen && sensitivitiesList.length === 0;
 
   const sensitivitiesRadioList = ['Not known', 'Known'];
-
-  const onDeleteChipHandler = async (chip) => {
-    try {
-      const {
-        reasonCode: { code },
-      } = chip;
-      if (currEncounterResponse.items.length) {
-        const { sensitiveConditionsIds } = getValues({ nest: true });
-        if (sensitiveConditionsIds[code]) {
-          await FHIR('Condition', 'doWork', {
-            functionName: 'patchCondition',
-            functionParams: {
-              conditionId: sensitiveConditionsIds[code].id,
-              patchParams: {
-                clinicalStatus: 'inactive',
-              },
-            },
-          });
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     register({ name: 'sensitivitiesCodes' });
@@ -208,7 +184,6 @@ const Sensitivities = ({
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
           sortByTranslation
-          onDeleteChip={onDeleteChipHandler}
         />
       )}
     </StyledSensitivities>

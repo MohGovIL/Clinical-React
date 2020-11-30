@@ -44,30 +44,6 @@ const BackgroundDiseases = ({
 
   const [selectedList, setSelectedList] = useState([]);
 
-  const onDeleteChipHandler = async (chip) => {
-    try {
-      const {
-        reasonCode: { code },
-      } = chip;
-      if (currEncounterResponse.items.length) {
-        const { backgroundDiseasesIds } = getValues({ nest: true });
-        if (backgroundDiseasesIds[code]) {
-          await FHIR('Condition', 'doWork', {
-            functionName: 'patchCondition',
-            functionParams: {
-              conditionId: backgroundDiseasesIds[code].id,
-              patchParams: {
-                clinicalStatus: 'inactive',
-              },
-            },
-          });
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     register({ name: 'backgroundDiseasesCodes' });
     register({ name: 'backgroundDiseasesIds' });
@@ -211,7 +187,6 @@ const BackgroundDiseases = ({
           defaultRenderOptionFunction={defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
           sortByTranslation
-          onDeleteChip={onDeleteChipHandler}
         />
       )}
     </StyleBackgroundDiseases>

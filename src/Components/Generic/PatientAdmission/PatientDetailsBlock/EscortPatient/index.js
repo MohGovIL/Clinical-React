@@ -15,7 +15,8 @@ const EscortPatient = ({
   isArrivalWay,
   relatedPersonId,
   encounterArrivalWay,
-  handleLoading
+  handleLoading,
+  writePermission
 }) => {
   const {
     errors,
@@ -123,10 +124,14 @@ const EscortPatient = ({
                 onChange={arrivalWayHandler}
                 exclusive
                 aria-label='Arrival way'>
-                <StyledToggleButton value='Ambulance' aria-label='ambulance'>
+                <StyledToggleButton
+                  value='Ambulance'
+                  aria-label='ambulance'
+                  disabled={!writePermission}>
                   {t('Ambulance')}
                 </StyledToggleButton>
                 <StyledToggleButton
+                   disabled={!writePermission}
                   value='Independent'
                   aria-label='Independent'>
                   {t('Independent')}
@@ -146,6 +151,7 @@ const EscortPatient = ({
               : `* ${t('Patient arrived with an escort')}?`}
           </span>
           <StyledSwitch
+            disabled={!writePermission}
             register={register}
             name='isEscorted'
             label_1={'No'}
@@ -169,6 +175,7 @@ const EscortPatient = ({
             name='escortName'
             control={control}
             defaultValue={name}
+            disabled={!writePermission}
             onBlur={([event]) => {
               setName(event.target.value);
               return event.target.value;
@@ -179,6 +186,7 @@ const EscortPatient = ({
             name='escortMobilePhone'
             control={control}
             defaultValue={mobilePhone}
+            disabled={!writePermission}
             error={errors.escortMobilePhone && true}
             helperText={
               errors.escortMobilePhone && t('The number entered is incorrect')

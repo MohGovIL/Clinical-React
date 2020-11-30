@@ -34,7 +34,7 @@ import { showSnackbar } from 'Store/Actions/UiActions/ToastActions.js';
 const InstructionsForTreatment = ({
   encounter,
   patient,
-  permission,
+  permissionHandler,
   saveIndicatorsOnSubmit,
   currentUser,
   validationFunction,
@@ -140,7 +140,7 @@ const InstructionsForTreatment = ({
   };
 
   const saveServiceRequestData = () => {
-    if (permission !== 'write') return []; //empty request;
+    if (permissionHandler() !== 'write') return []; //empty request;
 
     const { Instruction } = getValues({ nest: true });
 
@@ -192,7 +192,7 @@ const InstructionsForTreatment = ({
   const onSubmit = (data) => {
     //  console.log('data', JSON.stringify(data));
     // console.log(isRequiredValidation(data));
-    if (permission !== 'write') return false;
+    if (permissionHandler() !== 'write') return false;
     if (isFormDirty()) {
       setdisabledOnSubmit(true);
       const indicatorsFHIRArray = saveIndicatorsOnSubmit();
@@ -441,7 +441,7 @@ const InstructionsForTreatment = ({
   ];
 
   return (
-    <FormContext {...methods} permission={permission}>
+    <FormContext {...methods} permission={permissionHandler()}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <PopUpFormTemplates {...popUpProps} />
         <Fields
@@ -449,7 +449,7 @@ const InstructionsForTreatment = ({
           setRequiredErrors={setRequiredErrors}
           requiredErrors={requiredErrors}
           handlePopUpProps={handlePopUpProps}
-          permission={permission}
+          permission={permissionHandler()}
         />
         <Grid container spacing={1}>
           <SaveForm

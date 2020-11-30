@@ -65,10 +65,7 @@ const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items, initVa
       },
       {
         nursingDetails: itemsObj[3],
-      },
-      {
-        isPregnancy: itemsObj[4],
-      },
+      }
     ]);
   }, [items, setValue]);
 

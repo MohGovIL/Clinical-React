@@ -18,7 +18,7 @@ import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeF
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 
-const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading }) => {
+const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, writePermission }) => {
   const { t } = useTranslation();
 
   const {
@@ -301,6 +301,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading }) 
           name='paymentAmount'
           onChange={onChangePaymentAmountHandler}
           onBlur={onBlurPaymentAmountHandler}
+          disabled={!writePermission}
           value={paymentAmount}
           label={t('Payment amount')}
         />
@@ -314,6 +315,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading }) 
           <StyledToggleButtonGroup
             value={paymentMethod}
             onChange={paymentMethodHandler}
+            disabled={!writePermission}
             exclusive
             aria-label='Payment method'>
             <StyledToggleButton value='Cash' aria-label='Cash'>
@@ -347,6 +349,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading }) 
           inputRef={register}
           id={'commitmentAndPaymentReferenceForPaymentCommitment'}
           type='number'
+          disabled={!writePermission}
           InputLabelProps={{ shrink: true }}
           error={
             requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
@@ -364,6 +367,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading }) 
               value: (value) => validateDate(value, 'before'),
             },
           }}
+          disabled={!writePermission}
           defaultValue={commitmentAndPaymentCommitmentDate}
           control={control}
           as={
@@ -409,6 +413,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading }) 
             },
           }}
           defaultValue={commitmentAndPaymentCommitmentValidity}
+          disabled={!writePermission}
           as={
             <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
               <CustomizedKeyboardDatePicker
@@ -445,6 +450,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading }) 
           name='commitmentAndPaymentDoctorsName'
           label={`${t('Doctors name')} *`}
           inputRef={register}
+          disabled={!writePermission}
           id={'commitmentAndPaymentDoctorsName'}
           InputLabelProps={{ shrink: true }}
           error={requiredErrors.commitmentAndPaymentDoctorsName ? true : false}
@@ -455,6 +461,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading }) 
           label={`${t('Doctors license')} *`}
           name='commitmentAndPaymentDoctorsLicense'
           inputRef={register}
+          disabled={!writePermission}
           id={'commitmentAndPaymentDoctorsLicense'}
           type='number'
           InputLabelProps={{ shrink: true }}

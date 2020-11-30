@@ -46,30 +46,6 @@ const ChronicMedication = ({
 
   const [selectedList, setSelectedList] = useState([]);
 
-  const onDeleteChipHandler = async (chip) => {
-    try {
-      const {
-        reasonCode: { code },
-      } = chip;
-      if (currEncounterResponse.items.length) {
-        const { chronicMedicationIds } = getValues({ nest: true });
-        if (chronicMedicationIds[code]) {
-          await FHIR('MedicationStatement', 'doWork', {
-            functionName: 'patchMedicationStatement',
-            functionParams: {
-              medicationStatementId: chronicMedicationIds[code].id,
-              patchParams: {
-                status: 'inactive',
-              },
-            },
-          });
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     register({ name: 'chronicMedicationCodes' });
     register({ name: 'chronicMedicationIds' });
@@ -222,7 +198,6 @@ const ChronicMedication = ({
           virtual
           defaultRenderOptionFunction={multiMedicationsOptions}
           defaultChipLabelFunction={defaultChipLabelFunction}
-          onDeleteChip={onDeleteChipHandler}
         />
       )}
     </StyleChronicMedication>

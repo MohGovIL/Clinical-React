@@ -45,6 +45,8 @@ const PopupCreateNewPatient = ({
   authorizationACO,
   hideAppointment,
 }) => {
+
+
   const { t } = useTranslation();
   const [idTypesList, setIdTypesList] = useState([]);
   const [genderList, setGenderList] = useState([]);
@@ -94,6 +96,8 @@ const PopupCreateNewPatient = ({
     show: false,
   });
 
+
+
   const textFieldSelectNotEmptyRule = {
     validate: {
       value: (value) => (value !== undefined && value !== 0) || 'error',
@@ -136,6 +140,7 @@ const PopupCreateNewPatient = ({
     setValue,
     getValues,
     formState,
+    watch
   } = useForm({
     mode: 'onBlur',
     validateCriteriaMode: 'all',
@@ -143,11 +148,14 @@ const PopupCreateNewPatient = ({
       identifierType: patientIdTypeMain,
     },
   });
+
   //Check if form was changed
   const { dirty } = formState;
   useEffect(() => {
     setIsDirty(dirty);
   }, [dirty, setIsDirty]);
+
+  const currentIdentifier = watch('identifier');
 
   const onSubmit = (patient, e) => {
     //
@@ -313,9 +321,8 @@ const PopupCreateNewPatient = ({
   useEffect(() => {
     (async () => {
       if (
-        patientIdType !== 0 &&
-        patientIdNumber &&
-        patientIdNumber.length > 0
+        patientIdType !== 0 && typeof currentIdentifier !== "undefined" &&
+        ((patientIdType === patientIdTypeMain && currentIdentifier.length === 9) || (patientIdType !== patientIdTypeMain && currentIdentifier.length > 1))
       ) {
         setIsFound(true);
         const result = await triggerValidation('identifier');
@@ -324,7 +331,7 @@ const PopupCreateNewPatient = ({
           FHIR('Patient', 'doWork', {
             functionName: 'searchPatientById',
             functionParams: {
-              identifierValue: patientIdNumber,
+              identifierValue: currentIdentifier,
               identifierType: patientIdType,
             },
           }).then((patients) => {
@@ -389,36 +396,42 @@ const PopupCreateNewPatient = ({
                 setErrorIdNumberText(t(errors?.identifier?.message));
                 setFormButtonSave('write');
               } else {
-                if (patientWasFound) {
-                  //we will need to make this after reset of react-hook-form
-                  let nullValues = [
-                    { identifier: patientIdNumber },
-                    { gender: 0 },
-                    { managingOrganization: 0 },
-                    { birthDate: null },
-                    { lastName: '' },
-                    { firstName: '' },
-                    { mobileCellPhone: '' },
-                    { email: '' },
-                  ];
-                  setValue(nullValues);
-                  setPatientGender(0);
-                  setPatientKupatHolim(0);
-                  setPatientBirthDate(null);
-                  setPatientWasFound(false);
-                }
-                clearIdNumberError();
-                setFormButtonSave('write');
+                clearForm();
               }
             }
           });
         } catch (err) {
           console.log(err);
         }
+      } else {
+        clearForm();
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientIdNumber, patientIdType]);
+  }, [patientIdNumber, patientIdType, currentIdentifier]);
+
+  const clearForm = () => {
+    if (patientWasFound) {
+      //we will need to make this after reset of react-hook-form
+      let nullValues = [
+        { identifier: patientIdNumber },
+        { gender: 0 },
+        { managingOrganization: 0 },
+        { birthDate: null },
+        { lastName: '' },
+        { firstName: '' },
+        { mobileCellPhone: '' },
+        { email: '' },
+      ];
+      setValue(nullValues);
+      setPatientGender(0);
+      setPatientKupatHolim(0);
+      setPatientBirthDate(null);
+      setPatientWasFound(false);
+    }
+    clearIdNumberError();
+    setFormButtonSave('write');
+  }
 
   //Change button type for patientAdmission
   useEffect(() => {
@@ -439,6 +452,16 @@ const PopupCreateNewPatient = ({
     try {
       setValue('identifierType', event.target.value, true);
       setPatientIdType(event.target.value);
+    } catch (e) {
+      console.log('Error: ' + e);
+    }
+  };
+
+  const handlePatientIdNumberChange = (event) => {
+    try {
+      console.log(event.target.value)
+      setValue('identifier', event.target.value, true);
+      setPatientIdentifier(event.target.value);
     } catch (e) {
       console.log('Error: ' + e);
     }

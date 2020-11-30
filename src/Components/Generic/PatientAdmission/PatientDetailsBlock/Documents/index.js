@@ -14,7 +14,7 @@ import { decodeBase_64IntoBlob } from 'Utils/Helpers/decodeBase_64IntoBlob';
 import { combineBase_64 } from 'Utils/Helpers/combineBase_64';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 import CustomizedPopup from 'Assets/Elements/CustomizedPopup';
-const Documents = ({ eid, pid, handleLoading }) => {
+const Documents = ({ eid, pid, handleLoading, writePermission }) => {
   const { t } = useTranslation();
   const { setValue, register, unregister, isCommitmentForm } = useFormContext();
 
@@ -309,7 +309,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
         ]}
         title={t('System notification')}>
         {`${t('You choose to delete the document')} ${t(
-          popUpReferenceFile,
+          popUpReferenceFile === 'Document1' ? '' : popUpReferenceFile
         )} ${t('Do you want to continue?')}`}
       </CustomizedPopup>
       <StyledFormGroup>
@@ -342,6 +342,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
               id='Referral'
               type='file'
               accept='.pdf,.gpf,.png,.gif,.jpg'
+              disabled={!writePermission}
               onChange={() =>
                 onChangeFileHandler(referralRef, setReferralFile, 'Referral')
               }
@@ -349,6 +350,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
             {Object.values(referralFile).length > 0 ? (
               <ChipWithImage
                 htmlFor='Referral'
+                disabled={!writePermission}
                 label={referralFile.name}
                 size={referralFile.size}
                 onDelete={(event) => {
@@ -364,6 +366,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
                   color='primary'
                   component='span'
                   size={'large'}
+                  disabled={!writePermission}
                   startIcon={<Scanner />}>
                   {t('Upload document')}
                 </StyledButton>
@@ -387,6 +390,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
                 id='Commitment'
                 type='file'
                 accept='.pdf,.gpf,.png,.gif,.jpg'
+                disabled={!writePermission}
                 onChange={() =>
                   onChangeFileHandler(
                     commitmentRef,
@@ -400,6 +404,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
                   htmlFor='Commitment'
                   label={commitmentFile.name}
                   size={commitmentFile.size}
+                  disabled={!writePermission}
                   onDelete={(event) => {
                     setPopUpReferenceFile('Commitment');
                     onDeletePopUp(event);
@@ -413,6 +418,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
                     color='primary'
                     component='span'
                     size={'large'}
+                    disabled={!writePermission}
                     startIcon={<Scanner />}>
                     {t('Upload document')}
                   </StyledButton>
@@ -437,6 +443,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
                 id='Document1'
                 type='file'
                 accept='.pdf,.gpf,.png,.gif,.jpg'
+                disabled={!writePermission}
                 onChange={() =>
                   onChangeFileHandler(
                     additionalDocumentRef,
@@ -448,11 +455,12 @@ const Documents = ({ eid, pid, handleLoading }) => {
               {Object.values(additionalDocumentFile).length > 0 ? (
                 <ChipWithImage
                   htmlFor='AdditionalDocument'
+                  disabled={!writePermission}
                   label={additionalDocumentFile.name}
                   size={additionalDocumentFile.size}
                   onDelete={(event) => {
                     setPopUpReferenceFile(
-                      '',
+                      'Document1',
                     );
                     onDeletePopUp(event);
                   }}
@@ -466,6 +474,7 @@ const Documents = ({ eid, pid, handleLoading }) => {
                     variant='outlined'
                     color='primary'
                     component='span'
+                    disabled={!writePermission}
                     size={'large'}
                     startIcon={<Scanner />}>
                     {t('Upload document')}

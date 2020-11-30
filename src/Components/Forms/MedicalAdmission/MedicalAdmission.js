@@ -24,13 +24,17 @@ import SaveForm from '../GeneralComponents/SaveForm';
 import { store } from 'index';
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 import Loader from "../../../Assets/Elements/Loader";
+import {ParseQuestionnaireResponseBoolean} from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
+import {setEncounterAction} from 'Store/Actions/ActiveActions';
+import {showSnackbar} from 'Store/Actions/UiActions/ToastActions';
+import {baseRoutePath} from 'Utils/Helpers/baseRoutePath';
+import { useHistory } from 'react-router-dom';
 
 const MedicalAdmission = ({
   patient,
   encounter,
   formatDate,
   languageDirection,
-  history,
   verticalName,
   permission,
   validationFunction,
@@ -43,14 +47,15 @@ const MedicalAdmission = ({
     mode: 'onBlur',
     submitFocusError: true,
   });
-
-  const { handleSubmit, register, setValue, unregister, getValues } = methods;
+  const history = useHistory();
+  const { handleSubmit, register, setValue, unregister, getValues, watch } = methods;
 
   /*
   * <FORM DIRTY FUNCTIONS>
   * */
   const [initValueObj, setInitValueObj] = useState({});
   const [loading, setLoading] = useState(true);
+  const pregnancyLinkId = '4';
 
   /*
   * Save all the init value in the state than call to setValue
@@ -219,7 +224,6 @@ const MedicalAdmission = ({
   const isRequiredValidation = (data) => {
     let clean = true;
     if (!data) data = getValues({ nest: true });
-    console.log(data);
     const cloneRequiredErrors = { ...requiredErrors };
     for (const fieldKey in requiredFields) {
       if (requiredFields.hasOwnProperty(fieldKey)) {
@@ -264,6 +268,12 @@ const MedicalAdmission = ({
     [],
   );
   const [prevEncounterResponse, setPrevEncounterResponse] = useState([]);
+
+  useEffect(() => {
+    register({ name: 'isPregnancy' });
+    return () => unregister(['isPregnancy']);
+  }, [register, unregister]);
+
 
   useEffect(() => {
     (async () => {
@@ -338,6 +348,12 @@ const MedicalAdmission = ({
           { questionnaire: Questionnaire },
           { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
         ]);
+
+        const pregnancyResponse = typeof normalizedFhirQuestionnaireResponse.items !== "undefined" ? ParseQuestionnaireResponseBoolean(normalizedFhirQuestionnaireResponse, pregnancyLinkId) : undefined;
+        if (typeof pregnancyResponse !== "undefined") {
+          initValue([{isPregnancy: pregnancyResponse ? 'Yes' : 'No' }]);
+        }
+
         handleLoading('questionnaireResponse');
       } catch (error) {
         console.log(error);
@@ -355,11 +371,6 @@ const MedicalAdmission = ({
   ]);
 
   useEffect(() => {
-    register({ name: 'isPregnancy' });
-    return () => unregister(['isPregnancy']);
-  }, [register, unregister]);
-
-  useEffect(() => {
     validationFunction.current = isRequiredValidation;
     functionToRunOnTabChange.current = onSubmit;
     isSomethingWasChanged.current = isFormDirty;
@@ -367,6 +378,7 @@ const MedicalAdmission = ({
       functionToRunOnTabChange.current = false;
       validationFunction.current = () => true;
       isSomethingWasChanged.current = () => false;
+
     };
     stopSavingProcess();
   }, [initValueObj]);
@@ -442,11 +454,19 @@ const MedicalAdmission = ({
     // in the first form of the encounter need to save the form and connect the medical issue from prev encounter in current.
     // the questionnaireResponseId is undefined in the first
     const firstEncForm = typeof initValueObj['questionnaireResponseId'] === 'undefined'? true : false;
-    console.log(`first = ${firstEncForm}`)
+
     savingProcess();
     if (isFormDirty() || firstEncForm) {
+
+      const encounterChanged =  (data.examinationCode !== encounter.examinationCode||
+        data.serviceTypeCode !== encounter.serviceTypeCode ||
+        (encounter.priority == 1 && data.isUrgent) ||
+        (encounter.priority == 2 && !data.isUrgent) ||
+        data.reasonForReferralDetails !== encounter.extensionReasonCodeDetails);
+
       try {
         const APIsArray = [];
+        let cloneEncounter = null;
         const items = data.questionnaire.item.map((i) => {
           const item = {
             linkId: i.linkId,
@@ -524,21 +544,25 @@ const MedicalAdmission = ({
             }),
           );
         }
-        const cloneEncounter = {...encounter};
-        cloneEncounter['examinationCode'] = data.examinationCode;
-        cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
-        cloneEncounter['priority'] = data.isUrgent ? 2 : 1;
-        cloneEncounter['extensionReasonCodeDetails'] =
-          data.reasonForReferralDetails;
-        APIsArray.push(
-          FHIR('Encounter', 'doWork', {
-            functionName: 'updateEncounter',
-            functionParams: {
-              encounterId: encounter.id,
-              encounter: cloneEncounter,
-            },
-          }),
-        );
+        if (encounterChanged) {
+          cloneEncounter = {...encounter};
+          cloneEncounter['examinationCode'] = data.examinationCode;
+          cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
+          cloneEncounter['priority'] = data.isUrgent ? 2 : 1;
+          cloneEncounter['extensionReasonCodeDetails'] =
+            data.reasonForReferralDetails;
+          APIsArray.push(
+            FHIR('Encounter', 'doWork', {
+              functionName: 'updateEncounter',
+              functionParams: {
+                encounterId: encounter.id,
+                encounter: cloneEncounter,
+              },
+            }),
+          );
+        }
+        console.log(initValueObj)
+        console.log(data)
         //Creating new conditions for sensitivities
         if (data.sensitivities === 'Known') {
           data.sensitivitiesCodes.forEach((sensitivities) => {
@@ -566,6 +590,14 @@ const MedicalAdmission = ({
               );
             }
           });
+          // removed from list (by unchecked)
+          initValueObj.sensitivitiesCodes.forEach((sensitivities) => {
+            if (!data.sensitivitiesCodes.includes(sensitivities)) {
+              APIsArray.push(
+                conditionInactive(initValueObj.sensitiveConditionsIds[sensitivities].id)
+              );
+            }
+          });
         } else {
           if (
             data.sensitivitiesCodes &&
@@ -577,16 +609,7 @@ const MedicalAdmission = ({
             data.sensitivitiesCodes.forEach((code) => {
               if (data.sensitiveConditionsIds[code]) {
                 APIsArray.push(
-                  FHIR('Condition', 'doWork', {
-                    functionName: 'patchCondition',
-                    functionParams: {
-                      conditionId: data.sensitiveConditionsIds[code].id,
-                      patchParams: {
-                        clinicalStatus: 'inactive',
-                        encounter: encounter.id,
-                      },
-                    },
-                  }),
+                  conditionInactive(data.sensitiveConditionsIds[code].id)
                 );
               }
             });
@@ -619,6 +642,14 @@ const MedicalAdmission = ({
               );
             }
           });
+          // removed from list (by unchecked)
+          initValueObj.backgroundDiseasesCodes.forEach((sensitivities) => {
+            if (!data.backgroundDiseasesCodes.includes(sensitivities)) {
+              APIsArray.push(
+                conditionInactive(initValueObj.backgroundDiseasesIds[sensitivities].id)
+              );
+            }
+          });
         } else {
           if (
             data.backgroundDiseasesCodes &&
@@ -630,16 +661,7 @@ const MedicalAdmission = ({
             data.backgroundDiseasesCodes.forEach((code) => {
               if (data.backgroundDiseasesIds[code]) {
                 APIsArray.push(
-                  FHIR('Condition', 'doWork', {
-                    functionName: 'patchCondition',
-                    functionParams: {
-                      conditionId: data.backgroundDiseasesIds[code].id,
-                      patchParams: {
-                        clinicalStatus: 'inactive',
-                        encounter: encounter.id,
-                      },
-                    },
-                  }),
+                  conditionInactive(data.backgroundDiseasesIds[code].id)
                 );
               }
             });
@@ -674,6 +696,14 @@ const MedicalAdmission = ({
               );
             }
           });
+          // removed from list (by unchecked)
+          initValueObj.chronicMedicationCodes.forEach((medication) => {
+            if (!data.chronicMedicationCodes.includes(medication)) {
+              APIsArray.push(
+                medicationInactive(initValueObj.chronicMedicationIds[medication].id)
+              );
+            }
+          });
         } else {
           if (
             data.chronicMedicationCodes &&
@@ -698,6 +728,10 @@ const MedicalAdmission = ({
             });
           }
         }
+
+        if (encounterChanged && cloneEncounter !== null) {
+          APIsArray.push(new Promise(store.dispatch(setEncounterAction(cloneEncounter))))
+        }
         console.log(APIsArray);
         return APIsArray;
       } catch (error) {
@@ -710,11 +744,69 @@ const MedicalAdmission = ({
 
   };
 
+  const conditionInactive = (id) => {
+    return FHIR('Condition', 'doWork', {
+      functionName: 'patchCondition',
+      functionParams: {
+        conditionId: id,
+        patchParams: {
+          clinicalStatus: 'inactive',
+          encounter: encounter.id,
+        },
+      },
+    });
+  }
+
+  const medicationInactive = (id) => {
+    return FHIR('MedicationStatement', 'doWork', {
+      functionName: 'patchMedicationStatement',
+      functionParams: {
+        medicationStatementId: id,
+        patchParams: {
+          status: 'inactive',
+          encounter: encounter.id,
+        },
+      },
+    });
+  }
+
   const permissionHandler = React.useCallback(() => {
     let clonePermission = permission;
     if (encounter.status === 'finished') clonePermission = 'view';
     return clonePermission;
   }, [encounter.status, permission]);
+
+  const updateEncounterExtension = async (
+    encounter,
+    selectedStatus,
+    practitioner,
+  ) => {
+      try {
+        const data = getValues({ nest: true });
+        const cloneEncounter = { ...encounter };
+        cloneEncounter.extensionSecondaryStatus = selectedStatus;
+        cloneEncounter.status = 'triaged';
+        cloneEncounter.practitioner = practitioner;
+        cloneEncounter['examinationCode'] = data.examinationCode;
+        cloneEncounter['serviceTypeCode'] = data.serviceTypeCode;
+        cloneEncounter['priority'] = data.isUrgent ? 2 : 1;
+        cloneEncounter['extensionReasonCodeDetails'] =
+          data.reasonForReferralDetails;
+
+        await FHIR('Encounter', 'doWork', {
+          functionName: 'updateEncounter',
+          functionParams: {
+            encounterId: encounter.id,
+            encounter: cloneEncounter,
+          },
+        });
+        store.dispatch(showSnackbar(t('The encounter sheet has saved successfully'), 'check'));
+        history.push(`${baseRoutePath()}/generic/patientTracking`);
+      } catch (error) {
+        console.log(error);
+      }
+
+  };
 
   return (
     <StyledMedicalAdmission>
@@ -776,11 +868,11 @@ const MedicalAdmission = ({
           />
           <SaveForm
             encounter={encounter}
-            mainStatus={'triaged'}
             onSubmit={onSubmit}
             validationFunction={isRequiredValidation}
             disabledOnSubmit={disabledOnSubmit}
             setLoading={setLoading}
+            updateEncounterExtension={updateEncounterExtension}
           />
         </StyledForm>
       </FormContext>
