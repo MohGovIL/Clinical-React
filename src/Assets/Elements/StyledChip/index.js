@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Delete, Visibility } from '@material-ui/icons';
 import { Typography, Tooltip, Grid } from '@material-ui/core';
 import HeaderIcon from '../Header/HeaderIcon/index';
-const ChipWithImage = ({ label, onDelete, size, onClick, htmlFor }) => {
+const ChipWithImage = ({ label, onDelete, size, onClick, htmlFor, disabled }) => {
   const { t } = useTranslation();
 
   return (
@@ -32,7 +32,7 @@ const ChipWithImage = ({ label, onDelete, size, onClick, htmlFor }) => {
               margin: '0 24px 0 24px',
               cursor: 'pointer',
             }}
-            onClick={(event) => onDelete(event) || null}
+            onClick={(event) => !disabled ? onDelete(event) : null || null}
           />
         )}
       </Grid>

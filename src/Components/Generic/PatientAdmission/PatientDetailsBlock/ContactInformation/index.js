@@ -14,7 +14,8 @@ const ContactInformation = ({
   streetNumber,
   city,
   streetName,
-  addressType
+  addressType,
+  writePermission
 }) => {
   const { t } = useTranslation();
   const {
@@ -198,6 +199,7 @@ const ContactInformation = ({
                 setCitiesOpen(false);
               }}
               loading={loadingCities}
+              disabled={!writePermission}
               options={cities}
               value={addressCity}
               onChange={(event, newValue) => {
@@ -249,6 +251,7 @@ const ContactInformation = ({
               onClose={() => setStreetsOpen(false)}
               id='addressStreet'
               value={addressStreet}
+              disabled={!writePermission}
               getOptionSelected={(option, value) => option.code === value.code}
               onChange={(event, newValue) => {
                 if (newValue) {
@@ -301,6 +304,7 @@ const ContactInformation = ({
                   label={t('House number')}
                 />
               }
+              disabled={!writePermission}
             />
             {/* Contact Information - address - postal code */}
             <Controller
@@ -320,6 +324,7 @@ const ContactInformation = ({
                   type='number'
                 />
               }
+              disabled={!writePermission}
               rules={{ maxLength: { value: 7 }, minLength: { value: 7 } }}
               error={errors.addressPostalCode && true}
               helperText={errors.addressPostalCode && 'יש להזין 7 ספרות'}
@@ -345,6 +350,7 @@ const ContactInformation = ({
               }}
               getOptionSelected={(option, value) => option.code === value.code}
               value={POBoxCity}
+              disabled={!writePermission}
               loading={loadingCities}
               options={cities}
               getOptionLabel={(option) => option.name}
@@ -380,6 +386,7 @@ const ContactInformation = ({
                 onTextBlur(event.target.value, setPOBox);
                 return event.target.value;
               }}
+              disabled={!writePermission}
               as={
                 <CustomizedTextField
                   width={'70%'}
@@ -394,6 +401,7 @@ const ContactInformation = ({
               name={'POBoxPostalCode'}
               key='POBoxPostalCode'
               control={control}
+              disabled={!writePermission}
               onBlur={([event]) => {
                 onTextBlur(event.target.value, setPOBoxPostalCode);
                 return event.target.value;
