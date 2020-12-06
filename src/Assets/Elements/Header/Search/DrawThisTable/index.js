@@ -27,6 +27,11 @@ import { useHistory } from 'react-router-dom';
 import PopAppointmentsPerPatient from 'Components/Generic/PopupComponents/PopupAppointmentsPerPatient';
 import { gotToPatientAdmission } from 'Utils/Helpers/goTo/gotoPatientAdmission';
 import { useSelector } from 'react-redux';
+import {
+  fhirFormatDate,
+  currentDate,
+  formatShortDate
+} from 'Utils/Helpers/Datetime/formatDate';
 
 const DrawThisTable = ({
   result,
@@ -118,9 +123,7 @@ const DrawThisTable = ({
     let theAppointmentIsToday = false;
     if (nextAppointmetCheckNormelized) {
       theAppointmentIsToday =
-        moment
-          .utc(nextAppointmetCheckNormelized.startTime)
-          .format('DD/MM/YYYY') === moment.utc().format('DD/MM/YYYY')
+        formatShortDate(nextAppointmetCheckNormelized.startTime, 'DD/MM/YYYY') === currentDate('DD/MM/YYYY')
           ? true
           : false;
     }
@@ -172,7 +175,7 @@ const DrawThisTable = ({
     setExpanded(newExpanded ? panel : false);
     if (newExpanded) {
       let identifier = patient.id;
-      let currentDate = moment().utc().format('YYYY-MM-DD');
+      let currentDate = fhirFormatDate();
       // const encounterStatPromise = await getValueSet("encounter_statuses");
       const encounterStatPromise = await FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',

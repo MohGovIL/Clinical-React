@@ -4,13 +4,15 @@ import StyledPatientBackground, {
   StyledHeader,
 } from 'Components/Generic/EncounterSheet/PatientBackground/Style';
 import { FHIR } from 'Utils/Services/FHIR';
-import moment from 'moment';
 import normalizeFhirEncounter from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirEncounter';
 import { useTranslation } from 'react-i18next';
 import Encounters from 'Components/Generic/EncounterSheet/PatientBackground/Encounters';
 import normalizeFhirDocumentReference from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirDocumentReference';
 import MedicalIssues from './MedicalIssues';
 import Loader from 'Assets/Elements/Loader';
+import {
+  fhirFormatDate
+} from 'Utils/Helpers/Datetime/formatDate';
 
 const PatientBackground = ({
   encounter,
@@ -25,7 +27,7 @@ const PatientBackground = ({
   };
 
   const [prevEncounters, setPrevEncounters] = React.useState([]);
-  const currentDate = moment().utc().format('YYYY-MM-DD');
+  const currentDate = fhirFormatDate();
 
   /*
   * setLoading - hide/show loader
