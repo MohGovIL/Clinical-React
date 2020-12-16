@@ -591,13 +591,16 @@ const MedicalAdmission = ({
             }
           });
           // removed from list (by unchecked)
-          initValueObj.sensitivitiesCodes.forEach((sensitivities) => {
-            if (!data.sensitivitiesCodes.includes(sensitivities)) {
-              APIsArray.push(
-                conditionInactive(initValueObj.sensitiveConditionsIds[sensitivities].id)
-              );
-            }
-          });
+          if (typeof initValueObj.sensitivitiesCodes !== "undefined") {
+            initValueObj.sensitivitiesCodes.forEach((sensitivities) => {
+              if (!data.sensitivitiesCodes.includes(sensitivities)) {
+                APIsArray.push(
+                  conditionInactive(initValueObj.sensitiveConditionsIds[sensitivities].id)
+                );
+              }
+            });
+          }
+
         } else {
           if (
             data.sensitivitiesCodes &&
@@ -615,7 +618,6 @@ const MedicalAdmission = ({
             });
           }
         }
-
         //Creating new conditions for backgroundDiseases
         if (data.background_diseases === 'There are diseases') {
           data.backgroundDiseasesCodes.forEach((backgroundDisease) => {
@@ -643,13 +645,15 @@ const MedicalAdmission = ({
             }
           });
           // removed from list (by unchecked)
-          initValueObj.backgroundDiseasesCodes.forEach((sensitivities) => {
-            if (!data.backgroundDiseasesCodes.includes(sensitivities)) {
-              APIsArray.push(
-                conditionInactive(initValueObj.backgroundDiseasesIds[sensitivities].id)
-              );
-            }
-          });
+          if (typeof initValueObj.backgroundDiseasesCodes !== "undefined") {
+            initValueObj.backgroundDiseasesCodes.forEach((sensitivities) => {
+              if (!data.backgroundDiseasesCodes.includes(sensitivities)) {
+                APIsArray.push(
+                  conditionInactive(initValueObj.backgroundDiseasesIds[sensitivities].id)
+                );
+              }
+            });
+          }
         } else {
           if (
             data.backgroundDiseasesCodes &&
@@ -697,13 +701,15 @@ const MedicalAdmission = ({
             }
           });
           // removed from list (by unchecked)
-          initValueObj.chronicMedicationCodes.forEach((medication) => {
-            if (!data.chronicMedicationCodes.includes(medication)) {
-              APIsArray.push(
-                medicationInactive(initValueObj.chronicMedicationIds[medication].id)
-              );
-            }
-          });
+          if (typeof initValueObj.chronicMedicationCodes !== "undefined") {
+            initValueObj.chronicMedicationCodes.forEach((medication) => {
+              if (!data.chronicMedicationCodes.includes(medication)) {
+                APIsArray.push(
+                  medicationInactive(initValueObj.chronicMedicationIds[medication].id)
+                );
+              }
+            });
+          }
         } else {
           if (
             data.chronicMedicationCodes &&
