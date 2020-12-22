@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { loginAction } from 'Store/Actions/LoginActions/LoginActions';
+import {
+  LOGIN_FAILED,
+  MFA_REQUIRED
+} from 'Store/Actions/LoginActions/LoginActionTypes';
 import bg from 'Assets/Images/bg.svg';
 import loginLogo from 'Assets/Images/logo.svg';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
@@ -32,6 +36,8 @@ const Login = ({ loginAction, history, status }) => {
   const { t } = useTranslation();
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [clientId, setClientId] = useState(null);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [connectDetails, setConnectDetails] = useState({});
 
   useEffect(() => {
       const userObj = {
@@ -39,7 +45,7 @@ const Login = ({ loginAction, history, status }) => {
         redirect_uris: [`${window.location.protocol}//${window.location.hostname}`],
         client_name:'clinikal app',
         token_endpoint_auth_method: 'client_secret_post',
-        contacts: ["me@example.org", "them@example.org"]
+        contacts: []
       };
 
       const response = loginInstance({'Content-Type': 'application/json'}).post('oauth2/default/registration', userObj);
@@ -53,8 +59,19 @@ const Login = ({ loginAction, history, status }) => {
   }, []);
 
   const onSubmit = (data) => {
-    console.log(clientId)
-    loginAction(clientId,data.userName, data.password, history);
+    if (cloneStatus !== MFA_REQUIRED) {
+      setConnectDetails(data);
+      const result = loginAction(clientId,data.userName, data.password, history);
+      result.then((err_status) => {
+        console.log(err_status)
+        console.log(cloneStatus)
+        if (err_status === MFA_REQUIRED) {
+            console.log('mfa required')
+        }
+      })
+    }
+
+
   };
 
   const handleOnDelete = () => {
@@ -64,6 +81,7 @@ const Login = ({ loginAction, history, status }) => {
   const [cloneStatus, setCloneStatus] = useState('');
 
   useEffect(() => {
+    console.log(status)
     setCloneStatus(status);
   }, [status]);
 
@@ -84,7 +102,7 @@ const Login = ({ loginAction, history, status }) => {
           כניסה למערכת
         </Typography>
         <StyledDivider />
-        {cloneStatus === 'LOGIN_FAILED' && (
+        {cloneStatus === LOGIN_FAILED && (
           <StyledErrorChip
             label='שם המשתמש ו/או הסיסמה שהוזנו אינם תקינים'
             onDelete={handleOnDelete}

@@ -5,7 +5,8 @@ import {
   LOGOUT_FAILED,
   LOGOUT_SUCCESS,
   LOGOUT_START,
-  LOGIN_EXPIRED
+  LOGIN_EXPIRED,
+  MFA_REQUIRED
 } from './LoginActionTypes';
 import { loginInstance } from 'Utils/Services/AxiosLoginInstance';
 import { stateLessOrNot } from 'Utils/Helpers/StatelessOrNot';
@@ -66,6 +67,13 @@ export const loginFailedAction = () => {
   };
 };
 
+export const mfaRequiredAction = () => {
+  return {
+    type: MFA_REQUIRED,
+    isAuth: false,
+  };
+};
+
 export const loginExpiredAction = (seconds) => {
   return {
     type: LOGIN_EXPIRED,
@@ -119,7 +127,13 @@ export const loginAction = (client_id, username, password, history) => {
       dispatch(getSettingsAction(history, username));
 
     } catch (err) {
-      dispatch(loginFailedAction());
+      console.log(err.response)
+      if (err.response.data.error === 'mfa_required') {
+        dispatch(mfaRequiredAction());
+        return MFA_REQUIRED;
+      } else {
+        dispatch(loginFailedAction());
+      }
       /*Optional solution dispatch logoutAction and add the 'else' below to logoutAction
             (not really necessary cuz Auth is false and PrivateRoute got it covered)
             */
