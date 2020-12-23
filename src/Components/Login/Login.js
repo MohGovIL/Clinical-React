@@ -30,6 +30,7 @@ const Login = ({ loginAction, history, status }) => {
     defaultValues: {
       userName: '',
       password: '',
+      totp: '',
     },
     submitFocusError: true,
   });
@@ -63,8 +64,6 @@ const Login = ({ loginAction, history, status }) => {
       setConnectDetails(data);
       const result = loginAction(clientId,data.userName, data.password, history);
       result.then((err_status) => {
-        console.log(err_status)
-        console.log(cloneStatus)
         if (err_status === MFA_REQUIRED) {
             console.log('mfa required')
         }
@@ -108,6 +107,8 @@ const Login = ({ loginAction, history, status }) => {
             onDelete={handleOnDelete}
           />
         )}
+        {cloneStatus !== MFA_REQUIRED && (
+        <>
         <CustomizedTextField
           name='userName'
           label={t('* שם המשתמש')}
@@ -151,6 +152,41 @@ const Login = ({ loginAction, history, status }) => {
             ),
           }}
         />
+        </>
+        )}
+        {cloneStatus === MFA_REQUIRED && (
+        <CustomizedTextField
+          name='totp'
+          type={'number'}
+          label={t('*הזן את הקוד מאפליקציית האימות')}
+          error={errors.userName ? true : false}
+          helperText={errors.totp && errors.totp.message}
+          fullWidth
+          lang_dir={'rtl'}
+          InputProps={
+          {
+            autoComplete: 'off',
+            endAdornment: (errors.totp ? true : false) && (
+            < InputAdornment
+            position = 'end' >
+              < ErrorOutline
+            color = {'error'}
+            />
+            < /InputAdornment>
+          )
+          }}
+          inputRef={register({
+                     required: 'יש להזין ערך בשדה',
+                     pattern: {
+                       value: /^[0-9]+$/,
+                    message: 'יש להזין רק מסרים',
+                    },
+          })}
+          onInput = {(e) =>{
+          e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,6)
+          }}
+        />
+        )}
         <CustomizedTableButton
           label={t('כניסה למערכת')}
           backGroundColor={'#002398'}
