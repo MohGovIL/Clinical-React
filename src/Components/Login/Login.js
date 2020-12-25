@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { loginAction } from 'Store/Actions/LoginActions/LoginActions';
-import {
-  LOGIN_FAILED,
-  MFA_REQUIRED
-} from 'Store/Actions/LoginActions/LoginActionTypes';
 import bg from 'Assets/Images/bg.svg';
 import loginLogo from 'Assets/Images/logo.svg';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
@@ -37,8 +33,13 @@ const Login = ({ loginAction, history, status }) => {
   const { t } = useTranslation();
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [clientId, setClientId] = useState(null);
-  const [mfaRequired, setMfaRequired] = useState(false);
+  const [loginStatus, setLoginStatus] = useState(null);
   const [connectDetails, setConnectDetails] = useState({});
+
+  /* error statuses */
+  const INVALID_GRANT = 'invalid_grant';
+  const MFA_REQUIRED = 'mfa_required';
+  const MFA_TOKEN_INVALID = 'mfa_token_invalid';
 
   useEffect(() => {
       const userObj = {
@@ -60,30 +61,41 @@ const Login = ({ loginAction, history, status }) => {
   }, []);
 
   const onSubmit = (data) => {
-    if (cloneStatus !== MFA_REQUIRED) {
+    setButtonDisabled(true);
+    if (!mfaProcess()) {
       setConnectDetails(data);
       const result = loginAction(clientId,data.userName, data.password, history);
       result.then((err_status) => {
-        if (err_status === MFA_REQUIRED) {
-            console.log('mfa required')
+        if (err_status !== 'success') {
+          setLoginStatus(err_status);
+          setButtonDisabled(false);
         }
       })
+    } else {
+      /* login with 2FA */
+      const result = loginAction(clientId,connectDetails.userName, connectDetails.password, history, data.totp);
+      result.then((err_status) => {
+        console.log(err_status)
+        if (err_status !== 'success') {
+          setLoginStatus(err_status)
+          setButtonDisabled(false);;
+        }
+      });
     }
-
-
   };
 
-  const handleOnDelete = () => {
-    setCloneStatus('');
+  const mfaProcess = () => {
+     return (loginStatus !== MFA_REQUIRED && loginStatus !== MFA_TOKEN_INVALID) ? false : true;
+  }
+
+
+  const handleOnDeleteInvalidGrant = () => {
+     setLoginStatus(null);
   };
 
-  const [cloneStatus, setCloneStatus] = useState('');
-
-  useEffect(() => {
-    console.log(status)
-    setCloneStatus(status);
-  }, [status]);
-
+  const handleOnDeleteMfaInvalid = () => {
+    setLoginStatus(MFA_REQUIRED);
+  };
 
 
   useEffect(() => {}, [status]);
@@ -101,13 +113,19 @@ const Login = ({ loginAction, history, status }) => {
           כניסה למערכת
         </Typography>
         <StyledDivider />
-        {cloneStatus === LOGIN_FAILED && (
+        {loginStatus ===  INVALID_GRANT && (
           <StyledErrorChip
             label='שם המשתמש ו/או הסיסמה שהוזנו אינם תקינים'
-            onDelete={handleOnDelete}
+            onDelete={handleOnDeleteInvalidGrant}
           />
         )}
-        {cloneStatus !== MFA_REQUIRED && (
+        {loginStatus ===  MFA_TOKEN_INVALID && (
+        <StyledErrorChip
+          label='הקוד שנשלח אינו תקין / אינו בתוקף'
+          onDelete={handleOnDeleteMfaInvalid}
+          />
+        )}
+        {(!mfaProcess()) && (
         <>
         <CustomizedTextField
           name='userName'
@@ -154,7 +172,7 @@ const Login = ({ loginAction, history, status }) => {
         />
         </>
         )}
-        {cloneStatus === MFA_REQUIRED && (
+        {mfaProcess() && (
         <CustomizedTextField
           name='totp'
           type={'number'}
@@ -179,11 +197,11 @@ const Login = ({ loginAction, history, status }) => {
                      required: 'יש להזין ערך בשדה',
                      pattern: {
                        value: /^[0-9]+$/,
-                    message: 'יש להזין רק מסרים',
+                    message: 'יש להזין רק מספרים',
                     },
           })}
           onInput = {(e) =>{
-          e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,6)
+          e.target.value = e.target.value.substring(0,6)
           }}
         />
         )}

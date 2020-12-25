@@ -6,7 +6,6 @@ import {
   LOGOUT_START,
   LOGOUT_SUCCESS,
   LOGIN_EXPIRED,
-  MFA_REQUIRED
 } from 'Store/Actions/LoginActions/LoginActionTypes';
 import moment from 'moment';
 
@@ -33,12 +32,6 @@ const loginReducer = (state = INITIAL_STATE, action) => {
         STATUS: action.type,
       };
     case LOGIN_FAILED:
-      return {
-        ...state,
-        isAuth: action.isAuth,
-        STATUS: action.type,
-      };
-    case MFA_REQUIRED:
       return {
         ...state,
         isAuth: action.isAuth,
