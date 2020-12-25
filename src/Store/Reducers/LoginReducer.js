@@ -5,7 +5,7 @@ import {
   LOGOUT_FAILED,
   LOGOUT_START,
   LOGOUT_SUCCESS,
-  LOGIN_EXPIRED,
+  LOGIN_EXPIRED
 } from 'Store/Actions/LoginActions/LoginActionTypes';
 import moment from 'moment';
 
