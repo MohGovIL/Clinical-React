@@ -26,12 +26,20 @@ const Login = ({ loginAction, history, status }) => {
     defaultValues: {
       userName: '',
       password: '',
+      totp: '',
     },
     submitFocusError: true,
   });
   const { t } = useTranslation();
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [clientId, setClientId] = useState(null);
+  const [loginStatus, setLoginStatus] = useState(null);
+  const [connectDetails, setConnectDetails] = useState({});
+
+  /* error statuses */
+  const INVALID_GRANT = 'invalid_grant';
+  const MFA_REQUIRED = 'mfa_required';
+  const MFA_TOKEN_INVALID = 'mfa_token_invalid';
 
   useEffect(() => {
       const userObj = {
@@ -39,7 +47,7 @@ const Login = ({ loginAction, history, status }) => {
         redirect_uris: [`${window.location.protocol}//${window.location.hostname}`],
         client_name:'clinikal app',
         token_endpoint_auth_method: 'client_secret_post',
-        contacts: ["me@example.org", "them@example.org"]
+        contacts: []
       };
 
       const response = loginInstance({'Content-Type': 'application/json'}).post('oauth2/default/registration', userObj);
@@ -53,20 +61,41 @@ const Login = ({ loginAction, history, status }) => {
   }, []);
 
   const onSubmit = (data) => {
-    console.log(clientId)
-    loginAction(clientId,data.userName, data.password, history);
+    setButtonDisabled(true);
+    if (!mfaProcess()) {
+      setConnectDetails(data);
+      const result = loginAction(clientId,data.userName, data.password, history);
+      result.then((err_status) => {
+        if (err_status !== 'success') {
+          setLoginStatus(err_status);
+          setButtonDisabled(false);
+        }
+      })
+    } else {
+      /* login with 2FA */
+      const result = loginAction(clientId,connectDetails.userName, connectDetails.password, history, data.totp);
+      result.then((err_status) => {
+        console.log(err_status)
+        if (err_status !== 'success') {
+          setLoginStatus(err_status)
+          setButtonDisabled(false);;
+        }
+      });
+    }
   };
 
-  const handleOnDelete = () => {
-    setCloneStatus('');
+  const mfaProcess = () => {
+     return (loginStatus !== MFA_REQUIRED && loginStatus !== MFA_TOKEN_INVALID) ? false : true;
+  }
+
+
+  const handleOnDeleteInvalidGrant = () => {
+     setLoginStatus(null);
   };
 
-  const [cloneStatus, setCloneStatus] = useState('');
-
-  useEffect(() => {
-    setCloneStatus(status);
-  }, [status]);
-
+  const handleOnDeleteMfaInvalid = () => {
+    setLoginStatus(MFA_REQUIRED);
+  };
 
 
   useEffect(() => {}, [status]);
@@ -84,12 +113,20 @@ const Login = ({ loginAction, history, status }) => {
           כניסה למערכת
         </Typography>
         <StyledDivider />
-        {cloneStatus === 'LOGIN_FAILED' && (
+        {loginStatus ===  INVALID_GRANT && (
           <StyledErrorChip
             label='שם המשתמש ו/או הסיסמה שהוזנו אינם תקינים'
-            onDelete={handleOnDelete}
+            onDelete={handleOnDeleteInvalidGrant}
           />
         )}
+        {loginStatus ===  MFA_TOKEN_INVALID && (
+        <StyledErrorChip
+          label='הקוד שנשלח אינו תקין / אינו בתוקף'
+          onDelete={handleOnDeleteMfaInvalid}
+          />
+        )}
+        {(!mfaProcess()) && (
+        <>
         <CustomizedTextField
           name='userName'
           label={t('* שם המשתמש')}
@@ -133,6 +170,41 @@ const Login = ({ loginAction, history, status }) => {
             ),
           }}
         />
+        </>
+        )}
+        {mfaProcess() && (
+        <CustomizedTextField
+          name='totp'
+          type={'number'}
+          label={t('*הזן את הקוד מאפליקציית האימות')}
+          error={errors.userName ? true : false}
+          helperText={errors.totp && errors.totp.message}
+          fullWidth
+          lang_dir={'rtl'}
+          InputProps={
+          {
+            autoComplete: 'off',
+            endAdornment: (errors.totp ? true : false) && (
+            < InputAdornment
+            position = 'end' >
+              < ErrorOutline
+            color = {'error'}
+            />
+            < /InputAdornment>
+          )
+          }}
+          inputRef={register({
+                     required: 'יש להזין ערך בשדה',
+                     pattern: {
+                       value: /^[0-9]+$/,
+                    message: 'יש להזין רק מספרים',
+                    },
+          })}
+          onInput = {(e) =>{
+          e.target.value = e.target.value.substring(0,6)
+          }}
+        />
+        )}
         <CustomizedTableButton
           label={t('כניסה למערכת')}
           backGroundColor={'#002398'}
