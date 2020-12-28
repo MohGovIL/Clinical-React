@@ -56,6 +56,7 @@ const MedicalAdmission = ({
   const [initValueObj, setInitValueObj] = useState({});
   const [loading, setLoading] = useState(true);
   const pregnancyLinkId = '4';
+  const [saveProcess, setSaveProcess] = useState(false);
 
   /*
   * Save all the init value in the state than call to setValue
@@ -448,9 +449,13 @@ const MedicalAdmission = ({
   };
 
   const onSubmit = (data) => {
-    if (permissionHandler() === 'view') return false;
+    if (permissionHandler() === 'view' || saveProcess) return false;
+    setSaveProcess(true);
     if (!data) data = getValues({ nest: true });
-    if (!isRequiredValidation(data)) return false;
+    if (!isRequiredValidation(data)) {
+      setSaveProcess(false);
+      return false;
+    }
     // in the first form of the encounter need to save the form and connect the medical issue from prev encounter in current.
     // the questionnaireResponseId is undefined in the first
     const firstEncForm = typeof initValueObj['questionnaireResponseId'] === 'undefined'? true : false;
@@ -745,6 +750,7 @@ const MedicalAdmission = ({
         console.log(error);
       }
     } else {
+      setSaveProcess(false);
       return false;
     }
 

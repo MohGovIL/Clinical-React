@@ -47,7 +47,7 @@ const FormsContainer = ({ tabs, dir, prevEncounterId, isSomethingWasChanged }) =
   const { t } = useTranslation();
 
   const [value, setValue] = React.useState(0);
-  const [loading, setLoading] = useState(true);
+  const [tabDisabled, setTabDisabled] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
 
   let formComponents = [];
