@@ -510,6 +510,7 @@ const DiagnosisAndRecommendations = ({
             formatDate={formatDate}
             handleLoading={handleLoading}
             initValueFunction={initValue}
+            languageDirection={languageDirection}
           />
           <DecisionOnRelease initValueFunction={initValue} />
           <SaveForm

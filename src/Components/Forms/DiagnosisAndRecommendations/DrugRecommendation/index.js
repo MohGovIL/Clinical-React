@@ -13,12 +13,17 @@ import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationRequest';
 import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/VirtualizedListbox';
 import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoComplete';
+import {
+  StyledPopper,
+} from 'Components/Forms/TestsAndTreatments/Style';
+
 
 const DrugRecommendation = ({
   encounterId,
   formatDate,
   handleLoading,
   initValueFunction,
+  languageDirection
 }) => {
   const { t } = useTranslation();
   const {
@@ -43,6 +48,24 @@ const DrugRecommendation = ({
     setValue(name, data);
   };
 
+  const popperWidthFixer = function (props) {
+    return (
+      <StyledPopper
+    {...props}
+    modifiers={{
+      setWidth: {
+        enabled: true,
+          order: 840,
+          fn(data) {
+          data.offsets.popper.width = data.styles.width = '700px';
+          return data;
+        },
+      },
+    }}
+    placement='bottom-start'
+      />
+  );
+  };
   const handlePopUpProps = (
     title,
     fields,
@@ -397,6 +420,7 @@ const DrugRecommendation = ({
                 disabled={permission === 'view' ? true : false}
                 as={
                   <StyledAutoComplete
+                    PopperComponent={popperWidthFixer}
                     blurOnSelect
                     disableClearable
                     selectOnFocus
