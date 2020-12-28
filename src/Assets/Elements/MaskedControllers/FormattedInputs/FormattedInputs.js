@@ -79,7 +79,7 @@ export default function FormattedInputs({
             }}
             dir={'ltr'}
             label={label}
-            value={value && value.replace(mask, '') && value.replace(/0+$/,'').replace(/\.$/,'')}
+            value={value}
             onChange={onChange}
             onKeyUp={onKeyUp}
             autoComplete="no"
@@ -88,7 +88,6 @@ export default function FormattedInputs({
             onInput = {(e) =>{
               if(/[a-zA-Z&^*#@]+$/.test(e.target.value)){
                 e.target.value = e.target.value.slice(0, -1);
-
               }
               e.target.value = e.target.value.substring(0,mask.length)
             }}

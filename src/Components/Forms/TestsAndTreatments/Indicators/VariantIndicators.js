@@ -48,7 +48,7 @@ const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
                               value={
                                 value.disabled && value.value === ''
                                   ? '-'
-                                  : value.value && value.value.replace(/0+$/,'').replace(/\.$/,'')
+                                  : value.value
                               }
                             />
                           </TableCell>
