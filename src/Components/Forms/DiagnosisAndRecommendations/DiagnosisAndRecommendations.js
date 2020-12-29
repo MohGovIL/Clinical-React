@@ -49,6 +49,7 @@ const DiagnosisAndRecommendations = ({
 
   const { handleSubmit, setValue, register, unregister, getValues } = methods;
   const [loading, setLoading] = useState(true);
+  const [saveProcess, setSaveProcess] = useState(false);
   const { t } = useTranslation();
 
   /*
@@ -307,7 +308,8 @@ const DiagnosisAndRecommendations = ({
 
   const onSubmit = (data) => {
     setdisabledOnSubmit(true);
-    if (permissionHandler() === 'view') return false;
+    if (permissionHandler() === 'view' || saveProcess) return false;
+    setSaveProcess(true);
     if (isFormDirty()) {
       if (!data) data = getValues({ nest: true });
       try {
@@ -443,6 +445,7 @@ const DiagnosisAndRecommendations = ({
         console.log(error);
       }
     } else {
+      setSaveProcess(false);
       return false;
     }
   };
@@ -510,6 +513,7 @@ const DiagnosisAndRecommendations = ({
             formatDate={formatDate}
             handleLoading={handleLoading}
             initValueFunction={initValue}
+            languageDirection={languageDirection}
           />
           <DecisionOnRelease initValueFunction={initValue} />
           <SaveForm

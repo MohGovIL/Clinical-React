@@ -150,6 +150,7 @@ export function mergeMultipleIndicators(
     }
   });
   if (keysPlaces.length > 0) {
+
     let variantIndicatorsNormalizedDataTemp = JSON.parse(
       JSON.stringify(variantIndicatorsNormalizedData),
     );
