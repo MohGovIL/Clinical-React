@@ -108,9 +108,13 @@ const InstructionsForTreatment = ({
           ) {
             returnThis = false;
           }
-          return returnThis;
+          if (returnThis) {
+            return true;
+          }
         }
-        return returnThis;
+        if (returnThis) {
+          return true;
+        }
       }
     };
   }

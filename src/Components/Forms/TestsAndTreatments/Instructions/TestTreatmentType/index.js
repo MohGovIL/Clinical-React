@@ -12,10 +12,9 @@ import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { useTranslation } from 'react-i18next';
 import TestTreatmentLockedText from 'Components/Forms/TestsAndTreatments/Helpers/TestTreatmentLockedText';
-
+import { StyledPopper } from 'Assets/Elements/AutoComplete/Popper/Style';
 import {
   StyledHiddenDiv,
-  StyledPopper,
   StyledTypographyList,
 } from 'Components/Forms/TestsAndTreatments/Style';
 

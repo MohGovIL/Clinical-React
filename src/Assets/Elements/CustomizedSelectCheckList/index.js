@@ -21,7 +21,9 @@ import CustomizedTextField from '../CustomizedTextField';
 import { useTranslation } from 'react-i18next';
 import matchSorter from 'match-sorter';
 import { useFormContext } from 'react-hook-form';
-import { StyledAutocomplete } from './Style';
+import { StyledAutocomplete , StyleLTRTypography} from './Style';
+import { StyledPopper } from 'Assets/Elements/AutoComplete/Popper/Style';
+import PopperProps from '@material-ui/core/Popper';
 
 const CustomizedSelectCheckList = ({
   labelInputText,
@@ -37,6 +39,8 @@ const CustomizedSelectCheckList = ({
   selectedList,
   sortByTranslation,
   onDeleteChip,
+  popperWidth,
+  popperLanguageDirection
 }) => {
   const { t } = useTranslation();
 
@@ -114,6 +118,27 @@ const CustomizedSelectCheckList = ({
     setSelectedServicesType(filteredSelectedServicesType);
   };
 
+  const popperWidthFixer = function (props) {
+    return (
+      <StyledPopper
+    direction={popperLanguageDirection ? popperLanguageDirection : 'inherit' }
+    {...props}
+    modifiers={{
+      setWidth: {
+        enabled: true,
+          order: 840,
+          fn(data) {
+          data.offsets.popper.width = data.styles.width = popperWidth ? popperWidth+'px' : '700px';
+          return data;
+        },
+      },
+    }}
+    placement='bottom-start'
+      />
+  );
+  };
+
+
   //this function for change dropdown list style
   const defaultRenderOption = (option, state) => {
     return (
@@ -141,7 +166,7 @@ const CustomizedSelectCheckList = ({
           )}
           {option.reasonCode && option.reasonCode.name && (
             <Grid item xs={3}>
-              <Typography noWrap>{option.reasonCode.name}</Typography>
+              <Typography  noWrap>{option.reasonCode.name}</Typography>
               {/* <ListItemText primary={t(option.reasonCode.name)} /> */}
             </Grid>
           )}
@@ -174,6 +199,7 @@ const CustomizedSelectCheckList = ({
         getOptionSelected={(option, value) =>
           option.reasonCode.code === value.reasonCode.code
         }
+        PopperComponent={popperWidth ? popperWidthFixer : PopperProps}
         disableCloseOnSelect
         renderTags={() => null}
         renderOption={(option, state) =>
