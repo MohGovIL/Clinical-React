@@ -123,10 +123,6 @@ const normalizeFhirObservation = (observation, indicators, performers) => {
     });
   }
 
-  console.log(returnedObservation);
-  returnedObservation.forEach(obj => {
-    obj.value = obj.value.replace(/0+$/,'').replace(/\.$/,'');
-  })
 
   return {
     id: id,

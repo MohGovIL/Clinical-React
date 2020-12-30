@@ -13,9 +13,8 @@ import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationRequest';
 import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/VirtualizedListbox';
 import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoComplete';
-import {
-  StyledPopper,
-} from 'Components/Forms/TestsAndTreatments/Style';
+import { StyledPopper } from 'Assets/Elements/AutoComplete/Popper/Style';
+import Tooltip from "@material-ui/core/Tooltip";
 
 
 const DrugRecommendation = ({
@@ -431,13 +430,15 @@ const DrugRecommendation = ({
                     }}
                     getOptionLabel={(option) => option.display || ''}
                     renderOption={(option) => (
-                      <Typography noWrap>{option.display}</Typography>
+                      <Tooltip title={drugRecommendation[index].drugName} aria-label={drugRecommendation[index].drugName}>
+                        <Typography noWrap>{option.display}</Typography>
+                    </Tooltip>
                     )}
                     popupIcon={<KeyboardArrowDown />}
                     renderInput={(params) => (
                       <CustomizedTextField
                         iconColor='#1976d2'
-                        width='30%'
+                        width='60%'
                         {...params}
                         label={t('Drug Name')}
                       />
