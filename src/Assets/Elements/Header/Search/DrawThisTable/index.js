@@ -146,7 +146,7 @@ const DrawThisTable = ({
   };
 
   const requestValueSet = (valueSet) => {
-    if (!valueSet.data) {
+    if (typeof valueSet === "undefined" || !valueSet.data) {
       return;
     }
     const {
@@ -154,7 +154,7 @@ const DrawThisTable = ({
         expansion: { contains },
       },
     } = valueSet;
-    let options = [];
+    let options = {};
     if (contains) {
       for (let status of contains) {
         options[status.code] = status.display;
@@ -176,84 +176,109 @@ const DrawThisTable = ({
     if (newExpanded) {
       let identifier = patient.id;
       let currentDate = fhirFormatDate();
-      // const encounterStatPromise = await getValueSet("encounter_statuses");
-      const encounterStatPromise = await FHIR('ValueSet', 'doWork', {
-        functionName: 'getValueSet',
-        functionParams: { id: 'encounter_statuses' },
-      });
-      const encounterStat = requestValueSet(encounterStatPromise);
-      //const appointmentStatPromise = await getValueSet("appointment_statuses");
-      if (hideAppointments !== '1') {
-        const appointmentStatPromise = await FHIR('ValueSet', 'doWork', {
+
+      const ApiCalls = [];
+
+      ApiCalls.push(
+        FHIR('Encounter', 'doWork', {
+          functionName: 'getNextPrevEncounterPerPatient',
+          functionParams: {
+            date: currentDate,
+            patient: identifier,
+            prev: true,
+          },
+        })
+      );
+
+      ApiCalls.push(
+        FHIR('Encounter', 'doWork', {
+          functionName: 'getCurrentEncounterPerPatient',
+          functionParams: {
+            date: currentDate,
+            patient: identifier,
+            specialOrder: `_sort=service-type,-priority,date`,
+          },
+        })
+      );
+
+      ApiCalls.push(
+        FHIR('Encounter', 'doWork', {
+          functionName: 'getNextPrevEncountersPerPatient',
+          functionParams: {
+            date: currentDate,
+            patient: identifier,
+            prev: true,
+          },
+        })
+      );
+
+      ApiCalls.push(
+        FHIR('ValueSet', 'doWork', {
           functionName: 'getValueSet',
-          functionParams: { id: 'appointment_statuses' },
-        });
-        const appointmentStat = requestValueSet(appointmentStatPromise);
-        if (!patientTrackingStatuses)
-          setPatientTrackingStatuses(appointmentStat);
+          functionParams: { id: 'encounter_statuses' },
+        })
+      );
+
+      ApiCalls.push(
+        FHIR('ValueSet', 'doWork', {
+          functionName: 'getValueSet',
+          functionParams: { id: 'encounter_secondary_statuses' },
+        })
+      );
+
+      if (hideAppointments !== '1') {
+
+        ApiCalls.push(
+          FHIR('Appointment', 'doWork', {
+            functionName: 'getNextPrevAppointmentsPerPatient',
+            functionParams: {
+              date: currentDate,
+              patient: identifier,
+              prev: false,
+            },
+          })
+        );
+
+        ApiCalls.push(
+          FHIR('Appointment', 'doWork', {
+            functionName: 'getNextPrevAppointmentPerPatient',
+            functionParams: {
+              date: currentDate,
+              patient: identifier,
+              prev: false,
+            },
+          })
+        );
+
+        ApiCalls.push(
+          FHIR('ValueSet', 'doWork', {
+            functionName: 'getValueSet',
+            functionParams: {id: 'appointment_statuses'},
+          })
+        );
+
       }
 
-      if (!encounterStatuses) setEncounterStatuses(encounterStat);
-      //setNextAppointment(await getNextPrevAppointmentPerPatient(currentDate, identifier, false));
+      const [FHIRPrevEncounter, FHIRCurEncounter, FHIRPrevEncounters, encounterStatPromise, encounterSecStatusPromise, FHIRNextAppointments, FHIRNextAppointment ,appointmentStatPromise] = await Promise.all(ApiCalls);
 
-      const FHIRNextAppointment = await FHIR('Appointment', 'doWork', {
-        functionName: 'getNextPrevAppointmentPerPatient',
-        functionParams: {
-          date: currentDate,
-          patient: identifier,
-          prev: false,
-        },
-      });
-      setNextAppointment(FHIRNextAppointment);
 
-      //setPrevEncounter(await getNextPrevEncounterPerPatient(currentDate, identifier, true));
-      const FHIRPrevEncounter = await FHIR('Encounter', 'doWork', {
-        functionName: 'getNextPrevEncounterPerPatient',
-        functionParams: {
-          date: currentDate,
-          patient: identifier,
-          prev: true,
-        },
-      });
       setPrevEncounter(FHIRPrevEncounter);
-
-      //setCurEncounter(await getCurrentEncounterPerPatient(currentDate, identifier));
-      const FHIRCurEncounter = await FHIR('Encounter', 'doWork', {
-        functionName: 'getCurrentEncounterPerPatient',
-        functionParams: {
-          date: currentDate,
-          patient: identifier,
-          specialOrder: `_sort=service-type,-priority,date`,
-        },
-      });
       setCurEncounter(FHIRCurEncounter);
-
-      /*  const prevTotal = prevEncounter && prevEncounter.data && prevEncounter.data.total;*/
-
-      //setNextAppointments(await getNextPrevAppointmentsPerPatient(currentDate, identifier, false));
-
-      const FHIRNextAppointments = await FHIR('Appointment', 'doWork', {
-        functionName: 'getNextPrevAppointmentsPerPatient',
-        functionParams: {
-          date: currentDate,
-          patient: identifier,
-          prev: false,
-        },
-      });
-      setNextAppointments(FHIRNextAppointments);
-
-      //setPrevEncounters(await getNextPrevEncountersPerPatient(currentDate, identifier, true));
-
-      const FHIRPrevEncounters = await FHIR('Encounter', 'doWork', {
-        functionName: 'getNextPrevEncountersPerPatient',
-        functionParams: {
-          date: currentDate,
-          patient: identifier,
-          prev: true,
-        },
-      });
-
       setPrevEncounters(FHIRPrevEncounters);
+
+      const encounterStat = requestValueSet(encounterStatPromise);
+      const encounterSecStat = requestValueSet(encounterSecStatusPromise);
+      const statusesList = {...encounterStat, ...encounterSecStat};
+      if (!encounterStatuses) setEncounterStatuses(statusesList);
+
+      setNextAppointments(FHIRNextAppointments);
+      setNextAppointment(FHIRNextAppointment);
+      const appointmentStat = requestValueSet(appointmentStatPromise);
+      if (!patientTrackingStatuses)
+        setPatientTrackingStatuses(appointmentStat);
+
+
+
     }
   };
 
