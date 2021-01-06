@@ -34,6 +34,8 @@ import {
 import { store } from 'index';
 import { createSummaryLetter } from 'Utils/Helpers/Letters/createSummaryLetter';
 import {FHIR} from 'Utils/Services/FHIR';
+import {getNormalizeEncounterStatus} from 'Utils/Helpers/FhirEntities/helpers/getNormalizeEncounterStatus';
+
 
 const AppointmentsAndEncountersTables = ({
   patientId,
@@ -280,7 +282,7 @@ const AppointmentsAndEncountersTables = ({
                           <TitleValueComponent
                             name={
                               encounterStatuses && encounter
-                                ? t(encounterStatuses[encounter.status])
+                                ? t(encounterStatuses[getNormalizeEncounterStatus(encounter)])
                                 : ''
                             }
                           />
@@ -544,7 +546,7 @@ const AppointmentsAndEncountersTables = ({
                             <TitleValueComponent
                               name={
                                 encounterStatuses && encounter
-                                  ? t(encounterStatuses[encounter.status])
+                                  ? t(encounterStatuses[getNormalizeEncounterStatus(encounter)])
                                   : ''
                               }
                             />
