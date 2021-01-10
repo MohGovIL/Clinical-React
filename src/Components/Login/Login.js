@@ -143,11 +143,7 @@ const Login = ({ loginAction, history, status }) => {
             ),
           }}
           inputRef={register({
-            required: 'יש להזין ערך בשדה',
-            pattern: {
-              value: /^[a-zA-Z]+$/,
-              message: 'יש להזין רק אותיות באנגלית',
-            },
+            required: 'יש להזין ערך בשדה'
           })}
         />
         <CustomizedTextField
