@@ -46,7 +46,7 @@ const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
                               id={value.id + '_' + rowCounter}
                               label={t(value.label)}
                               value={
-                                value.disabled && value.value === ''
+                                value.disabled && (value.value === '' || value.value === '0' || value.value === 0)
                                   ? '-'
                                   : value.value
                               }
