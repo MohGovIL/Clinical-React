@@ -41,7 +41,7 @@ import TestTreatmentRemark from 'Components/Forms/TestsAndTreatments/Instruction
 import normalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
 import { Delete } from '@material-ui/icons';
 import { FHIR } from 'Utils/Services/FHIR';
-import { formatTime, formatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
 
 
 /**
@@ -280,7 +280,7 @@ const Fields = ({
                         as={<input />}
                       />
                       {item.locked
-                        ? formatDateTime(item.authoredOn, formatDate)
+                        ? formatTime(item.authoredOn, formatDate)
                         : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>
@@ -364,7 +364,7 @@ const Fields = ({
                         as={<input />}
                       />
                       {item.locked && item.test_treatment_status === 'done'
-                        ? formatDateTime(item.occurrence, formatDate)
+                        ? formatTime(item.occurrence, formatDate)
                         : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>

@@ -246,6 +246,8 @@ const PatientDetailsBlock = ({
                 questionnaireResponseId: data.questionnaireResponse,
                 questionnaireResponseParams: {
                   item,
+                  author: store.getState().login.userID,
+                  authored: fhirFormatDateTime(),
                 },
               }),
             );
