@@ -4,7 +4,7 @@ const INITIAL_STATE = {
   listsbox:{}
 };
 
-const facilityReducer = (state = INITIAL_STATE, action) => {
+const listBoxReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case SET_VALUESET:
       let mergedListbox = {...state.listsbox, ...action.valueset}
@@ -17,4 +17,4 @@ const facilityReducer = (state = INITIAL_STATE, action) => {
   }
 };
 
-export default facilityReducer;
+export default listBoxReducer;
