@@ -47,14 +47,18 @@ const StyledExaminationStatusesWithIcons = ({
   }, []);
 
   const createLetter = async () => {
-    let docId = await createSummaryLetter({
-      encounter: encounterData,
-      patientId: patient.id,
-      currentUser,
-      facility,
-      docID: existLetter,
-    });
-    setDoc(docId);
+    if ((encounterData.status === 'finished' && existLetter) ||
+    encounterData.extensionSecondaryStatus === 'waiting_for_release')
+    {
+      let docId = await createSummaryLetter({
+        encounter: encounterData,
+        patientId: patient.id,
+        currentUser,
+        facility,
+        docID: existLetter,
+      });
+      setDoc(docId);
+    }
   };
 
   const existSummeryLetter = async () => {

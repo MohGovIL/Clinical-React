@@ -45,7 +45,7 @@ export const getSettingsAction = (history, userName) => {
           user: settings.data.user_id,
         },
       });
-      await geti18n(settings.data.lang_id);
+      geti18n(settings.data.lang_id);
       console.log(settings.data)
       dispatch(getSettingsSuccessAction(settings.data));
 

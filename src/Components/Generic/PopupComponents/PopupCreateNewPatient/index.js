@@ -17,7 +17,7 @@ import CustomizedDatePicker from 'Assets/Elements/CustomizedDatePicker';
 import {
   getCellPhoneRegexPattern,
   getEmailRegexPattern,
-  getOnlyLettersRegexPattern,
+  getPatientNamePattern
 } from 'Utils/Helpers/validation/patterns';
 import { normalizeValueData } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeValueData';
 import { emptyArrayAll } from 'Utils/Helpers/emptyArray';
@@ -778,7 +778,7 @@ const PopupCreateNewPatient = ({
                   onInput={handlerOnInvalidField}
                   rules={{
                     validate: (value) => {
-                      return getOnlyLettersRegexPattern().test(value) ? false : true;
+                      return getPatientNamePattern().test(value) ? false : true;
                     }
                   }}
                   error={
@@ -969,7 +969,7 @@ const PopupCreateNewPatient = ({
                   onInput={handlerOnInvalidField}
                   rules={{
                     validate: (value) => {
-                      return getOnlyLettersRegexPattern().test(value) ? false : true;
+                      return getPatientNamePattern().test(value) ? false : true;
                     }
                   }}
                   error={

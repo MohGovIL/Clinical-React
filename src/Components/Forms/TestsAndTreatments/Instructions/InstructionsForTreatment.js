@@ -55,6 +55,7 @@ const InstructionsForTreatment = ({
   });
 
   const [disabledOnSubmit, setdisabledOnSubmit] = useState(false);
+  const [saveProcess, setSaveProcess] = useState(false);
   const [defaultContext, setDefaultContext] = useState('');
   const [serviceRequests, setServiceRequests] = useState([]);
   const { t } = useTranslation();
@@ -78,6 +79,7 @@ const InstructionsForTreatment = ({
       const diffExists = wasSomethingChanged(serviceRequest, serviceRequests);
       if (diffExists) return true;
     }
+    return false;
   };
 
   function wasSomethingChanged(serviceRequest, serviceRequests) {
@@ -106,9 +108,13 @@ const InstructionsForTreatment = ({
           ) {
             returnThis = false;
           }
-          return returnThis;
+          if (returnThis) {
+            return true;
+          }
         }
-        return returnThis;
+        if (returnThis) {
+          return true;
+        }
       }
     };
   }
@@ -191,8 +197,9 @@ const InstructionsForTreatment = ({
   };
   const onSubmit = (data) => {
     //  console.log('data', JSON.stringify(data));
-    // console.log(isRequiredValidation(data));
-    if (permissionHandler() !== 'write') return false;
+
+    if (permissionHandler() !== 'write' || saveProcess) return false;
+    setSaveProcess(true)
     if (isFormDirty()) {
       setdisabledOnSubmit(true);
       const indicatorsFHIRArray = saveIndicatorsOnSubmit();
@@ -210,6 +217,7 @@ const InstructionsForTreatment = ({
       console.log(returnThis);
       return returnThis;
     } else {
+      setdisabledOnSubmit(false);
       return false;
     }
   };

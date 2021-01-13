@@ -13,12 +13,16 @@ import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirMedicationRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirMedicationRequest';
 import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/VirtualizedListbox';
 import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoComplete';
+import { StyledPopper } from 'Assets/Elements/AutoComplete/Popper/Style';
+import Tooltip from "@material-ui/core/Tooltip";
+
 
 const DrugRecommendation = ({
   encounterId,
   formatDate,
   handleLoading,
   initValueFunction,
+  languageDirection
 }) => {
   const { t } = useTranslation();
   const {
@@ -43,6 +47,24 @@ const DrugRecommendation = ({
     setValue(name, data);
   };
 
+  const popperWidthFixer = function (props) {
+    return (
+      <StyledPopper
+    {...props}
+    modifiers={{
+      setWidth: {
+        enabled: true,
+          order: 840,
+          fn(data) {
+          data.offsets.popper.width = data.styles.width = '700px';
+          return data;
+        },
+      },
+    }}
+    placement='bottom-start'
+      />
+  );
+  };
   const handlePopUpProps = (
     title,
     fields,
@@ -397,6 +419,7 @@ const DrugRecommendation = ({
                 disabled={permission === 'view' ? true : false}
                 as={
                   <StyledAutoComplete
+                    PopperComponent={popperWidthFixer}
                     blurOnSelect
                     disableClearable
                     selectOnFocus
@@ -407,13 +430,15 @@ const DrugRecommendation = ({
                     }}
                     getOptionLabel={(option) => option.display || ''}
                     renderOption={(option) => (
-                      <Typography noWrap>{option.display}</Typography>
+                      <Tooltip title={drugRecommendation[index].drugName} aria-label={drugRecommendation[index].drugName}>
+                        <Typography noWrap>{option.display}</Typography>
+                    </Tooltip>
                     )}
                     popupIcon={<KeyboardArrowDown />}
                     renderInput={(params) => (
                       <CustomizedTextField
                         iconColor='#1976d2'
-                        width='30%'
+                        width='60%'
                         {...params}
                         label={t('Drug Name')}
                       />

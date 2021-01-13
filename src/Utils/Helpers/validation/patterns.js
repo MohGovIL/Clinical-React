@@ -25,3 +25,9 @@ export const getOnlyLettersRegexPattern = () => {
   return /[~`!@#$%^&*()_={}:;,.<>+?"'\\/]|[0-9+]/gm;
   // return /[~`!@#$%^&()_={}[\]:;,.<>+\/?-\\"']|[0-9+]/gm;
 };
+
+export const getPatientNamePattern = () => {
+  return /[~!@#$%^&*={}:;,.<>+?\\/]|[0-9+]/gm;
+  // return /[~`!@#$%^&()_={}[\]:;,.<>+\/?-\\"']|[0-9+]/gm;
+};
+

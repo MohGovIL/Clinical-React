@@ -47,10 +47,14 @@ export const LoginForm = styled.form`
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  padding: 0 286px;
+  padding-right:286px;
   & > .MuiTypography-root {
     font-size: 32px;
     color: #000b40;
+  }
+  padding-left:150px;
+  @media (min-width: 1500px) {
+    padding-left:286px;
   }
 `;
 

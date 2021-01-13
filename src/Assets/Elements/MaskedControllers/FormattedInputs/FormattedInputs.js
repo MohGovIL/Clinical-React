@@ -12,16 +12,16 @@ import FormControl from '@material-ui/core/FormControl';
 import { StyledMaskedInput } from './Style';
 import { StyledVariantTextField } from 'Components/Forms/TestsAndTreatments/Style';
 
+/* todo- for now not on used */
 function TextMaskCustom(props) {
   const { inputRef, ...other } = props;
-
   return (
     <StyledMaskedInput
       {...other}
       ref={(ref) => {
         inputRef(ref ? ref.inputElement : null);
       }}
-      mask={other['aria-describedby']}
+      format={other['aria-describedby']}
       dir='ltr'
     />
   );
@@ -60,7 +60,7 @@ export default function FormattedInputs({
             </InputLabel>
             <Input
               dir={'ltr'}
-              value={value}
+              value={value && value.replace('.00', '')}
               onChange={onChange}
               onKeyUp={onKeyUp}
               name={`textmask-${label}-${id}`}
@@ -75,18 +75,28 @@ export default function FormattedInputs({
         return (
           <StyledVariantTextField
             InputLabelProps={{
-              shrink: value !== '' ? true : false,
+              shrink:true
             }}
             dir={'ltr'}
             label={label}
-            value={value && value.replace(mask, '')}
+            value={value}
             onChange={onChange}
             onKeyUp={onKeyUp}
+            autoComplete="no"
             name={name}
+            type={'text'}
+            onInput = {(e) =>{
+              if(/[a-zA-Z&^*#@]+$/.test(e.target.value)){
+                e.target.value = e.target.value.slice(0, -1);
+              }
+              e.target.value = e.target.value.substring(0,mask.length)
+            }}
             id={`formatted-numberformat-input-${label}-${id}`}
+            placeholder={mask}
             InputProps={{
               'aria-describedby': mask,
-              inputComponent: TextMaskCustom,
+              autoComplete:"off"
+             // inputComponent: TextMaskCustom,
             }}
           />
         );
@@ -106,4 +116,7 @@ export default function FormattedInputs({
     label,
     name,
   });
+
 }
+
+

@@ -192,6 +192,8 @@ const ChronicMedication = ({
           setServicesTypeOpen={setServicesTypeOpen}
           valueSetCode={'chronicMedicationCodes'}
           labelInputText={'Medications details'}
+          popperWidth={800}
+          popperLanguageDirection={'ltr'}
           // helperErrorText={
           //   'The visit reason performed during the visit must be selected'
           // }

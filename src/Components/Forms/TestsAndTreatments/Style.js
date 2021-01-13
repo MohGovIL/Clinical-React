@@ -276,9 +276,4 @@ export const StyledHeader = styled.p`
 `;
 
 export const StyledTypographyList = styled(Typography)``;
-export const StyledPopper = styled(Popper)`
-  ul {
-    direction: ${(props) =>
-      props.direction ? `${props.direction} !important` : 'ltr'};
-  }
-`;
+

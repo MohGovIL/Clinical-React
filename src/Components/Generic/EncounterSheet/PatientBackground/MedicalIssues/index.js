@@ -258,6 +258,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
       <MedicalIssue
         items={patientChronicMedications}
         title={t('Chronic medications')}
+        langDirection={'ltr'}
       />
     </React.Fragment>
   );

@@ -41,7 +41,7 @@ import TestTreatmentRemark from 'Components/Forms/TestsAndTreatments/Instruction
 import normalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
 import { Delete } from '@material-ui/icons';
 import { FHIR } from 'Utils/Services/FHIR';
-import { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { formatTime, formatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
 
 
 /**
@@ -63,6 +63,7 @@ const Fields = ({
   setRequiredErrors,
   permission,
   language_direction,
+  formatDate
 }) => {
   const [practitioners, setPreactitioners] = useState([]);
   const { control, watch, register, setValue, getValues } = useFormContext();
@@ -279,7 +280,7 @@ const Fields = ({
                         as={<input />}
                       />
                       {item.locked
-                        ? formatTime(item.authoredOn)
+                        ? formatDateTime(item.authoredOn, formatDate)
                         : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>
@@ -363,7 +364,7 @@ const Fields = ({
                         as={<input />}
                       />
                       {item.locked && item.test_treatment_status === 'done'
-                        ? formatTime(item.occurrence)
+                        ? formatDateTime(item.occurrence, formatDate)
                         : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>
@@ -383,37 +384,44 @@ const Fields = ({
                   </Grid>
                   {!item.locked ? (
                     <Grid container direction='row' justify='flex-end'>
+                    <div
+                      style={{
+                        paddingLeft:'25px',
+                        paddingBottom:'25px',
+                      }}
+                      onClick={async () => {
+                    // Since there is no disabled option for icons I check the permission inside the function
+                    if (permission !== 'write') return;
+                    const { Instruction } = getValues({
+                      nest: true,
+                    });
+                    //console.log(Instruction);
+                    if (
+                      Instruction &&
+                      Instruction[index] &&
+                      Instruction[index].serviceReqID &&
+                      Instruction[index].serviceReqID !== ''
+                    ) {
+                      await FHIR('ServiceRequests', 'doWork', {
+                        functionName: 'deleteServiceRequest',
+                        functionParams: {
+                          _id: Instruction[index].serviceReqID,
+                        },
+                      });
+                      delete Instruction[index];
+                      setValue('medicationRequest', Instruction);
+                    }
+                    setRequiredErrors((prevState) => {
+                      const cloneState = [...prevState];
+                      cloneState.splice(index, 1);
+                      return cloneState;
+                    });
+                    remove(index);
+                  }}
+                    >
                       <Delete
                         color={permission === 'view' ? 'disabled' : 'primary'}
-                        onClick={async () => {
-                          // Since there is no disabled option for icons I check the permission inside the function
-                          if (permission !== 'write') return;
-                          const { Instruction } = getValues({
-                            nest: true,
-                          });
-                          //console.log(Instruction);
-                          if (
-                            Instruction &&
-                            Instruction[index] &&
-                            Instruction[index].serviceReqID &&
-                            Instruction[index].serviceReqID !== ''
-                          ) {
-                            await FHIR('ServiceRequests', 'doWork', {
-                              functionName: 'deleteServiceRequest',
-                              functionParams: {
-                                _id: Instruction[index].serviceReqID,
-                              },
-                            });
-                            delete Instruction[index];
-                            setValue('medicationRequest', Instruction);
-                          }
-                          setRequiredErrors((prevState) => {
-                            const cloneState = [...prevState];
-                            cloneState.splice(index, 1);
-                            return cloneState;
-                          });
-                          remove(index);
-                        }}
+
                         style={{ cursor: 'pointer' }}
                       />
                       <span
@@ -425,6 +433,7 @@ const Fields = ({
                         }}>
                         {t('Delete Instruction')}
                       </span>
+                    </div>
                     </Grid>
                   ) : null}
                 </Grid>
