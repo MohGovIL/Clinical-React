@@ -12,7 +12,7 @@ import FiltersReducer from 'Store/Reducers/FiltersReducer';
 import FhirDataReducer from 'Store/Reducers/FhirDataReducer';
 import ActiveDataReducer from 'Store/Reducers/ActiveDataReducer';
 import UiReducer from "Store/Reducers/UiReducer";
-import listBoxReducer from "Store/Reducers/listBoxReducer";
+import listBoxReducer from "Store/Reducers/ListsBoxReducer";
 import 'material-icons-font/material-icons-font.css';
 import thunk from 'redux-thunk';
 

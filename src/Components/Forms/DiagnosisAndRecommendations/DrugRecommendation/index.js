@@ -15,6 +15,7 @@ import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/Virtua
 import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoComplete';
 import { StyledPopper } from 'Assets/Elements/AutoComplete/Popper/Style';
 import Tooltip from "@material-ui/core/Tooltip";
+import { store } from 'index';
 
 
 const DrugRecommendation = ({
@@ -107,60 +108,24 @@ const DrugRecommendation = ({
     drugRoute: [],
     drugIntervals: [],
   });
+
   const fetchDrugsData = React.useCallback(async () => {
-    const APIsArray = [
-      FHIR('ValueSet', 'doWork', {
-        functionName: 'getValueSet',
-        functionParams: {
-          id: 'drugs_list',
-        },
-      }),
-      FHIR('ValueSet', 'doWork', {
-        functionName: 'getValueSet',
-        functionParams: {
-          id: 'drug_form',
-        },
-      }),
-      FHIR('ValueSet', 'doWork', {
-        functionName: 'getValueSet',
-        functionParams: {
-          id: 'drug_route',
-        },
-      }),
-      FHIR('ValueSet', 'doWork', {
-        functionName: 'getValueSet',
-        functionParams: {
-          id: 'drug_interval',
-        },
-      }),
-    ];
+
     try {
-      const drugsData = await Promise.all(APIsArray);
       // const drugList = [{ code: '123', display: 'medicine' }];
       // const drugIntervals = [{ code: '1234', display: '10minutes' }];
       setDrugsData({
         // drugList,
-        drugList:
-          drugsData[0].status === 200
-            ? drugsData[0].data.expansion.contains
-            : [],
-        drugForm:
-          drugsData[1].status === 200
-            ? drugsData[1].data.expansion.contains
-            : [],
-        drugRoute:
-          drugsData[2].status === 200
-            ? drugsData[2].data.expansion.contains
-            : [],
-        drugIntervals:
-          drugsData[3].status === 200
-            ? drugsData[3].data.expansion.contains
-            : [],
+        drugList : store.getState().listsBox.drugs_list.expansion.contains,
+        drugForm: store.getState().listsBox.drug_form.expansion.contains,
+        drugRoute: store.getState().listsBox.drug_route.expansion.contains,
+        drugIntervals: store.getState().listsBox.drug_interval.expansion.contains,
       });
     } catch (error) {
       console.log(error);
     }
   }, []);
+
 
   const fetchMedicationRequest = React.useCallback(async () => {
     try {

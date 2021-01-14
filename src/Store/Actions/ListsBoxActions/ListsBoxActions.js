@@ -1,22 +1,21 @@
 import { SET_VALUESET } from './ListsboxActionTypes';
 import {FHIR} from "Utils/Services/FHIR";
 
-export const setValueset = (valueset, listBoxStat) => {
+export const setValueset = (valueset) => {
   return async (dispatch) => {
-    if (listBoxStat.hasOwnProperty(valueset)) {
-      return listBoxStat[valueset];
-    }
     try {
       const result = await FHIR('ValueSet', 'doWork', {
         functionName: 'getValueSet',
         functionParams: {
-          id: 'drug_form',
+          id: valueset,
         },
       })
       let objValueset = {};
-      objValueset[result.id] = result;
-      dispatch({ type: SET_VALUESET, valueset:objValueset });
-      return result;
+      if(result.data) {
+        // store list in the listsBox
+        objValueset[result.data.id] = result.data;
+        dispatch({ type: SET_VALUESET, valueset:objValueset });
+      }
     } catch (err) {
       console.log(err);
     }
