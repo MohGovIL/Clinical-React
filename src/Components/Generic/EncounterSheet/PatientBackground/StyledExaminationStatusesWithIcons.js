@@ -34,8 +34,8 @@ const StyledExaminationStatusesWithIcons = ({
     // handleCreateData(true);
     store.dispatch(setEncounterAndPatient(encounterData, patient));
   };
-  const [docID, setDoc] = React.useState(-1);
   const [existLetter, setExistLetter] = React.useState(false);
+  const [letterInPreogress, setLetterInPreogress] = React.useState(false);
 
   useEffect(() => {
     if (
@@ -46,18 +46,20 @@ const StyledExaminationStatusesWithIcons = ({
     }
   }, []);
 
-  const createLetter = async () => {
-    if ((encounterData.status === 'finished' && existLetter) ||
+  const createLetter = async (existLetterId) => {
+    if ((encounterData.status === 'finished' && existLetterId) ||
     encounterData.extensionSecondaryStatus === 'waiting_for_release')
     {
+      setLetterInPreogress(true)
       let docId = await createSummaryLetter({
         encounter: encounterData,
         patientId: patient.id,
         currentUser,
         facility,
-        docID: existLetter,
+        docID: existLetterId,
       });
-      setDoc(docId);
+      setExistLetter(docId);
+      setLetterInPreogress(false)
     }
   };
 
@@ -66,6 +68,7 @@ const StyledExaminationStatusesWithIcons = ({
       functionName: 'getDocumentReference',
       searchParams: { category: 5, encounter: encounterData.id },
     });
+    console.log(documentReferenceData)
     return documentReferenceData &&
       documentReferenceData.data &&
       documentReferenceData.data.total >= 1
@@ -87,10 +90,13 @@ const StyledExaminationStatusesWithIcons = ({
             <input value={encounterData.status} />*/}
           <StyledListItem>
             <StyledMedicalFileIcon
-              onClick={createLetter}
+              onClick={() => {
+                createLetter(existLetter)
+              }}
               canClickMedical={
-                (encounterData.status === 'finished' && existLetter) ||
-                encounterData.extensionSecondaryStatus === 'waiting_for_release'
+                (encounterData.status === 'finished' && existLetter && !letterInPreogress) ||
+                (encounterData.extensionSecondaryStatus === 'waiting_for_release' && !letterInPreogress)
+
               }>
               <img alt={'MedicalFile'} src={MedicalFile} />
               <span>{t('Summary letter')}</span>
