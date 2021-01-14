@@ -44,6 +44,7 @@ const PopupCreateNewPatient = ({
   facility,
   authorizationACO,
   hideAppointment,
+  listsBox
 }) => {
 
 
@@ -226,15 +227,9 @@ const PopupCreateNewPatient = ({
     //Load id types list
     (() => {
       try {
-        FHIR('ValueSet', 'doWork', {
-          functionName: 'getValueSet',
-          functionParams: { id: 'identifier_type_list' },
-        }).then((type_list) => {
           const {
-            data: {
               expansion: { contains },
-            },
-          } = type_list;
+          } = listsBox.identifier_type_list;
           let options = emptyArrayAll(t('Choose'));
           for (let status of contains) {
             options.push(normalizeFhirValueSet(status));
@@ -246,7 +241,6 @@ const PopupCreateNewPatient = ({
           if (selectedIdType.code !== 0) {
             setValue('identifierType', selectedIdType.code);
           }
-        });
       } catch (e) {
         console.log(e);
       }
@@ -255,23 +249,19 @@ const PopupCreateNewPatient = ({
     //Load KupatHolim list
     (() => {
       try {
-        FHIR('Organization', 'doWork', {
-          functionName: 'getOrganizationTypeKupatHolim',
-          //'functionParams': {id: 'gender'}
-        }).then((kupatHolim_list) => {
-          const {
-            data: { entry },
-          } = kupatHolim_list;
-          let array = emptyArrayAll(t('Choose'));
-          for (let row of entry) {
-            if (row.resource !== undefined) {
-              row.resource.name = t(row.resource.name);
-              let setLabelKupatHolim = normalizeValueData(row.resource);
-              array.push(setLabelKupatHolim);
-            }
+        const {
+          entry
+        } = listsBox.hmoList;
+        let array = emptyArrayAll(t('Choose'));
+        for (let row of entry) {
+          if (row.resource !== undefined) {
+            row.resource.name = t(row.resource.name);
+            let setLabelKupatHolim = normalizeValueData(row.resource);
+            array.push(setLabelKupatHolim);
           }
-          setKupatHolimList(array);
-        });
+        }
+        setKupatHolimList(array);
+
       } catch (e) {
         console.log(e);
       }
@@ -280,21 +270,14 @@ const PopupCreateNewPatient = ({
     //Load gender list
     (() => {
       try {
-        FHIR('ValueSet', 'doWork', {
-          functionName: 'getValueSet',
-          functionParams: { id: 'gender' },
-        }).then((gender_list) => {
           const {
-            data: {
               expansion: { contains },
-            },
-          } = gender_list;
+          } = listsBox.gender;
           let options = emptyArrayAll(t('Choose'));
           for (let status of contains) {
             options.push(normalizeFhirValueSet(status));
           }
           setGenderList(options);
-        });
       } catch (e) {
         console.log(e);
       }
@@ -1153,6 +1136,7 @@ const mapStateToProps = (state) => {
     formatDate: state.settings.format_date,
     facility: state.settings.facility,
     hideAppointment: state.settings.clinikal.clinikal_hide_appoitments,
+    listsBox: state.listsBox
   };
 };
 

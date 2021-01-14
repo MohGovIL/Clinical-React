@@ -29,6 +29,7 @@ import {setEncounterAction} from 'Store/Actions/ActiveActions';
 import {showSnackbar} from 'Store/Actions/UiActions/ToastActions';
 import {baseRoutePath} from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
+import { setValueset } from 'Store/Actions/ListsBoxActions/ListsBoxActions';
 
 const MedicalAdmission = ({
   patient,
@@ -41,6 +42,8 @@ const MedicalAdmission = ({
   functionToRunOnTabChange,
   isSomethingWasChanged,
   prevEncounterId,
+  listsBox,
+  listsBox_s
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -57,6 +60,7 @@ const MedicalAdmission = ({
   const [loading, setLoading] = useState(true);
   const pregnancyLinkId = '4';
   const [saveProcess, setSaveProcess] = useState(false);
+  const [ListsLoaded, setListsLoaded] = useState(false);
 
   /*
   * Save all the init value in the state than call to setValue
@@ -147,6 +151,23 @@ const MedicalAdmission = ({
     backgroundDiseases: false,
   });
   const [disabledOnSubmit, setdisabledOnSubmit] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const APILists = [];
+      const systemLists = ['drugs_list', 'bk_diseases', 'sensitivities']
+      systemLists.forEach((value => {
+            if ( !listsBox.hasOwnProperty(value)) {
+              APILists.push(
+                  store.dispatch(setValueset(value))
+              )
+            }
+          }
+      ));
+      await Promise.all(APILists);
+      setListsLoaded(true);
+    })();
+  }, []);
 
   useEffect(() => {
     for (const val in loadingStatus) {
@@ -863,23 +884,27 @@ const MedicalAdmission = ({
               />
             </StyledRadioGroupChoice>
           )}
-          <Sensitivities
-            defaultRenderOptionFunction={medicalAdmissionRenderOption}
-            defaultChipLabelFunction={medicalAdmissionChipLabel}
-            handleLoading={handleLoading}
-            initValueFunction={initValue}
-          />
-          <BackgroundDiseases
-            defaultRenderOptionFunction={medicalAdmissionRenderOption}
-            defaultChipLabelFunction={medicalAdmissionChipLabel}
-            handleLoading={handleLoading}
-            initValueFunction={initValue}
-          />
-          <ChronicMedication
-            defaultChipLabelFunction={medicalAdmissionChipLabel}
-            handleLoading={handleLoading}
-            initValueFunction={initValue}
-          />
+          {ListsLoaded && (
+            <>
+            <Sensitivities
+              defaultRenderOptionFunction={medicalAdmissionRenderOption}
+              defaultChipLabelFunction={medicalAdmissionChipLabel}
+              handleLoading={handleLoading}
+              initValueFunction={initValue}
+            />
+            <BackgroundDiseases
+              defaultRenderOptionFunction={medicalAdmissionRenderOption}
+              defaultChipLabelFunction={medicalAdmissionChipLabel}
+              handleLoading={handleLoading}
+              initValueFunction={initValue}
+            />
+            <ChronicMedication
+              defaultChipLabelFunction={medicalAdmissionChipLabel}
+              handleLoading={handleLoading}
+              initValueFunction={initValue}
+            />
+            </>
+          )}
           <SaveForm
             encounter={encounter}
             onSubmit={onSubmit}
@@ -902,6 +927,7 @@ const mapStateToProps = (state) => {
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
+    listsBox: state.listsBox,
   };
 };
-export default connect(mapStateToProps, null)(MedicalAdmission);
+export default connect(mapStateToProps, { setValueset })(MedicalAdmission);

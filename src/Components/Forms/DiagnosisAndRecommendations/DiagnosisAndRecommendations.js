@@ -17,6 +17,7 @@ import { store } from 'index';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 import Loader from "../../../Assets/Elements/Loader";
+import { setValueset } from 'Store/Actions/ListsBoxActions/ListsBoxActions';
 
 const DiagnosisAndRecommendations = ({
   patient,
@@ -28,6 +29,7 @@ const DiagnosisAndRecommendations = ({
   functionToRunOnTabChange,
   validationFunction,
   isSomethingWasChanged,
+  listsBox
 }) => {
   const methods = useForm({
     mode: 'onBlur',
@@ -50,7 +52,26 @@ const DiagnosisAndRecommendations = ({
   const { handleSubmit, setValue, register, unregister, getValues } = methods;
   const [loading, setLoading] = useState(true);
   const [saveProcess, setSaveProcess] = useState(false);
+  const [ListsLoaded, setListsLoaded] = useState(false);
   const { t } = useTranslation();
+
+  // Load form lists into redux in the first setting up
+  useEffect(() => {
+    (async () => {
+      const APILists = [];
+      const systemLists = ['drugs_list', 'drug_form', 'drug_route', 'drug_interval']
+      systemLists.forEach((value => {
+            if ( !listsBox.hasOwnProperty(value)) {
+              APILists.push(
+                  store.dispatch(setValueset(value))
+              )
+            }
+          }
+      ));
+      await Promise.all(APILists);
+      setListsLoaded(true);
+    })();
+  }, []);
 
   /*
    * <FORM DIRTY FUNCTIONS>
@@ -511,13 +532,15 @@ const DiagnosisAndRecommendations = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <DiagnosisAndTreatment initValueFunction={initValue} />
           <RecommendationsOnRelease initValueFunction={initValue} />
-          <DrugRecommendation
-            encounterId={encounter.id}
-            formatDate={formatDate}
-            handleLoading={handleLoading}
-            initValueFunction={initValue}
-            languageDirection={languageDirection}
-          />
+          {ListsLoaded && (
+              <DrugRecommendation
+                  encounterId={encounter.id}
+                  formatDate={formatDate}
+                  handleLoading={handleLoading}
+                  initValueFunction={initValue}
+                  languageDirection={languageDirection}
+              />
+          )}
           <DecisionOnRelease initValueFunction={initValue} />
           <SaveForm
             statuses={statuses}
@@ -543,6 +566,7 @@ const mapStateToProps = (state) => {
     languageDirection: state.settings.lang_dir,
     formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
+    listsBox: state.listsBox,
   };
 };
 export default connect(mapStateToProps, null)(DiagnosisAndRecommendations);

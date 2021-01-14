@@ -151,13 +151,11 @@ const DrawThisTable = ({
   };
 
   const requestValueSet = (valueSet) => {
-    if (typeof valueSet === "undefined" || !valueSet.data) {
+    if (typeof valueSet === "undefined" ) {
       return;
     }
     const {
-      data: {
         expansion: { contains },
-      },
     } = valueSet;
     let options = {};
     if (contains) {
@@ -217,20 +215,6 @@ const DrawThisTable = ({
         })
       );
 
-      ApiCalls.push(
-        FHIR('ValueSet', 'doWork', {
-          functionName: 'getValueSet',
-          functionParams: { id: 'encounter_statuses' },
-        })
-      );
-
-      ApiCalls.push(
-        FHIR('ValueSet', 'doWork', {
-          functionName: 'getValueSet',
-          functionParams: { id: 'encounter_secondary_statuses' },
-        })
-      );
-
       if (hideAppointments !== '1') {
 
         ApiCalls.push(
@@ -264,15 +248,15 @@ const DrawThisTable = ({
 
       }
 
-      const [FHIRPrevEncounter, FHIRCurEncounter, FHIRPrevEncounters, encounterStatPromise, encounterSecStatusPromise, FHIRNextAppointments, FHIRNextAppointment ,appointmentStatPromise] = await Promise.all(ApiCalls);
+      const [FHIRPrevEncounter, FHIRCurEncounter, FHIRPrevEncounters, FHIRNextAppointments, FHIRNextAppointment ,appointmentStatPromise] = await Promise.all(ApiCalls);
 
 
       setPrevEncounter(FHIRPrevEncounter);
       setCurEncounter(FHIRCurEncounter);
       setPrevEncounters(FHIRPrevEncounters);
 
-      const encounterStat = requestValueSet(encounterStatPromise);
-      const encounterSecStat = requestValueSet(encounterSecStatusPromise);
+      const encounterStat = requestValueSet(store.getState().listsBox.encounter_statuses);
+      const encounterSecStat = requestValueSet(store.getState().listsBox.encounter_secondary_statuses);
       const statusesList = {...encounterStat, ...encounterSecStat};
       if (!encounterStatuses) setEncounterStatuses(statusesList);
 
