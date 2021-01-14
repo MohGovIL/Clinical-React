@@ -240,8 +240,12 @@ const DrugRecommendation = ({
               );
             } else {
               append({
-                drugName:
-                  normalizedFhirMedicationRequest.medicationCodeableConceptCode,
+                drugName: {
+                  code:
+                      normalizedFhirMedicationRequest.medicationCodeableConceptCode || '',
+                  display:
+                      normalizedFhirMedicationRequest.medicationCodeableConceptDisplay || '',
+                },
                 quantity: normalizedFhirMedicationRequest.doseQuantity || '',
                 drugForm: normalizedFhirMedicationRequest.methodCode || '',
                 drugRoute: normalizedFhirMedicationRequest.routeCode || '',
@@ -395,7 +399,7 @@ const DrugRecommendation = ({
                     }}
                     getOptionLabel={(option) => option.display || ''}
                     renderOption={(option) => (
-                      <Tooltip title={drugRecommendation[index].drugName} aria-label={drugRecommendation[index].drugName}>
+                      <Tooltip title={option.display} aria-label={option.display}>
                         <Typography noWrap>{option.display}</Typography>
                     </Tooltip>
                     )}
