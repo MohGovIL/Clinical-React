@@ -42,6 +42,7 @@ import normalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/normalizeFhi
 import { Delete } from '@material-ui/icons';
 import { FHIR } from 'Utils/Services/FHIR';
 import { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import isAllowed from 'Utils/Helpers/isAllowed';
 
 
 /**
@@ -118,6 +119,10 @@ const Fields = ({
       }
     })();
   }, [serviceRequests]);
+
+  const isAllowAddNewInstruction = () => {
+    return isAllowed('add_new_treatment_instruction') === 'write' ? true : false;
+  }
 
   const createDataFromRecord = async ({ serviceReq, locked }) => {
     let serviceReqTemp = {
@@ -242,13 +247,16 @@ const Fields = ({
       <StyledConstantHeaders>
         {t('Instructions for treatment')}
       </StyledConstantHeaders>
-      <StyledTreatmentInstructionsButton
-        disabled={permission !== 'write'}
-        language_direction={language_direction}
-        onClick={addNewInstruction}>
-        <img alt='plus icon' src={PLUS} />
-        {t('Instructions for treatment')}
-      </StyledTreatmentInstructionsButton>
+      {permission === 'write' && isAllowAddNewInstruction() &&
+      <>
+        <StyledTreatmentInstructionsButton
+            language_direction={language_direction}
+            onClick={addNewInstruction}>
+          <img alt='plus icon' src={PLUS}/>
+          {t('Instructions for treatment')}
+        </StyledTreatmentInstructionsButton>
+      </>
+      }
       <hr />
       <StyledInstructions id='newRefInstructions'>
         {fields.map((item, index) => {
