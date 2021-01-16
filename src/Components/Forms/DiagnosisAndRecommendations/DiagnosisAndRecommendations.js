@@ -385,6 +385,8 @@ const DiagnosisAndRecommendations = ({
               questionnaireResponseId: data.questionnaireResponseId,
               questionnaireResponseParams: {
                 item: items,
+                author: store.getState().login.userID,
+                authored: fhirFormatDateTime()
               },
             }),
           );

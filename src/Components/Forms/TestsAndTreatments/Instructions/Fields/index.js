@@ -41,7 +41,8 @@ import TestTreatmentRemark from 'Components/Forms/TestsAndTreatments/Instruction
 import normalizeFhirServiceRequest from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirServiceRequest';
 import { Delete } from '@material-ui/icons';
 import { FHIR } from 'Utils/Services/FHIR';
-import { formatTime, formatDateTime }  from 'Utils/Helpers/Datetime/formatDate';
+import { formatTime }  from 'Utils/Helpers/Datetime/formatDate';
+import isAllowed from 'Utils/Helpers/isAllowed';
 
 
 /**
@@ -118,6 +119,10 @@ const Fields = ({
       }
     })();
   }, [serviceRequests]);
+
+  const isAllowAddNewInstruction = () => {
+    return isAllowed('add_new_treatment_instruction') === 'write' ? true : false;
+  }
 
   const createDataFromRecord = async ({ serviceReq, locked }) => {
     let serviceReqTemp = {
@@ -242,13 +247,16 @@ const Fields = ({
       <StyledConstantHeaders>
         {t('Instructions for treatment')}
       </StyledConstantHeaders>
-      <StyledTreatmentInstructionsButton
-        disabled={permission !== 'write'}
-        language_direction={language_direction}
-        onClick={addNewInstruction}>
-        <img alt='plus icon' src={PLUS} />
-        {t('Instructions for treatment')}
-      </StyledTreatmentInstructionsButton>
+      {permission === 'write' && isAllowAddNewInstruction() &&
+      <>
+        <StyledTreatmentInstructionsButton
+            language_direction={language_direction}
+            onClick={addNewInstruction}>
+          <img alt='plus icon' src={PLUS}/>
+          {t('Instructions for treatment')}
+        </StyledTreatmentInstructionsButton>
+      </>
+      }
       <hr />
       <StyledInstructions id='newRefInstructions'>
         {fields.map((item, index) => {
@@ -280,7 +288,7 @@ const Fields = ({
                         as={<input />}
                       />
                       {item.locked
-                        ? formatDateTime(item.authoredOn, formatDate)
+                        ? formatTime(item.authoredOn, formatDate)
                         : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>
@@ -364,7 +372,7 @@ const Fields = ({
                         as={<input />}
                       />
                       {item.locked && item.test_treatment_status === 'done'
-                        ? formatDateTime(item.occurrence, formatDate)
+                        ? formatTime(item.occurrence, formatDate)
                         : ''}
                     </StyledTypographyHour>
                   </StyledCardContent>
