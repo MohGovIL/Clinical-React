@@ -17,8 +17,9 @@ import moment from 'moment';
 import { normalizeFhirOrganization } from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirOrganization';
 import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirQuestionnaireResponse';
+import { ParseQuestionnaireResponseText } from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
 
-const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, writePermission }) => {
+const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, writePermission, initValueFunction }) => {
   const { t } = useTranslation();
 
   const {
@@ -27,10 +28,9 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
     setValue,
     requiredErrors,
     errors,
-    reset,
     unregister,
     isCommitmentForm,
-    getValues,
+
   } = useFormContext();
   const [paymentMethod, setPaymentMethod] = useState('');
   const paymentMethodHandler = (event, method) => {
@@ -110,6 +110,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
 
   useEffect(() => {
     register({ name: 'questionnaireId' });
+    register({ name: 'questionnaire' });
     register({ name: 'questionnaireResponse' });
     if (isCommitmentForm !== '1') {
       register({ name: 'paymentMethod' });
@@ -123,6 +124,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
         });
         if (questionnaire.data.total) {
           setValue('questionnaireId', questionnaire.data.entry[1].resource.id);
+          setValue('questionnaire', questionnaire.data.entry[1].resource);
           const questionnaireResponseData = await FHIR(
             'QuestionnaireResponse',
             'doWork',
@@ -173,7 +175,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
                   normalizedQuestionnaireResponse.items.find(
                     (item) => item.linkId === '5',
                   ).answer[0].valueInteger || '';
-                setValue([
+                initValueFunction([
                   {
                     commitmentAndPaymentReferenceForPaymentCommitment:
                       commitmentAndPaymentReferenceForPaymentCommitment || '',
@@ -187,41 +189,17 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
                       commitmentAndPaymentDoctorsLicense || '',
                   },
                 ]);
-                // reset({
-                //   ...getValues(),
-                //   commitmentAndPaymentReferenceForPaymentCommitment:
-                //     normalizedQuestionnaireResponse.items.find(
-                //       (item) => item.linkId === '1',
-                //     ).answer[0].valueInteger || '',
-                //   commitmentAndPaymentDoctorsName:
-                //     normalizedQuestionnaireResponse.items.find(
-                //       (item) => item.linkId === '4',
-                //     ).answer[0].valueString || '',
-                //   commitmentAndPaymentDoctorsLicense:
-                //     normalizedQuestionnaireResponse.items.find(
-                //       (item) => item.linkId === '5',
-                //     ).answer[0].valueInteger || '',
-                // });
               } else {
-                const paymentAmount = normalizedQuestionnaireResponse.items.find(
-                  (item) => item.linkId === '6',
-                ).answer[0].valueString;
-                const paymentMethod = normalizedQuestionnaireResponse.items.find(
-                  (item) => item.linkId === '7',
-                ).answer[0].valueString;
-                const receiptNumber = normalizedQuestionnaireResponse.items.find(
-                  (item) => item.linkId === '8',
-                ).answer[0].valueString;
-                setValue([
+                const paymentAmount = ParseQuestionnaireResponseText(normalizedQuestionnaireResponse, '6');
+                const paymentMethod = ParseQuestionnaireResponseText(normalizedQuestionnaireResponse, '7');
+                const receiptNumber = ParseQuestionnaireResponseText(normalizedQuestionnaireResponse, '8');
+                initValueFunction([
                   {
                     paymentAmount: paymentAmount || 0,
                   },
                   {
                     paymentMethod: paymentMethod || '',
                   },
-                  // {
-                  //   questionnaireId: questionnaire.data.entry[1].resource.id,
-                  // },
                   {
                     questionnaireResponse:
                       normalizedQuestionnaireResponse.id || '',
@@ -236,11 +214,6 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
                 if (paymentAmount) {
                   setPaymentAmount(paymentAmount);
                 }
-                // if (receiptNumber)
-                //   reset({
-                //     ...getValues(),
-                //     receiptNumber: receiptNumber,
-                //   });
               }
             }
             handleLoading('payment');
@@ -304,6 +277,9 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
           disabled={!writePermission}
           value={paymentAmount}
           label={t('Payment amount')}
+          InputProps={{
+            autoComplete: 'off',
+          }}
         />
         <Grid
           container
@@ -331,7 +307,12 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
           width={'70%'}
           inputRef={register}
           label={t('Receipt number')}
-          InputLabelProps={{ shrink: true }}
+          InputLabelProps={{
+            shrink: true
+          }}
+          InputProps={{
+            autoComplete: 'off'
+          }}
         />
       </TabPanel>
       <TabPanel value='HMO' selectedValue={commitmentAndPaymentTabValue}>
@@ -359,6 +340,9 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
           helperText={
             requiredErrors.commitmentAndPaymentReferenceForPaymentCommitment
           }
+          InputProps={{
+            autoComplete: 'off',
+          }}
         />
         <Controller
           name='commitmentAndPaymentCommitmentDate'
@@ -464,7 +448,12 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
           disabled={!writePermission}
           id={'commitmentAndPaymentDoctorsLicense'}
           type='number'
-          InputLabelProps={{ shrink: true }}
+          InputLabelProps={{
+            shrink: true
+          }}
+          InputProps={{
+            autoComplete: 'off'
+          }}
           error={
             requiredErrors.commitmentAndPaymentDoctorsLicense ? true : false
           }

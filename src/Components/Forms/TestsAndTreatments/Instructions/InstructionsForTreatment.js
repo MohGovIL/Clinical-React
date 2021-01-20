@@ -65,6 +65,7 @@ const InstructionsForTreatment = ({
 
   const isFormDirty = () => {
     // check in indicators section;
+    if (permissionHandler() !== 'write' )return false;
     if (formDirty) return true;
 
     //check in instructions section
