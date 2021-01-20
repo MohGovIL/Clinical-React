@@ -18,6 +18,7 @@ import normalizeFhirQuestionnaireResponse from 'Utils/Helpers/FhirEntities/norma
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 import Loader from "../../../Assets/Elements/Loader";
 import { setValueset } from 'Store/Actions/ListsBoxActions/ListsBoxActions';
+import { answerType } from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
 
 const DiagnosisAndRecommendations = ({
   patient,
@@ -102,6 +103,7 @@ const DiagnosisAndRecommendations = ({
    * compare initValueObj with currentValues and find changes
    * */
   const isFormDirty = () => {
+    if (permissionHandler() !== 'write' )return false;
     const currentValues = getValues({ nest: true });
     console.log(currentValues);
     console.log(initValueObj);
@@ -113,8 +115,7 @@ const DiagnosisAndRecommendations = ({
       'treatmentDetails',
       'evacuationWay',
       'decision',
-      'numberOfDays',
-      'drugRecommendation'
+      'numberOfDays'
     ];
     for (const elem of emptyInFirst) {
       if (
@@ -125,6 +126,21 @@ const DiagnosisAndRecommendations = ({
         return true;
       }
     }
+    //check if drugRecommendation added
+    if (
+        typeof initValueObj['drugRecommendation'] === 'undefined' &&
+        (
+            typeof currentValues['drugRecommendation'] !== 'undefined' &&
+            currentValues['drugRecommendation'].length > 0 &&
+            currentValues['drugRecommendation'][0]['drugName'] !== ''
+        )
+    ) {
+      return true;
+    }
+
+
+
+
 
     for (const index in initValueObj) {
       if (
@@ -167,24 +183,6 @@ const DiagnosisAndRecommendations = ({
       cloneLoadingStatus[componentName] = true;
       return cloneLoadingStatus;
     });
-  };
-
-  const answerType = (type, data) => {
-    if (type === 'string') {
-      return [
-        {
-          valueString: data,
-        },
-      ];
-    } else if (type === 'integer') {
-      return [
-        {
-          valueInteger: data,
-        },
-      ];
-    } else {
-      return `No such type: ${type}`;
-    }
   };
 
   const [

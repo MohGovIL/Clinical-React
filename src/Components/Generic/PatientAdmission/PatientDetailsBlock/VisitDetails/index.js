@@ -195,9 +195,9 @@ const VisitDetails = ({
     register({ name: 'examinationCode' });
     initValueFunction([
       { serviceTypeCode },
-      { examinationCode },
-      { isUrgent: priority > 1 ? true : false },
+      { examinationCode }
     ]);
+
     return () => {
       unregister(['serviceTypeCode', 'examinationCode']);
     };
@@ -251,25 +251,6 @@ const VisitDetails = ({
             />
             <StyledDivider variant={'fullWidth'} />
           </>
-        ) : null}
-        {!props.hasOwnProperty('disableButtonIsUrgent') ||
-        props.disableButtonIsUrgent === true ? (
-          <Grid
-            container
-            direction={'row'}
-            justify={'flex-start'}
-            alignItems={'center'}>
-            <span>{t('Is urgent?')}</span>
-            {/* Requested service - switch */}
-            <StyledSwitch
-              name='isUrgent'
-              register={register}
-              label_1={'No'}
-              label_2={'Yes'}
-              marginLeft={'40px'}
-              marginRight={'40px'}
-            />
-          </Grid>
         ) : null}
         {/* Requested service - select test */}
         <StyledAutoComplete

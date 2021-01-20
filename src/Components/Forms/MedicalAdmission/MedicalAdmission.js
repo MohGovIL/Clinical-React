@@ -24,7 +24,10 @@ import SaveForm from '../GeneralComponents/SaveForm';
 import { store } from 'index';
 import { fhirFormatDateTime } from 'Utils/Helpers/Datetime/formatDate';
 import Loader from "../../../Assets/Elements/Loader";
-import {ParseQuestionnaireResponseBoolean} from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
+import {
+  answerType,
+  ParseQuestionnaireResponseBoolean
+} from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
 import {setEncounterAction} from 'Store/Actions/ActiveActions';
 import {showSnackbar} from 'Store/Actions/UiActions/ToastActions';
 import {baseRoutePath} from 'Utils/Helpers/baseRoutePath';
@@ -84,6 +87,7 @@ const MedicalAdmission = ({
   * compare initValueObj with currentValues and find changes
   * */
   const isFormDirty = () => {
+    if (permissionHandler() !== 'write' )return false;
     const currentValues = getValues({ nest: true });
     const emptyInFirst = [
       'sensitivities',
@@ -103,10 +107,10 @@ const MedicalAdmission = ({
 
     for (const index in initValueObj) {
       if (
-        (typeof initValueObj[index] === "undefined" && (typeof initValueObj[index] !== "undefined" && currentValues[index].length > 0))
+        (typeof initValueObj[index] === "undefined" && (typeof currentValues[index] !== "undefined" && currentValues[index].length > 0))
         || (typeof initValueObj[index] !== "undefined" && JSON.stringify(initValueObj[index]) !== JSON.stringify(currentValues[index]))
       ) {
-        console.log(`changed - ${index}`);
+      //  console.log(`changed - ${index}`);
         return true;
       }
     }
@@ -437,24 +441,6 @@ const MedicalAdmission = ({
 
   const medicalAdmissionChipLabel = (selected) => {
     return `${t(selected.reasonCode.name)}`;
-  };
-
-  const answerType = (type, data) => {
-    if (type === 'string') {
-      return [
-        {
-          valueString: data,
-        },
-      ];
-    } else if (type === 'boolean') {
-      return [
-        {
-          valueBoolean: data,
-        },
-      ];
-    } else {
-      return `No such type: ${type}`;
-    }
   };
 
   const savingProcess = () => {
@@ -863,7 +849,6 @@ const MedicalAdmission = ({
             serviceTypeCode={encounter.serviceTypeCode}
             priority={encounter.priority}
             disableHeaders={false}
-            disableButtonIsUrgent={false}
             initValueFunction={initValue}
           />
           <UrgentAndInsulation
