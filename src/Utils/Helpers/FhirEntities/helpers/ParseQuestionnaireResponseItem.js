@@ -18,7 +18,7 @@ export const ParseQuestionnaireResponseText = (normalizedResponse, linkId) => {
   return  item.answer[0].valueString;
 }
 
-
+// answer for QuestionnaireResponse
 export const answerType = (type, data) => {
   if (type === 'string') {
     return [
