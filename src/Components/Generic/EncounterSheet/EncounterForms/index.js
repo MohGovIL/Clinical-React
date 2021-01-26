@@ -18,7 +18,8 @@ const EncounterForms = ({
   formatDate,
   prevEncounterId,
   verticalName,
-  isSomethingWasChanged
+  isSomethingWasChanged,
+  forceEncounterSheetUpdate
 }) => {
   const [formsPerSheet, setFormsPerSheet] = React.useState();
   const { t } = useTranslation();
@@ -80,6 +81,7 @@ const EncounterForms = ({
             tabs={formsPerSheet}
             prevEncounterId={prevEncounterId}
             isSomethingWasChanged={isSomethingWasChanged}
+            forceEncounterSheetUpdate={forceEncounterSheetUpdate}
           />
         ) : null}
       </StyledPatientFiles>

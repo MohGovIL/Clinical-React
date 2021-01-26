@@ -46,7 +46,7 @@ const MedicalAdmission = ({
   isSomethingWasChanged,
   prevEncounterId,
   listsBox,
-  listsBox_s
+  encounterFieldsWereUpdated,
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -64,6 +64,27 @@ const MedicalAdmission = ({
   const pregnancyLinkId = '4';
   const [saveProcess, setSaveProcess] = useState(false);
   const [ListsLoaded, setListsLoaded] = useState(false);
+  const watchFields = watch(["examinationCode", "examination", "serviceTypeCode", "isUrgent", "reasonForReferralDetails"]);
+
+  //watch changes in the encounter - if the encounter details changed all the encounter sheet will rerender afoer the save process
+  useEffect(() =>{
+    if (typeof watchFields.examinationCode === 'undefined') return;
+    const encounterChanged =  (watchFields.examinationCode !== encounter.examinationCode||
+        watchFields.serviceTypeCode !== encounter.serviceTypeCode ||
+        (encounter.priority == 1 && watchFields.isUrgent) ||
+        (encounter.priority == 2 && !watchFields.isUrgent) ||
+        watchFields.reasonForReferralDetails !== encounter.extensionReasonCodeDetails);
+    if (encounterChanged) {
+      const cloneEncounter = {...encounter};
+      cloneEncounter['examinationCode'] = watchFields.examinationCode;
+      cloneEncounter['examination'] = watchFields.examination;
+      cloneEncounter['serviceTypeCode'] = watchFields.serviceTypeCode;
+      cloneEncounter['priority'] = watchFields.isUrgent ? 2 : 1;
+      cloneEncounter['extensionReasonCodeDetails'] = watchFields.reasonForReferralDetails;
+      encounterFieldsWereUpdated.current = cloneEncounter;
+    }
+
+  },[watchFields])
 
   /*
   * Save all the init value in the state than call to setValue
@@ -749,10 +770,6 @@ const MedicalAdmission = ({
           }
         }
 
-        if (encounterChanged && cloneEncounter !== null) {
-          APIsArray.push(new Promise(store.dispatch(setEncounterAction(cloneEncounter))))
-        }
-        console.log(APIsArray);
         return APIsArray;
       } catch (error) {
         stopSavingProcess();

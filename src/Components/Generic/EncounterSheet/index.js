@@ -19,6 +19,11 @@ const EncounterSheet = ({
 }) => {
   const [prevEncounterId, setPrevEncounterId] = useState(null);
   const isSomethingWasChanged = React.useRef(() => false);
+
+  //force update when the encounter details are changed
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+
   useEffect(() => {
     (async () => {
       try {
@@ -71,6 +76,7 @@ const EncounterSheet = ({
           languageDirection={languageDirection}
           verticalName={verticalName}
           isSomethingWasChanged={isSomethingWasChanged}
+          forceEncounterSheetUpdate={forceUpdate}
         />
       </StyledEncounterSheet>
     </React.Fragment>
