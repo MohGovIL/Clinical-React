@@ -68,11 +68,13 @@ const VisitDetails = ({
 
   const onCloseChangeHandler = (value) => {
     const examinationCodeArr = [];
+    const examinationArr = [];
     let serviceTypeCodeValue = '';
     if (value && value.length) {
       serviceTypeCodeValue = value[0].serviceType.code;
       value.forEach((item, itemIndex) => {
         examinationCodeArr.push(item.reasonCode.code);
+        examinationArr.push(item.reasonCode.name);
       });
     }
     setValue([
@@ -81,6 +83,9 @@ const VisitDetails = ({
       },
       {
         examinationCode: examinationCodeArr,
+      },
+      {
+        examination: examinationArr,
       },
     ]);
   };
@@ -193,13 +198,15 @@ const VisitDetails = ({
   useEffect(() => {
     register({ name: 'serviceTypeCode' });
     register({ name: 'examinationCode' });
+    register({ name: 'examination' });
     initValueFunction([
       { serviceTypeCode },
-      { examinationCode }
+      { examinationCode },
+      { examination }
     ]);
 
     return () => {
-      unregister(['serviceTypeCode', 'examinationCode']);
+      unregister(['serviceTypeCode', 'examinationCode', 'examination']);
     };
   }, [
     register,

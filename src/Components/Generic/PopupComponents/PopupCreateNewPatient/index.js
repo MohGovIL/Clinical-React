@@ -174,7 +174,7 @@ const PopupCreateNewPatient = ({
       ) {
         setError('identifier', 'notValid', 'The number entered is incorrect');
         setErrorIdNumber(true);
-        setErrorIdNumberText(t(errors?.identifier?.message));
+        setErrorIdNumberText(t('The number entered is incorrect'));
         setFormButtonSave('write');
       } else {
         (() => {
@@ -376,7 +376,7 @@ const PopupCreateNewPatient = ({
                   'The number entered is incorrect',
                 );
                 setErrorIdNumber(true);
-                setErrorIdNumberText(t(errors?.identifier?.message));
+                setErrorIdNumberText(t('The number entered is incorrect'));
                 setFormButtonSave('write');
               } else {
                 clearForm();
