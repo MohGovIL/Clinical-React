@@ -73,6 +73,6 @@
     "prettier": "^2.2.1",
     "react-hook-form-devtools": "^1.1.2",
     "react-maskedinput": "^4.0.1",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.12"
   }
 }
