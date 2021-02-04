@@ -37,15 +37,13 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "rewire": "^4.0.1",
-    "styled-components": "^5.0.0"
+    "styled-components": "^5.2.1"
   },
   "scripts": {
     "start": "react-scripts start --no-cache",
     "build": "react-scripts build",
     "test": "react-scripts test --no-cache",
     "eject": "react-scripts eject",
-    "watch": "node scripts/customized-config watch -b dev-mode/build/ -v",
-    "watch2": "cra-build-watch",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
   },
@@ -66,14 +64,12 @@
   },
   "proxy": "http://localhost:80",
   "devDependencies": {
-    "@storybook/addon-actions": "^5.3.3",
-    "@storybook/addon-knobs": "^5.3.3",
-    "@storybook/addon-links": "^5.3.3",
-    "@storybook/addon-storysource": "^5.3.3",
-    "@storybook/addons": "^5.3.3",
-    "@storybook/react": "^5.3.3",
-    "cra-build-watch": "^3.0.0",
-    "error-overlay-webpack-plugin": "^0.4.1",
+    "@storybook/addon-actions": "^5.3.21",
+    "@storybook/addon-knobs": "^5.3.21",
+    "@storybook/addon-links": "^5.3.21",
+    "@storybook/addon-storysource": "^5.3.21",
+    "@storybook/addons": "^5.3.21",
+    "@storybook/react": "^5.3.21",
     "prettier": "^2.2.1",
     "react-hook-form-devtools": "^1.1.2",
     "react-maskedinput": "^4.0.1",
