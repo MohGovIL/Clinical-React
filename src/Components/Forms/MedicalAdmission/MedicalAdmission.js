@@ -55,14 +55,13 @@ const MedicalAdmission = ({
   });
   const history = useHistory();
   const { handleSubmit, register, setValue, unregister, getValues, watch } = methods;
-
+  const saveProcess = React.useRef( false);
   /*
   * <FORM DIRTY FUNCTIONS>
   * */
   const [initValueObj, setInitValueObj] = useState({});
   const [loading, setLoading] = useState(true);
   const pregnancyLinkId = '4';
-  const [saveProcess, setSaveProcess] = useState(false);
   const [ListsLoaded, setListsLoaded] = useState(false);
   const watchFields = watch(["examinationCode", "examination", "serviceTypeCode", "isUrgent", "reasonForReferralDetails"]);
 
@@ -477,11 +476,11 @@ const MedicalAdmission = ({
   };
 
   const onSubmit = (data) => {
-    if (permissionHandler() === 'view' || saveProcess) return false;
-    setSaveProcess(true);
+    if (permissionHandler() === 'view' || saveProcess.current ) return false;
+    saveProcess.current = true;
     if (!data) data = getValues({ nest: true });
     if (!isRequiredValidation(data)) {
-      setSaveProcess(false);
+      saveProcess.current  = false;
       return false;
     }
     // in the first form of the encounter need to save the form and connect the medical issue from prev encounter in current.
@@ -776,7 +775,7 @@ const MedicalAdmission = ({
         console.log(error);
       }
     } else {
-      setSaveProcess(false);
+      saveProcess.current  = false;
       return false;
     }
 

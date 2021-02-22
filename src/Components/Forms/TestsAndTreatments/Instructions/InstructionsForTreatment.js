@@ -55,12 +55,11 @@ const InstructionsForTreatment = ({
   });
 
   const [disabledOnSubmit, setdisabledOnSubmit] = useState(false);
-  const [saveProcess, setSaveProcess] = useState(false);
   const [defaultContext, setDefaultContext] = useState('');
   const [serviceRequests, setServiceRequests] = useState([]);
   const { t } = useTranslation();
   const history = useHistory();
-
+  const saveProcess = React.useRef( false);
   const { handleSubmit, setValue, watch, getValues } = methods;
 
   const isFormDirty = () => {
@@ -198,9 +197,8 @@ const InstructionsForTreatment = ({
   };
   const onSubmit = (data) => {
     //  console.log('data', JSON.stringify(data));
-
-    if (permissionHandler() !== 'write' || saveProcess) return false;
-    setSaveProcess(true)
+    if (permissionHandler() !== 'write' || saveProcess.current) return false;
+    saveProcess.current =  true;
     if (isFormDirty()) {
       setdisabledOnSubmit(true);
       const indicatorsFHIRArray = saveIndicatorsOnSubmit();
