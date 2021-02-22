@@ -57,11 +57,16 @@ const EncounterForms = ({
   React.useEffect(() => {
     (async () => {
       try {
-        const forms = await getForms(
-          encounter.serviceTypeCode,
-          encounter.examinationCode,
-        );
-        setFormsPerSheet(forms);
+       if (typeof encounter.serviceTypeCode !== 'undefined' && encounter.serviceTypeCode !== null &&
+         typeof encounter.examinationCode !== 'undefined' && encounter.examinationCode !== null
+       ) {
+         const forms = await getForms(
+           encounter.serviceTypeCode,
+           encounter.examinationCode,
+         );
+         setFormsPerSheet(forms);
+       }
+
       } catch (error) {
         console.log(error);
       }
