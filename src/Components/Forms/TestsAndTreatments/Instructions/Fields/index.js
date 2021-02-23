@@ -323,7 +323,7 @@ const Fields = ({
                       item={item}
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid item xs={6}>
                     <TestTreatmentType
                       requiredErrors={requiredErrors}
                       index={index}
@@ -331,8 +331,8 @@ const Fields = ({
                       setRequiredErrors={setRequiredErrors}
                     />
                   </Grid>
-                  <Grid item xs={2}></Grid>
-                  <Grid item xs={4}>
+                  {/*<Grid item xs={2}></Grid>*/}
+                  <Grid justify="flex-start" item xs={3}>
                     <TestTreatmentReferral
                       setRequiredErrors={setRequiredErrors}
                       requiredErrors={requiredErrors}
@@ -340,12 +340,13 @@ const Fields = ({
                       item={item}
                     />
                   </Grid>
-
+                  <Grid container item xs={12}>
                   <TestTreatmentInstructions
                     index={index}
                     item={item}
                     handlePopUpProps={handlePopUpProps}
                   />
+                  </Grid>
                 </Grid>
               </StyledCardInstruction>
                 <StyledCardInstruction>

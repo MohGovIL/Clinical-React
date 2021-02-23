@@ -52,9 +52,9 @@ const DiagnosisAndRecommendations = ({
 
   const { handleSubmit, setValue, register, unregister, getValues } = methods;
   const [loading, setLoading] = useState(true);
-  const [saveProcess, setSaveProcess] = useState(false);
   const [ListsLoaded, setListsLoaded] = useState(false);
   const { t } = useTranslation();
+  const saveProcess = React.useRef( false);
 
   // Load form lists into redux in the first setting up
   useEffect(() => {
@@ -328,8 +328,8 @@ const DiagnosisAndRecommendations = ({
 
   const onSubmit = (data) => {
     setdisabledOnSubmit(true);
-    if (permissionHandler() === 'view' || saveProcess) return false;
-    setSaveProcess(true);
+    if (permissionHandler() === 'view' || saveProcess.current) return false;
+    saveProcess.current = true;
     if (isFormDirty()) {
       if (!data) data = getValues({ nest: true });
       try {
@@ -467,7 +467,7 @@ const DiagnosisAndRecommendations = ({
         console.log(error);
       }
     } else {
-      setSaveProcess(false);
+      saveProcess.current = false;
       return false;
     }
   };
