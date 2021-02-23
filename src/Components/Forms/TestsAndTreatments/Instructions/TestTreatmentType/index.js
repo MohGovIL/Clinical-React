@@ -24,10 +24,12 @@ import { VirtualizedListboxComponent } from 'Assets/Elements/AutoComplete/Virtua
 import { connect } from 'react-redux';
 import { store } from 'index';
 import { SET_VALUESET } from 'Store/Actions/ListsBoxActions/ListsboxActionTypes';
+import Tooltip from '@material-ui/core/Tooltip';
+import StyledTooltip from 'Assets/Elements/StyledTooltip';
 
 /**
  *
- * @param item
+* @param item
  * @param index
  * @param requiredErrors
  * @returns UI Field of the main form.
@@ -203,26 +205,31 @@ const TestTreatmentType = ({
                   </StyledTypographyList>
                 )}
                 popupIcon={<KeyboardArrowDown />}
+                input_direction={test_treatment === 'providing_medicine' ? 'ltr' : language_direction}
                 renderInput={(params) => (
-                  <CustomizedTextField
-                    iconColor='#1976d2'
-                    fullWidth
-                    {...params}
-                    label={t(currentTitle)}
-                    error={
-                      requiredErrors[index] &&
-                      requiredErrors[index].test_treatment_type &&
-                      requiredErrors[index].test_treatment_type.length
-                        ? true
-                        : false
-                    }
-                    helperText={
-                      requiredErrors[index] &&
-                      requiredErrors[index].test_treatment_type
-                        ? requiredErrors[index].test_treatment_type
-                        : ''
-                    }
-                  />
+                  <StyledTooltip
+                    title={params.inputProps.value}
+                    aria-label={params.inputProps.value}>
+                    <CustomizedTextField
+                      iconColor='#1976d2'
+                      fullWidth
+                      {...params}
+                      label={t(currentTitle)}
+                      error={
+                        requiredErrors[index] &&
+                        requiredErrors[index].test_treatment_type &&
+                        requiredErrors[index].test_treatment_type.length
+                          ? true
+                          : false
+                      }
+                      helperText={
+                        requiredErrors[index] &&
+                        requiredErrors[index].test_treatment_type
+                          ? requiredErrors[index].test_treatment_type
+                          : ''
+                      }
+                    />
+                  </StyledTooltip>
                 )}
               />
             }

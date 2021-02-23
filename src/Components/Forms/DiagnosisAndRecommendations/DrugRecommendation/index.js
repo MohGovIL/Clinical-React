@@ -16,6 +16,7 @@ import { StyledAutoComplete } from 'Assets/Elements/AutoComplete/StyledAutoCompl
 import { StyledPopper } from 'Assets/Elements/AutoComplete/Popper/Style';
 import Tooltip from "@material-ui/core/Tooltip";
 import { store } from 'index';
+import StyledTooltip from 'Assets/Elements/StyledTooltip';
 
 
 const DrugRecommendation = ({
@@ -404,13 +405,18 @@ const DrugRecommendation = ({
                     </Tooltip>
                     )}
                     popupIcon={<KeyboardArrowDown />}
+                    input_direction={'ltr'}
                     renderInput={(params) => (
-                      <CustomizedTextField
-                        iconColor='#1976d2'
-                        width='60%'
-                        {...params}
-                        label={t('Drug Name')}
-                      />
+                      <StyledTooltip
+                        title={params.inputProps.value}
+                        aria-label={params.inputProps.value}>
+                        <CustomizedTextField
+                          iconColor='#1976d2'
+                          width='60%'
+                          {...params}
+                          label={t('Drug Name')}
+                        />
+                      </StyledTooltip>
                     )}
                   />
                 }

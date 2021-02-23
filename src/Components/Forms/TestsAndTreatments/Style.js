@@ -148,7 +148,7 @@ export const StyledTreatmentInstructionsButton = styled(Button)`
 `;
 
 export const StyledCardRoot = styled.div`  
-  padding: 27px;
+  padding: 14px;
 `;
 export const StyledCardInstruction = styled(Card)`
   display: flex;
@@ -215,7 +215,6 @@ export const StyledIconedButton = styled(Button)`
   border-radius: 0px 23.5px 23.5px 0px;
   background-color: #eaf7ff;
   top: 34%;
-  right: 32%;
 
   p {
     width: auto;
@@ -228,6 +227,7 @@ export const StyledIconedButton = styled(Button)`
     letter-spacing: normal;
     text-align: right;
     color: #000b40;
+    white-space: nowrap;
   }
 
   div {
