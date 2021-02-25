@@ -364,6 +364,9 @@ const InstructionsForTreatment = ({
         case 'waiting_for_xray':
           cloneEncounter.status = 'in-progress';
           break;
+        case 'during_treatment':
+          cloneEncounter.status = 'in-progress';
+          break;
       }
       cloneEncounter.extensionSecondaryStatus = selectedStatus;
       cloneEncounter.practitioner = practitioner;
@@ -445,6 +448,7 @@ const InstructionsForTreatment = ({
     { label: 'Waiting for nurse', value: 'waiting_for_nurse' },
     { label: 'Waiting for doctor', value: 'waiting_for_doctor' },
     { label: 'Waiting for xray', value: 'waiting_for_xray' },
+    { label: 'During treatment', value: 'during_treatment' }
   ];
 
   return (
