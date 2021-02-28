@@ -69,7 +69,7 @@ export const getSettingsAction = (history, userName) => {
       APISettings.push(
           geti18n(settings.data.lang_id)
       )
-      const systemLists = ['encounter_statuses', 'gender', 'encounter_secondary_statuses', 'appointment_statuses', 'identifier_type_list', 'waiting_for_xray_statuses', 'waiting_for_release_statuses', 'service_types']
+      const systemLists = ['encounter_statuses', 'gender', 'encounter_secondary_statuses', 'appointment_statuses', 'identifier_type_list', 'waiting_for_xray_statuses', 'waiting_for_release_statuses', 'service_types', 'no_payment_reasons']
       systemLists.forEach((value => {
             APISettings.push(
                 dispatch(setValueset(value))

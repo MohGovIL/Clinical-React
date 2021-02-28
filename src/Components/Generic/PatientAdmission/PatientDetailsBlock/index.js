@@ -190,6 +190,7 @@ const PatientDetailsBlock = ({
     arrivalWay: '',
   });
   const onSubmit = async (data) => {
+    console.log(data)
     if(writePermission()) {
       try {
         const clear = isRequiredValidation(data);
@@ -289,6 +290,15 @@ const PatientDetailsBlock = ({
                 if (data.receiptNumber)
                   item['answer'] = answerType(i.type, data.receiptNumber);
                 break;
+              case '9':
+                if (data.exemptionReason)
+                  item['answer'] = answerType(i.type, data.exemptionReason);
+                break;
+              case '10':
+                if (data.noPaymentComment)
+                  item['answer'] = answerType(i.type, data.noPaymentComment);
+                break;
+
               default:
                 break;
             }
@@ -551,7 +561,7 @@ const PatientDetailsBlock = ({
           requiredErrors={requiredErrors}
           permission={writePermission() ? 'write' : 'view'}
           isCommitmentForm={configuration.clinikal_pa_commitment_form}>
-          <StyledForm onSubmit={handleSubmit(onSubmit)}>
+          <StyledForm >
             <EscortPatient
               writePermission={writePermission()}
               relatedPersonId={encounterData.relatedPerson}
@@ -600,9 +610,10 @@ const PatientDetailsBlock = ({
               <Grid container direction='row' justify='flex-end'>
                 <Grid item lg={3} sm={4}>
                   <StyledButton
+                    onClick={handleSubmit(onSubmit)}
                     color='primary'
                     variant='contained'
-                    type='submit'
+                    type='button'
                     disabled={loading}
                     letterSpacing={'0.1'}>
                     {t(writePermission() ? 'Save & Close' : 'Close')}
