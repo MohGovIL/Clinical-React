@@ -190,7 +190,7 @@ const PatientDetailsBlock = ({
     arrivalWay: '',
   });
   const onSubmit = async (data) => {
-    console.log(data)
+
     if(writePermission()) {
       try {
         const clear = isRequiredValidation(data);
