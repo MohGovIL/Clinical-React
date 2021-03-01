@@ -71,8 +71,8 @@ const PatientDetailsBlock = ({
   const isFormDirty = () => {
     if (!writePermission()) return false;
     const currentValues = getValues({ nest: true });
-    console.log(currentValues)
-    console.log(initValueObj)
+   // console.log(currentValues)
+  //  console.log(initValueObj)
 
     const emptyInFirst = [
         'Referral',
@@ -190,6 +190,7 @@ const PatientDetailsBlock = ({
     arrivalWay: '',
   });
   const onSubmit = async (data) => {
+
     if(writePermission()) {
       try {
         const clear = isRequiredValidation(data);
@@ -255,40 +256,59 @@ const PatientDetailsBlock = ({
             };
             switch (i.linkId) {
               case '1':
-                if (data.commitmentAndPaymentReferenceForPaymentCommitment)
-                  item['answer'] = answerType(i.type, data.commitmentAndPaymentReferenceForPaymentCommitment);
+                 (data.commitmentAndPaymentReferenceForPaymentCommitment && data.paymentTab === 'HMO') ?
+                  item['answer'] = answerType(i.type, data.commitmentAndPaymentReferenceForPaymentCommitment) :
+                  item['answer'] = answerType(i.type, null);
                 break;
               case '2':
-                if (data.commitmentAndPaymentCommitmentDate)
-                  item['answer'] = answerType(i.type, data.commitmentAndPaymentCommitmentDate);
+                 (data.commitmentAndPaymentCommitmentDate && data.paymentTab === 'HMO') ?
+                  item['answer'] = answerType(i.type, data.commitmentAndPaymentCommitmentDate) :
+                  item['answer'] = answerType(i.type, null);
                 break;
               case '3':
-                if (data.commitmentAndPaymentCommitmentValidity)
-                  item['answer'] = answerType(i.type, data.commitmentAndPaymentCommitmentValidity);
+                 (data.commitmentAndPaymentCommitmentValidity && data.paymentTab === 'HMO') ?
+                  item['answer'] = answerType(i.type, data.commitmentAndPaymentCommitmentValidity) :
+                   item['answer'] = answerType(i.type, null);
                 break;
               case '4':
-                if (data.commitmentAndPaymentDoctorsName)
+                 (data.commitmentAndPaymentDoctorsName && data.paymentTab === 'HMO') ?
                   item['answer'] = answerType(
                       i.type,
                       data.commitmentAndPaymentDoctorsName,
-                  );
+                  ) :
+                   item['answer'] = answerType(i.type, null);
                 break;
               case '5':
-                if (data.commitmentAndPaymentDoctorsLicense)
-                  item['answer'] = answerType(i.type, data.commitmentAndPaymentDoctorsLicense);
+                (data.commitmentAndPaymentDoctorsLicense && data.paymentTab === 'HMO') ?
+                  item['answer'] = answerType(i.type, data.commitmentAndPaymentDoctorsLicense) :
+                  item['answer'] = answerType(i.type, null);
                 break;
               case '6':
-                if (data.paymentAmount)
-                  item['answer'] = answerType(i.type, data.paymentAmount);
+                 (data.paymentAmount && data.paymentTab === 'Private') ?
+                  item['answer'] = answerType(i.type, data.paymentAmount) :
+                  item['answer'] = answerType(i.type, null);
                 break;
               case '7':
-                if (data.paymentMethod)
-                  item['answer'] = answerType(i.type, data.paymentMethod);
+                 (data.paymentMethod && data.paymentTab === 'Private') ?
+                  item['answer'] = answerType(i.type, data.paymentMethod) :
+                  item['answer'] = answerType(i.type, null);
                 break;
               case '8':
-                if (data.receiptNumber)
-                  item['answer'] = answerType(i.type, data.receiptNumber);
+                 (data.receiptNumber && data.paymentTab === 'Private') ?
+                  item['answer'] = answerType(i.type, data.receiptNumber):
+                  item['answer'] = answerType(i.type, null);
                 break;
+              case '9':
+                 (data.exemptionReason && data.paymentTab === 'noPayment') ?
+                  item['answer'] = answerType(i.type, data.exemptionReason) :
+                  item['answer'] = answerType(i.type, null);
+                break;
+              case '10':
+                 (data.noPaymentComment && data.paymentTab === 'noPayment') ?
+                  item['answer'] = answerType(i.type, data.noPaymentComment) :
+                  item['answer'] = answerType(i.type, null);
+                break;
+
               default:
                 break;
             }
@@ -551,7 +571,7 @@ const PatientDetailsBlock = ({
           requiredErrors={requiredErrors}
           permission={writePermission() ? 'write' : 'view'}
           isCommitmentForm={configuration.clinikal_pa_commitment_form}>
-          <StyledForm onSubmit={handleSubmit(onSubmit)}>
+          <StyledForm >
             <EscortPatient
               writePermission={writePermission()}
               relatedPersonId={encounterData.relatedPerson}
@@ -600,9 +620,10 @@ const PatientDetailsBlock = ({
               <Grid container direction='row' justify='flex-end'>
                 <Grid item lg={3} sm={4}>
                   <StyledButton
+                    onClick={handleSubmit(onSubmit)}
                     color='primary'
                     variant='contained'
-                    type='submit'
+                    type='button'
                     disabled={loading}
                     letterSpacing={'0.1'}>
                     {t(writePermission() ? 'Save & Close' : 'Close')}
