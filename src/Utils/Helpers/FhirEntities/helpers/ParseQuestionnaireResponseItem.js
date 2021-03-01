@@ -18,6 +18,15 @@ export const ParseQuestionnaireResponseText = (normalizedResponse, linkId) => {
   return  item.answer[0].valueString;
 }
 
+export const ParseQuestionnaireResponseInt = (normalizedResponse, linkId) => {
+  const item = normalizedResponse.items.find(
+    (i) => i.linkId === linkId,
+  );
+  if (typeof item === "undefined" || typeof item.answer === "undefined" )return undefined;
+  return  item.answer[0].valueInteger;
+}
+
+
 // answer for QuestionnaireResponse
 export const answerType = (type, data) => {
   if (type === 'string') {
