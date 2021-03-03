@@ -12,6 +12,8 @@ import { FHIR } from 'Utils/Services/FHIR';
 import normalizeFhirCondition from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirCondition';
 import {ParseQuestionnaireResponseBoolean} from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
 import { store } from 'index';
+import { longCodeListOptions } from 'Assets/Elements/CustomizedSelectCheckList/RenderTemplates/longCodeListOptions';
+import { isRTLLanguage } from 'Utils/Helpers/language';
 
 const BackgroundDiseases = ({
   defaultRenderOptionFunction,
@@ -36,6 +38,7 @@ const BackgroundDiseases = ({
 
   const direction = useSelector((state) => state.settings.lang_dir);
 
+  const [backgroundDiseasesLang, setBackgroundDiseasesLang] = useState('he');
   const [backgroundDiseasesList, setBackgroundDiseasesList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
   const loadingBackgroundDiseasesList =
@@ -137,6 +140,7 @@ const BackgroundDiseases = ({
     (async () => {
       try {
         const sensitivitiesResponse = store.getState().listsBox.bk_diseases;
+        setBackgroundDiseasesLang(sensitivitiesResponse.language)
         if (active) {
           const options = [];
           const servicesTypeObj = {};
@@ -184,10 +188,13 @@ const BackgroundDiseases = ({
           setServicesTypeOpen={setServicesTypeOpen}
           valueSetCode={'backgroundDiseasesCodes'}
           labelInputText={'Diseases details'}
-          // helperErrorText={'Some error text'}
-          defaultRenderOptionFunction={defaultRenderOptionFunction}
+          popperWidth={700}
+          popperLanguageDirection={isRTLLanguage(backgroundDiseasesLang) ? 'rtl' : 'ltr'}
+          //if the language is english the list will be list of professional codes
+          defaultRenderOptionFunction={backgroundDiseasesLang === 'en' ? longCodeListOptions : defaultRenderOptionFunction}
           defaultChipLabelFunction={defaultChipLabelFunction}
-          sortByTranslation
+          sortByTranslation={!backgroundDiseasesLang === 'en'}
+          virtual
         />
       )}
     </StyleBackgroundDiseases>
