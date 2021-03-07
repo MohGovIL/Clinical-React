@@ -724,8 +724,12 @@ const PopupCreateNewPatient = ({
                   rules={{
                     validate: (value) => {
                       const formValues = getValues('identifierType');
+                      console.log(formValues)
                       if (formValues && formValues.identifier !== undefined) {
                         setPatientIdNumber(formValues.identifier.trim());
+                      }
+                      if (formValues.identifierType === patientIdTypeMain && !validateLuhnAlgorithm(value)) {
+                        return true;
                       }
                       return getIsFound() === true;
                     },
@@ -733,7 +737,7 @@ const PopupCreateNewPatient = ({
                   color={'primary'}
                   variant={'filled'}
                   error={
-                    errorIdNumber || (!errorRequired.identifier ? false : true)
+                    errorIdNumber || (errorRequired.identifier)
                   }
                   helperText={errorIdNumberText || errorRequired.identifier}
                   title={''}
@@ -761,7 +765,7 @@ const PopupCreateNewPatient = ({
                   onInput={handlerOnInvalidField}
                   rules={{
                     validate: (value) => {
-                      return getPatientNamePattern().test(value) ? false : true;
+                      return !getPatientNamePattern().test(value);
                     }
                   }}
                   error={
@@ -866,9 +870,7 @@ const PopupCreateNewPatient = ({
                   error={
                     errors.managingOrganization
                       ? true
-                      : !errorRequired.managingOrganization
-                      ? false
-                      : true
+                      : errorRequired.managingOrganization
                   }
                   helperText={
                     errors.managingOrganization
