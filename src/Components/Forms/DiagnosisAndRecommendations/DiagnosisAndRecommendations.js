@@ -109,10 +109,9 @@ const DiagnosisAndRecommendations = ({
     console.log(initValueObj);
 
     const emptyInFirst = [
-      'diagnosisDetails',
-      'findingsDetails',
+      'physicalExamination',
+      'medicalAnamnesis',
       'instructionsForFurtherTreatment',
-      'treatmentDetails',
       'evacuationWay',
       'decision',
       'numberOfDays'
@@ -341,16 +340,12 @@ const DiagnosisAndRecommendations = ({
           };
           switch (i.linkId) {
             case '1':
-              if (data.findingsDetails)
-                item['answer'] = answerType(i.type, data.findingsDetails);
+              if (data.medicalAnamnesis)
+                item['answer'] = answerType(i.type, data.medicalAnamnesis);
               break;
             case '2':
-              if (data.diagnosisDetails)
-                item['answer'] = answerType(i.type, data.diagnosisDetails);
-              break;
-            case '3':
-              if (data.treatmentDetails)
-                item['answer'] = answerType(i.type, data.treatmentDetails);
+              if (data.physicalExamination)
+                item['answer'] = answerType(i.type, data.physicalExamination);
               break;
             case '4':
               if (data.instructionsForFurtherTreatment)

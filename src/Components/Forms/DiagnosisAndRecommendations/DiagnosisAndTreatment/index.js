@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Title from 'Assets/Elements/Title';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
@@ -7,8 +7,16 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { Grid } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext } from 'react-hook-form';
+import { isRTLLanguage } from 'Utils/Helpers/language';
+import { longCodeListOptions } from 'Assets/Elements/CustomizedSelectCheckList/RenderTemplates/longCodeListOptions';
+import CustomizedSelectCheckList from 'Assets/Elements/CustomizedSelectCheckList';
+import { ConditionRenderOption } from 'Assets/Elements/CustomizedSelectCheckList/RenderTemplates/conditionsRenderOptions';
+import { store } from 'index';
+import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
+import { setValueset } from 'Store/Actions/ListsBoxActions/ListsBoxActions';
+import { connect } from 'react-redux';
 
-const DiagnosisAndTreatment = ({ initValueFunction }) => {
+const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => {
   const { t } = useTranslation();
   const {
     permission,
@@ -20,11 +28,18 @@ const DiagnosisAndTreatment = ({ initValueFunction }) => {
     questionnaireResponse,
   } = useFormContext();
 
-  const diagnosisAndTreatmentFields = watch(['findingsDetails', 'treatmentDetails', 'diagnosisDetails']);
+  const diagnosisAndTreatmentFields = watch(['medicalAnamnesis', 'treatmentDetails', 'physicalExamination']);
 
   const callBack = (data, name) => {
     setValue(name, data);
   };
+
+  const [diagnosisList, setDiagnosisList] = useState([]);
+  const [selectedList, setSelectedList] = useState([]);
+  const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
+  const [DiagnosisLang, setDiagnosisLang] = useState('he');
+  const [diagnosisListsLoaded, setDiagnosisListsLoaded] = useState(false);
+
 
   const handlePopUpProps = (title, fields, id, callBack, name) => {
     setPopUpProps((prevState) => {
@@ -41,8 +56,8 @@ const DiagnosisAndTreatment = ({ initValueFunction }) => {
     });
   };
   const treatmentDetails = t('Treatment details');
-  const diagnosisDetails = t('Diagnosis details');
-  const findingsDetails = t('Findings details');
+  const physicalExamination = t('Physical examination');
+  const medicalAnamnesis = t('Medical anamnesis');
   React.useEffect(() => {
     const { items } = questionnaireResponse;
     if (items) {
@@ -51,12 +66,12 @@ const DiagnosisAndTreatment = ({ initValueFunction }) => {
           switch (item.linkId) {
             case '1':
               initValueFunction([
-                { findingsDetails: item.answer[0].valueString },
+                { medicalAnamnesis: item.answer[0].valueString },
               ]);
               break;
             case '2':
               initValueFunction([
-                { diagnosisDetails: item.answer[0].valueString },
+                { physicalExamination: item.answer[0].valueString },
               ]);
               break;
             case '3':
@@ -73,10 +88,61 @@ const DiagnosisAndTreatment = ({ initValueFunction }) => {
   }, [
     questionnaireResponse,
     setValue,
-    diagnosisDetails,
+    physicalExamination,
     treatmentDetails,
-    findingsDetails,
+    medicalAnamnesis,
   ]);
+
+  const medicalAdmissionChipLabel = (selected) => {
+    return `${t(selected.reasonCode.name)}`;
+  };
+
+  useEffect(() => {
+    (async () => {
+      const APILists = [];
+      const systemLists = ['bk_diseases']
+      systemLists.forEach((value => {
+          if ( !listsBox.hasOwnProperty(value)) {
+            APILists.push(
+              store.dispatch(setValueset(value))
+            )
+          }
+        }
+      ));
+      await Promise.all(APILists);
+      setDiagnosisListsLoaded(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+
+    if (diagnosisListsLoaded) {
+      (async () => {
+        try {
+          const diagnosisResponse = listsBox.bk_diseases;
+          setDiagnosisLang(diagnosisResponse.language)
+          const options = [];
+          const servicesTypeObj = {};
+          await Promise.all(
+            diagnosisResponse.expansion.contains.map((sensitive) => {
+              const normalizedSensitiveSet = normalizeFhirValueSet(sensitive);
+              const optionObj = {};
+              optionObj['serviceType'] = {
+                ...servicesTypeObj[normalizedSensitiveSet.code],
+              };
+              optionObj['reasonCode'] = normalizedSensitiveSet;
+              options.push(optionObj);
+            }),
+          );
+          setDiagnosisList(options);
+        } catch (err) {
+          console.log(err);
+        }
+      })();
+    }
+
+
+  },[diagnosisListsLoaded]);
 
   return (
     <StyledFormGroup>
@@ -93,13 +159,13 @@ const DiagnosisAndTreatment = ({ initValueFunction }) => {
         justify='flex-start'
         alignItems='baseline'>
         <CustomizedTextField
-          name='findingsDetails'
+          name='medicalAnamnesis'
           inputRef={register}
-          label={findingsDetails}
+          label={medicalAnamnesis}
           width='45%'
           multiline
           InputLabelProps={{
-            shrink: diagnosisAndTreatmentFields['findingsDetails']
+            shrink: diagnosisAndTreatmentFields['medicalAnamnesis']
               ? true
               : false,
           }}
@@ -109,11 +175,11 @@ const DiagnosisAndTreatment = ({ initValueFunction }) => {
           disabled={permission === 'view' ? true : false}
           onClick={() =>
             handlePopUpProps(
-              findingsDetails,
-              'findings_details',
+              medicalAnamnesis,
+              'medical_anamnesis',
               'diagnosis_and_recommendations',
               callBack,
-              'findingsDetails',
+              'medicalAnamnesis',
             )
           }>
           {t('Select template')}
@@ -126,10 +192,10 @@ const DiagnosisAndTreatment = ({ initValueFunction }) => {
         alignItems='baseline'>
         <CustomizedTextField
           inputRef={register}
-          name='diagnosisDetails'
-          label={diagnosisDetails}
+          name='physicalExamination'
+          label={physicalExamination}
           InputLabelProps={{
-            shrink: diagnosisAndTreatmentFields['diagnosisDetails']
+            shrink: diagnosisAndTreatmentFields['physicalExamination']
               ? true
               : false,
           }}
@@ -141,11 +207,11 @@ const DiagnosisAndTreatment = ({ initValueFunction }) => {
           disabled={permission === 'view' ? true : false}
           onClick={() =>
             handlePopUpProps(
-              diagnosisDetails,
-              'diagnosis_details',
+              physicalExamination,
+              'physical_examination',
               'diagnosis_and_recommendations',
               callBack,
-              'diagnosisDetails',
+              'physicalExamination',
             )
           }>
           {t('Select template')}
@@ -156,35 +222,34 @@ const DiagnosisAndTreatment = ({ initValueFunction }) => {
         direction='row'
         justify='flex-start'
         alignItems='baseline'>
-        <CustomizedTextField
-          inputRef={register}
-          name='treatmentDetails'
-          label={treatmentDetails}
-          InputLabelProps={{
-            shrink: diagnosisAndTreatmentFields['treatmentDetails']
-              ? true
-              : false,
-          }}
-          width='45%'
-          multiline
-          disabled={permission === 'view' ? true : false}
-        />
-        <StyledSelectTemplateButton
-          disabled={permission === 'view' ? true : false}
-          onClick={() =>
-            handlePopUpProps(
-              treatmentDetails,
-              'treatment_details',
-              'diagnosis_and_recommendations',
-              callBack,
-              'treatmentDetails',
-            )
-          }>
-          {t('Select template')}
-        </StyledSelectTemplateButton>
+        <Grid sm={10} >
+          <CustomizedSelectCheckList
+            selectedList={selectedList}
+            selectCheckList={diagnosisList}
+            // loadingCheckList={loadingDiagnosisList}
+            servicesTypeOpen={servicesTypeOpen}
+            setServicesTypeOpen={setServicesTypeOpen}
+            valueSetCode={'DiagnosisCodes'}
+            labelInputText={'Diagnosis'}
+            popperWidth={700}
+            popperLanguageDirection={isRTLLanguage(DiagnosisLang) ? 'rtl' : 'ltr'}
+            //if the language is english the list will be list of professional codes
+            defaultRenderOptionFunction={DiagnosisLang === 'en' ? longCodeListOptions : ConditionRenderOption}
+            defaultChipLabelFunction={medicalAdmissionChipLabel}
+            sortByTranslation={!DiagnosisLang === 'en'}
+            virtual
+            notRequired={true}
+          />
+        </Grid>
       </Grid>
     </StyledFormGroup>
   );
 };
 
-export default DiagnosisAndTreatment;
+
+const mapStateToProps = (state) => {
+  return {
+    listsBox: state.listsBox,
+  };
+};
+export default connect(mapStateToProps, { setValueset })(DiagnosisAndTreatment);

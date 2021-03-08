@@ -40,7 +40,8 @@ const CustomizedSelectCheckList = ({
   sortByTranslation,
   onDeleteChip,
   popperWidth,
-  popperLanguageDirection
+  popperLanguageDirection,
+  notRequired
 }) => {
   const { t } = useTranslation();
 
@@ -232,7 +233,7 @@ const CustomizedSelectCheckList = ({
               requiredErrors[valueSetCode] || ''
             }
             {...params}
-            label={`${t(labelInputText)} *`}
+            label={`${t(labelInputText)} ${notRequired ? '' : '*'}`}
             InputProps={{
               ...params.InputProps,
               endAdornment: (
