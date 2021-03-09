@@ -35,6 +35,7 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
   };
 
   const [diagnosisList, setDiagnosisList] = useState([]);
+  const [diagnosisKeyValue, setDiagnosisKeyValue] = useState({});
   const [selectedList, setSelectedList] = useState([]);
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
   const [DiagnosisLang, setDiagnosisLang] = useState('he');
@@ -59,37 +60,55 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
   const physicalExamination = t('Physical examination');
   const medicalAnamnesis = t('Medical anamnesis');
   React.useEffect(() => {
-    const { items } = questionnaireResponse;
-    if (items) {
-      items.forEach((item) => {
-        if (item.answer) {
-          switch (item.linkId) {
-            case '1':
-              initValueFunction([
-                { medicalAnamnesis: item.answer[0].valueString },
-              ]);
-              break;
-            case '2':
-              initValueFunction([
-                { physicalExamination: item.answer[0].valueString },
-              ]);
-              break;
-            case '3':
-              initValueFunction([
-                { treatmentDetails: item.answer[0].valueString },
-              ]);
-              break;
-            default:
-              break;
+    if (Object.keys(diagnosisKeyValue).length > 0 ) {
+      const { items } = questionnaireResponse;
+      if (items) {
+        items.forEach((item) => {
+          if (item.answer) {
+            switch (item.linkId) {
+              case '1':
+                initValueFunction([
+                  { medicalAnamnesis: item.answer[0].valueString },
+                ]);
+                break;
+              case '2':
+                initValueFunction([
+                  { physicalExamination: item.answer[0].valueString },
+                ]);
+                break;
+              case '8':
+                const diagnosisCodesArr = item.answer[0].valueString.split('|')
+                initValueFunction([
+                  { diagnosisCodes: diagnosisCodesArr },
+                ]);
+                let diagnosisCodes = []
+                diagnosisCodesArr.map((code) => {
+                  diagnosisCodes.push({
+                    reasonCode: {
+                      name: diagnosisKeyValue[code],
+                      code: code,
+                    },
+                    serviceType: {
+                      code: '',
+                      name: '',
+                    },
+                  });
+                })
+                setSelectedList(diagnosisCodes)
+                console.log(diagnosisCodes)
+                break;
+              default:
+                break;
+            }
           }
-        }
-      });
+        });
+      }
     }
   }, [
     questionnaireResponse,
     setValue,
     physicalExamination,
-    treatmentDetails,
+    diagnosisKeyValue,
     medicalAnamnesis,
   ]);
 
@@ -98,6 +117,7 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
   };
 
   useEffect(() => {
+    register({ name: 'diagnosisCodes' });
     (async () => {
       const APILists = [];
       const systemLists = ['bk_diseases']
@@ -122,6 +142,7 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
           const diagnosisResponse = listsBox.bk_diseases;
           setDiagnosisLang(diagnosisResponse.language)
           const options = [];
+          const optionsKeyValObj = {};
           const servicesTypeObj = {};
           await Promise.all(
             diagnosisResponse.expansion.contains.map((sensitive) => {
@@ -132,9 +153,11 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
               };
               optionObj['reasonCode'] = normalizedSensitiveSet;
               options.push(optionObj);
+              optionsKeyValObj[normalizedSensitiveSet.code] = normalizedSensitiveSet.name;
             }),
           );
           setDiagnosisList(options);
+          setDiagnosisKeyValue(optionsKeyValObj);
         } catch (err) {
           console.log(err);
         }
@@ -169,10 +192,10 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
               ? true
               : false,
           }}
-          disabled={permission === 'view' ? true : false}
+          disabled={permission === 'view'}
         />
         <StyledSelectTemplateButton
-          disabled={permission === 'view' ? true : false}
+          disabled={permission === 'view'}
           onClick={() =>
             handlePopUpProps(
               medicalAnamnesis,
@@ -201,10 +224,10 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
           }}
           width='45%'
           multiline
-          disabled={permission === 'view' ? true : false}
+          disabled={permission === 'view'}
         />
         <StyledSelectTemplateButton
-          disabled={permission === 'view' ? true : false}
+          disabled={permission === 'view'}
           onClick={() =>
             handlePopUpProps(
               physicalExamination,
@@ -229,7 +252,7 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
             // loadingCheckList={loadingDiagnosisList}
             servicesTypeOpen={servicesTypeOpen}
             setServicesTypeOpen={setServicesTypeOpen}
-            valueSetCode={'DiagnosisCodes'}
+            valueSetCode={'diagnosisCodes'}
             labelInputText={'Diagnosis'}
             popperWidth={700}
             popperLanguageDirection={isRTLLanguage(DiagnosisLang) ? 'rtl' : 'ltr'}
@@ -239,6 +262,7 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
             sortByTranslation={!DiagnosisLang === 'en'}
             virtual
             notRequired={true}
+            disabled={permission === 'view'}
           />
         </Grid>
       </Grid>

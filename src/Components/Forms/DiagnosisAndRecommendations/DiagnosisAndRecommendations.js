@@ -111,6 +111,7 @@ const DiagnosisAndRecommendations = ({
     const emptyInFirst = [
       'physicalExamination',
       'medicalAnamnesis',
+      'diagnosisCodes',
       'instructionsForFurtherTreatment',
       'evacuationWay',
       'decision',
@@ -136,10 +137,6 @@ const DiagnosisAndRecommendations = ({
     ) {
       return true;
     }
-
-
-
-
 
     for (const index in initValueObj) {
       if (
@@ -365,6 +362,11 @@ const DiagnosisAndRecommendations = ({
             case '7':
               if (data.numberOfDays)
                 item['answer'] = answerType(i.type, data.numberOfDays);
+              break;
+            case '8':
+               (data.diagnosisCodes && data.diagnosisCodes.length > 0) ?
+                item['answer'] = answerType(i.type, data.diagnosisCodes.join('|')) :
+                item['answer'] = answerType(i.type, null);
               break;
             default:
               break;
