@@ -82,21 +82,27 @@ const BackgroundDiseases = ({
                 const normalizedCondition = normalizeFhirCondition(
                   condition.resource,
                 );
-                conditionCodes.push({
-                  reasonCode: {
-                    name: normalizedCondition.codeText,
+                //ignore duplicates
+                if (!conditionInitIds.includes(normalizedCondition.codeCode)) {
+
+                  conditionCodes.push({
+                    reasonCode: {
+                      name: normalizedCondition.codeText,
+                      code: normalizedCondition.codeCode,
+                    },
+                    serviceType: {
+                      code: '',
+                      name: '',
+                    },
+                  });
+                  conditionIds[normalizedCondition.codeCode] = {
+                    id: normalizedCondition.id,
                     code: normalizedCondition.codeCode,
-                  },
-                  serviceType: {
-                    code: '',
-                    name: '',
-                  },
-                });
-                conditionIds[normalizedCondition.codeCode] = {
-                  id: normalizedCondition.id,
-                  code: normalizedCondition.codeCode,
-                };
-                conditionInitIds.push(normalizedCondition.codeCode)
+                  };
+
+                  conditionInitIds.push(normalizedCondition.codeCode)
+
+                }
               }
             });
             setSelectedList(conditionCodes);

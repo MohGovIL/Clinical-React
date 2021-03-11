@@ -404,6 +404,27 @@ const DiagnosisAndRecommendations = ({
             }),
           );
         }
+        if (data.addToBD) {
+          data.diagnosisCodes.forEach((diagnosis) => {
+            APIsArray.push(
+              FHIR('Condition', 'doWork', {
+                functionParams: {
+                  condition: {
+                    categorySystem:
+                      'http://clinikal/condition/category/medical_problem',
+                    codeSystem: 'http://clinikal/diagnosis/type/bk_diseases',
+                    codeCode: diagnosis,
+                    patient: patient.id,
+                    recorder: store.getState().login.userID,
+                    clinicalStatus: 'active',
+                    encounter: encounter.id,
+                  },
+                },
+                functionName: 'createCondition',
+              }),
+            );
+          });
+        }
         if (data.drugRecommendation && data.drugRecommendation.length) {
           data.drugRecommendation.forEach((drug, drugIndex) => {
             if (drug.drugName.code) {

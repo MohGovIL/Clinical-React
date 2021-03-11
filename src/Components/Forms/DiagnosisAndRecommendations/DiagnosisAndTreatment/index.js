@@ -4,7 +4,7 @@ import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
 import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
 import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
-import { Grid } from '@material-ui/core';
+import { FormControlLabel, Grid } from '@material-ui/core';
 import { StyledDivider } from '../Style';
 import { useFormContext } from 'react-hook-form';
 import { isRTLLanguage } from 'Utils/Helpers/language';
@@ -15,6 +15,7 @@ import { store } from 'index';
 import normalizeFhirValueSet from 'Utils/Helpers/FhirEntities/normalizeFhirEntity/normalizeFhirValueSet';
 import { setValueset } from 'Store/Actions/ListsBoxActions/ListsBoxActions';
 import { connect } from 'react-redux';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => {
   const { t } = useTranslation();
@@ -40,6 +41,7 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
   const [servicesTypeOpen, setServicesTypeOpen] = useState(false);
   const [DiagnosisLang, setDiagnosisLang] = useState('he');
   const [diagnosisListsLoaded, setDiagnosisListsLoaded] = useState(false);
+  const [addToBDlist, setAddToBDlist] = useState(false);
 
 
   const handlePopUpProps = (title, fields, id, callBack, name) => {
@@ -118,6 +120,10 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
 
   useEffect(() => {
     register({ name: 'diagnosisCodes' });
+    register({ name: 'addToBD' });
+    initValueFunction([
+      { addToBD: false },
+    ]);
     (async () => {
       const APILists = [];
       const systemLists = ['bk_diseases']
@@ -244,8 +250,8 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
         container
         direction='row'
         justify='flex-start'
-        alignItems='baseline'>
-        <Grid sm={10} >
+        alignItems='center'>
+        <Grid sm={9} >
           <CustomizedSelectCheckList
             selectedList={selectedList}
             selectCheckList={diagnosisList}
@@ -263,6 +269,22 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
             virtual
             notRequired={true}
             disabled={permission === 'view'}
+          />
+        </Grid>
+        <Grid sm={3} >
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={addToBDlist}
+                onChange={() => {
+                  setAddToBDlist(!addToBDlist);
+                  setValue('addToBD', !addToBDlist);
+                }}
+                name="addToBDlist"
+                color="primary"
+              />
+            }
+            label={t('Add to background diseases')}
           />
         </Grid>
       </Grid>

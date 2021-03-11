@@ -85,26 +85,28 @@ const ChronicMedication = ({
                 const normalizedMedicationStatement = normalizeFhirMedicationStatement(
                   medication.resource,
                 );
-                medicationCodes.push({
-                  reasonCode: {
-                    name:
+                if (!medicationInitIds.includes(normalizedMedicationStatement.medicationCodeableConceptCode)) {
+                  medicationCodes.push({
+                    reasonCode: {
+                      name:
                       normalizedMedicationStatement.medicationCodeableConceptText,
-                    code:
+                      code:
                       normalizedMedicationStatement.medicationCodeableConceptCode,
-                  },
-                  serviceType: {
-                    code: '',
-                    name: '',
-                  },
-                });
-                medicationIds[
-                  normalizedMedicationStatement.medicationCodeableConceptCode
-                ] = {
-                  id: normalizedMedicationStatement.id,
-                  code:
+                    },
+                    serviceType: {
+                      code: '',
+                      name: '',
+                    },
+                  });
+                  medicationIds[
+                    normalizedMedicationStatement.medicationCodeableConceptCode
+                    ] = {
+                    id: normalizedMedicationStatement.id,
+                    code:
                     normalizedMedicationStatement.medicationCodeableConceptCode,
-                };
-                medicationInitIds.push(normalizedMedicationStatement.medicationCodeableConceptCode)
+                  };
+                  medicationInitIds.push(normalizedMedicationStatement.medicationCodeableConceptCode)
+                }
               }
             });
             setSelectedList(medicationCodes);
