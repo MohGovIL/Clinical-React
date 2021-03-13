@@ -96,9 +96,11 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
             const sensitivesArr = [];
             sensitives.data.entry.forEach((sens) => {
               if (sens.resource) {
-                sensitivesArr.push(
-                  normalizeFhirCondition(sens.resource)['codeText'],
-                );
+                if (!sensitivesArr.includes(normalizeFhirCondition(sens.resource)['codeText'])) {
+                  sensitivesArr.push(
+                    normalizeFhirCondition(sens.resource)['codeText'],
+                  );
+                }
               }
             });
             setPatientSensitivities(sensitivesArr);
@@ -120,9 +122,11 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
             const backgroundArr = [];
             background.data.entry.forEach((back) => {
               if (back.resource) {
-                backgroundArr.push(
-                  normalizeFhirCondition(back.resource)['codeText'],
-                );
+                if (!backgroundArr.includes(normalizeFhirCondition(back.resource)['codeText'])) {
+                  backgroundArr.push(
+                    normalizeFhirCondition(back.resource)['codeText'],
+                  );
+                }
               }
             });
             setPatientBackgroundDiseases(backgroundArr);
@@ -144,11 +148,13 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading 
             const chronicArr = [];
             chronic.data.entry.forEach((chro) => {
               if (chro.resource) {
-                chronicArr.push(
-                  normalizeFhirMedicationStatement(chro.resource)[
-                    'medicationCodeableConceptText'
-                  ],
-                );
+                if (!chronicArr.includes(normalizeFhirMedicationStatement(chro.resource)['medicationCodeableConceptText'])) {
+                  chronicArr.push(
+                    normalizeFhirMedicationStatement(chro.resource)[
+                      'medicationCodeableConceptText'
+                      ],
+                  );
+                }
               }
             });
             setPatientChronicMedications(chronicArr);

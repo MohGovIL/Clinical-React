@@ -109,10 +109,10 @@ const DiagnosisAndRecommendations = ({
     console.log(initValueObj);
 
     const emptyInFirst = [
-      'diagnosisDetails',
-      'findingsDetails',
+      'physicalExamination',
+      'medicalAnamnesis',
+      'diagnosisCodes',
       'instructionsForFurtherTreatment',
-      'treatmentDetails',
       'evacuationWay',
       'decision',
       'numberOfDays'
@@ -137,10 +137,6 @@ const DiagnosisAndRecommendations = ({
     ) {
       return true;
     }
-
-
-
-
 
     for (const index in initValueObj) {
       if (
@@ -341,16 +337,12 @@ const DiagnosisAndRecommendations = ({
           };
           switch (i.linkId) {
             case '1':
-              if (data.findingsDetails)
-                item['answer'] = answerType(i.type, data.findingsDetails);
+              if (data.medicalAnamnesis)
+                item['answer'] = answerType(i.type, data.medicalAnamnesis);
               break;
             case '2':
-              if (data.diagnosisDetails)
-                item['answer'] = answerType(i.type, data.diagnosisDetails);
-              break;
-            case '3':
-              if (data.treatmentDetails)
-                item['answer'] = answerType(i.type, data.treatmentDetails);
+              if (data.physicalExamination)
+                item['answer'] = answerType(i.type, data.physicalExamination);
               break;
             case '4':
               if (data.instructionsForFurtherTreatment)
@@ -370,6 +362,11 @@ const DiagnosisAndRecommendations = ({
             case '7':
               if (data.numberOfDays)
                 item['answer'] = answerType(i.type, data.numberOfDays);
+              break;
+            case '8':
+               (data.diagnosisCodes && data.diagnosisCodes.length > 0) ?
+                item['answer'] = answerType(i.type, data.diagnosisCodes.join('|')) :
+                item['answer'] = answerType(i.type, null);
               break;
             default:
               break;
@@ -406,6 +403,27 @@ const DiagnosisAndRecommendations = ({
               },
             }),
           );
+        }
+        if (data.addToBD) {
+          data.diagnosisCodes.forEach((diagnosis) => {
+            APIsArray.push(
+              FHIR('Condition', 'doWork', {
+                functionParams: {
+                  condition: {
+                    categorySystem:
+                      'http://clinikal/condition/category/medical_problem',
+                    codeSystem: 'http://clinikal/diagnosis/type/bk_diseases',
+                    codeCode: diagnosis,
+                    patient: patient.id,
+                    recorder: store.getState().login.userID,
+                    clinicalStatus: 'active',
+                    encounter: encounter.id,
+                  },
+                },
+                functionName: 'createCondition',
+              }),
+            );
+          });
         }
         if (data.drugRecommendation && data.drugRecommendation.length) {
           data.drugRecommendation.forEach((drug, drugIndex) => {
