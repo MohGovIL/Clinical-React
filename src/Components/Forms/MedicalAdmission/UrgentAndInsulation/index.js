@@ -61,10 +61,14 @@ const UrgentAndInsulation = ({ requiredUrgent, requiredInsulation, items, initVa
       }
     });
     setInsulationInstructionState(itemsObj[2]);
+    if ( formsSettings.clinikal_forms_hide_insulation !== '1') {
+      initValueFunction([
+        {
+          isInsulationInstruction: itemsObj[1],
+        }
+      ]);
+    }
     initValueFunction([
-      {
-        isInsulationInstruction: itemsObj[1],
-      },
       {
         nursingDetails: itemsObj[3],
       }
