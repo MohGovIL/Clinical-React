@@ -136,6 +136,10 @@ const BackgroundDiseases = ({
     prevEncounterResponse,
   ]);
 
+  const medicalAdmissionChipLabel = (selected) => {
+    return backgroundDiseasesLang !== 'en' ? `${t(selected.reasonCode.name)}` : selected.reasonCode.name;
+  };
+
   useEffect(() => {
     let active = true;
 
@@ -198,7 +202,7 @@ const BackgroundDiseases = ({
           popperLanguageDirection={isRTLLanguage(backgroundDiseasesLang) ? 'rtl' : 'ltr'}
           //if the language is english the list will be list of professional codes
           defaultRenderOptionFunction={backgroundDiseasesLang === 'en' ? longCodeListOptions : defaultRenderOptionFunction}
-          defaultChipLabelFunction={defaultChipLabelFunction}
+          defaultChipLabelFunction={medicalAdmissionChipLabel}
           sortByTranslation={!backgroundDiseasesLang === 'en'}
           virtual
         />

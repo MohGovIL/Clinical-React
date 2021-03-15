@@ -41,7 +41,8 @@ const CustomizedSelectCheckList = ({
   onDeleteChip,
   popperWidth,
   popperLanguageDirection,
-  notRequired
+  notRequired,
+  inputWidth
 }) => {
   const { t } = useTranslation();
 
@@ -102,9 +103,9 @@ const CustomizedSelectCheckList = ({
     }
     return matchSorter(options, inputValue, {
       keys: [
-        (item) => t(item.reasonCode.name),
+        (item) => sortByTranslation ? t(item.reasonCode.name) : item.reasonCode.name,
         'reasonCode.code',
-        (item) => t(item.serviceType.name),
+        (item) =>  sortByTranslation ?  t(item.serviceType.name) : item.serviceType.name,
       ],
     });
   };
@@ -221,7 +222,7 @@ const CustomizedSelectCheckList = ({
         options={selectCheckList}
         renderInput={(params) => (
           <CustomizedTextField
-            width={'70%'}
+            width={inputWidth ? inputWidth : '70%'}
             name='selectTest'
             inputRef={(e) => {
               selectTestRef.current = e;

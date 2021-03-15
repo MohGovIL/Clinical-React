@@ -115,7 +115,7 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
   ]);
 
   const medicalAdmissionChipLabel = (selected) => {
-    return `${t(selected.reasonCode.name)}`;
+    return DiagnosisLang !== 'en' ? `${t(selected.reasonCode.name)}` : selected.reasonCode.name;
   };
 
   useEffect(() => {
@@ -251,7 +251,7 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
         direction='row'
         justify='flex-start'
         alignItems='center'>
-        <Grid sm={9} >
+        <Grid sm={12} >
           <CustomizedSelectCheckList
             selectedList={selectedList}
             selectCheckList={diagnosisList}
@@ -269,9 +269,10 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
             virtual
             notRequired={true}
             disabled={permission === 'view'}
+            inputWidth={'60%'}
           />
         </Grid>
-        <Grid sm={3} >
+        <Grid sm={12} >
           <FormControlLabel
             control={
               <Checkbox
