@@ -33,6 +33,7 @@ import {showSnackbar} from 'Store/Actions/UiActions/ToastActions';
 import {baseRoutePath} from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import { setValueset } from 'Store/Actions/ListsBoxActions/ListsBoxActions';
+import MedicalBackgroundComments from 'Components/Forms/MedicalAdmission/MedicalBackgroundComments';
 
 const MedicalAdmission = ({
   patient,
@@ -541,6 +542,8 @@ const MedicalAdmission = ({
                 i.type,
                 data.medication === 'Exist' ? true : false,
               );
+            case '8':
+              item['answer'] = item['answer'] = answerType(i.type, data.medicalBackgroundComments);
               break;
             default:
               break;
@@ -903,6 +906,10 @@ const MedicalAdmission = ({
               defaultChipLabelFunction={medicalAdmissionChipLabel}
               handleLoading={handleLoading}
               initValueFunction={initValue}
+            />
+            <MedicalBackgroundComments
+              initValueFunction={initValue}
+              items={questionnaireResponseItems}
             />
             </>
           )}

@@ -1,0 +1,70 @@
+import React, { useEffect } from 'react';
+import { StyledTemplateSelection } from '../Style';
+import { Grid } from '@material-ui/core';
+import { useFormContext } from 'react-hook-form';
+import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
+import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
+import { useTranslation } from 'react-i18next';
+import {
+  ParseQuestionnaireResponseBoolean,
+  ParseQuestionnaireResponseText
+} from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
+
+const MedicalBackgroundComments = ({initValueFunction, items}) => {
+  const { t } = useTranslation();
+  const MedicalBackgroundCommentsLinkId = '8';
+  const {
+    permission,
+    setValue,
+    register,
+    watch,
+  } = useFormContext();
+
+  useEffect(() => {
+    if (typeof items.items !== "undefined" && items.items.length) {
+      const MedicalBackgroundCommentsContent = ParseQuestionnaireResponseText(items, MedicalBackgroundCommentsLinkId)
+
+      initValueFunction([
+        {
+          medicalBackgroundComments: MedicalBackgroundCommentsContent,
+        }
+      ]);
+    }
+  },[])
+
+  const callBack = (data, name) => {
+    setValue(name, data);
+  };
+
+  const medicalBackground = watch(['medicalBackgroundComments']);
+  const label = t('Medical Background Comments');
+
+  useEffect(() => {
+    console.log(medicalBackground)
+  }, [medicalBackground])
+
+  return (
+    <StyledTemplateSelection>
+      <Grid
+        container
+        direction={'row'}
+        justify={'flex-start'}
+        alignItems={'center'}>
+        <Grid item xs={10}>
+          <CustomizedTextField
+            inputRef={register}
+            name='medicalBackgroundComments'
+            multiline
+            width={'85%'}
+            label={label}
+            InputLabelProps={{
+              shrink: medicalBackground,
+            }}
+            disabled={permission !== 'write'}
+          />
+        </Grid>
+      </Grid>
+    </StyledTemplateSelection>
+  );
+};
+export default MedicalBackgroundComments;
