@@ -10,7 +10,7 @@ import {
   ParseQuestionnaireResponseText
 } from 'Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem';
 
-const MedicalBackgroundComments = ({initValueFunction, items}) => {
+const MedicalBackgroundComments = ({initValueFunction, items, prevEncounterResponse}) => {
   const { t } = useTranslation();
   const MedicalBackgroundCommentsLinkId = '8';
   const {
@@ -21,6 +21,7 @@ const MedicalBackgroundComments = ({initValueFunction, items}) => {
   } = useFormContext();
 
   useEffect(() => {
+    console.log(items)
     if (typeof items.items !== "undefined" && items.items.length) {
       const MedicalBackgroundCommentsContent = ParseQuestionnaireResponseText(items, MedicalBackgroundCommentsLinkId)
 
@@ -29,8 +30,19 @@ const MedicalBackgroundComments = ({initValueFunction, items}) => {
           medicalBackgroundComments: MedicalBackgroundCommentsContent,
         }
       ]);
+    } else {
+      console.log(prevEncounterResponse)
+      if ( typeof prevEncounterResponse.items !== 'undefined' && prevEncounterResponse.items.length) {
+        const MedicalBackgroundCommentsContent = ParseQuestionnaireResponseText(prevEncounterResponse, MedicalBackgroundCommentsLinkId)
+        initValueFunction([
+          {
+            medicalBackgroundComments: MedicalBackgroundCommentsContent,
+          }
+        ]);
+
+      }
     }
-  },[])
+  },[prevEncounterResponse, items])
 
   const callBack = (data, name) => {
     setValue(name, data);
@@ -39,10 +51,10 @@ const MedicalBackgroundComments = ({initValueFunction, items}) => {
   const medicalBackground = watch(['medicalBackgroundComments']);
   const label = t('Medical Background Comments');
 
-  useEffect(() => {
+  /*useEffect(() => {
     console.log(medicalBackground)
   }, [medicalBackground])
-
+*/
   return (
     <StyledTemplateSelection>
       <Grid

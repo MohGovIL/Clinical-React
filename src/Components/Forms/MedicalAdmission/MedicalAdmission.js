@@ -909,6 +909,7 @@ const MedicalAdmission = ({
             />
             <MedicalBackgroundComments
               initValueFunction={initValue}
+              prevEncounterResponse={prevEncounterResponse}
               items={questionnaireResponseItems}
             />
             </>
