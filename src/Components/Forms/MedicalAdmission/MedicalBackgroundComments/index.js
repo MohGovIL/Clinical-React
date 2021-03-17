@@ -70,7 +70,7 @@ const MedicalBackgroundComments = ({initValueFunction, items, prevEncounterRespo
             width={'85%'}
             label={label}
             InputLabelProps={{
-              shrink: medicalBackground,
+              shrink:medicalBackground['medicalBackgroundComments'] && medicalBackground['medicalBackgroundComments'].length > 0,
             }}
             disabled={permission !== 'write'}
           />

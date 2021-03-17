@@ -48,6 +48,7 @@ const MedicalAdmission = ({
   prevEncounterId,
   listsBox,
   encounterFieldsWereUpdated,
+  formsSettings
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -907,11 +908,13 @@ const MedicalAdmission = ({
               handleLoading={handleLoading}
               initValueFunction={initValue}
             />
-            <MedicalBackgroundComments
-              initValueFunction={initValue}
-              prevEncounterResponse={prevEncounterResponse}
-              items={questionnaireResponseItems}
-            />
+              {formsSettings.clinikal_forms_medical_background_comments === '1' && (
+                <MedicalBackgroundComments
+                  initValueFunction={initValue}
+                  prevEncounterResponse={prevEncounterResponse}
+                  items={questionnaireResponseItems}
+                />
+              )}
             </>
           )}
           <SaveForm
@@ -937,6 +940,7 @@ const mapStateToProps = (state) => {
     formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
     listsBox: state.listsBox,
+    formsSettings: state.settings.clinikal.forms,
   };
 };
 export default connect(mapStateToProps, { setValueset })(MedicalAdmission);
