@@ -176,9 +176,12 @@ export function mergeMultipleIndicators(
           : ''
       }`;
     }
-    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['mask'] = `${
+   /* variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['mask'] = `${
       variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['mask']
-    }${seperator}${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['mask']}`;
+    }${seperator}${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['mask']}`;*/
+    variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['placeholder'] = `${
+      variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['placeholder']
+    }${seperator}${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['placeholder']}`;
     variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['code'] = `${
       variantIndicatorsNormalizedDataTemp[keysPlaces[0]]['code']
     }${seperator}${variantIndicatorsNormalizedDataTemp[keysPlaces[1]]['code']}`;

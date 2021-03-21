@@ -543,6 +543,7 @@ const MedicalAdmission = ({
                 i.type,
                 data.medication === 'Exist' ? true : false,
               );
+              break;
             case '8':
               item['answer'] = item['answer'] = answerType(i.type, data.medicalBackgroundComments);
               break;

@@ -15,11 +15,12 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableBody from '@material-ui/core/TableBody';
 import Paper from '@material-ui/core/Paper';
 import TableCell from '@material-ui/core/TableCell';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 
 const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
   let rowCounter = 0;
   const { t } = useTranslation();
-
   if (!variantIndicators) {
     return null;
   } else {
@@ -39,7 +40,9 @@ const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
                             <value.componentType
                               name={value.name}
                               componenttype={value.componenttype}
-                              mask={value.mask}
+                              placeholder={value.placeholder}
+                              symbol={value.symbol ? value.symbol : false}
+                              mask={value.mask ? value.mask : false}
                               disabled={value.disabled}
                               onChange={value.handleOnChange}
                               onKeyUp={() => setFormDirty(true)}
@@ -50,6 +53,16 @@ const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
                                   ? '-'
                                   : value.value
                               }
+                              dir={'ltr'}
+                              InputProps={{
+                                endAdornment: value.symbol && (
+                                  <InputAdornment>
+                                    <IconButton size={'small'}>
+                                      {value.symbol}
+                                    </IconButton>
+                                  </InputAdornment>
+                                )
+                              }}
                             />
                           </TableCell>
                         ) : null;
