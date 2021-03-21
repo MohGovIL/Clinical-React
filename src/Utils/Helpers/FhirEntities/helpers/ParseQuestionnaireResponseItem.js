@@ -28,7 +28,7 @@ export const ParseQuestionnaireResponseInt = (normalizedResponse, linkId) => {
 
 
 // answer for QuestionnaireResponse
-export const answerType = (type, data) => {
+  export const answerType = (type, data) => {
   if (type === 'string') {
     return [
       {

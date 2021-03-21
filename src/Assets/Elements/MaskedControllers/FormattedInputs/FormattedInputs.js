@@ -11,6 +11,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { StyledMaskedInput } from './Style';
 import { StyledVariantTextField } from 'Components/Forms/TestsAndTreatments/Style';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 
 /* todo- for now not on used */
 function TextMaskCustom(props) {
@@ -39,7 +41,9 @@ export default function FormattedInputs({
   onKeyUp,
   label,
   mask,
+  placeholder,
   name,
+  symbol
 }) {
   function renderSwitch({
     componenttype,
@@ -48,8 +52,10 @@ export default function FormattedInputs({
     onKeyUp,
     id,
     label,
+    placeholder,
     mask,
     name,
+    symbol
   }) {
     switch (componenttype) {
       case 'regularMasked':
@@ -86,17 +92,26 @@ export default function FormattedInputs({
             name={name}
             type={'text'}
             onInput = {(e) =>{
-              if(/[a-zA-Z&^*#@]+$/.test(e.target.value)){
-                e.target.value = e.target.value.slice(0, -1);
+              if (placeholder && !mask) {
+                if(/[a-zA-Z&^*#@]+$/.test(e.target.value)){
+                  e.target.value = e.target.value.slice(0, -1);
+                }
+                e.target.value = e.target.value.substring(0,placeholder.length)
               }
-              e.target.value = e.target.value.substring(0,mask.length)
             }}
             id={`formatted-numberformat-input-${label}-${id}`}
-            placeholder={mask}
+            placeholder={placeholder}
             InputProps={{
               'aria-describedby': mask,
-              autoComplete:"off"
-             // inputComponent: TextMaskCustom,
+              autoComplete:"off",
+              inputComponent: mask ? TextMaskCustom : 'input',
+              endAdornment: symbol && (
+                <InputAdornment>
+                  <IconButton size={'small'}>
+                    {symbol}
+                  </IconButton>
+                </InputAdornment>
+              )
             }}
           />
         );
@@ -109,12 +124,14 @@ export default function FormattedInputs({
   return renderSwitch({
     componenttype,
     mask,
+    placeholder,
     value,
     id,
     onChange,
     onKeyUp,
     label,
     name,
+    symbol
   });
 
 }

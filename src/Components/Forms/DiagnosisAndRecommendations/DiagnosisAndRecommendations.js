@@ -185,6 +185,10 @@ const DiagnosisAndRecommendations = ({
     normalizedQuestionnaireResponse,
     setNormalizedQuestionnaireResponse,
   ] = React.useState({});
+const [
+  normalizedPatientAdmissionQuestionnaireResponse,
+    setNormalizePatientAdmissionQuestionnaireResponse,
+  ] = React.useState({});
 
   React.useEffect(() => {
     (async () => {
@@ -224,6 +228,43 @@ const DiagnosisAndRecommendations = ({
           { questionnaireResponseId: normalizedFhirQuestionnaireResponse.id },
         ]);
         handleLoading('questionnaireResponse');
+
+        /* fetch patient admission questionnaire for add to background diseases */
+        const patientAdmissionQ = await FHIR('Questionnaire', 'doWork', {
+          functionName: 'getQuestionnaire',
+          functionParams: {
+            QuestionnaireName: 'medical_admission_questionnaire',
+          },
+        });
+        const patientAdmissionQuestionnaireResponse = await FHIR(
+          'QuestionnaireResponse',
+          'doWork',
+          {
+            functionName: 'getQuestionnaireResponse',
+            functionParams: {
+              encounterId: encounter.id,
+              patientId: patient.id,
+              questionnaireId: patientAdmissionQ.data.entry[1].resource.id,
+            },
+          },
+        );
+        let normalizedFhirPatientAdmissionQuestionnaireResponse = {};
+        if (patientAdmissionQuestionnaireResponse.data.total) {
+          normalizedFhirPatientAdmissionQuestionnaireResponse = normalizeFhirQuestionnaireResponse(
+            patientAdmissionQuestionnaireResponse.data.entry[1].resource,
+          );
+          setNormalizePatientAdmissionQuestionnaireResponse(
+            patientAdmissionQuestionnaireResponse,
+          );
+        }
+        const patientAdmissionQuestionnaire = patientAdmissionQ.data.entry[1].resource;
+        register({ name: 'patientAdmissionQuestionnaire' });
+        register({ name: 'patientAdmissionQuestionnaireResponseId' });
+        initValue([
+          { patientAdmissionQuestionnaire: patientAdmissionQuestionnaire },
+          { patientAdmissionQuestionnaireResponseId: normalizedFhirPatientAdmissionQuestionnaireResponse.id },
+        ]);
+
       } catch (error) {
         console.log(error);
         handleLoading('questionnaireResponse');
@@ -421,6 +462,31 @@ const DiagnosisAndRecommendations = ({
                   },
                 },
                 functionName: 'createCondition',
+              }),
+            );
+            const items = data.patientAdmissionQuestionnaire.item.map((i) => {
+              const item = {
+                linkId: i.linkId,
+                text: i.text,
+              };
+              // eslint-disable-next-line default-case
+              switch (i.linkId) {
+                //bk_diseases
+                case '6':
+                    item['answer'] = answerType(i.type, true);
+                  break;
+              }
+              return item;
+            });
+            APIsArray.push(
+              FHIR('QuestionnaireResponse', 'doWork', {
+                functionName: 'patchQuestionnaireResponse',
+                questionnaireResponseId: data.patientAdmissionQuestionnaireResponseId,
+                questionnaireResponseParams: {
+                  item: items,
+                  author: store.getState().login.userID,
+                  authored: fhirFormatDateTime()
+                },
               }),
             );
           });

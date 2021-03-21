@@ -33,6 +33,7 @@ import {showSnackbar} from 'Store/Actions/UiActions/ToastActions';
 import {baseRoutePath} from 'Utils/Helpers/baseRoutePath';
 import { useHistory } from 'react-router-dom';
 import { setValueset } from 'Store/Actions/ListsBoxActions/ListsBoxActions';
+import MedicalBackgroundComments from 'Components/Forms/MedicalAdmission/MedicalBackgroundComments';
 
 const MedicalAdmission = ({
   patient,
@@ -47,6 +48,7 @@ const MedicalAdmission = ({
   prevEncounterId,
   listsBox,
   encounterFieldsWereUpdated,
+  formsSettings
 }) => {
   const { t } = useTranslation();
   const methods = useForm({
@@ -542,6 +544,9 @@ const MedicalAdmission = ({
                 data.medication === 'Exist' ? true : false,
               );
               break;
+            case '8':
+              item['answer'] = item['answer'] = answerType(i.type, data.medicalBackgroundComments);
+              break;
             default:
               break;
           }
@@ -904,6 +909,13 @@ const MedicalAdmission = ({
               handleLoading={handleLoading}
               initValueFunction={initValue}
             />
+              {formsSettings.clinikal_forms_medical_background_comments === '1' && (
+                <MedicalBackgroundComments
+                  initValueFunction={initValue}
+                  prevEncounterResponse={prevEncounterResponse}
+                  items={questionnaireResponseItems}
+                />
+              )}
             </>
           )}
           <SaveForm
@@ -929,6 +941,7 @@ const mapStateToProps = (state) => {
     formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
     listsBox: state.listsBox,
+    formsSettings: state.settings.clinikal.forms,
   };
 };
 export default connect(mapStateToProps, { setValueset })(MedicalAdmission);
