@@ -16,7 +16,7 @@ import {
 } from "Utils/Helpers/FhirEntities/helpers/ParseQuestionnaireResponseItem";
 import {
   StyledContentBlock,
-  StyledDiv,
+  StyledDiv, StyledLastDiv,
   StyledTitleTypography,
   StyledTypography
 } from 'Assets/Elements/MedicalIssue/Style';
@@ -288,7 +288,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading,
       />
       {formsSettings.clinikal_forms_medical_background_comments === '1' && (
       <>
-        <StyledDiv>
+        <StyledLastDiv>
           <StyledTitleTypography variant='h6' gutterBottom>
             {t('Comments')}
           </StyledTitleTypography>
@@ -296,7 +296,7 @@ const MedicalIssues = ({ patientId, prevEncounterId, encounterId, handleLoading,
           <StyledContentBlock>
               <StyledTypography style={{whiteSpace: 'pre-line'}}>{medicalHistoryCommentContent}</StyledTypography>
           </StyledContentBlock>
-        </StyledDiv>
+        </StyledLastDiv>
       </>
       )}
     </React.Fragment>

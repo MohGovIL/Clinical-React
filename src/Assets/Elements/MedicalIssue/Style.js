@@ -7,6 +7,10 @@ export const StyledDiv = styled.div`
   margin-top: 42px;
 `;
 
+export const StyledLastDiv = styled.div`
+  padding-bottom: 34px;
+`;
+
 export const StyledTitleTypography = styled(Typography)`
   color: #000b40;
   font-weight: bold;
