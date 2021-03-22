@@ -8,6 +8,7 @@ export const StyledDiv = styled.div`
 `;
 
 export const StyledLastDiv = styled.div`
+  margin-top: 42px;
   padding-bottom: 34px;
 `;
 
