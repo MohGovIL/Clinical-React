@@ -4,7 +4,7 @@
  * @returns masked text ui
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -29,6 +29,39 @@ function TextMaskCustom(props) {
   );
 }
 
+function BloodPressMask(props) {
+  const { inputRef, ...other } = props;
+  const [format, setFormat] = useState('###/###')
+  return (
+    <StyledMaskedInput
+      {...other}
+      ref={(ref) => {
+        inputRef(ref ? ref.inputElement : null);
+      }}
+      onKeyDown={() => {
+        setFormat("###/###");
+      }}
+      onKeyUp={(e)=> {
+        console.log(e.target.value);
+        const n = e.target.value.replace(/\D/g, "").length;
+        if (n === 4) {
+          setFormat("##/##");
+        }
+        if (n === 5) {
+          setFormat("###/##")
+        }
+        if (n === 6) {
+          setFormat("###/###");
+        }
+      }}
+      format={format}
+      dir='ltr'
+    />
+  );
+}
+
+
+
 TextMaskCustom.propTypes = {
   inputRef: PropTypes.func.isRequired,
 };
@@ -43,7 +76,8 @@ export default function FormattedInputs({
   mask,
   placeholder,
   name,
-  symbol
+  symbol,
+  labelEng
 }) {
   function renderSwitch({
     componenttype,
@@ -55,7 +89,8 @@ export default function FormattedInputs({
     placeholder,
     mask,
     name,
-    symbol
+    symbol,
+    labelEng
   }) {
     switch (componenttype) {
       case 'regularMasked':
@@ -104,7 +139,8 @@ export default function FormattedInputs({
             InputProps={{
               'aria-describedby': mask,
               autoComplete:"off",
-              inputComponent: mask ? TextMaskCustom : 'input',
+              // special mask logic for blood press
+              inputComponent: mask ? labelEng === 'Blood pressure' ? BloodPressMask : TextMaskCustom : 'input',
               endAdornment: symbol && (
                 <InputAdornment>
                   <IconButton size={'small'}>
@@ -131,7 +167,8 @@ export default function FormattedInputs({
     onKeyUp,
     label,
     name,
-    symbol
+    symbol,
+    labelEng
   });
 
 }

@@ -48,6 +48,7 @@ const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
                               onKeyUp={() => setFormDirty(true)}
                               id={value.id + '_' + rowCounter}
                               label={t(value.label)}
+                              labelEng={value.label}
                               value={
                                 value.disabled && (value.value === '')
                                   ? '-'
