@@ -17,8 +17,9 @@ import Paper from '@material-ui/core/Paper';
 import TableCell from '@material-ui/core/TableCell';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
+import { connect } from 'react-redux';
 
-const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
+const VariantIndicators = ({ variantIndicators, setFormDirty, language_direction }) => {
   let rowCounter = 0;
   const { t } = useTranslation();
   if (!variantIndicators) {
@@ -28,7 +29,7 @@ const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
       <React.Fragment>
         <StyledVariantForm autoComplete='off'>
           <TableContainer component={Paper}>
-            <StyledTable>
+            <StyledTable language_direction={language_direction}>
               <TableBody>
                 {Object.entries(variantIndicators).map(([index, tr]) => {
                   return (
@@ -79,4 +80,11 @@ const VariantIndicators = ({ variantIndicators, setFormDirty }) => {
     );
   }
 };
-export default VariantIndicators;
+
+const mapStateToProps = (state) => {
+  return {
+    language_direction: state.settings.lang_dir,
+  };
+};
+
+export default connect(mapStateToProps, null)(VariantIndicators);
