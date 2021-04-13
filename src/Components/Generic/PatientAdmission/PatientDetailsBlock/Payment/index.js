@@ -148,6 +148,7 @@ const Payment = ({ pid, eid, formatDate, managingOrganization, handleLoading, wr
       register({ name: 'receiptNumber' });
     }
     register({ name: 'paymentTab' });
+    setValue({ paymentTab: commitmentAndPaymentTabValue })
     register({ name: 'exemptionReason' });
     register({ name: 'noPaymentComment' });
 
