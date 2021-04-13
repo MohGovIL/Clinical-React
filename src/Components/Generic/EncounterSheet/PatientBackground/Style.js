@@ -49,7 +49,7 @@ export const StyledEncountersTicketsOther = styled(Paper)`
 
 export const StyledCurrentExaminationHeader = styled.div`
   display: flex;
-  margin: 20px 23px;
+  margin: 20px 9px;
   width: 95%;
 
   div {
@@ -64,7 +64,9 @@ export const StyledCurrentExaminationHeader = styled.div`
     -moz-letter-spacing: normal;
     -ms-letter-spacing: normal;
     letter-spacing: normal;
-    text-align: right;
+    padding-left: ${(props) => (props.dir === 'ltr' ? '0' : '4px')};
+    padding-right: ${(props) => (props.dir === 'ltr' ? '4px' : '0')};
+    text-align: ${(props) => (props.dir === 'ltr' ? 'left' : 'right')};
     color: #000b40;
   }
   span {
@@ -78,7 +80,7 @@ export const StyledCurrentExaminationHeader = styled.div`
     -moz-letter-spacing: normal;
     -ms-letter-spacing: normal;
     letter-spacing: normal;
-    text-align: right;
+    text-align: ${(props) => (props.dir === 'ltr' ? 'left' : 'right')};
     color: #000b40;
     margin-left: 10%;
     /*white-space: nowrap;
@@ -93,7 +95,7 @@ export const StyledIconContainer = styled.div`
 `;
 export const StyledCameraIcon = styled.div`
   cursor: ${(props) => (props.canClickEncounter ? 'pointer' : 'not-allowed')};
-
+  width: 130px;
   img {
     width: 16px;
     height: 16px;
@@ -103,7 +105,7 @@ export const StyledCameraIcon = styled.div`
   span {
     width: 34px;
     height: 18px;
-    font-size: 16px;
+    font-size: ${(props) => (props.lang === 'en' ? '12px' : '16px')};
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;
@@ -126,7 +128,7 @@ export const StyledMedicalFileIcon = styled.div`
   span {
     width: 71px;
     height: 18px;
-    font-size: 16px;
+    font-size: ${(props) => (props.lang === 'en' ? '12px' : '16px')};;
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;
