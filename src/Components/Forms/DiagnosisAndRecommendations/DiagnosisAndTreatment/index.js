@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Title from 'Assets/Elements/Title';
 import { StyledFormGroup } from 'Assets/Elements/StyledFormGroup';
-import { StyledSelectTemplateButton } from 'Assets/Elements/StyledSelectTempleteButton';
+import StyledSelectTemplateButton  from 'Assets/Elements/StyledSelectTempleteButton';
 import { useTranslation } from 'react-i18next';
 import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { FormControlLabel, Grid } from '@material-ui/core';

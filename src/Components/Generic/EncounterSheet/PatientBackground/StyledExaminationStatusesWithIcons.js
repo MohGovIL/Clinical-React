@@ -24,6 +24,7 @@ const StyledExaminationStatusesWithIcons = ({
   handleCreateData,
   currentUser,
   facility,
+  languageCode
 }) => {
   const { t } = useTranslation();
   const MedicalFileClick = (doc) => {
@@ -81,7 +82,7 @@ const StyledExaminationStatusesWithIcons = ({
       <StyledIconContainer>
         <StyledCameraIcon
           canClickEncounter={encounterSheet ? false : true}
-          onClick={!encounterSheet ? CameraClick : null}>
+          onClick={!encounterSheet ? CameraClick : null} lang={languageCode}>
           <img alt={'Camera'} src={Camera} />
           <span>{t('Encounter sheet')}</span>
         </StyledCameraIcon>
@@ -90,6 +91,7 @@ const StyledExaminationStatusesWithIcons = ({
             <input value={encounterData.status} />*/}
           <StyledListItem>
             <StyledMedicalFileIcon
+              lang={languageCode}
               onClick={() => {
                 createLetter(existLetter)
               }}
@@ -112,6 +114,7 @@ const mapStateToProps = (state) => {
     patient: state.active.activePatient,
     encounter: state.active.activeEncounter,
     languageDirection: state.settings.lang_dir,
+    languageCode: state.settings.lang_code,
     formatDate: state.settings.format_date,
     verticalName: state.settings.clinikal_vertical,
     currentUser: state.active.activeUser,

@@ -114,11 +114,16 @@ export const StyledConstantForm = styled.div`
 export const StyledTestsAndTreatments = styled.div``;
 export const StyledTable = styled(Table)`
   .MuiInputLabel-formControl {
-    left: 19px;
+    left: ${(props) => (props.language_direction === 'ltr' ? '-21px' : '-71px')};
+    text-align: ${(props) => (props.language_direction === 'ltr' ? 'left' : 'right')};
+    width: 160px;
   }
   display: flex;
   .MuiTableCell-root {
     padding: 2px;
+  }
+  .MuiInputLabel-shrink {
+    transform-origin: ${(props) => (props.language_direction === 'ltr' ? 'left' : 'right')};
   }
 `;
 

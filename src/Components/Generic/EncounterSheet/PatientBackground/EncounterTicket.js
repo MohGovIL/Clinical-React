@@ -79,7 +79,7 @@ const EncounterTicket = ({
             elevation={0}
             dir={languageDirection}
             key={key}>
-            <StyledCurrentExaminationHeader>
+            <StyledCurrentExaminationHeader dir={languageDirection}>
               <div>
                 {currentDate('YYYY-MM-DD') ===
                 formatShortDate(encounterToParse.startTime, 'YYYY-MM-DD')
