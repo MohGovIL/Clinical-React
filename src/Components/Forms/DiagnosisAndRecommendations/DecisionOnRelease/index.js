@@ -7,7 +7,6 @@ import CustomizedTextField from 'Assets/Elements/CustomizedTextField';
 import { useFormContext, Controller } from 'react-hook-form';
 import { StyledDivider } from '../Style';
 import { connect } from 'react-redux';
-import { setValueset } from 'Store/Actions/ListsBoxActions/ListsBoxActions';
 const RecommendationsOnRelease = ({ initValueFunction, languageDirection}) => {
   const { t } = useTranslation();
   const {
