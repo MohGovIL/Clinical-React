@@ -395,7 +395,8 @@ const Fields = ({
                     <Grid container direction='row' justify='flex-end'>
                     <div
                       style={{
-                        paddingLeft:'25px',
+                        paddingRight:language_direction === 'ltr' ? '25px' : null,
+                        paddingLeft:language_direction === 'rtl' ? '25px' : null,
                         paddingBottom:'25px',
                       }}
                       onClick={async () => {

@@ -29,7 +29,7 @@ export const StyledVariantTextField = styled(TextField)`
   border-radius: 10px;
   background-color: #f8faff;
   label + .MuiInput-formControl {
-    margin: 15px 6px;
+    margin: 23px 6px;
     width: 104px;
   }
   .MuiInputLabel-shrink {

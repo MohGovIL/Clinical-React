@@ -95,7 +95,7 @@ export const StyledIconContainer = styled.div`
 `;
 export const StyledCameraIcon = styled.div`
   cursor: ${(props) => (props.canClickEncounter ? 'pointer' : 'not-allowed')};
-  width: 130px;
+  width: 109px;
   img {
     width: 16px;
     height: 16px;
@@ -214,3 +214,4 @@ export const StyledAllButton = styled(Button)`
 export const StyledListItem = styled(ListItem)`
   margin: -16px 0px;
 `;
+
