@@ -51,7 +51,7 @@ const Login = ({ loginAction, history, status }) => {
       const languageDir = getToken('langDir');
       setLangCode(languageCode.length > 0 ? languageCode : 'en');
       setLangDir(languageDir.length > 0 ? languageDir : 'ltr');
-      setTranslation(LOGIN_LANGUAGES[languageCode]);
+      setTranslation(LOGIN_LANGUAGES[languageCode.length > 0 ? languageCode : 'en']);
 
       const userObj = {
         application_type: 'private',

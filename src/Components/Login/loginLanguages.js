@@ -5,13 +5,13 @@ export const LOGIN_LANGUAGES = {
       'user_name' : 'User Name',
       'password' : 'Password',
       'administrative_and_clinical_management_in_one_product' : 'Administrative and clinical management in one product',
-      'value_required' : 'Value required',
-      'enter_code_from_auth_app': 'Enter the code from authentication application',
-      'only_numbers_allowed' : 'Only numbers allowed',
-      'code_not_valid': 'The code is not valid',
+      'value_required' : 'Please enter a value',
+      'enter_code_from_auth_app': 'Enter the code from the authentication app',
+      'only_numbers_allowed' : 'Please enter only numbers',
+      'code_not_valid': 'The code is invalid / expired',
       'please_wait': 'Please wait',
       'clinikal': 'Clinikal',
-      'invalid_username': 'Invalid user name or password'
+      'invalid_username': 'Username and / or password are incorrect'
     },
   he: {
     'welcome_back' : 'ברוכים השבים',
