@@ -19,6 +19,8 @@ import LoginBG from './LoginBG';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import { loginInstance } from 'Utils/Services/AxiosLoginInstance';
+import { getToken } from 'Utils/Helpers/getToken';
+import { LOGIN_LANGUAGES } from 'Components/Login/loginLanguages';
 
 const Login = ({ loginAction, history, status }) => {
   const { register, handleSubmit, errors } = useForm({
@@ -35,6 +37,9 @@ const Login = ({ loginAction, history, status }) => {
   const [clientId, setClientId] = useState(null);
   const [loginStatus, setLoginStatus] = useState(null);
   const [connectDetails, setConnectDetails] = useState({});
+  const [langDir, setLangDir] = useState(null);
+  const [langCode, setLangCode] = useState(null);
+  const [translation, setTranslation] = useState([]);
 
   /* error statuses */
   const INVALID_GRANT = 'invalid_grant';
@@ -42,6 +47,12 @@ const Login = ({ loginAction, history, status }) => {
   const MFA_TOKEN_INVALID = 'mfa_token_invalid';
 
   useEffect(() => {
+      const languageCode = getToken('langCode');
+      const languageDir = getToken('langDir');
+      setLangCode(languageCode.length > 0 ? languageCode : 'en');
+      setLangDir(languageDir.length > 0 ? languageDir : 'ltr');
+      setTranslation(LOGIN_LANGUAGES[languageCode]);
+
       const userObj = {
         application_type: 'private',
         redirect_uris: [`${window.location.protocol}//${window.location.hostname}`],
@@ -100,28 +111,30 @@ const Login = ({ loginAction, history, status }) => {
 
   useEffect(() => {}, [status]);
   return (
-    <StyledLogin>
-      <LoginBG src={bg} />
-      <LoginForm onSubmit={handleSubmit(onSubmit)}>
+    <>
+    { langCode && (
+    <StyledLogin >
+      <LoginBG translation={translation} src={bg} />
+      <LoginForm dir={langDir} onSubmit={handleSubmit(onSubmit)}>
         <LoginTitle>
           <LoginLogo src={loginLogo} />
           <Typography variant={'h5'} align={'center'}>
-            קליניקל
+            {translation['clinikal']}
           </Typography>
         </LoginTitle>
         <Typography variant={'h4'} align={'center'}>
-          כניסה למערכת
+          {translation['login']}
         </Typography>
         <StyledDivider />
         {loginStatus ===  INVALID_GRANT && (
           <StyledErrorChip
-            label='שם המשתמש ו/או הסיסמה שהוזנו אינם תקינים'
+            label={translation['invalid_username']}
             onDelete={handleOnDeleteInvalidGrant}
           />
         )}
         {loginStatus ===  MFA_TOKEN_INVALID && (
         <StyledErrorChip
-          label='הקוד שנשלח אינו תקין / אינו בתוקף'
+          label={translation['code_not_valid']}
           onDelete={handleOnDeleteMfaInvalid}
           />
         )}
@@ -129,11 +142,11 @@ const Login = ({ loginAction, history, status }) => {
         <>
         <CustomizedTextField
           name='userName'
-          label={t('* שם המשתמש')}
+          label={`${translation['user_name']}*`}
           error={errors.userName ? true : false}
           helperText={errors.userName && errors.userName.message}
           fullWidth
-          lang_dir={'rtl'}
+          lang_dir={langDir}
           InputProps={{
             autoComplete: 'off',
             endAdornment: (errors.userName ? true : false) && (
@@ -143,19 +156,19 @@ const Login = ({ loginAction, history, status }) => {
             ),
           }}
           inputRef={register({
-            required: 'יש להזין ערך בשדה'
+            required: translation['value_required']
           })}
         />
         <CustomizedTextField
           name='password'
-          label={t('* סיסמה')}
+          label={`${translation['password']}*`}
           type={'password'}
           error={errors.password ? true : false}
           helperText={errors.password && errors.password.message}
           fullWidth
-          lang_dir={'rtl'}
+          lang_dir={langDir}
           inputRef={register({
-            required: 'יש להזין ערך בשדה',
+            required: translation['value_required'],
           })}
           InputProps={{
             autoComplete: 'off',
@@ -172,11 +185,11 @@ const Login = ({ loginAction, history, status }) => {
         <CustomizedTextField
           name='totp'
           type={'number'}
-          label={t('*הזן את הקוד מאפליקציית האימות')}
+          label={`${translation['enter_code_from_auth_app']}*`}
           error={errors.userName ? true : false}
           helperText={errors.totp && errors.totp.message}
           fullWidth
-          lang_dir={'rtl'}
+          lang_dir={langDir}
           InputProps={
           {
             autoComplete: 'off',
@@ -190,10 +203,10 @@ const Login = ({ loginAction, history, status }) => {
           )
           }}
           inputRef={register({
-                     required: 'יש להזין ערך בשדה',
+                     required: translation['value_required'],
                      pattern: {
                        value: /^[0-9]+$/,
-                    message: 'יש להזין רק מספרים',
+                    message: translation['only_numbers_allowed'],
                     },
           })}
           onInput = {(e) =>{
@@ -202,7 +215,7 @@ const Login = ({ loginAction, history, status }) => {
         />
         )}
         <CustomizedTableButton
-          label={t('כניסה למערכת')}
+          label={translation['login']}
           backGroundColor={'#002398'}
           variant={'contained'}
           color={'primary'}
@@ -215,6 +228,8 @@ const Login = ({ loginAction, history, status }) => {
         />
       </LoginForm>
     </StyledLogin>
+    )}
+   </>
   );
 };
 

@@ -4,6 +4,7 @@ const StyledBG = styled.div`
   display: flex;
   min-width: 47%;
   position: relative;
+  background-image: url(${(props) => (props.url) });
 `;
 
 export default StyledBG;
