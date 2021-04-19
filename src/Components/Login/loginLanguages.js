@@ -9,7 +9,7 @@ export const LOGIN_LANGUAGES = {
       'enter_code_from_auth_app': 'Enter the code from authentication application',
       'only_numbers_allowed' : 'Only numbers allowed',
       'code_not_valid': 'The code is not valid',
-      'please_wait': 'Please_wait',
+      'please_wait': 'Please wait',
       'clinikal': 'Clinikal',
       'invalid_username': 'Invalid user name or password'
     },
