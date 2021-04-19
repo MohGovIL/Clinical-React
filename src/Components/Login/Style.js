@@ -56,6 +56,7 @@ export const LoginForm = styled.form`
   @media (min-width: 1500px) {
     padding-left:286px;
   }
+  direction: ${(props) => (props.dir)};
 `;
 
 export const LoginLogo = styled.img`

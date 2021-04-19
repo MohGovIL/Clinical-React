@@ -41,6 +41,8 @@ export const getSettingsAction = (history, userName) => {
     try {
       dispatch(getSettingsStartAction());
       const settings = await getGlobalSettings(userName);
+      document.cookie = `langDir=${settings.data.lang_dir}`;
+      document.cookie = `langCode=${settings.data.lang_code}`;
       dispatch(loginSuccessAction(settings.data.user_id));
 
       /* Load all the main lists are on multiple usage into redux */
