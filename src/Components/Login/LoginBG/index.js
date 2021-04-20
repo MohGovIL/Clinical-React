@@ -4,7 +4,6 @@ import Typography from '@material-ui/core/Typography';
 const LoginBG = ({ src, translation }) => {
   return (
     <StyledBG url={src}>
-      <BGImage alt='backgroundImage' />
       <CenteredText>
         <Typography variant={'h1'} align={'center'}>
           {translation['welcome_back']}

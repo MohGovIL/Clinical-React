@@ -33,6 +33,9 @@ export const LoginTitle = styled.div`
   justify-content: center;
   align-items: center;
   margin: 96px 0 122px 0;
+  @media (max-width: 1400px) {
+    margin: 96px 0 96px 0;
+  }
   & .MuiTypography-root {
     font-size: 28px;
     font-weight: bold;

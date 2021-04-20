@@ -95,17 +95,23 @@ export const StyledIconContainer = styled.div`
 `;
 export const StyledCameraIcon = styled.div`
   cursor: ${(props) => (props.canClickEncounter ? 'pointer' : 'not-allowed')};
-  width: 109px;
+  width: 50%;
   img {
     width: 16px;
     height: 16px;
     object-fit: contain;
-    margin: -3px 9px;
+    margin: -3px 5px;
+    @media (max-width: 1400px) {
+      margin: -3px 4px;
+    }
   }
   span {
     width: 34px;
     height: 18px;
-    font-size: ${(props) => (props.lang === 'en' ? '12px' : '16px')};
+    font-size: ${(props) => (props.lang === 'en' ? '13px' : '16px')};
+    @media (max-width: 1400px) {
+      font-size: ${(props) => (props.lang === 'en' ? '11px' : '14px')};
+    }
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;
@@ -123,12 +129,18 @@ export const StyledMedicalFileIcon = styled.div`
     width: 12px;
     height: 14px;
     object-fit: contain;
-    margin: -1px 9px;
+    margin: -1px 5px;
+    @media (max-width: 1400px) {
+      margin: -1px 4px;
+    }
   }
   span {
     width: 71px;
     height: 18px;
-    font-size: ${(props) => (props.lang === 'en' ? '12px' : '16px')};;
+    font-size: ${(props) => (props.lang === 'en' ? '13px' : '16px')};;
+    @media (max-width: 1400px) {
+      font-size: ${(props) => (props.lang === 'en' ? '11px' : '14px')};
+    }
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;
