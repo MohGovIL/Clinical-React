@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const StyledBG = styled.div`
   display: flex;
-  min-width: 50%;
+  min-width: 47%;
   position: relative;
   height: 100vh;
   background-image: url(${(props) => (props.url) });
