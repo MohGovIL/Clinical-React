@@ -436,13 +436,16 @@ const DrugRecommendation = ({
                     const value = event.target.value;
                     console.log(value);
                     if (value) {
-                      const isNumber = /^[0-9]/;
+                     const isNumber = /^[0-9.]/;
                       if (isNumber.test(value[value.length - 1])) {
                         if (value > 0) {
                           return value;
                         } else {
                           return '';
                         }
+                      }
+                      if (typeof value === 'number') {
+                        return  value;
                       }
                     }
                     return '';

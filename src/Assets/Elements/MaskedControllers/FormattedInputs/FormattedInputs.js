@@ -38,8 +38,17 @@ function BloodPressMask(props) {
       ref={(ref) => {
         inputRef(ref ? ref.inputElement : null);
       }}
-      onKeyDown={() => {
-        setFormat("###/###");
+      onKeyDown={(e) => {
+        const n = e.target.value.replace(/\D/g, "").length;
+        if (n > 3 ) {
+          setFormat("###/###");
+        } else {
+          setFormat("##/##");
+        }
+        //delete from 5 to 4
+        if(n === 5 && e.keyCode === 8) {
+          setFormat("##/##");
+        }
       }}
       onKeyUp={(e)=> {
         console.log(e.target.value);
