@@ -20,6 +20,13 @@ import IconButton from '@material-ui/core/IconButton';
 import { connect } from 'react-redux';
 
 const VariantIndicators = ({ variantIndicators, setFormDirty, language_direction }) => {
+  const normalizeMask = (mask, value) => {
+    if(mask === '##.#' && !value.includes('.')) {
+      return value + '.0';
+    }
+    return value;
+  }
+
   let rowCounter = 0;
   const { t } = useTranslation();
   if (!variantIndicators) {
@@ -53,7 +60,7 @@ const VariantIndicators = ({ variantIndicators, setFormDirty, language_direction
                               value={
                                 value.disabled && (value.value === '')
                                   ? '-'
-                                  : value.value
+                                  : value.disabled && value.mask ? normalizeMask(value.mask, value.value) : value.value
                               }
                               dir={'ltr'}
                               InputProps={{
