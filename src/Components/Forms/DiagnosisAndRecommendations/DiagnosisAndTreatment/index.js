@@ -259,7 +259,7 @@ const DiagnosisAndTreatment = ({ initValueFunction, listsBox, setValueset }) => 
             servicesTypeOpen={servicesTypeOpen}
             setServicesTypeOpen={setServicesTypeOpen}
             valueSetCode={'diagnosisCodes'}
-            labelInputText={'Diagnosis'}
+            labelInputText={'Suspected diagnostic'}
             popperWidth={700}
             popperLanguageDirection={isRTLLanguage(DiagnosisLang) ? 'rtl' : 'ltr'}
             //if the language is english the list will be list of professional codes
