@@ -438,7 +438,7 @@ const DrugRecommendation = ({
                     if (value) {
                      const isNumber = /^[0-9.]/;
                       if (isNumber.test(value[value.length - 1])) {
-                        if (value > 0) {
+                        if (value >= 0) {
                           return value;
                         } else {
                           return '';
