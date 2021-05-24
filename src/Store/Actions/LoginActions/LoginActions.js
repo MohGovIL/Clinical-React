@@ -15,6 +15,7 @@ import { basePath } from 'Utils/Helpers/basePath';
 import { ApiTokens } from 'Utils/Services/ApiTokens';
 import {convertParamsToUrl} from "Utils/Helpers/CommonFunctions";
 import { getToken } from 'Utils/Helpers/getToken';
+import moment from 'moment';
 
 export const logoutStartAction = () => {
   return {
@@ -67,12 +68,6 @@ export const loginFailedAction = () => {
   };
 };
 
-export const loginExpiredAction = (seconds) => {
-  return {
-    type: LOGIN_EXPIRED,
-    seconds: seconds,
-  };
-};
 
 export const loginSuccessAction = (userID) => {
   return {
@@ -116,7 +111,7 @@ export const loginAction = (client_id, username, password, history, mfa_token = 
         document.cookie = `clientId=${client_id}`;
         document.cookie = `accessToken=${connection.data.access_token}`;
         document.cookie = `refreshToken=${connection.data.refresh_token}`;
-        dispatch(loginExpiredAction(connection.data.expires_in));
+        document.cookie = `tokenExpired=${moment().add(connection.data.expires_in, 'seconds').unix()}`;
       }else {
         tokenData = await loginPromise(null, username, password);
         document.cookie = `${ApiTokens.CSRF.tokenName}=${tokenData.data.csrf_token}`;
@@ -147,7 +142,7 @@ const refreshTokenPromise = async () => {
 };
 
 
-export const restoreTokenAction = () => {
+export const  restoreTokenAction = () => {
   return async (dispatch) => {
     //dispatch(loginStartAction());
     try {
@@ -155,7 +150,7 @@ export const restoreTokenAction = () => {
         const connection = await refreshTokenPromise();
         document.cookie = `accessToken=${connection.data.access_token}`;
         document.cookie = `refreshToken=${connection.data.refresh_token}`;
-        dispatch(loginExpiredAction(connection.data.expires_in));
+        document.cookie = `tokenExpired=${moment().add(connection.data.expires_in, 'seconds').unix()}`;
       }else {
         //todo - not supported
       }
