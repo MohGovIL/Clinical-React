@@ -23,3 +23,4 @@ This repository contains **React application** for manage clinic, all the medica
 
 ### License
 Please see the [license agreement](https://github.com/israeli-moh/clinikal-react/blob/develop/LICENSE).
+
